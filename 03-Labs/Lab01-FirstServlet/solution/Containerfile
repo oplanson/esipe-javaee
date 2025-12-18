@@ -1,0 +1,25 @@
+# © Copyright Olivier Planson - 2025
+# Containerfile for Banking Application with Open Liberty
+# Use with Podman: podman build -t banking-app:latest .
+
+FROM icr.io/appcafe/open-liberty:full-java17-openj9-ubi
+
+# Copy application WAR to apps directory (not dropins)
+# This allows explicit configuration in server.xml
+COPY --chown=1001:0 target/banking-app.war /config/apps/
+
+# Copy Liberty server configuration
+COPY --chown=1001:0 src/main/liberty/config/server.xml /config/
+COPY --chown=1001:0 src/main/liberty/config/bootstrap.properties /config/
+
+# Copy MicroProfile configuration
+COPY --chown=1001:0 src/main/resources/META-INF/microprofile-config.properties /config/
+
+# This script will add the requested XML snippets to enable Liberty features and grow image to be fit-for-purpose using featureUtility.
+RUN configure.sh
+
+# Expose HTTP and HTTPS ports
+EXPOSE 9080 9443
+
+# Run Open Liberty
+CMD ["/opt/ol/wlp/bin/server", "run", "defaultServer"]
