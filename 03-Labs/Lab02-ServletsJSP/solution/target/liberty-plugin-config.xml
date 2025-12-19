@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<liberty-plugin-config>
+    <installDirectory>/Users/oplanson/Olivier/00-Dev/26-BOB/17 - Cours JakartaEE and Microservices/esipe-javaee/03-Labs/Lab02-ServletsJSP/solution/target/liberty/wlp</installDirectory>
+    <serverDirectory>/Users/oplanson/Olivier/00-Dev/26-BOB/17 - Cours JakartaEE and Microservices/esipe-javaee/03-Labs/Lab02-ServletsJSP/solution/target/liberty/wlp/usr/servers/bankingServer</serverDirectory>
+    <userDirectory>/Users/oplanson/Olivier/00-Dev/26-BOB/17 - Cours JakartaEE and Microservices/esipe-javaee/03-Labs/Lab02-ServletsJSP/solution/target/liberty/wlp/usr</userDirectory>
+    <serverOutputDirectory>/Users/oplanson/Olivier/00-Dev/26-BOB/17 - Cours JakartaEE and Microservices/esipe-javaee/03-Labs/Lab02-ServletsJSP/solution/target/liberty/wlp/usr/servers/bankingServer</serverOutputDirectory>
+    <serverName>bankingServer</serverName>
+    <configDirectory>/Users/oplanson/Olivier/00-Dev/26-BOB/17 - Cours JakartaEE and Microservices/esipe-javaee/03-Labs/Lab02-ServletsJSP/solution/src/main/liberty/config</configDirectory>
+    <configFile>/Users/oplanson/Olivier/00-Dev/26-BOB/17 - Cours JakartaEE and Microservices/esipe-javaee/03-Labs/Lab02-ServletsJSP/solution/src/main/liberty/config/server.xml</configFile>
+    <bootstrapPropertiesFile>/Users/oplanson/Olivier/00-Dev/26-BOB/17 - Cours JakartaEE and Microservices/esipe-javaee/03-Labs/Lab02-ServletsJSP/solution/src/main/liberty/config/bootstrap.properties</bootstrapPropertiesFile>
+    <appsDirectory>apps</appsDirectory>
+    <looseApplication>true</looseApplication>
+    <stripVersion>true</stripVersion>
+    <installAppPackages>project</installAppPackages>
+    <applicationFilename>banking-web-app.war.xml</applicationFilename>
+    <assemblyArtifact>
+        <groupId>io.openliberty</groupId>
+        <artifactId>openliberty-runtime</artifactId>
+        <version>23.0.0.12</version>
+        <type>zip</type>
+    </assemblyArtifact>
+    <assemblyArchive>/Users/oplanson/.m2/repository/io/openliberty/openliberty-runtime/23.0.0.12/openliberty-runtime-23.0.0.12.zip</assemblyArchive>
+    <assemblyInstallDirectory>/Users/oplanson/Olivier/00-Dev/26-BOB/17 - Cours JakartaEE and Microservices/esipe-javaee/03-Labs/Lab02-ServletsJSP/solution/target/liberty</assemblyInstallDirectory>
+    <refresh>false</refresh>
+    <installAppsConfigDropins>/Users/oplanson/Olivier/00-Dev/26-BOB/17 - Cours JakartaEE and Microservices/esipe-javaee/03-Labs/Lab02-ServletsJSP/solution/target/liberty/wlp/usr/servers/bankingServer/configDropins/defaults/install_apps_configuration_1491924271.xml</installAppsConfigDropins>
+    <projectType>war</projectType>
+    <projectCompileDependency>jakarta.servlet.jsp.jstl:jakarta.servlet.jsp.jstl-api:3.0.0</projectCompileDependency>
+    <projectCompileDependency>jakarta.servlet:jakarta.servlet-api:6.0.0</projectCompileDependency>
+    <projectCompileDependency>jakarta.el:jakarta.el-api:5.0.0</projectCompileDependency>
+    <projectCompileDependency>org.glassfish.web:jakarta.servlet.jsp.jstl:3.0.1</projectCompileDependency>
+    <warSourceDirectory>/Users/oplanson/Olivier/00-Dev/26-BOB/17 - Cours JakartaEE and Microservices/esipe-javaee/03-Labs/Lab02-ServletsJSP/solution/src/main/webapp</warSourceDirectory>
+</liberty-plugin-config>

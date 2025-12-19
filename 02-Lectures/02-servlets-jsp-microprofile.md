@@ -195,6 +195,8 @@ stateDiagram-v2
 
 </details>
 
+![width:70%](images/02-servlets-jsp-microprofile-diagram-1.png)    
+
 ---
 
 ## 🔄 Servlet Lifecycle Methods
@@ -805,6 +807,8 @@ graph LR
 
 </details>
 
+![width:70%](images/02-servlets-jsp-microprofile-diagram-2.png)
+
 ### Responsibilities:
 
 - **Model:** Business logic, data access (Java classes, JPA entities)
@@ -1360,6 +1364,8 @@ sequenceDiagram
 ```
 
 </details>
+
+![width:70%](images/02-servlets-jsp-microprofile-diagram-3.png)
 
 ---
 

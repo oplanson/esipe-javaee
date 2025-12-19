@@ -1,0 +1,5 @@
+Maintenant nous allons travailler le deuxieme chapitre décrit dans le le fichier .md. Il faut revenir à la demande initiale expliquée dans le fichier @/esipe-javaee/01-Inputs/prompt.txt mais te focaliser sur le cours 2 et le lab 2. Les fichiers pour le labo 2 seront mis dans le repertoire 03-Labs dans un repertoire Lab02 le fichier md du cours sera mis au meme niveau que le fichier md du cours 01. Le contenu du cours est présentée dans le .md de l'introduction "- Servlet lifecycle in detail
+- JSP and JSTL
+- MVC pattern
+- MP Config in web applications
+- Health checks for web tier". Les cours et les exemples seront généré en anglais.
