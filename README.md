@@ -99,12 +99,12 @@ esipe-javaee/
 
 ### Software Requirements
 - **JDK:** OpenJDK 17 or later
-- **Application Server:** WildFly 27+ or Payara 6+
-- **Database:** PostgreSQL 14+ or MySQL 8+
+- **Application Server:** OpenLiberty 24.0+ (automatically downloaded by Maven)
+- **Container Runtime:** Podman or Docker (for containerized deployment)
+- **Database:** PostgreSQL 14+ or MySQL 8+ (for later labs)
 - **Build Tool:** Maven 3.8+
 - **IDE:** IntelliJ IDEA, Eclipse, or VS Code with Java extensions
 - **Git:** Version control
-- **Docker:** For containerization (optional but recommended)
 
 ### Knowledge Prerequisites
 - Java SE fundamentals
@@ -166,14 +166,23 @@ pandoc 02-Lectures/01-intro-jakartaee.md -o slides/01-intro-jakartaee.pptx
 ### 4. Run Lab Exercises
 Each lab includes:
 - **Instructions:** Step-by-step guide
-- **Starter Code:** Initial project structure
+- **Starter Code:** Initial project structure with TODO comments
 - **Solution:** Complete working solution
-- **Tests:** Unit tests to validate implementation
+- **Deployment Scripts:** Automated deployment with Podman/Docker
 
 ```bash
 cd 03-Labs/Lab01-FirstServlet
-mvn clean install
-mvn wildfly:deploy
+# Option 1: Quick test with Podman (recommended)
+./podman-test.sh
+
+# Option 2: Development mode with Liberty
+./run-lab.sh
+
+# Option 3: Build verification only
+./test-lab.sh
+
+# Option 4: Docker alternative
+./docker-test.sh
 ```
 
 ### 5. Build Banking Application
@@ -281,7 +290,8 @@ Each lab follows this structure:
 ### Official Documentation
 - [Jakarta EE Specification](https://jakarta.ee/specifications/)
 - [Jakarta EE Tutorial](https://eclipse-ee4j.github.io/jakartaee-tutorial/)
-- [WildFly Documentation](https://docs.wildfly.org/)
+- [OpenLiberty Documentation](https://openliberty.io/docs/)
+- [MicroProfile Documentation](https://microprofile.io/)
 
 ### Recommended Reading
 - "Domain-Driven Design" by Eric Evans
