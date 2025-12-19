@@ -23,7 +23,8 @@ This complete course package contains everything needed to teach or learn Jakart
    - Course outline summary
 
 2. **Lecture Slides** (`02-Lectures/`)
-   - ✅ Lecture 1: Introduction to Jakarta EE (485 lines)
+   - ✅ Lecture 1: Introduction to Jakarta EE & MicroProfile (485 lines)
+   - ✅ Lecture 2: Servlets, JSP & MicroProfile (1400+ lines)
    - Markdown format with Marp compatibility
    - Ready for PowerPoint conversion
    - Includes Mermaid diagrams, code examples, and visuals
@@ -34,7 +35,15 @@ This complete course package contains everything needed to teach or learn Jakart
      - Starter code with project structure
      - Complete solution with all files
      - Client model, servlets, HTML, CSS
-   - Framework for Labs 2-8 (to be expanded)
+     - Deployment scripts (Podman/Docker)
+   - ✅ Lab 2: Servlets, JSP & MicroProfile (complete)
+     - Comprehensive instructions with MVC pattern
+     - JavaBeans-based architecture (no CDI)
+     - Complete solution with 5 Java classes + 3 JSP views
+     - Professional CSS styling (568 lines)
+     - 4 deployment scripts (podman-test.sh, docker-test.sh, test-lab.sh, run-lab.sh)
+     - Testing guide (545 lines)
+   - Framework for Labs 3-8 (to be expanded)
 
 4. **Banking Application** (`04-BankingApp/`)
    - Complete documentation (598 lines)
@@ -44,8 +53,9 @@ This complete course package contains everything needed to teach or learn Jakart
 
 5. **Deployment Guides** (`05-Deployment/`)
    - ✅ Environment Setup Guide (598 lines)
-   - JDK, Maven, WildFly installation
-   - PostgreSQL configuration
+   - JDK, Maven, OpenLiberty installation
+   - Podman/Docker configuration
+   - PostgreSQL configuration (for later labs)
    - IDE setup instructions
    - Troubleshooting section
 
@@ -96,8 +106,9 @@ Follow: `05-Deployment/00-environment-setup.md`
 Required:
 - JDK 17+
 - Maven 3.8+
-- WildFly 27+
-- PostgreSQL 14+
+- OpenLiberty 24.0+ (auto-downloaded by Maven)
+- Podman or Docker
+- PostgreSQL 14+ (for later labs)
 - IDE (IntelliJ IDEA recommended)
 
 ### 4. Test Lab 1
@@ -105,14 +116,17 @@ Required:
 ```bash
 cd 03-Labs/Lab01-FirstServlet/solution
 
-# Build
+# Option 1: Quick test with Podman (recommended)
+./podman-test.sh
+
+# Option 2: Development mode
+./run-lab.sh
+
+# Option 3: Build only
 mvn clean package
 
-# Deploy to WildFly
-mvn wildfly:deploy
-
-# Test
-open http://localhost:8080/banking-app
+# Test in browser
+open http://localhost:9080/banking-app
 ```
 
 ### 5. Prepare for Class
@@ -156,8 +170,11 @@ cat README.md
 # Start with starter code
 cd starter/
 
-# Build and deploy
-mvn clean package wildfly:deploy
+# Quick test with Podman
+./podman-test.sh
+
+# Or development mode
+./run-lab.sh
 ```
 
 ### 4. Review Lecture Materials
@@ -220,14 +237,14 @@ esipe-javaee/
 │   └── prompt.txt
 │
 ├── 02-Lectures/                       # Lecture slides (Markdown)
-│   ├── 01-intro-jakartaee.md        # ✅ Complete (485 lines)
-│   ├── 02-jsp-jstl.md                # To be created
-│   ├── 03-jpa-fundamentals.md        # To be created
-│   ├── 04-cdi-fundamentals.md        # To be created
-│   ├── 05-jaxrs-rest.md              # To be created
-│   ├── 06-ddd-strategic.md           # To be created
-│   ├── 07-hexagonal-architecture.md  # To be created
-│   └── 08-microservices.md           # To be created
+│   ├── 01-intro-jakartaee-microprofile.md  # ✅ Complete (485 lines)
+│   ├── 02-servlets-jsp-microprofile.md     # ✅ Complete (1400+ lines)
+│   ├── 03-jpa-fundamentals.md              # To be created
+│   ├── 04-cdi-fundamentals.md              # To be created
+│   ├── 05-jaxrs-rest.md                    # To be created
+│   ├── 06-ddd-strategic.md                 # To be created
+│   ├── 07-hexagonal-architecture.md        # To be created
+│   └── 08-microservices.md                 # To be created
 │
 ├── 03-Labs/                           # Lab exercises
 │   ├── Lab01-FirstServlet/           # ✅ Complete
@@ -235,10 +252,20 @@ esipe-javaee/
 │   │   ├── starter/                  # Starter code
 │   │   │   ├── pom.xml
 │   │   │   └── src/
-│   │   └── solution/                 # Complete solution
-│   │       ├── pom.xml
-│   │       └── src/
-│   ├── Lab02-JSP-JSTL/               # To be created
+│   │   ├── solution/                 # Complete solution
+│   │   │   ├── pom.xml
+│   │   │   └── src/
+│   │   └── *.sh                      # Deployment scripts
+│   ├── Lab02-ServletsJSP/            # ✅ Complete
+│   │   ├── README.md                 # Instructions
+│   │   ├── TESTING-GUIDE.md          # Testing guide (545 lines)
+│   │   ├── starter/                  # Starter with TODOs
+│   │   │   ├── pom.xml
+│   │   │   └── src/
+│   │   ├── solution/                 # Complete solution
+│   │   │   ├── pom.xml
+│   │   │   └── src/
+│   │   └── *.sh                      # 4 deployment scripts
 │   ├── Lab03-JPA/                    # To be created
 │   ├── Lab04-CDI/                    # To be created
 │   ├── Lab05-REST-API/               # To be created
@@ -269,19 +296,21 @@ esipe-javaee/
 ### ✅ Fully Complete
 
 1. **Course Structure** - All directories created
-2. **Main README** - Comprehensive overview
-3. **Lecture 1** - Complete with Mermaid diagrams
-4. **Lab 1** - Full instructions, starter, and solution
-5. **Environment Setup** - Detailed installation guide
-6. **Course Outline** - Complete 48-hour breakdown
-7. **Conversion Guide** - Marp/Slidev/Pandoc instructions
-8. **Banking App Docs** - Complete architecture and roadmap
-9. **Conversion Script** - Automated slide generation
+2. **Main README** - Comprehensive overview (updated for OpenLiberty)
+3. **Lecture 1** - Introduction to Jakarta EE & MicroProfile (485 lines)
+4. **Lecture 2** - Servlets, JSP & MicroProfile (1400+ lines)
+5. **Lab 1** - First Servlet with deployment scripts
+6. **Lab 2** - Complete MVC with JavaBeans, JSP, and 4 deployment scripts
+7. **Environment Setup** - Detailed installation guide
+8. **Course Outline** - Complete 48-hour breakdown
+9. **Conversion Guide** - Marp/Slidev/Pandoc instructions
+10. **Banking App Docs** - Complete architecture and roadmap
+11. **Conversion Script** - Automated slide generation
 
 ### 📝 To Be Expanded (Framework Ready)
 
-1. **Lectures 2-8** - Follow Lecture 1 template
-2. **Labs 2-8** - Follow Lab 1 structure
+1. **Lectures 3-8** - Follow Lecture 1-2 template
+2. **Labs 3-8** - Follow Lab 1-2 structure with deployment scripts
 3. **Banking App Code** - Implement 8 Git branches
 4. **Additional Resources** - FAQ, cheat sheets, etc.
 
@@ -292,14 +321,14 @@ esipe-javaee/
 ### Required
 - **Java:** OpenJDK 17+
 - **Build:** Maven 3.8+
-- **Server:** WildFly 27+ or Payara 6+
-- **Database:** PostgreSQL 14+ or MySQL 8+
+- **Server:** OpenLiberty 24.0+ (auto-downloaded by Maven)
+- **Container Runtime:** Podman or Docker
+- **Database:** PostgreSQL 14+ or MySQL 8+ (for later labs)
 - **IDE:** IntelliJ IDEA, Eclipse, or VS Code
 
 ### Optional but Recommended
 - **Slide Conversion:** Marp CLI, Slidev, or Pandoc
 - **API Testing:** Postman or Insomnia
-- **Containerization:** Docker and Docker Compose
 - **Database Tool:** DBeaver or pgAdmin
 - **Version Control:** Git
 
