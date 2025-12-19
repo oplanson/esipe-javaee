@@ -1,0 +1,90 @@
+**Final Comprehensive Prompt for Jakarta EE and Microservices Course (English Only, Markdown → PowerPoint)**
+
+---
+
+**Context and Goals:**
+I am a computer science instructor preparing a **24-hour lecture course + 24-hour practical labs** on **Jakarta EE** and **microservices**, with a focus on **Domain-Driven Design (DDD)** and **hexagonal architecture**. The course will culminate in the development of a **banking application** (advisor managing multiple clients and accounts).
+**All course materials and lab exercises must be written in English.**
+
+**Course Requirements:**
+
+1. **Course Content and Progression:**
+   - Follow the **Jakarta EE standard** (no external frameworks unless pedagogically justified).
+   - Progress from **basics to advanced topics**: servlets, JPA, CDI, JAX-RS, microservices, DDD, hexagonal architecture.
+   - Each concept must be introduced with **theory**, followed by a **practical exercise**, and integrated into the **banking application**.
+
+2. **Banking Application Specifications:**
+   - **Entities:** Client (id, name, email), Account (id, number, balance, type, client_id).
+   - **Features:** CRUD for clients/accounts, balance inquiry, transfers between accounts.
+   - **Database:** Tables for Client and Account, with appropriate relationships.
+
+3. **Lab Exercises:**
+   - Each lab must reinforce a specific concept, with **clear instructions**, **starter code**, and **solution keys**.
+   - Exercises should be **progressive**, building on previous labs.
+
+4. **Course Materials (Markdown → PowerPoint):**
+   - **Format:** Each lecture and lab must be provided as a **Markdown file**, structured for easy conversion to PowerPoint using tools like **Marp**, **Slidev**, or **Pandoc**.
+   - **Structure:**
+     - One `.md` file per lecture/lab (e.g., `01-intro-jakartaee.md`, `02-servlets-jsp.md`).
+     - Each file must start with a **YAML header** for slide conversion (e.g., `--- marp: true ---`).
+     - Slides must be **visual**: use Mermaid diagrams, ASCII art, code snippets, and screenshots.
+     - Separate slides for **theory**, **examples**, **exercises**, and **summaries**.
+   - **Example Markdown Slide Structure:**
+     ```markdown
+     ---
+     marp: true
+     theme: default
+     paginate: true
+     ---
+     # Lecture Title
+
+     ## Objectives
+     - Objective 1
+     - Objective 2
+
+     ---
+     ## Key Concept 1
+     - Definition
+     - Code Example:
+       ```java
+       public class Example {
+           // code here
+       }
+       ```
+
+     ---
+     ## Practical Exercise
+     **Task:** Implement X using Y.
+     **Instructions:**
+     1. Step 1
+     2. Step 2
+     **Solution:** [Link to solution file]
+     ```
+
+5. **Deliverables:**
+   - **Lecture Slides:** Markdown files for each lecture, ready for PowerPoint conversion.
+   - **Lab Exercises:** Markdown files with exercises, starter code, and solutions.
+   - **Banking Application Code:** Versioned by concept (Git branches).
+   - **Deployment Guide:** Step-by-step instructions for setting up and running the application.
+   - **README:** Instructions for compiling slides and using lab materials.
+
+6. **Pedagogical Approach:**
+   - **Active Learning:** Emphasize hands-on practice and incremental code development.
+   - **Real-World Relevance:** Use the banking application as a consistent, practical example.
+   - **English Language:** All materials (slides, exercises, code comments, README) must be in **clear, professional English**.
+
+**Open Question:**
+What are the best practices for structuring a 48-hour course on Jakarta EE and microservices, integrating DDD and hexagonal architecture, while keeping students engaged and ensuring all materials are in English and easily convertible to PowerPoint?
+
+---
+
+**Notes for the AI/Developer:**
+- Use **Mermaid.js** for diagrams in Markdown.
+- Provide **code snippets** with comments for clarity.
+- Ensure **exercises** are self-contained and include **hints** and **solutions**.
+- Use **Git-friendly** structure for code (one branch per major concept).
+- All text must be in **English**, with **technical accuracy** and **pedagogical clarity**.
+
+---
+**Ready to use!**
+This prompt ensures you receive a **complete, English-language course package** with slides, labs, and code, all structured for easy conversion to PowerPoint and immediate classroom use. If you need a sample Markdown file or further customization, let me know!

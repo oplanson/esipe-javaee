@@ -1,0 +1,6 @@
+{
+  "markdown.marp.themes": [
+    "./esipe-theme.css"
+  ],
+  "markdown.marp.enableHtml": true
+}

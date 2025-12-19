@@ -5,13 +5,122 @@ paginate: true
 backgroundColor: #fff
 header: 'Jakarta EE & MicroProfile Course'
 footer: 'Lecture 1: Jakarta EE, MicroProfile & Open Liberty | © 2025'
+style: |
+  section {
+    font-size: 22px;
+    padding: 40px 60px;
+  }
+  img {
+    max-width: 85%;
+    max-height: 380px;
+    display: block;
+    margin: 10px auto;
+  }
+  pre {
+    font-size: 0.65em;
+    margin: 10px 0;
+    padding: 10px;
+  }
+  code {
+    font-size: 0.7em;
+  }
+  ul, ol {
+    font-size: 0.85em;
+    line-height: 1.8;
+    margin: 8px 0;
+  }
+  li {
+    margin: 6px 0;
+    line-height: 1.8;
+  }
+  li::marker {
+    flex-shrink: 0;
+  }
+  h1 {
+    font-size: 1.8em;
+    margin-bottom: 20px;
+    line-height: 1.3;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: nowrap;
+    white-space: nowrap;
+  }
+  h2 {
+    font-size: 1.3em;
+    margin: 15px 0 10px 0;
+    line-height: 1.3;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: nowrap;
+    white-space: nowrap;
+  }
+  h3 {
+    font-size: 1.1em;
+    margin: 10px 0 8px 0;
+    line-height: 1.3;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex-wrap: nowrap;
+    white-space: nowrap;
+  }
+  table {
+    font-size: 0.8em;
+  }
+  td {
+    vertical-align: middle;
+    white-space: nowrap;
+  }
+  th {
+    white-space: nowrap;
+  }
+  p {
+    margin: 8px 0;
+    line-height: 1.6;
+    white-space: nowrap;
+  }
+  strong {
+    white-space: nowrap;
+  }
+  blockquote {
+    font-size: 0.9em;
+    margin: 10px 0;
+    padding: 10px 15px;
+  }
+  .columns {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    align-items: start;
+  }
+  .columns-3 {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 15px;
+    align-items: start;
+  }
+  .columns-2-1 {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 20px;
+    align-items: start;
+  }
+  .columns-1-2 {
+    display: grid;
+    grid-template-columns: 1fr 2fr;
+    gap: 20px;
+    align-items: start;
+  }
 ---
 
 # Introduction to Jakarta EE and MicroProfile
 ## Enterprise Java Development with Open Liberty
 
 **Duration:** 2 hours  
-**Instructor:** [Your Name]  
+**Instructor:** Olivier Planson  
+**Date:** 2025-12
 **Course:** Jakarta EE, MicroProfile and Microservices
 
 ---
@@ -20,12 +129,14 @@ footer: 'Lecture 1: Jakarta EE, MicroProfile & Open Liberty | © 2025'
 
 By the end of this lecture, you will be able to:
 
-- ✅ Understand Jakarta EE and MicroProfile ecosystems
-- ✅ Differentiate between Jakarta EE and MicroProfile
-- ✅ Identify core specifications and APIs
-- ✅ Set up Open Liberty development environment
-- ✅ Create and deploy your first application with Podman
-- ✅ Understand the role of application servers
+| | |
+| --- | --- |
+| ✅ | Understand Jakarta EE and MicroProfile ecosystems |
+| ✅ | Differentiate between Jakarta EE and MicroProfile |
+| ✅ | Identify core specifications and APIs |
+| ✅ | Set up Open Liberty development environment |
+| ✅ | Create and deploy your first application with Podman |
+| ✅ | Understand the role of application servers |
 
 ---
 
@@ -80,6 +191,9 @@ MicroProfile 1.0 (2016) → MicroProfile 6.0 (2023)
 
 ## 🤝 Jakarta EE + MicroProfile Together
 
+<details>
+<summary>📝 Original Mermaid Code (click to expand)</summary>
+
 ```mermaid
 graph TB
     A[Your Application] --> B[MicroProfile APIs]
@@ -95,6 +209,11 @@ graph TB
     style C fill:#4facfe
     style F fill:#43e97b
 ```
+
+</details>
+
+![width:70%](images/01-intro-jakartaee-microprofile-diagram-1.png)
+
 
 **Best Practice:** Use Jakarta EE for core enterprise features + MicroProfile for cloud-native capabilities
 
@@ -212,7 +331,8 @@ public class DatabaseHealthCheck implements HealthCheck {
                 .named("database-check")
                 .status(isHealthy)
                 .build();
-        } catch (SQLException e) {
+        }
+        catch (SQLException e) {
             return HealthCheckResponse
                 .named("database-check")
                 .down()
@@ -254,14 +374,23 @@ public class TransferService {
 
 **Open Liberty** is IBM's open-source Jakarta EE and MicroProfile runtime.
 
-### Why Open Liberty?
+<table style="border: none; width: 100%;">
+<tr style="border: none;">
+<td style="border: none; vertical-align: top; width: 50%;">
 
-- ✅ **Lightweight:** Fast startup, small footprint
-- ✅ **Modular:** Load only what you need
-- ✅ **Cloud-native:** Perfect for containers
-- ✅ **Full compliance:** Jakarta EE 10 + MicroProfile 6
-- ✅ **Developer-friendly:** Hot reload, dev mode
-- ✅ **Production-ready:** Used by IBM, Red Hat, and others
+### Why Open Liberty? 
+
+| | |
+|---|---|
+| ✅ | **Lightweight:** Fast startup, small footprint |
+| ✅ | **Modular:** Load only what you need |
+| ✅ | **Cloud-native:** Perfect for containers |
+| ✅ | **Full compliance:** Jakarta EE 10 + MicroProfile 6 |
+| ✅ | **Developer-friendly:** Hot reload, dev mode |
+| ✅ | **Production-ready:** Used by IBM, Red Hat, and others |
+
+</td>
+<td style-"border: none; vertical-align: top; width: 50%;">
 
 ### Comparison with Other Runtimes
 
@@ -271,6 +400,10 @@ public class TransferService {
 | **Memory** | 💚 Low | Medium | Medium |
 | **MicroProfile** | ✅ Full | Partial | Full |
 | **Container-ready** | ✅ Excellent | Good | Good |
+
+</td>
+</tr>
+</table>
 
 ---
 
@@ -333,14 +466,23 @@ banking-app/
 
 ## 🐳 Why Podman Instead of Docker?
 
+<table style="border: none; width: 100%;">
+<tr style="border: none;">
+<td style="border: none; vertical-align: top; width: 50%;">
+
 ### Podman Advantages:
 
-- ✅ **Daemonless:** No background daemon required
-- ✅ **Rootless:** Run containers without root privileges
-- ✅ **Docker-compatible:** Same CLI commands
-- ✅ **Systemd integration:** Native systemd support
-- ✅ **Security:** Better security model
-- ✅ **Open-source:** Truly open-source (OCI compliant)
+| | |
+|---|---|
+| ✅ | **Daemonless:** No background daemon required |
+| ✅ | **Rootless:** Run containers without root privileges |
+| ✅ | **Docker-compatible:** Same CLI commands |
+| ✅ | **Systemd integration:** Native systemd support |
+| ✅ | **Security:** Better security model |
+| ✅ | **Open-source:** Truly open-source (OCI compliant) |
+
+</td>
+<td style="border: none; vertical-align: top; width: 50%;">
 
 ### Podman vs Docker
 
@@ -351,6 +493,10 @@ banking-app/
 | **CLI Compatibility** | ✅ Docker-compatible | N/A |
 | **Systemd** | ✅ Native | ⚠️ Limited |
 | **Security** | ✅ Better | Good |
+
+</td>
+</tr>
+</table>
 
 **Note:** `alias docker=podman` makes transition seamless!
 
@@ -414,10 +560,9 @@ import java.io.IOException;
 public class HelloServlet extends HttpServlet {
     
     @Override
-    protected void doGet(HttpServletRequest request, 
-                        HttpServletResponse response) 
+    protected void doGet(HttpServletRequest request,
+                        HttpServletResponse response)
             throws IOException {
-        
         response.setContentType("text/html");
         response.getWriter().println("""
             <html><body>
@@ -565,6 +710,9 @@ OpenAPI:      http://localhost:9080/openapi
 
 ### Layered Architecture with MicroProfile:
 
+<details>
+<summary>📝 Original Mermaid Code (click to expand)</summary>
+
 ```mermaid
 graph TB
     A[Client Browser/API] --> B[JAX-RS Resources]
@@ -587,12 +735,17 @@ graph TB
     style H fill:#b3e5fc
 ```
 
+</details>
+
+![width:70%](images/01-intro-jakartaee-microprofile-diagram-2.png)
+
+
 ---
 
 ## 📊 Course Roadmap
 
 ### Week 1: Foundations
-1. ✅ **Today:** Jakarta EE, MicroProfile & Open Liberty
+1. **Today:** Jakarta EE, MicroProfile & Open Liberty ✅
 2. **Next:** Servlets and JSP (3h)
 3. **Then:** JPA and Database Integration (4h)
 4. **Finally:** CDI and Service Layer (3h)
@@ -607,17 +760,30 @@ graph TB
 
 ## 🎓 Key Takeaways
 
+<table style="border: none; width: 100%;">
+<tr style="border: none;">
+<td style="border: none; vertical-align: top; width: 50%;">
+
 ### What We Learned Today:
-1. ✅ Jakarta EE provides enterprise Java standards
-2. ✅ MicroProfile adds cloud-native capabilities
-3. ✅ Open Liberty is lightweight and modular
-4. ✅ Podman offers better security than Docker
-5. ✅ Combine Jakarta EE + MicroProfile for modern apps
+
+| | |
+|---|---|
+| ✅ | Jakarta EE provides enterprise Java standards |
+| ✅ | MicroProfile adds cloud-native capabilities |
+| ✅ | Open Liberty is lightweight and modular |
+| ✅ | Podman offers better security than Docker |
+| ✅ | Combine Jakarta EE + MicroProfile for modern apps |
+
+</td>
+<td style="border: none; vertical-align: top; horizontal-align: top; width: 50%;">
 
 ### Jakarta EE vs MicroProfile:
 - **Jakarta EE:** Comprehensive enterprise platform
 - **MicroProfile:** Cloud-native microservices extensions
 - **Together:** Best of both worlds!
+</td>
+</tr>
+</table>
 
 ### Next Steps:
 - Complete Lab 1: First Application with Open Liberty
@@ -703,10 +869,13 @@ A banking application with:
 ## 📝 Homework
 
 ### Before Next Lecture:
-1. ✅ Complete Lab 1: First Application
-2. ✅ Install Podman and test basic commands
-3. ✅ Read MicroProfile Config specification
-4. ✅ Explore Open Liberty guides
+
+| | |
+|---|---|
+| ✅ | Complete Lab 1: First Application |
+| ✅ | Install Podman and test basic commands |
+| ✅ | Read MicroProfile Config specification |
+| ✅ | Explore Open Liberty guides |
 
 ### Optional:
 - Set up PostgreSQL in Podman container
@@ -775,6 +944,10 @@ A banking application with:
 @Timed                         // MP Metrics
 @Retry                         // MP Fault Tolerance
 ```
+
+---
+
+## Appendix: Commands Reference
 
 ### Maven Commands:
 ```bash
