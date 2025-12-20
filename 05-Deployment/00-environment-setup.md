@@ -161,85 +161,115 @@ Create/edit `~/.m2/settings.xml`:
 
 ---
 
-## 3️⃣ WildFly Application Server
+## 3️⃣ OpenLiberty Application Server
 
-### Download and Installation
+### Automatic Installation via Maven
 
-1. **Download WildFly 27+:**
-   - Visit: https://www.wildfly.org/downloads/
-   - Download: WildFly 27.x.x Final (ZIP)
+**Good News!** OpenLiberty is automatically downloaded by Maven when you build the labs. No manual installation required!
+
+### Manual Installation (Optional)
+
+If you want to install OpenLiberty manually:
+
+1. **Download OpenLiberty 24.0+:**
+   - Visit: https://openliberty.io/downloads/
+   - Download: OpenLiberty Runtime (ZIP)
 
 2. **Extract:**
 
 **macOS/Linux:**
 ```bash
 cd ~/Downloads
-unzip wildfly-27.*.zip
-sudo mv wildfly-27.* /opt/wildfly
+unzip openliberty-*.zip
+sudo mv wlp /opt/openliberty
 ```
 
 **Windows:**
-- Extract to: `C:\wildfly`
+- Extract to: `C:\openliberty`
 
-3. **Set Environment Variable:**
+3. **Set Environment Variable (Optional):**
 
 **macOS/Linux (add to ~/.bashrc or ~/.zshrc):**
 ```bash
-export WILDFLY_HOME=/opt/wildfly
-export PATH=$WILDFLY_HOME/bin:$PATH
+export LIBERTY_HOME=/opt/openliberty/wlp
+export PATH=$LIBERTY_HOME/bin:$PATH
 ```
 
 **Windows:**
-- Add system variable: `WILDFLY_HOME` = `C:\wildfly`
-- Add to PATH: `%WILDFLY_HOME%\bin`
-
-### Start WildFly
-
-**macOS/Linux:**
-```bash
-$WILDFLY_HOME/bin/standalone.sh
-```
-
-**Windows:**
-```cmd
-%WILDFLY_HOME%\bin\standalone.bat
-```
+- Add system variable: `LIBERTY_HOME` = `C:\openliberty\wlp`
+- Add to PATH: `%LIBERTY_HOME%\bin`
 
 ### Verification
 
-1. Wait for startup message:
-   ```
-   WildFly 27.x.x.Final started in XXXXms
-   ```
+OpenLiberty will be automatically started by the lab deployment scripts. You can verify it's working when you run your first lab.
 
-2. Open browser: http://localhost:8080
-
-3. You should see WildFly welcome page
-
-### Create Admin User
-
-```bash
-# macOS/Linux
-$WILDFLY_HOME/bin/add-user.sh
-
-# Windows
-%WILDFLY_HOME%\bin\add-user.bat
-```
-
-Follow prompts:
-- Type: Management User
-- Username: `admin`
-- Password: `admin` (or your choice)
-- Groups: (leave empty)
-
-### Access Admin Console
-
-- URL: http://localhost:9990
-- Login with admin credentials
+**Default Ports:**
+- Application: http://localhost:9080
+- Admin Center: http://localhost:9443 (if enabled)
 
 ---
 
-## 4️⃣ PostgreSQL Database
+## 4️⃣ Podman or Docker (Container Runtime)
+
+### Why Podman/Docker?
+
+The labs use containerized deployment for:
+- ✅ Consistent environment across all platforms
+- ✅ Easy cleanup and reset
+- ✅ No manual server configuration
+- ✅ Automated testing
+
+### Option A: Podman (Recommended for Linux/macOS)
+
+**macOS:**
+```bash
+brew install podman
+podman machine init
+podman machine start
+```
+
+**Linux:**
+```bash
+sudo apt update
+sudo apt install podman
+```
+
+**Verification:**
+```bash
+podman --version
+podman ps
+```
+
+### Option B: Docker
+
+**macOS/Windows:**
+- Download Docker Desktop: https://www.docker.com/products/docker-desktop/
+- Install and start Docker Desktop
+
+**Linux:**
+```bash
+sudo apt install docker.io
+sudo systemctl start docker
+sudo systemctl enable docker
+sudo usermod -aG docker $USER
+# Log out and back in for group changes
+```
+
+**Verification:**
+```bash
+docker --version
+docker ps
+```
+
+### Choose One
+
+You only need **either** Podman **or** Docker, not both. The lab scripts support both.
+
+---
+
+## 5️⃣ PostgreSQL Database (For Later Labs)
+
+**Note:** PostgreSQL is not required for Labs 1-2. You'll need it for Lab 3 (JPA) onwards.
 
 ### Installation
 
@@ -262,7 +292,7 @@ sudo systemctl enable postgresql
 2. Run installer
 3. Remember the password you set for postgres user
 
-### Create Database and User
+### Create Database and User (When Needed)
 
 ```bash
 # Connect to PostgreSQL
@@ -281,35 +311,11 @@ GRANT ALL PRIVILEGES ON DATABASE bankingdb TO bankuser;
 psql -U bankuser -d bankingdb -h localhost
 ```
 
-### Install JDBC Driver in WildFly
-
-1. **Download PostgreSQL JDBC Driver:**
-   ```bash
-   cd $WILDFLY_HOME/standalone/deployments
-   curl -O https://jdbc.postgresql.org/download/postgresql-42.6.0.jar
-   ```
-
-2. **Configure DataSource:**
-   
-   Edit `$WILDFLY_HOME/standalone/configuration/standalone.xml`
-   
-   Add inside `<datasources>` section:
-   ```xml
-   <datasource jndi-name="java:jboss/datasources/BankingDS" 
-               pool-name="BankingDS" 
-               enabled="true">
-       <connection-url>jdbc:postgresql://localhost:5432/bankingdb</connection-url>
-       <driver>postgresql</driver>
-       <security>
-           <user-name>bankuser</user-name>
-           <password>bankpass</password>
-       </security>
-   </datasource>
-   ```
+**You can skip this section for now and return to it before Lab 3.**
 
 ---
 
-## 5️⃣ Integrated Development Environment (IDE)
+## 6️⃣ Integrated Development Environment (IDE)
 
 ### Option A: IntelliJ IDEA (Recommended)
 
@@ -326,6 +332,7 @@ psql -U bankuser -d bankingdb -h localhost
 3. **Configure:**
    - File → Project Structure → SDKs → Add JDK 17
    - File → Settings → Build Tools → Maven → Set Maven home
+   - No server configuration needed (labs use containers)
 
 ### Option B: Eclipse IDE
 
@@ -333,8 +340,8 @@ psql -U bankuser -d bankingdb -h localhost
    https://www.eclipse.org/downloads/packages/
 
 2. **Install Plugins:**
-   - WildFly Tools
    - Maven Integration
+   - Docker/Podman Tools (optional)
 
 ### Option C: Visual Studio Code
 
@@ -348,7 +355,7 @@ psql -U bankuser -d bankingdb -h localhost
 
 ---
 
-## 6️⃣ Git Version Control
+## 7️⃣ Git Version Control
 
 ### Installation
 
@@ -381,35 +388,22 @@ git --version
 
 ---
 
-## 7️⃣ Additional Tools (Optional but Recommended)
+## 8️⃣ Additional Tools (Optional but Recommended)
 
 ### Postman (API Testing)
 
 1. Download: https://www.postman.com/downloads/
 2. Install and create free account
-3. Import course API collections (provided later)
-
-### Docker (For Containerization)
-
-**macOS/Windows:**
-- Download Docker Desktop: https://www.docker.com/products/docker-desktop/
-
-**Linux:**
-```bash
-sudo apt install docker.io
-sudo systemctl start docker
-sudo systemctl enable docker
-sudo usermod -aG docker $USER
-```
+3. Import course API collections (provided in later labs)
 
 ### DBeaver (Database Management)
 
 1. Download: https://dbeaver.io/download/
-2. Install and configure PostgreSQL connection
+2. Install and configure PostgreSQL connection (when needed for Lab 3+)
 
 ---
 
-## 8️⃣ Verify Complete Setup
+## 9️⃣ Verify Complete Setup
 
 ### Run Verification Script
 
@@ -429,12 +423,20 @@ echo "2. Maven Version:"
 mvn -version
 echo ""
 
-echo "3. WildFly Home:"
-echo $WILDFLY_HOME
+echo "3. Podman/Docker:"
+if command -v podman &> /dev/null; then
+    echo "Podman version:"
+    podman --version
+elif command -v docker &> /dev/null; then
+    echo "Docker version:"
+    docker --version
+else
+    echo "Neither Podman nor Docker found!"
+fi
 echo ""
 
-echo "4. PostgreSQL:"
-psql --version
+echo "4. PostgreSQL (Optional for Lab 1-2):"
+psql --version 2>/dev/null || echo "Not installed (OK for early labs)"
 echo ""
 
 echo "5. Git:"
@@ -452,7 +454,7 @@ chmod +x verify-setup.sh
 
 ---
 
-## 9️⃣ Clone Course Repository
+## 🔟 Clone Course Repository
 
 ```bash
 # Navigate to your workspace
@@ -470,24 +472,50 @@ ls -la
 
 ---
 
-## 🔟 Test First Application
+## 1️⃣1️⃣ Test First Application
 
-### Build and Deploy Sample App
+### Option 1: Using Liberty Maven Plugin (Recommended for Development)
 
 ```bash
 cd 03-Labs/Lab01-FirstServlet/solution
 
-# Build
+# Build and run with Liberty
+mvn clean liberty:dev
+
+# In another terminal, test
+curl http://localhost:9080/banking-app/welcome
+```
+
+**Expected:** HTML response with welcome message
+
+Press `Ctrl+C` to stop the server.
+
+### Option 2: Using Podman/Docker (Recommended for Production-like Testing)
+
+```bash
+cd 03-Labs/Lab01-FirstServlet/solution
+
+# Build the application
 mvn clean package
 
-# Start WildFly (if not running)
-$WILDFLY_HOME/bin/standalone.sh &
+# Build and run container with Podman
+podman build -t banking-app .
+podman run -d -p 9080:9080 --name banking-app banking-app
 
-# Deploy
-mvn wildfly:deploy
+# Or with Docker
+docker build -t banking-app .
+docker run -d -p 9080:9080 --name banking-app banking-app
 
 # Test
-curl http://localhost:8080/banking-app/welcome
+curl http://localhost:9080/banking-app/welcome
+
+# View logs
+podman logs banking-app  # or docker logs banking-app
+
+# Stop and remove
+podman stop banking-app && podman rm banking-app
+# or
+docker stop banking-app && docker rm banking-app
 ```
 
 **Expected:** HTML response with welcome message
@@ -496,16 +524,16 @@ curl http://localhost:8080/banking-app/welcome
 
 ## 🆘 Troubleshooting
 
-### Issue: Port 8080 Already in Use
+### Issue: Port 9080 Already in Use
 
 **Solution:**
 ```bash
 # Find process
-lsof -i :8080  # macOS/Linux
-netstat -ano | findstr :8080  # Windows
+lsof -i :9080  # macOS/Linux
+netstat -ano | findstr :9080  # Windows
 
-# Kill process or change WildFly port
-# Edit standalone.xml, change socket-binding port
+# Kill process or change Liberty port
+# Edit server.xml, change httpEndpoint port
 ```
 
 ### Issue: Maven Build Fails
@@ -519,7 +547,7 @@ rm -rf ~/.m2/repository
 mvn clean install -U
 ```
 
-### Issue: Database Connection Failed
+### Issue: Database Connection Failed (Lab 3+)
 
 **Solution:**
 ```bash
@@ -531,18 +559,41 @@ brew services list  # macOS
 psql -U bankuser -d bankingdb -h localhost
 ```
 
-### Issue: WildFly Won't Start
+### Issue: Liberty Won't Start
 
 **Solution:**
 ```bash
-# Check Java version
+# Check Java version (must be 17 or 21)
 java -version
 
 # Check JAVA_HOME
 echo $JAVA_HOME
 
 # Check logs
-tail -f $WILDFLY_HOME/standalone/log/server.log
+tail -f target/liberty/wlp/usr/servers/defaultServer/logs/messages.log
+
+# Clean and rebuild
+mvn clean package
+```
+
+### Issue: Podman/Docker Container Won't Start
+
+**Solution:**
+```bash
+# Check container logs
+podman logs <container-name>
+# or
+docker logs <container-name>
+
+# Check if port is available
+lsof -i :9080
+
+# Remove old containers
+podman ps -a
+podman rm <container-name>
+
+# Rebuild image
+podman build --no-cache -t banking-app .
 ```
 
 ---
@@ -550,8 +601,11 @@ tail -f $WILDFLY_HOME/standalone/log/server.log
 ## 📚 Additional Resources
 
 ### Documentation
-- [WildFly Documentation](https://docs.wildfly.org/)
+- [Open Liberty Documentation](https://openliberty.io/docs/)
+- [Jakarta EE Specifications](https://jakarta.ee/specifications/)
 - [Maven Getting Started](https://maven.apache.org/guides/getting-started/)
+- [Podman Documentation](https://docs.podman.io/)
+- [Docker Documentation](https://docs.docker.com/)
 - [PostgreSQL Documentation](https://www.postgresql.org/docs/)
 
 ### Video Tutorials
