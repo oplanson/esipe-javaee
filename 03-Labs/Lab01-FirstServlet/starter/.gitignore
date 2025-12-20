@@ -1,7 +1,3 @@
-# OS
-.DS_Store
-Thumbs.db
-
 # Maven
 target/
 pom.xml.tag
@@ -27,10 +23,14 @@ buildNumber.properties
 *.swo
 *~
 
+# OS
+.DS_Store
+Thumbs.db
+
 # Logs
 *.log
 
-# Build artifacts
+# Build
 *.war
 *.ear
 *.jar

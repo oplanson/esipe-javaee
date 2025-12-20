@@ -1,6 +1,0 @@
-/Users/oplanson/Olivier/00-Dev/26-BOB/17 - Cours JakartaEE and Microservices/esipe-javaee/03-Labs/Lab02-ServletsJSP/starter/src/main/java/com/bank/model/Client.java
-/Users/oplanson/Olivier/00-Dev/26-BOB/17 - Cours JakartaEE and Microservices/esipe-javaee/03-Labs/Lab02-ServletsJSP/starter/src/main/java/com/bank/service/ClientService.java
-/Users/oplanson/Olivier/00-Dev/26-BOB/17 - Cours JakartaEE and Microservices/esipe-javaee/03-Labs/Lab02-ServletsJSP/starter/src/main/java/com/bank/health/WebAppReadinessCheck.java
-/Users/oplanson/Olivier/00-Dev/26-BOB/17 - Cours JakartaEE and Microservices/esipe-javaee/03-Labs/Lab02-ServletsJSP/starter/src/main/java/com/bank/health/DatabaseHealthCheck.java
-/Users/oplanson/Olivier/00-Dev/26-BOB/17 - Cours JakartaEE and Microservices/esipe-javaee/03-Labs/Lab02-ServletsJSP/starter/src/main/java/com/bank/web/ClientController.java
-/Users/oplanson/Olivier/00-Dev/26-BOB/17 - Cours JakartaEE and Microservices/esipe-javaee/03-Labs/Lab02-ServletsJSP/starter/src/main/java/com/bank/model/Account.java

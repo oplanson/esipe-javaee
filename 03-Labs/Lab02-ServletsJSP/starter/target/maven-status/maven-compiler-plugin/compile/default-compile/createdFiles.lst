@@ -1,6 +1,0 @@
-com/bank/model/Account.class
-com/bank/health/DatabaseHealthCheck.class
-com/bank/web/ClientController.class
-com/bank/service/ClientService.class
-com/bank/model/Client.class
-com/bank/health/WebAppReadinessCheck.class
