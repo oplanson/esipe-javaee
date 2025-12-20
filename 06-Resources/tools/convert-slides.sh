@@ -55,12 +55,12 @@ fi
 echo ""
 
 # Create output directory
-SLIDES_DIR="$SCRIPT_DIR/slides"
+SLIDES_DIR="$SCRIPT_DIR/../slides"
 mkdir -p "$SLIDES_DIR"
 echo -e "${GREEN}✓ Output directory created: $SLIDES_DIR${NC}"
 
 # Check for custom theme
-THEME_FILE="$SCRIPT_DIR/02-Lectures/esipe-theme.css"
+THEME_FILE="$SCRIPT_DIR/../../02-Lectures/esipe-theme.css"
 if [ -f "$THEME_FILE" ]; then
     echo -e "${GREEN}✓ Custom theme found: esipe-theme.css${NC}"
     THEME_ARG="--theme $THEME_FILE"
@@ -79,7 +79,7 @@ failed=0
 echo "Checking lecture files for conversion..."
 echo "----------------------------"
 
-LECTURES_DIR="$SCRIPT_DIR/02-Lectures"
+LECTURES_DIR="$SCRIPT_DIR/../../02-Lectures"
 cd "$LECTURES_DIR"
 
 for file in *.md; do
