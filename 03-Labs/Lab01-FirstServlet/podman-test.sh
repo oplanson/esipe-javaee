@@ -227,6 +227,16 @@ HTTP_CODE=$(curl -s -o /tmp/response.txt -w "%{http_code}" http://localhost:9080
 if [ "$HTTP_CODE" = "200" ] && grep -q "base" /tmp/response.txt; then
     echo -e "${GREEN}✓ PASS${NC}"
     TESTS_PASSED=$((TESTS_PASSED + 1))
+elif [ "$HTTP_CODE" = "401" ]; then
+    # Try with authentication if required
+    HTTP_CODE=$(curl -s -u admin:adminpwd -o /tmp/response.txt -w "%{http_code}" http://localhost:9080/metrics)
+    if [ "$HTTP_CODE" = "200" ] && grep -q "base" /tmp/response.txt; then
+        echo -e "${GREEN}✓ PASS (with auth)${NC}"
+        TESTS_PASSED=$((TESTS_PASSED + 1))
+    else
+        echo -e "${RED}✗ FAIL even with auth (HTTP $HTTP_CODE)${NC}"
+        TESTS_FAILED=$((TESTS_FAILED + 1))
+    fi
 else
     echo -e "${RED}✗ FAIL (HTTP $HTTP_CODE)${NC}"
     TESTS_FAILED=$((TESTS_FAILED + 1))
