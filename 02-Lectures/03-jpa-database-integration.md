@@ -1687,6 +1687,54 @@ ALTER TABLE clients ADD COLUMN status VARCHAR(20) DEFAULT 'ACTIVE';
 
 ---
 
+## 📝 Homework
+
+**Before Next Lecture:**
+
+| | |
+|---|---|
+| ✅ | Complete Lab 3: JPA Database Integration |
+| ✅ | Practice writing JPQL queries |
+| ✅ | Experiment with Criteria API |
+| ✅ | Set up Flyway migrations |
+
+**Optional:**
+- Read about CDI and dependency injection
+- Explore transaction management patterns
+- Review JPA best practices
+
+---
+
+## 🙋 Questions & Discussion
+
+**Discussion Topics:**
+- When to use JPQL vs Criteria API?
+- How to handle complex entity relationships?
+- What are the trade-offs of manual vs automatic transaction management?
+
+**Office Hours:**
+- **When:** [Your schedule]
+- **Where:** [Your location/online]
+- **Contact:** [Your email]
+
+---
+
+## 📅 Next Lecture
+
+### CDI and Dependency Injection
+**Date:** [Next session date]
+**Duration:** 3 hours
+**Topics:**
+- CDI fundamentals and bean scopes
+- Dependency injection patterns
+- Qualifiers and alternatives
+- Producer methods
+- Declarative transaction management with @Transactional
+
+**Preparation:** Complete Lab 3 and review dependency injection concepts
+
+---
+
 ## ❓ Questions?
 
 **Common Questions:**
