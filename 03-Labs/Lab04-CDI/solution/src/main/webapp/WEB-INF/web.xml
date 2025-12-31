@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app xmlns="https://jakarta.ee/xml/ns/jakartaee"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="https://jakarta.ee/xml/ns/jakartaee
+         https://jakarta.ee/xml/ns/jakartaee/web-app_6_0.xsd"
+         version="6.0">
+
+    <display-name>Banking CDI Application - Lab 04</display-name>
+    <description>
+        Banking application with CDI dependency injection.
+        Lab 04: CDI beans, interceptors, producers, and dependency injection.
+    </description>
+
+    <!-- Context Parameters -->
+    <context-param>
+        <param-name>app.name</param-name>
+        <param-value>Banking CDI Application</param-value>
+    </context-param>
+
+    <context-param>
+        <param-name>web.pagination.default.size</param-name>
+        <param-value>10</param-value>
+    </context-param>
+
+    <context-param>
+        <param-name>feature.client.deletion.enabled</param-name>
+        <param-value>true</param-value>
+    </context-param>
+
+    <!-- Welcome Files -->
+    <welcome-file-list>
+        <welcome-file>index.html</welcome-file>
+    </welcome-file-list>
+
+    <!-- Session Configuration -->
+    <session-config>
+        <session-timeout>30</session-timeout>
+        <cookie-config>
+            <http-only>true</http-only>
+            <secure>false</secure>
+        </cookie-config>
+    </session-config>
+
+    <!-- Error Pages -->
+    <error-page>
+        <error-code>404</error-code>
+        <location>/error-404.html</location>
+    </error-page>
+
+    <error-page>
+        <error-code>500</error-code>
+        <location>/error-500.html</location>
+    </error-page>
+
+</web-app>
+
+<!-- Made with Bob -->

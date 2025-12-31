@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Banking Web Application - Lab 04</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <div class="container">
+        <header class="hero">
+            <h1>🏦 Banking Web Application</h1>
+            <p class="subtitle">Lab 04: CDI & Dependency Injection</p>
+        </header>
+
+        <main>
+            <section class="card">
+                <h2>Welcome!</h2>
+                <p>This is a banking application built with Jakarta EE and MicroProfile.</p>
+                <p>This lab demonstrates CDI (Contexts and Dependency Injection) features.</p>
+            </section>
+
+            <section class="card">
+                <h2>Quick Links</h2>
+                <nav class="nav-links">
+                    <a href="clients" class="btn btn-primary">View Clients</a>
+                    <a href="client?action=new" class="btn btn-secondary">Add New Client</a>
+                </nav>
+            </section>
+
+            <section class="card">
+                <h2>Monitoring</h2>
+                <nav class="nav-links">
+                    <a href="health" class="btn btn-info">Health Check</a>
+                    <a href="health/live" class="btn btn-info">Liveness</a>
+                    <a href="health/ready" class="btn btn-info">Readiness</a>
+                    <a href="metrics" class="btn btn-info">Metrics</a>
+                </nav>
+            </section>
+
+            <section class="card">
+                <h2>CDI Features</h2>
+                <ul class="feature-list">
+                    <li>✅ Dependency Injection (@Inject)</li>
+                    <li>✅ EntityManager Producer (@Produces)</li>
+                    <li>✅ Interceptors (@Logged)</li>
+                    <li>✅ Request Scoped Beans (@RequestScoped)</li>
+                    <li>✅ Transactional Methods (@Transactional)</li>
+                    <li>✅ MicroProfile Config (@ConfigProperty)</li>
+                </ul>
+            </section>
+        </main>
+
+        <footer>
+            <p>&copy; 2025 Banking Application | Lab 04</p>
+            <p>Built with Jakarta EE 10, MicroProfile 6 & CDI 4.0</p>
+        </footer>
+    </div>
+</body>
+</html>

@@ -26,6 +26,7 @@ This complete course package contains everything needed to teach or learn Jakart
    - ✅ Lecture 1: Introduction to Jakarta EE & MicroProfile (485 lines)
    - ✅ Lecture 2: Servlets, JSP & MicroProfile (1400+ lines)
    - ✅ Lecture 3: JPA and Database Integration (1200+ lines)
+   - ✅ Lecture 4: CDI and Dependency Injection (1377 lines)
    - Markdown format with Marp compatibility
    - Ready for PowerPoint conversion
    - Includes Mermaid diagrams, code examples, and visuals
@@ -53,7 +54,16 @@ This complete course package contains everything needed to teach or learn Jakart
      - Complete solution with starter code
      - Error handling pages (error.jsp, 404, 500)
      - Deployment scripts and testing guide
-   - Framework for Labs 4-8 (to be expanded)
+   - ✅ Lab 4: CDI and Dependency Injection (complete)
+     - Complete CDI implementation with @Inject
+     - Converted from Singleton to @ApplicationScoped
+     - Declarative transactions with @Transactional
+     - JTA transaction management (changed from RESOURCE_LOCAL)
+     - Producer methods for EntityManager and Logger
+     - Logging interceptor with @AroundInvoke
+     - beans.xml for CDI activation
+     - Complete solution with deployment scripts
+   - Framework for Labs 5-8 (to be expanded)
 
 4. **Banking Application** (`04-BankingApp/`)
    - Complete documentation (598 lines)
@@ -211,9 +221,9 @@ Lecture slides are in Markdown format:
 - Lecture: JPA, ORM, manual transaction management
 - Lab: Database integration with Singleton pattern (no CDI)
 
-**Session 4 (6h):** Dependency Injection
-- Lecture: CDI fundamentals
-- Lab: Service layer with CDI
+**Session 4 (6h):** Dependency Injection with CDI
+- Lecture: CDI fundamentals, bean scopes, @Transactional
+- Lab: Convert to CDI with declarative transactions
 
 ### Week 2: Advanced Topics
 
@@ -250,7 +260,7 @@ esipe-javaee/
 │   ├── 01-intro-jakartaee-microprofile.md  # ✅ Complete (485 lines)
 │   ├── 02-servlets-jsp-microprofile.md     # ✅ Complete (1400+ lines)
 │   ├── 03-jpa-database-integration.md      # ✅ Complete (1200+ lines)
-│   ├── 04-cdi-fundamentals.md              # To be created
+│   ├── 04-cdi-dependency-injection.md      # ✅ Complete (1377 lines)
 │   ├── 05-jaxrs-rest.md                    # To be created
 │   ├── 06-ddd-strategic.md                 # To be created
 │   ├── 07-hexagonal-architecture.md        # To be created
@@ -288,7 +298,16 @@ esipe-javaee/
 │   │   │   ├── Containerfile
 │   │   │   └── src/
 │   │   └── *.sh                      # Deployment scripts
-│   ├── Lab04-CDI/                    # To be created
+│   ├── Lab04-CDI/                    # ✅ Complete
+│   │   ├── README.md                 # Instructions (577 lines)
+│   │   ├── SOLUTION-STATUS.md        # Implementation status
+│   │   ├── starter/                  # Starter code (to be created)
+│   │   ├── solution/                 # Complete CDI solution
+│   │   │   ├── pom.xml
+│   │   │   ├── Containerfile
+│   │   │   ├── docker-compose.yml
+│   │   │   └── src/
+│   │   └── *.sh                      # Deployment scripts
 │   ├── Lab05-REST-API/               # To be created
 │   ├── Lab06-DDD/                    # To be created
 │   ├── Lab07-Hexagonal/              # To be created
@@ -321,14 +340,16 @@ esipe-javaee/
 3. **Lecture 1** - Introduction to Jakarta EE & MicroProfile (485 lines)
 4. **Lecture 2** - Servlets, JSP & MicroProfile (1400+ lines)
 5. **Lecture 3** - JPA and Database Integration (1200+ lines)
-6. **Lab 1** - First Servlet with deployment scripts
-7. **Lab 2** - Complete MVC with JavaBeans, JSP, and 4 deployment scripts
-8. **Lab 3** - JPA with PostgreSQL, Flyway migrations, and error handling
-9. **Environment Setup** - Detailed installation guide
-10. **Course Outline** - Complete 48-hour breakdown
-11. **Conversion Guide** - Marp/Slidev/Pandoc instructions
-12. **Banking App Docs** - Complete architecture and roadmap
-13. **Conversion Script** - Automated slide generation
+6. **Lecture 4** - CDI and Dependency Injection (1377 lines)
+7. **Lab 1** - First Servlet with deployment scripts
+8. **Lab 2** - Complete MVC with JavaBeans, JSP, and 4 deployment scripts
+9. **Lab 3** - JPA with PostgreSQL, Flyway migrations, and error handling
+10. **Lab 4** - CDI with declarative transactions, interceptors, and producers
+11. **Environment Setup** - Detailed installation guide
+12. **Course Outline** - Complete 48-hour breakdown
+13. **Conversion Guide** - Marp/Slidev/Pandoc instructions
+14. **Banking App Docs** - Complete architecture and roadmap
+15. **Conversion Script** - Automated slide generation
 
 ### 📝 To Be Expanded (Framework Ready)
 

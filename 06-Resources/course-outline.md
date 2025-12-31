@@ -192,58 +192,73 @@
 
 ---
 
-## 📅 Session 4: Dependency Injection with CDI (6 hours)
+## 📅 Session 4: Dependency Injection with CDI (6 hours) ✅ COMPLETE
 
-### Lecture 4.1: CDI Fundamentals (2 hours)
+### Lecture 4.1: CDI Fundamentals (2 hours) ✅
 **Topics:**
-- Dependency injection principles
-- CDI beans and scopes
+- Dependency injection principles and benefits
+- CDI beans and scopes (@ApplicationScoped, @RequestScoped, @SessionScoped)
+- Injection points with @Inject
 - Qualifiers and alternatives
-- Producer methods
-- Events and observers
+- Producer methods and disposers
+- Declarative transaction management with @Transactional
 
 **Learning Outcomes:**
-- Understand DI benefits
-- Use CDI annotations
+- Understand DI benefits and principles
+- Use CDI annotations effectively
 - Implement loose coupling
-- Handle events
+- Apply declarative transactions
+- Create producer methods
 
 **Materials:**
-- Slides: `02-Lectures/04-cdi-fundamentals.md`
+- Slides: `02-Lectures/04-cdi-dependency-injection.md` ✅
+- Code examples: CDI demos with interceptors ✅
 
 ---
 
-### Lab 4: Service Layer with CDI (2 hours)
+### Lab 4: CDI and Dependency Injection (2 hours) ✅
 **Objectives:**
-- Create service classes
-- Inject dependencies
-- Implement business logic
-- Use CDI scopes
+- Convert Lab 3 code from Singleton pattern to CDI
+- Use @Inject for dependency injection
+- Apply @ApplicationScoped for service beans
+- Implement @Transactional for declarative transactions
+- Change persistence.xml from RESOURCE_LOCAL to JTA
+- Create EntityManager producer
+- Add logging interceptor
 
 **Deliverables:**
-- ClientService implementation
-- AccountService implementation
-- CDI-managed beans
+- CDI-managed service layer
+- Declarative transaction management
+- Producer methods for EntityManager and Logger
+- Logging interceptor implementation
+- JTA-configured persistence unit
+- Cleaner, more testable code
 
 **Materials:**
-- Lab guide: `03-Labs/Lab04-CDI/README.md`
+- Lab guide: `03-Labs/Lab04-CDI/README.md` ✅
+- Solution: `03-Labs/Lab04-CDI/solution/` ✅
+- Testing scripts: run-lab.sh, podman-test.sh, docker-test.sh ✅
 
 ---
 
-### Lecture 4.2: Advanced CDI (1 hour)
+### Lecture 4.2: Advanced CDI (1 hour) ✅
 **Topics:**
 - Interceptors and decorators
-- Stereotypes
-- Portable extensions
+- Interceptor bindings (@InterceptorBinding)
+- CDI events and observers
+- Transaction attributes (REQUIRED, REQUIRES_NEW, SUPPORTS)
 - CDI best practices
+- Testing CDI beans
 
 ---
 
-### Lab 4 Continuation (1 hour)
+### Lab 4 Continuation (1 hour) ✅
 **Activities:**
-- Add transaction interceptor
-- Implement logging decorator
-- Create custom qualifier
+- Test declarative transactions
+- Verify interceptor logging
+- Compare code with Lab 3 (before/after CDI)
+- Experiment with different bean scopes
+- Test transaction rollback scenarios
 
 ---
 
