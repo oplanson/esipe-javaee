@@ -25,6 +25,7 @@ This complete course package contains everything needed to teach or learn Jakart
 2. **Lecture Slides** (`02-Lectures/`)
    - ✅ Lecture 1: Introduction to Jakarta EE & MicroProfile (485 lines)
    - ✅ Lecture 2: Servlets, JSP & MicroProfile (1400+ lines)
+   - ✅ Lecture 3: JPA and Database Integration (1200+ lines)
    - Markdown format with Marp compatibility
    - Ready for PowerPoint conversion
    - Includes Mermaid diagrams, code examples, and visuals
@@ -43,7 +44,16 @@ This complete course package contains everything needed to teach or learn Jakart
      - Professional CSS styling (568 lines)
      - 4 deployment scripts (podman-test.sh, docker-test.sh, test-lab.sh, run-lab.sh)
      - Testing guide (545 lines)
-   - Framework for Labs 3-8 (to be expanded)
+   - ✅ Lab 3: JPA and Database Integration (complete)
+     - Complete JPA implementation with PostgreSQL
+     - Flyway database migrations (3 migration scripts)
+     - Singleton pattern service layer (no CDI)
+     - RESOURCE_LOCAL transaction management
+     - Docker Compose for PostgreSQL
+     - Complete solution with starter code
+     - Error handling pages (error.jsp, 404, 500)
+     - Deployment scripts and testing guide
+   - Framework for Labs 4-8 (to be expanded)
 
 4. **Banking Application** (`04-BankingApp/`)
    - Complete documentation (598 lines)
@@ -239,7 +249,7 @@ esipe-javaee/
 ├── 02-Lectures/                       # Lecture slides (Markdown)
 │   ├── 01-intro-jakartaee-microprofile.md  # ✅ Complete (485 lines)
 │   ├── 02-servlets-jsp-microprofile.md     # ✅ Complete (1400+ lines)
-│   ├── 03-jpa-fundamentals.md              # To be created
+│   ├── 03-jpa-database-integration.md      # ✅ Complete (1200+ lines)
 │   ├── 04-cdi-fundamentals.md              # To be created
 │   ├── 05-jaxrs-rest.md                    # To be created
 │   ├── 06-ddd-strategic.md                 # To be created
@@ -266,7 +276,18 @@ esipe-javaee/
 │   │   │   ├── pom.xml
 │   │   │   └── src/
 │   │   └── *.sh                      # 4 deployment scripts
-│   ├── Lab03-JPA/                    # To be created
+│   ├── Lab03-JPA/                    # ✅ Complete
+│   │   ├── README.md                 # Instructions
+│   │   ├── SOLUTION-STATUS.md        # Implementation status
+│   │   ├── docker-compose.yml        # PostgreSQL setup
+│   │   ├── starter/                  # Starter code
+│   │   │   ├── pom.xml
+│   │   │   └── src/
+│   │   ├── solution/                 # Complete solution
+│   │   │   ├── pom.xml
+│   │   │   ├── Containerfile
+│   │   │   └── src/
+│   │   └── *.sh                      # Deployment scripts
 │   ├── Lab04-CDI/                    # To be created
 │   ├── Lab05-REST-API/               # To be created
 │   ├── Lab06-DDD/                    # To be created
@@ -299,18 +320,20 @@ esipe-javaee/
 2. **Main README** - Comprehensive overview (updated for OpenLiberty)
 3. **Lecture 1** - Introduction to Jakarta EE & MicroProfile (485 lines)
 4. **Lecture 2** - Servlets, JSP & MicroProfile (1400+ lines)
-5. **Lab 1** - First Servlet with deployment scripts
-6. **Lab 2** - Complete MVC with JavaBeans, JSP, and 4 deployment scripts
-7. **Environment Setup** - Detailed installation guide
-8. **Course Outline** - Complete 48-hour breakdown
-9. **Conversion Guide** - Marp/Slidev/Pandoc instructions
-10. **Banking App Docs** - Complete architecture and roadmap
-11. **Conversion Script** - Automated slide generation
+5. **Lecture 3** - JPA and Database Integration (1200+ lines)
+6. **Lab 1** - First Servlet with deployment scripts
+7. **Lab 2** - Complete MVC with JavaBeans, JSP, and 4 deployment scripts
+8. **Lab 3** - JPA with PostgreSQL, Flyway migrations, and error handling
+9. **Environment Setup** - Detailed installation guide
+10. **Course Outline** - Complete 48-hour breakdown
+11. **Conversion Guide** - Marp/Slidev/Pandoc instructions
+12. **Banking App Docs** - Complete architecture and roadmap
+13. **Conversion Script** - Automated slide generation
 
 ### 📝 To Be Expanded (Framework Ready)
 
-1. **Lectures 3-8** - Follow Lecture 1-2 template
-2. **Labs 3-8** - Follow Lab 1-2 structure with deployment scripts
+1. **Lectures 4-8** - Follow Lecture 1-3 template
+2. **Labs 4-8** - Follow Lab 1-3 structure with deployment scripts
 3. **Banking App Code** - Implement 8 Git branches
 4. **Additional Resources** - FAQ, cheat sheets, etc.
 
@@ -435,18 +458,19 @@ Students who complete this course will be able to:
 
 ## 📈 Expansion Roadmap
 
-### Phase 1: Core Content (Current)
+### Phase 1: Core Content (Complete)
 - ✅ Course structure
-- ✅ Lecture 1 and Lab 1
+- ✅ Lectures 1, 2, and 3
+- ✅ Labs 1, 2, and 3
 - ✅ Documentation and guides
 
 ### Phase 2: Complete Lectures (Next)
-- Create Lectures 2-8
+- Create Lectures 4-8
 - Add more Mermaid diagrams
 - Include more code examples
 
 ### Phase 3: Complete Labs (Following)
-- Create Labs 2-8
+- Create Labs 4-8
 - Provide starter and solution code
 - Add comprehensive tests
 
@@ -464,7 +488,11 @@ Before using this course:
 - [x] Course structure created
 - [x] Main README complete
 - [x] Lecture 1 complete with diagrams
+- [x] Lecture 2 complete with MVC patterns
+- [x] Lecture 3 complete with JPA and database
 - [x] Lab 1 complete with solution
+- [x] Lab 2 complete with JSP and MicroProfile
+- [x] Lab 3 complete with JPA and PostgreSQL
 - [x] Environment setup guide complete
 - [x] Course outline detailed
 - [x] Conversion guide provided
