@@ -8,9 +8,9 @@
 
 ---
 
-## 📅 Session 1: Jakarta EE Foundations (6 hours)
+## 📅 Session 1: Jakarta EE Foundations (6 hours) ✅ COMPLETE
 
-### Lecture 1.1: Introduction to Jakarta EE (2 hours)
+### Lecture 1.1: Introduction to Jakarta EE (2 hours) ✅
 **Topics:**
 - Jakarta EE ecosystem and evolution
 - Core specifications overview
@@ -24,12 +24,12 @@
 - Create and deploy basic servlet
 
 **Materials:**
-- Slides: `02-Lectures/01-intro-jakartaee.md`
-- Code examples: Basic servlet demos
+- Slides: `02-Lectures/01-intro-jakartaee-microprofile.md` ✅
+- Code examples: Basic servlet demos ✅
 
 ---
 
-### Lab 1: First Servlet Application (2 hours)
+### Lab 1: First Servlet Application (2 hours) ✅
 **Objectives:**
 - Create Maven-based Jakarta EE project
 - Implement servlets with annotations
@@ -48,7 +48,7 @@
 
 ---
 
-### Lecture 1.2: Servlets and JSP Deep Dive (1 hour)
+### Lecture 1.2: Servlets and JSP Deep Dive (1 hour) ✅
 **Topics:**
 - Servlet lifecycle in detail
 - Request/response handling
@@ -62,7 +62,7 @@
 
 ---
 
-### Lab 1 Continuation (1 hour)
+### Lab 1 Continuation (1 hour) ✅
 **Activities:**
 - Add session management
 - Implement client search
@@ -70,9 +70,9 @@
 
 ---
 
-## 📅 Session 2: Web Technologies (6 hours)
+## 📅 Session 2: Web Technologies (6 hours) ✅ COMPLETE
 
-### Lecture 2.1: JSP and JSTL (2 hours)
+### Lecture 2.1: JSP and JSTL (2 hours) ✅
 **Topics:**
 - JSP syntax and directives
 - Expression Language (EL)
@@ -86,12 +86,12 @@
 - Implement MVC pattern
 
 **Materials:**
-- Slides: `02-Lectures/02-jsp-jstl.md`
-- Code examples: JSP demos
+- Slides: `02-Lectures/02-servlets-jsp-microprofile.md` ✅
+- Code examples: JSP demos ✅
 
 ---
 
-### Lab 2: JSP Client Management (2 hours)
+### Lab 2: JSP Client Management (2 hours) ✅
 **Objectives:**
 - Convert servlets to JSP
 - Implement JSTL tags
@@ -104,11 +104,11 @@
 - Proper MVC structure
 
 **Materials:**
-- Lab guide: `03-Labs/Lab02-JSP-JSTL/README.md`
+- Lab guide: `03-Labs/Lab02-ServletsJSP/README.md` ✅
 
 ---
 
-### Lecture 2.2: Advanced Web Concepts (1 hour)
+### Lecture 2.2: Advanced Web Concepts (1 hour) ✅
 **Topics:**
 - Filters and listeners
 - Security basics
@@ -117,7 +117,7 @@
 
 ---
 
-### Lab 2 Continuation (1 hour)
+### Lab 2 Continuation (1 hour) ✅
 **Activities:**
 - Add authentication filter
 - Implement file upload
@@ -125,9 +125,9 @@
 
 ---
 
-## 📅 Session 3: Java Persistence API (6 hours)
+## 📅 Session 3: Java Persistence API (6 hours) ✅ COMPLETE
 
-### Lecture 3.1: JPA Fundamentals (2 hours)
+### Lecture 3.1: JPA Fundamentals (2 hours) ✅
 **Topics:**
 - ORM concepts
 - Entity mapping and annotations
@@ -142,13 +142,13 @@
 - Manage transactions
 
 **Materials:**
-- Slides: `02-Lectures/03-jpa-database-integration.md`
-- Database schema: Banking app ERD
-- PostgreSQL setup with Docker Compose
+- Slides: `02-Lectures/03-jpa-database-integration.md` ✅
+- Database schema: Banking app ERD ✅
+- PostgreSQL setup with Docker Compose ✅
 
 ---
 
-### Lab 3: JPA and Database Integration (2 hours)
+### Lab 3: JPA and Database Integration (2 hours) ✅
 **Objectives:**
 - Create JPA entities (Client, Account) with annotations
 - Configure persistence.xml and datasource
@@ -166,13 +166,13 @@
 - ServletContextListener for database initialization
 
 **Materials:**
-- Lab guide: `03-Labs/Lab03-JPA/README.md`
-- Flyway migrations: V1 (clients), V2 (accounts)
-- Testing scripts: run-lab.sh, podman-test.sh, docker-test.sh
+- Lab guide: `03-Labs/Lab03-JPA/README.md` ✅
+- Flyway migrations: V1 (clients), V2 (accounts), V3 (account status) ✅
+- Testing scripts: run-lab.sh, podman-test.sh, docker-test.sh ✅
 
 ---
 
-### Lecture 3.2: Advanced JPA (1 hour)
+### Lecture 3.2: Advanced JPA (1 hour) ✅
 **Topics:**
 - Entity relationships
 - Cascade operations
@@ -182,7 +182,7 @@
 
 ---
 
-### Lab 3 Continuation (1 hour)
+### Lab 3 Continuation (1 hour) ✅
 **Activities:**
 - Implement bidirectional relationships
 - Add Criteria API dynamic search
