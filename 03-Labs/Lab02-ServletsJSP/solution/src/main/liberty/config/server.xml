@@ -13,6 +13,7 @@
         <feature>mpConfig-3.0</feature>
         <feature>mpHealth-4.0</feature>
         <feature>mpMetrics-5.0</feature>
+        <feature>mpOpenAPI-3.1</feature>
     </featureManager>
 
     <!-- HTTP Endpoint -->
@@ -30,12 +31,19 @@
     </webApplication>
 
     <!-- Logging -->
-    <logging traceSpecification="*=info:com.bank.*=all" 
-             maxFileSize="20" 
+    <logging traceSpecification="*=info:com.bank.*=all"
+             maxFileSize="20"
              maxFiles="10" />
 
     <!-- Application Security (basic for now) -->
     <applicationManager autoExpand="true"/>
+
+    <!-- Quick Start Security for MicroProfile endpoints -->
+    <!-- This allows access to /health, /metrics without authentication -->
+    <quickStartSecurity userName="admin" userPassword="adminpwd"/>
+    
+    <!-- Allow unauthenticated access to MicroProfile endpoints -->
+    <mpMetrics authentication="false"/>
 
 </server>
 

@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<persistence version="3.0"
+             xmlns="https://jakarta.ee/xml/ns/persistence"
+             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+             xsi:schemaLocation="https://jakarta.ee/xml/ns/persistence
+             https://jakarta.ee/xml/ns/persistence/persistence_3_0.xsd">
+    
+    <persistence-unit name="bankingPU" transaction-type="RESOURCE_LOCAL">
+        <provider>org.eclipse.persistence.jpa.PersistenceProvider</provider>
+        <non-jta-data-source>jdbc/bankingDS</non-jta-data-source>
+        
+        <!-- Entity classes -->
+        <class>com.bank.model.Client</class>
+        <class>com.bank.model.Account</class>
+        
+        <properties>
+            <!-- EclipseLink properties -->
+            <property name="eclipselink.target-database" value="PostgreSQL"/>
+            <property name="eclipselink.logging.level" value="FINE"/>
+            <property name="eclipselink.logging.parameters" value="true"/>
+            
+            <!-- Schema validation - validate against Flyway migrations -->
+            <property name="eclipselink.ddl-generation" value="none"/>
+            
+            <!-- Connection pool -->
+            <property name="eclipselink.jdbc.cache-statements" value="true"/>
+            
+            <!-- Weaving -->
+            <property name="eclipselink.weaving" value="static"/>
+        </properties>
+    </persistence-unit>
+    
+</persistence>
+
+<!-- Made with Bob -->

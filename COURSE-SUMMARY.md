@@ -198,8 +198,8 @@ Lecture slides are in Markdown format:
 - Lab: JSP-based views
 
 **Session 3 (6h):** Java Persistence API
-- Lecture: JPA, ORM, transactions
-- Lab: Database integration
+- Lecture: JPA, ORM, manual transaction management
+- Lab: Database integration with Singleton pattern (no CDI)
 
 **Session 4 (6h):** Dependency Injection
 - Lecture: CDI fundamentals

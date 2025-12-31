@@ -1,0 +1,6 @@
+Maintenant nous allons travailler le troisieme chapitre décrit dans le le fichier .md. Il faut revenir à la demande initiale expliquée dans le fichier @/esipe-javaee/01-Inputs/prompt.txt mais te focaliser sur le cours 3 et le lab 3. Les fichiers pour le labo 3 seront mis dans le repertoire 03-Labs dans un repertoire Lab03 le fichier md du cours sera mis au meme niveau que le fichier md du cours 01. Le contenu du cours est présentée dans le .md de l'introduction "JPA and Database Integration"
+- JPA entities and relationships
+- JPQL and Criteria API
+- Transaction management
+- Database migrations
+Les cours et les exemples seront générés en anglais.

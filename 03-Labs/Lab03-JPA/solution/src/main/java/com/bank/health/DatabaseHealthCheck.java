@@ -4,29 +4,37 @@ import org.eclipse.microprofile.health.HealthCheck;
 import org.eclipse.microprofile.health.HealthCheckResponse;
 import org.eclipse.microprofile.health.HealthCheckResponseBuilder;
 import org.eclipse.microprofile.health.Liveness;
-import jakarta.enterprise.context.ApplicationScoped;
+
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.EntityManagerFactory;
+import jakarta.persistence.Persistence;
 
 /**
  * Health check for database connectivity.
- * Implements MicroProfile Health liveness probe.
- *
- * This check verifies that the database connection is available.
- * - Returns UP if database is connected
- * - Returns DOWN if database is not available
- * - Includes connection status and type in response data
- *
- * Note: In Lab 2, this simulates a database connection.
- * In Lab 3, this will check actual PostgreSQL connectivity.
+ * Tests actual database connection using JPA EntityManager.
+ * 
+ * Note: This implementation uses manual EntityManager creation
+ * instead of CDI injection (CDI is introduced in Lab 4).
  */
 @Liveness
-@ApplicationScoped
 public class DatabaseHealthCheck implements HealthCheck {
+    
+    private static EntityManagerFactory emf;
+    
+    /**
+     * Get or create the EntityManagerFactory.
+     */
+    private static synchronized EntityManagerFactory getEntityManagerFactory() {
+        if (emf == null || !emf.isOpen()) {
+            emf = Persistence.createEntityManagerFactory("bankingPU");
+        }
+        return emf;
+    }
     
     /**
      * Perform the health check.
-     *
      * Creates a health check response indicating database connectivity status.
-     *
+     * 
      * @return HealthCheckResponse with UP/DOWN status and connection details
      */
     @Override
@@ -43,7 +51,7 @@ public class DatabaseHealthCheck implements HealthCheck {
         if (databaseAvailable) {
             return builder.up()
                 .withData("status", "connected")
-                .withData("type", "in-memory")
+                .withData("type", "postgresql")
                 .build();
         } else {
             return builder.down()
@@ -53,25 +61,28 @@ public class DatabaseHealthCheck implements HealthCheck {
     }
     
     /**
-     * Check if database is available.
-     *
-     * In Lab 2, this simulates a successful database connection.
-     * In Lab 3, this will be replaced with actual PostgreSQL connectivity check:
-     * - Obtain a connection from the DataSource
-     * - Execute a simple validation query (SELECT 1)
-     * - Return true if successful, false otherwise
+     * Check if database is available by executing a simple query.
      *
      * @return true if database is available, false otherwise
      */
     private boolean checkDatabase() {
+        EntityManager em = null;
         try {
-            // Simulate successful connection for Lab 2
-            // This will be replaced with actual database check in Lab 3
+            // Create EntityManager
+            em = getEntityManagerFactory().createEntityManager();
+            
+            // Execute a simple query to test database connectivity
+            em.createNativeQuery("SELECT 1").getSingleResult();
             return true;
             
         } catch (Exception e) {
+            // Log error
             System.err.println("Database health check failed: " + e.getMessage());
             return false;
+        } finally {
+            if (em != null && em.isOpen()) {
+                em.close();
+            }
         }
     }
 }

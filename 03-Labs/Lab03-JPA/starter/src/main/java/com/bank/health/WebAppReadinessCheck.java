@@ -10,15 +10,13 @@ import org.eclipse.microprofile.config.inject.ConfigProperty;
 
 /**
  * Health check for web application readiness.
- * Implements MicroProfile Health readiness probe.
- *
- * This check verifies that the application is ready to serve requests by:
- * - Verifying that configuration properties are loaded
- * - Checking that required services are initialized
- * - Returning UP when the application is ready to handle traffic
- * - Returning DOWN if configuration or services are not ready
- *
- * Includes application name and environment information in the response.
+ * Checks if the application is ready to serve requests.
+ * 
+ * TODO: Implement the readiness check:
+ * 1. Verify configuration is loaded
+ * 2. Check if services are initialized
+ * 3. Return UP if ready
+ * 4. Return DOWN if not ready
  */
 @Readiness
 @ApplicationScoped
@@ -34,41 +32,45 @@ public class WebAppReadinessCheck implements HealthCheck {
     
     /**
      * Perform the readiness check.
-     *
-     * Verifies that the application configuration is loaded and services are initialized.
-     * Returns UP if the application is ready to serve requests, DOWN otherwise.
-     *
-     * @return HealthCheckResponse with UP/DOWN status and application details
+     * 
+     * TODO: Implement this method
+     * Steps:
+     * 1. Create HealthCheckResponseBuilder with name "web-application-readiness"
+     * 2. Check if configuration is loaded (appName not null/empty)
+     * 3. Check if services are ready
+     * 4. Return UP with data if ready
+     * 5. Return DOWN with error info if not ready
      */
     @Override
     public HealthCheckResponse call() {
         
-        // Create response builder
+        // TODO: Create response builder
         HealthCheckResponseBuilder builder = HealthCheckResponse
             .named("web-application-readiness");
         
         try {
-            // Check if configuration is loaded
+            // TODO: Check if configuration is loaded
             boolean configLoaded = appName != null && !appName.isEmpty();
             
-            // Check if services are initialized
+            // TODO: Check if services are initialized
             // For now, assume services are ready if config is loaded
             boolean servicesReady = configLoaded;
             
-            // Build and return response
-            if (configLoaded && servicesReady) {
-                return builder.up()
-                    .withData("configuration", "loaded")
-                    .withData("services", "initialized")
-                    .withData("app_name", appName)
-                    .withData("environment", environment)
-                    .build();
-            } else {
-                return builder.down()
-                    .withData("configuration", configLoaded ? "loaded" : "not loaded")
-                    .withData("services", servicesReady ? "ready" : "not ready")
-                    .build();
-            }
+            // TODO: Build and return response
+            // If ready:
+            //   return builder.up()
+            //     .withData("configuration", "loaded")
+            //     .withData("services", "initialized")
+            //     .withData("app_name", appName)
+            //     .withData("environment", environment)
+            //     .build();
+            // If not ready:
+            //   return builder.down()
+            //     .withData("configuration", configLoaded ? "loaded" : "not loaded")
+            //     .withData("services", servicesReady ? "ready" : "not ready")
+            //     .build();
+            
+            return null; // TODO: Replace with actual response
             
         } catch (Exception e) {
             // Return DOWN on any exception

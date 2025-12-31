@@ -142,26 +142,33 @@
 - Manage transactions
 
 **Materials:**
-- Slides: `02-Lectures/03-jpa-fundamentals.md`
+- Slides: `02-Lectures/03-jpa-database-integration.md`
 - Database schema: Banking app ERD
+- PostgreSQL setup with Docker Compose
 
 ---
 
-### Lab 3: Database Integration (2 hours)
+### Lab 3: JPA and Database Integration (2 hours)
 **Objectives:**
-- Create JPA entities (Client, Account)
-- Configure persistence.xml
-- Implement repository pattern
-- Write JPQL queries
+- Create JPA entities (Client, Account) with annotations
+- Configure persistence.xml and datasource
+- Implement service layer with manual EntityManager management
+- Write JPQL queries and use Criteria API
+- Set up Flyway database migrations
+- Apply manual transaction management with EntityTransaction
 
 **Deliverables:**
-- JPA entity classes
-- Repository implementations
-- Database-backed application
+- JPA entity classes with relationships
+- Service layer with Singleton pattern
+- Manual transaction management (no CDI)
+- Database-backed application with PostgreSQL
+- Flyway migration scripts
+- ServletContextListener for database initialization
 
 **Materials:**
 - Lab guide: `03-Labs/Lab03-JPA/README.md`
-- SQL scripts: Database initialization
+- Flyway migrations: V1 (clients), V2 (accounts)
+- Testing scripts: run-lab.sh, podman-test.sh, docker-test.sh
 
 ---
 
@@ -177,9 +184,11 @@
 
 ### Lab 3 Continuation (1 hour)
 **Activities:**
-- Add Account entity
-- Implement relationships
-- Create complex queries
+- Implement bidirectional relationships
+- Add Criteria API dynamic search
+- Test transaction rollback scenarios
+- Optimize queries to avoid N+1 problem
+- Add aggregate queries (total balance, account counts)
 
 ---
 
