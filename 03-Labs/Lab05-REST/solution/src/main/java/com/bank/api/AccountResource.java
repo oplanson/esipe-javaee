@@ -281,6 +281,8 @@ public class AccountResource {
         }
         
         return accountService.update(account);
+    }
+    
     /**
      * Transfer money between accounts.
      * 
@@ -395,7 +397,6 @@ public class AccountResource {
         public void setToAccount(Account toAccount) {
             this.toAccount = toAccount;
         }
-    }
     }
     
     /**

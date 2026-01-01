@@ -1,5 +1,5 @@
 #!/bin/bash
-# © Copyright Olivier Planson - 2025
+# © Copyright 2025-2026 Olivier Planson. All rights reserved. Reproduction prohibited. Made with IBM Bob.
 
 # Lab 3 Quick Start Script with Open Liberty
 # Builds, deploys, and opens the JPA application

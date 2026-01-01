@@ -1,4 +1,4 @@
-# © Copyright Olivier Planson - 2025
+# © Copyright 2025-2026 Olivier Planson. All rights reserved. Reproduction prohibited. Made with IBM Bob.
 #!/bin/bash
 
 # Lab 1 Testing Script

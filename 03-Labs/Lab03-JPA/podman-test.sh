@@ -1,5 +1,5 @@
 #!/bin/bash
-# © Copyright Olivier Planson - 2025
+# © Copyright 2025-2026 Olivier Planson. All rights reserved. Reproduction prohibited. Made with IBM Bob.
 
 # Podman-based testing for Lab 3 with Open Liberty and PostgreSQL
 # No local Liberty installation required!
@@ -18,6 +18,11 @@ YELLOW='\033[1;33m'
 BLUE='\033[0;34m'
 NC='\033[0m'
 
+# Configuration
+IMAGE_NAME="banking-jpa-app:lab03"
+CONTAINER_NAME="banking-jpa-lab03"
+APP_PORT=9080
+
 # Check if Podman is installed
 if ! command -v podman &> /dev/null; then
     echo -e "${RED}❌ Podman not found${NC}"
@@ -33,18 +38,87 @@ echo -e "${GREEN}✓ Podman found${NC}"
 podman --version
 echo ""
 
+# Step 0: Cleanup existing containers and images
+echo "Step 0: Checking for existing containers..."
+echo "----------------------------"
+
+# Determine which container runtime to use
+CONTAINER_CMD=""
+if command -v docker &> /dev/null; then
+    CONTAINER_CMD="docker"
+elif command -v podman &> /dev/null; then
+    CONTAINER_CMD="podman"
+fi
+
+# Check if application container exists and is running
+if $CONTAINER_CMD ps 2>/dev/null | grep -q $CONTAINER_NAME; then
+    echo -e "${YELLOW}⚠ Application container is running, stopping...${NC}"
+    podman stop $CONTAINER_NAME > /dev/null 2>&1 || true
+    echo -e "${GREEN}✓ Container stopped${NC}"
+fi
+
+# Check if application container exists (stopped)
+if $CONTAINER_CMD ps -a 2>/dev/null | grep -q $CONTAINER_NAME; then
+    echo -e "${YELLOW}⚠ Application container exists, removing...${NC}"
+    podman rm $CONTAINER_NAME > /dev/null 2>&1 || true
+    echo -e "${GREEN}✓ Container removed${NC}"
+fi
+
+# Check for port conflicts - stop any container using port 9080
+echo "Checking for port conflicts on $APP_PORT..."
+CONFLICTING_CONTAINERS=$(podman ps --format "{{.Names}}" | while read -r name; do
+    if podman port "$name" 2>/dev/null | grep -q "0.0.0.0:$APP_PORT"; then
+        echo "$name"
+    fi
+done)
+
+if [ -n "$CONFLICTING_CONTAINERS" ]; then
+    echo -e "${YELLOW}⚠ Found containers using port $APP_PORT:${NC}"
+    echo "$CONFLICTING_CONTAINERS" | while read -r container; do
+        if [ -n "$container" ] && [ "$container" != "$CONTAINER_NAME" ]; then
+            echo -e "${YELLOW}  Stopping $container...${NC}"
+            podman stop "$container" > /dev/null 2>&1 || true
+            podman rm "$container" > /dev/null 2>&1 || true
+            echo -e "${GREEN}  ✓ $container stopped and removed${NC}"
+        fi
+    done
+else
+    echo -e "${GREEN}✓ No port conflicts detected${NC}"
+fi
+
+# Check if image exists
+if podman images | grep -q "banking-jpa-app.*lab03"; then
+    echo -e "${YELLOW}⚠ Old image exists, removing...${NC}"
+    podman rmi $IMAGE_NAME 2>/dev/null || true
+    echo -e "${GREEN}✓ Old image removed${NC}"
+fi
+
+echo -e "${GREEN}✓ Cleanup complete - ready for fresh deployment${NC}"
+echo ""
+
 # Navigate to solution
 cd solution
 
-# Start PostgreSQL with docker-compose
-echo "Starting PostgreSQL..."
+# Step 1: Start PostgreSQL with docker-compose
+echo "Step 1: Starting PostgreSQL..."
 echo "----------------------------"
+
+# Determine which container command to use for database
+if command -v docker &> /dev/null; then
+    DB_CMD="docker"
+elif command -v podman &> /dev/null; then
+    DB_CMD="podman"
+else
+    echo -e "${RED}❌ Neither docker nor podman found${NC}"
+    exit 1
+fi
+
 if ! docker-compose ps | grep -q "banking-db.*Up"; then
     docker-compose up -d
     
     echo "Waiting for PostgreSQL to be ready..."
     for i in {1..30}; do
-        if docker exec banking-db pg_isready -U bankuser -d bankdb > /dev/null 2>&1; then
+        if $DB_CMD exec banking-db pg_isready -U bankuser -d bankdb > /dev/null 2>&1; then
             echo -e "${GREEN}✓ PostgreSQL is ready${NC}"
             break
         fi
@@ -58,8 +132,8 @@ fi
 
 echo ""
 
-# Build application
-echo "Building application..."
+# Step 2: Build application
+echo "Step 2: Building application..."
 echo "----------------------------"
 mvn clean package -q
 
@@ -73,8 +147,8 @@ fi
 
 echo ""
 
-# Run Flyway migrations
-echo "Running Flyway migrations..."
+# Step 3: Run Flyway migrations
+echo "Step 3: Running Flyway migrations..."
 echo "----------------------------"
 mvn flyway:migrate -q
 
@@ -86,10 +160,10 @@ fi
 
 echo ""
 
-# Build Podman image
-echo "Building Podman image..."
+# Step 4: Build Podman image
+echo "Step 4: Building Podman image..."
 echo "----------------------------"
-podman build -t banking-jpa-app:lab03 -f Containerfile .
+podman build -t $IMAGE_NAME -f Containerfile .
 
 if [ $? -eq 0 ]; then
     echo -e "${GREEN}✓ Podman image built${NC}"
@@ -100,15 +174,8 @@ fi
 
 echo ""
 
-# Stop existing container if running
-if podman ps -a | grep -q banking-jpa-lab03; then
-    echo "Stopping existing container..."
-    podman stop banking-jpa-lab03 > /dev/null 2>&1 || true
-    podman rm banking-jpa-lab03 > /dev/null 2>&1 || true
-fi
-
-# Start container with Open Liberty
-echo "Starting container with Open Liberty..."
+# Step 5: Start container with Open Liberty
+echo "Step 5: Starting container with Open Liberty..."
 echo "----------------------------"
 
 # Get host IP for database connection
@@ -117,8 +184,8 @@ echo "----------------------------"
 DB_HOST="host.containers.internal"
 
 podman run -d \
-    --name banking-jpa-lab03 \
-    -p 9080:9080 \
+    --name $CONTAINER_NAME \
+    -p $APP_PORT:9080 \
     -p 9443:9443 \
     --add-host=host.containers.internal:host-gateway \
     -e DB_HOST=${DB_HOST} \
@@ -126,7 +193,7 @@ podman run -d \
     -e DB_NAME=bankdb \
     -e DB_USER=bankuser \
     -e DB_PASSWORD=bankpass \
-    banking-jpa-app:lab03
+    $IMAGE_NAME
 
 if [ $? -eq 0 ]; then
     echo -e "${GREEN}✓ Container started${NC}"
@@ -136,7 +203,7 @@ else
 fi
 
 echo ""
-echo "Waiting for Open Liberty to start..."
+echo "Step 6: Waiting for Open Liberty to start..."
 echo "----------------------------"
 
 # Wait for container to be healthy
@@ -146,18 +213,18 @@ LIBERTY_STARTED=false
 
 while [ $ELAPSED -lt $TIMEOUT ]; do
     # Check if container is still running
-    if ! podman ps | grep -q banking-jpa-lab03; then
+    if ! podman ps | grep -q $CONTAINER_NAME; then
         echo ""
         echo -e "${RED}❌ Container stopped unexpectedly${NC}"
         echo ""
         echo "Container logs:"
         echo "----------------------------"
-        podman logs banking-jpa-lab03 | tail -50
+        podman logs $CONTAINER_NAME | tail -50
         exit 1
     fi
     
     # Try to connect to the application
-    if curl -s -f http://localhost:9080/ > /dev/null 2>&1; then
+    if curl -s -f http://localhost:$APP_PORT/ > /dev/null 2>&1; then
         echo ""
         echo -e "${GREEN}✓ Open Liberty started successfully${NC}"
         LIBERTY_STARTED=true
@@ -175,11 +242,11 @@ if [ "$LIBERTY_STARTED" = false ]; then
     echo -e "${RED}❌ Open Liberty failed to start within ${TIMEOUT}s${NC}"
     echo ""
     echo "Container status:"
-    podman ps -a | grep banking-jpa-lab03
+    podman ps -a | grep $CONTAINER_NAME
     echo ""
     echo "Container logs (last 50 lines):"
     echo "----------------------------"
-    podman logs banking-jpa-lab03 | tail -50
+    podman logs $CONTAINER_NAME | tail -50
     echo ""
     echo -e "${YELLOW}Tip: Check for database connection or Flyway migration errors${NC}"
     exit 1
@@ -189,16 +256,6 @@ fi
 echo ""
 echo "Checking database schema..."
 echo "----------------------------"
-
-# Check if docker or podman command exists for database
-if command -v docker &> /dev/null; then
-    DB_CMD="docker"
-elif command -v podman &> /dev/null; then
-    DB_CMD="podman"
-else
-    echo -e "${YELLOW}⚠ Neither docker nor podman found, skipping database check${NC}"
-    DB_CMD=""
-fi
 
 if [ -n "$DB_CMD" ]; then
     # Try to check tables
@@ -243,7 +300,7 @@ echo ""
 # Wait a moment
 sleep 3
 
-echo "Testing endpoints..."
+echo "Step 7: Testing endpoints..."
 echo "----------------------------"
 
 TESTS_PASSED=0
@@ -251,7 +308,7 @@ TESTS_FAILED=0
 
 # Test home page
 echo -n "Testing home page... "
-HTTP_CODE=$(curl -s -o /tmp/response.txt -w "%{http_code}" http://localhost:9080/)
+HTTP_CODE=$(curl -s -o /tmp/response.txt -w "%{http_code}" http://localhost:$APP_PORT/)
 if [ "$HTTP_CODE" = "200" ] && grep -q "Banking" /tmp/response.txt; then
     echo -e "${GREEN}✓ PASS${NC}"
     TESTS_PASSED=$((TESTS_PASSED + 1))
@@ -262,7 +319,7 @@ fi
 
 # Test clients endpoint
 echo -n "Testing clients endpoint... "
-HTTP_CODE=$(curl -s -o /tmp/response.txt -w "%{http_code}" http://localhost:9080/clients)
+HTTP_CODE=$(curl -s -o /tmp/response.txt -w "%{http_code}" http://localhost:$APP_PORT/clients)
 if [ "$HTTP_CODE" = "200" ]; then
     echo -e "${GREEN}✓ PASS${NC}"
     TESTS_PASSED=$((TESTS_PASSED + 1))
@@ -273,7 +330,7 @@ fi
 
 # Test health endpoint
 echo -n "Testing health endpoint... "
-HTTP_CODE=$(curl -s -o /tmp/response.txt -w "%{http_code}" http://localhost:9080/health)
+HTTP_CODE=$(curl -s -o /tmp/response.txt -w "%{http_code}" http://localhost:$APP_PORT/health)
 if [ "$HTTP_CODE" = "200" ] && grep -q "UP" /tmp/response.txt; then
     echo -e "${GREEN}✓ PASS${NC}"
     TESTS_PASSED=$((TESTS_PASSED + 1))
@@ -284,13 +341,13 @@ fi
 
 # Test metrics endpoint
 echo -n "Testing metrics endpoint... "
-HTTP_CODE=$(curl -s -o /tmp/response.txt -w "%{http_code}" http://localhost:9080/metrics)
+HTTP_CODE=$(curl -s -o /tmp/response.txt -w "%{http_code}" http://localhost:$APP_PORT/metrics)
 if [ "$HTTP_CODE" = "200" ] && grep -q "base" /tmp/response.txt; then
     echo -e "${GREEN}✓ PASS${NC}"
     TESTS_PASSED=$((TESTS_PASSED + 1))
 elif [ "$HTTP_CODE" = "401" ]; then
     # Try with authentication if required
-    HTTP_CODE=$(curl -s -u admin:adminpwd -o /tmp/response.txt -w "%{http_code}" http://localhost:9080/metrics)
+    HTTP_CODE=$(curl -s -u admin:adminpwd -o /tmp/response.txt -w "%{http_code}" http://localhost:$APP_PORT/metrics)
     if [ "$HTTP_CODE" = "200" ] && grep -q "base" /tmp/response.txt; then
         echo -e "${GREEN}✓ PASS (with auth)${NC}"
         TESTS_PASSED=$((TESTS_PASSED + 1))
@@ -305,7 +362,7 @@ fi
 
 # Test OpenAPI endpoint
 echo -n "Testing OpenAPI endpoint... "
-HTTP_CODE=$(curl -s -o /tmp/response.txt -w "%{http_code}" http://localhost:9080/openapi)
+HTTP_CODE=$(curl -s -o /tmp/response.txt -w "%{http_code}" http://localhost:$APP_PORT/openapi)
 if [ "$HTTP_CODE" = "200" ] && grep -q "openapi" /tmp/response.txt; then
     echo -e "${GREEN}✓ PASS${NC}"
     TESTS_PASSED=$((TESTS_PASSED + 1))
@@ -316,13 +373,18 @@ fi
 
 # Test database data
 echo -n "Testing database data... "
-CLIENT_COUNT=$(docker exec banking-db psql -U bankuser -d bankdb -t -c "SELECT COUNT(*) FROM clients;" 2>/dev/null | tr -d ' ')
-if [ "$CLIENT_COUNT" -gt 0 ]; then
-    echo -e "${GREEN}✓ PASS ($CLIENT_COUNT clients)${NC}"
-    TESTS_PASSED=$((TESTS_PASSED + 1))
+# Use the same container command that was determined earlier
+if [ -n "$DB_CMD" ]; then
+    CLIENT_COUNT=$($DB_CMD exec banking-db psql -U bankuser -d bankdb -t -c "SELECT COUNT(*) FROM clients;" 2>/dev/null | tr -d ' ')
+    if [ -n "$CLIENT_COUNT" ] && [ "$CLIENT_COUNT" -gt 0 ] 2>/dev/null; then
+        echo -e "${GREEN}✓ PASS ($CLIENT_COUNT clients)${NC}"
+        TESTS_PASSED=$((TESTS_PASSED + 1))
+    else
+        echo -e "${RED}✗ FAIL (no clients found or database error)${NC}"
+        TESTS_FAILED=$((TESTS_FAILED + 1))
+    fi
 else
-    echo -e "${RED}✗ FAIL (no clients found)${NC}"
-    TESTS_FAILED=$((TESTS_FAILED + 1))
+    echo -e "${YELLOW}⚠ SKIP (no container command available)${NC}"
 fi
 
 # Cleanup
@@ -334,9 +396,10 @@ echo "Test Results: ${GREEN}$TESTS_PASSED passed${NC}, ${RED}$TESTS_FAILED faile
 if [ $TESTS_FAILED -gt 0 ]; then
     echo ""
     echo -e "${YELLOW}⚠ Some tests failed. Check logs:${NC}"
-    echo "  podman logs banking-jpa-lab03"
-    echo "  podman logs banking-jpa-lab03 | grep -i error"
-    echo "  podman logs banking-jpa-lab03 | grep -i flyway"
+    echo "  podman logs $CONTAINER_NAME"
+    echo "  podman logs $CONTAINER_NAME | grep -i error"
+    echo "  podman logs $CONTAINER_NAME | grep -i flyway"
+    exit 1
 fi
 
 echo ""
@@ -345,10 +408,10 @@ echo "Database Queries"
 echo "=========================================="
 echo ""
 echo "View all clients:"
-docker exec banking-db psql -U bankuser -d bankdb -c "SELECT id, name, email FROM clients;" 2>/dev/null || echo "  (Run after first deployment)"
+$DB_CMD exec banking-db psql -U bankuser -d bankdb -c "SELECT id, name, email FROM clients;" 2>/dev/null || echo "  (Run after first deployment)"
 echo ""
 echo "View all accounts:"
-docker exec banking-db psql -U bankuser -d bankdb -c "SELECT id, number, balance, type, client_id FROM accounts;" 2>/dev/null || echo "  (Run after first deployment)"
+$DB_CMD exec banking-db psql -U bankuser -d bankdb -c "SELECT id, number, balance, type, client_id FROM accounts;" 2>/dev/null || echo "  (Run after first deployment)"
 echo ""
 
 echo "=========================================="
@@ -356,38 +419,42 @@ echo "Management Commands"
 echo "=========================================="
 echo ""
 echo "View application logs:"
-echo "  podman logs -f banking-jpa-lab03"
+echo "  podman logs -f $CONTAINER_NAME"
 echo ""
 echo "View database logs:"
 echo "  docker logs -f banking-db"
 echo ""
 echo "Stop application:"
-echo "  podman stop banking-jpa-lab03"
+echo "  podman stop $CONTAINER_NAME"
 echo ""
 echo "Stop database:"
 echo "  docker-compose down"
 echo ""
 echo "Remove application container:"
-echo "  podman rm banking-jpa-lab03"
+echo "  podman rm $CONTAINER_NAME"
 echo ""
 echo "Remove application image:"
-echo "  podman rmi banking-jpa-app:lab03"
+echo "  podman rmi $IMAGE_NAME"
 echo ""
 echo "Restart application:"
-echo "  podman restart banking-jpa-lab03"
+echo "  podman restart $CONTAINER_NAME"
 echo ""
 
 # Try to open browser
 if command -v open &> /dev/null; then
     echo "Opening browser..."
-    open http://localhost:9080/
+    open http://localhost:$APP_PORT/
 elif command -v xdg-open &> /dev/null; then
     echo "Opening browser..."
-    xdg-open http://localhost:9080/
+    xdg-open http://localhost:$APP_PORT/
 fi
 
 echo ""
 echo -e "${GREEN}✓ Lab 3 is running with Podman + Open Liberty + PostgreSQL!${NC}"
+echo ""
+echo -e "${GREEN}✓ All tests passed successfully!${NC}"
+echo ""
+echo -e "${BLUE}Container is still running. Use the commands above to manage it.${NC}"
 echo ""
 
 # Made with Bob

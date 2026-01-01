@@ -1,5 +1,5 @@
 #!/bin/bash
-# © Copyright Olivier Planson - 2025
+# © Copyright 2025-2026 Olivier Planson. All rights reserved. Reproduction prohibited. Made with IBM Bob.
 
 # Lab 4 Testing Script
 # Tests the complete Lab 4 solution with CDI and PostgreSQL

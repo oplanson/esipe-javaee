@@ -1,5 +1,7 @@
 package com.bank.service;
 
+/* © Copyright 2025-2026 Olivier Planson. All rights reserved. Reproduction prohibited. Made with IBM Bob. */
+
 import com.bank.model.Client;
 import com.bank.model.Account;
 

@@ -1,5 +1,7 @@
 package com.bank.event;
 
+/* © Copyright 2025-2026 Olivier Planson. All rights reserved. Reproduction prohibited. Made with IBM Bob. */
+
 import com.bank.config.Premium;
 import com.bank.config.Standard;
 import com.bank.service.NotificationService;

@@ -71,6 +71,35 @@ if $CONTAINER_CMD ps -a 2>/dev/null | grep -q $CONTAINER_NAME; then
     print_status "Container removed"
 fi
 
+# Check for port conflicts - stop any container using port 9080
+echo "Checking for port conflicts on $APP_PORT..."
+CONFLICTING_CONTAINERS=$(podman ps --format "{{.Names}}" | while read -r name; do
+    if podman port "$name" 2>/dev/null | grep -q "0.0.0.0:$APP_PORT"; then
+        echo "$name"
+    fi
+done)
+
+if [ -n "$CONFLICTING_CONTAINERS" ]; then
+    print_warning "Found containers using port $APP_PORT:"
+    echo "$CONFLICTING_CONTAINERS" | while read -r container; do
+        if [ -n "$container" ] && [ "$container" != "$CONTAINER_NAME" ]; then
+            print_warning "  Stopping $container..."
+            podman stop "$container" > /dev/null 2>&1 || true
+            podman rm "$container" > /dev/null 2>&1 || true
+            print_status "  ✓ $container stopped and removed"
+        fi
+    done
+else
+    print_status "No port conflicts detected"
+fi
+
+# Check if image exists
+if podman images | grep -q "banking-rest-lab05"; then
+    print_warning "Old image exists, removing..."
+    podman rmi $IMAGE_NAME 2>/dev/null || true
+    print_status "Old image removed"
+fi
+
 # Stop docker-compose services if running
 if command -v docker-compose &> /dev/null; then
     print_warning "Stopping any existing docker-compose services..."

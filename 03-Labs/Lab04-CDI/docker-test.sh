@@ -1,5 +1,5 @@
 #!/bin/bash
-# © Copyright Olivier Planson - 2025
+# © Copyright 2025-2026 Olivier Planson. All rights reserved. Reproduction prohibited. Made with IBM Bob.
 
 # Docker-based testing for Lab 4 with Open Liberty and PostgreSQL
 # No local Liberty installation required!

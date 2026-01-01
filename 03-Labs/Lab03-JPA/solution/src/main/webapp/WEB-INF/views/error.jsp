@@ -1,3 +1,4 @@
+<%-- © Copyright 2025-2026 Olivier Planson. All rights reserved. Reproduction prohibited. Made with IBM Bob. --%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" isErrorPage="true" %>
 <!DOCTYPE html>
 <html lang="en">
