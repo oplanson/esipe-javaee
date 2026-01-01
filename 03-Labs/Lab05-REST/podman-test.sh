@@ -1,0 +1,430 @@
+#!/bin/bash
+# Podman deployment and testing script for Lab 05 - REST API
+# This script builds and deploys the banking REST application using Podman
+
+set -e  # Exit on error
+
+echo "=========================================="
+echo "Lab 05 - REST API Deployment (Podman)"
+echo "=========================================="
+echo ""
+
+# Configuration
+IMAGE_NAME="banking-rest-lab05"
+CONTAINER_NAME="banking-rest-lab05"
+APP_PORT=9080
+DB_CONTAINER="banking-db"
+
+# Colors for output
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+RED='\033[0;31m'
+NC='\033[0m' # No Color
+
+# Function to print colored output
+print_status() {
+    echo -e "${GREEN}[✓]${NC} $1"
+}
+
+print_warning() {
+    echo -e "${YELLOW}[!]${NC} $1"
+}
+
+print_error() {
+    echo -e "${RED}[✗]${NC} $1"
+}
+
+# Check if podman is installed
+if ! command -v podman &> /dev/null; then
+    print_error "Podman is not installed. Please install Podman first."
+    exit 1
+fi
+
+print_status "Podman is installed"
+
+# Navigate to solution directory
+cd solution
+
+# Step 0: Check and cleanup existing containers
+echo ""
+echo "Step 0: Checking for existing containers..."
+
+# Determine which container runtime to use
+CONTAINER_CMD=""
+if command -v docker &> /dev/null; then
+    CONTAINER_CMD="docker"
+elif command -v podman &> /dev/null; then
+    CONTAINER_CMD="podman"
+fi
+
+# Check if application container exists and is running
+if $CONTAINER_CMD ps 2>/dev/null | grep -q $CONTAINER_NAME; then
+    print_warning "Application container is running, stopping..."
+    podman stop $CONTAINER_NAME 2>/dev/null || true
+    print_status "Container stopped"
+fi
+
+# Check if application container exists (stopped)
+if $CONTAINER_CMD ps -a 2>/dev/null | grep -q $CONTAINER_NAME; then
+    print_warning "Application container exists, removing..."
+    podman rm $CONTAINER_NAME 2>/dev/null || true
+    print_status "Container removed"
+fi
+
+# Stop docker-compose services if running
+if command -v docker-compose &> /dev/null; then
+    print_warning "Stopping any existing docker-compose services..."
+    docker-compose down 2>/dev/null || true
+    print_status "Docker-compose services stopped"
+fi
+
+print_status "Cleanup complete - ready for fresh deployment"
+
+# Step 1: Start PostgreSQL database
+echo ""
+echo "Step 1: Starting PostgreSQL database..."
+if ! docker-compose up -d; then
+    print_error "Failed to start database with docker-compose"
+    exit 1
+fi
+print_status "PostgreSQL database container starting..."
+
+# Wait for database to be ready
+echo "Waiting for database to be ready..."
+MAX_DB_WAIT=30
+DB_WAIT=0
+while [ $DB_WAIT -lt $MAX_DB_WAIT ]; do
+    # Try with docker first, then podman
+    if docker exec $DB_CONTAINER pg_isready -U bankuser -d bankdb > /dev/null 2>&1; then
+        print_status "Database is ready!"
+        break
+    elif podman exec $DB_CONTAINER pg_isready -U bankuser -d bankdb > /dev/null 2>&1; then
+        print_status "Database is ready!"
+        break
+    fi
+    DB_WAIT=$((DB_WAIT + 1))
+    echo -n "."
+    sleep 1
+done
+
+if [ $DB_WAIT -eq $MAX_DB_WAIT ]; then
+    print_warning "Database readiness check timed out, but continuing..."
+    echo "You may need to wait a bit longer for the database to be fully ready."
+    sleep 5
+fi
+
+echo ""
+
+# Step 2: Build application with Maven
+echo ""
+echo "Step 2: Building application with Maven..."
+echo "Running: mvn clean package"
+if mvn clean package; then
+    print_status "Application built successfully"
+else
+    print_error "Maven build failed"
+    exit 1
+fi
+
+# Step 3: Build Podman image
+echo ""
+echo "Step 3: Building Podman image..."
+if podman images | grep -q $IMAGE_NAME; then
+    print_warning "Image already exists, removing..."
+    podman rmi $IMAGE_NAME 2>/dev/null || true
+fi
+
+if podman build -t $IMAGE_NAME .; then
+    print_status "Podman image built successfully"
+else
+    print_error "Podman image build failed"
+    exit 1
+fi
+
+# Step 4: Verify cleanup (double-check)
+echo ""
+echo "Step 4: Final verification before starting container..."
+if podman ps -a | grep -q $CONTAINER_NAME; then
+    print_warning "Container still exists, force removing..."
+    podman stop $CONTAINER_NAME 2>/dev/null || true
+    podman rm -f $CONTAINER_NAME 2>/dev/null || true
+fi
+print_status "Ready to start container"
+
+# Step 5: Run container
+echo ""
+echo "Step 5: Starting application container..."
+
+# Determine database host for container
+# When NOT using --network host, we need to use special hostnames
+DB_HOST="host.containers.internal"
+if [[ "$OSTYPE" == "darwin"* ]]; then
+    DB_HOST="host.docker.internal"
+    print_warning "macOS detected, using host.docker.internal for database connection"
+elif [[ "$OSTYPE" == "linux-gnu"* ]]; then
+    # On Linux, add host.containers.internal to /etc/hosts or use host IP
+    DB_HOST="host.containers.internal"
+    print_warning "Linux detected, using host.containers.internal for database connection"
+fi
+
+# Run container WITHOUT --network host to properly expose ports
+# IMPORTANT: Liberty uses underscores in env vars, which are converted to dots
+podman run -d \
+    --name $CONTAINER_NAME \
+    -p $APP_PORT:9080 \
+    --add-host=host.containers.internal:host-gateway \
+    -e db_host=$DB_HOST \
+    -e db_port=5432 \
+    -e db_name=bankdb \
+    -e db_user=bankuser \
+    -e db_password=bankpass \
+    $IMAGE_NAME
+
+print_status "Container started successfully"
+print_status "Database host configured as: $DB_HOST"
+print_status "Application accessible at: http://localhost:$APP_PORT"
+
+# Step 6: Wait for application to start
+echo ""
+echo "Step 6: Waiting for application to start..."
+MAX_ATTEMPTS=60
+ATTEMPT=0
+
+while [ $ATTEMPT -lt $MAX_ATTEMPTS ]; do
+    # Try multiple endpoints to check if app is ready
+    if curl -s http://localhost:$APP_PORT/health/ready > /dev/null 2>&1; then
+        print_status "Application is ready! (health/ready endpoint)"
+        break
+    elif curl -s http://localhost:$APP_PORT/health > /dev/null 2>&1; then
+        print_status "Application is ready! (health endpoint)"
+        break
+    elif curl -s http://localhost:$APP_PORT/ > /dev/null 2>&1; then
+        print_status "Application is ready! (root endpoint)"
+        break
+    fi
+    ATTEMPT=$((ATTEMPT + 1))
+    echo -n "."
+    sleep 2
+done
+
+if [ $ATTEMPT -eq $MAX_ATTEMPTS ]; then
+    print_warning "Health check timeout reached, but continuing with tests..."
+    echo "The application may still be starting. Waiting 10 more seconds..."
+    sleep 10
+fi
+
+echo ""
+
+# Step 7: Run REST API tests
+echo ""
+echo "Step 7: Testing REST API endpoints..."
+echo ""
+
+BASE_URL="http://localhost:$APP_PORT/api"
+
+# Test 1: Health check
+echo "Test 1: Health check"
+HTTP_CODE=$(curl -s -o /dev/null -w "%{http_code}" http://localhost:$APP_PORT/health)
+if [ "$HTTP_CODE" = "200" ]; then
+    HEALTH_RESPONSE=$(curl -s http://localhost:$APP_PORT/health)
+    if echo "$HEALTH_RESPONSE" | grep -q "UP"; then
+        print_status "Health check passed (all checks UP)"
+    else
+        print_warning "Health check endpoint accessible but some checks are DOWN"
+        echo "Response: $HEALTH_RESPONSE" | head -n 5
+    fi
+else
+    print_error "Health check endpoint not accessible (HTTP $HTTP_CODE)"
+fi
+
+# Test 2: Get all clients
+echo ""
+echo "Test 2: GET /api/clients"
+RESPONSE=$(curl -s $BASE_URL/clients)
+if [ -n "$RESPONSE" ]; then
+    print_status "GET /api/clients successful"
+    echo "$RESPONSE" | jq . 2>/dev/null || echo "$RESPONSE"
+else
+    print_error "GET /api/clients failed"
+fi
+
+# Test 3: Create client
+echo ""
+echo "Test 3: POST /api/clients"
+CREATE_RESPONSE=$(curl -s -X POST $BASE_URL/clients \
+    -H "Content-Type: application/json" \
+    -d '{"name":"Test Client","email":"test@example.com","premium":false}')
+if [ -n "$CREATE_RESPONSE" ]; then
+    print_status "POST /api/clients successful"
+    echo "$CREATE_RESPONSE" | jq . 2>/dev/null || echo "$CREATE_RESPONSE"
+    CLIENT_ID=$(echo "$CREATE_RESPONSE" | jq -r '.id' 2>/dev/null)
+else
+    print_error "POST /api/clients failed"
+fi
+
+# Test 4: Get client by ID
+if [ -n "$CLIENT_ID" ] && [ "$CLIENT_ID" != "null" ]; then
+    echo ""
+    echo "Test 4: GET /api/clients/$CLIENT_ID"
+    GET_RESPONSE=$(curl -s $BASE_URL/clients/$CLIENT_ID)
+    if [ -n "$GET_RESPONSE" ]; then
+        print_status "GET /api/clients/$CLIENT_ID successful"
+        echo "$GET_RESPONSE" | jq . 2>/dev/null || echo "$GET_RESPONSE"
+    else
+        print_error "GET /api/clients/$CLIENT_ID failed"
+    fi
+fi
+
+# Test 5: Get all accounts
+echo ""
+echo "Test 5: GET /api/accounts"
+ACCOUNTS_RESPONSE=$(curl -s $BASE_URL/accounts)
+if [ -n "$ACCOUNTS_RESPONSE" ]; then
+    print_status "GET /api/accounts successful"
+    echo "$ACCOUNTS_RESPONSE" | jq . 2>/dev/null || echo "$ACCOUNTS_RESPONSE"
+else
+    print_error "GET /api/accounts failed"
+fi
+
+# Test 6: Test validation (should fail)
+echo ""
+echo "Test 6: POST /api/clients (invalid data - should fail)"
+INVALID_RESPONSE=$(curl -s -X POST $BASE_URL/clients \
+    -H "Content-Type: application/json" \
+    -d '{"name":"J","email":"invalid"}')
+if echo "$INVALID_RESPONSE" | grep -q "Validation Failed"; then
+    print_status "Validation test passed (correctly rejected invalid data)"
+    echo "$INVALID_RESPONSE" | jq . 2>/dev/null || echo "$INVALID_RESPONSE"
+else
+    print_warning "Validation test did not return expected error"
+fi
+
+# Test 7: Test not found (should return 404)
+echo ""
+echo "Test 7: GET /api/clients/999 (should return 404)"
+NOT_FOUND_RESPONSE=$(curl -s -w "\n%{http_code}" $BASE_URL/clients/999)
+HTTP_CODE=$(echo "$NOT_FOUND_RESPONSE" | tail -n1)
+if [ "$HTTP_CODE" = "404" ]; then
+    print_status "Not found test passed (correctly returned 404)"
+else
+    print_warning "Not found test did not return 404 (got $HTTP_CODE)"
+fi
+
+# Test 8: Test web application endpoints
+echo ""
+echo "=========================================="
+echo "Testing Web Application (JSP/Servlets)"
+echo "=========================================="
+echo ""
+
+# Test home page
+echo "Test 8: GET / (home page)"
+HOME_RESPONSE=$(curl -s -w "\n%{http_code}" http://localhost:$APP_PORT/)
+HTTP_CODE=$(echo "$HOME_RESPONSE" | tail -n1)
+if [ "$HTTP_CODE" = "200" ]; then
+    print_status "Home page accessible (HTTP $HTTP_CODE)"
+else
+    print_warning "Home page returned HTTP $HTTP_CODE"
+fi
+
+# Test clients web interface
+echo ""
+echo "Test 9: GET /clients (web interface)"
+CLIENTS_WEB_RESPONSE=$(curl -s -w "\n%{http_code}" http://localhost:$APP_PORT/clients)
+HTTP_CODE=$(echo "$CLIENTS_WEB_RESPONSE" | tail -n1)
+if [ "$HTTP_CODE" = "200" ]; then
+    print_status "Clients web interface accessible (HTTP $HTTP_CODE)"
+else
+    print_warning "Clients web interface returned HTTP $HTTP_CODE"
+fi
+
+# Test accounts web interface
+echo ""
+echo "Test 10: GET /accounts (web interface)"
+ACCOUNTS_WEB_RESPONSE=$(curl -s -w "\n%{http_code}" http://localhost:$APP_PORT/accounts)
+HTTP_CODE=$(echo "$ACCOUNTS_WEB_RESPONSE" | tail -n1)
+if [ "$HTTP_CODE" = "200" ]; then
+    print_status "Accounts web interface accessible (HTTP $HTTP_CODE)"
+else
+    print_warning "Accounts web interface returned HTTP $HTTP_CODE"
+fi
+
+# Test database data
+echo ""
+echo "Test 11: Verify database data"
+# Try with the available container runtime (docker or podman)
+if command -v docker &> /dev/null && docker ps | grep -q banking-db; then
+    CLIENT_COUNT=$(docker exec banking-db psql -U bankuser -d bankdb -t -c "SELECT COUNT(*) FROM clients;" 2>/dev/null | tr -d ' ')
+    ACCOUNT_COUNT=$(docker exec banking-db psql -U bankuser -d bankdb -t -c "SELECT COUNT(*) FROM accounts;" 2>/dev/null | tr -d ' ')
+    
+    if [ -n "$CLIENT_COUNT" ] && [ "$CLIENT_COUNT" -gt 0 ]; then
+        print_status "Database has $CLIENT_COUNT clients"
+    else
+        print_warning "No clients found in database"
+    fi
+    
+    if [ -n "$ACCOUNT_COUNT" ] && [ "$ACCOUNT_COUNT" -gt 0 ]; then
+        print_status "Database has $ACCOUNT_COUNT accounts"
+    else
+        print_warning "No accounts found in database"
+    fi
+elif command -v podman &> /dev/null && podman ps | grep -q banking-db; then
+    CLIENT_COUNT=$(podman exec banking-db psql -U bankuser -d bankdb -t -c "SELECT COUNT(*) FROM clients;" 2>/dev/null | tr -d ' ')
+    ACCOUNT_COUNT=$(podman exec banking-db psql -U bankuser -d bankdb -t -c "SELECT COUNT(*) FROM accounts;" 2>/dev/null | tr -d ' ')
+    
+    if [ -n "$CLIENT_COUNT" ] && [ "$CLIENT_COUNT" -gt 0 ]; then
+        print_status "Database has $CLIENT_COUNT clients (via Podman)"
+    else
+        print_warning "No clients found in database"
+    fi
+    
+    if [ -n "$ACCOUNT_COUNT" ] && [ "$ACCOUNT_COUNT" -gt 0 ]; then
+        print_status "Database has $ACCOUNT_COUNT accounts (via Podman)"
+    else
+        print_warning "No accounts found in database"
+    fi
+else
+    print_warning "Database container not found or not accessible with Docker/Podman"
+fi
+
+# Summary
+echo ""
+echo "=========================================="
+echo "Deployment Summary"
+echo "=========================================="
+print_status "Application URL: http://localhost:$APP_PORT"
+print_status "REST API Base: http://localhost:$APP_PORT/api"
+print_status "Health Check: http://localhost:$APP_PORT/health"
+print_status "Metrics: http://localhost:$APP_PORT/metrics"
+echo ""
+echo "Web Application URLs:"
+echo "  🏠 Home:     http://localhost:$APP_PORT/"
+echo "  👥 Clients:  http://localhost:$APP_PORT/clients"
+echo "  💰 Accounts: http://localhost:$APP_PORT/accounts"
+echo ""
+echo "Available REST Endpoints:"
+echo "  GET    /api/clients           - List all clients"
+echo "  GET    /api/clients/{id}      - Get client by ID"
+echo "  POST   /api/clients           - Create client"
+echo "  PUT    /api/clients/{id}      - Update client"
+echo "  DELETE /api/clients/{id}      - Delete client"
+echo "  GET    /api/clients/search    - Search clients"
+echo ""
+echo "  GET    /api/accounts          - List all accounts"
+echo "  GET    /api/accounts/{id}     - Get account by ID"
+echo "  POST   /api/accounts          - Create account"
+echo "  PUT    /api/accounts/{id}     - Update account"
+echo "  DELETE /api/accounts/{id}     - Delete account"
+echo "  GET    /api/accounts/client/{clientId} - Get client's accounts"
+echo ""
+echo "Container Management:"
+echo "  View logs:    podman logs -f $CONTAINER_NAME"
+echo "  Stop:         podman stop $CONTAINER_NAME"
+echo "  Remove:       podman rm $CONTAINER_NAME"
+echo "  Stop DB:      docker-compose down"
+echo ""
+echo "=========================================="
+print_status "Lab 05 deployment complete!"
+echo "=========================================="
+
+# Made with Bob

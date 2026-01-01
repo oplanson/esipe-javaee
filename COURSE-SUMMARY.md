@@ -6,7 +6,7 @@
 **Language:** English  
 **Level:** Intermediate to Advanced  
 **Version:** 1.0  
-**Last Updated:** December 2025
+**Last Updated:** January 2026
 
 ---
 
@@ -27,6 +27,7 @@ This complete course package contains everything needed to teach or learn Jakart
    - ✅ Lecture 2: Servlets, JSP & MicroProfile (1400+ lines)
    - ✅ Lecture 3: JPA and Database Integration (1200+ lines)
    - ✅ Lecture 4: CDI and Dependency Injection (1377 lines)
+   - ✅ Lecture 5: JAX-RS and RESTful Services (1770+ lines)
    - Markdown format with Marp compatibility
    - Ready for PowerPoint conversion
    - Includes Mermaid diagrams, code examples, and visuals
@@ -63,7 +64,17 @@ This complete course package contains everything needed to teach or learn Jakart
      - Logging interceptor with @AroundInvoke
      - beans.xml for CDI activation
      - Complete solution with deployment scripts
-   - Framework for Labs 5-8 (to be expanded)
+   - ✅ Lab 5: JAX-RS and RESTful Services (complete)
+     - Complete REST API implementation
+     - Client and Account REST resources
+     - JSON-B for JSON processing with circular reference handling
+     - Exception handling with custom mappers
+     - Bean Validation integration
+     - MicroProfile Rest Client
+     - Transfer endpoint for money transfers
+     - Complete solution with 11 automated tests
+     - Deployment scripts (Podman/Docker support)
+   - Framework for Labs 6-8 (to be expanded)
 
 4. **Banking Application** (`04-BankingApp/`)
    - Complete documentation (598 lines)
@@ -261,7 +272,7 @@ esipe-javaee/
 │   ├── 02-servlets-jsp-microprofile.md     # ✅ Complete (1400+ lines)
 │   ├── 03-jpa-database-integration.md      # ✅ Complete (1200+ lines)
 │   ├── 04-cdi-dependency-injection.md      # ✅ Complete (1377 lines)
-│   ├── 05-jaxrs-rest.md                    # To be created
+│   ├── 05-jaxrs-restful-services.md        # ✅ Complete (1770+ lines)
 │   ├── 06-ddd-strategic.md                 # To be created
 │   ├── 07-hexagonal-architecture.md        # To be created
 │   └── 08-microservices.md                 # To be created
@@ -308,7 +319,15 @@ esipe-javaee/
 │   │   │   ├── docker-compose.yml
 │   │   │   └── src/
 │   │   └── *.sh                      # Deployment scripts
-│   ├── Lab05-REST-API/               # To be created
+│   ├── Lab05-REST/                   # ✅ Complete
+│   │   ├── README.md                 # Instructions (1658 lines)
+│   │   ├── starter/                  # Starter code (to be created)
+│   │   ├── solution/                 # Complete REST solution
+│   │   │   ├── pom.xml
+│   │   │   ├── Containerfile
+│   │   │   ├── docker-compose.yml
+│   │   │   └── src/
+│   │   └── *.sh                      # Deployment scripts (Podman/Docker)
 │   ├── Lab06-DDD/                    # To be created
 │   ├── Lab07-Hexagonal/              # To be created
 │   └── Lab08-Microservices/          # To be created
@@ -341,20 +360,22 @@ esipe-javaee/
 4. **Lecture 2** - Servlets, JSP & MicroProfile (1400+ lines)
 5. **Lecture 3** - JPA and Database Integration (1200+ lines)
 6. **Lecture 4** - CDI and Dependency Injection (1377 lines)
-7. **Lab 1** - First Servlet with deployment scripts
-8. **Lab 2** - Complete MVC with JavaBeans, JSP, and 4 deployment scripts
-9. **Lab 3** - JPA with PostgreSQL, Flyway migrations, and error handling
-10. **Lab 4** - CDI with declarative transactions, interceptors, and producers
-11. **Environment Setup** - Detailed installation guide
-12. **Course Outline** - Complete 48-hour breakdown
-13. **Conversion Guide** - Marp/Slidev/Pandoc instructions
-14. **Banking App Docs** - Complete architecture and roadmap
-15. **Conversion Script** - Automated slide generation
+7. **Lecture 5** - JAX-RS and RESTful Services (1770+ lines)
+8. **Lab 1** - First Servlet with deployment scripts
+9. **Lab 2** - Complete MVC with JavaBeans, JSP, and 4 deployment scripts
+10. **Lab 3** - JPA with PostgreSQL, Flyway migrations, and error handling
+11. **Lab 4** - CDI with declarative transactions, interceptors, and producers
+12. **Lab 5** - REST API with JAX-RS, JSON-B, validation, and MicroProfile Rest Client
+13. **Environment Setup** - Detailed installation guide
+14. **Course Outline** - Complete 48-hour breakdown
+15. **Conversion Guide** - Marp/Slidev/Pandoc instructions
+16. **Banking App Docs** - Complete architecture and roadmap
+17. **Conversion Script** - Automated slide generation
 
 ### 📝 To Be Expanded (Framework Ready)
 
-1. **Lectures 4-8** - Follow Lecture 1-3 template
-2. **Labs 4-8** - Follow Lab 1-3 structure with deployment scripts
+1. **Lectures 6-8** - Follow Lecture 1-5 template
+2. **Labs 6-8** - Follow Lab 1-5 structure with deployment scripts
 3. **Banking App Code** - Implement 8 Git branches
 4. **Additional Resources** - FAQ, cheat sheets, etc.
 
@@ -479,19 +500,19 @@ Students who complete this course will be able to:
 
 ## 📈 Expansion Roadmap
 
-### Phase 1: Core Content (Complete)
+### Phase 1: Core Content (Complete ✅)
 - ✅ Course structure
-- ✅ Lectures 1, 2, and 3
-- ✅ Labs 1, 2, and 3
+- ✅ Lectures 1-5 (Introduction, Servlets/JSP, JPA, CDI, JAX-RS)
+- ✅ Labs 1-5 (First Servlet, JSP/MVC, JPA, CDI, REST API)
 - ✅ Documentation and guides
 
-### Phase 2: Complete Lectures (Next)
-- Create Lectures 4-8
+### Phase 2: Advanced Topics (Next)
+- Create Lectures 6-8 (DDD, Hexagonal, Microservices)
 - Add more Mermaid diagrams
 - Include more code examples
 
 ### Phase 3: Complete Labs (Following)
-- Create Labs 4-8
+- Create Labs 6-8 (DDD, Hexagonal, Microservices)
 - Provide starter and solution code
 - Add comprehensive tests
 
@@ -511,9 +532,13 @@ Before using this course:
 - [x] Lecture 1 complete with diagrams
 - [x] Lecture 2 complete with MVC patterns
 - [x] Lecture 3 complete with JPA and database
+- [x] Lecture 4 complete with CDI and transactions
+- [x] Lecture 5 complete with JAX-RS and REST
 - [x] Lab 1 complete with solution
 - [x] Lab 2 complete with JSP and MicroProfile
 - [x] Lab 3 complete with JPA and PostgreSQL
+- [x] Lab 4 complete with CDI and declarative transactions
+- [x] Lab 5 complete with REST API and JSON-B
 - [x] Environment setup guide complete
 - [x] Course outline detailed
 - [x] Conversion guide provided

@@ -262,61 +262,78 @@
 
 ---
 
-## 📅 Session 5: RESTful Web Services (6 hours)
+## 📅 Session 5: RESTful Web Services (6 hours) ✅ COMPLETE
 
-### Lecture 5.1: JAX-RS Fundamentals (2 hours)
+### Lecture 5.1: JAX-RS Fundamentals (2 hours) ✅
 **Topics:**
-- REST principles
-- JAX-RS annotations
-- HTTP methods mapping
+- REST principles and Richardson Maturity Model
+- JAX-RS annotations (@Path, @GET, @POST, @PUT, @DELETE)
+- HTTP methods mapping and status codes
 - Path parameters and query strings
 - JSON-B for JSON processing
-- Exception handling
+- Handling circular references with @JsonbTransient
+- Exception handling and custom mappers
+- Bean Validation integration
 
 **Learning Outcomes:**
-- Design RESTful APIs
-- Implement REST endpoints
-- Handle JSON data
-- Manage errors
+- Design RESTful APIs following REST principles
+- Implement REST endpoints with JAX-RS
+- Handle JSON data with JSON-B
+- Manage errors with exception mappers
+- Apply Bean Validation to REST resources
 
 **Materials:**
-- Slides: `02-Lectures/05-jaxrs-rest.md`
+- Slides: `02-Lectures/05-jaxrs-restful-services.md` ✅ (1770+ lines)
+- Code examples: Complete REST resources ✅
 
 ---
 
-### Lab 5: REST API Development (2 hours)
+### Lab 5: REST API Development (2 hours) ✅
 **Objectives:**
-- Create REST resources
-- Implement CRUD endpoints
-- Handle JSON requests/responses
-- Test with Postman
+- Create REST resources for Client and Account
+- Implement complete CRUD endpoints
+- Handle JSON requests/responses with JSON-B
+- Implement custom exception mappers
+- Add Bean Validation
+- Configure MicroProfile Rest Client
+- Implement transfer endpoint for money transfers
+- Test with curl and automated scripts
 
 **Deliverables:**
-- Client REST API
-- Account REST API
-- API documentation
+- Client REST API (CRUD + search)
+- Account REST API (CRUD + deposit/withdraw/transfer)
+- Exception handling with 4 custom mappers
+- Bean Validation integration
+- MicroProfile Rest Client configuration
+- 11 automated tests (Podman/Docker support)
+- Complete API documentation
 
 **Materials:**
-- Lab guide: `03-Labs/Lab05-REST-API/README.md`
-- Postman collection
+- Lab guide: `03-Labs/Lab05-REST/README.md` ✅ (1658 lines)
+- Solution: `03-Labs/Lab05-REST/solution/` ✅
+- Testing scripts: podman-test.sh, docker-test.sh ✅
 
 ---
 
-### Lecture 5.2: Advanced REST (1 hour)
+### Lecture 5.2: Advanced REST (1 hour) ✅
 **Topics:**
-- HATEOAS
+- MicroProfile Rest Client
+- Type-safe REST client interfaces
+- CDI integration with REST clients
+- Exception handling in REST clients
 - Content negotiation
-- Versioning strategies
-- Security (JWT)
-- API documentation (OpenAPI)
+- API documentation with MicroProfile OpenAPI
 
 ---
 
-### Lab 5 Continuation (1 hour)
+### Lab 5 Continuation (1 hour) ✅
 **Activities:**
-- Add HATEOAS links
-- Implement JWT authentication
-- Generate OpenAPI spec
+- Test all REST endpoints with curl
+- Verify exception handling
+- Test Bean Validation
+- Use MicroProfile Rest Client
+- Run automated test suite (11 tests)
+- Deploy with Podman/Docker
 
 ---
 
@@ -622,4 +639,4 @@ To receive course certificate:
 **Course prepared by:** [Instructor Name]  
 **Institution:** [Institution Name]  
 **Version:** 1.0  
-**Last Updated:** December 2025
+**Last Updated:** January 2026
