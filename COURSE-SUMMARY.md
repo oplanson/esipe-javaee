@@ -30,6 +30,7 @@ This complete course package contains everything needed to teach or learn Jakart
    - ✅ Lecture 3: JPA and Database Integration (1200+ lines)
    - ✅ Lecture 4: CDI and Dependency Injection (1377 lines)
    - ✅ Lecture 5: JAX-RS and RESTful Services (1770+ lines)
+   - ✅ Lecture 6: Domain-Driven Design (1400+ lines with DDD Documentation section)
    - Markdown format with Marp compatibility
    - Ready for PowerPoint conversion
    - Includes Mermaid diagrams, code examples, and visuals
@@ -76,7 +77,19 @@ This complete course package contains everything needed to teach or learn Jakart
      - Transfer endpoint for money transfers
      - Complete solution with 11 automated tests
      - Deployment scripts (Podman/Docker support)
-   - Framework for Labs 6-8 (to be expanded)
+   - ✅ Lab 6: Domain-Driven Design (complete)
+     - Complete DDD refactoring from anemic to rich domain model
+     - Value Objects (Money, AccountNumber, Email, AccountType)
+     - Aggregate Roots (Account, Client) with business logic
+     - Domain Services (TransferService)
+     - Domain Events (MoneyDeposited, MoneyWithdrawn, MoneyTransferred)
+     - Repository Interfaces (AccountRepository, ClientRepository)
+     - DTOs for data transfer
+     - Database migration for DDD schema
+     - Complete Bounded Context documentation (398 lines)
+     - Complete solution with deployment scripts
+     - Comprehensive README (545 lines)
+   - Framework for Labs 7-8 (to be expanded)
 
 4. **Banking Application** (`04-BankingApp/`)
    - Complete documentation (598 lines)
@@ -275,7 +288,7 @@ esipe-javaee/
 │   ├── 03-jpa-database-integration.md      # ✅ Complete (1200+ lines)
 │   ├── 04-cdi-dependency-injection.md      # ✅ Complete (1377 lines)
 │   ├── 05-jaxrs-restful-services.md        # ✅ Complete (1770+ lines)
-│   ├── 06-ddd-strategic.md                 # To be created
+│   ├── 06-domain-driven-design.md          # ✅ Complete (1150+ lines)
 │   ├── 07-hexagonal-architecture.md        # To be created
 │   └── 08-microservices.md                 # To be created
 │
@@ -330,7 +343,25 @@ esipe-javaee/
 │   │   │   ├── docker-compose.yml
 │   │   │   └── src/
 │   │   └── *.sh                      # Deployment scripts (Podman/Docker)
-│   ├── Lab06-DDD/                    # To be created
+│   ├── Lab06-DDD/                    # ✅ Complete
+│   │   ├── README.md                 # Instructions (545 lines)
+│   │   ├── SOLUTION-STATUS.md        # Implementation status (329 lines)
+│   │   ├── starter/                  # Starter code (to be created)
+│   │   ├── solution/                 # Complete DDD solution
+│   │   │   ├── BOUNDED-CONTEXT.md    # Complete Bounded Context documentation (398 lines)
+│   │   │   ├── pom.xml
+│   │   │   ├── Containerfile
+│   │   │   ├── docker-compose.yml
+│   │   │   └── src/
+│   │   │       ├── domain/           # Domain layer
+│   │   │       │   ├── valueobject/  # Value Objects (Money, AccountNumber, Email, AccountType)
+│   │   │       │   ├── service/      # Domain Services (TransferService)
+│   │   │       │   ├── event/        # Domain Events
+│   │   │       │   └── repository/   # Repository Interfaces (AccountRepository, ClientRepository)
+│   │   │       ├── model/            # Aggregates (Account, Client)
+│   │   │       ├── application/      # DTOs
+│   │   │       └── ...
+│   │   └── *.sh                      # Deployment scripts (Podman/Docker)
 │   ├── Lab07-Hexagonal/              # To be created
 │   └── Lab08-Microservices/          # To be created
 │
@@ -363,16 +394,18 @@ esipe-javaee/
 5. **Lecture 3** - JPA and Database Integration (1200+ lines)
 6. **Lecture 4** - CDI and Dependency Injection (1377 lines)
 7. **Lecture 5** - JAX-RS and RESTful Services (1770+ lines)
-8. **Lab 1** - First Servlet with deployment scripts
-9. **Lab 2** - Complete MVC with JavaBeans, JSP, and 4 deployment scripts
-10. **Lab 3** - JPA with PostgreSQL, Flyway migrations, and error handling
-11. **Lab 4** - CDI with declarative transactions, interceptors, and producers
-12. **Lab 5** - REST API with JAX-RS, JSON-B, validation, and MicroProfile Rest Client
-13. **Environment Setup** - Detailed installation guide
-14. **Course Outline** - Complete 48-hour breakdown
-15. **Conversion Guide** - Marp/Slidev/Pandoc instructions
-16. **Banking App Docs** - Complete architecture and roadmap
-17. **Conversion Script** - Automated slide generation
+8. **Lecture 6** - Domain-Driven Design (1400+ lines, includes DDD documentation section)
+9. **Lab 1** - First Servlet with deployment scripts
+10. **Lab 2** - Complete MVC with JavaBeans, JSP, and 4 deployment scripts
+11. **Lab 3** - JPA with PostgreSQL, Flyway migrations, and error handling
+12. **Lab 4** - CDI with declarative transactions, interceptors, and producers
+13. **Lab 5** - REST API with JAX-RS, JSON-B, validation, and MicroProfile Rest Client
+14. **Lab 6** - DDD refactoring with Value Objects, Aggregates, Domain Services, Events, Repository Interfaces, and complete Bounded Context documentation
+15. **Environment Setup** - Detailed installation guide
+16. **Course Outline** - Complete 48-hour breakdown
+17. **Conversion Guide** - Marp/Slidev/Pandoc instructions
+18. **Banking App Docs** - Complete architecture and roadmap
+19. **Conversion Script** - Automated slide generation
 
 ### 📝 To Be Expanded (Framework Ready)
 
@@ -536,11 +569,13 @@ Before using this course:
 - [x] Lecture 3 complete with JPA and database
 - [x] Lecture 4 complete with CDI and transactions
 - [x] Lecture 5 complete with JAX-RS and REST
+- [x] Lecture 6 complete with DDD patterns
 - [x] Lab 1 complete with solution
 - [x] Lab 2 complete with JSP and MicroProfile
 - [x] Lab 3 complete with JPA and PostgreSQL
 - [x] Lab 4 complete with CDI and declarative transactions
 - [x] Lab 5 complete with REST API and JSON-B
+- [x] Lab 6 complete with DDD refactoring
 - [x] Environment setup guide complete
 - [x] Course outline detailed
 - [x] Conversion guide provided

@@ -1,0 +1,1508 @@
+---
+marp: true
+theme: default
+paginate: true
+backgroundColor: #fff
+header: 'Jakarta EE & MicroProfile Course'
+footer: 'Lecture 6: Domain-Driven Design (DDD) | © 2026 Olivier Planson - All rights reserved. Reproduction prohibited.'
+style: |
+  section {
+    font-size: 22px;
+    padding: 40px 60px;
+  }
+  img {
+    max-width: 85%;
+    max-height: 380px;
+    display: block;
+    margin: 10px auto;
+  }
+  pre {
+    font-size: 0.65em;
+    margin: 10px 0;
+    padding: 10px;
+  }
+  code {
+    font-size: 0.7em;
+  }
+  ul, ol {
+    font-size: 0.85em;
+    line-height: 1.8;
+    margin: 8px 0;
+  }
+  li {
+    margin: 6px 0;
+    line-height: 1.8;
+  }
+  li::marker {
+    flex-shrink: 0;
+  }
+  h1 {
+    font-size: 1.8em;
+    margin-bottom: 20px;
+    line-height: 1.3;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: nowrap;
+    white-space: nowrap;
+  }
+  h2 {
+    font-size: 1.3em;
+    margin: 15px 0 10px 0;
+    line-height: 1.3;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: nowrap;
+    white-space: nowrap;
+  }
+  h3 {
+    font-size: 1.1em;
+    margin: 10px 0 8px 0;
+    line-height: 1.3;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex-wrap: nowrap;
+    white-space: nowrap;
+  }
+  table {
+    font-size: 0.8em;
+  }
+  td {
+    vertical-align: middle;
+    white-space: nowrap;
+  }
+  th {
+    white-space: nowrap;
+  }
+  p {
+    margin: 8px 0;
+    line-height: 1.6;
+    white-space: nowrap;
+  }
+  strong {
+    white-space: nowrap;
+  }
+  blockquote {
+    font-size: 0.9em;
+    margin: 10px 0;
+    padding: 10px 15px;
+  }
+  .columns {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    align-items: start;
+  }
+  .columns-3 {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 15px;
+    align-items: start;
+  }
+  .columns-2-1 {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 20px;
+    align-items: start;
+  }
+  .columns-1-2 {
+    display: grid;
+    grid-template-columns: 1fr 2fr;
+    gap: 20px;
+    align-items: start;
+  }
+---
+
+<!-- © Copyright 2026 Olivier Planson. All rights reserved. Reproduction prohibited. Made with IBM Bob. -->
+
+
+# Lecture 6: Domain-Driven Design (DDD)
+## Strategic and Tactical Patterns for Enterprise Applications
+
+**Duration:** 3 hours  
+**Instructor:** Olivier Planson  
+**Date:** January 2026  
+**Course:** Jakarta EE, MicroProfile and Microservices
+
+---
+
+## 📋 Learning Objectives
+
+By the end of this lecture, you will be able to:
+
+| | |
+| --- | --- |
+| ✅ | Understand Domain-Driven Design philosophy and benefits |
+| ✅ | Apply strategic DDD patterns (Bounded Contexts, Context Maps) |
+| ✅ | Implement tactical DDD patterns (Entities, Value Objects, Aggregates) |
+| ✅ | Design domain models using ubiquitous language |
+| ✅ | Refactor existing code to DDD architecture |
+| ✅ | Apply DDD to the banking application |
+
+---
+
+## 🎯 What is Domain-Driven Design?
+
+**Domain-Driven Design (DDD)** is an approach to software development that emphasizes collaboration between technical and domain experts to create a model that reflects the business domain.
+
+### Core Philosophy:
+- **Focus on the domain and domain logic**
+- **Base complex designs on a model of the domain**
+- **Collaborate with domain experts to improve the model**
+- **Use a ubiquitous language within a bounded context**
+
+### Key Benefits:
+- Better alignment between business and code
+- More maintainable and flexible software
+- Clearer communication between teams
+- Reduced complexity through proper boundaries
+
+---
+
+## 📚 DDD: Strategic vs Tactical Patterns
+
+### Strategic Patterns (Big Picture)
+Focus on **high-level organization** and **boundaries**:
+- Bounded Contexts
+- Context Mapping
+- Ubiquitous Language
+- Subdomains (Core, Supporting, Generic)
+
+### Tactical Patterns (Implementation)
+Focus on **code-level design** within a bounded context:
+- Entities
+- Value Objects
+- Aggregates
+- Repositories
+- Domain Services
+- Domain Events
+
+---
+
+## 🗺️ Strategic Pattern: Bounded Context
+
+A **Bounded Context** is an explicit boundary within which a domain model is defined and applicable.
+
+### Key Characteristics:
+- **Clear boundaries:** Each context has its own model
+- **Ubiquitous language:** Terms have specific meaning within context
+- **Independence:** Contexts can evolve separately
+- **Integration points:** Explicit interfaces between contexts
+
+### Banking Example:
+```
+┌─────────────────────┐  ┌──────────────────────┐  ┌─────────────────────┐
+│  Account Management │  │  Transaction         │  │  Customer           │
+│  Context            │  │  Processing Context  │  │  Management Context │
+│                     │  │                      │  │                     │
+│  - Account          │  │  - Transaction       │  │  - Customer         │
+│  - Balance          │  │  - Transfer          │  │  - Profile          │
+│  - AccountType      │  │  - Payment           │  │  - Contact Info     │
+└─────────────────────┘  └──────────────────────┘  └─────────────────────┘
+```
+
+---
+
+## 🌐 Ubiquitous Language
+
+**Ubiquitous Language** is a common, rigorous language between developers and domain experts.
+
+### Principles:
+- Use the **same terms** in conversations, code, and documentation
+- **Avoid technical jargon** when talking to domain experts
+- **Refine the language** as understanding deepens
+- **Model the language** in code (class names, method names)
+
+### Banking Example:
+
+| Domain Term | Code Representation | Meaning |
+|------------|---------------------|---------|
+| Account | `Account` entity | Customer's bank account |
+| Deposit | `deposit()` method | Add money to account |
+| Withdrawal | `withdraw()` method | Remove money from account |
+| Transfer | `transfer()` method | Move money between accounts |
+| Balance | `balance` field | Current account balance |
+
+---
+
+## 🎯 Tactical Pattern: Entity
+
+An **Entity** is an object defined by its **identity** rather than its attributes.
+
+### Characteristics:
+- Has a **unique identifier** (ID)
+- **Mutable:** Attributes can change over time
+- **Identity persists** through lifecycle
+- **Equality based on ID**, not attributes
+
+### Entity Example:
+```java
+@Entity
+public class Account {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;  // Identity
+    
+    private String accountNumber;
+    private BigDecimal balance;  // Can change
+    private AccountType type;
+    
+    // Equality based on ID
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Account)) return false;
+        Account account = (Account) o;
+        return Objects.equals(id, account.id);
+    }
+}
+```
+
+---
+
+## 💎 Tactical Pattern: Value Object
+
+A **Value Object** is an object defined by its **attributes** rather than identity.
+
+### Characteristics:
+- **No unique identifier**
+- **Immutable:** Cannot change after creation
+- **Equality based on attributes**
+- **Replaceable:** Create new instance instead of modifying
+
+### Value Object Example:
+```java
+public class Money {
+    private final BigDecimal amount;
+    private final Currency currency;
+    
+    public Money(BigDecimal amount, Currency currency) {
+        this.amount = Objects.requireNonNull(amount);
+        this.currency = Objects.requireNonNull(currency);
+    }
+    
+    // Immutable - returns new instance
+    public Money add(Money other) {
+        if (!this.currency.equals(other.currency)) {
+            throw new IllegalArgumentException("Currency mismatch");
+        }
+        return new Money(this.amount.add(other.amount), this.currency);
+    }
+    
+    // Equality based on attributes
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Money)) return false;
+        Money money = (Money) o;
+        return amount.equals(money.amount) && currency.equals(money.currency);
+    }
+}
+```
+
+---
+
+## 🔗 Entity vs Value Object
+
+### When to Use Each:
+
+<div class="columns">
+<div>
+
+### Entity
+- Needs to be **tracked over time**
+- Has a **lifecycle**
+- **Identity matters**
+- Examples:
+  - Customer
+  - Account
+  - Order
+  - Invoice
+
+</div>
+<div>
+
+### Value Object
+- Describes or measures something
+- **No lifecycle**
+- **Attributes matter**, not identity
+- Examples:
+  - Money
+  - Address
+  - DateRange
+  - Email
+
+</div>
+</div>
+
+### Rule of Thumb:
+**If you can replace it without anyone noticing, it's a Value Object.**
+
+---
+
+## 📦 Tactical Pattern: Aggregate
+
+An **Aggregate** is a cluster of domain objects treated as a single unit for data changes.
+
+### Key Concepts:
+- **Aggregate Root:** Entry point for all operations
+- **Consistency Boundary:** Ensures invariants are maintained
+- **Transaction Boundary:** Changes are atomic
+- **Reference by ID:** External objects reference root by ID only
+
+### Aggregate Structure:
+```
+┌─────────────────────────────────────┐
+│  Account Aggregate                  │
+│  ┌───────────────────────────────┐  │
+│  │  Account (Root)               │  │
+│  │  - id                         │  │
+│  │  - accountNumber              │  │
+│  │  - balance                    │  │
+│  │  └─────────────────────────┐  │  │
+│  │  Transactions (Children)   │  │  │
+│  │  - Transaction 1           │  │  │
+│  │  - Transaction 2           │  │  │
+│  │  - Transaction 3           │  │  │
+│  └────────────────────────────┘  │  │
+└─────────────────────────────────────┘
+```
+
+---
+
+## 🏦 Banking Aggregate Example
+
+```java
+@Entity
+public class Account {  // Aggregate Root
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+    
+    private String accountNumber;
+    private BigDecimal balance;
+    
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Transaction> transactions = new ArrayList<>();
+    
+    // Business logic in aggregate root
+    public void deposit(BigDecimal amount) {
+        if (amount.compareTo(BigDecimal.ZERO) <= 0) {
+            throw new IllegalArgumentException("Amount must be positive");
+        }
+        this.balance = this.balance.add(amount);
+        this.transactions.add(new Transaction(TransactionType.DEPOSIT, amount));
+    }
+    
+    public void withdraw(BigDecimal amount) {
+        if (amount.compareTo(balance) > 0) {
+            throw new InsufficientFundsException("Insufficient funds");
+        }
+        this.balance = this.balance.subtract(amount);
+        this.transactions.add(new Transaction(TransactionType.WITHDRAWAL, amount));
+    }
+}
+```
+
+---
+
+## 🎯 Aggregate Design Rules
+
+### Rule 1: Reference Other Aggregates by ID Only
+```java
+@Entity
+public class Account {
+    @Id
+    private Long id;
+    
+    // ❌ BAD: Direct reference to another aggregate
+    // @ManyToOne
+    // private Client client;
+    
+    // ✅ GOOD: Reference by ID
+    private Long clientId;
+}
+```
+
+### Rule 2: Keep Aggregates Small
+- Include only what needs to be **consistent together**
+- Larger aggregates = more contention and complexity
+- Prefer **multiple small aggregates** over one large one
+
+### Rule 3: Enforce Invariants
+- All business rules enforced **within the aggregate**
+- **No external code** can violate invariants
+- Use **private setters** and **public methods** for operations
+
+---
+
+## 📚 Tactical Pattern: Repository
+
+A **Repository** provides collection-like access to aggregates.
+
+### Characteristics:
+- **One repository per aggregate root**
+- Abstracts data access details
+- Returns fully-formed aggregates
+- Supports querying by business criteria
+
+### Repository Interface:
+```java
+public interface AccountRepository {
+    // Basic CRUD
+    Account findById(Long id);
+    List<Account> findAll();
+    void save(Account account);
+    void delete(Account account);
+    
+    // Business queries
+    List<Account> findByClientId(Long clientId);
+    Account findByAccountNumber(String accountNumber);
+    List<Account> findByBalanceGreaterThan(BigDecimal amount);
+    
+    // No methods that return partial aggregates!
+    // ❌ List<Transaction> findTransactionsByAccountId(Long accountId);
+}
+```
+
+---
+
+## 🔧 Repository Implementation with JPA
+
+```java
+@ApplicationScoped
+public class JpaAccountRepository implements AccountRepository {
+    
+    @Inject
+    private EntityManager em;
+    
+    @Override
+    public Account findById(Long id) {
+        return em.find(Account.class, id);
+    }
+    
+    @Override
+    public List<Account> findAll() {
+        return em.createQuery("SELECT a FROM Account a", Account.class)
+                 .getResultList();
+    }
+    
+    @Override
+    @Transactional
+    public void save(Account account) {
+        if (account.getId() == null) {
+            em.persist(account);
+        } else {
+            em.merge(account);
+        }
+    }
+    
+    @Override
+    public Account findByAccountNumber(String accountNumber) {
+        return em.createQuery(
+            "SELECT a FROM Account a WHERE a.accountNumber = :number", 
+            Account.class)
+            .setParameter("number", accountNumber)
+            .getSingleResult();
+    }
+}
+```
+
+---
+
+## ⚙️ Tactical Pattern: Domain Service
+
+A **Domain Service** contains domain logic that doesn't naturally fit in an entity or value object.
+
+### When to Use:
+- Operation involves **multiple aggregates**
+- Logic is **stateless**
+- Represents a **domain concept** (not technical)
+
+### Domain Service Example:
+```java
+@ApplicationScoped
+public class TransferService {  // Domain Service
+    
+    @Inject
+    private AccountRepository accountRepository;
+    
+    @Transactional
+    public void transfer(Long fromAccountId, Long toAccountId, BigDecimal amount) {
+        // Load both aggregates
+        Account fromAccount = accountRepository.findById(fromAccountId);
+        Account toAccount = accountRepository.findById(toAccountId);
+        
+        // Validate
+        if (fromAccount == null || toAccount == null) {
+            throw new AccountNotFoundException();
+        }
+        
+        // Execute domain logic
+        fromAccount.withdraw(amount);  // Aggregate enforces rules
+        toAccount.deposit(amount);     // Aggregate enforces rules
+        
+        // Save both aggregates
+        accountRepository.save(fromAccount);
+        accountRepository.save(toAccount);
+    }
+}
+```
+
+---
+
+## 🎭 Domain Service vs Application Service
+
+### Domain Service
+- Contains **domain logic**
+- Uses **ubiquitous language**
+- Coordinates **multiple aggregates**
+- Example: `TransferService.transfer()`
+
+### Application Service
+- **Orchestrates** use cases
+- Handles **transactions**
+- Manages **infrastructure concerns**
+- Example: `AccountApplicationService.createAccount()`
+
+```java
+@ApplicationScoped
+public class AccountApplicationService {  // Application Service
+    
+    @Inject
+    private AccountRepository accountRepository;
+    
+    @Inject
+    private TransferService transferService;  // Uses domain service
+    
+    @Transactional
+    public AccountDTO createAccount(CreateAccountRequest request) {
+        // Orchestration logic
+        Account account = new Account(request.getAccountNumber(), 
+                                     request.getInitialBalance());
+        accountRepository.save(account);
+        return AccountDTO.from(account);
+    }
+}
+```
+
+---
+
+## 📢 Tactical Pattern: Domain Events
+
+**Domain Events** represent something significant that happened in the domain.
+
+### Characteristics:
+- **Immutable:** Cannot be changed after creation
+- **Past tense:** Describes what happened
+- **Contains relevant data**
+- **Triggers side effects**
+
+### Domain Event Example:
+```java
+public class AccountCreatedEvent {
+    private final Long accountId;
+    private final String accountNumber;
+    private final Long clientId;
+    private final LocalDateTime occurredOn;
+    
+    public AccountCreatedEvent(Long accountId, String accountNumber, Long clientId) {
+        this.accountId = accountId;
+        this.accountNumber = accountNumber;
+        this.clientId = clientId;
+        this.occurredOn = LocalDateTime.now();
+    }
+    
+    // Getters only - immutable
+}
+```
+
+---
+
+## 🔔 Publishing Domain Events with CDI
+
+```java
+@Entity
+public class Account {
+    @Id
+    private Long id;
+    
+    @Transient  // Not persisted
+    @Inject
+    private Event<AccountCreatedEvent> accountCreatedEvent;
+    
+    public static Account create(String accountNumber, Long clientId) {
+        Account account = new Account();
+        account.accountNumber = accountNumber;
+        account.clientId = clientId;
+        
+        // Publish domain event
+        if (account.accountCreatedEvent != null) {
+            account.accountCreatedEvent.fire(
+                new AccountCreatedEvent(account.id, accountNumber, clientId)
+            );
+        }
+        
+        return account;
+    }
+}
+
+// Event Observer
+@ApplicationScoped
+public class AccountEventHandler {
+    
+    public void onAccountCreated(@Observes AccountCreatedEvent event) {
+        // Send welcome email, create audit log, etc.
+        System.out.println("Account created: " + event.getAccountNumber());
+    }
+}
+```
+
+---
+
+## 🏗️ DDD Layered Architecture
+
+```
+┌─────────────────────────────────────────────────────────┐
+│  Presentation Layer (REST API, Web UI)                 │
+│  - Controllers, Resources, DTOs                         │
+└─────────────────────────────────────────────────────────┘
+                          ↓
+┌─────────────────────────────────────────────────────────┐
+│  Application Layer (Use Cases)                          │
+│  - Application Services, DTOs, Mappers                  │
+└─────────────────────────────────────────────────────────┘
+                          ↓
+┌─────────────────────────────────────────────────────────┐
+│  Domain Layer (Business Logic) ← CORE                   │
+│  - Entities, Value Objects, Aggregates                  │
+│  - Domain Services, Repositories (interfaces)           │
+│  - Domain Events                                        │
+└─────────────────────────────────────────────────────────┘
+                          ↓
+┌─────────────────────────────────────────────────────────┐
+│  Infrastructure Layer (Technical Details)               │
+│  - Repository Implementations (JPA)                     │
+│  - External Services, Database, Messaging               │
+└─────────────────────────────────────────────────────────┘
+```
+
+**Key Principle:** Domain layer has **no dependencies** on other layers!
+
+---
+
+## 📦 DDD Package Structure
+
+```
+com.bank/
+├── domain/                    # Domain Layer
+│   ├── model/
+│   │   ├── account/
+│   │   │   ├── Account.java           # Aggregate Root
+│   │   │   ├── AccountNumber.java     # Value Object
+│   │   │   ├── Transaction.java       # Entity
+│   │   │   └── AccountRepository.java # Repository Interface
+│   │   └── client/
+│   │       ├── Client.java
+│   │       ├── Email.java             # Value Object
+│   │       └── ClientRepository.java
+│   ├── service/
+│   │   └── TransferService.java       # Domain Service
+│   └── event/
+│       └── AccountCreatedEvent.java   # Domain Event
+├── application/               # Application Layer
+│   ├── service/
+│   │   └── AccountApplicationService.java
+│   └── dto/
+│       └── AccountDTO.java
+├── infrastructure/            # Infrastructure Layer
+│   ├── persistence/
+│   │   └── JpaAccountRepository.java  # Repository Implementation
+│   └── messaging/
+└── presentation/              # Presentation Layer
+    └── rest/
+        └── AccountResource.java       # REST API
+```
+
+---
+
+## 🔄 Refactoring to DDD: Before and After
+
+### Before (Anemic Domain Model):
+```java
+// Just data, no behavior
+@Entity
+public class Account {
+    private Long id;
+    private BigDecimal balance;
+    // Getters and setters only
+}
+
+// All logic in service
+@ApplicationScoped
+public class AccountService {
+    public void deposit(Account account, BigDecimal amount) {
+        account.setBalance(account.getBalance().add(amount));
+        accountRepository.save(account);
+    }
+}
+```
+
+### After (Rich Domain Model):
+```java
+// Behavior in domain
+@Entity
+public class Account {
+    private Long id;
+    private BigDecimal balance;
+    
+    // Business logic in entity
+    public void deposit(BigDecimal amount) {
+        if (amount.compareTo(BigDecimal.ZERO) <= 0) {
+            throw new IllegalArgumentException("Amount must be positive");
+        }
+        this.balance = this.balance.add(amount);
+    }
+}
+
+// Service just coordinates
+@ApplicationScoped
+public class AccountService {
+    public void deposit(Long accountId, BigDecimal amount) {
+        Account account = accountRepository.findById(accountId);
+        account.deposit(amount);  // Domain logic in entity
+        accountRepository.save(account);
+    }
+}
+```
+
+---
+
+## ✅ DDD Best Practices
+
+### 1. Start with the Domain
+- Understand the business **before** coding
+- Collaborate with domain experts
+- Use **ubiquitous language** everywhere
+
+### 2. Keep Aggregates Small
+- Only include what must be **consistent together**
+- Reference other aggregates by ID
+- Avoid deep object graphs
+
+### 3. Protect Invariants
+- Enforce business rules in **aggregate roots**
+- Use **private setters**, public methods
+- Validate in constructors
+
+### 4. Use Value Objects
+- Make them **immutable**
+- Use for concepts without identity
+- Reduces complexity
+
+---
+
+## ⚠️ Common DDD Pitfalls
+
+### 1. Anemic Domain Model
+**Problem:** Entities with only getters/setters, all logic in services
+**Solution:** Move business logic into entities and value objects
+
+### 2. Large Aggregates
+**Problem:** Including too much in one aggregate
+**Solution:** Keep aggregates small, reference by ID
+
+### 3. Ignoring Ubiquitous Language
+**Problem:** Technical terms in domain code
+**Solution:** Use business terms consistently
+
+### 4. Over-Engineering
+**Problem:** Applying all DDD patterns everywhere
+**Solution:** Use DDD where complexity justifies it
+
+---
+
+## 🏦 Banking Application: DDD Refactoring
+
+### Current Structure (Lab 5):
+- Entities: `Client`, `Account`
+- Services: `ClientService`, `AccountService`
+- REST: `ClientResource`, `AccountResource`
+
+### DDD Refactoring (Lab 6):
+1. **Identify Aggregates:**
+   - `Client` aggregate (root: Client)
+   - `Account` aggregate (root: Account, children: Transactions)
+
+2. **Extract Value Objects:**
+   - `Money` (amount + currency)
+   - `AccountNumber`
+   - `Email`
+
+3. **Define Domain Services:**
+   - `TransferService` (coordinates two accounts)
+
+4. **Add Domain Events:**
+   - `AccountCreatedEvent`
+   - `MoneyDepositedEvent`
+   - `MoneyWithdrawnEvent`
+
+---
+
+## 💰 Value Object: Money
+
+```java
+public class Money {
+    private final BigDecimal amount;
+    private final String currency;
+    
+    private Money(BigDecimal amount, String currency) {
+        if (amount == null || amount.compareTo(BigDecimal.ZERO) < 0) {
+            throw new IllegalArgumentException("Amount cannot be negative");
+        }
+        this.amount = amount;
+        this.currency = currency != null ? currency : "USD";
+    }
+    
+    public static Money of(BigDecimal amount, String currency) {
+        return new Money(amount, currency);
+    }
+    
+    public static Money usd(BigDecimal amount) {
+        return new Money(amount, "USD");
+    }
+    
+    public Money add(Money other) {
+        if (!this.currency.equals(other.currency)) {
+            throw new IllegalArgumentException("Cannot add different currencies");
+        }
+        return new Money(this.amount.add(other.amount), this.currency);
+    }
+    
+    public Money subtract(Money other) {
+        if (!this.currency.equals(other.currency)) {
+            throw new IllegalArgumentException("Cannot subtract different currencies");
+        }
+        return new Money(this.amount.subtract(other.amount), this.currency);
+    }
+    
+    public boolean isGreaterThan(Money other) {
+        if (!this.currency.equals(other.currency)) {
+            throw new IllegalArgumentException("Cannot compare different currencies");
+        }
+        return this.amount.compareTo(other.amount) > 0;
+    }
+    
+    // Getters, equals, hashCode
+}
+```
+
+---
+
+## 🔢 Value Object: AccountNumber
+
+```java
+public class AccountNumber {
+    private final String value;
+    
+    private AccountNumber(String value) {
+        if (value == null || !value.matches("\\d{10}")) {
+            throw new IllegalArgumentException("Account number must be 10 digits");
+        }
+        this.value = value;
+    }
+    
+    public static AccountNumber of(String value) {
+        return new AccountNumber(value);
+    }
+    
+    public static AccountNumber generate() {
+        // Generate random 10-digit number
+        Random random = new Random();
+        String number = String.format("%010d", random.nextInt(1000000000));
+        return new AccountNumber(number);
+    }
+    
+    public String getValue() {
+        return value;
+    }
+    
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof AccountNumber)) return false;
+        AccountNumber that = (AccountNumber) o;
+        return value.equals(that.value);
+    }
+    
+    @Override
+    public int hashCode() {
+        return Objects.hash(value);
+    }
+    
+    @Override
+    public String toString() {
+        return value;
+    }
+}
+```
+
+---
+
+## 🏦 Refactored Account Aggregate
+
+```java
+@Entity
+public class Account {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+    
+    @Embedded
+    private AccountNumber accountNumber;
+    
+    @Embedded
+    private Money balance;
+    
+    @Enumerated(EnumType.STRING)
+    private AccountType type;
+    
+    private Long clientId;  // Reference by ID
+    
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Transaction> transactions = new ArrayList<>();
+    
+    // Factory method
+    public static Account open(AccountNumber accountNumber, Money initialBalance, 
+                              AccountType type, Long clientId) {
+        Account account = new Account();
+        account.accountNumber = accountNumber;
+        account.balance = initialBalance;
+        account.type = type;
+        account.clientId = clientId;
+        return account;
+    }
+    
+    // Business methods
+    public void deposit(Money amount) {
+        this.balance = this.balance.add(amount);
+        this.transactions.add(Transaction.deposit(amount));
+    }
+    
+    public void withdraw(Money amount) {
+        if (this.balance.isGreaterThan(amount)) {
+            throw new InsufficientFundsException("Insufficient funds");
+        }
+        this.balance = this.balance.subtract(amount);
+        this.transactions.add(Transaction.withdrawal(amount));
+    }
+    
+    // Getters only - no setters!
+}
+```
+
+---
+
+## 🔄 Domain Service: Transfer
+
+```java
+@ApplicationScoped
+public class TransferService {
+    
+    @Inject
+    private AccountRepository accountRepository;
+    
+    @Inject
+    private Event<MoneyTransferredEvent> transferEvent;
+    
+    @Transactional
+    public void transfer(Long fromAccountId, Long toAccountId, Money amount) {
+        // Load aggregates
+        Account fromAccount = accountRepository.findById(fromAccountId)
+            .orElseThrow(() -> new AccountNotFoundException(fromAccountId));
+        Account toAccount = accountRepository.findById(toAccountId)
+            .orElseThrow(() -> new AccountNotFoundException(toAccountId));
+        
+        // Validate
+        if (fromAccount.equals(toAccount)) {
+            throw new IllegalArgumentException("Cannot transfer to same account");
+        }
+        
+        // Execute transfer (domain logic in aggregates)
+        fromAccount.withdraw(amount);
+        toAccount.deposit(amount);
+        
+        // Save both aggregates
+        accountRepository.save(fromAccount);
+        accountRepository.save(toAccount);
+        
+        // Publish domain event
+        transferEvent.fire(new MoneyTransferredEvent(
+            fromAccountId, toAccountId, amount, LocalDateTime.now()
+        ));
+    }
+}
+```
+
+---
+
+## 📊 DDD Benefits in Banking App
+
+### Before DDD:
+- Business logic scattered across services
+- Entities are just data containers
+- Difficult to understand business rules
+- Hard to maintain consistency
+
+### After DDD:
+- Business logic in domain entities
+- Clear aggregate boundaries
+- Ubiquitous language in code
+- Invariants protected by aggregates
+- Domain events for side effects
+
+### Concrete Improvements:
+1. **Money** value object prevents currency errors
+2. **AccountNumber** value object enforces format
+3. **Account** aggregate protects balance invariants
+4. **TransferService** coordinates complex operations
+5. **Domain events** enable audit trail and notifications
+
+---
+
+## 🎯 Lab 6 Preview: DDD Refactoring
+
+### Objectives:
+1. Refactor Lab 5 code to DDD architecture
+2. Create value objects (Money, AccountNumber, Email)
+3. Define clear aggregate boundaries
+4. Implement domain services
+5. Add domain events
+6. Reorganize package structure
+
+### What You'll Build:
+- Rich domain model with business logic
+- Value objects for key concepts
+- Domain services for complex operations
+- Event-driven architecture
+- Clean separation of concerns
+
+**Duration:** 3 hours  
+**Difficulty:** Intermediate to Advanced
+
+---
+
+## 📚 Key Takeaways
+
+### Strategic DDD:
+- **Bounded Contexts** define clear boundaries
+- **Ubiquitous Language** aligns business and code
+- **Context Mapping** manages integration
+
+### Tactical DDD:
+- **Entities** have identity and lifecycle
+- **Value Objects** are immutable and replaceable
+- **Aggregates** maintain consistency
+- **Repositories** provide collection-like access
+- **Domain Services** coordinate multiple aggregates
+- **Domain Events** enable loose coupling
+
+### Remember:
+**DDD is about understanding the domain and modeling it in code using a shared language.**
+
+---
+## 📝 Documenting Your DDD Implementation
+
+Proper documentation is crucial for maintaining a DDD implementation and ensuring team alignment.
+
+### Essential Documentation Artifacts
+
+#### 1. Bounded Context Document
+
+A comprehensive document that defines your bounded context:
+
+```markdown
+# Banking Bounded Context
+
+## Context Definition
+- **Name:** Banking Core Context
+- **Purpose:** Manage core banking operations
+- **Scope:** Client accounts, transactions, transfers
+- **Out of Scope:** Loans, investments, credit cards
+
+## Ubiquitous Language
+| Term | Definition | Type |
+|------|------------|------|
+| Client | Person/entity with accounts | Aggregate Root |
+| Account | Financial account holding money | Aggregate Root |
+| Money | Amount with currency | Value Object |
+| Deposit | Adding money to account | Domain Operation |
+| Transfer | Moving money between accounts | Domain Service |
+
+## Domain Model
+### Aggregates
+- **Account Aggregate**
+  - Root: Account
+  - Value Objects: Money, AccountNumber, AccountType
+  - Invariants: Balance limits, currency consistency
+  
+### Domain Services
+- **TransferService:** Coordinates money transfers
+
+### Domain Events
+- MoneyDepositedEvent
+- MoneyWithdrawnEvent
+- MoneyTransferredEvent
+
+## Business Rules
+1. Minimum initial deposit: 10 EUR
+2. CHECKING accounts: overdraft up to -500 EUR
+3. SAVINGS accounts: no negative balance
+4. All operations must use same currency
+
+## Context Boundaries
+### Inside Context
+✅ Account management
+✅ Money transfers
+✅ Balance tracking
+
+### Outside Context
+❌ Loan processing
+❌ Investment products
+❌ External payments
+
+## Integration Points
+- Identity Context (authentication)
+- Notification Context (emails/SMS)
+- Audit Context (compliance)
+```
+
+#### 2. Repository Interfaces
+
+Document repository contracts in the domain layer:
+
+```java
+/**
+ * Repository interface for Account aggregate.
+ * 
+ * DDD Pattern: Repository
+ * - Provides collection-like interface
+ * - Abstracts persistence mechanism
+ * - Uses domain language and types
+ * - Part of domain layer (interface)
+ * - Implementation in infrastructure layer
+ */
+public interface AccountRepository {
+    
+    // Save/Update
+    Account save(Account account);
+    
+    // Queries using domain types
+    Optional<Account> findById(Long id);
+    Optional<Account> findByAccountNumber(AccountNumber accountNumber);
+    List<Account> findByClientId(Long clientId);
+    List<Account> findByType(AccountType accountType);
+    
+    // Business queries
+    long countByClientId(Long clientId);
+    boolean existsByAccountNumber(AccountNumber accountNumber);
+    
+    // Deletion
+    void delete(Account account);
+}
+```
+
+**Key Points:**
+- Interface in `domain.repository` package
+- Uses Value Objects (AccountNumber, AccountType)
+- Domain language (findByAccountNumber, not findByNumber)
+- No infrastructure concerns (no SQL, no JPA annotations)
+
+#### 3. Context Map
+
+Visual representation of context relationships:
+
+```
+┌─────────────────────────────────────┐
+│     Banking Core Context            │
+│  (Account & Client Management)      │
+│                                     │
+│  Aggregates: Account, Client        │
+│  Services: TransferService          │
+└─────────────────────────────────────┘
+            │
+            │ Published Language (Events)
+            │
+    ┌───────┴────────┬──────────────┐
+    │                │               │
+    ▼                ▼               ▼
+┌─────────┐    ┌─────────┐    ┌─────────┐
+│Notifica-│    │  Audit  │    │Reporting│
+│tion     │    │ Context │    │ Context │
+│Context  │    │         │    │         │
+└─────────┘    └─────────┘    └─────────┘
+
+Relationship: Customer/Supplier
+- Banking Core is Supplier (upstream)
+- Others are Customers (downstream)
+- Integration via Domain Events
+```
+
+### Documentation Best Practices
+
+#### 1. Keep Documentation Close to Code
+
+```
+project/
+├── BOUNDED-CONTEXT.md          # Context definition
+├── src/
+│   └── main/
+│       └── java/
+│           └── com/
+│               └── bank/
+│                   ├── domain/
+│                   │   ├── repository/
+│                   │   │   ├── AccountRepository.java
+│                   │   │   └── ClientRepository.java
+│                   │   ├── README.md    # Domain layer guide
+│                   │   └── ...
+│                   └── ...
+```
+
+#### 2. Document Business Rules in Code
+
+```java
+public class Account {
+    
+    /**
+     * Deposit money into account.
+     * 
+     * Business Rules:
+     * - Amount must be positive
+     * - Currency must match account currency
+     * - All accounts can accept deposits
+     * 
+     * Domain Event: MoneyDepositedEvent
+     */
+    public void deposit(Money amount) {
+        validateDeposit(amount);
+        this.balance = this.balance.add(amount);
+        publishEvent(new MoneyDepositedEvent(this, amount));
+    }
+}
+```
+
+#### 3. Maintain Ubiquitous Language Glossary
+
+Create a living document that evolves with the domain:
+
+```markdown
+## Ubiquitous Language - Banking Context
+
+### Core Concepts
+- **Account:** A financial account that holds money
+- **Client:** A person or entity that owns accounts
+- **Money:** An amount with a specific currency
+- **Balance:** Current amount of money in an account
+
+### Operations
+- **Deposit:** Add money to an account
+- **Withdraw:** Remove money from an account
+- **Transfer:** Move money from one account to another
+
+### Business Terms
+- **Overdraft:** Negative balance allowed for checking accounts
+- **Premium Client:** Client with enhanced privileges
+- **Account Type:** Classification (CHECKING, SAVINGS)
+```
+
+#### 4. Document Aggregate Boundaries
+
+```markdown
+## Aggregate Design Decisions
+
+### Account Aggregate
+**Included:**
+- Account (root)
+- Money (value object)
+- AccountNumber (value object)
+- AccountType (value object)
+
+**Excluded:**
+- Client (separate aggregate, referenced by ID)
+- Transactions (could be separate aggregate if needed)
+
+**Rationale:**
+- Account is the consistency boundary
+- Client can exist without accounts
+- Transactions are historical, don't need strong consistency
+```
+
+### Documentation Maintenance
+
+#### When to Update Documentation
+
+1. **New Features:** Document new aggregates, services, or events
+2. **Business Rule Changes:** Update rules and invariants
+3. **Context Evolution:** Adjust boundaries and scope
+4. **Integration Changes:** Update context map
+5. **Refactoring:** Keep structure diagrams current
+
+#### Documentation Review Checklist
+
+- [ ] Bounded Context definition is current
+- [ ] Ubiquitous Language reflects actual code
+- [ ] All aggregates are documented
+- [ ] Business rules are explicit
+- [ ] Context boundaries are clear
+- [ ] Integration points are defined
+- [ ] Repository interfaces are documented
+
+### Lab 6 Documentation Example
+
+In Lab 6, you'll find complete documentation:
+
+1. **BOUNDED-CONTEXT.md** - Full context definition
+2. **Repository Interfaces** - Explicit domain contracts
+3. **Code Comments** - Business rules in code
+4. **README** - Quick reference guide
+
+This documentation serves as:
+- **Team Reference:** Shared understanding
+- **Onboarding Tool:** New developers learn quickly
+- **Design Record:** Decisions and rationale
+- **Evolution Guide:** How to extend the system
+
+---
+
+
+## 📖 Recommended Reading
+
+### Essential Books:
+- **"Domain-Driven Design"** by Eric Evans (The Blue Book)
+- **"Implementing Domain-Driven Design"** by Vaughn Vernon (The Red Book)
+- **"Domain-Driven Design Distilled"** by Vaughn Vernon (Quick intro)
+
+### Online Resources:
+- DDD Community: https://www.domainlanguage.com/
+- Martin Fowler's DDD articles: https://martinfowler.com/tags/domain%20driven%20design.html
+- DDD Reference: https://www.domainlanguage.com/ddd/reference/
+
+### Patterns:
+- Aggregate Design: https://vaughnvernon.com/
+- Event Storming: https://www.eventstorming.com/
+
+---
+
+## ❓ Common Questions
+
+**Q: When should I use DDD?**
+A: Use DDD for complex domains with significant business logic. Not needed for simple CRUD applications.
+
+**Q: Do I need to use all DDD patterns?**
+A: No! Use what makes sense for your domain. Start with aggregates and value objects.
+
+**Q: How do I identify aggregates?**
+A: Look for consistency boundaries. What must change together atomically?
+
+**Q: Should everything be a value object?**
+A: No. Use value objects for concepts without identity that are immutable.
+
+**Q: How do I handle relationships between aggregates?**
+
+---
+
+## Next Steps
+
+### Lecture 7: Hexagonal Architecture
+- Ports and Adapters pattern
+- Dependency Inversion Principle
+- Clean Architecture principles
+- Separating domain from infrastructure
+
+### Lab 7: Hexagonal Architecture Implementation
+- Restructure application with hexagonal architecture
+- Define ports (interfaces) for external systems
+- Implement adapters for database, REST, etc.
+- Achieve true independence of domain logic
+
+---
+A: Reference by ID only. Use domain services to coordinate operations.
+
+---
+
+## 🔍 Lab 6 Preview: What to Expect
+
+### Part 1: Value Objects (45 min)
+- Create `Money` value object
+- Create `AccountNumber` value object
+- Create `Email` value object
+- Update entities to use value objects
+
+### Part 2: Aggregates (45 min)
+- Define `Account` aggregate with transactions
+- Define `Client` aggregate
+- Implement business logic in aggregates
+- Protect invariants
+
+### Part 3: Domain Services (45 min)
+- Implement `TransferService`
+- Add domain events
+- Refactor application services
+
+### Part 4: Testing (45 min)
+- Test value objects
+- Test aggregate business rules
+- Test domain services
+- Deploy and verify
+
+---
+
+## 🎉 Ready for Lab 6!
+
+### What You've Learned:
+- ✅ DDD philosophy and benefits
+- ✅ Strategic patterns (Bounded Contexts, Ubiquitous Language)
+- ✅ Tactical patterns (Entities, Value Objects, Aggregates)
+- ✅ Domain services and events
+- ✅ DDD layered architecture
+
+### Next Steps:
+1. Review lecture slides
+2. Read DDD reference materials
+3. Start Lab 6: DDD Refactoring
+4. Apply patterns to banking application
+
+**Let's build a rich domain model! 🚀**
+
+---
+
+## 📞 Questions & Discussion
+
+### Discussion Topics:
+- How does DDD improve code maintainability?
+- When is DDD overkill?
+- How do you identify bounded contexts?
+- What are the challenges of implementing DDD?
+
+### Office Hours:
+- **When:** [Your schedule]
+- **Where:** [Your location/online]
+- **Contact:** [Your email]
+
+---
+
+# Thank You!
+
+## Domain-Driven Design: Aligning Code with Business 🎯
+
+**Remember:**
+- Focus on the domain and domain logic
+- Use ubiquitous language consistently
+- Keep aggregates small and focused
+- Protect invariants in aggregate roots
+- Use value objects for immutable concepts
+
+**See you in Lab 6!**

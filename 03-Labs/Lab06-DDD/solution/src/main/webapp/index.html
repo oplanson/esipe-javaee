@@ -1,0 +1,65 @@
+<!-- © Copyright 2025-2026 Olivier Planson. All rights reserved. Reproduction prohibited. Made with IBM Bob. -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Banking Web Application - Lab 06</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <div class="container">
+        <header class="hero">
+            <h1>🏦 Banking Web Application</h1>
+            <p class="subtitle">Lab 06: Domain-Driven Design</p>
+        </header>
+
+        <main>
+            <section class="card">
+                <h2>Welcome!</h2>
+                <p>This is a banking application built with Jakarta EE and MicroProfile.</p>
+                <p>This lab demonstrates JAX-RS (RESTful Web Services) features.</p>
+            </section>
+
+            <section class="card">
+                <h2>Quick Links</h2>
+                <nav class="nav-links">
+                    <a href="clients" class="btn btn-primary">View Clients</a>
+                    <a href="client?action=new" class="btn btn-secondary">Add New Client</a>
+                    <a href="api/clients" class="btn btn-info">REST API - Clients</a>
+                    <a href="api/accounts" class="btn btn-info">REST API - Accounts</a>
+                </nav>
+            </section>
+
+            <section class="card">
+                <h2>Monitoring & API Documentation</h2>
+                <nav class="nav-links">
+                    <a href="health" class="btn btn-info">Health Check</a>
+                    <a href="health/live" class="btn btn-info">Liveness</a>
+                    <a href="health/ready" class="btn btn-info">Readiness</a>
+                    <a href="metrics" class="btn btn-info">Metrics</a>
+                    <a href="openapi" class="btn btn-success">OpenAPI Spec</a>
+                    <a href="openapi/ui" class="btn btn-success">API Documentation</a>
+                </nav>
+            </section>
+
+            <section class="card">
+                <h2>JAX-RS Features</h2>
+                <ul class="feature-list">
+                    <li>✅ RESTful Resources (@Path, @GET, @POST, @PUT, @DELETE)</li>
+                    <li>✅ JSON-B Serialization (@Produces, @Consumes)</li>
+                    <li>✅ Bean Validation (@Valid, @NotNull)</li>
+                    <li>✅ Exception Mappers (@Provider)</li>
+                    <li>✅ MicroProfile OpenAPI (@OpenAPIDefinition)</li>
+                    <li>✅ MicroProfile Rest Client (@RegisterRestClient)</li>
+                </ul>
+            </section>
+        </main>
+
+        <footer>
+            <p>&copy; 2026 Banking Application | Lab 06</p>
+            <p>Built with Jakarta EE 10, MicroProfile 6 & Domain-Driven Design</p>
+        </footer>
+    </div>
+</body>
+</html>
