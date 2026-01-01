@@ -99,9 +99,9 @@ esipe-javaee/
 
 ### Software Requirements
 - **JDK:** OpenJDK 17 or later
-- **Application Server:** OpenLiberty 24.0+ (automatically downloaded by Maven)
+- **Application Server:** Open Liberty 24.0+ (automatically downloaded by Maven)
 - **Container Runtime:** Podman or Docker (for containerized deployment)
-- **Database:** PostgreSQL 14+ or MySQL 8+ (for later labs)
+- **Database:** PostgreSQL 14+ (for Labs 3-5)
 - **Build Tool:** Maven 3.8+
 - **IDE:** IntelliJ IDEA, Eclipse, or VS Code with Java extensions
 - **Git:** Version control
@@ -127,41 +127,29 @@ Follow the detailed setup guide in `05-Deployment/00-environment-setup.md`
 
 ### 3. Convert Markdown Slides to PowerPoint
 
-#### Option A: Using Marp CLI (Recommended)
+#### Automated Conversion (Recommended)
+```bash
+# Use the provided conversion script
+cd 06-Resources/tools
+./convert-slides.sh
+
+# Slides will be generated in: 06-Resources/slides/
+```
+
+#### Manual Conversion with Marp CLI
 ```bash
 # Install Marp CLI
 npm install -g @marp-team/marp-cli
 
 # Convert a single lecture
-marp 02-Lectures/01-intro-jakartaee.md -o slides/01-intro-jakartaee.pptx
+cd 02-Lectures
+marp 01-intro-jakartaee-microprofile.md -o ../06-Resources/slides/01-intro-jakartaee-microprofile.pptx --theme esipe-theme.css
 
 # Convert all lectures
-marp 02-Lectures/*.md -o slides/
+marp *.md -o ../06-Resources/slides/ --theme esipe-theme.css
 ```
 
-#### Option B: Using Slidev
-```bash
-# Install Slidev
-npm install -g @slidev/cli
-
-# Start presentation server
-cd 02-Lectures
-slidev 01-intro-jakartaee.md
-
-# Export to PowerPoint
-slidev export 01-intro-jakartaee.md --format pptx
-```
-
-#### Option C: Using Pandoc
-```bash
-# Install Pandoc
-# macOS: brew install pandoc
-# Linux: apt-get install pandoc
-# Windows: Download from pandoc.org
-
-# Convert to PowerPoint
-pandoc 02-Lectures/01-intro-jakartaee.md -o slides/01-intro-jakartaee.pptx
-```
+For detailed conversion instructions, see: `06-Resources/MERMAID-CONVERSION-GUIDE.md`
 
 ### 4. Run Lab Exercises
 Each lab includes:
@@ -185,19 +173,18 @@ cd 03-Labs/Lab01-FirstServlet
 ./docker-test.sh
 ```
 
-### 5. Build Banking Application
-The banking application evolves through Git branches:
+### 5. Verify All Labs
+Test all labs at once with the verification script:
 
 ```bash
-cd 04-BankingApp/src
-git checkout 01-basic-servlets    # Week 1
-git checkout 02-jpa-entities       # Week 1
-git checkout 03-cdi-services       # Week 1
-git checkout 04-rest-api           # Week 2
-git checkout 05-ddd-refactor       # Week 2
-git checkout 06-hexagonal-arch     # Week 2
-git checkout 07-microservices      # Week 2
+cd 06-Resources/tools
+./verify-all-labs.sh
+
+# This will test Labs 1-5 sequentially
+# Compatible with macOS (Bash 3.2) and Linux
 ```
+
+For individual lab testing, see each lab's README.md
 
 ---
 
@@ -244,20 +231,31 @@ Each lab follows this structure:
 ```
 03-Labs/LabXX-TopicName/
 ├── README.md              # Lab instructions
+├── TESTING-GUIDE.md       # Testing documentation (Labs 1-2)
+├── SOLUTION-STATUS.md     # Implementation status (Labs 3-5)
 ├── starter/               # Initial code for students
 │   ├── pom.xml
+│   ├── Containerfile      # Container build file
 │   └── src/
 ├── solution/              # Complete solution
 │   ├── pom.xml
+│   ├── Containerfile      # Container build file
+│   ├── docker-compose.yml # Database setup (Labs 3-5)
 │   └── src/
-└── tests/                 # Validation tests
+├── podman-test.sh         # Podman deployment script (recommended)
+├── docker-test.sh         # Docker deployment script
+├── run-lab.sh             # Development mode script
+└── test-lab.sh            # Build verification script
 ```
 
 ### Lab Workflow
 1. Read `README.md` for objectives and instructions
-2. Start with code in `starter/` directory
+2. Start with code in `starter/` directory (or solution for reference)
 3. Implement required functionality
-4. Run tests to validate solution
+4. Test with deployment scripts:
+   - `./podman-test.sh` - Quick containerized test (recommended)
+   - `./run-lab.sh` - Development mode with hot reload
+   - `./test-lab.sh` - Build verification only
 5. Compare with `solution/` if needed
 
 ---
@@ -290,7 +288,7 @@ Each lab follows this structure:
 ### Official Documentation
 - [Jakarta EE Specification](https://jakarta.ee/specifications/)
 - [Jakarta EE Tutorial](https://eclipse-ee4j.github.io/jakartaee-tutorial/)
-- [OpenLiberty Documentation](https://openliberty.io/docs/)
+- [Open Liberty Documentation](https://openliberty.io/docs/)
 - [MicroProfile Documentation](https://microprofile.io/)
 
 ### Recommended Reading
@@ -357,6 +355,6 @@ For questions or issues:
 
 ---
 
-**Last Updated:** December 2025  
-**Version:** 1.0  
-**Course Code:** JAKARTAEE-MS-2025
+**Last Updated:** January 2026
+**Version:** 1.0
+**Course Code:** JAKARTAEE-MS-2026
