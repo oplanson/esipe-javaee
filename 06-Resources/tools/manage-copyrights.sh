@@ -134,12 +134,44 @@ add_copyright() {
             fi
             ;;
         *.md)
-            # Markdown: Add at beginning
-            {
-                echo "<!-- $copyright_text -->"
-                echo ""
-                cat "$file"
-            } > "$file.tmp"
+            # Markdown: Check if file has YAML front matter (Marp slides)
+            if head -1 "$file" | grep -q "^---$"; then
+                # Has YAML front matter
+                # 1. Update footer copyright year in YAML (visible to users)
+                # 2. Add internal copyright comment after YAML
+                awk -v copyright="<!-- $copyright_text -->" -v year="$CURRENT_YEAR" '
+                    BEGIN { in_frontmatter = 0; frontmatter_ended = 0 }
+                    /^---$/ {
+                        if (in_frontmatter == 0) {
+                            in_frontmatter = 1
+                            print $0
+                            next
+                        } else if (in_frontmatter == 1 && frontmatter_ended == 0) {
+                            frontmatter_ended = 1
+                            print $0
+                            print ""
+                            print copyright
+                            print ""
+                            next
+                        }
+                    }
+                    /^footer:/ && in_frontmatter == 1 {
+                        # Update copyright year and ensure full copyright message
+                        # Format: "Lecture X: Title | © YEAR Olivier Planson - All rights reserved. Reproduction prohibited."
+                        gsub(/© [0-9]{4}[^|]*/, "© " year " Olivier Planson - All rights reserved. Reproduction prohibited.")
+                        print $0
+                        next
+                    }
+                    { print }
+                ' "$file" > "$file.tmp"
+            else
+                # No YAML front matter, add at beginning
+                {
+                    echo "<!-- $copyright_text -->"
+                    echo ""
+                    cat "$file"
+                } > "$file.tmp"
+            fi
             ;;
     esac
     
@@ -174,6 +206,7 @@ update_copyright() {
             sed -i '' "s|# © Copyright $old_year_escaped Olivier Planson\. All rights reserved\. Reproduction prohibited\. Made with IBM Bob\.|# © Copyright $new_year_range Olivier Planson. All rights reserved. Reproduction prohibited. Made with IBM Bob.|g" "$file"
             ;;
         *.md)
+            # Markdown files: copyright can be at beginning or after YAML front matter
             sed -i '' "s|<!-- © Copyright $old_year_escaped Olivier Planson\. All rights reserved\. Reproduction prohibited\. Made with IBM Bob\. -->|<!-- © Copyright $new_year_range Olivier Planson. All rights reserved. Reproduction prohibited. Made with IBM Bob. -->|g" "$file"
             ;;
         *.jsp)

@@ -1,12 +1,10 @@
-<!-- © Copyright 2026 Olivier Planson. All rights reserved. Reproduction prohibited. Made with IBM Bob. -->
-
 ---
 marp: true
 theme: default
 paginate: true
 backgroundColor: #fff
 header: 'Jakarta EE & MicroProfile Course'
-footer: 'Lecture 1: Jakarta EE, MicroProfile & Open Liberty | © 2025'
+footer: 'Lecture 1: Jakarta EE, MicroProfile & Open Liberty | © 2026 Olivier Planson - All rights reserved. Reproduction prohibited.'
 style: |
   section {
     font-size: 22px;
@@ -116,6 +114,13 @@ style: |
     align-items: start;
   }
 ---
+
+<!-- © Copyright 2026 Olivier Planson. All rights reserved. Reproduction prohibited. Made with IBM Bob. -->
+
+
+
+
+
 
 # Introduction to Jakarta EE and MicroProfile
 ## Enterprise Java Development with Open Liberty

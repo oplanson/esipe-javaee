@@ -1,12 +1,10 @@
-<!-- © Copyright 2026 Olivier Planson. All rights reserved. Reproduction prohibited. Made with IBM Bob. -->
-
 ---
 marp: true
 theme: default
 paginate: true
 backgroundColor: #fff
 header: 'Jakarta EE & MicroProfile Course'
-footer: 'Lecture 3: JPA and Database Integration | © 2025'
+footer: 'Lecture 3: JPA and Database Integration | © 2026 Olivier Planson - All rights reserved. Reproduction prohibited.'
 style: |
   section {
     font-size: 22px;
@@ -24,7 +22,7 @@ style: |
     padding: 10px;
   }
   code {
-    font-size: 0.85em;
+    font-size: 0.7em;
   }
   ul, ol {
     font-size: 0.85em;
@@ -73,6 +71,7 @@ style: |
   }
   td {
     vertical-align: middle;
+    white-space: nowrap;
   }
   th {
     white-space: nowrap;
@@ -80,6 +79,7 @@ style: |
   p {
     margin: 8px 0;
     line-height: 1.6;
+    white-space: nowrap;
   }
   strong {
     white-space: nowrap;
@@ -101,7 +101,26 @@ style: |
     gap: 15px;
     align-items: start;
   }
+  .columns-2-1 {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 20px;
+    align-items: start;
+  }
+  .columns-1-2 {
+    display: grid;
+    grid-template-columns: 1fr 2fr;
+    gap: 20px;
+    align-items: start;
+  }
 ---
+
+<!-- © Copyright 2026 Olivier Planson. All rights reserved. Reproduction prohibited. Made with IBM Bob. -->
+
+
+
+
+
 
 # 🗄️ Lecture 3: JPA and Database Integration
 

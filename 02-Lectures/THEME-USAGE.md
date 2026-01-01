@@ -1,5 +1,3 @@
-<!-- © Copyright 2026 Olivier Planson. All rights reserved. Reproduction prohibited. Made with IBM Bob. -->
-
 # Guide d'utilisation du thème Marp ESIPE
 
 ## Configuration du thème
@@ -17,6 +15,13 @@ backgroundColor: #fff
 header: 'Votre en-tête'
 footer: 'Votre pied de page'
 ---
+
+<!-- © Copyright 2026 Olivier Planson. All rights reserved. Reproduction prohibited. Made with IBM Bob. -->
+
+
+
+
+
 ```
 
 ## Mise en page en colonnes

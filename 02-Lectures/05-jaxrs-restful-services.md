@@ -1,12 +1,126 @@
-<!-- © Copyright 2026 Olivier Planson. All rights reserved. Reproduction prohibited. Made with IBM Bob. -->
-
 ---
 marp: true
 theme: default
 paginate: true
-header: 'Jakarta EE - JAX-RS and RESTful Web Services'
-footer: '© 2025 ESIPE - All Rights Reserved'
+backgroundColor: #fff
+header: 'Jakarta EE & MicroProfile Course'
+footer: 'Lecture 5: JAX-RS and RESTful Services | © 2026 Olivier Planson - All rights reserved. Reproduction prohibited.'
+style: |
+  section {
+    font-size: 22px;
+    padding: 40px 60px;
+  }
+  img {
+    max-width: 85%;
+    max-height: 380px;
+    display: block;
+    margin: 10px auto;
+  }
+  pre {
+    font-size: 0.65em;
+    margin: 10px 0;
+    padding: 10px;
+  }
+  code {
+    font-size: 0.7em;
+  }
+  ul, ol {
+    font-size: 0.85em;
+    line-height: 1.8;
+    margin: 8px 0;
+  }
+  li {
+    margin: 6px 0;
+    line-height: 1.8;
+  }
+  li::marker {
+    flex-shrink: 0;
+  }
+  h1 {
+    font-size: 1.8em;
+    margin-bottom: 20px;
+    line-height: 1.3;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: nowrap;
+    white-space: nowrap;
+  }
+  h2 {
+    font-size: 1.3em;
+    margin: 15px 0 10px 0;
+    line-height: 1.3;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: nowrap;
+    white-space: nowrap;
+  }
+  h3 {
+    font-size: 1.1em;
+    margin: 10px 0 8px 0;
+    line-height: 1.3;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex-wrap: nowrap;
+    white-space: nowrap;
+  }
+  table {
+    font-size: 0.8em;
+  }
+  td {
+    vertical-align: middle;
+    white-space: nowrap;
+  }
+  th {
+    white-space: nowrap;
+  }
+  p {
+    margin: 8px 0;
+    line-height: 1.6;
+    white-space: nowrap;
+  }
+  strong {
+    white-space: nowrap;
+  }
+  blockquote {
+    font-size: 0.9em;
+    margin: 10px 0;
+    padding: 10px 15px;
+  }
+  .columns {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    align-items: start;
+  }
+  .columns-3 {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 15px;
+    align-items: start;
+  }
+  .columns-2-1 {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 20px;
+    align-items: start;
+  }
+  .columns-1-2 {
+    display: grid;
+    grid-template-columns: 1fr 2fr;
+    gap: 20px;
+    align-items: start;
+  }
 ---
+
+<!-- © Copyright 2026 Olivier Planson. All rights reserved. Reproduction prohibited. Made with IBM Bob. -->
+
+
+
+
+
 
 <!-- 
 Lecture 5: JAX-RS and RESTful Web Services
