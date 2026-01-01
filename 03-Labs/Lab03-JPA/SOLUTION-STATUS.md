@@ -1,3 +1,5 @@
+<!-- © Copyright 2026 Olivier Planson. All rights reserved. Reproduction prohibited. Made with IBM Bob. -->
+
 # Lab 03 Solution Status
 
 ## ✅ Completed Components

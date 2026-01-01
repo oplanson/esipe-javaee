@@ -1,3 +1,5 @@
+<!-- © Copyright 2026 Olivier Planson. All rights reserved. Reproduction prohibited. Made with IBM Bob. -->
+
 # Guide de Conversion des Slides
 
 Ce guide explique comment utiliser le script `convert-slides.sh` pour convertir automatiquement les fichiers Markdown en présentations PowerPoint avec gestion intelligente des mises à jour et conversion automatique des diagrammes Mermaid.

@@ -1,3 +1,5 @@
+<!-- © Copyright 2026 Olivier Planson. All rights reserved. Reproduction prohibited. Made with IBM Bob. -->
+
 # Lab 5: JAX-RS and RESTful Web Services
 
 ## Banking Application - REST API Implementation

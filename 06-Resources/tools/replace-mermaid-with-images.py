@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# © Copyright 2026 Olivier Planson. All rights reserved. Reproduction prohibited. Made with IBM Bob.
 """
 Script to replace Mermaid blocks with image references while keeping the original code in HTML comments.
 This allows the diagrams to be updated later if needed.

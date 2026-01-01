@@ -1,4 +1,5 @@
 #!/bin/bash
+# © Copyright 2026 Olivier Planson. All rights reserved. Reproduction prohibited. Made with IBM Bob.
 
 # Script to extract Mermaid diagrams from markdown files and convert them to images
 # Usage: ./convert-mermaid-to-images.sh [markdown-file or directory]

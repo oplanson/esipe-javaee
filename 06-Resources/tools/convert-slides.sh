@@ -1,4 +1,5 @@
 #!/bin/bash
+# © Copyright 2026 Olivier Planson. All rights reserved. Reproduction prohibited. Made with IBM Bob.
 
 # Markdown to PowerPoint Conversion Script
 # Converts all lecture Markdown files to PowerPoint using Marp

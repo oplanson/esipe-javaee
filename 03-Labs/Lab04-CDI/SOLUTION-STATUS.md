@@ -1,3 +1,5 @@
+<!-- © Copyright 2026 Olivier Planson. All rights reserved. Reproduction prohibited. Made with IBM Bob. -->
+
 # Lab 04 - CDI and Dependency Injection - Solution Status
 
 ## ✅ Completion Status: 100%

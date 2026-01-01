@@ -1,3 +1,5 @@
+<!-- © Copyright 2026 Olivier Planson. All rights reserved. Reproduction prohibited. Made with IBM Bob. -->
+
 # Mermaid Diagram to Image Conversion Guide
 
 This guide explains how to convert Mermaid diagrams embedded in Markdown files to PNG/SVG images.

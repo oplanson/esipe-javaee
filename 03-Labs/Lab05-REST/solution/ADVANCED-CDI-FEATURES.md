@@ -1,3 +1,5 @@
+<!-- © Copyright 2026 Olivier Planson. All rights reserved. Reproduction prohibited. Made with IBM Bob. -->
+
 # Advanced CDI Features in Lab 05
 
 This document describes the advanced CDI features implemented in Lab 05 (inherited from Lab 04), including **CDI Events** and **CDI Qualifiers**.

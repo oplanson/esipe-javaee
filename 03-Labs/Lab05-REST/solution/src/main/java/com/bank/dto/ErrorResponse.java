@@ -1,5 +1,7 @@
 package com.bank.dto;
 
+/* © Copyright 2026 Olivier Planson. All rights reserved. Reproduction prohibited. Made with IBM Bob. */
+
 import java.time.LocalDateTime;
 import java.util.List;
 

@@ -1,5 +1,7 @@
 package com.bank.exception.mapper;
 
+/* © Copyright 2026 Olivier Planson. All rights reserved. Reproduction prohibited. Made with IBM Bob. */
+
 import com.bank.dto.ErrorResponse;
 import com.bank.exception.ValidationException;
 

@@ -1,298 +1,328 @@
-# Copyright Management Tools
+# Copyright Management Guide
 
-This directory contains three scripts for managing copyright notices across the project.
-
-## Scripts Overview
-
-### 1. `update-copyrights.sh` - Bulk Update
-**Purpose:** Update ALL existing copyright notices to the new format, regardless of file modification status.
-
-**Use Case:** Initial migration or format change
-
-**What it does:**
-- Finds all files with existing copyright notices
-- Updates them to the new format: `© Copyright 2025-CURRENT_YEAR Olivier Planson. All rights reserved. Reproduction prohibited. Made with IBM Bob.`
-- Changes single year (2025) to year range (2025-CURRENT_YEAR)
-- Uses current system year automatically
-- Processes: Markdown, Shell, XML, HTML, JSP, Java, Python files
-
-**Usage:**
-```bash
-cd esipe-javaee
-bash 06-Resources/tools/update-copyrights.sh
-```
-
-**Example Output:**
-```
-✓ Updated: ./03-Labs/Lab01-FirstServlet/README.md
-✓ Updated: ./03-Labs/Lab01-FirstServlet/podman-test.sh
-⏭️  Skipped (no copyright): ./03-Labs/Lab02-ServletsJSP/solution/src/main/java/Client.java
-```
-
----
-
-### 2. `add-missing-copyrights.sh` - Add to New Files
-**Purpose:** Add copyright notices to files that don't have one yet.
-
-**Use Case:** Adding copyrights to newly created files or files without copyright
-
-**What it does:**
-- Scans HTML, JSP, and Java files
-- Adds copyright notice with current year at the beginning of files without one
-- Skips files that already have a copyright
-- Preserves file structure (adds before package declaration in Java)
-- Uses current system year automatically
-
-**Usage:**
-```bash
-cd esipe-javaee
-bash 06-Resources/tools/add-missing-copyrights.sh
-```
-
-**Example Output:**
-```
-✓ Added copyright: ./03-Labs/Lab04-CDI/solution/src/main/webapp/index.html
-✓ Added copyright: ./03-Labs/Lab05-REST/solution/src/main/java/com/bank/api/AccountResource.java
-⏭️  Already has copyright: ./03-Labs/Lab01-FirstServlet/solution/src/main/java/Client.java
-```
-
----
-
-### 3. `smart-update-copyrights.sh` - Intelligent Update (RECOMMENDED)
-**Purpose:** Intelligently update copyright years based on Git modification history.
-
-**Use Case:** Annual copyright updates or after making changes to files
-
-**What it does:**
-- Uses Git to detect when each file was last modified
-- Only updates copyright if file was modified in the current year
-- Preserves original creation year
-- Creates or updates year range (e.g., 2025 → 2025-2026)
-- Skips files not modified this year
-- Skips files already showing current year
-
-**Logic:**
-```
-File created in 2025, modified in CURRENT_YEAR:
-  Before: © Copyright 2025 Olivier Planson...
-  After:  © Copyright 2025-CURRENT_YEAR Olivier Planson...
-
-File created in 2025, not modified in CURRENT_YEAR:
-  Before: © Copyright 2025 Olivier Planson...
-  After:  © Copyright 2025 Olivier Planson... (no change)
-
-File already has CURRENT_YEAR:
-  Before: © Copyright 2025-CURRENT_YEAR Olivier Planson...
-  After:  © Copyright 2025-CURRENT_YEAR Olivier Planson... (no change)
-```
-
-**Note:** CURRENT_YEAR is automatically determined from the system date.
-
-**Usage:**
-```bash
-cd esipe-javaee
-bash 06-Resources/tools/smart-update-copyrights.sh
-```
-
-**Example Output:**
-```
-Current year: 2026
-✓ Updated: ./03-Labs/Lab05-REST/solution/src/main/java/com/bank/api/AccountResource.java (2025 → 2025-2026)
-⏭️  Not modified this year: ./03-Labs/Lab01-FirstServlet/README.md (last: 2025, copyright: 2025)
-⏭️  Already current: ./03-Labs/Lab04-CDI/solution/src/main/webapp/index.html (2025-2026)
-```
-
-**Note:** The year 2026 in this example would be the current system year when the script runs.
-
----
+This guide explains how copyright notices are managed in the Jakarta EE course repository using the unified management script.
 
 ## Copyright Format
 
-All scripts use the same copyright format:
+All files in this repository should include the following copyright notice:
 
-**HTML/XML:**
-```html
-<!-- © Copyright 2025-CURRENT_YEAR Olivier Planson. All rights reserved. Reproduction prohibited. Made with IBM Bob. -->
+```
+© Copyright 2025-2026 Olivier Planson. All rights reserved. Reproduction prohibited. Made with IBM Bob.
 ```
 
-**Java:**
+## File-Specific Formats
+
+### Category 1: Java Files (Internal Code)
 ```java
-/* © Copyright 2025-CURRENT_YEAR Olivier Planson. All rights reserved. Reproduction prohibited. Made with IBM Bob. */
+/* © Copyright 2025-2026 Olivier Planson. All rights reserved. Reproduction prohibited. Made with IBM Bob. */
+
+package com.bank.model;
+
+public class MyClass {
+    // ...
+}
+```
+**Placement:** After package declaration to avoid compilation errors
+
+### Category 2: Source Code Files (Internal, Not User-Visible)
+
+#### Shell Scripts
+```bash
+#!/bin/bash
+# © Copyright 2025-2026 Olivier Planson. All rights reserved. Reproduction prohibited. Made with IBM Bob.
 ```
 
-**JSP:**
+#### Python Scripts
+```python
+#!/usr/bin/env python3
+# © Copyright 2025-2026 Olivier Planson. All rights reserved. Reproduction prohibited. Made with IBM Bob.
+```
+
+#### XML Files
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- © Copyright 2025-2026 Olivier Planson. All rights reserved. Reproduction prohibited. Made with IBM Bob. -->
+```
+
+#### Markdown Files
+```markdown
+<!-- © Copyright 2025-2026 Olivier Planson. All rights reserved. Reproduction prohibited. Made with IBM Bob. -->
+
+# Document Title
+```
+
+### Category 3: User-Visible Files (Rendered in Browser)
+
+#### HTML Files
+```html
+<!-- © Copyright 2025-2026 Olivier Planson. All rights reserved. Reproduction prohibited. Made with IBM Bob. -->
+<!DOCTYPE html>
+<html>
+    <!-- Content visible to users -->
+</html>
+```
+**Note:** Copyright in HTML comment (internal), not visible in rendered page
+
+#### JSP Files
 ```jsp
-<%-- © Copyright 2025-CURRENT_YEAR Olivier Planson. All rights reserved. Reproduction prohibited. Made with IBM Bob. --%>
+<%-- © Copyright 2025-2026 Olivier Planson. All rights reserved. Reproduction prohibited. Made with IBM Bob. --%>
+<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<html>
+    <!-- Content visible to users -->
+</html>
 ```
+**Note:** Copyright in JSP comment (internal), not visible in rendered page
 
-**Shell/Python/Markdown:**
+---
+
+## Unified Management Script
+
+### Single Script for All Copyright Management
+**File:** `manage-copyrights.sh`
+
+This unified script handles all copyright management tasks:
+- Updates copyright years for modified files (Git-based detection)
+- Adds copyright to files without one
+- Handles all file types correctly
+- Respects file categories (internal vs user-visible)
+
+**Features:**
+- ✅ Smart detection: Only updates files modified in current year
+- ✅ Preserves original creation year
+- ✅ Creates or updates year ranges (e.g., 2025 → 2025-2026)
+- ✅ Skips files already showing current year
+- ✅ Adds copyright to new files automatically
+- ✅ Correct placement for each file type
+- ✅ Uses Git history to determine modifications
+
+**Usage:**
 ```bash
-# © Copyright 2025-CURRENT_YEAR Olivier Planson. All rights reserved. Reproduction prohibited. Made with IBM Bob.
+cd 06-Resources/tools
+./manage-copyrights.sh
 ```
 
-**Note:** CURRENT_YEAR is automatically replaced with the actual current year (e.g., 2026, 2027, etc.)
+**When to use:**
+- Automatically runs in pre-commit hook
+- Manual run for audits or verification
+- After creating new files
 
 ---
 
-## Workflow Recommendations
+## File Categories and Copyright Visibility
 
-### Initial Setup (First Time)
-1. Run `add-missing-copyrights.sh` to add copyrights to all files
-2. Run `update-copyrights.sh` to ensure consistent format
-3. Commit changes
+### 1. Internal Code (Java)
+- **Visibility:** Not visible to end users
+- **Format:** `/* ... */` comment after package declaration
+- **Purpose:** Legal protection of source code
 
-### Annual Update (Every Year)
-1. Run `smart-update-copyrights.sh` at the beginning of the year
-2. Review changes
-3. Commit with message: `docs: update copyright year to YYYY`
+### 2. Source Files (sh, py, xml, md)
+- **Visibility:** Not visible to end users
+- **Format:** `#` or `<!-- ... -->` comments
+- **Purpose:** Legal protection of configuration and documentation
 
-### New Files
-1. Manually add copyright when creating new files, OR
-2. Run `add-missing-copyrights.sh` periodically
-
-### Format Change
-1. Update the copyright format in all three scripts
-2. Run `update-copyrights.sh` to apply new format to all files
-3. Commit changes
+### 3. User-Visible Files (html, jsp)
+- **Visibility:** Copyright in internal comments only
+- **Format:** `<!-- ... -->` or `<%-- ... --%>` comments
+- **Purpose:** Legal protection without cluttering user interface
+- **Important:** Copyright NOT displayed in rendered HTML
 
 ---
 
-## Git Integration
+## Automated Management
 
-The `smart-update-copyrights.sh` script requires Git to function properly. It uses:
-- `git log` to determine when files were last modified
-- `git rev-parse` to verify it's in a Git repository
+### Pre-Commit Hook
 
-**Requirements:**
-- Must be run from within a Git repository
-- Files must be tracked by Git
-- Git history must be available
+The repository includes a pre-commit hook that automatically runs the unified management script before each commit.
 
----
+**Location:** `.git/hooks/pre-commit`
 
-## Automation
+**What it does:**
+1. Runs `manage-copyrights.sh`
+2. Updates copyrights for modified files
+3. Adds copyrights to new files
+4. Stages any copyright changes
+5. Continues with commit if successful
 
-### Pre-commit Hook Integration
-
-You can integrate copyright updates into the pre-commit hook:
-
+**To disable temporarily:**
 ```bash
-# Add to .git/hooks/pre-commit
-echo "Updating copyrights for modified files..."
-bash 06-Resources/tools/smart-update-copyrights.sh
+git commit --no-verify
 ```
-
-### CI/CD Integration
-
-Add to your CI/CD pipeline to verify copyrights:
-
-```yaml
-# Example GitHub Actions
-- name: Check Copyright Years
-  run: |
-    bash 06-Resources/tools/smart-update-copyrights.sh
-    if [ -n "$(git status --porcelain)" ]; then
-      echo "Copyright years need updating"
-      exit 1
-    fi
-```
-
----
-
-## Troubleshooting
-
-### Script Not Executable
-```bash
-chmod +x 06-Resources/tools/*.sh
-```
-
-### sed: command not found (macOS)
-The scripts use `sed -i ''` for macOS compatibility. For Linux, change to `sed -i`.
-
-### Git History Not Found
-If `smart-update-copyrights.sh` shows "No Git history", ensure:
-- File is tracked by Git: `git add <file>`
-- Repository has commits: `git log`
-
-### Copyright Not Detected
-Ensure copyright format matches exactly:
-```
-© Copyright YYYY[-YYYY] Olivier Planson
-```
-
----
-
-## File Support
-
-| File Type | Extension | Supported |
-|-----------|-----------|-----------|
-| Java      | .java     | ✅        |
-| Markdown  | .md       | ✅        |
-| Shell     | .sh       | ✅        |
-| XML       | .xml      | ✅        |
-| HTML      | .html     | ✅        |
-| JSP       | .jsp      | ✅        |
-| Python    | .py       | ✅        |
-| CSS       | .css      | ❌        |
-| JavaScript| .js       | ❌        |
-| Properties| .properties| ❌       |
-
-To add support for new file types, update the scripts' file patterns and sed commands.
 
 ---
 
 ## Best Practices
 
-1. **Always review changes** before committing
-2. **Use smart-update-copyrights.sh** for annual updates
-3. **Add copyrights to new files** immediately
-4. **Keep format consistent** across all files
-5. **Document any format changes** in commit messages
-6. **Test scripts** on a small set of files first
+### 1. Let the Hook Handle It
+The pre-commit hook automatically manages copyrights. You usually don't need to run the script manually.
+
+### 2. New Files
+When creating new files:
+- The pre-commit hook will add copyright automatically
+- Or run `./manage-copyrights.sh` manually
+
+### 3. Year Ranges
+- Single year: `2025` (file created and not modified since)
+- Year range: `2025-2026` (file created in 2025, modified in 2026)
+- The script handles this automatically based on Git history
+
+### 4. File Placement Rules
+
+**Java Files:**
+- Copyright AFTER package declaration
+- Prevents compilation errors
+- Automatically handled by script
+
+**HTML/JSP Files:**
+- Copyright in comments (internal)
+- NOT visible in rendered output
+- Maintains clean user interface
+
+**Shell/Python Scripts:**
+- Copyright after shebang line
+- Maintains script executability
+
+**XML Files:**
+- Copyright after XML declaration
+- Maintains XML validity
 
 ---
 
-## Examples
+## Troubleshooting
 
-### Scenario 1: New Year Update
-```bash
-# January 1st, 2027
-cd esipe-javaee
-bash 06-Resources/tools/smart-update-copyrights.sh
-# Only files modified in 2027 will be updated to 2025-2027
-git add .
-git commit -m "docs: update copyright year to 2027"
+### Copyright Not Updating
+**Problem:** File modified but copyright not updated
+
+**Solutions:**
+1. Check if file was actually modified this year (Git history)
+2. Verify copyright format matches expected pattern
+3. Run script manually: `./manage-copyrights.sh`
+4. Check Git history: `git log -1 --format="%ad" --date=format:"%Y" -- <file>`
+
+### Compilation Errors in Java
+**Problem:** Java compilation fails due to copyright placement
+
+**Solution:**
+The unified script automatically places copyright AFTER package declaration. If you have issues:
+1. Run `./manage-copyrights.sh`
+2. Verify package declaration is on first line
+3. Check for extra spaces or formatting issues
+
+### Script Not Found
+**Problem:** Cannot find or execute script
+
+**Solutions:**
+1. Ensure you're in the repository root
+2. Check script exists: `ls -la 06-Resources/tools/manage-copyrights.sh`
+3. Make executable: `chmod +x 06-Resources/tools/manage-copyrights.sh`
+
+### Copyright in Wrong Format
+**Problem:** Copyright doesn't match expected format
+
+**Solution:**
+The script looks for: `© Copyright [year] Olivier Planson`
+- Ensure exact format is used
+- Run script to standardize format
+- Check for typos or extra characters
+
+---
+
+## Manual Copyright Addition
+
+If you need to add copyright manually (not recommended, use script instead):
+
+### Java
+```java
+/* © Copyright 2025-2026 Olivier Planson. All rights reserved. Reproduction prohibited. Made with IBM Bob. */
+
+package com.bank.model;
+
+public class MyClass {
+    // ...
+}
 ```
 
-### Scenario 2: New Lab Created
-```bash
-# After creating Lab06
-cd esipe-javaee
-bash 06-Resources/tools/add-missing-copyrights.sh
-# Adds copyright to all new files in Lab06
-git add 03-Labs/Lab06
-git commit -m "feat: add Lab06 with copyright notices"
+### HTML
+```html
+<!-- © Copyright 2025-2026 Olivier Planson. All rights reserved. Reproduction prohibited. Made with IBM Bob. -->
+<!DOCTYPE html>
+<html>
+    <!-- ... -->
+</html>
 ```
 
-### Scenario 3: Format Change
-```bash
-# Change copyright format in all three scripts
-cd esipe-javaee
-bash 06-Resources/tools/update-copyrights.sh
-# Updates all existing copyrights to new format
-git add .
-git commit -m "docs: update copyright format"
+### JSP
+```jsp
+<%-- © Copyright 2025-2026 Olivier Planson. All rights reserved. Reproduction prohibited. Made with IBM Bob. --%>
+<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<html>
+    <!-- ... -->
+</html>
 ```
 
 ---
 
-## Support
+## Verification
 
-For issues or questions about copyright management:
-1. Check this documentation
-2. Review script comments
-3. Test on a single file first
-4. Contact the maintainer
+To verify copyright consistency:
+
+```bash
+# Run the unified script (it will report status)
+cd 06-Resources/tools
+./manage-copyrights.sh
+
+# Check files without copyright manually
+find . -name "*.java" -type f | while read f; do
+    if ! grep -q "© Copyright.*Olivier Planson" "$f"; then
+        echo "Missing: $f"
+    fi
+done
+
+# Check files with old year only
+find . -name "*.java" -type f | while read f; do
+    if grep -q "© Copyright 2025 Olivier Planson" "$f" && ! grep -q "2026" "$f"; then
+        echo "Old year: $f"
+    fi
+done
+```
+
+---
+
+## Script Output Interpretation
+
+The unified script provides clear output:
+
+```
+✓ Updated: file.java (2025 → 2025-2026)     # File modified this year, copyright updated
+✓ Added copyright: newfile.java              # New file, copyright added
+⏭️  Already current: file.java (2025-2026)   # Copyright already up to date
+⏭️  Not modified this year: file.java        # File not modified, skipped
+⚠️  No Git history: file.java                # File not in Git, skipped
+```
+
+---
+
+## Summary
+
+### Unified Approach
+- **One Script:** `manage-copyrights.sh` handles everything
+- **Automated:** Pre-commit hook runs automatically
+- **Smart:** Only updates modified files (Git-based)
+- **Complete:** Adds copyright to new files
+- **Correct:** Proper placement for each file type
+
+### File Categories
+1. **Java Files:** Internal code, copyright after package
+2. **Source Files:** Internal (sh, py, xml, md), copyright at beginning
+3. **User-Visible:** HTML/JSP, copyright in comments (not rendered)
+
+### Workflow
+1. Create or modify files
+2. Commit changes
+3. Pre-commit hook runs automatically
+4. Copyrights managed automatically
+5. No manual intervention needed
+
+The copyright management system is fully automated and requires no manual intervention in normal workflow.
 
 ---
 

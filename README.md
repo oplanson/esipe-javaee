@@ -1,3 +1,5 @@
+<!-- © Copyright 2026 Olivier Planson. All rights reserved. Reproduction prohibited. Made with IBM Bob. -->
+
 # Jakarta EE and Microservices Course
 ## Complete Course Package with DDD and Hexagonal Architecture
 

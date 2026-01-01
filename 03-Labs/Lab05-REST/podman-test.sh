@@ -1,4 +1,5 @@
 #!/bin/bash
+# © Copyright 2026 Olivier Planson. All rights reserved. Reproduction prohibited. Made with IBM Bob.
 # Podman deployment and testing script for Lab 05 - REST API
 # This script builds and deploys the banking REST application using Podman
 
