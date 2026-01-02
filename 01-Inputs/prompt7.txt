@@ -1,0 +1,38 @@
+Maintenant nous allons travailler le eptieme chapitre décrit dans les fichiers @README.md, @COURSE-SUMMARY.md et @course-outline.md. Il faut revenir à la demande initiale expliquée dans le fichier @/esipe-javaee/01-Inputs/prompt.txt et tous les prompts qui sont décrits dans le repertoire 01-Inputs mais te focaliser sur le cours 7 et le lab 7. Les fichiers pour le lab 7 seront mis dans le repertoire 03-Labs dans un repertoire Lab07.
+Le fichier md du cours sera mis au meme niveau que le fichier md du cours 01. 
+Le contenu du cours est présenté dans le .md de l'introduction "Hexagonal Architecture"
+- Ports and Adapters pattern
+- Dependency Inversion Principle
+- Clean Architecture principles
+- Separating domain from infrastructure
+
+
+Les cours et les exemples seront générés en anglais.
+La structure du cours devra respecter les structures des cours précedents et bien expliquer le next lecture.
+
+Ensuite, le Lab07 sera généré dans son integralité pour etre fonctionnel et appuyer le cours. 
+Il contiendra le repertoire starter pour permettre aux etudiants de démarrer ainsi que les fichiers de base pour commencer le lab et le repertoire solution pour avoir une correction avec la solution complete et fonctionnelle. 
+Le contenu du repertoire solution devra etre opérationnel dans son integralité. 
+Le code produit devra reprendre le code des lab précédents et toutes leurs fonctionnalités en mettant en avant les apports de ce chapitre. 
+Les outils de tests shell seront aussi générés pour permettre de valider le contenu du repertoire solution et tout autre exemple fourni par un etudiant. Bien reprendre les orientation des derniers shell pour eviter de generer les erreurs de tests.  
+Enfin, les fichier @README.md @course-outline.md et @COURSE-SUMMARY.md seront mis à jours avec les informations du nouveau chapitre. 
+
+### Objectifs
+- Apprendre les notions de base de la programmation orientée objet
+- Apprendre les notions de base de la programmation fonctionnelle
+- Apprendre les notions de base de la programmation impérative
+- Apprendre les notions de base de la programmation réactive
+- Apprendre les notions de base de la programmation orientée données
+- Apprendre les notions de base de la programmation orientée services
+- Apprendre les notions de base de la programmation orientée événements
+- Apprendre les notions de base de la programmation orientée flux
+- Apprendre les notions de base de la programmation orientée messages
+- Apprendre les notions de base de la programmation orientée microservices
+- Apprendre les notions de base de la programmation orientée cloud
+- Apprendre les notions de base de la programmation orientée containers
+- Apprendre les notions de base de la programmation orientée bases de données
+- Apprendre les notions de base de la programmation orientée sécurité
+- Apprendre les notions de base de la programmation orientée tests
+- Apprendre les notions de base de la programmation orientée analyse
+- Apprendre les notions de base de la programmation orientée intelligence artificielle
+- Apprendre les notions de base de la programmation orientée IA

@@ -297,7 +297,7 @@ public class AccountResourceV2 {
         AccountDTO dto = new AccountDTO();
         dto.setId(account.getId());
         dto.setAccountNumber(account.getAccountNumber() != null ? account.getAccountNumber().getValue() : null);
-        dto.setBalance(account.getBalance() != null ? account.getBalance().getAmount() : null);
+        dto.setBalance(account.getBalance() != null ? account.getBalance().getAmount() : BigDecimal.ZERO);
         dto.setCurrency(account.getBalance() != null ? account.getBalance().getCurrency() : "EUR");
         dto.setAccountType(account.getAccountType() != null ? account.getAccountType().name() : null);
         dto.setClientId(account.getClient() != null ? account.getClient().getId() : null);

@@ -433,60 +433,102 @@
 
 ---
 
-## 📅 Session 7: Hexagonal Architecture (6 hours)
+## 📅 Session 7: Hexagonal Architecture (6 hours) ✅ COMPLETE
 
-### Lecture 7.1: Hexagonal Architecture (2 hours)
+### Lecture 7.1: Hexagonal Architecture (2 hours) ✅
 **Topics:**
-- Ports and adapters pattern
-- Dependency inversion principle
-- Clean architecture
-- Separation of concerns
-- Testing strategies
+- Ports and adapters pattern (Alistair Cockburn)
+- Dependency inversion principle (SOLID)
+- Clean architecture layers
+- Primary ports (driving/use cases) vs Secondary ports (driven/repositories)
+- Separation of concerns and layer boundaries
+- Domain purity (no framework dependencies)
+- Testing strategies with mock adapters
+- **API versioning as multiple adapters for same ports**
 
 **Learning Outcomes:**
-- Understand hexagonal architecture
-- Implement ports and adapters
-- Apply dependency inversion
-- Write testable code
+- Understand hexagonal architecture principles
+- Distinguish between primary and secondary ports
+- Implement ports and adapters correctly
+- Apply dependency inversion principle
+- Keep domain pure and testable
+- **Demonstrate adapter flexibility through API versioning**
 
 **Materials:**
-- Slides: `02-Lectures/07-hexagonal-architecture.md`
+- Slides: `02-Lectures/07-hexagonal-architecture.md` ✅ (1650 lines)
+- Architecture diagrams with Mermaid ✅
+- Code examples comparing layered vs hexagonal ✅
 
 ---
 
-### Lab 7: Hexagonal Refactoring (2 hours)
+### Lab 7: Hexagonal Refactoring with API Versioning (2 hours) ✅
 **Objectives:**
-- Define domain ports
-- Implement adapters
-- Restructure application layers
-- Write unit tests
+- Refactor Lab 06 DDD code to hexagonal architecture
+- Create pure domain layer (no JPA annotations)
+- Define primary ports (use case interfaces)
+- Define secondary ports (repository interfaces)
+- Implement application services (use cases)
+- Create infrastructure adapters (JPA, REST, Web, Events)
+- Separate domain entities from JPA entities
+- Create mappers between domain and infrastructure
+- **Implement API V1 (deprecated) and V2 (current)**
+- **Demonstrate multiple adapters for same ports**
 
 **Deliverables:**
-- Port interfaces
-- Adapter implementations
-- Layered architecture
-- Unit test suite
+- Pure domain model (Account, Client, Money, Email, etc.)
+- Primary ports: AccountManagementUseCase, ClientManagementUseCase, MoneyOperationsUseCase
+- Secondary ports: AccountRepository, ClientRepository, EventPublisher
+- Application services implementing use cases
+- Commands for all operations (OpenAccountCommand, DepositCommand, etc.)
+- JPA entities (AccountEntity, ClientEntity) separate from domain
+- Mappers (AccountMapper, ClientMapper)
+- JPA adapters implementing repository ports
+- **REST V1 adapters (deprecated with @Deprecated)**
+- **REST V2 adapters (current with Money VO)**
+- Web adapters (JSP controllers)
+- CDI event publisher adapter
+- Complete hexagonal structure with 43 Java files
+- **API-VERSIONING.md documentation (329 lines)**
 
 **Materials:**
-- Lab guide: `03-Labs/Lab07-Hexagonal/README.md`
+- Lab guide: `03-Labs/Lab07-Hexagonal/README.md` ✅ (950+ lines with API versioning section)
+- Solution: `03-Labs/Lab07-Hexagonal/solution/` ✅
+- API Versioning Guide: `03-Labs/Lab07-Hexagonal/solution/API-VERSIONING.md` ✅
+- Architecture docs: HEXAGONAL-ARCHITECTURE.md, REFACTORING-GUIDE.md ✅
+- Testing scripts: run-lab.sh, podman-test.sh, docker-test.sh ✅
 
 ---
 
-### Lecture 7.2: Testing and Quality (1 hour)
+### Lecture 7.2: API Versioning & Adapter Flexibility (1 hour) ✅
 **Topics:**
-- Unit testing with JUnit 5
-- Integration testing
-- Mocking with Mockito
-- Test-driven development
-- Code quality tools
+- Multiple adapters for same ports
+- API versioning strategies in hexagonal architecture
+- Deprecation with @Deprecated annotation
+- V1 (simple format) vs V2 (rich format with Money VO)
+- Migration path and timeline
+- Testing multiple API versions
+- Benefits of hexagonal architecture for API evolution
+
+**Learning Outcomes:**
+- Understand how hexagonal architecture enables API versioning
+- Implement multiple REST adapters for same use cases
+- Use @Deprecated for graceful API deprecation
+- Design migration strategies
+- Test multiple API versions simultaneously
 
 ---
 
-### Lab 7 Continuation (1 hour)
+### Lab 7 Continuation (1 hour) ✅
 **Activities:**
-- Write comprehensive tests
-- Add integration tests
-- Configure code coverage
+- Test API V1 (deprecated) endpoints
+- Test API V2 (current) endpoints with Money VO
+- Verify @Deprecated warnings in IDE
+- Compare response formats between versions
+- Test premium client features (V2 exclusive)
+- Run compilation: `mvn clean package` - BUILD SUCCESS ✅
+- Verify all 43 source files compile
+- Review architecture documentation
+- Compare with Lab 06 to understand refactoring
 
 ---
 

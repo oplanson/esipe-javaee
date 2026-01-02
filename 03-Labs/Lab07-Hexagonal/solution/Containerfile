@@ -1,0 +1,29 @@
+# © Copyright Olivier Planson - 2026
+# Containerfile for Banking Hexagonal Architecture Application - Lab 07
+# Hexagonal Architecture (Ports and Adapters) with JAX-RS & MicroProfile
+# Use with Podman: podman build -t banking-hexagonal-app:lab07 .
+
+FROM icr.io/appcafe/open-liberty:full-java17-openj9-ubi
+
+# Copy application WAR to apps directory
+COPY --chown=1001:0 target/banking-hexagonal-app.war /config/apps/
+
+# Copy Liberty server configuration
+COPY --chown=1001:0 src/main/liberty/config/server.xml /config/
+COPY --chown=1001:0 src/main/liberty/config/bootstrap.properties /config/
+
+# Copy MicroProfile configuration
+COPY --chown=1001:0 src/main/resources/META-INF/microprofile-config.properties /config/
+
+# Copy PostgreSQL JDBC driver to shared resources
+RUN mkdir -p /opt/ol/wlp/usr/shared/resources/postgresql
+COPY --chown=1001:0 target/liberty/wlp/usr/servers/bankingServer/postgresql/*.jar /opt/ol/wlp/usr/shared/resources/postgresql/
+
+# Configure Liberty features
+RUN configure.sh
+
+# Expose HTTP and HTTPS ports
+EXPOSE 9080 9443
+
+# Run Open Liberty
+CMD ["/opt/ol/wlp/bin/server", "run", "defaultServer"]

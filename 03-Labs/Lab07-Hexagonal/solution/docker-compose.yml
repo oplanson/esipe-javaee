@@ -1,0 +1,33 @@
+# Docker Compose for Lab 07 - Hexagonal Architecture
+# © Copyright 2026 Olivier Planson. All rights reserved. Reproduction prohibited. Made with IBM Bob.
+
+services:
+  # PostgreSQL Database
+  postgres:
+    image: postgres:16-alpine
+    container_name: lab07-postgres
+    environment:
+      POSTGRES_DB: bankingdb
+      POSTGRES_USER: bankuser
+      POSTGRES_PASSWORD: bankpass
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U bankuser -d bankingdb"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - bank-network
+
+volumes:
+  postgres_data:
+    driver: local
+
+networks:
+  bank-network:
+    driver: bridge
+
+# Made with Bob

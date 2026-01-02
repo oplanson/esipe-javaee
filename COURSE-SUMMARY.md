@@ -31,6 +31,7 @@ This complete course package contains everything needed to teach or learn Jakart
    - ✅ Lecture 4: CDI and Dependency Injection (1377 lines)
    - ✅ Lecture 5: JAX-RS and RESTful Services (1770+ lines)
    - ✅ Lecture 6: Domain-Driven Design (1400+ lines with DDD Documentation section)
+   - ✅ Lecture 7: Hexagonal Architecture (1650+ lines with Ports and Adapters pattern)
    - Markdown format with Marp compatibility
    - Ready for PowerPoint conversion
    - Includes Mermaid diagrams, code examples, and visuals
@@ -92,7 +93,22 @@ This complete course package contains everything needed to teach or learn Jakart
      - Complete solution with deployment scripts
      - Comprehensive README with migration strategy
      - 18 automated tests including API versioning verification
-   - Framework for Labs 7-8 (to be expanded)
+  - ✅ Lab 7: Hexagonal Architecture (complete)
+     - Complete Hexagonal Architecture implementation
+     - Pure domain layer (zero framework dependencies)
+     - Primary Ports (AccountManagementUseCase, ClientManagementUseCase, MoneyOperationsUseCase)
+     - Secondary Ports (AccountRepository, ClientRepository, EventPublisher)
+     - Commands (OpenAccountCommand, CreateClientCommand, UpdateClientCommand, DepositCommand, WithdrawCommand, TransferCommand)
+     - Primary Adapters (REST v1/v2, Web controllers)
+     - Secondary Adapters (JPA repositories, CDI event publisher)
+     - **API Versioning (V1 deprecated, V2 current with Money VO)**
+     - **API-VERSIONING.md guide (329 lines)**
+     - JPA entities separate from domain entities
+     - Mappers for entity conversion
+     - Complete solution with deployment scripts
+     - Comprehensive README (950+ lines)
+     - 43 source files compiled successfully
+  - Framework for Lab 8 (to be expanded)
 
 4. **Banking Application** (`04-BankingApp/`)
    - Complete documentation (598 lines)
@@ -292,7 +308,7 @@ esipe-javaee/
 │   ├── 04-cdi-dependency-injection.md      # ✅ Complete (1377 lines)
 │   ├── 05-jaxrs-restful-services.md        # ✅ Complete (1770+ lines)
 │   ├── 06-domain-driven-design.md          # ✅ Complete (1150+ lines)
-│   ├── 07-hexagonal-architecture.md        # To be created
+│   ├── 07-hexagonal-architecture.md        # ✅ Complete (1650+ lines)
 │   └── 08-microservices.md                 # To be created
 │
 ├── 03-Labs/                           # Lab exercises
@@ -365,7 +381,33 @@ esipe-javaee/
 │   │   │       ├── application/      # DTOs
 │   │   │       └── ...
 │   │   └── *.sh                      # Deployment scripts (Podman/Docker)
-│   ├── Lab07-Hexagonal/              # To be created
+│   ├── Lab07-Hexagonal/              # ✅ Complete
+│   │   ├── README.md                 # Instructions (950+ lines)
+│   │   ├── SOLUTION-STATUS.md        # Implementation status
+│   │   ├── starter/                  # Starter code (to be created)
+│   │   ├── solution/                 # Complete Hexagonal solution
+│   │   │   ├── API-VERSIONING.md     # API versioning guide (329 lines)
+│   │   │   ├── pom.xml
+│   │   │   ├── Containerfile
+│   │   │   ├── docker-compose.yml
+│   │   │   └── src/
+│   │   │       ├── domain/           # Pure domain layer (no dependencies)
+│   │   │       │   ├── model/        # Aggregates (Account, Client)
+│   │   │       │   ├── valueobject/  # Value Objects (Money, AccountNumber, Email, AccountType)
+│   │   │       │   ├── service/      # Domain Services (TransferService)
+│   │   │       │   └── event/        # Domain Events
+│   │   │       ├── application/      # Application layer
+│   │   │       │   ├── port/         # Ports (primary and secondary)
+│   │   │       │   ├── command/      # Commands (6 command records)
+│   │   │       │   ├── dto/          # DTOs
+│   │   │       │   └── service/      # Use case implementations
+│   │   │       └── infrastructure/   # Infrastructure layer
+│   │   │           ├── persistence/  # JPA entities, mappers, adapters
+│   │   │           ├── rest/         # REST adapters (v1 and v2)
+│   │   │           ├── web/          # Web adapters (JSP controllers)
+│   │   │           ├── event/        # Event publisher adapter
+│   │   │           └── config/       # Configuration
+│   │   └── *.sh                      # Deployment scripts (Podman/Docker)
 │   └── Lab08-Microservices/          # To be created
 │
 ├── 04-BankingApp/                     # Banking application
@@ -398,13 +440,15 @@ esipe-javaee/
 6. **Lecture 4** - CDI and Dependency Injection (1377 lines)
 7. **Lecture 5** - JAX-RS and RESTful Services (1770+ lines)
 8. **Lecture 6** - Domain-Driven Design (1400+ lines, includes DDD documentation section)
-9. **Lab 1** - First Servlet with deployment scripts
+9. **Lecture 7** - Hexagonal Architecture (1650+ lines, includes Ports and Adapters pattern)
+10. **Lab 1** - First Servlet with deployment scripts
 10. **Lab 2** - Complete MVC with JavaBeans, JSP, and 4 deployment scripts
 11. **Lab 3** - JPA with PostgreSQL, Flyway migrations, and error handling
 12. **Lab 4** - CDI with declarative transactions, interceptors, and producers
 13. **Lab 5** - REST API with JAX-RS, JSON-B, validation, and MicroProfile Rest Client
 14. **Lab 6** - DDD refactoring with Value Objects, Aggregates, Domain Services, Events, Repository Interfaces, and complete Bounded Context documentation
-15. **Environment Setup** - Detailed installation guide
+15. **Lab 7** - Hexagonal Architecture with pure domain layer, ports, adapters, commands, and API versioning (v1/v2)
+16. **Environment Setup** - Detailed installation guide
 16. **Course Outline** - Complete 48-hour breakdown
 17. **Conversion Guide** - Marp/Slidev/Pandoc instructions
 18. **Banking App Docs** - Complete architecture and roadmap
@@ -412,8 +456,8 @@ esipe-javaee/
 
 ### 📝 To Be Expanded (Framework Ready)
 
-1. **Lectures 6-8** - Follow Lecture 1-5 template
-2. **Labs 6-8** - Follow Lab 1-5 structure with deployment scripts
+1. **Lecture 8** - Microservices (follow Lecture 1-7 template)
+2. **Lab 8** - Microservices (follow Lab 1-7 structure with deployment scripts)
 3. **Banking App Code** - Implement 8 Git branches
 4. **Additional Resources** - FAQ, cheat sheets, etc.
 
@@ -540,17 +584,17 @@ Students who complete this course will be able to:
 
 ### Phase 1: Core Content (Complete ✅)
 - ✅ Course structure
-- ✅ Lectures 1-5 (Introduction, Servlets/JSP, JPA, CDI, JAX-RS)
-- ✅ Labs 1-5 (First Servlet, JSP/MVC, JPA, CDI, REST API)
+- ✅ Lectures 1-7 (Introduction, Servlets/JSP, JPA, CDI, JAX-RS, DDD, Hexagonal)
+- ✅ Labs 1-7 (First Servlet, JSP/MVC, JPA, CDI, REST API, DDD, Hexagonal)
 - ✅ Documentation and guides
 
 ### Phase 2: Advanced Topics (Next)
-- Create Lectures 6-8 (DDD, Hexagonal, Microservices)
+- Create Lecture 8 (Microservices)
 - Add more Mermaid diagrams
 - Include more code examples
 
 ### Phase 3: Complete Labs (Following)
-- Create Labs 6-8 (DDD, Hexagonal, Microservices)
+- Create Lab 8 (Microservices)
 - Provide starter and solution code
 - Add comprehensive tests
 
@@ -573,12 +617,14 @@ Before using this course:
 - [x] Lecture 4 complete with CDI and transactions
 - [x] Lecture 5 complete with JAX-RS and REST
 - [x] Lecture 6 complete with DDD patterns
+- [x] Lecture 7 complete with Hexagonal Architecture
 - [x] Lab 1 complete with solution
 - [x] Lab 2 complete with JSP and MicroProfile
 - [x] Lab 3 complete with JPA and PostgreSQL
 - [x] Lab 4 complete with CDI and declarative transactions
 - [x] Lab 5 complete with REST API and JSON-B
 - [x] Lab 6 complete with DDD refactoring
+- [x] Lab 7 complete with Hexagonal Architecture and API versioning
 - [x] Environment setup guide complete
 - [x] Course outline detailed
 - [x] Conversion guide provided
