@@ -101,11 +101,11 @@ if podman images | grep -q "banking-ddd-lab06"; then
     print_status "Old image removed"
 fi
 
-# Stop docker-compose services if running
+# Stop docker-compose services if running (with volumes cleanup)
 if command -v docker-compose &> /dev/null; then
-    print_warning "Stopping any existing docker-compose services..."
-    docker-compose down 2>/dev/null || true
-    print_status "Docker-compose services stopped"
+    print_warning "Stopping any existing docker-compose services and removing volumes..."
+    docker-compose down -v 2>/dev/null || true
+    print_status "Docker-compose services and volumes removed"
 fi
 
 # Clean up any orphaned networks using available container runtime
@@ -394,9 +394,186 @@ else
     print_warning "Accounts web interface returned HTTP $HTTP_CODE"
 fi
 
+# Test 12: API Versioning - Test V1 (Deprecated)
+echo ""
+echo "=========================================="
+echo "Testing API Versioning (V1 vs V2)"
+echo "=========================================="
+echo ""
+
+echo "Test 12: GET /api/accounts (V1 - DEPRECATED)"
+V1_RESPONSE=$(curl -s -i $BASE_URL/accounts)
+V1_BODY=$(echo "$V1_RESPONSE" | tail -n +$(echo "$V1_RESPONSE" | grep -n "^\r$" | cut -d: -f1 | head -1))
+V1_HEADERS=$(echo "$V1_RESPONSE" | head -n $(echo "$V1_RESPONSE" | grep -n "^\r$" | cut -d: -f1 | head -1))
+
+if echo "$V1_HEADERS" | grep -q "X-API-Deprecated: true"; then
+    print_status "V1 API has deprecation header"
+else
+    print_warning "V1 API missing deprecation header"
+fi
+
+if echo "$V1_HEADERS" | grep -q "X-API-Version: 1.0"; then
+    print_status "V1 API has version header (1.0)"
+else
+    print_warning "V1 API missing version header"
+fi
+
+if echo "$V1_HEADERS" | grep -q "X-API-Sunset-Date"; then
+    SUNSET_DATE=$(echo "$V1_HEADERS" | grep "X-API-Sunset-Date" | cut -d: -f2 | tr -d ' \r')
+    print_status "V1 API has sunset date: $SUNSET_DATE"
+else
+    print_warning "V1 API missing sunset date header"
+fi
+
+if [ -n "$V1_BODY" ]; then
+    print_status "V1 API response received"
+    echo "$V1_BODY" | jq '.[0] | {id, number, balance, type}' 2>/dev/null || echo "V1 format: simple balance field"
+else
+    print_warning "V1 API returned empty response"
+fi
+
+# Test 13: API Versioning - Test V2 (Current)
+echo ""
+echo "Test 13: GET /api/v2/accounts (V2 - CURRENT)"
+V2_RESPONSE=$(curl -s -i http://localhost:$APP_PORT/api/v2/accounts)
+V2_BODY=$(echo "$V2_RESPONSE" | tail -n +$(echo "$V2_RESPONSE" | grep -n "^\r$" | cut -d: -f1 | head -1))
+V2_HEADERS=$(echo "$V2_RESPONSE" | head -n $(echo "$V2_RESPONSE" | grep -n "^\r$" | cut -d: -f1 | head -1))
+
+if echo "$V2_HEADERS" | grep -q "X-API-Version: 2.0"; then
+    print_status "V2 API has version header (2.0)"
+else
+    print_warning "V2 API missing version header"
+fi
+
+if echo "$V2_HEADERS" | grep -q "X-API-Deprecated"; then
+    print_warning "V2 API should NOT have deprecation header"
+else
+    print_status "V2 API correctly has no deprecation header"
+fi
+
+if [ -n "$V2_BODY" ]; then
+    print_status "V2 API response received"
+    echo "$V2_BODY" | jq '.[0] | {id, accountNumber, balance: {amount: .balance.amount, currency: .balance.currency}, accountType}' 2>/dev/null || echo "V2 format: Money Value Object"
+else
+    print_warning "V2 API returned empty response"
+fi
+
+# Test 14: Compare V1 vs V2 response format
+echo ""
+echo "Test 14: Comparing V1 vs V2 response formats"
+if [ -n "$ACCOUNT_ID" ] && [ "$ACCOUNT_ID" != "null" ]; then
+    echo "Fetching same account from both APIs..."
+    
+    V1_ACCOUNT=$(curl -s $BASE_URL/accounts/$ACCOUNT_ID)
+    V2_ACCOUNT=$(curl -s http://localhost:$APP_PORT/api/v2/accounts/$ACCOUNT_ID)
+    
+    echo ""
+    echo "V1 Response (simple balance):"
+    echo "$V1_ACCOUNT" | jq '{id, number, balance, type}' 2>/dev/null || echo "$V1_ACCOUNT"
+    
+    echo ""
+    echo "V2 Response (Money Value Object):"
+    echo "$V2_ACCOUNT" | jq '{id, accountNumber, balance, accountType}' 2>/dev/null || echo "$V2_ACCOUNT"
+    
+    # Verify V2 has Money object structure
+    if echo "$V2_ACCOUNT" | jq -e '.balance.amount' > /dev/null 2>&1 && \
+       echo "$V2_ACCOUNT" | jq -e '.balance.currency' > /dev/null 2>&1; then
+        print_status "V2 correctly uses Money Value Object (amount + currency)"
+    else
+        print_warning "V2 response does not have expected Money Value Object structure"
+    fi
+else
+    print_warning "No account ID available for comparison test"
+fi
+
+# Test 15: V2 Deposit with Money Value Object
+if [ -n "$ACCOUNT_ID" ] && [ "$ACCOUNT_ID" != "null" ]; then
+    echo ""
+    echo "Test 15: POST /api/v2/accounts/$ACCOUNT_ID/deposit (Money VO)"
+    V2_DEPOSIT=$(curl -s -X POST http://localhost:$APP_PORT/api/v2/accounts/$ACCOUNT_ID/deposit \
+        -H "Content-Type: application/json" \
+        -d '{"amount": 100.00, "currency": "EUR"}')
+    
+    if echo "$V2_DEPOSIT" | jq -e '.balance.amount' > /dev/null 2>&1; then
+        BALANCE_AMOUNT=$(echo "$V2_DEPOSIT" | jq -r '.balance.amount')
+        BALANCE_CURRENCY=$(echo "$V2_DEPOSIT" | jq -r '.balance.currency')
+        print_status "V2 deposit successful: $BALANCE_AMOUNT $BALANCE_CURRENCY"
+        echo "$V2_DEPOSIT" | jq . 2>/dev/null
+    else
+        print_warning "V2 deposit response unexpected"
+        echo "$V2_DEPOSIT"
+    fi
+fi
+
+# Test 16: Verify deprecation headers on all V1 endpoints
+echo ""
+echo "Test 16: Verify deprecation headers on V1 endpoints"
+V1_ENDPOINTS=(
+    "/api/accounts"
+    "/api/accounts/$ACCOUNT_ID"
+    "/api/clients"
+)
+
+for endpoint in "${V1_ENDPOINTS[@]}"; do
+    if [[ "$endpoint" == *"null"* ]]; then
+        continue
+    fi
+    
+    HEADERS=$(curl -s -I http://localhost:$APP_PORT$endpoint 2>/dev/null)
+    if echo "$HEADERS" | grep -q "X-API-Deprecated: true"; then
+        print_status "✓ $endpoint has deprecation header"
+    else
+        print_warning "✗ $endpoint missing deprecation header"
+    fi
+done
+
+# Test 17: Test database migration (Option 4 verification)
+echo ""
+echo "Test 17: Verify database migration (Option 4 - Backward Compatible)"
+if command -v docker &> /dev/null && docker ps | grep -q $DB_CONTAINER; then
+    # Check if both old and new columns exist
+    COLUMNS=$(docker exec $DB_CONTAINER psql -U bankuser -d bankdb -t -c "SELECT column_name FROM information_schema.columns WHERE table_name='accounts' AND column_name IN ('balance', 'balance_amount', 'balance_currency');" 2>/dev/null | tr -d ' ')
+    
+    if echo "$COLUMNS" | grep -q "balance" && \
+       echo "$COLUMNS" | grep -q "balance_amount" && \
+       echo "$COLUMNS" | grep -q "balance_currency"; then
+        print_status "Database has both old (balance) and new (balance_amount, balance_currency) columns"
+        print_status "Option 4 (Backward Compatible Migration) verified!"
+    else
+        print_warning "Database migration columns not as expected"
+    fi
+    
+    # Check if trigger exists
+    TRIGGER_EXISTS=$(docker exec $DB_CONTAINER psql -U bankuser -d bankdb -t -c "SELECT COUNT(*) FROM pg_trigger WHERE tgname='trigger_sync_account_balance';" 2>/dev/null | tr -d ' ')
+    if [ "$TRIGGER_EXISTS" = "1" ]; then
+        print_status "Synchronization trigger exists (keeps old column in sync)"
+    else
+        print_warning "Synchronization trigger not found"
+    fi
+elif command -v podman &> /dev/null && podman ps | grep -q $DB_CONTAINER; then
+    # Same checks with podman
+    COLUMNS=$(podman exec $DB_CONTAINER psql -U bankuser -d bankdb -t -c "SELECT column_name FROM information_schema.columns WHERE table_name='accounts' AND column_name IN ('balance', 'balance_amount', 'balance_currency');" 2>/dev/null | tr -d ' ')
+    
+    if echo "$COLUMNS" | grep -q "balance" && \
+       echo "$COLUMNS" | grep -q "balance_amount" && \
+       echo "$COLUMNS" | grep -q "balance_currency"; then
+        print_status "Database has both old and new columns (via Podman)"
+        print_status "Option 4 (Backward Compatible Migration) verified!"
+    else
+        print_warning "Database migration columns not as expected"
+    fi
+    
+    TRIGGER_EXISTS=$(podman exec $DB_CONTAINER psql -U bankuser -d bankdb -t -c "SELECT COUNT(*) FROM pg_trigger WHERE tgname='trigger_sync_account_balance';" 2>/dev/null | tr -d ' ')
+    if [ "$TRIGGER_EXISTS" = "1" ]; then
+        print_status "Synchronization trigger exists (via Podman)"
+    else
+        print_warning "Synchronization trigger not found"
+    fi
+fi
+
 # Test database data
 echo ""
-echo "Test 11: Verify database data"
+echo "Test 18: Verify database data"
 # Try with the available container runtime (docker or podman)
 if command -v docker &> /dev/null && docker ps | grep -q $DB_CONTAINER; then
     CLIENT_COUNT=$(docker exec $DB_CONTAINER psql -U bankuser -d bankdb -t -c "SELECT COUNT(*) FROM clients;" 2>/dev/null | tr -d ' ')
@@ -456,23 +633,42 @@ echo "  ✓ Business Rules Enforcement"
 echo "  ✓ Factory Methods"
 echo ""
 echo "Available REST Endpoints:"
+echo ""
+echo "API V1 (DEPRECATED - Sunset: 2026-06-01):"
 echo "  GET    /api/clients           - List all clients"
 echo "  GET    /api/clients/{id}      - Get client by ID"
 echo "  POST   /api/clients           - Create client"
 echo "  PUT    /api/clients/{id}      - Update client"
 echo "  DELETE /api/clients/{id}      - Delete client"
 echo ""
-echo "  GET    /api/accounts          - List all accounts"
+echo "  GET    /api/accounts          - List all accounts (simple balance)"
 echo "  GET    /api/accounts/{id}     - Get account by ID"
 echo "  POST   /api/accounts          - Create account"
 echo "  POST   /api/accounts/{id}/deposit?amount=X   - Deposit money"
 echo "  POST   /api/accounts/{id}/withdraw?amount=X  - Withdraw money"
 echo ""
+echo "API V2 (CURRENT - Recommended):"
+echo "  GET    /api/v2/accounts       - List all accounts (Money VO)"
+echo "  GET    /api/v2/accounts/{id}  - Get account by ID"
+echo "  POST   /api/v2/accounts/{id}/deposit   - Deposit (JSON body)"
+echo "  POST   /api/v2/accounts/{id}/withdraw  - Withdraw (JSON body)"
+echo "  POST   /api/v2/accounts/{id}/transfer  - Transfer (JSON body)"
+echo ""
+echo "API Versioning Features:"
+echo "  ✓ V1 has deprecation headers (X-API-Deprecated, X-API-Sunset-Date)"
+echo "  ✓ V2 uses Money Value Object (amount + currency)"
+echo "  ✓ Both versions work simultaneously (backward compatible)"
+echo "  ✓ Database supports both formats via trigger (Option 4)"
+echo ""
+echo "Documentation:"
+echo "  📖 API Versioning Guide: solution/API-VERSIONING.md"
+echo "  📖 Migration Guide: V1 → V2 examples included"
+echo ""
 echo "Container Management:"
 echo "  View logs:    podman logs -f $CONTAINER_NAME"
 echo "  Stop:         podman stop $CONTAINER_NAME"
 echo "  Remove:       podman rm $CONTAINER_NAME"
-echo "  Stop DB:      docker-compose down"
+echo "  Stop DB:      docker-compose down -v"
 echo ""
 echo "=========================================="
 print_status "Lab 06 deployment complete!"

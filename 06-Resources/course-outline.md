@@ -339,61 +339,97 @@
 
 ---
 
-## 📅 Session 6: Domain-Driven Design (6 hours)
+## 📅 Session 6: Domain-Driven Design (6 hours) ✅ COMPLETE
 
-### Lecture 6.1: DDD Strategic Patterns (2 hours)
+### Lecture 6.1: DDD Strategic & Tactical Patterns (2 hours) ✅
 **Topics:**
 - DDD philosophy and benefits
-- Ubiquitous language
-- Bounded contexts
+- Ubiquitous language and bounded contexts
 - Context mapping
+- Entities vs value objects
+- Aggregates and aggregate roots
+- Repositories and domain services
 - Domain events
+- **API versioning and breaking changes**
+- **Database migration strategies (Option 4)**
 
 **Learning Outcomes:**
 - Understand DDD principles
 - Identify bounded contexts
-- Design domain model
+- Design domain model with value objects
 - Use domain events
+- **Manage API evolution without breaking changes**
+- **Implement backward-compatible database migrations**
 
 **Materials:**
-- Slides: `02-Lectures/06-ddd-strategic.md`
-- Banking domain analysis
+- Slides: `02-Lectures/06-domain-driven-design.md` ✅ (1508 lines)
+- Banking domain analysis ✅
+- API versioning examples ✅
 
 ---
 
-### Lab 6: DDD Refactoring (Part 1) (2 hours)
+### Lab 6: DDD Refactoring with API Versioning (2 hours) ✅
 **Objectives:**
-- Identify aggregates
-- Define value objects
+- Refactor from anemic to rich domain model
+- Create value objects (Money, AccountNumber, Email, AccountType)
+- Define aggregate roots (Account, Client)
+- Implement domain services (TransferService)
 - Implement domain events
-- Refactor to DDD structure
+- **Create API V2 with Money Value Object**
+- **Add deprecation headers to API V1**
+- **Implement Option 4 database migration**
+- Refactor to DDD package structure
 
 **Deliverables:**
-- Aggregate roots
-- Value objects
-- Domain events
-- Refactored codebase
+- Complete DDD refactoring
+- Value Objects with business logic
+- Aggregate roots with invariants
+- Domain services and events
+- Repository interfaces
+- **API V1 (deprecated) and V2 (current)**
+- **Backward-compatible database migration**
+- **API-VERSIONING.md documentation**
+- DTOs for data transfer
+- 18 automated tests
 
 **Materials:**
-- Lab guide: `03-Labs/Lab06-DDD/README.md`
+- Lab guide: `03-Labs/Lab06-DDD/README.md` ✅ (with migration strategy section)
+- Solution: `03-Labs/Lab06-DDD/solution/` ✅
+- API Versioning Guide: `03-Labs/Lab06-DDD/solution/API-VERSIONING.md` ✅ (398 lines)
+- Bounded Context Doc: `03-Labs/Lab06-DDD/solution/BOUNDED-CONTEXT.md` ✅
+- Testing scripts with API versioning tests ✅
 
 ---
 
-### Lecture 6.2: DDD Tactical Patterns (1 hour)
+### Lecture 6.2: API Evolution & Production Practices (1 hour) ✅
 **Topics:**
-- Entities vs value objects
-- Aggregates and aggregate roots
-- Repositories
-- Domain services
-- Factories
+- Breaking changes vs backward compatibility
+- API versioning strategies (URL, Header, Content Negotiation)
+- Deprecation timelines and communication
+- Database migration patterns (Options 1-4)
+- Real-world examples (Stripe, GitHub, Twitter)
+- Testing API versions
+
+**Learning Outcomes:**
+- Understand API evolution challenges
+- Choose appropriate versioning strategy
+- Implement backward-compatible migrations
+- Communicate deprecation effectively
 
 ---
 
-### Lab 6 Continuation (1 hour)
+### Lab 6 Continuation (1 hour) ✅
 **Activities:**
-- Implement domain services
-- Create factories
-- Add business rules validation
+- Test both API versions (V1 and V2)
+- Verify deprecation headers
+- Compare response formats
+- Test database migration (Option 4)
+- Verify trigger synchronization
+- Run 18 automated tests including:
+  - API V1 deprecation headers
+  - API V2 Money Value Object format
+  - Database backward compatibility
+  - Trigger synchronization
 
 ---
 

@@ -99,25 +99,31 @@ echo ""
 # Navigate to solution
 cd solution
 
+# Stop and remove any existing docker-compose services (with volumes)
+if command -v docker-compose &> /dev/null; then
+    if docker-compose ps 2>/dev/null | grep -q "Up\|Exit"; then
+        echo -e "${YELLOW}⚠ Stopping and removing existing docker-compose services and volumes...${NC}"
+        docker-compose down -v 2>/dev/null || true
+        echo -e "${GREEN}✓ Docker-compose services and volumes removed${NC}"
+    fi
+fi
+
 # Step 1: Start PostgreSQL with docker-compose
 echo "Step 1: Starting PostgreSQL..."
 echo "----------------------------"
-if ! docker-compose ps | grep -q "banking-db.*Up"; then
-    docker-compose up -d
-    
-    echo "Waiting for PostgreSQL to be ready..."
-    for i in {1..30}; do
-        if docker exec banking-db pg_isready -U bankuser -d bankdb > /dev/null 2>&1; then
-            echo -e "${GREEN}✓ PostgreSQL is ready${NC}"
-            break
-        fi
-        sleep 2
-        echo -n "."
-    done
-    echo ""
-else
-    echo -e "${GREEN}✓ PostgreSQL already running${NC}"
-fi
+# Always start fresh after cleanup
+docker-compose up -d
+
+echo "Waiting for PostgreSQL to be ready..."
+for i in {1..30}; do
+    if docker exec banking-db pg_isready -U bankuser -d bankdb > /dev/null 2>&1; then
+        echo -e "${GREEN}✓ PostgreSQL is ready${NC}"
+        break
+    fi
+    sleep 2
+    echo -n "."
+done
+echo ""
 
 echo ""
 
@@ -440,8 +446,8 @@ echo ""
 echo "Stop application:"
 echo "  podman stop $CONTAINER_NAME"
 echo ""
-echo "Stop database:"
-echo "  docker-compose down"
+echo "Stop database (with volumes cleanup):"
+echo "  docker-compose down -v"
 echo ""
 echo "Remove application container:"
 echo "  podman rm $CONTAINER_NAME"

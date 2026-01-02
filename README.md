@@ -81,7 +81,9 @@ esipe-javaee/
    - DDD strategic patterns
    - Bounded contexts and aggregates
    - Value objects and entities
-   - Banking app: DDD refactoring
+   - API versioning and breaking changes
+   - Database migration strategies (Option 4)
+   - Banking app: DDD refactoring with V1/V2 APIs
 
 7. **Hexagonal Architecture** (2h lecture + 2h lab)
    - Ports and adapters pattern

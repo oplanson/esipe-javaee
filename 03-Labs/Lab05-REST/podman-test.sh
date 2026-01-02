@@ -101,11 +101,11 @@ if podman images | grep -q "banking-rest-lab05"; then
     print_status "Old image removed"
 fi
 
-# Stop docker-compose services if running
+# Stop docker-compose services if running (with volumes cleanup)
 if command -v docker-compose &> /dev/null; then
-    print_warning "Stopping any existing docker-compose services..."
-    docker-compose down 2>/dev/null || true
-    print_status "Docker-compose services stopped"
+    print_warning "Stopping any existing docker-compose services and removing volumes..."
+    docker-compose down -v 2>/dev/null || true
+    print_status "Docker-compose services and volumes removed"
 fi
 
 print_status "Cleanup complete - ready for fresh deployment"
@@ -451,7 +451,7 @@ echo "Container Management:"
 echo "  View logs:    podman logs -f $CONTAINER_NAME"
 echo "  Stop:         podman stop $CONTAINER_NAME"
 echo "  Remove:       podman rm $CONTAINER_NAME"
-echo "  Stop DB:      docker-compose down"
+echo "  Stop DB:      docker-compose down -v"
 echo ""
 echo "=========================================="
 print_status "Lab 05 deployment complete!"

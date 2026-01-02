@@ -342,6 +342,380 @@ public class Money {
 
 ---
 
+## 🔄 API Versioning and Breaking Changes
+
+### The Challenge of Refactoring
+
+When refactoring to DDD, we often need to change our data model significantly. This raises an important question: **How do we evolve our API without breaking existing clients?**
+
+### Example: Money Value Object Migration
+
+In our banking application, we're refactoring from a simple `balance` field to a `Money` Value Object with `amount` and `currency`:
+
+**Before (Lab 5):**
+```java
+@Entity
+public class Account {
+    private BigDecimal balance;  // Simple field
+}
+```
+
+**After (Lab 6):**
+```java
+@Entity
+public class Account {
+    @Embedded
+    private Money balance;  // Value Object with amount + currency
+}
+```
+
+### Migration Strategies
+
+#### ❌ Option 1: Breaking Change (Not Recommended)
+```sql
+-- Drop old column, add new ones
+ALTER TABLE accounts DROP COLUMN balance;
+ALTER TABLE accounts ADD COLUMN balance_amount DECIMAL(19,2);
+ALTER TABLE accounts ADD COLUMN balance_currency VARCHAR(3);
+```
+
+**Problems:**
+- ❌ Breaks all existing clients immediately
+- ❌ Requires coordinated deployment
+- ❌ No rollback possible
+- ❌ High risk in production
+
+#### ❌ Option 2: Big Bang Migration
+```sql
+-- Rename and add in one step
+ALTER TABLE accounts RENAME COLUMN balance TO balance_amount;
+ALTER TABLE accounts ADD COLUMN balance_currency VARCHAR(3);
+```
+
+**Problems:**
+- ❌ Still breaks existing code
+- ❌ Difficult to test incrementally
+- ❌ All or nothing approach
+
+#### ❌ Option 3: Dual Write (Complex)
+Keep both old and new fields, write to both:
+
+```java
+public void setBalance(Money money) {
+    this.balance = money.getAmount();  // Old field
+    this.balanceAmount = money.getAmount();  // New field
+    this.balanceCurrency = money.getCurrency();  // New field
+}
+```
+
+**Problems:**
+- ❌ Code duplication
+- ❌ Risk of inconsistency
+- ❌ Maintenance burden
+
+#### ✅ Option 4: Backward Compatible Migration (Recommended)
+
+This is the approach we use in Lab 6:
+
+```sql
+-- Step 1: Add new columns (non-breaking)
+ALTER TABLE accounts ADD COLUMN balance_amount DECIMAL(19,2);
+ALTER TABLE accounts ADD COLUMN balance_currency VARCHAR(3) DEFAULT 'EUR';
+
+-- Step 2: Migrate existing data
+UPDATE accounts SET balance_amount = balance WHERE balance_amount IS NULL;
+
+-- Step 3: Keep old column in sync with trigger
+CREATE OR REPLACE FUNCTION sync_account_balance()
+RETURNS TRIGGER AS $$
+BEGIN
+    NEW.balance = NEW.balance_amount;  -- Sync old column
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER trigger_sync_account_balance
+    BEFORE INSERT OR UPDATE ON accounts
+    FOR EACH ROW
+    EXECUTE FUNCTION sync_account_balance();
+```
+
+**Advantages:**
+- ✅ No breaking changes
+- ✅ Gradual migration possible
+- ✅ Easy rollback
+- ✅ Old and new code can coexist
+- ✅ Low risk
+
+### API Versioning Strategies
+
+#### 1. URL Versioning
+```
+GET /api/v1/accounts/{id}  → Returns { "balance": 1000.00 }
+GET /api/v2/accounts/{id}  → Returns { "balance": { "amount": 1000.00, "currency": "EUR" } }
+```
+
+**Pros:** Clear, easy to understand
+**Cons:** URL proliferation, maintenance burden
+
+#### 2. Header Versioning
+```
+GET /api/accounts/{id}
+Accept: application/vnd.bank.v1+json  → Old format
+Accept: application/vnd.bank.v2+json  → New format
+```
+
+**Pros:** Clean URLs, flexible
+**Cons:** Less visible, harder to test
+
+#### 3. Content Negotiation
+```
+GET /api/accounts/{id}
+Accept: application/json  → Default (latest)
+Accept: application/vnd.bank.legacy+json  → Old format
+```
+
+**Pros:** Backward compatible by default
+**Cons:** Complex to implement
+
+#### 4. Deprecation Strategy (Our Approach)
+
+We use a **deprecation period** approach:
+
+```java
+@GET
+@Path("/{id}")
+public Response getAccount(@PathParam("id") Long id) {
+    Account account = accountService.findById(id);
+    
+    // Return new format with Money Value Object
+    AccountDTO dto = new AccountDTO();
+    dto.setId(account.getId());
+    dto.setBalance(account.getBalance());  // Money object
+    
+    // Add deprecation warning header
+    return Response.ok(dto)
+        .header("X-API-Deprecation", "balance field will change format in v2.0")
+        .header("X-API-Sunset", "2026-06-01")
+        .build();
+}
+```
+
+#### 5. JAX-RS Resource Registration Best Practices
+
+When implementing API versioning with JAX-RS, **explicit resource registration** is crucial to prevent version mixing.
+
+##### ⚠️ Common Pitfall: Auto-Discovery Conflicts
+
+By default, JAX-RS applications use auto-discovery to find all `@Path` annotated classes:
+
+```java
+@ApplicationPath("/api")
+public class RestApplication extends Application {
+    // Auto-discovers ALL @Path classes in the application
+}
+
+@ApplicationPath("/api/v2")
+public class RestApplicationV2 extends Application {
+    // Also auto-discovers ALL @Path classes!
+}
+```
+
+**Problem:** Both applications discover and register ALL resources, causing:
+- V2 resources appear in V1 API with V1 deprecation headers ❌
+- V1 resources appear in V2 API ❌
+- Inconsistent behavior and confusing API contracts
+
+##### ✅ Solution: Explicit Resource Registration
+
+Override `getClasses()` to explicitly register only the resources for each version:
+
+```java
+@ApplicationPath("/api")
+public class RestApplication extends Application {
+    
+    @Override
+    public Set<Class<?>> getClasses() {
+        Set<Class<?>> classes = new HashSet<>();
+        // Only register V1 resources
+        classes.add(AccountResource.class);
+        classes.add(ClientResource.class);
+        return classes;
+    }
+}
+
+@ApplicationPath("/api/v2")
+public class RestApplicationV2 extends Application {
+    
+    @Override
+    public Set<Class<?>> getClasses() {
+        Set<Class<?>> classes = new HashSet<>();
+        // Only register V2 resources
+        classes.add(AccountResourceV2.class);
+        return classes;
+    }
+}
+```
+
+##### 📋 Benefits of Explicit Registration
+
+1. **Clear API Contract** - You know exactly what's exposed in each version
+2. **No Surprises** - Prevents accidental resource exposure
+3. **Easy to Audit** - Simple to verify what's in each API version
+4. **Version Isolation** - Complete separation between API versions
+5. **Maintainable** - Easy to add/remove resources per version
+
+##### 🎯 Best Practice Checklist
+
+- ✅ Override `getClasses()` in each `Application` class
+- ✅ Explicitly register resources for each version
+- ✅ Document why explicit registration is used
+- ✅ Keep V1 and V2 resources in separate packages (optional but recommended)
+- ✅ Test that resources don't leak between versions
+
+##### 📚 Alternative Approaches
+
+**Package-Based Scanning:**
+```java
+@Override
+public Set<Class<?>> getClasses() {
+    // Scan only specific package
+    return scanPackage("com.bank.api.v1");
+}
+```
+**Pros:** Automatic within package  
+**Cons:** Requires package restructuring, more complex
+
+**Annotation-Based Filtering:**
+```java
+@ApiVersion("v1")
+public class AccountResource { }
+
+// Filter by annotation in Application
+```
+**Pros:** Flexible  
+**Cons:** Custom implementation, non-standard
+
+##### 🔍 Real-World Example
+
+**Stripe API** uses explicit versioning with date-based versions:
+- Each API version is explicitly defined
+- Resources are carefully curated per version
+- Clear migration guides between versions
+
+**GitHub API** uses URL versioning with explicit resource sets:
+- `/api/v3/` and `/api/v4/` are completely separate
+- No resource leakage between versions
+- Deprecation headers on old versions
+
+##### 💡 Key Takeaway
+
+> **"Explicit is better than implicit"** - Python Zen, applicable to API design
+> 
+> When versioning APIs, always prefer explicit resource registration over auto-discovery to maintain clear boundaries and prevent unexpected behavior.
+
+
+### Breaking Change Checklist
+
+Before introducing a breaking change, ask:
+
+1. ✅ **Can we make it backward compatible?**
+   - Add new fields instead of changing existing ones
+   - Use database triggers for synchronization
+   - Support both old and new formats
+
+2. ✅ **Do we need versioning?**
+   - Major changes → New API version
+   - Minor changes → Deprecation period
+   - Bug fixes → No version change
+
+3. ✅ **Have we communicated the change?**
+   - Documentation updated
+   - Deprecation warnings in responses
+   - Migration guide provided
+   - Sunset date announced
+
+4. ✅ **Is there a migration path?**
+   - Step-by-step guide
+   - Code examples
+   - Testing tools
+   - Rollback plan
+
+### Lab 6 Migration Strategy
+
+In Lab 6, we implement **Option 4** with these steps:
+
+**Phase 1: Preparation (Non-breaking)**
+```sql
+-- Add new columns
+ALTER TABLE accounts ADD COLUMN balance_amount DECIMAL(19,2);
+ALTER TABLE accounts ADD COLUMN balance_currency VARCHAR(3);
+-- Old 'balance' column still exists
+```
+
+**Phase 2: Dual Operation (Transition)**
+```java
+// Code works with both old and new columns
+// Trigger keeps them in sync
+```
+
+**Phase 3: Deprecation (Future)**
+```sql
+-- In V6 migration (future):
+-- ALTER TABLE accounts DROP COLUMN balance;
+```
+
+### Key Lessons
+
+1. **Backward Compatibility is King**
+   - Never break existing clients without warning
+   - Provide migration period (3-6 months minimum)
+   - Support old format during transition
+
+2. **Database Changes are Permanent**
+   - Plan migrations carefully
+   - Test rollback procedures
+   - Use feature flags for code changes
+
+3. **Communication is Critical**
+   - Document all breaking changes
+   - Provide migration guides
+   - Set clear sunset dates
+
+4. **Incremental is Better**
+   - Small, frequent changes > Big bang
+   - Each step should be deployable
+   - Validate at each stage
+
+### Real-World Example: Stripe API
+
+Stripe handles API versioning excellently:
+
+```
+# Each account has an API version
+GET /v1/charges
+Stripe-Version: 2023-10-16
+
+# Old versions supported for years
+# Breaking changes only in new versions
+# Automatic upgrades with warnings
+```
+
+**Lessons from Stripe:**
+- Version per account, not globally
+- Long deprecation periods (1-2 years)
+- Extensive documentation
+- Migration tools provided
+
+### Discussion Questions
+
+1. When is it acceptable to introduce a breaking change?
+2. How long should a deprecation period be?
+3. What's the cost of maintaining multiple API versions?
+4. How do you test backward compatibility?
+
+---
+
 ## 📦 Tactical Pattern: Aggregate
 
 An **Aggregate** is a cluster of domain objects treated as a single unit for data changes.

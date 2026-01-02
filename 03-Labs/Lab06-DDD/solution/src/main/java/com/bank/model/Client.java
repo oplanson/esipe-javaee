@@ -95,9 +95,10 @@ public class Client {
     }
     
     /**
-     * Default constructor required by JPA.
+     * Default constructor required by JPA and JAX-RS.
+     * Note: In production, use DTOs for REST API instead of exposing entities.
      */
-    protected Client() {
+    public Client() {
     }
     
     /**
@@ -330,6 +331,21 @@ public class Client {
     
     public LocalDateTime getUpdatedAt() {
         return updatedAt;
+    }
+    
+    // Public setters for JAX-RS deserialization
+    // Note: In production, use DTOs instead of exposing entity setters
+    
+    public void setName(String name) {
+        this.name = name;
+    }
+    
+    public void setEmail(Email email) {
+        this.email = email;
+    }
+    
+    public void setPremium(boolean premium) {
+        this.premium = premium;
     }
     
     // Package-private setters for JPA and testing

@@ -16,17 +16,29 @@ import java.util.List;
 import java.util.logging.Logger;
 
 /**
- * REST resource for Account operations.
- * 
+ * REST resource for Account operations - API Version 1 (DEPRECATED).
+ *
  * Base URL: /api/accounts
- * 
+ *
+ * ⚠️ DEPRECATION NOTICE:
+ * This API version is deprecated and will be removed on 2026-06-01.
+ * Please migrate to /api/v2/accounts which uses Money Value Object format.
+ *
+ * MIGRATION GUIDE:
+ * - V1: {"balance": 1000.00}
+ * - V2: {"balance": {"amount": 1000.00, "currency": "EUR"}}
+ *
+ * See: /api/v2/accounts for new API
+ *
  * @author Banking Application Team
- * @version 1.0
- * @since Lab 06
+ * @version 1.0 (DEPRECATED)
+ * @since Lab 05
+ * @deprecated Use {@link com.bank.api.v2.AccountResourceV2} instead
  */
 @Path("/accounts")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
+@Deprecated(since = "1.0", forRemoval = true)
 public class AccountResource {
     
     @Inject
@@ -50,9 +62,17 @@ public class AccountResource {
      * ]
      */
     @GET
-    public List<Account> getAllAccounts() {
-        logger.info("REST: Getting all accounts");
-        return accountService.findAll();
+    public Response getAllAccounts() {
+        logger.info("REST V1 (DEPRECATED): Getting all accounts");
+        List<Account> accounts = accountService.findAll();
+        
+        return Response.ok(accounts)
+            .header("X-API-Version", "1.0")
+            .header("X-API-Deprecated", "true")
+            .header("X-API-Deprecation-Info", "This API version is deprecated. Use /api/v2/accounts instead.")
+            .header("X-API-Sunset-Date", "2026-06-01")
+            .header("X-API-Migration-Guide", "https://docs.bank.com/api/v1-to-v2-migration")
+            .build();
     }
     
     /**
@@ -70,8 +90,8 @@ public class AccountResource {
      */
     @GET
     @Path("/{id}")
-    public Account getAccount(@PathParam("id") Long id) {
-        logger.info("REST: Getting account with ID: " + id);
+    public Response getAccount(@PathParam("id") Long id) {
+        logger.info("REST V1 (DEPRECATED): Getting account with ID: " + id);
         
         Account account = accountService.findById(id);
         
@@ -79,7 +99,12 @@ public class AccountResource {
             throw new NotFoundException("Account with ID " + id + " not found");
         }
         
-        return account;
+        return Response.ok(account)
+            .header("X-API-Version", "1.0")
+            .header("X-API-Deprecated", "true")
+            .header("X-API-Deprecation-Info", "This API version is deprecated. Use /api/v2/accounts/{id} instead.")
+            .header("X-API-Sunset-Date", "2026-06-01")
+            .build();
     }
     
     /**
@@ -99,7 +124,7 @@ public class AccountResource {
      */
     @POST
     public Response createAccount(@Valid Account account) {
-        logger.info("REST: Creating account: " + account.getNumber());
+        logger.info("REST V1 (DEPRECATED): Creating account: " + account.getNumber());
         
         // Extract client ID from the account's client relationship
         if (account.getClient() == null || account.getClient().getId() == null) {
@@ -112,6 +137,9 @@ public class AccountResource {
         return Response
             .status(Response.Status.CREATED)
             .entity(created)
+            .header("X-API-Version", "1.0")
+            .header("X-API-Deprecated", "true")
+            .header("X-API-Sunset-Date", "2026-06-01")
             .build();
     }
     
@@ -134,8 +162,8 @@ public class AccountResource {
      */
     @PUT
     @Path("/{id}")
-    public Account updateAccount(@PathParam("id") Long id, @Valid Account account) {
-        logger.info("REST: Updating account with ID: " + id);
+    public Response updateAccount(@PathParam("id") Long id, @Valid Account account) {
+        logger.info("REST V1 (DEPRECATED): Updating account with ID: " + id);
         
         Account existing = accountService.findById(id);
         
@@ -147,7 +175,13 @@ public class AccountResource {
         // This is kept for REST API compatibility
         // In production, consider using specific commands/DTOs
         // We don't update the account directly, just return the existing one
-        return accountService.update(existing);
+        Account updated = accountService.update(existing);
+        
+        return Response.ok(updated)
+            .header("X-API-Version", "1.0")
+            .header("X-API-Deprecated", "true")
+            .header("X-API-Sunset-Date", "2026-06-01")
+            .build();
     }
     
     /**
@@ -165,7 +199,7 @@ public class AccountResource {
     @DELETE
     @Path("/{id}")
     public Response deleteAccount(@PathParam("id") Long id) {
-        logger.info("REST: Deleting account with ID: " + id);
+        logger.info("REST V1 (DEPRECATED): Deleting account with ID: " + id);
         
         boolean deleted = accountService.delete(id);
         
@@ -173,7 +207,11 @@ public class AccountResource {
             throw new NotFoundException("Account with ID " + id + " not found");
         }
         
-        return Response.noContent().build();
+        return Response.noContent()
+            .header("X-API-Version", "1.0")
+            .header("X-API-Deprecated", "true")
+            .header("X-API-Sunset-Date", "2026-06-01")
+            .build();
     }
     
     /**
@@ -193,9 +231,15 @@ public class AccountResource {
      */
     @GET
     @Path("/client/{clientId}")
-    public List<Account> getClientAccounts(@PathParam("clientId") Long clientId) {
-        logger.info("REST: Getting accounts for client ID: " + clientId);
-        return accountService.findByClient(clientId);
+    public Response getClientAccounts(@PathParam("clientId") Long clientId) {
+        logger.info("REST V1 (DEPRECATED): Getting accounts for client ID: " + clientId);
+        List<Account> accounts = accountService.findByClient(clientId);
+        
+        return Response.ok(accounts)
+            .header("X-API-Version", "1.0")
+            .header("X-API-Deprecated", "true")
+            .header("X-API-Sunset-Date", "2026-06-01")
+            .build();
     }
     
     /**
@@ -212,9 +256,15 @@ public class AccountResource {
      */
     @GET
     @Path("/type/{type}")
-    public List<Account> getAccountsByType(@PathParam("type") String type) {
-        logger.info("REST: Getting accounts by type: " + type);
-        return accountService.findByType(type);
+    public Response getAccountsByType(@PathParam("type") String type) {
+        logger.info("REST V1 (DEPRECATED): Getting accounts by type: " + type);
+        List<Account> accounts = accountService.findByType(type);
+        
+        return Response.ok(accounts)
+            .header("X-API-Version", "1.0")
+            .header("X-API-Deprecated", "true")
+            .header("X-API-Sunset-Date", "2026-06-01")
+            .build();
     }
     
     /**
@@ -233,8 +283,8 @@ public class AccountResource {
      */
     @POST
     @Path("/{id}/deposit")
-    public Account deposit(@PathParam("id") Long id, @QueryParam("amount") double amount) {
-        logger.info("REST: Depositing " + amount + " to account ID: " + id);
+    public Response deposit(@PathParam("id") Long id, @QueryParam("amount") double amount) {
+        logger.info("REST V1 (DEPRECATED): Depositing " + amount + " to account ID: " + id);
         
         Account account = accountService.findById(id);
         
@@ -248,7 +298,13 @@ public class AccountResource {
         
         Money depositAmount = Money.euros(amount);
         account.deposit(depositAmount);
-        return accountService.update(account);
+        Account updated = accountService.update(account);
+        
+        return Response.ok(updated)
+            .header("X-API-Version", "1.0")
+            .header("X-API-Deprecated", "true")
+            .header("X-API-Sunset-Date", "2026-06-01")
+            .build();
     }
     
     /**
@@ -268,8 +324,8 @@ public class AccountResource {
      */
     @POST
     @Path("/{id}/withdraw")
-    public Account withdraw(@PathParam("id") Long id, @QueryParam("amount") double amount) {
-        logger.info("REST: Withdrawing " + amount + " from account ID: " + id);
+    public Response withdraw(@PathParam("id") Long id, @QueryParam("amount") double amount) {
+        logger.info("REST V1 (DEPRECATED): Withdrawing " + amount + " from account ID: " + id);
         
         Account account = accountService.findById(id);
         
@@ -284,7 +340,13 @@ public class AccountResource {
         try {
             Money withdrawAmount = Money.euros(amount);
             account.withdraw(withdrawAmount);
-            return accountService.update(account);
+            Account updated = accountService.update(account);
+            
+            return Response.ok(updated)
+                .header("X-API-Version", "1.0")
+                .header("X-API-Deprecated", "true")
+                .header("X-API-Sunset-Date", "2026-06-01")
+                .build();
         } catch (IllegalArgumentException e) {
             throw new IllegalArgumentException("Insufficient funds or invalid amount: " + e.getMessage());
         }
@@ -354,6 +416,9 @@ public class AccountResource {
         // Build response
         return Response.ok()
                 .entity(new TransferResponse(true, "Transfer completed successfully", fromAccount, toAccount))
+                .header("X-API-Version", "1.0")
+                .header("X-API-Deprecated", "true")
+                .header("X-API-Sunset-Date", "2026-06-01")
                 .build();
     }
     
@@ -427,6 +492,9 @@ public class AccountResource {
         
         return Response.ok()
             .entity("{\"count\": " + count + "}")
+            .header("X-API-Version", "1.0")
+            .header("X-API-Deprecated", "true")
+            .header("X-API-Sunset-Date", "2026-06-01")
             .build();
     }
 }

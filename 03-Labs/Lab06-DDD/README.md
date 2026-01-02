@@ -12,6 +12,14 @@ This lab demonstrates the refactoring of an anemic domain model into a rich doma
 
 ## 📚 Documentation
 
+- **[API-VERSIONING.md](solution/API-VERSIONING.md)** - ⭐ **NEW!** Complete guide to API versioning strategy:
+  - V1 vs V2 API comparison
+  - Migration guide with code examples
+  - Deprecation headers and timeline
+  - OpenAPI specifications
+  - Real-world examples (Stripe, GitHub, Twitter)
+  - Testing both versions side-by-side
+
 - **[BOUNDED-CONTEXT.md](solution/BOUNDED-CONTEXT.md)** - Complete documentation of the Banking Bounded Context, including:
   - Bounded Context definition and scope
   - Ubiquitous Language glossary
@@ -165,6 +173,214 @@ com.bank/
     ├── AccountController.java
     └── ClientController.java
 ```
+
+## 🔄 Database Migration Strategy: API Versioning in Practice
+
+### The Challenge
+
+When refactoring from Lab 05 to Lab 06, we face a critical question: **How do we migrate the database schema without breaking existing code?**
+
+Our refactoring changes the `Account` entity significantly:
+- **Lab 05**: Simple `balance` field (BigDecimal)
+- **Lab 06**: `Money` Value Object with `amount` and `currency`
+
+### Migration Options Comparison
+
+#### ❌ Option 1: Breaking Change
+```sql
+ALTER TABLE accounts DROP COLUMN balance;
+ALTER TABLE accounts ADD COLUMN balance_amount DECIMAL(19,2);
+ALTER TABLE accounts ADD COLUMN balance_currency VARCHAR(3);
+```
+**Why not?** Breaks all existing code immediately, no rollback possible.
+
+#### ❌ Option 2: Big Bang
+```sql
+ALTER TABLE accounts RENAME COLUMN balance TO balance_amount;
+ALTER TABLE accounts ADD COLUMN balance_currency VARCHAR(3);
+```
+**Why not?** Still breaks existing code, difficult to test incrementally.
+
+#### ❌ Option 3: Dual Write
+Keep both old and new fields, write to both manually.
+**Why not?** Code duplication, risk of inconsistency, maintenance burden.
+
+#### ✅ Option 4: Backward Compatible Migration (Our Approach)
+
+This is the **recommended approach** for production systems and what we implement in Lab 06.
+
+### Our Implementation: V5 Migration
+
+See `src/main/resources/db/migration/V5__refactor_for_ddd.sql`:
+
+```sql
+-- Step 1: Add new columns (NON-BREAKING)
+ALTER TABLE accounts ADD COLUMN IF NOT EXISTS balance_amount DECIMAL(19,2);
+ALTER TABLE accounts ADD COLUMN IF NOT EXISTS balance_currency VARCHAR(3) DEFAULT 'EUR';
+
+-- Step 2: Migrate existing data
+UPDATE accounts SET balance_amount = balance WHERE balance_amount IS NULL;
+UPDATE accounts SET balance_currency = 'EUR' WHERE balance_currency IS NULL;
+
+-- Step 3: Make new columns NOT NULL
+ALTER TABLE accounts ALTER COLUMN balance_amount SET NOT NULL;
+ALTER TABLE accounts ALTER COLUMN balance_currency SET NOT NULL;
+
+-- Step 4: Keep old column in sync with trigger
+CREATE OR REPLACE FUNCTION sync_account_balance()
+RETURNS TRIGGER AS $$
+BEGIN
+    NEW.balance = NEW.balance_amount;  -- Sync old column automatically
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER trigger_sync_account_balance
+    BEFORE INSERT OR UPDATE ON accounts
+    FOR EACH ROW
+    EXECUTE FUNCTION sync_account_balance();
+
+-- Note: Old 'balance' column kept for backward compatibility
+-- Will be removed in future migration (V6 or later)
+```
+
+### Why This Approach Works
+
+#### ✅ Advantages
+
+1. **Zero Downtime**: Application continues running during migration
+2. **Gradual Rollout**: Can deploy new code incrementally
+3. **Easy Rollback**: If issues arise, can revert without data loss
+4. **Coexistence**: Old and new code can run simultaneously
+5. **Low Risk**: Changes are additive, not destructive
+6. **Testing**: Can test new code before removing old column
+
+#### 📊 Migration Phases
+
+**Phase 1: Preparation (Current - Lab 06)**
+```
+accounts table:
+├── balance (old, kept for compatibility)
+├── balance_amount (new, synced via trigger)
+└── balance_currency (new)
+```
+
+**Phase 2: Transition (Future - Lab 07+)**
+```java
+// Both approaches work:
+account.getBalance()  // Returns BigDecimal (old)
+account.getBalanceMoney()  // Returns Money (new)
+```
+
+**Phase 3: Cleanup (Future - V6 migration)**
+```sql
+-- After all code is updated:
+DROP TRIGGER trigger_sync_account_balance ON accounts;
+DROP FUNCTION sync_account_balance();
+ALTER TABLE accounts DROP COLUMN balance;
+```
+
+### Real-World Lessons
+
+This migration strategy teaches important production practices:
+
+1. **Backward Compatibility First**
+   - Never break existing clients without warning
+   - Provide deprecation period (typically 3-6 months)
+   - Support old format during transition
+
+2. **Database Changes are Permanent**
+   - Plan migrations carefully
+   - Test rollback procedures
+   - Use feature flags for code changes
+
+3. **Communication is Critical**
+   - Document all changes
+   - Provide migration guides
+   - Set clear sunset dates
+
+4. **Incremental is Better**
+   - Small, frequent changes > Big bang
+   - Each step should be deployable
+   - Validate at each stage
+
+### API Versioning Strategies
+
+When the database changes, the API often needs versioning too:
+
+#### URL Versioning
+```
+GET /api/v1/accounts/{id}  → { "balance": 1000.00 }
+GET /api/v2/accounts/{id}  → { "balance": { "amount": 1000.00, "currency": "EUR" } }
+```
+
+#### Header Versioning
+```
+GET /api/accounts/{id}
+Accept: application/vnd.bank.v1+json  → Old format
+Accept: application/vnd.bank.v2+json  → New format
+```
+
+#### Deprecation Headers (Our Approach)
+```java
+@GET
+@Path("/{id}")
+public Response getAccount(@PathParam("id") Long id) {
+    AccountDTO dto = accountService.findById(id);
+    return Response.ok(dto)
+        .header("X-API-Deprecation", "balance format will change in v2.0")
+        .header("X-API-Sunset", "2026-06-01")
+        .build();
+}
+```
+
+### Testing the Migration
+
+1. **Verify Data Migration**:
+   ```sql
+   -- Check all balances migrated correctly
+   SELECT id, balance, balance_amount, balance_currency
+   FROM accounts
+   WHERE balance != balance_amount;
+   ```
+
+2. **Test Trigger**:
+   ```sql
+   -- Insert new account
+   INSERT INTO accounts (balance_amount, balance_currency, ...)
+   VALUES (100.00, 'EUR', ...);
+   
+   -- Verify old column synced
+   SELECT balance, balance_amount FROM accounts WHERE id = ...;
+   ```
+
+3. **Test Rollback**:
+   ```bash
+   # Rollback migration
+   mvn flyway:undo
+   
+   # Verify application still works
+   curl http://localhost:9080/api/accounts
+   ```
+
+### Discussion Questions
+
+1. When is it acceptable to introduce a breaking change?
+2. How long should a deprecation period be?
+3. What's the cost of maintaining multiple API versions?
+4. How would you handle this in a microservices architecture?
+
+### Key Takeaways
+
+- ✅ **Always prefer backward-compatible changes**
+- ✅ **Use database triggers for synchronization during transition**
+- ✅ **Plan for gradual migration, not big bang**
+- ✅ **Document deprecation timeline clearly**
+- ✅ **Test rollback procedures before production**
+
+This approach demonstrates **professional software engineering practices** that you'll use in real-world projects.
+
+---
 
 ## Key DDD Patterns Implemented
 

@@ -16,18 +16,24 @@ import java.util.List;
 import java.util.logging.Logger;
 
 /**
- * REST resource for Client operations.
+ * REST resource for Client operations - API Version 1 (DEPRECATED).
  * Provides CRUD operations via HTTP methods.
- * 
+ *
  * Base URL: /api/clients
- * 
+ *
+ * ⚠️ DEPRECATION NOTICE:
+ * This API version is deprecated and will be removed on 2026-06-01.
+ * Please migrate to /api/v2/clients for future compatibility.
+ *
  * @author Banking Application Team
- * @version 1.0
+ * @version 1.0 (DEPRECATED)
  * @since Lab 06
+ * @deprecated Use {@link com.bank.api.v2.ClientResourceV2} instead
  */
 @Path("/clients")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
+@Deprecated(since = "1.0", forRemoval = true)
 public class ClientResource {
     
     @Inject
@@ -51,9 +57,16 @@ public class ClientResource {
      * ]
      */
     @GET
-    public List<Client> getAllClients() {
-        logger.info("REST: Getting all clients");
-        return clientService.findAll();
+    public Response getAllClients() {
+        logger.info("REST V1 (DEPRECATED): Getting all clients");
+        List<Client> clients = clientService.findAll();
+        
+        return Response.ok(clients)
+            .header("X-API-Version", "1.0")
+            .header("X-API-Deprecated", "true")
+            .header("X-API-Deprecation-Info", "This API version is deprecated. Use /api/v2/clients instead.")
+            .header("X-API-Sunset-Date", "2026-06-01")
+            .build();
     }
     
     /**
@@ -71,8 +84,8 @@ public class ClientResource {
      */
     @GET
     @Path("/{id}")
-    public Client getClient(@PathParam("id") Long id) {
-        logger.info("REST: Getting client with ID: " + id);
+    public Response getClient(@PathParam("id") Long id) {
+        logger.info("REST V1 (DEPRECATED): Getting client with ID: " + id);
         
         Client client = clientService.findById(id);
         
@@ -80,7 +93,11 @@ public class ClientResource {
             throw new NotFoundException("Client with ID " + id + " not found");
         }
         
-        return client;
+        return Response.ok(client)
+            .header("X-API-Version", "1.0")
+            .header("X-API-Deprecated", "true")
+            .header("X-API-Sunset-Date", "2026-06-01")
+            .build();
     }
     
     /**
@@ -100,7 +117,7 @@ public class ClientResource {
      */
     @POST
     public Response createClient(@Valid Client client) {
-        logger.info("REST: Creating client: " + client.getName());
+        logger.info("REST V1 (DEPRECATED): Creating client: " + client.getName());
         
         // Note: Client should be created using factory methods
         // For REST API, we accept the client object and persist it
@@ -110,6 +127,9 @@ public class ClientResource {
         return Response
             .status(Response.Status.CREATED)
             .entity(created)
+            .header("X-API-Version", "1.0")
+            .header("X-API-Deprecated", "true")
+            .header("X-API-Sunset-Date", "2026-06-01")
             .build();
     }
     
@@ -132,8 +152,8 @@ public class ClientResource {
      */
     @PUT
     @Path("/{id}")
-    public Client updateClient(@PathParam("id") Long id, @Valid Client client) {
-        logger.info("REST: Updating client with ID: " + id);
+    public Response updateClient(@PathParam("id") Long id, @Valid Client client) {
+        logger.info("REST V1 (DEPRECATED): Updating client with ID: " + id);
         
         Client existing = clientService.findById(id);
         
@@ -154,7 +174,13 @@ public class ClientResource {
                 existing.downgradeFromPremium();
             }
             
-            return clientService.update(existing);
+            Client updated = clientService.update(existing);
+            
+            return Response.ok(updated)
+                .header("X-API-Version", "1.0")
+                .header("X-API-Deprecated", "true")
+                .header("X-API-Sunset-Date", "2026-06-01")
+                .build();
         } catch (IllegalArgumentException | IllegalStateException e) {
             throw new IllegalArgumentException("Error updating client: " + e.getMessage());
         }
@@ -175,7 +201,7 @@ public class ClientResource {
     @DELETE
     @Path("/{id}")
     public Response deleteClient(@PathParam("id") Long id) {
-        logger.info("REST: Deleting client with ID: " + id);
+        logger.info("REST V1 (DEPRECATED): Deleting client with ID: " + id);
         
         boolean deleted = clientService.delete(id);
         
@@ -183,7 +209,11 @@ public class ClientResource {
             throw new NotFoundException("Client with ID " + id + " not found");
         }
         
-        return Response.noContent().build();
+        return Response.noContent()
+            .header("X-API-Version", "1.0")
+            .header("X-API-Deprecated", "true")
+            .header("X-API-Sunset-Date", "2026-06-01")
+            .build();
     }
     
     /**
@@ -200,14 +230,21 @@ public class ClientResource {
      */
     @GET
     @Path("/search")
-    public List<Client> searchClients(@QueryParam("name") String name) {
-        logger.info("REST: Searching clients by name: " + name);
+    public Response searchClients(@QueryParam("name") String name) {
+        logger.info("REST V1 (DEPRECATED): Searching clients by name: " + name);
         
+        List<Client> clients;
         if (name == null || name.trim().isEmpty()) {
-            return clientService.findAll();
+            clients = clientService.findAll();
+        } else {
+            clients = clientService.findByName(name);
         }
         
-        return clientService.findByName(name);
+        return Response.ok(clients)
+            .header("X-API-Version", "1.0")
+            .header("X-API-Deprecated", "true")
+            .header("X-API-Sunset-Date", "2026-06-01")
+            .build();
     }
     
     /**
@@ -231,6 +268,9 @@ public class ClientResource {
         
         return Response.ok()
             .entity("{\"count\": " + count + "}")
+            .header("X-API-Version", "1.0")
+            .header("X-API-Deprecated", "true")
+            .header("X-API-Sunset-Date", "2026-06-01")
             .build();
     }
 }

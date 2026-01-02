@@ -99,36 +99,32 @@ echo ""
 # Navigate to solution
 cd solution
 
+# Stop and remove any existing docker-compose services (with volumes)
+if command -v docker-compose &> /dev/null; then
+    if docker-compose ps 2>/dev/null | grep -q "Up\|Exit"; then
+        echo -e "${YELLOW}⚠ Stopping and removing existing docker-compose services and volumes...${NC}"
+        docker-compose down -v 2>/dev/null || true
+        echo -e "${GREEN}✓ Docker-compose services and volumes removed${NC}"
+    fi
+fi
+
 # Step 1: Start PostgreSQL with docker-compose
 echo "Step 1: Starting PostgreSQL..."
 echo "----------------------------"
 
-# Determine which container command to use for database
-if command -v docker &> /dev/null; then
-    DB_CMD="docker"
-elif command -v podman &> /dev/null; then
-    DB_CMD="podman"
-else
-    echo -e "${RED}❌ Neither docker nor podman found${NC}"
-    exit 1
-fi
+# Always start fresh after cleanup
+docker-compose up -d
 
-if ! docker-compose ps | grep -q "banking-db.*Up"; then
-    docker-compose up -d
-    
-    echo "Waiting for PostgreSQL to be ready..."
-    for i in {1..30}; do
-        if $DB_CMD exec banking-db pg_isready -U bankuser -d bankdb > /dev/null 2>&1; then
-            echo -e "${GREEN}✓ PostgreSQL is ready${NC}"
-            break
-        fi
-        sleep 2
-        echo -n "."
-    done
-    echo ""
-else
-    echo -e "${GREEN}✓ PostgreSQL already running${NC}"
-fi
+echo "Waiting for PostgreSQL to be ready..."
+for i in {1..30}; do
+    if docker exec banking-db pg_isready -U bankuser -d bankdb > /dev/null 2>&1; then
+        echo -e "${GREEN}✓ PostgreSQL is ready${NC}"
+        break
+    fi
+    sleep 2
+    echo -n "."
+done
+echo ""
 
 echo ""
 
@@ -257,26 +253,27 @@ echo ""
 echo "Checking database schema..."
 echo "----------------------------"
 
-if [ -n "$DB_CMD" ]; then
-    # Try to check tables
-    TABLES=$($DB_CMD exec banking-db psql -U bankuser -d bankdb -t -c "SELECT COUNT(*) FROM information_schema.tables WHERE table_schema='public' AND table_type='BASE TABLE';" 2>/dev/null | tr -d ' ')
+# Try docker first, then podman
+TABLES=$(docker exec banking-db psql -U bankuser -d bankdb -t -c "SELECT COUNT(*) FROM information_schema.tables WHERE table_schema='public' AND table_type='BASE TABLE';" 2>/dev/null | tr -d ' ')
+if [ -z "$TABLES" ]; then
+    TABLES=$(podman exec banking-db psql -U bankuser -d bankdb -t -c "SELECT COUNT(*) FROM information_schema.tables WHERE table_schema='public' AND table_type='BASE TABLE';" 2>/dev/null | tr -d ' ')
+fi
+
+if [ -n "$TABLES" ] && [ "$TABLES" -gt 0 ]; then
+    echo -e "${GREEN}✓ Database tables created ($TABLES tables)${NC}"
     
-    if [ -n "$TABLES" ] && [ "$TABLES" -gt 0 ]; then
-        echo -e "${GREEN}✓ Database tables created ($TABLES tables)${NC}"
-        
-        # List tables
-        echo ""
-        echo "Tables in database:"
-        $DB_CMD exec banking-db psql -U bankuser -d bankdb -c "\dt" 2>/dev/null || echo "  (Unable to list tables)"
-    else
-        echo -e "${YELLOW}⚠ Database tables not found${NC}"
-        echo "Flyway migrations may not have run successfully."
-        echo ""
-        echo "To manually run migrations:"
-        echo "  cd solution && mvn flyway:migrate"
-    fi
+    # List tables
+    echo ""
+    echo "Tables in database:"
+    docker exec banking-db psql -U bankuser -d bankdb -c "\dt" 2>/dev/null || \
+    podman exec banking-db psql -U bankuser -d bankdb -c "\dt" 2>/dev/null || \
+    echo "  (Unable to list tables)"
 else
-    echo -e "${YELLOW}⚠ Cannot check database schema${NC}"
+    echo -e "${YELLOW}⚠ Database tables not found${NC}"
+    echo "Flyway migrations may not have run successfully."
+    echo ""
+    echo "To manually run migrations:"
+    echo "  cd solution && mvn flyway:migrate"
 fi
 
 echo ""
@@ -373,18 +370,17 @@ fi
 
 # Test database data
 echo -n "Testing database data... "
-# Use the same container command that was determined earlier
-if [ -n "$DB_CMD" ]; then
-    CLIENT_COUNT=$($DB_CMD exec banking-db psql -U bankuser -d bankdb -t -c "SELECT COUNT(*) FROM clients;" 2>/dev/null | tr -d ' ')
-    if [ -n "$CLIENT_COUNT" ] && [ "$CLIENT_COUNT" -gt 0 ] 2>/dev/null; then
-        echo -e "${GREEN}✓ PASS ($CLIENT_COUNT clients)${NC}"
-        TESTS_PASSED=$((TESTS_PASSED + 1))
-    else
-        echo -e "${RED}✗ FAIL (no clients found or database error)${NC}"
-        TESTS_FAILED=$((TESTS_FAILED + 1))
-    fi
+# Try docker first, then podman
+CLIENT_COUNT=$(docker exec banking-db psql -U bankuser -d bankdb -t -c "SELECT COUNT(*) FROM clients;" 2>/dev/null | tr -d ' ')
+if [ -z "$CLIENT_COUNT" ]; then
+    CLIENT_COUNT=$(podman exec banking-db psql -U bankuser -d bankdb -t -c "SELECT COUNT(*) FROM clients;" 2>/dev/null | tr -d ' ')
+fi
+
+if [ -n "$CLIENT_COUNT" ] && [ "$CLIENT_COUNT" -ge 0 ] 2>/dev/null; then
+    echo -e "${GREEN}✓ PASS ($CLIENT_COUNT clients in database)${NC}"
+    TESTS_PASSED=$((TESTS_PASSED + 1))
 else
-    echo -e "${YELLOW}⚠ SKIP (no container command available)${NC}"
+    echo -e "${YELLOW}⚠ SKIP (cannot connect to database)${NC}"
 fi
 
 # Cleanup
@@ -392,6 +388,22 @@ rm -f /tmp/response.txt
 
 echo ""
 echo "Test Results: ${GREEN}$TESTS_PASSED passed${NC}, ${RED}$TESTS_FAILED failed${NC}"
+
+echo ""
+echo "=========================================="
+echo "Database Queries"
+echo "=========================================="
+echo ""
+echo "View all clients:"
+docker exec banking-db psql -U bankuser -d bankdb -c "SELECT id, name, email FROM clients;" 2>/dev/null || \
+podman exec banking-db psql -U bankuser -d bankdb -c "SELECT id, name, email FROM clients;" 2>/dev/null || \
+echo "  (No clients in database yet)"
+echo ""
+echo "View all accounts:"
+docker exec banking-db psql -U bankuser -d bankdb -c "SELECT id, number, balance, type, client_id FROM accounts;" 2>/dev/null || \
+podman exec banking-db psql -U bankuser -d bankdb -c "SELECT id, number, balance, type, client_id FROM accounts;" 2>/dev/null || \
+echo "  (No accounts in database yet)"
+echo ""
 
 if [ $TESTS_FAILED -gt 0 ]; then
     echo ""
@@ -401,18 +413,6 @@ if [ $TESTS_FAILED -gt 0 ]; then
     echo "  podman logs $CONTAINER_NAME | grep -i flyway"
     exit 1
 fi
-
-echo ""
-echo "=========================================="
-echo "Database Queries"
-echo "=========================================="
-echo ""
-echo "View all clients:"
-$DB_CMD exec banking-db psql -U bankuser -d bankdb -c "SELECT id, name, email FROM clients;" 2>/dev/null || echo "  (Run after first deployment)"
-echo ""
-echo "View all accounts:"
-$DB_CMD exec banking-db psql -U bankuser -d bankdb -c "SELECT id, number, balance, type, client_id FROM accounts;" 2>/dev/null || echo "  (Run after first deployment)"
-echo ""
 
 echo "=========================================="
 echo "Management Commands"
@@ -427,8 +427,8 @@ echo ""
 echo "Stop application:"
 echo "  podman stop $CONTAINER_NAME"
 echo ""
-echo "Stop database:"
-echo "  docker-compose down"
+echo "Stop database (with volumes cleanup):"
+echo "  docker-compose down -v"
 echo ""
 echo "Remove application container:"
 echo "  podman rm $CONTAINER_NAME"

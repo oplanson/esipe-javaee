@@ -210,11 +210,82 @@
 - ✅ Complete workflow testing
 - ✅ DDD pattern verification
 
+## Migration Strategy: Option 4 (Backward Compatible)
+
+### Why Option 4?
+
+This lab demonstrates **OPTION 4: Backward Compatible Migration**, a production-ready approach for evolving database schemas without breaking changes.
+
+### Implementation Details
+
+**Phase 1 (Current - Lab 06):**
+```sql
+accounts table:
+├── balance (DEPRECATED - kept for compatibility)
+├── balance_amount (NEW - Money Value Object amount)
+└── balance_currency (NEW - Money Value Object currency)
+```
+
+**Synchronization Mechanism:**
+- PostgreSQL trigger automatically syncs `balance` with `balance_amount`
+- Zero code changes needed for synchronization
+- Both old and new code can coexist
+
+**Phase 2 (Future - Lab 07+):**
+- Update all application code to use Money Value Object
+- Test thoroughly in production
+- Monitor for any issues
+
+**Phase 3 (Future - V6 migration):**
+```sql
+-- After 3-6 months deprecation period:
+DROP TRIGGER trigger_sync_account_balance ON accounts;
+DROP FUNCTION sync_account_balance();
+ALTER TABLE accounts DROP COLUMN balance;
+```
+
+### Pedagogical Value
+
+This approach teaches students:
+
+1. **Real-World Migration Patterns**
+   - How companies like Stripe, GitHub handle API evolution
+   - Zero-downtime deployment strategies
+   - Risk mitigation in production systems
+
+2. **Backward Compatibility**
+   - Why breaking changes are costly
+   - How to maintain compatibility during transitions
+   - Deprecation timeline management
+
+3. **Database Evolution**
+   - Additive changes vs destructive changes
+   - Using triggers for data synchronization
+   - Planning multi-phase migrations
+
+4. **Professional Practices**
+   - Documentation of deprecation
+   - Clear migration paths
+   - Rollback strategies
+
+### Comparison with Other Options
+
+| Option | Downtime | Risk | Rollback | Complexity |
+|--------|----------|------|----------|------------|
+| 1. Breaking Change | ❌ Yes | 🔴 High | ❌ Hard | 🟢 Low |
+| 2. Big Bang | ❌ Yes | 🔴 High | ❌ Hard | 🟡 Medium |
+| 3. Dual Write | ✅ No | 🟡 Medium | 🟡 Medium | 🔴 High |
+| **4. Backward Compatible** | ✅ **No** | 🟢 **Low** | ✅ **Easy** | 🟡 **Medium** |
+
+**Option 4 is the winner** for production systems!
+
 ## Known Issues
 
-1. **Backward Compatibility**: Old `balance` column kept for compatibility
-   - Will be removed in future migration
-   - Trigger keeps it in sync with `balance_amount`
+1. **Backward Compatibility Mechanism**: Old `balance` column kept for compatibility
+   - **Purpose**: Demonstrates Option 4 migration strategy
+   - **Mechanism**: PostgreSQL trigger keeps it in sync with `balance_amount`
+   - **Timeline**: Will be removed in V6 migration (after code migration complete)
+   - **Learning**: Shows how to evolve schemas without breaking changes
 
 2. **Service Layer**: Not fully refactored to DDD
    - Still uses some anemic patterns

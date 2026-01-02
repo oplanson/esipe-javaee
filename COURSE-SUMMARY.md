@@ -85,10 +85,13 @@ This complete course package contains everything needed to teach or learn Jakart
      - Domain Events (MoneyDeposited, MoneyWithdrawn, MoneyTransferred)
      - Repository Interfaces (AccountRepository, ClientRepository)
      - DTOs for data transfer
-     - Database migration for DDD schema
+     - **API Versioning (V1 deprecated, V2 current)**
+     - **Database migration Option 4 (backward compatible)**
+     - **API-VERSIONING.md guide (398 lines)**
      - Complete Bounded Context documentation (398 lines)
      - Complete solution with deployment scripts
-     - Comprehensive README (545 lines)
+     - Comprehensive README with migration strategy
+     - 18 automated tests including API versioning verification
    - Framework for Labs 7-8 (to be expanded)
 
 4. **Banking Application** (`04-BankingApp/`)
