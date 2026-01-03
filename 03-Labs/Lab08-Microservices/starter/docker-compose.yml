@@ -1,0 +1,193 @@
+# © Copyright 2026 Olivier Planson. All rights reserved. Reproduction prohibited. Made with IBM Bob.
+
+version: '3.8'
+
+services:
+  # ============================================
+  # Database Services
+  # ============================================
+  
+  # Client Service Database
+  client-db:
+    image: postgres:16
+    container_name: banking-client-db
+    environment:
+      POSTGRES_DB: banking_client_db
+      POSTGRES_USER: bankuser
+      POSTGRES_PASSWORD: bankpass
+    ports:
+      - "5433:5432"
+    volumes:
+      - client-db-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U bankuser -d banking_client_db"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    networks:
+      - banking-network
+    restart: unless-stopped
+
+  # Account Service Database
+  account-db:
+    image: postgres:16
+    container_name: banking-account-db
+    environment:
+      POSTGRES_DB: banking_account_db
+      POSTGRES_USER: bankuser
+      POSTGRES_PASSWORD: bankpass
+    ports:
+      - "5434:5432"
+    volumes:
+      - account-db-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U bankuser -d banking_account_db"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    networks:
+      - banking-network
+    restart: unless-stopped
+
+  # ============================================
+  # Microservices
+  # ============================================
+
+  # Client Service
+  client-service:
+    build:
+      context: ./solution/client-service
+      dockerfile: Containerfile
+    container_name: banking-client-service
+    ports:
+      - "9081:9080"
+      - "9444:9443"
+    environment:
+      # Database Configuration
+      DB_HOST: client-db
+      DB_PORT: 5432
+      DB_NAME: banking_client_db
+      DB_USER: bankuser
+      DB_PASSWORD: bankpass
+      # Service Configuration
+      SERVICE_NAME: client-service
+      SERVICE_VERSION: 1.0.0
+      # Logging
+      LOG_LEVEL: INFO
+    depends_on:
+      client-db:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9080/health/live"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+    networks:
+      - banking-network
+    restart: unless-stopped
+
+  # Account Service
+  account-service:
+    build:
+      context: ./solution/account-service
+      dockerfile: Containerfile
+    container_name: banking-account-service
+    ports:
+      - "9082:9080"
+      - "9445:9443"
+    environment:
+      # Database Configuration
+      DB_HOST: account-db
+      DB_PORT: 5432
+      DB_NAME: banking_account_db
+      DB_USER: bankuser
+      DB_PASSWORD: bankpass
+      # Client Service Configuration
+      CLIENT_SERVICE_URL: http://client-service:9080
+      # Service Configuration
+      SERVICE_NAME: account-service
+      SERVICE_VERSION: 1.0.0
+      # Fault Tolerance Configuration
+      CIRCUIT_BREAKER_REQUEST_VOLUME_THRESHOLD: 4
+      CIRCUIT_BREAKER_FAILURE_RATIO: 0.5
+      CIRCUIT_BREAKER_DELAY: 5000
+      CIRCUIT_BREAKER_SUCCESS_THRESHOLD: 2
+      RETRY_MAX_RETRIES: 3
+      RETRY_DELAY: 1000
+      TIMEOUT_VALUE: 2000
+      # Logging
+      LOG_LEVEL: INFO
+    depends_on:
+      account-db:
+        condition: service_healthy
+      client-service:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9080/health/live"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+    networks:
+      - banking-network
+    restart: unless-stopped
+
+  # API Gateway
+  api-gateway:
+    build:
+      context: ./solution/api-gateway
+      dockerfile: Containerfile
+    container_name: banking-api-gateway
+    ports:
+      - "9080:9080"
+      - "9443:9443"
+    environment:
+      # Service URLs
+      CLIENT_SERVICE_URL: http://client-service:9080
+      ACCOUNT_SERVICE_URL: http://account-service:9080
+      # Service Configuration
+      SERVICE_NAME: api-gateway
+      SERVICE_VERSION: 1.0.0
+      # Fault Tolerance Configuration
+      CIRCUIT_BREAKER_REQUEST_VOLUME_THRESHOLD: 4
+      CIRCUIT_BREAKER_FAILURE_RATIO: 0.5
+      CIRCUIT_BREAKER_DELAY: 5000
+      TIMEOUT_VALUE: 5000
+      # Logging
+      LOG_LEVEL: INFO
+    depends_on:
+      client-service:
+        condition: service_healthy
+      account-service:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9080/health/live"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+    networks:
+      - banking-network
+    restart: unless-stopped
+
+# ============================================
+# Volumes
+# ============================================
+volumes:
+  client-db-data:
+    name: banking-client-db-data
+  account-db-data:
+    name: banking-account-db-data
+
+# ============================================
+# Networks
+# ============================================
+networks:
+  banking-network:
+    name: banking-network
+    driver: bridge
+
+# Made with Bob

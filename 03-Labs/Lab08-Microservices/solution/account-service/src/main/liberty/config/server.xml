@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- © Copyright 2025-2026 Olivier Planson. All rights reserved. Reproduction prohibited. Made with IBM Bob. -->
+<server description="Account Microservice">
+
+    <!-- Enable features -->
+    <featureManager>
+        <feature>webProfile-10.0</feature>
+        <feature>microProfile-6.0</feature>
+        <feature>jdbc-4.2</feature>
+    </featureManager>
+
+    <!-- HTTP Endpoint -->
+    <httpEndpoint id="defaultHttpEndpoint"
+                  httpPort="${http.port}"
+                  httpsPort="${https.port}"
+                  host="*" />
+
+    <!-- Application -->
+    <webApplication id="account-service" 
+                    location="account-service.war" 
+                    contextRoot="/">
+        <classloader apiTypeVisibility="+third-party"/>
+    </webApplication>
+
+    <!-- PostgreSQL Library -->
+    <library id="postgresql-library">
+        <fileset dir="${shared.resource.dir}" includes="postgresql-*.jar"/>
+    </library>
+
+    <!-- DataSource Configuration -->
+    <dataSource id="accountDS" jndiName="jdbc/accountDS">
+        <jdbcDriver libraryRef="postgresql-library"/>
+        <properties.postgresql 
+            serverName="${env.DB_HOST}"
+            portNumber="${env.DB_PORT}"
+            databaseName="${env.DB_NAME}"
+            user="${env.DB_USER}"
+            password="${env.DB_PASSWORD}"
+            currentSchema="public"/>
+        <connectionManager maxPoolSize="10" minPoolSize="2"/>
+    </dataSource>
+
+    <!-- Logging -->
+    <logging 
+        traceSpecification="*=info:com.bank.*=fine"
+        maxFileSize="20"
+        maxFiles="10"
+        consoleLogLevel="INFO"/>
+
+    <!-- MicroProfile Config -->
+    <mpMetrics authentication="false"/>
+    
+    <!-- Quick startup for development -->
+    <webContainer deferServletLoad="false"/>
+    
+    <!-- Application Manager -->
+    <applicationManager autoExpand="true"/>
+</server>
+
+<!-- Made with Bob -->

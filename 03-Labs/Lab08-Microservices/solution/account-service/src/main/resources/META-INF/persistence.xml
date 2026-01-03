@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- © Copyright 2025-2026 Olivier Planson. All rights reserved. Reproduction prohibited. Made with IBM Bob. -->
+<persistence version="3.0"
+             xmlns="https://jakarta.ee/xml/ns/persistence"
+             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+             xsi:schemaLocation="https://jakarta.ee/xml/ns/persistence 
+             https://jakarta.ee/xml/ns/persistence/persistence_3_0.xsd">
+    
+    <persistence-unit name="accountPU" transaction-type="JTA">
+        <jta-data-source>jdbc/accountDS</jta-data-source>
+        
+        <!-- Entity classes -->
+        <class>com.bank.account.infrastructure.persistence.entity.AccountEntity</class>
+        
+        <properties>
+            <!-- EclipseLink properties -->
+            <property name="eclipselink.target-database" value="PostgreSQL"/>
+            <property name="eclipselink.logging.level" value="FINE"/>
+            <property name="eclipselink.logging.parameters" value="true"/>
+            <property name="eclipselink.logging.timestamp" value="true"/>
+            <property name="eclipselink.logging.thread" value="false"/>
+            <property name="eclipselink.logging.session" value="false"/>
+            <property name="eclipselink.logging.exceptions" value="true"/>
+            
+            <!-- Schema generation - none, we use Flyway -->
+            <property name="eclipselink.ddl-generation" value="none"/>
+            
+            <!-- Connection pool -->
+            <property name="eclipselink.jdbc.batch-writing" value="JDBC"/>
+            <property name="eclipselink.jdbc.batch-writing.size" value="100"/>
+            
+            <!-- Cache configuration -->
+            <property name="eclipselink.cache.shared.default" value="false"/>
+            
+            <!-- Performance -->
+            <property name="eclipselink.weaving" value="true"/>
+        </properties>
+    </persistence-unit>
+</persistence>
+
+<!-- Made with Bob -->

@@ -550,25 +550,32 @@
 - Configure distributed system
 
 **Materials:**
-- Slides: `02-Lectures/08-microservices.md`
+- Slides: `02-Lectures/08-microservices-architecture.md` ✅ (1850 lines)
 
 ---
 
-### Lab 8: Microservices Implementation (2 hours)
+### Lab 8: Microservices Implementation (2 hours) ✅
 **Objectives:**
-- Split application into services
-- Implement REST communication
-- Configure service discovery
-- Deploy multiple services
+- Decompose Lab07 monolith into three microservices
+- Implement database per service pattern
+- Use MicroProfile Rest Client for inter-service communication
+- Apply fault tolerance patterns (circuit breaker, retry, timeout)
+- Configure service discovery with Docker DNS
+- Implement health checks and metrics
+- Deploy with Docker Compose
 
 **Deliverables:**
-- Client microservice
-- Account microservice
-- API Gateway
-- Docker compose setup
+- Client microservice (Port 9081) with PostgreSQL
+- Account microservice (Port 9082) with PostgreSQL
+- API Gateway (Port 9080) for routing and aggregation
+- Docker Compose orchestration
+- 15+ automated tests
+- Complete documentation
 
 **Materials:**
-- Lab guide: `03-Labs/Lab08-Microservices/README.md`
+- Lab guide: `03-Labs/Lab08-Microservices/README.md` ✅ (1450 lines)
+- Solution: `03-Labs/Lab08-Microservices/solution/` (in progress)
+- Testing scripts: podman-test.sh, docker-test.sh (to be created)
 
 ---
 
@@ -582,12 +589,24 @@
 
 ---
 
-### Lab 8 Continuation & Final Project (1 hour)
+### Lab 8 Continuation (1 hour) ✅
 **Activities:**
-- Add circuit breaker
-- Implement health checks
-- Configure monitoring
-- Final project presentation
+- Test inter-service communication
+- Verify fault tolerance (circuit breaker, retry)
+- Test health checks (liveness, readiness, aggregate)
+- Verify metrics collection
+- Test API Gateway aggregation
+- Run complete test suite (15+ tests)
+- Deploy with Docker Compose
+- Compare with Lab07 monolith architecture
+
+### Final Project Presentation (Optional)
+**Activities:**
+- Demo complete banking application
+- Explain microservices architecture decisions
+- Discuss trade-offs (monolith vs microservices)
+- Present monitoring and observability strategy
+- Q&A session
 
 ---
 

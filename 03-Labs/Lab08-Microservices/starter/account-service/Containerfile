@@ -1,0 +1,12 @@
+# © Copyright 2025-2026 Olivier Planson. All rights reserved. Reproduction prohibited. Made with IBM Bob.
+FROM icr.io/appcafe/open-liberty:full-java17-openj9-ubi
+
+# Copy application WAR
+COPY --chown=1001:0 target/account-service.war /config/apps/
+
+# Copy server configuration
+COPY --chown=1001:0 src/main/liberty/config/server.xml /config/
+COPY --chown=1001:0 src/main/liberty/config/bootstrap.properties /config/
+
+# Configure Liberty
+RUN configure.sh

@@ -1,0 +1,502 @@
+**Chapter 8: Microservices Architecture - Specifications**
+
+---
+
+**Context:**
+This is the eighth and final chapter of the Jakarta EE and Microservices course. It builds upon all previous chapters (Servlets, JSP, JPA, CDI, JAX-RS, DDD, Hexagonal Architecture) to demonstrate how to decompose a monolithic application into microservices.
+
+**Learning Objectives:**
+- Understand microservices architecture principles and patterns
+- Learn service decomposition strategies
+- Implement inter-service communication (REST, messaging)
+- Apply API Gateway pattern
+- Configure service discovery and load balancing
+- Implement distributed tracing and monitoring
+- Handle distributed transactions and data consistency
+- Deploy microservices with Docker Compose
+
+**Course Content (Lecture 08):**
+
+1. **Microservices Fundamentals (30 min)**
+   - Definition and characteristics
+   - Monolith vs Microservices comparison
+   - Benefits and challenges
+   - When to use microservices
+   - Conway's Law and team organization
+
+2. **Service Decomposition Strategies (30 min)**
+   - Decomposition by business capability
+   - Decomposition by subdomain (DDD)
+   - Decomposition by transaction boundaries
+   - Database per service pattern
+   - Shared database anti-pattern
+   - Banking app decomposition: Client Service + Account Service
+
+3. **Inter-Service Communication (45 min)**
+   - Synchronous communication (REST, gRPC)
+   - Asynchronous communication (messaging, events)
+   - Service mesh concepts
+   - Circuit breaker pattern (MicroProfile Fault Tolerance)
+   - Retry and timeout strategies
+   - MicroProfile Rest Client for service-to-service calls
+
+4. **API Gateway Pattern (30 min)**
+   - API Gateway responsibilities
+   - Request routing and composition
+   - Authentication and authorization
+   - Rate limiting and throttling
+   - Response aggregation
+   - Implementation with Jakarta EE
+
+5. **Service Discovery and Configuration (20 min)**
+   - Service registry pattern
+   - Client-side vs server-side discovery
+   - MicroProfile Config for externalized configuration
+   - Environment-specific configuration
+   - Configuration in Docker Compose
+
+6. **Distributed Tracing and Monitoring (25 min)**
+   - MicroProfile OpenTracing
+   - Correlation IDs and request tracking
+   - MicroProfile Metrics for monitoring
+   - Health checks (liveness, readiness, startup)
+   - Logging best practices in microservices
+   - Centralized logging with ELK stack concepts
+
+7. **Data Consistency and Transactions (20 min)**
+   - Distributed transaction challenges
+   - Saga pattern for distributed transactions
+   - Eventual consistency
+   - Event sourcing concepts
+   - CQRS pattern introduction
+
+8. **Deployment and DevOps (20 min)**
+   - Containerization with Docker
+   - Docker Compose for local development
+   - Kubernetes concepts (brief introduction)
+   - CI/CD pipeline considerations
+   - Blue-green deployment
+   - Canary releases
+
+**Lab 08 Specifications:**
+
+**Objective:**
+Decompose the Lab07 Hexagonal Architecture banking application into three microservices:
+1. **Client Service** - Manages client information
+2. **Account Service** - Manages accounts and transactions
+3. **API Gateway** - Routes requests and aggregates responses
+
+**Technical Requirements:**
+
+1. **Client Service:**
+   - Port: 9081
+   - Database: PostgreSQL (banking_client_db)
+   - Endpoints:
+     - GET /api/clients - List all clients
+     - GET /api/clients/{id} - Get client by ID
+     - POST /api/clients - Create client
+     - PUT /api/clients/{id} - Update client
+     - DELETE /api/clients/{id} - Delete client
+   - MicroProfile features:
+     - Health checks
+     - Metrics
+     - OpenAPI documentation
+     - Config for database connection
+
+2. **Account Service:**
+   - Port: 9082
+   - Database: PostgreSQL (banking_account_db)
+   - Endpoints:
+     - GET /api/accounts - List all accounts
+     - GET /api/accounts/{id} - Get account by ID
+     - GET /api/accounts/client/{clientId} - Get accounts by client
+     - POST /api/accounts - Create account
+     - PUT /api/accounts/{id} - Update account
+     - DELETE /api/accounts/{id} - Delete account
+     - POST /api/accounts/{id}/deposit - Deposit money
+     - POST /api/accounts/{id}/withdraw - Withdraw money
+     - POST /api/accounts/transfer - Transfer between accounts
+   - MicroProfile features:
+     - Health checks
+     - Metrics
+     - OpenAPI documentation
+     - Rest Client to call Client Service
+     - Fault Tolerance (circuit breaker, retry)
+     - Config for database and client service URL
+
+3. **API Gateway:**
+   - Port: 9080
+   - No database (stateless)
+   - Responsibilities:
+     - Route requests to appropriate services
+     - Aggregate responses (e.g., client with accounts)
+     - Handle authentication (basic implementation)
+     - Provide unified API documentation
+   - Endpoints:
+     - GET /api/clients - Proxy to Client Service
+     - GET /api/clients/{id} - Proxy to Client Service
+     - GET /api/clients/{id}/accounts - Aggregate client + accounts
+     - POST /api/clients - Proxy to Client Service
+     - GET /api/accounts - Proxy to Account Service
+     - POST /api/accounts - Proxy to Account Service
+     - POST /api/accounts/{id}/deposit - Proxy to Account Service
+     - POST /api/accounts/{id}/withdraw - Proxy to Account Service
+     - POST /api/accounts/transfer - Proxy to Account Service
+   - MicroProfile features:
+     - Health checks (aggregate from services)
+     - Metrics
+     - OpenAPI documentation
+     - Rest Client for both services
+     - Fault Tolerance
+
+**Architecture:**
+
+```
+┌─────────────────────────────────────────────────────────┐
+│                      API Gateway                         │
+│                    (Port 9080)                          │
+│  - Request routing                                       │
+│  - Response aggregation                                  │
+│  - Authentication                                        │
+└────────────┬──────────────────────────┬─────────────────┘
+             │                          │
+             │ REST                     │ REST
+             │                          │
+    ┌────────▼────────┐        ┌───────▼────────┐
+    │ Client Service  │        │ Account Service │
+    │   (Port 9081)   │◄───────│   (Port 9082)   │
+    │                 │  REST  │                  │
+    └────────┬────────┘        └────────┬─────────┘
+             │                          │
+             │                          │
+    ┌────────▼────────┐        ┌───────▼─────────┐
+    │  PostgreSQL     │        │   PostgreSQL    │
+    │ client_db       │        │  account_db     │
+    └─────────────────┘        └─────────────────┘
+```
+
+**Docker Compose Configuration:**
+
+```yaml
+version: '3.8'
+
+services:
+  # Client Service Database
+  client-db:
+    image: postgres:16
+    environment:
+      POSTGRES_DB: banking_client_db
+      POSTGRES_USER: bankuser
+      POSTGRES_PASSWORD: bankpass
+    ports:
+      - "5433:5432"
+    volumes:
+      - client-db-data:/var/lib/postgresql/data
+
+  # Account Service Database
+  account-db:
+    image: postgres:16
+    environment:
+      POSTGRES_DB: banking_account_db
+      POSTGRES_USER: bankuser
+      POSTGRES_PASSWORD: bankpass
+    ports:
+      - "5434:5432"
+    volumes:
+      - account-db-data:/var/lib/postgresql/data
+
+  # Client Service
+  client-service:
+    build:
+      context: ./client-service
+      dockerfile: Containerfile
+    ports:
+      - "9081:9080"
+    environment:
+      DB_HOST: client-db
+      DB_PORT: 5432
+      DB_NAME: banking_client_db
+      DB_USER: bankuser
+      DB_PASSWORD: bankpass
+    depends_on:
+      - client-db
+
+  # Account Service
+  account-service:
+    build:
+      context: ./account-service
+      dockerfile: Containerfile
+    ports:
+      - "9082:9080"
+    environment:
+      DB_HOST: account-db
+      DB_PORT: 5432
+      DB_NAME: banking_account_db
+      DB_USER: bankuser
+      DB_PASSWORD: bankpass
+      CLIENT_SERVICE_URL: http://client-service:9080
+    depends_on:
+      - account-db
+      - client-service
+
+  # API Gateway
+  api-gateway:
+    build:
+      context: ./api-gateway
+      dockerfile: Containerfile
+    ports:
+      - "9080:9080"
+    environment:
+      CLIENT_SERVICE_URL: http://client-service:9080
+      ACCOUNT_SERVICE_URL: http://account-service:9080
+    depends_on:
+      - client-service
+      - account-service
+
+volumes:
+  client-db-data:
+  account-db-data:
+```
+
+**Testing Strategy:**
+
+1. **Unit Tests:**
+   - Test each service independently
+   - Mock external service calls
+   - Test domain logic
+
+2. **Integration Tests:**
+   - Test service-to-service communication
+   - Test database interactions
+   - Test MicroProfile features
+
+3. **End-to-End Tests:**
+   - Test through API Gateway
+   - Test complete workflows
+   - Test fault tolerance scenarios
+
+**Deployment Scripts:**
+
+1. **podman-test.sh** - Deploy all services with Podman Compose
+2. **docker-test.sh** - Deploy all services with Docker Compose
+3. **run-lab.sh** - Run services in development mode
+4. **test-lab.sh** - Run automated tests
+
+**Test Scenarios (minimum 15 tests):**
+
+1. Health check - Client Service
+2. Health check - Account Service
+3. Health check - API Gateway (aggregate)
+4. Create client via Gateway
+5. Get client via Gateway
+6. Create account via Gateway
+7. Get accounts for client via Gateway
+8. Deposit money via Gateway
+9. Withdraw money via Gateway
+10. Transfer between accounts via Gateway
+11. Get client with accounts (aggregated response)
+12. Circuit breaker test (stop Client Service, verify fallback)
+13. Retry test (temporary failure, verify retry)
+14. Metrics endpoint test
+15. OpenAPI documentation test
+
+**Key Learning Points:**
+
+1. **Service Decomposition:**
+   - How to split a monolith by business capability
+   - Database per service pattern
+   - Maintaining data consistency
+
+2. **Inter-Service Communication:**
+   - REST-based synchronous communication
+   - MicroProfile Rest Client usage
+   - Error handling across services
+
+3. **Resilience:**
+   - Circuit breaker pattern
+   - Retry strategies
+   - Timeout configuration
+   - Graceful degradation
+
+4. **Observability:**
+   - Health checks for each service
+   - Metrics collection
+   - Distributed tracing concepts
+   - Centralized logging
+
+5. **Configuration:**
+   - Externalized configuration
+   - Environment-specific settings
+   - Service discovery via configuration
+
+6. **Deployment:**
+   - Containerization with Docker
+   - Multi-service orchestration
+   - Network configuration
+   - Volume management
+
+**Comparison with Lab07:**
+
+| Aspect | Lab07 (Monolith) | Lab08 (Microservices) |
+|--------|------------------|----------------------|
+| Deployment | Single WAR | 3 separate services |
+| Database | Single database | 2 databases (client, account) |
+| Scaling | Scale entire app | Scale services independently |
+| Technology | Single tech stack | Can use different stacks |
+| Complexity | Lower | Higher (distributed system) |
+| Resilience | Single point of failure | Fault isolation |
+| Development | Simpler | Requires coordination |
+| Testing | Easier | More complex |
+
+**Migration Strategy from Lab07 to Lab08:**
+
+1. **Phase 1: Identify Service Boundaries**
+   - Analyze Lab07 hexagonal architecture
+   - Identify bounded contexts (Client, Account)
+   - Define service contracts (APIs)
+
+2. **Phase 2: Extract Client Service**
+   - Copy domain model for Client
+   - Copy use cases for Client management
+   - Create new database schema
+   - Implement REST API
+   - Add MicroProfile features
+
+3. **Phase 3: Extract Account Service**
+   - Copy domain model for Account
+   - Copy use cases for Account management
+   - Create new database schema
+   - Implement REST API
+   - Add Rest Client for Client Service
+   - Add Fault Tolerance
+
+4. **Phase 4: Create API Gateway**
+   - Implement routing logic
+   - Add response aggregation
+   - Configure Rest Clients
+   - Add health checks
+   - Add OpenAPI documentation
+
+5. **Phase 5: Deploy and Test**
+   - Create Docker Compose configuration
+   - Test service-to-service communication
+   - Test fault tolerance
+   - Verify metrics and health checks
+
+**Best Practices:**
+
+1. **Service Design:**
+   - Keep services small and focused
+   - Design for failure
+   - Use asynchronous communication when possible
+   - Implement proper error handling
+
+2. **Data Management:**
+   - Database per service
+   - Avoid distributed transactions
+   - Use eventual consistency
+   - Implement compensation logic
+
+3. **API Design:**
+   - Version your APIs
+   - Use standard HTTP methods
+   - Provide clear error messages
+   - Document with OpenAPI
+
+4. **Monitoring:**
+   - Implement health checks
+   - Collect metrics
+   - Use correlation IDs
+   - Centralize logs
+
+5. **Security:**
+   - Secure service-to-service communication
+   - Implement authentication at gateway
+   - Use HTTPS in production
+   - Validate all inputs
+
+**Common Pitfalls to Avoid:**
+
+1. Creating too many microservices (nano-services)
+2. Sharing databases between services
+3. Tight coupling between services
+4. Ignoring network latency
+5. Not implementing proper error handling
+6. Insufficient monitoring and logging
+7. Complex distributed transactions
+8. Not testing failure scenarios
+
+**Next Steps After Lab08:**
+
+1. Implement asynchronous communication with messaging
+2. Add event sourcing and CQRS
+3. Implement saga pattern for distributed transactions
+4. Deploy to Kubernetes
+5. Add service mesh (Istio)
+6. Implement advanced security (OAuth2, JWT)
+7. Add API rate limiting
+8. Implement caching strategies
+
+---
+
+**Deliverables:**
+
+1. **Lecture 08 Markdown** (08-microservices-architecture.md)
+   - ~1800 lines
+   - Comprehensive coverage of all topics
+   - Mermaid diagrams
+   - Code examples
+   - Best practices
+
+2. **Lab 08 README** (Lab08-Microservices/README.md)
+   - ~1000 lines
+   - Detailed instructions
+   - Architecture diagrams
+   - Step-by-step migration guide
+   - Testing guide
+
+3. **Lab 08 Solution:**
+   - client-service/ (complete microservice)
+   - account-service/ (complete microservice)
+   - api-gateway/ (complete gateway)
+   - docker-compose.yml
+   - Deployment scripts
+   - All tests passing
+
+4. **Lab 08 Starter:**
+   - Basic project structure
+   - TODO comments
+   - Partial implementation
+   - Students complete the rest
+
+5. **Documentation Updates:**
+   - README.md
+   - COURSE-SUMMARY.md
+   - course-outline.md
+
+---
+
+**Timeline:**
+- Lecture creation: 4 hours
+- Lab solution creation: 6 hours
+- Lab starter creation: 2 hours
+- Testing and validation: 2 hours
+- Documentation updates: 1 hour
+- **Total: ~15 hours**
+
+---
+
+**Success Criteria:**
+
+✅ Lecture covers all microservices concepts
+✅ Lab demonstrates practical microservices implementation
+✅ All services deploy successfully with Docker Compose
+✅ All 15+ tests pass
+✅ Code follows hexagonal architecture principles
+✅ MicroProfile features properly implemented
+✅ Documentation is comprehensive and clear
+✅ Students can understand and replicate the solution
+
+---
+
+**End of Specifications**

@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- © Copyright 2025-2026 Olivier Planson. All rights reserved. Reproduction prohibited. Made with IBM Bob. -->
+<server description="API Gateway / BFF Server">
+
+    <!-- Enable features -->
+    <featureManager>
+        <feature>webProfile-10.0</feature>
+        <feature>microProfile-6.0</feature>
+    </featureManager>
+
+    <!-- HTTP Endpoint -->
+    <httpEndpoint id="defaultHttpEndpoint"
+                  httpPort="${http.port}"
+                  httpsPort="${https.port}"
+                  host="*" />
+
+    <!-- Web Application -->
+    <webApplication id="api-gateway" 
+                    location="api-gateway.war" 
+                    contextRoot="/">
+        <classloader delegation="parentLast" />
+    </webApplication>
+
+    <!-- Logging -->
+    <logging traceSpecification="*=info:com.bank.*=fine" 
+             maxFileSize="20" 
+             maxFiles="10" />
+
+    <!-- MicroProfile Config -->
+    <mpMetrics authentication="false" />
+
+    <!-- CORS Configuration for API calls -->
+    <cors domain="/"
+          allowedOrigins="*"
+          allowedMethods="GET, POST, PUT, DELETE, OPTIONS"
+          allowedHeaders="*"
+          allowCredentials="true"
+          maxAge="3600" />
+</server>
+
+<!-- Made with Bob -->

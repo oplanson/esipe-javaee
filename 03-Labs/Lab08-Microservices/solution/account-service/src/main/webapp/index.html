@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<!-- © Copyright 2025-2026 Olivier Planson. All rights reserved. Reproduction prohibited. Made with IBM Bob. -->
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Account Service - Banking Microservices</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        
+        .container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            padding: 40px;
+            max-width: 800px;
+            width: 100%;
+        }
+        
+        h1 {
+            color: #667eea;
+            margin-bottom: 10px;
+            font-size: 2.5em;
+        }
+        
+        .subtitle {
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 1.1em;
+        }
+        
+        .info-box {
+            background: #f8f9fa;
+            border-left: 4px solid #667eea;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 5px;
+        }
+        
+        .info-box h2 {
+            color: #667eea;
+            margin-bottom: 15px;
+            font-size: 1.3em;
+        }
+        
+        .links {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin: 30px 0;
+        }
+        
+        .link-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            text-decoration: none;
+            text-align: center;
+            transition: transform 0.3s, box-shadow 0.3s;
+            display: block;
+        }
+        
+        .link-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4);
+        }
+        
+        .link-card h3 {
+            margin-bottom: 10px;
+            font-size: 1.2em;
+        }
+        
+        .link-card p {
+            font-size: 0.9em;
+            opacity: 0.9;
+        }
+        
+        .features {
+            margin: 30px 0;
+        }
+        
+        .features ul {
+            list-style: none;
+            padding-left: 0;
+        }
+        
+        .features li {
+            padding: 10px 0;
+            padding-left: 30px;
+            position: relative;
+        }
+        
+        .features li:before {
+            content: "✓";
+            position: absolute;
+            left: 0;
+            color: #667eea;
+            font-weight: bold;
+            font-size: 1.2em;
+        }
+        
+        .footer {
+            text-align: center;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #e0e0e0;
+            color: #666;
+            font-size: 0.9em;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🏦 Account Service</h1>
+        <p class="subtitle">Banking Microservices Architecture - Lab 08</p>
+        
+        <div class="info-box">
+            <h2>Service Information</h2>
+            <p><strong>Service:</strong> Account Management Microservice</p>
+            <p><strong>Port:</strong> 9082</p>
+            <p><strong>Architecture:</strong> Hexagonal Architecture with Domain-Driven Design</p>
+            <p><strong>Database:</strong> PostgreSQL (banking_account_db)</p>
+        </div>
+        
+        <div class="links">
+            <a href="/api/accounts" class="link-card">
+                <h3>📋 REST API</h3>
+                <p>Account endpoints</p>
+            </a>
+            
+            <a href="/openapi/ui/" class="link-card">
+                <h3>📚 API Docs</h3>
+                <p>OpenAPI UI</p>
+            </a>
+            
+            <a href="/health" class="link-card">
+                <h3>💚 Health</h3>
+                <p>Service health</p>
+            </a>
+            
+            <a href="/metrics" class="link-card">
+                <h3>📊 Metrics</h3>
+                <p>Service metrics</p>
+            </a>
+        </div>
+        
+        <div class="features">
+            <h2>Features</h2>
+            <ul>
+                <li>Account creation and management</li>
+                <li>Deposit and withdrawal operations</li>
+                <li>Account-to-account transfers</li>
+                <li>Account status management (Active, Suspended, Closed)</li>
+                <li>Client verification via REST client</li>
+                <li>Fault tolerance with Circuit Breaker</li>
+                <li>Automatic retry on failures</li>
+                <li>Database migration with Flyway</li>
+                <li>Health checks and metrics</li>
+            </ul>
+        </div>
+        
+        <div class="info-box">
+            <h2>MicroProfile Features</h2>
+            <ul>
+                <li><strong>Rest Client:</strong> Type-safe client for Client Service</li>
+                <li><strong>Fault Tolerance:</strong> Circuit Breaker, Retry, Timeout, Fallback</li>
+                <li><strong>Health:</strong> Readiness and liveness probes</li>
+                <li><strong>Metrics:</strong> Application metrics exposure</li>
+                <li><strong>OpenAPI:</strong> Automatic API documentation</li>
+            </ul>
+        </div>
+        
+        <div class="footer">
+            <p>© 2025-2026 Olivier Planson - Banking Microservices Lab 08</p>
+            <p>Part of Jakarta EE & MicroProfile Course</p>
+        </div>
+    </div>
+</body>
+</html>

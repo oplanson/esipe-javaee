@@ -32,6 +32,7 @@ This complete course package contains everything needed to teach or learn Jakart
    - ✅ Lecture 5: JAX-RS and RESTful Services (1770+ lines)
    - ✅ Lecture 6: Domain-Driven Design (1400+ lines with DDD Documentation section)
    - ✅ Lecture 7: Hexagonal Architecture (1650+ lines with Ports and Adapters pattern)
+   - ✅ Lecture 8: Microservices Architecture (1850+ lines with distributed systems patterns)
    - Markdown format with Marp compatibility
    - Ready for PowerPoint conversion
    - Includes Mermaid diagrams, code examples, and visuals
@@ -108,7 +109,21 @@ This complete course package contains everything needed to teach or learn Jakart
      - Complete solution with deployment scripts
      - Comprehensive README (950+ lines)
      - 43 source files compiled successfully
-  - Framework for Lab 8 (to be expanded)
+  - ✅ Lab 8: Microservices Architecture (documentation complete, implementation in progress)
+     - Comprehensive README (1450+ lines)
+     - Three microservices architecture:
+       * Client Service (Port 9081) - Client management
+       * Account Service (Port 9082) - Account and transaction management
+       * API Gateway (Port 9080) - Request routing and aggregation
+     - Database per service pattern (2 PostgreSQL databases)
+     - MicroProfile Rest Client for inter-service communication
+     - Fault tolerance (circuit breaker, retry, timeout, fallback)
+     - Service discovery with Docker DNS
+     - Health checks (liveness, readiness, aggregate)
+     - Metrics collection with MicroProfile Metrics
+     - Docker Compose orchestration
+     - Complete testing strategy (15+ tests)
+     - Migration guide from Lab07 monolith
 
 4. **Banking Application** (`04-BankingApp/`)
    - Complete documentation (598 lines)
@@ -309,7 +324,7 @@ esipe-javaee/
 │   ├── 05-jaxrs-restful-services.md        # ✅ Complete (1770+ lines)
 │   ├── 06-domain-driven-design.md          # ✅ Complete (1150+ lines)
 │   ├── 07-hexagonal-architecture.md        # ✅ Complete (1650+ lines)
-│   └── 08-microservices.md                 # To be created
+│   ├── 08-microservices-architecture.md    # ✅ Complete (1850+ lines)
 │
 ├── 03-Labs/                           # Lab exercises
 │   ├── Lab01-FirstServlet/           # ✅ Complete
@@ -454,12 +469,13 @@ esipe-javaee/
 18. **Banking App Docs** - Complete architecture and roadmap
 19. **Conversion Script** - Automated slide generation
 
-### 📝 To Be Expanded (Framework Ready)
+### 📝 To Be Completed
 
-1. **Lecture 8** - Microservices (follow Lecture 1-7 template)
-2. **Lab 8** - Microservices (follow Lab 1-7 structure with deployment scripts)
-3. **Banking App Code** - Implement 8 Git branches
-4. **Additional Resources** - FAQ, cheat sheets, etc.
+1. **Lab 8 Implementation** - Complete microservices code (Client Service, Account Service, API Gateway)
+2. **Lab 8 Deployment Scripts** - podman-test.sh, docker-test.sh, run-lab.sh, test-lab.sh
+3. **Lab 8 Starter Code** - Partial implementation for students
+4. **Banking App Code** - Implement 8 Git branches
+5. **Additional Resources** - FAQ, cheat sheets, etc.
 
 ---
 
@@ -584,19 +600,24 @@ Students who complete this course will be able to:
 
 ### Phase 1: Core Content (Complete ✅)
 - ✅ Course structure
-- ✅ Lectures 1-7 (Introduction, Servlets/JSP, JPA, CDI, JAX-RS, DDD, Hexagonal)
+- ✅ Lectures 1-8 (Introduction, Servlets/JSP, JPA, CDI, JAX-RS, DDD, Hexagonal, Microservices)
 - ✅ Labs 1-7 (First Servlet, JSP/MVC, JPA, CDI, REST API, DDD, Hexagonal)
+- ✅ Lab 8 Documentation (Microservices - 1450 lines)
 - ✅ Documentation and guides
 
-### Phase 2: Advanced Topics (Next)
-- Create Lecture 8 (Microservices)
-- Add more Mermaid diagrams
-- Include more code examples
+### Phase 2: Lab 8 Implementation (In Progress)
+- ✅ Lecture 8 created (1850 lines)
+- ✅ Lab 8 README created (1450 lines)
+- ⏳ Client Service implementation
+- ⏳ Account Service implementation
+- ⏳ API Gateway implementation
+- ⏳ Docker Compose configuration
+- ⏳ Deployment scripts
 
-### Phase 3: Complete Labs (Following)
-- Create Lab 8 (Microservices)
-- Provide starter and solution code
-- Add comprehensive tests
+### Phase 3: Finalization (Following)
+- Complete Lab 8 starter code
+- Test all Lab 8 scripts
+- Verify end-to-end functionality
 
 ### Phase 4: Banking Application (Final)
 - Implement all 8 Git branches
@@ -618,6 +639,7 @@ Before using this course:
 - [x] Lecture 5 complete with JAX-RS and REST
 - [x] Lecture 6 complete with DDD patterns
 - [x] Lecture 7 complete with Hexagonal Architecture
+- [x] Lecture 8 complete with Microservices Architecture (1850 lines)
 - [x] Lab 1 complete with solution
 - [x] Lab 2 complete with JSP and MicroProfile
 - [x] Lab 3 complete with JPA and PostgreSQL
@@ -625,6 +647,9 @@ Before using this course:
 - [x] Lab 5 complete with REST API and JSON-B
 - [x] Lab 6 complete with DDD refactoring
 - [x] Lab 7 complete with Hexagonal Architecture and API versioning
+- [x] Lab 8 README complete (1450 lines)
+- [ ] Lab 8 implementation (Client Service, Account Service, API Gateway)
+- [ ] Lab 8 deployment scripts
 - [x] Environment setup guide complete
 - [x] Course outline detailed
 - [x] Conversion guide provided

@@ -1,0 +1,71 @@
+# © Copyright 2026 Olivier Planson. All rights reserved. Reproduction prohibited. Made with IBM Bob.
+
+version: '3.8'
+
+services:
+  # ============================================
+  # Database Services Only
+  # ============================================
+  
+  # Client Service Database
+  client-db:
+    image: postgres:16
+    container_name: banking-client-db
+    environment:
+      POSTGRES_DB: banking_client_db
+      POSTGRES_USER: bankuser
+      POSTGRES_PASSWORD: bankpass
+    ports:
+      - "5433:5432"
+    volumes:
+      - client-db-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U bankuser -d banking_client_db"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    networks:
+      - banking-network
+    restart: unless-stopped
+
+  # Account Service Database
+  account-db:
+    image: postgres:16
+    container_name: banking-account-db
+    environment:
+      POSTGRES_DB: banking_account_db
+      POSTGRES_USER: bankuser
+      POSTGRES_PASSWORD: bankpass
+    ports:
+      - "5434:5432"
+    volumes:
+      - account-db-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U bankuser -d banking_account_db"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    networks:
+      - banking-network
+    restart: unless-stopped
+
+# ============================================
+# Volumes
+# ============================================
+volumes:
+  client-db-data:
+    name: banking-client-db-data
+  account-db-data:
+    name: banking-account-db-data
+
+# ============================================
+# Networks
+# ============================================
+networks:
+  banking-network:
+    name: banking-network
+    driver: bridge
+
+# Made with Bob

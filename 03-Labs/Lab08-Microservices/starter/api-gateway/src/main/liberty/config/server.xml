@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- © Copyright 2025-2026 Olivier Planson. All rights reserved. Reproduction prohibited. Made with IBM Bob. -->
+<server description="API Gateway / BFF">
+    <featureManager>
+        <feature>webProfile-10.0</feature>
+        <feature>microProfile-6.0</feature>
+    </featureManager>
+
+    <variable name="http.port" defaultValue="9080"/>
+    <variable name="https.port" defaultValue="9443"/>
+
+    <httpEndpoint id="defaultHttpEndpoint"
+                  host="*"
+                  httpPort="${http.port}"
+                  httpsPort="${https.port}"/>
+
+    <!-- TODO: Configure MicroProfile Rest Clients for backend services -->
+    <!-- Hint: Configure clients for both Client Service and Account Service -->
+    
+    <mpMetrics authentication="false"/>
+
+    <webApplication location="api-gateway.war" contextRoot="/">
+        <classloader apiTypeVisibility="+third-party"/>
+    </webApplication>
+
+    <logging traceSpecification="*=info:com.bank.*=fine"/>
+</server>
+
+<!-- Made with Bob -->
