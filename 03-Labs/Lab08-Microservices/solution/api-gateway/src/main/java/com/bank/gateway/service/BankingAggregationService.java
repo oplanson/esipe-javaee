@@ -37,6 +37,21 @@ public class BankingAggregationService {
     private AccountServiceClient accountServiceClient;
     
     /**
+     * Default constructor for CDI
+     */
+    public BankingAggregationService() {
+    }
+    
+    /**
+     * Constructor for programmatic instantiation (used by servlets)
+     */
+    public BankingAggregationService(ClientServiceClient clientServiceClient,
+                                     AccountServiceClient accountServiceClient) {
+        this.clientServiceClient = clientServiceClient;
+        this.accountServiceClient = accountServiceClient;
+    }
+    
+    /**
      * Get client with all their accounts (aggregated data)
      * This demonstrates the BFF pattern - combining data from multiple services
      */

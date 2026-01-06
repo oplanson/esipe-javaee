@@ -31,14 +31,14 @@
                 <div class="action-card">
                     <h3>👥 Clients</h3>
                     <p>Manage client information and view their accounts</p>
-                    <a href="clients" class="button">View Clients</a>
-                    <a href="clients/new" class="button secondary">Add New Client</a>
+                    <a href="/web/clients" class="button">View Clients</a>
+                    <a href="/web/clients/new" class="button secondary">Add New Client</a>
                 </div>
                 
                 <div class="action-card">
                     <h3>💰 Accounts</h3>
                     <p>Manage bank accounts and perform transactions</p>
-                    <a href="accounts" class="button">View All Accounts</a>
+                    <a href="/web/accounts" class="button">View All Accounts</a>
                 </div>
             </div>
             
@@ -91,7 +91,7 @@
                 <div class="service-links">
                     <div class="link-group">
                         <h4>Client Service (9081)</h4>
-                        <a href="http://localhost:9081/api/clients" target="_blank">REST API</a>
+                        <a href="http://localhost:9081/web/api/clients" target="_blank">REST API</a>
                         <a href="http://localhost:9081/openapi/ui/" target="_blank">API Docs</a>
                         <a href="http://localhost:9081/health" target="_blank">Health</a>
                         <a href="http://localhost:9081/metrics" target="_blank">Metrics</a>
@@ -99,7 +99,7 @@
                     
                     <div class="link-group">
                         <h4>Account Service (9082)</h4>
-                        <a href="http://localhost:9082/api/accounts" target="_blank">REST API</a>
+                        <a href="http://localhost:9082/web/api/accounts" target="_blank">REST API</a>
                         <a href="http://localhost:9082/openapi/ui/" target="_blank">API Docs</a>
                         <a href="http://localhost:9082/health" target="_blank">Health</a>
                         <a href="http://localhost:9082/metrics" target="_blank">Metrics</a>
@@ -107,6 +107,9 @@
                     
                     <div class="link-group">
                         <h4>API Gateway (9080)</h4>
+                        <a href="/web/api/clients" target="_blank">REST API - Clients</a>
+                        <a href="/web/api/accounts" target="_blank">REST API - Accounts</a>
+                        <a href="/web/api/banking/clients-with-accounts" target="_blank">BFF Aggregation</a>
                         <a href="/health" target="_blank">Health</a>
                         <a href="/metrics" target="_blank">Metrics</a>
                     </div>

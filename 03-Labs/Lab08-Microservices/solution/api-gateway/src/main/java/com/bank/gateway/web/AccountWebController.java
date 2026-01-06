@@ -7,46 +7,61 @@ import com.bank.gateway.client.ClientServiceClient;
 import com.bank.gateway.dto.AccountDTO;
 import com.bank.gateway.dto.ClientDTO;
 import com.bank.gateway.dto.TransactionDTO;
-import jakarta.inject.Inject;
 import jakarta.servlet.ServletException;
-import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import org.eclipse.microprofile.rest.client.inject.RestClient;
+import org.eclipse.microprofile.config.ConfigProvider;
+import org.eclipse.microprofile.rest.client.RestClientBuilder;
 
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.net.URI;
 import java.util.List;
 import java.util.logging.Logger;
 
 /**
  * Web Controller for Account operations
  * Handles JSP-based web interface requests
+ * Uses RestClientBuilder for programmatic REST client creation
+ * Configured in web.xml
  */
-@WebServlet(urlPatterns = {
-    "/accounts", 
-    "/accounts/new", 
-    "/accounts/view",
-    "/accounts/deposit",
-    "/accounts/withdraw",
-    "/accounts/transfer",
-    "/accounts/suspend",
-    "/accounts/activate",
-    "/accounts/close",
-    "/accounts/delete"
-})
 public class AccountWebController extends HttpServlet {
     
     private static final Logger LOGGER = Logger.getLogger(AccountWebController.class.getName());
     
-    @Inject
-    @RestClient
     private AccountServiceClient accountServiceClient;
-    
-    @Inject
-    @RestClient
     private ClientServiceClient clientServiceClient;
+    
+    @Override
+    public void init() throws ServletException {
+        super.init();
+        
+        // Get service URLs from MicroProfile Config
+        String accountServiceUrl = ConfigProvider.getConfig()
+            .getValue("account.service.url", String.class);
+        String clientServiceUrl = ConfigProvider.getConfig()
+            .getValue("client.service.url", String.class);
+        
+        // Build REST clients programmatically
+        accountServiceClient = RestClientBuilder.newBuilder()
+            .baseUri(URI.create(accountServiceUrl))
+            .build(AccountServiceClient.class);
+            
+        clientServiceClient = RestClientBuilder.newBuilder()
+            .baseUri(URI.create(clientServiceUrl))
+            .build(ClientServiceClient.class);
+        
+        LOGGER.info("AccountWebController initialized with account service URL: " + accountServiceUrl);
+    }
+    
+    private AccountServiceClient getAccountServiceClient() {
+        return accountServiceClient;
+    }
+    
+    private ClientServiceClient getClientServiceClient() {
+        return clientServiceClient;
+    }
     
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) 
@@ -140,7 +155,7 @@ public class AccountWebController extends HttpServlet {
         }
     }
     
-    private void listAccounts(HttpServletRequest request, HttpServletResponse response) 
+    private void listAccounts(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         
         String clientIdParam = request.getParameter("clientId");
@@ -150,42 +165,42 @@ public class AccountWebController extends HttpServlet {
             Long clientId = Long.parseLong(clientIdParam);
             LOGGER.info("Listing accounts for client: " + clientId);
             
-            ClientDTO client = clientServiceClient.getClientById(clientId);
-            List<AccountDTO> accounts = accountServiceClient.getAccountsByClientId(clientId);
+            ClientDTO client = getClientServiceClient().getClientById(clientId);
+            List<AccountDTO> accounts = getAccountServiceClient().getAccountsByClientId(clientId);
             
             request.setAttribute("client", client);
             request.setAttribute("accounts", accounts);
         } else {
             // List all accounts
             LOGGER.info("Listing all accounts");
-            List<AccountDTO> accounts = accountServiceClient.getAllAccounts();
+            List<AccountDTO> accounts = getAccountServiceClient().getAllAccounts();
             request.setAttribute("accounts", accounts);
         }
         
         request.getRequestDispatcher("/WEB-INF/views/account-list.jsp").forward(request, response);
     }
     
-    private void viewAccount(HttpServletRequest request, HttpServletResponse response) 
+    private void viewAccount(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         
         Long id = Long.parseLong(request.getParameter("id"));
         LOGGER.info("Viewing account: " + id);
         
-        AccountDTO account = accountServiceClient.getAccountById(id);
-        ClientDTO client = clientServiceClient.getClientById(account.getClientId());
+        AccountDTO account = getAccountServiceClient().getAccountById(id);
+        ClientDTO client = getClientServiceClient().getClientById(account.getClientId());
         
         request.setAttribute("account", account);
         request.setAttribute("client", client);
         request.getRequestDispatcher("/WEB-INF/views/account-details.jsp").forward(request, response);
     }
     
-    private void showNewForm(HttpServletRequest request, HttpServletResponse response) 
+    private void showNewForm(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         
         LOGGER.info("Showing new account form");
         
         // Get all clients for the dropdown
-        List<ClientDTO> clients = clientServiceClient.getAllClients();
+        List<ClientDTO> clients = getClientServiceClient().getAllClients();
         request.setAttribute("clients", clients);
         
         // Pre-select client if provided
@@ -197,7 +212,7 @@ public class AccountWebController extends HttpServlet {
         request.getRequestDispatcher("/WEB-INF/views/account-form.jsp").forward(request, response);
     }
     
-    private void createAccount(HttpServletRequest request, HttpServletResponse response) 
+    private void createAccount(HttpServletRequest request, HttpServletResponse response)
             throws IOException {
         
         LOGGER.info("Creating new account");
@@ -212,24 +227,24 @@ public class AccountWebController extends HttpServlet {
             account.setBalance(new BigDecimal(balanceParam));
         }
         
-        accountServiceClient.createAccount(account);
+        getAccountServiceClient().createAccount(account);
         
         response.sendRedirect(request.getContextPath() + "/accounts?clientId=" + account.getClientId());
     }
     
-    private void showDepositForm(HttpServletRequest request, HttpServletResponse response) 
+    private void showDepositForm(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         
         Long id = Long.parseLong(request.getParameter("id"));
         LOGGER.info("Showing deposit form for account: " + id);
         
-        AccountDTO account = accountServiceClient.getAccountById(id);
+        AccountDTO account = getAccountServiceClient().getAccountById(id);
         request.setAttribute("account", account);
         request.setAttribute("operation", "deposit");
         request.getRequestDispatcher("/WEB-INF/views/transaction-form.jsp").forward(request, response);
     }
     
-    private void processDeposit(HttpServletRequest request, HttpServletResponse response) 
+    private void processDeposit(HttpServletRequest request, HttpServletResponse response)
             throws IOException {
         
         Long id = Long.parseLong(request.getParameter("id"));
@@ -238,24 +253,24 @@ public class AccountWebController extends HttpServlet {
         LOGGER.info("Processing deposit of " + amount + " to account: " + id);
         
         TransactionDTO transaction = new TransactionDTO(amount);
-        accountServiceClient.deposit(id, transaction);
+        getAccountServiceClient().deposit(id, transaction);
         
         response.sendRedirect(request.getContextPath() + "/accounts/view?id=" + id);
     }
     
-    private void showWithdrawForm(HttpServletRequest request, HttpServletResponse response) 
+    private void showWithdrawForm(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         
         Long id = Long.parseLong(request.getParameter("id"));
         LOGGER.info("Showing withdraw form for account: " + id);
         
-        AccountDTO account = accountServiceClient.getAccountById(id);
+        AccountDTO account = getAccountServiceClient().getAccountById(id);
         request.setAttribute("account", account);
         request.setAttribute("operation", "withdraw");
         request.getRequestDispatcher("/WEB-INF/views/transaction-form.jsp").forward(request, response);
     }
     
-    private void processWithdraw(HttpServletRequest request, HttpServletResponse response) 
+    private void processWithdraw(HttpServletRequest request, HttpServletResponse response)
             throws IOException {
         
         Long id = Long.parseLong(request.getParameter("id"));
@@ -264,19 +279,19 @@ public class AccountWebController extends HttpServlet {
         LOGGER.info("Processing withdrawal of " + amount + " from account: " + id);
         
         TransactionDTO transaction = new TransactionDTO(amount);
-        accountServiceClient.withdraw(id, transaction);
+        getAccountServiceClient().withdraw(id, transaction);
         
         response.sendRedirect(request.getContextPath() + "/accounts/view?id=" + id);
     }
     
-    private void showTransferForm(HttpServletRequest request, HttpServletResponse response) 
+    private void showTransferForm(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         
         Long fromId = Long.parseLong(request.getParameter("id"));
         LOGGER.info("Showing transfer form for account: " + fromId);
         
-        AccountDTO fromAccount = accountServiceClient.getAccountById(fromId);
-        List<AccountDTO> allAccounts = accountServiceClient.getAllAccounts();
+        AccountDTO fromAccount = getAccountServiceClient().getAccountById(fromId);
+        List<AccountDTO> allAccounts = getAccountServiceClient().getAllAccounts();
         
         request.setAttribute("fromAccount", fromAccount);
         request.setAttribute("allAccounts", allAccounts);
@@ -284,7 +299,7 @@ public class AccountWebController extends HttpServlet {
         request.getRequestDispatcher("/WEB-INF/views/transaction-form.jsp").forward(request, response);
     }
     
-    private void processTransfer(HttpServletRequest request, HttpServletResponse response) 
+    private void processTransfer(HttpServletRequest request, HttpServletResponse response)
             throws IOException {
         
         Long fromId = Long.parseLong(request.getParameter("fromId"));
@@ -294,52 +309,52 @@ public class AccountWebController extends HttpServlet {
         LOGGER.info("Processing transfer of " + amount + " from account " + fromId + " to " + toId);
         
         TransactionDTO transaction = new TransactionDTO(amount);
-        accountServiceClient.transfer(fromId, toId, transaction);
+        getAccountServiceClient().transfer(fromId, toId, transaction);
         
         response.sendRedirect(request.getContextPath() + "/accounts/view?id=" + fromId);
     }
     
-    private void suspendAccount(HttpServletRequest request, HttpServletResponse response) 
+    private void suspendAccount(HttpServletRequest request, HttpServletResponse response)
             throws IOException {
         
         Long id = Long.parseLong(request.getParameter("id"));
         LOGGER.info("Suspending account: " + id);
         
-        accountServiceClient.suspendAccount(id);
+        getAccountServiceClient().suspendAccount(id);
         
         response.sendRedirect(request.getContextPath() + "/accounts/view?id=" + id);
     }
     
-    private void activateAccount(HttpServletRequest request, HttpServletResponse response) 
+    private void activateAccount(HttpServletRequest request, HttpServletResponse response)
             throws IOException {
         
         Long id = Long.parseLong(request.getParameter("id"));
         LOGGER.info("Activating account: " + id);
         
-        accountServiceClient.activateAccount(id);
+        getAccountServiceClient().activateAccount(id);
         
         response.sendRedirect(request.getContextPath() + "/accounts/view?id=" + id);
     }
     
-    private void closeAccount(HttpServletRequest request, HttpServletResponse response) 
+    private void closeAccount(HttpServletRequest request, HttpServletResponse response)
             throws IOException {
         
         Long id = Long.parseLong(request.getParameter("id"));
         LOGGER.info("Closing account: " + id);
         
-        accountServiceClient.closeAccount(id);
+        getAccountServiceClient().closeAccount(id);
         
         response.sendRedirect(request.getContextPath() + "/accounts/view?id=" + id);
     }
     
-    private void deleteAccount(HttpServletRequest request, HttpServletResponse response) 
+    private void deleteAccount(HttpServletRequest request, HttpServletResponse response)
             throws IOException {
         
         Long id = Long.parseLong(request.getParameter("id"));
         Long clientId = Long.parseLong(request.getParameter("clientId"));
         LOGGER.info("Deleting account: " + id);
         
-        accountServiceClient.deleteAccount(id);
+        getAccountServiceClient().deleteAccount(id);
         
         response.sendRedirect(request.getContextPath() + "/accounts?clientId=" + clientId);
     }

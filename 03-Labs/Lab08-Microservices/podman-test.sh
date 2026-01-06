@@ -331,7 +331,7 @@ wait_for_service() {
         ADRESS="http://localhost:${port}/health/live"
         LIVE_RESPONSE=$(curl -w stdout $ADRESS 2>&1)
         echo $LIVE_RESPONSE
-        if echo $LIVE_RESPONSE | grep -qi "UP"; then 
+        if echo $LIVE_RESPONSE | grep -qi "UP"; then
             local elapsed=$(($(date +%s) - start_time))
             print_status "${service_name} is ready! (${elapsed}s)"
             return 0
@@ -543,9 +543,10 @@ else
 fi
 
 # Test 5: Get Client via API Gateway
+echo ""
+echo "Test 5: GET /api/clients/$CLIENT_ID (via API Gateway)"
+
 if [ -n "$CLIENT_ID" ] && [ "$CLIENT_ID" != "null" ]; then
-    echo ""
-    echo "Test 5: GET /api/clients/$CLIENT_ID (via API Gateway)"
     GET_CLIENT=$(curl -s http://localhost:$API_GATEWAY_PORT/api/clients/$CLIENT_ID)
     if echo "$GET_CLIENT" | grep -q "Alice"; then
         print_status "Client retrieved successfully via API Gateway"
@@ -553,12 +554,14 @@ if [ -n "$CLIENT_ID" ] && [ "$CLIENT_ID" != "null" ]; then
     else
         print_error "Failed to retrieve client"
     fi
+else
+    print_error "CLIENT_ID not available : Failed to retrieve client"
 fi
 
 # Test 6: Create Account via API Gateway
+echo ""
+echo "Test 6: POST /api/accounts (via API Gateway)"
 if [ -n "$CLIENT_ID" ] && [ "$CLIENT_ID" != "null" ]; then
-    echo ""
-    echo "Test 6: POST /api/accounts (via API Gateway)"
     CREATE_ACCOUNT=$(curl -s -X POST http://localhost:$API_GATEWAY_PORT/api/accounts \
         -H "Content-Type: application/json" \
         -d "{\"clientId\":$CLIENT_ID,\"accountType\":\"CHECKING\"}")
@@ -569,12 +572,15 @@ if [ -n "$CLIENT_ID" ] && [ "$CLIENT_ID" != "null" ]; then
     else
         print_error "Failed to create account"
     fi
+else
+    print_error "CLIENT_ID not available : Failed to create account"
 fi
 
 # Test 7: Deposit Money
+echo ""
+echo "Test 7: POST /api/accounts/$ACCOUNT_ID/deposit (via API Gateway)"
+
 if [ -n "$ACCOUNT_ID" ] && [ "$ACCOUNT_ID" != "null" ]; then
-    echo ""
-    echo "Test 7: POST /api/accounts/$ACCOUNT_ID/deposit (via API Gateway)"
     DEPOSIT_RESPONSE=$(curl -s -X POST "http://localhost:$API_GATEWAY_PORT/api/accounts/$ACCOUNT_ID/deposit" \
         -H "Content-Type: application/json" \
         -d '{"amount":1000.00}')
@@ -586,12 +592,15 @@ if [ -n "$ACCOUNT_ID" ] && [ "$ACCOUNT_ID" != "null" ]; then
         print_warning "Deposit response unexpected"
         echo "$DEPOSIT_RESPONSE"
     fi
+else
+    print_error "ACCOUNT_ID not available : Failed to POST deposit"
 fi
 
 # Test 8: Withdraw Money
+echo ""
+echo "Test 8: POST /api/accounts/$ACCOUNT_ID/withdraw (via API Gateway)"
+
 if [ -n "$ACCOUNT_ID" ] && [ "$ACCOUNT_ID" != "null" ]; then
-    echo ""
-    echo "Test 8: POST /api/accounts/$ACCOUNT_ID/withdraw (via API Gateway)"
     WITHDRAW_RESPONSE=$(curl -s -X POST "http://localhost:$API_GATEWAY_PORT/api/accounts/$ACCOUNT_ID/withdraw" \
         -H "Content-Type: application/json" \
         -d '{"amount":250.00}')
@@ -603,12 +612,15 @@ if [ -n "$ACCOUNT_ID" ] && [ "$ACCOUNT_ID" != "null" ]; then
         print_warning "Withdrawal response unexpected"
         echo "$WITHDRAW_RESPONSE"
     fi
+else
+    print_error "ACCOUNT_ID not available : Failed to POST withdraw"
 fi
 
 # Test 9: Get Client with Accounts (BFF Aggregation)
+echo ""
+echo "Test 9: GET /api/banking/clients-with-accounts/$CLIENT_ID (BFF Aggregation)"
+
 if [ -n "$CLIENT_ID" ] && [ "$CLIENT_ID" != "null" ]; then
-    echo ""
-    echo "Test 9: GET /api/banking/clients-with-accounts/$CLIENT_ID (BFF Aggregation)"
     AGGREGATED_RESPONSE=$(curl -s "http://localhost:$API_GATEWAY_PORT/api/banking/clients-with-accounts/$CLIENT_ID")
     if echo "$AGGREGATED_RESPONSE" | grep -q "accounts" && echo "$AGGREGATED_RESPONSE" | grep -q "Alice"; then
         print_status "Client with accounts retrieved successfully (BFF aggregation)"
@@ -617,6 +629,8 @@ if [ -n "$CLIENT_ID" ] && [ "$CLIENT_ID" != "null" ]; then
         print_warning "BFF aggregation response unexpected"
         echo "$AGGREGATED_RESPONSE"
     fi
+else
+    print_error "CLIENT_ID not availbale : error in BFF Aggregation clients-with-accounts"
 fi
 
 # Test 10: Get All Clients with Accounts (BFF Aggregation)
@@ -670,7 +684,8 @@ echo "=========================================="
 print_status "Client Service: http://localhost:$CLIENT_SERVICE_PORT"
 print_status "Account Service: http://localhost:$ACCOUNT_SERVICE_PORT"
 print_status "API Gateway (BFF): http://localhost:$API_GATEWAY_PORT"
-print_status "Web Interface: http://localhost:$API_GATEWAY_PORT/clients"
+print_status "Web Interface: http://localhost:$API_GATEWAY_PORT/web/"
+print_status "REST API: http://localhost:$API_GATEWAY_PORT/api/"
 echo ""
 echo "Microservices Architecture Verified:"
 echo "  ✓ Service Decomposition (Client, Account, API Gateway)"

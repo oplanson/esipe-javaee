@@ -9,6 +9,7 @@ import jakarta.ws.rs.core.Application;
  * JAX-RS Application configuration for API Gateway
  * Exposes REST API at /api/*
  */
+
 @ApplicationPath("/api")
 public class RestApplication extends Application {
     // No additional configuration needed

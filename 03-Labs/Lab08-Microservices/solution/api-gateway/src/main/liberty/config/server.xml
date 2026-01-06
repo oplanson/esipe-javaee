@@ -15,8 +15,15 @@
                   host="*" />
 
     <!-- Web Application -->
-    <webApplication id="api-gateway" 
-                    location="api-gateway.war" 
+    <webApplication id="api-gateway"
+                    location="api-gateway.war"
+                    contextRoot="/web">
+        <classloader delegation="parentLast" />
+    </webApplication>
+
+    <!-- Root-level redirector to map /api/* -> /web/api/* as a temporary compatibility shim -->
+    <webApplication id="root-redirect"
+                    location="root-redirect-1.0.0.war"
                     contextRoot="/">
         <classloader delegation="parentLast" />
     </webApplication>
@@ -28,14 +35,6 @@
 
     <!-- MicroProfile Config -->
     <mpMetrics authentication="false" />
-
-    <!-- CORS Configuration for API calls -->
-    <cors domain="/"
-          allowedOrigins="*"
-          allowedMethods="GET, POST, PUT, DELETE, OPTIONS"
-          allowedHeaders="*"
-          allowCredentials="true"
-          maxAge="3600" />
 </server>
 
 <!-- Made with Bob -->

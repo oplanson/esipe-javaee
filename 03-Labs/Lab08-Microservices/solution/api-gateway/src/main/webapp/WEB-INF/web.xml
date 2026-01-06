@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- © Copyright 2025-2026 Olivier Planson. All rights reserved. Reproduction prohibited. Made with IBM Bob. -->
+<web-app xmlns="https://jakarta.ee/xml/ns/jakartaee"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="https://jakarta.ee/xml/ns/jakartaee
+                             https://jakarta.ee/xml/ns/jakartaee/web-app_6_0.xsd"
+         version="6.0">
+
+    <display-name>Banking API Gateway / BFF</display-name>
+    
+    <!-- Servlets use programmatic CDI lookup (CDI.current()) for dependency injection -->
+    <!-- This avoids the "not a servlet class" error with @Inject in servlets -->
+    
+    <servlet>
+        <servlet-name>ClientWebController</servlet-name>
+        <servlet-class>com.bank.gateway.web.ClientWebController</servlet-class>
+    </servlet>
+    
+    <servlet-mapping>
+        <servlet-name>ClientWebController</servlet-name>
+        <url-pattern>/clients/*</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>AccountWebController</servlet-name>
+        <servlet-class>com.bank.gateway.web.AccountWebController</servlet-class>
+    </servlet>
+    
+    <servlet-mapping>
+        <servlet-name>AccountWebController</servlet-name>
+        <url-pattern>/accounts/*</url-pattern>
+    </servlet-mapping>
+
+ 
+    
+    <welcome-file-list>
+        <welcome-file>index.html</welcome-file>
+    </welcome-file-list>
+</web-app>
+
+<!-- Made with Bob -->
