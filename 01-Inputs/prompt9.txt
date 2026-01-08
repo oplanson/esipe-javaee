@@ -1,0 +1,8 @@
+As a teacher, I want to improve my lecture available in this repository (@esipe-javaee). 
+Iw ould like to insert some concept that maybe I haven't thought about yet.
+For exemple, I didn't see anything about EJB concept in jakartaEE.
+In the web part, I didn't see JSF in the list.
+I would like also manage some key topics in JakartaEE like HTTPSession, Filter, Listener, JMS, JNDI, JTA and JTS with User Transaction. 
+Last but not least, I would like to add a course about security (in jakartaEE and in microservices architecture)
+
+Could you prepare a plan in a markdown file to improve this lecture and adapte labs avaiblable to introduce the concept in the appropriate lab. 
