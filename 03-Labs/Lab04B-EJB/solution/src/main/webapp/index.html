@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<!-- © Copyright 2026 Olivier Planson. All rights reserved. Reproduction prohibited. Made with IBM Bob. -->
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lab 04B - EJB Banking</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        
+        .container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            padding: 40px;
+            max-width: 800px;
+            width: 100%;
+        }
+        
+        h1 {
+            color: #2c3e50;
+            margin-bottom: 10px;
+            font-size: 2.5em;
+        }
+        
+        .subtitle {
+            color: #7f8c8d;
+            margin-bottom: 30px;
+            font-size: 1.1em;
+        }
+        
+        .info-box {
+            background: #e8f4f8;
+            border-left: 4px solid #3498db;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 5px;
+        }
+        
+        .info-box h3 {
+            color: #2980b9;
+            margin-bottom: 10px;
+        }
+        
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin: 30px 0;
+        }
+        
+        .feature {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            transition: transform 0.3s;
+        }
+        
+        .feature:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        
+        .feature-icon {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+        
+        .feature h3 {
+            color: #2c3e50;
+            margin-bottom: 10px;
+            font-size: 1.1em;
+        }
+        
+        .feature p {
+            color: #7f8c8d;
+            font-size: 0.9em;
+        }
+        
+        .links {
+            display: flex;
+            gap: 15px;
+            margin-top: 30px;
+            flex-wrap: wrap;
+        }
+        
+        .btn {
+            flex: 1;
+            min-width: 200px;
+            padding: 15px 30px;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: bold;
+            text-align: center;
+            transition: all 0.3s;
+            display: inline-block;
+        }
+        
+        .btn-primary {
+            background: #3498db;
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background: #2980b9;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(52, 152, 219, 0.3);
+        }
+        
+        .btn-secondary {
+            background: #95a5a6;
+            color: white;
+        }
+        
+        .btn-secondary:hover {
+            background: #7f8c8d;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(149, 165, 166, 0.3);
+        }
+        
+        .btn-success {
+            background: #27ae60;
+            color: white;
+        }
+        
+        .btn-success:hover {
+            background: #229954;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(39, 174, 96, 0.3);
+        }
+        
+        code {
+            background: #f4f4f4;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: 'Courier New', monospace;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🏦 Lab 04B - Enterprise Java Beans</h1>
+        <p class="subtitle">Banking Application with EJB 4.0</p>
+        
+        <div class="info-box">
+            <h3>📚 Learning Objectives</h3>
+            <p>This lab demonstrates Enterprise Java Beans (EJB) concepts including:</p>
+            <ul style="margin-top: 10px; margin-left: 20px;">
+                <li>Stateless Session Beans for business logic</li>
+                <li>Stateful Session Beans for conversational state</li>
+                <li>Singleton Session Beans for shared configuration</li>
+                <li>Message-Driven Beans for asynchronous processing</li>
+                <li>Timer Service for scheduled tasks</li>
+                <li>Container-Managed Transactions (CMT)</li>
+                <li>EJB Security with role-based access control</li>
+            </ul>
+        </div>
+        
+        <div class="features">
+            <div class="feature">
+                <div class="feature-icon">💼</div>
+                <h3>Stateless EJB</h3>
+                <p>Account operations with CMT</p>
+            </div>
+            <div class="feature">
+                <div class="feature-icon">📦</div>
+                <h3>Stateful EJB</h3>
+                <p>Batch transaction processing</p>
+            </div>
+            <div class="feature">
+                <div class="feature-icon">⚙️</div>
+                <h3>Singleton EJB</h3>
+                <p>Application configuration</p>
+            </div>
+            <div class="feature">
+                <div class="feature-icon">📨</div>
+                <h3>Message-Driven</h3>
+                <p>Async notifications via JMS</p>
+            </div>
+            <div class="feature">
+                <div class="feature-icon">⏰</div>
+                <h3>Timer Service</h3>
+                <p>Scheduled report generation</p>
+            </div>
+            <div class="feature">
+                <div class="feature-icon">🔒</div>
+                <h3>Security</h3>
+                <p>Role-based access control</p>
+            </div>
+        </div>
+        
+        <div class="links">
+            <a href="/banking" class="btn btn-primary">🚀 Launch Banking App</a>
+            <a href="/health" class="btn btn-success">💚 Health Check</a>
+            <a href="/metrics" class="btn btn-secondary">📊 Metrics</a>
+        </div>
+        
+        <div class="info-box" style="margin-top: 30px;">
+            <h3>🔧 Quick Start</h3>
+            <p><strong>Default Users:</strong></p>
+            <ul style="margin-top: 10px; margin-left: 20px;">
+                <li><code>admin/admin123</code> - Full access</li>
+                <li><code>teller/teller123</code> - Banking operations</li>
+                <li><code>customer/customer123</code> - Read-only access</li>
+            </ul>
+        </div>
+    </div>
+</body>
+</html>
+
+<!-- Made with Bob -->

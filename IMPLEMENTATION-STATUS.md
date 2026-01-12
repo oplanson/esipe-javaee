@@ -11,8 +11,8 @@
 
 **Total Tasks:** 21
 **Completed:** 7 (33%)
-**In Progress:** 0 (0%)
-**Pending:** 14 (67%)
+**In Progress:** 1 (5%)
+**Pending:** 13 (62%)
 
 ---
 
@@ -91,6 +91,40 @@
   - Best Practices (10 min)
 - **PowerPoint:** Auto-generated via Marp
 
+### 6. 🔄 Lab 4B: EJB Banking Services - IN PROGRESS
+- **Directory:** `esipe-javaee/03-Labs/Lab04B-EJB/`
+- **Status:** Partial - Core implementation complete, testing needs improvement
+- **Files Created:**
+  - `README.md` - Complete lab instructions
+  - `test-lab.sh` - Build verification script
+  - `podman-test.sh` (330 lines) - Podman deployment and testing
+  - `TESTING-GUIDE.md` - Comprehensive testing guide
+- **Solution Components:**
+  - Stateless Session Bean: `AccountServiceBean.java`
+  - Stateful Session Bean: `TransactionBatchBean.java`
+  - Singleton Session Bean: `ConfigServiceBean.java`
+  - Message-Driven Bean: `NotificationMDB.java`
+  - Scheduled Bean: `ReportGeneratorBean.java`
+  - Web Servlet: `BankingServlet.java`
+  - Health Checks: `DatabaseHealthCheck.java`, `EJBHealthCheck.java`
+  - Models: `Account.java`, `Transaction.java`, `TransactionType.java`
+- **Configuration:**
+  - `server.xml` - Complete Liberty configuration with EJB, JMS, security
+  - `bootstrap.properties` - Environment variable support
+  - `persistence.xml` - JPA configuration
+  - `Containerfile` - Multi-stage build with PostgreSQL driver
+- **Fixes Applied (Jan 12, 2026):**
+  - ✅ Fixed WAR filename mismatch in Containerfile
+  - ✅ Fixed application name in server.xml
+  - ✅ Fixed database connection using environment variables
+  - ✅ Fixed authentication with plain-text passwords
+- **Remaining Work:**
+  - ⏳ Improve `podman-test.sh` with automated functional tests
+  - ⏳ Review and optimize build method in scripts
+  - ⏳ Add comprehensive EJB operation tests (create, deposit, withdraw, transfer)
+  - ⏳ Add MDB notification verification
+  - ⏳ Add scheduled task verification
+
 ---
 
 ## 📋 Pending Tasks
@@ -128,26 +162,9 @@
   - Secure password storage
   - Microservices security patterns
 
-### New Labs (3 remaining)
+### New Labs (2 remaining)
 
-#### 8. ⏳ Lab 4B: EJB Banking Services
-- **Directory:** `esipe-javaee/03-Labs/Lab04B-EJB/`
-- **Components:**
-  - README.md with objectives and instructions
-  - Starter code with TODOs
-  - Solution with complete implementation
-  - **Testing scripts (REQUIRED):**
-    - `test-lab.sh` - Build verification
-    - `podman-test.sh` - Deployment and testing
-    - `TESTING-GUIDE.md` - Comprehensive testing guide
-- **Deliverables:**
-  - Stateless Session Beans for account operations
-  - Stateful Session Bean for transaction batch
-  - Singleton Session Bean for configuration
-  - Message-Driven Bean for notifications
-  - Scheduled task for reports
-
-#### 9. ⏳ Lab 5B: Asynchronous Transaction Processing
+#### 7. ⏳ Lab 5B: Asynchronous Transaction Processing
 - **Directory:** `esipe-javaee/03-Labs/Lab05B-JMS/`
 - **Components:**
   - README.md with objectives and instructions
@@ -164,7 +181,7 @@
   - Audit logging MDB
   - Dead letter queue handling
 
-#### 10. ⏳ Lab 9: Secure Banking Application
+#### 8. ⏳ Lab 9: Secure Banking Application
 - **Directory:** `esipe-javaee/03-Labs/Lab09-Security/`
 - **Components:**
   - README.md with objectives and instructions
@@ -260,12 +277,12 @@
 ## 📈 Estimated Effort Remaining
 
 ### Content Creation
-- **New Lectures:** 3 × 4 hours = 12 hours
-- **New Labs:** 3 × 6 hours = 18 hours
+- **New Lectures:** 2 × 4 hours = 8 hours
+- **New Labs:** 2 × 6 hours = 12 hours
 - **Lecture Enhancements:** 4 × 2 hours = 8 hours
 - **Lab Enhancements:** 4 × 3 hours = 12 hours
 
-**Total Estimated:** 50 hours
+**Total Estimated:** 40 hours
 
 ### Token Usage Estimate
 - **New Lectures:** ~3,700 lines × 3 = ~11,100 lines
@@ -278,17 +295,17 @@
 
 ## 🎯 Recommended Implementation Order
 
-### Phase 1: Complete JSF Content (Current)
+### Phase 1: Complete JSF Content ✅ COMPLETED
 1. ✅ Lecture 2B: JSF - DONE
-2. 🔄 Lab 2B: JSF - IN PROGRESS
+2. ✅ Lab 2B: JSF - DONE
 
-### Phase 2: Web Technologies Enhancement
-3. Enhance Lecture 2: Add HTTPSession, Filters, Listeners
-4. Enhance Lab 2: Add Filter and Listener exercises
+### Phase 2: Web Technologies Enhancement ✅ COMPLETED
+3. ✅ Enhance Lecture 2: Add HTTPSession, Filters, Listeners - DONE
+4. ✅ Enhance Lab 2: Add Filter and Listener exercises - DONE
 
-### Phase 3: EJB Content
-5. Create Lecture 4B: EJB
-6. Create Lab 4B: EJB Banking Services
+### Phase 3: EJB Content 🔄 IN PROGRESS
+5. ✅ Create Lecture 4B: EJB - DONE
+6. 🔄 Create Lab 4B: EJB Banking Services - IN PROGRESS (testing improvements needed)
 
 ### Phase 4: Database & Transactions
 7. Enhance Lecture 3: Add JNDI section
@@ -343,7 +360,16 @@
 ## 🚀 Next Actions
 
 1. ✅ Complete Lab 2B: JSF Client Management - DONE
-2. Review Phase 1 completion with instructor
-3. Proceed to Phase 2: Web Technologies Enhancement
-4. Continue systematic implementation through Phase 6
-5. **Ensure all new labs include complete testing tools**
+2. ✅ Complete Phase 2: Web Technologies Enhancement - DONE
+3. 🔄 **Current:** Complete Phase 3: EJB Content
+   - **Immediate:** Improve Lab 4B testing scripts
+     - Add automated EJB operation tests in `podman-test.sh`
+     - Optimize build method
+     - Add functional verification tests
+4. **Next:** Proceed to Phase 4: Database & Transactions
+   - Enhance Lecture 3: Add JNDI section
+   - Enhance Lab 3: Add JNDI exercises
+   - Enhance Lecture 4: Add Transaction Management
+   - Enhance Lab 4: Add Transaction Management exercises
+5. Continue systematic implementation through Phase 6
+6. **Ensure all new labs include complete testing tools**

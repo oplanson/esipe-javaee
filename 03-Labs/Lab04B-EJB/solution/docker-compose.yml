@@ -1,0 +1,57 @@
+# © Copyright 2026 Olivier Planson. All rights reserved. Reproduction prohibited. Made with IBM Bob.
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: lab04b-postgres
+    environment:
+      POSTGRES_DB: bankingdb
+      POSTGRES_USER: bankuser
+      POSTGRES_PASSWORD: bankpass
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U bankuser -d bankingdb"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - banking-network
+
+  liberty:
+    build:
+      context: .
+      dockerfile: Containerfile
+    container_name: lab04b-liberty
+    ports:
+      - "9080:9080"
+      - "9443:9443"
+    environment:
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_NAME: bankingdb
+      DB_USER: bankuser
+      DB_PASSWORD: bankpass
+    depends_on:
+      postgres:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9080/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+    networks:
+      - banking-network
+
+volumes:
+  postgres-data:
+
+networks:
+  banking-network:
+    driver: bridge
+
+# Made with Bob
