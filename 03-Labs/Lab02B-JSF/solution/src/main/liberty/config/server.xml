@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- © Copyright 2026 Olivier Planson. All rights reserved. Reproduction prohibited. Made with IBM Bob. -->
+<server description="Lab 02B - JSF Client Management Server">
+
+    <!-- Enable features -->
+    <featureManager>
+        <feature>faces-4.0</feature>
+        <feature>cdi-4.0</feature>
+        <feature>servlet-6.0</feature>
+        <feature>jsonp-2.1</feature>
+        <feature>jsonb-3.0</feature>
+        <feature>mpHealth-4.0</feature>
+        <feature>mpConfig-3.0</feature>
+        <feature>mpMetrics-5.0</feature>
+    </featureManager>
+
+    <!-- HTTP Endpoint -->
+    <httpEndpoint id="defaultHttpEndpoint"
+                  httpPort="${http.port}"
+                  httpsPort="${https.port}"
+                  host="*" />
+
+    <!-- Web Application -->
+    <webApplication id="lab02b-jsf" 
+                    location="lab02b-jsf.war" 
+                    contextRoot="/lab02b-jsf">
+        <classloader delegation="parentLast" />
+    </webApplication>
+
+    <!-- Logging -->
+    <logging traceSpecification="*=info:com.bank.*=all" 
+             maxFileSize="20" 
+             maxFiles="10" />
+
+    <!-- MicroProfile Health -->
+    <mpHealth />
+
+    <!-- MicroProfile Metrics -->
+    <mpMetrics authentication="false" />
+
+</server>
+
+<!-- Made with Bob -->

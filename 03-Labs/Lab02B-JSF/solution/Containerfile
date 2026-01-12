@@ -1,0 +1,24 @@
+# © Copyright Olivier Planson - 2026
+# Containerfile for Lab 02B - JSF Client Management
+# Use with Podman: podman build -t lab02b-jsf:latest .
+
+FROM icr.io/appcafe/open-liberty:full-java17-openj9-ubi
+
+# Copy application WAR to apps directory
+COPY --chown=1001:0 target/lab02b-jsf.war /config/apps/
+
+# Copy Liberty server configuration
+COPY --chown=1001:0 src/main/liberty/config/server.xml /config/
+COPY --chown=1001:0 src/main/liberty/config/bootstrap.properties /config/
+
+# Copy MicroProfile configuration
+COPY --chown=1001:0 src/main/resources/META-INF/microprofile-config.properties /config/
+
+# Configure Liberty features
+RUN configure.sh
+
+# Expose HTTP and HTTPS ports
+EXPOSE 9080 9443
+
+# Run Open Liberty
+CMD ["/opt/ol/wlp/bin/server", "run", "defaultServer"]

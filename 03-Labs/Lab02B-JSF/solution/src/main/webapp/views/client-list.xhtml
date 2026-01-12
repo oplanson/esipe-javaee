@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<!-- © Copyright 2026 Olivier Planson. All rights reserved. Reproduction prohibited. Made with IBM Bob. -->
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="jakarta.faces.facelets"
+      xmlns:h="jakarta.faces.html"
+      xmlns:f="jakarta.faces.core">
+
+<ui:composition template="/WEB-INF/templates/main.xhtml">
+    
+    <ui:define name="title">Client List</ui:define>
+    
+    <ui:define name="content">
+        <h2>Client List</h2>
+        
+        <h:form id="clientListForm">
+            <!-- Messages -->
+            <h:messages globalOnly="true" styleClass="messages"/>
+            
+            <!-- Search Box with AJAX -->
+            <div class="search-box">
+                <h:outputLabel value="Search:" for="search"/>
+                <h:inputText id="search" value="#{clientBean.searchTerm}">
+                    <f:ajax event="keyup" listener="#{clientBean.search}" render="clientTable"/>
+                </h:inputText>
+            </div>
+            
+            <!-- Action Buttons -->
+            <div class="actions">
+                <h:commandButton value="New Client"
+                                action="#{clientBean.createNew}"
+                                styleClass="button"/>
+            </div>
+            
+            <!-- Client Table -->
+            <h:dataTable id="clientTable" 
+                        value="#{clientBean.filteredClients != null ? clientBean.filteredClients : clientBean.clients}" 
+                        var="client"
+                        styleClass="data-table"
+                        headerClass="table-header"
+                        rowClasses="row-odd,row-even">
+                
+                <!-- ID Column -->
+                <h:column>
+                    <f:facet name="header">ID</f:facet>
+                    #{client.id}
+                </h:column>
+                
+                <!-- Name Column -->
+                <h:column>
+                    <f:facet name="header">Name</f:facet>
+                    #{client.name}
+                </h:column>
+                
+                <!-- Email Column -->
+                <h:column>
+                    <f:facet name="header">Email</f:facet>
+                    #{client.email}
+                </h:column>
+                
+                <!-- City Column -->
+                <h:column>
+                    <f:facet name="header">City</f:facet>
+                    #{client.address.city}
+                </h:column>
+                
+                <!-- Accounts Column -->
+                <h:column>
+                    <f:facet name="header">Accounts</f:facet>
+                    #{client.accounts.size()}
+                </h:column>
+                
+                <!-- Actions Column -->
+                <h:column>
+                    <f:facet name="header">Actions</f:facet>
+                    <h:commandButton value="View" 
+                                    action="#{clientBean.viewDetails}"
+                                    styleClass="button button-small">
+                        <f:setPropertyActionListener target="#{clientBean.selectedClientId}" 
+                                                    value="#{client.id}"/>
+                    </h:commandButton>
+                    <h:commandButton value="Edit" 
+                                    action="#{clientBean.edit}"
+                                    styleClass="button button-small">
+                        <f:setPropertyActionListener target="#{clientBean.selectedClientId}" 
+                                                    value="#{client.id}"/>
+                    </h:commandButton>
+                    <h:commandButton value="Delete" 
+                                    action="#{clientBean.delete}"
+                                    styleClass="button button-small button-danger"
+                                    onclick="return confirm('Are you sure you want to delete this client?');">
+                        <f:setPropertyActionListener target="#{clientBean.selectedClientId}" 
+                                                    value="#{client.id}"/>
+                    </h:commandButton>
+                </h:column>
+            </h:dataTable>
+            
+            <div class="table-info">
+                <p>Total clients: #{clientBean.filteredClients != null ? clientBean.filteredClients.size() : clientBean.clients.size()}</p>
+            </div>
+        </h:form>
+    </ui:define>
+    
+</ui:composition>
+</html>

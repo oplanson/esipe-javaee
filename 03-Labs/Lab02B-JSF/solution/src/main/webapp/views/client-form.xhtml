@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<!-- © Copyright 2026 Olivier Planson. All rights reserved. Reproduction prohibited. Made with IBM Bob. -->
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="jakarta.faces.facelets"
+      xmlns:h="jakarta.faces.html"
+      xmlns:f="jakarta.faces.core">
+
+<ui:composition template="/WEB-INF/templates/main.xhtml">
+    
+    <ui:define name="title">
+        #{clientBean.client.id == null ? 'New Client' : 'Edit Client'}
+    </ui:define>
+    
+    <ui:define name="content">
+        <h2>#{clientBean.client.id == null ? 'New Client' : 'Edit Client'}</h2>
+        
+        <h:form id="clientForm">
+            <h:messages globalOnly="true" styleClass="messages"/>
+            
+            <h3>Personal Information</h3>
+            <h:panelGrid columns="3" styleClass="form-grid">
+                <!-- Name -->
+                <h:outputLabel value="Name:" for="name"/>
+                <h:inputText id="name" 
+                            value="#{clientBean.client.name}" 
+                            required="true"
+                            requiredMessage="Name is required">
+                    <f:validateLength minimum="2" maximum="100"/>
+                </h:inputText>
+                <h:message for="name" styleClass="error-message"/>
+                
+                <!-- Email -->
+                <h:outputLabel value="Email:" for="email"/>
+                <h:inputText id="email" 
+                            value="#{clientBean.client.email}" 
+                            required="true"
+                            requiredMessage="Email is required">
+                    <f:validator validatorId="emailValidator"/>
+                </h:inputText>
+                <h:message for="email" styleClass="error-message"/>
+            </h:panelGrid>
+            
+            <!-- Address Section -->
+            <h3>Address</h3>
+            <h:panelGrid columns="3" styleClass="form-grid">
+                <!-- Street -->
+                <h:outputLabel value="Street:" for="street"/>
+                <h:inputText id="street" 
+                            value="#{clientBean.client.address.street}"
+                            required="true"
+                            requiredMessage="Street is required"/>
+                <h:message for="street" styleClass="error-message"/>
+                
+                <!-- City -->
+                <h:outputLabel value="City:" for="city"/>
+                <h:inputText id="city" 
+                            value="#{clientBean.client.address.city}"
+                            required="true"
+                            requiredMessage="City is required"/>
+                <h:message for="city" styleClass="error-message"/>
+                
+                <!-- Postal Code -->
+                <h:outputLabel value="Postal Code:" for="postalCode"/>
+                <h:inputText id="postalCode" 
+                            value="#{clientBean.client.address.postalCode}"
+                            required="true"
+                            requiredMessage="Postal code is required">
+                    <f:validateLength minimum="4" maximum="10"/>
+                </h:inputText>
+                <h:message for="postalCode" styleClass="error-message"/>
+                
+                <!-- Country -->
+                <h:outputLabel value="Country:" for="country"/>
+                <h:selectOneMenu id="country" 
+                                value="#{clientBean.client.address.country}"
+                                required="true"
+                                requiredMessage="Country is required">
+                    <f:selectItem itemValue="" itemLabel="-- Select Country --"/>
+                    <f:selectItem itemValue="France" itemLabel="France"/>
+                    <f:selectItem itemValue="USA" itemLabel="United States"/>
+                    <f:selectItem itemValue="UK" itemLabel="United Kingdom"/>
+                    <f:selectItem itemValue="Germany" itemLabel="Germany"/>
+                    <f:selectItem itemValue="Spain" itemLabel="Spain"/>
+                    <f:selectItem itemValue="Italy" itemLabel="Italy"/>
+                </h:selectOneMenu>
+                <h:message for="country" styleClass="error-message"/>
+            </h:panelGrid>
+            
+            <!-- Buttons -->
+            <div class="form-actions">
+                <h:commandButton value="Save" 
+                                action="#{clientBean.save}"
+                                styleClass="button button-primary"/>
+                <h:commandButton value="Cancel" 
+                                action="#{clientBean.cancel}"
+                                immediate="true"
+                                styleClass="button"/>
+            </div>
+        </h:form>
+    </ui:define>
+    
+</ui:composition>
+</html>

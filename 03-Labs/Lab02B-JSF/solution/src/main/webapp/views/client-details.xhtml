@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<!-- © Copyright 2026 Olivier Planson. All rights reserved. Reproduction prohibited. Made with IBM Bob. -->
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="jakarta.faces.facelets"
+      xmlns:h="jakarta.faces.html"
+      xmlns:f="jakarta.faces.core">
+
+<ui:composition template="/WEB-INF/templates/main.xhtml">
+    
+    <ui:define name="title">Client Details</ui:define>
+    
+    <ui:define name="content">
+        <h2>Client Details</h2>
+        
+        <div class="details-panel">
+            <h3>Personal Information</h3>
+            <dl>
+                <dt>ID:</dt>
+                <dd>#{clientBean.client.id}</dd>
+                
+                <dt>Name:</dt>
+                <dd>#{clientBean.client.name}</dd>
+                
+                <dt>Email:</dt>
+                <dd>#{clientBean.client.email}</dd>
+            </dl>
+            
+            <h3>Address</h3>
+            <dl>
+                <dt>Street:</dt>
+                <dd>#{clientBean.client.address.street}</dd>
+                
+                <dt>City:</dt>
+                <dd>#{clientBean.client.address.city}</dd>
+                
+                <dt>Postal Code:</dt>
+                <dd>#{clientBean.client.address.postalCode}</dd>
+                
+                <dt>Country:</dt>
+                <dd>#{clientBean.client.address.country}</dd>
+            </dl>
+            
+            <h3>Accounts</h3>
+            <h:dataTable value="#{clientBean.client.accounts}" 
+                        var="account"
+                        styleClass="data-table"
+                        headerClass="table-header"
+                        rowClasses="row-odd,row-even"
+                        rendered="#{not empty clientBean.client.accounts}">
+                
+                <h:column>
+                    <f:facet name="header">Account Number</f:facet>
+                    #{account.accountNumber}
+                </h:column>
+                
+                <h:column>
+                    <f:facet name="header">Type</f:facet>
+                    #{account.accountType}
+                </h:column>
+                
+                <h:column>
+                    <f:facet name="header">Balance</f:facet>
+                    <h:outputText value="#{account.balance}">
+                        <f:convertNumber type="currency" currencySymbol="€" />
+                    </h:outputText>
+                </h:column>
+            </h:dataTable>
+            
+            <p rendered="#{empty clientBean.client.accounts}">
+                No accounts found for this client.
+            </p>
+        </div>
+        
+        <div class="actions">
+            <h:link outcome="client-form" value="Edit" styleClass="button">
+                <f:param name="id" value="#{clientBean.client.id}"/>
+            </h:link>
+            <h:link outcome="client-list" value="Back to List" styleClass="button"/>
+        </div>
+    </ui:define>
+    
+</ui:composition>
+</html>
