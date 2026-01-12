@@ -1556,6 +1556,1219 @@ req.setAttribute("csrfToken", csrfToken);
 ```
 
 ---
+## 🔐 Advanced Web Technologies
+## HTTPSession, Filters & Listeners
+
+**Duration:** 1 hour  
+**Topics:** Session Management, Servlet Filters, Servlet Listeners
+
+---
+
+## 🔐 HTTPSession Management
+
+### What is HTTPSession?
+
+**HTTPSession** provides a way to identify a user across multiple requests and store user-specific data.
+
+| | |
+|---|---|
+| 🎯 | **Purpose:** Maintain state in stateless HTTP protocol |
+| 📦 | **Storage:** Server-side data storage per user |
+| 🔑 | **Identification:** Session ID (cookie or URL rewriting) |
+| ⏱️ | **Lifecycle:** Created on first request, destroyed on timeout/logout |
+
+### Why Sessions?
+
+- **User Authentication:** Track logged-in users
+- **Shopping Cart:** Store items across pages
+- **User Preferences:** Remember settings
+- **Multi-step Forms:** Maintain data across steps
+
+---
+
+## 🔐 Session Lifecycle and Scope
+
+### Session Creation and Access
+
+```java
+@WebServlet("/login")
+public class LoginServlet extends HttpServlet {
+    
+    @Override
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp)
+            throws ServletException, IOException {
+        
+        String username = req.getParameter("username");
+        String password = req.getParameter("password");
+        
+        // Validate credentials
+        if (authenticate(username, password)) {
+            // Get or create session
+            HttpSession session = req.getSession(true);
+            
+            // Store user data in session
+            session.setAttribute("username", username);
+            session.setAttribute("loginTime", LocalDateTime.now());
+            session.setAttribute("role", getUserRole(username));
+            
+            // Set session timeout (in seconds)
+            session.setMaxInactiveInterval(30 * 60); // 30 minutes
+            
+            resp.sendRedirect(req.getContextPath() + "/dashboard");
+        } else {
+            req.setAttribute("error", "Invalid credentials");
+            req.getRequestDispatcher("/login.jsp").forward(req, resp);
+        }
+    }
+}
+```
+
+---
+
+## 🔐 Session Attributes and Data Storage
+
+### Storing and Retrieving Session Data
+
+```java
+@WebServlet("/cart")
+public class ShoppingCartServlet extends HttpServlet {
+    
+    @Override
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp)
+            throws ServletException, IOException {
+        
+        HttpSession session = req.getSession();
+        
+        // Get existing cart or create new one
+        @SuppressWarnings("unchecked")
+        List<Product> cart = (List<Product>) session.getAttribute("cart");
+        
+        if (cart == null) {
+            cart = new ArrayList<>();
+            session.setAttribute("cart", cart);
+        }
+        
+        // Add product to cart
+        String productId = req.getParameter("productId");
+        Product product = productService.findById(productId);
+        cart.add(product);
+        
+        // Update session
+        session.setAttribute("cart", cart);
+        session.setAttribute("cartTotal", calculateTotal(cart));
+        
+        resp.sendRedirect(req.getContextPath() + "/cart");
+    }
+    
+    @Override
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp)
+            throws ServletException, IOException {
+        
+        HttpSession session = req.getSession(false);
+        
+        if (session != null) {
+            List<Product> cart = (List<Product>) session.getAttribute("cart");
+            req.setAttribute("cart", cart);
+        }
+        
+        req.getRequestDispatcher("/WEB-INF/views/cart.jsp").forward(req, resp);
+    }
+}
+```
+
+---
+
+## 🔐 Session Timeout Configuration
+
+### Configuring Session Timeout
+
+**In web.xml:**
+
+```xml
+<web-app>
+    <!-- Session timeout in minutes -->
+    <session-config>
+        <session-timeout>30</session-timeout>
+        <cookie-config>
+            <http-only>true</http-only>
+            <secure>true</secure>
+            <max-age>1800</max-age>
+        </cookie-config>
+        <tracking-mode>COOKIE</tracking-mode>
+    </session-config>
+</web-app>
+```
+
+**Programmatically:**
+
+```java
+// Set timeout for specific session (in seconds)
+session.setMaxInactiveInterval(30 * 60); // 30 minutes
+
+// Get timeout
+int timeout = session.getMaxInactiveInterval();
+
+// Invalidate session (logout)
+session.invalidate();
+```
+
+---
+
+## 🔐 Session Security Considerations
+
+### Session Fixation Prevention
+
+```java
+@WebServlet("/login")
+public class SecureLoginServlet extends HttpServlet {
+    
+    @Override
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp)
+            throws ServletException, IOException {
+        
+        String username = req.getParameter("username");
+        String password = req.getParameter("password");
+        
+        if (authenticate(username, password)) {
+            // Invalidate old session (prevent session fixation)
+            HttpSession oldSession = req.getSession(false);
+            if (oldSession != null) {
+                oldSession.invalidate();
+            }
+            
+            // Create new session
+            HttpSession newSession = req.getSession(true);
+            newSession.setAttribute("username", username);
+            newSession.setAttribute("authenticated", true);
+            
+            // Regenerate session ID
+            req.changeSessionId();
+            
+            resp.sendRedirect(req.getContextPath() + "/dashboard");
+        }
+    }
+}
+```
+
+### Session Hijacking Prevention
+
+| | |
+|---|---|
+| ✅ | Use HTTPS to encrypt session cookies |
+| ✅ | Set HttpOnly flag on cookies |
+| ✅ | Set Secure flag for HTTPS-only cookies |
+| ✅ | Implement session timeout |
+| ✅ | Regenerate session ID after login |
+
+---
+
+## 🔐 Cookie-based vs URL Rewriting
+
+### Session Tracking Mechanisms
+
+<div class="columns">
+<div>
+
+**Cookie-based (Preferred):**
+
+```java
+// Automatic with cookies enabled
+HttpSession session = req.getSession();
+// Session ID stored in JSESSIONID cookie
+```
+
+**Advantages:**
+- Transparent to user
+- More secure
+- Cleaner URLs
+
+</div>
+<div>
+
+**URL Rewriting (Fallback):**
+
+```java
+// Encode URLs when cookies disabled
+String url = resp.encodeURL("/cart");
+String redirectUrl = resp.encodeRedirectURL("/checkout");
+```
+
+```jsp
+<!-- In JSP -->
+<a href="<c:url value='/cart'/>">View Cart</a>
+```
+
+**Disadvantages:**
+- Session ID visible in URL
+- Security risk (URL sharing)
+- SEO issues
+
+</div>
+</div>
+
+---
+
+## 🔍 Servlet Filters
+
+### What are Servlet Filters?
+
+**Filters** intercept requests and responses to perform cross-cutting concerns.
+
+| | |
+|---|---|
+| 🎯 | **Purpose:** Pre/post-processing of requests and responses |
+| 🔗 | **Chain:** Multiple filters can be chained |
+| 🎨 | **Transparent:** Servlets unaware of filters |
+| 🔄 | **Reusable:** Apply to multiple servlets/URLs |
+
+### Common Use Cases:
+
+- Authentication and authorization
+- Logging and auditing
+- Request/response modification
+- Compression and encryption
+- CORS handling
+- Character encoding
+
+---
+
+## 🔍 Filter Chain and Ordering
+
+### How Filter Chain Works
+
+```
+Client Request
+    ↓
+Filter 1 (before)
+    ↓
+Filter 2 (before)
+    ↓
+Filter 3 (before)
+    ↓
+Servlet/Resource
+    ↓
+Filter 3 (after)
+    ↓
+Filter 2 (after)
+    ↓
+Filter 1 (after)
+    ↓
+Client Response
+```
+
+### Filter Ordering
+
+**Using @WebFilter (order not guaranteed):**
+```java
+@WebFilter(urlPatterns = "/*")
+public class MyFilter implements Filter { }
+```
+
+**Using web.xml (explicit order):**
+```xml
+<filter-mapping>
+    <filter-name>EncodingFilter</filter-name>
+    <url-pattern>/*</url-pattern>
+</filter-mapping>
+<filter-mapping>
+    <filter-name>AuthenticationFilter</filter-name>
+    <url-pattern>/*</url-pattern>
+</filter-mapping>
+```
+
+---
+
+## 🔍 Authentication Filter Example
+
+### Complete Authentication Filter
+
+```java
+@WebFilter(urlPatterns = {"/dashboard/*", "/account/*", "/admin/*"})
+public class AuthenticationFilter implements Filter {
+    
+    private static final Logger logger = Logger.getLogger(
+        AuthenticationFilter.class.getName()
+    );
+    
+    @Override
+    public void init(FilterConfig filterConfig) throws ServletException {
+        logger.info("AuthenticationFilter initialized");
+    }
+    
+    @Override
+    public void doFilter(ServletRequest request, ServletResponse response,
+                        FilterChain chain) throws IOException, ServletException {
+        
+        HttpServletRequest req = (HttpServletRequest) request;
+        HttpServletResponse resp = (HttpServletResponse) response;
+        
+        HttpSession session = req.getSession(false);
+        String requestURI = req.getRequestURI();
+        
+        // Check if user is authenticated
+        boolean isAuthenticated = (session != null && 
+                                  session.getAttribute("username") != null);
+        
+        // Check if accessing admin area
+        boolean isAdminArea = requestURI.contains("/admin/");
+        
+        if (!isAuthenticated) {
+            logger.warning("Unauthorized access attempt to: " + requestURI);
+            resp.sendRedirect(req.getContextPath() + "/login");
+            return;
+        }
+        
+        // Check admin role for admin area
+        if (isAdminArea) {
+            String role = (String) session.getAttribute("role");
+            if (!"ADMIN".equals(role)) {
+                logger.warning("Non-admin user attempted to access: " + requestURI);
+                resp.sendError(HttpServletResponse.SC_FORBIDDEN, 
+                              "Access denied");
+                return;
+            }
+        }
+        
+        // User is authenticated, continue
+        chain.doFilter(request, response);
+    }
+    
+    @Override
+    public void destroy() {
+        logger.info("AuthenticationFilter destroyed");
+    }
+}
+```
+
+---
+
+## 🔍 Logging Filter with Timing
+
+### Request Logging and Performance Monitoring
+
+```java
+@WebFilter(urlPatterns = "/*")
+public class LoggingFilter implements Filter {
+    
+    private static final Logger logger = Logger.getLogger(
+        LoggingFilter.class.getName()
+    );
+    
+    @Override
+    public void doFilter(ServletRequest request, ServletResponse response,
+                        FilterChain chain) throws IOException, ServletException {
+        
+        HttpServletRequest req = (HttpServletRequest) request;
+        HttpServletResponse resp = (HttpServletResponse) response;
+        
+        // Log request details
+        String method = req.getMethod();
+        String uri = req.getRequestURI();
+        String queryString = req.getQueryString();
+        String remoteAddr = req.getRemoteAddr();
+        
+        logger.info(String.format("Request: %s %s%s from %s",
+            method, uri, 
+            queryString != null ? "?" + queryString : "",
+            remoteAddr
+        ));
+        
+        // Start timing
+        long startTime = System.currentTimeMillis();
+        
+        try {
+            // Continue filter chain
+            chain.doFilter(request, response);
+        } finally {
+            // Calculate duration
+            long duration = System.currentTimeMillis() - startTime;
+            
+            // Log response details
+            int status = resp.getStatus();
+            logger.info(String.format("Response: %d for %s %s (took %d ms)",
+                status, method, uri, duration
+            ));
+            
+            // Warn on slow requests
+            if (duration > 1000) {
+                logger.warning(String.format("Slow request detected: %s %s took %d ms",
+                    method, uri, duration
+                ));
+            }
+        }
+    }
+}
+```
+
+---
+
+## 🔍 CORS Filter Example
+
+### Cross-Origin Resource Sharing Filter
+
+```java
+@WebFilter(urlPatterns = "/api/*")
+public class CorsFilter implements Filter {
+    
+    @Override
+    public void doFilter(ServletRequest request, ServletResponse response,
+                        FilterChain chain) throws IOException, ServletException {
+        
+        HttpServletRequest req = (HttpServletRequest) request;
+        HttpServletResponse resp = (HttpServletResponse) response;
+        
+        // Get origin from request
+        String origin = req.getHeader("Origin");
+        
+        // Set CORS headers
+        if (origin != null && isAllowedOrigin(origin)) {
+            resp.setHeader("Access-Control-Allow-Origin", origin);
+            resp.setHeader("Access-Control-Allow-Methods", 
+                          "GET, POST, PUT, DELETE, OPTIONS");
+            resp.setHeader("Access-Control-Allow-Headers", 
+                          "Content-Type, Authorization, X-Requested-With");
+            resp.setHeader("Access-Control-Allow-Credentials", "true");
+            resp.setHeader("Access-Control-Max-Age", "3600");
+        }
+        
+        // Handle preflight request
+        if ("OPTIONS".equalsIgnoreCase(req.getMethod())) {
+            resp.setStatus(HttpServletResponse.SC_OK);
+            return;
+        }
+        
+        // Continue filter chain
+        chain.doFilter(request, response);
+    }
+    
+    private boolean isAllowedOrigin(String origin) {
+        // Configure allowed origins
+        List<String> allowedOrigins = Arrays.asList(
+            "http://localhost:3000",
+            "http://localhost:4200",
+            "https://myapp.example.com"
+        );
+        return allowedOrigins.contains(origin);
+    }
+}
+```
+
+---
+
+## 🔍 Character Encoding Filter
+
+### Ensuring Proper Character Encoding
+
+```java
+@WebFilter(urlPatterns = "/*")
+public class CharacterEncodingFilter implements Filter {
+    
+    private String encoding = "UTF-8";
+    
+    @Override
+    public void init(FilterConfig filterConfig) throws ServletException {
+        String encodingParam = filterConfig.getInitParameter("encoding");
+        if (encodingParam != null) {
+            this.encoding = encodingParam;
+        }
+    }
+    
+    @Override
+    public void doFilter(ServletRequest request, ServletResponse response,
+                        FilterChain chain) throws IOException, ServletException {
+        
+        // Set request encoding
+        if (request.getCharacterEncoding() == null) {
+            request.setCharacterEncoding(encoding);
+        }
+        
+        // Set response encoding
+        response.setCharacterEncoding(encoding);
+        response.setContentType("text/html; charset=" + encoding);
+        
+        // Continue filter chain
+        chain.doFilter(request, response);
+    }
+}
+```
+
+**Configuration in web.xml:**
+
+```xml
+<filter>
+    <filter-name>CharacterEncodingFilter</filter-name>
+    <filter-class>com.bank.filter.CharacterEncodingFilter</filter-class>
+    <init-param>
+        <param-name>encoding</param-name>
+        <param-value>UTF-8</param-value>
+    </init-param>
+</filter>
+```
+
+---
+
+## 🔍 Compression Filter
+
+### Response Compression Filter
+
+```java
+@WebFilter(urlPatterns = "/*")
+public class CompressionFilter implements Filter {
+    
+    @Override
+    public void doFilter(ServletRequest request, ServletResponse response,
+                        FilterChain chain) throws IOException, ServletException {
+        
+        HttpServletRequest req = (HttpServletRequest) request;
+        HttpServletResponse resp = (HttpServletResponse) response;
+        
+        // Check if client accepts gzip
+        String acceptEncoding = req.getHeader("Accept-Encoding");
+        
+        if (acceptEncoding != null && acceptEncoding.contains("gzip")) {
+            // Wrap response with compression
+            GzipResponseWrapper wrappedResponse = 
+                new GzipResponseWrapper(resp);
+            
+            try {
+                chain.doFilter(request, wrappedResponse);
+            } finally {
+                wrappedResponse.finish();
+            }
+        } else {
+            // No compression
+            chain.doFilter(request, response);
+        }
+    }
+}
+
+// Response wrapper for compression
+class GzipResponseWrapper extends HttpServletResponseWrapper {
+    private GZIPOutputStream gzipStream;
+    private ServletOutputStream outputStream;
+    
+    public GzipResponseWrapper(HttpServletResponse response) 
+            throws IOException {
+        super(response);
+        response.setHeader("Content-Encoding", "gzip");
+    }
+    
+    @Override
+    public ServletOutputStream getOutputStream() throws IOException {
+        if (outputStream == null) {
+            gzipStream = new GZIPOutputStream(getResponse().getOutputStream());
+            outputStream = new ServletOutputStream() {
+                @Override
+                public void write(int b) throws IOException {
+                    gzipStream.write(b);
+                }
+                
+                @Override
+                public boolean isReady() { return true; }
+                
+                @Override
+                public void setWriteListener(WriteListener listener) { }
+            };
+        }
+        return outputStream;
+    }
+    
+    public void finish() throws IOException {
+        if (gzipStream != null) {
+            gzipStream.finish();
+        }
+    }
+}
+```
+
+---
+
+## 🔍 Filter Best Practices
+
+### Guidelines for Filter Development
+
+| | |
+|---|---|
+| ✅ | **Keep filters focused:** One responsibility per filter |
+| ✅ | **Order matters:** Use web.xml for explicit ordering |
+| ✅ | **Always call chain.doFilter():** Unless intentionally blocking |
+| ✅ | **Handle exceptions:** Catch and log appropriately |
+| ✅ | **Use init() for setup:** Initialize resources once |
+| ✅ | **Clean up in destroy():** Release resources |
+| ✅ | **Be thread-safe:** Filters are singletons |
+| ✅ | **Minimize overhead:** Filters execute on every request |
+
+### Common Filter Patterns
+
+```java
+// Pattern 1: Pre-processing only
+chain.doFilter(request, response);
+
+// Pattern 2: Post-processing only
+chain.doFilter(request, response);
+// Post-processing code here
+
+// Pattern 3: Wrap request/response
+ModifiedRequest wrappedRequest = new ModifiedRequest(request);
+ModifiedResponse wrappedResponse = new ModifiedResponse(response);
+chain.doFilter(wrappedRequest, wrappedResponse);
+
+// Pattern 4: Conditional execution
+if (condition) {
+    chain.doFilter(request, response);
+} else {
+    // Block request
+    response.sendError(HttpServletResponse.SC_FORBIDDEN);
+}
+```
+
+---
+
+## 👂 Servlet Listeners
+
+### What are Servlet Listeners?
+
+**Listeners** respond to lifecycle events in web applications.
+
+| | |
+|---|---|
+| 🎯 | **Purpose:** React to application, session, and request events |
+| 📡 | **Event-driven:** Triggered automatically by container |
+| 🔄 | **Lifecycle hooks:** Initialize/cleanup resources |
+| 📊 | **Monitoring:** Track application state and metrics |
+
+### Listener Types:
+
+1. **ServletContextListener** - Application lifecycle
+2. **HttpSessionListener** - Session lifecycle
+3. **ServletRequestListener** - Request lifecycle
+4. **Attribute Listeners** - Attribute changes
+
+---
+
+## 👂 ServletContextListener - Application Lifecycle
+
+### Application Startup and Shutdown
+
+```java
+@WebListener
+public class ApplicationLifecycleListener implements ServletContextListener {
+    
+    private static final Logger logger = Logger.getLogger(
+        ApplicationLifecycleListener.class.getName()
+    );
+    
+    @Override
+    public void contextInitialized(ServletContextEvent sce) {
+        ServletContext context = sce.getServletContext();
+        
+        logger.info("=== Application Starting ===");
+        logger.info("Context Path: " + context.getContextPath());
+        logger.info("Server Info: " + context.getServerInfo());
+        
+        // Initialize application-wide resources
+        initializeDatabase(context);
+        loadConfiguration(context);
+        startScheduledTasks(context);
+        
+        // Store application start time
+        context.setAttribute("startTime", LocalDateTime.now());
+        
+        logger.info("=== Application Started Successfully ===");
+    }
+    
+    @Override
+    public void contextDestroyed(ServletContextEvent sce) {
+        ServletContext context = sce.getServletContext();
+        
+        logger.info("=== Application Shutting Down ===");
+        
+        // Cleanup resources
+        stopScheduledTasks(context);
+        closeDatabase(context);
+        
+        LocalDateTime startTime = 
+            (LocalDateTime) context.getAttribute("startTime");
+        if (startTime != null) {
+            Duration uptime = Duration.between(startTime, LocalDateTime.now());
+            logger.info("Application uptime: " + uptime);
+        }
+        
+        logger.info("=== Application Stopped ===");
+    }
+    
+    private void initializeDatabase(ServletContext context) {
+        // Database initialization logic
+        logger.info("Database connection pool initialized");
+    }
+    
+    private void loadConfiguration(ServletContext context) {
+        // Load configuration
+        logger.info("Configuration loaded");
+    }
+    
+    private void startScheduledTasks(ServletContext context) {
+        // Start background tasks
+        logger.info("Scheduled tasks started");
+    }
+    
+    private void stopScheduledTasks(ServletContext context) {
+        // Stop background tasks
+        logger.info("Scheduled tasks stopped");
+    }
+    
+    private void closeDatabase(ServletContext context) {
+        // Close database connections
+        logger.info("Database connections closed");
+    }
+}
+```
+
+---
+
+## 👂 HttpSessionListener - Session Tracking
+
+### Session Counter Listener
+
+```java
+@WebListener
+public class SessionCounterListener implements HttpSessionListener {
+    
+    private static final Logger logger = Logger.getLogger(
+        SessionCounterListener.class.getName()
+    );
+    
+    private final AtomicInteger activeSessions = new AtomicInteger(0);
+    private final AtomicInteger totalSessions = new AtomicInteger(0);
+    
+    @Override
+    public void sessionCreated(HttpSessionEvent se) {
+        HttpSession session = se.getSession();
+        
+        int active = activeSessions.incrementAndGet();
+        int total = totalSessions.incrementAndGet();
+        
+        logger.info(String.format(
+            "Session created: %s | Active: %d | Total: %d",
+            session.getId(), active, total
+        ));
+        
+        // Store session creation time
+        session.setAttribute("createdAt", LocalDateTime.now());
+        
+        // Store counter in application scope
+        ServletContext context = session.getServletContext();
+        context.setAttribute("activeSessions", active);
+        context.setAttribute("totalSessions", total);
+    }
+    
+    @Override
+    public void sessionDestroyed(HttpSessionEvent se) {
+        HttpSession session = se.getSession();
+        
+        int active = activeSessions.decrementAndGet();
+        
+        LocalDateTime createdAt = 
+            (LocalDateTime) session.getAttribute("createdAt");
+        if (createdAt != null) {
+            Duration duration = Duration.between(createdAt, LocalDateTime.now());
+            logger.info(String.format(
+                "Session destroyed: %s | Duration: %s | Active: %d",
+                session.getId(), duration, active
+            ));
+        }
+        
+        // Update application scope
+        ServletContext context = session.getServletContext();
+        context.setAttribute("activeSessions", active);
+    }
+    
+    public int getActiveSessions() {
+        return activeSessions.get();
+    }
+    
+    public int getTotalSessions() {
+        return totalSessions.get();
+    }
+}
+```
+
+---
+
+## 👂 ServletRequestListener - Request Tracking
+
+### Request Logging Listener
+
+```java
+@WebListener
+public class RequestLoggingListener implements ServletRequestListener {
+    
+    private static final Logger logger = Logger.getLogger(
+        RequestLoggingListener.class.getName()
+    );
+    
+    private static final String START_TIME_ATTR = "requestStartTime";
+    private final AtomicLong requestCounter = new AtomicLong(0);
+    
+    @Override
+    public void requestInitialized(ServletRequestEvent sre) {
+        ServletRequest request = sre.getServletRequest();
+        
+        if (request instanceof HttpServletRequest) {
+            HttpServletRequest httpRequest = (HttpServletRequest) request;
+            
+            // Store start time
+            request.setAttribute(START_TIME_ATTR, System.currentTimeMillis());
+            
+            // Increment counter
+            long requestId = requestCounter.incrementAndGet();
+            request.setAttribute("requestId", requestId);
+            
+            // Log request details
+            String method = httpRequest.getMethod();
+            String uri = httpRequest.getRequestURI();
+            String queryString = httpRequest.getQueryString();
+            String remoteAddr = httpRequest.getRemoteAddr();
+            String userAgent = httpRequest.getHeader("User-Agent");
+            
+            logger.info(String.format(
+                "[Request #%d] %s %s%s from %s | User-Agent: %s",
+                requestId, method, uri,
+                queryString != null ? "?" + queryString : "",
+                remoteAddr,
+                userAgent != null ? userAgent : "Unknown"
+            ));
+        }
+    }
+    
+    @Override
+    public void requestDestroyed(ServletRequestEvent sre) {
+        ServletRequest request = sre.getServletRequest();
+        
+        if (request instanceof HttpServletRequest) {
+            HttpServletRequest httpRequest = (HttpServletRequest) request;
+            
+            // Calculate duration
+            Long startTime = (Long) request.getAttribute(START_TIME_ATTR);
+            if (startTime != null) {
+                long duration = System.currentTimeMillis() - startTime;
+                Long requestId = (Long) request.getAttribute("requestId");
+                
+                String method = httpRequest.getMethod();
+                String uri = httpRequest.getRequestURI();
+                
+                logger.info(String.format(
+                    "[Request #%d] %s %s completed in %d ms",
+                    requestId, method, uri, duration
+                ));
+                
+                // Warn on slow requests
+                if (duration > 1000) {
+                    logger.warning(String.format(
+                        "[Request #%d] Slow request: %s %s took %d ms",
+                        requestId, method, uri, duration
+                    ));
+                }
+            }
+        }
+    }
+}
+```
+
+---
+
+## 👂 Attribute Listeners
+
+### Monitoring Attribute Changes
+
+```java
+@WebListener
+public class SessionAttributeListener implements HttpSessionAttributeListener {
+    
+    private static final Logger logger = Logger.getLogger(
+        SessionAttributeListener.class.getName()
+    );
+    
+    @Override
+    public void attributeAdded(HttpSessionBindingEvent event) {
+        String name = event.getName();
+        Object value = event.getValue();
+        String sessionId = event.getSession().getId();
+        
+        logger.info(String.format(
+            "Session attribute added: %s = %s (Session: %s)",
+            name, value, sessionId
+        ));
+        
+        // Track important attributes
+        if ("username".equals(name)) {
+            logger.info("User logged in: " + value);
+        }
+    }
+    
+    @Override
+    public void attributeRemoved(HttpSessionBindingEvent event) {
+        String name = event.getName();
+        Object value = event.getValue();
+        String sessionId = event.getSession().getId();
+        
+        logger.info(String.format(
+            "Session attribute removed: %s = %s (Session: %s)",
+            name, value, sessionId
+        ));
+        
+        if ("username".equals(name)) {
+            logger.info("User logged out: " + value);
+        }
+    }
+    
+    @Override
+    public void attributeReplaced(HttpSessionBindingEvent event) {
+        String name = event.getName();
+        Object oldValue = event.getValue();
+        Object newValue = event.getSession().getAttribute(name);
+        String sessionId = event.getSession().getId();
+        
+        logger.info(String.format(
+            "Session attribute replaced: %s changed from %s to %s (Session: %s)",
+            name, oldValue, newValue, sessionId
+        ));
+    }
+}
+```
+
+---
+
+## 👂 ServletContext Attribute Listener
+
+### Application-wide Attribute Monitoring
+
+```java
+@WebListener
+public class ApplicationAttributeListener 
+        implements ServletContextAttributeListener {
+    
+    private static final Logger logger = Logger.getLogger(
+        ApplicationAttributeListener.class.getName()
+    );
+    
+    @Override
+    public void attributeAdded(ServletContextAttributeEvent event) {
+        String name = event.getName();
+        Object value = event.getValue();
+        
+        logger.info(String.format(
+            "Application attribute added: %s = %s",
+            name, value
+        ));
+    }
+    
+    @Override
+    public void attributeRemoved(ServletContextAttributeEvent event) {
+        String name = event.getName();
+        Object value = event.getValue();
+        
+        logger.info(String.format(
+            "Application attribute removed: %s = %s",
+            name, value
+        ));
+    }
+    
+    @Override
+    public void attributeReplaced(ServletContextAttributeEvent event) {
+        String name = event.getName();
+        Object oldValue = event.getValue();
+        Object newValue = event.getServletContext().getAttribute(name);
+        
+        logger.info(String.format(
+            "Application attribute replaced: %s changed from %s to %s",
+            name, oldValue, newValue
+        ));
+    }
+}
+```
+
+---
+
+## 👂 Listener Use Cases and Patterns
+
+### Common Listener Patterns
+
+<div class="columns">
+<div>
+
+**Application Lifecycle:**
+- Database connection pool setup
+- Configuration loading
+- Cache initialization
+- Scheduled task management
+- Resource cleanup
+
+**Session Management:**
+- Active user tracking
+- Session timeout handling
+- User activity logging
+- Session statistics
+
+</div>
+<div>
+
+**Request Processing:**
+- Request timing and profiling
+- Request/response logging
+- Performance monitoring
+- Audit trail creation
+
+**Attribute Monitoring:**
+- Security auditing
+- State change tracking
+- Data validation
+- Event triggering
+
+</div>
+</div>
+
+### Best Practices
+
+| | |
+|---|---|
+| ✅ | **Keep listeners lightweight:** Avoid heavy processing |
+| ✅ | **Use for cross-cutting concerns:** Logging, monitoring, etc. |
+| ✅ | **Be thread-safe:** Listeners are singletons |
+| ✅ | **Handle exceptions:** Don't let exceptions propagate |
+| ✅ | **Log important events:** Aid debugging and monitoring |
+
+---
+
+## 🎯 Complete Example: Banking Application
+
+### Combining Filters and Listeners
+
+**Project Structure:**
+```
+src/main/java/com/bank/
+├── filter/
+│   ├── AuthenticationFilter.java
+│   ├── LoggingFilter.java
+│   └── CharacterEncodingFilter.java
+├── listener/
+│   ├── ApplicationLifecycleListener.java
+│   ├── SessionCounterListener.java
+│   └── RequestLoggingListener.java
+└── web/
+    ├── LoginServlet.java
+    ├── DashboardServlet.java
+    └── LogoutServlet.java
+```
+
+**Filter Chain Order (web.xml):**
+```xml
+<filter-mapping>
+    <filter-name>CharacterEncodingFilter</filter-name>
+    <url-pattern>/*</url-pattern>
+</filter-mapping>
+<filter-mapping>
+    <filter-name>LoggingFilter</filter-name>
+    <url-pattern>/*</url-pattern>
+</filter-mapping>
+<filter-mapping>
+    <filter-name>AuthenticationFilter</filter-name>
+    <url-pattern>/dashboard/*</url-pattern>
+</filter-mapping>
+```
+
+---
+
+## 🎯 Banking Application - Request Flow
+
+### Complete Request Processing Flow
+
+```
+1. Client Request → http://localhost:9080/bank/dashboard
+
+2. CharacterEncodingFilter
+   ├─ Set UTF-8 encoding
+   └─ Continue chain
+
+3. LoggingFilter
+   ├─ Log request details
+   ├─ Start timer
+   └─ Continue chain
+
+4. AuthenticationFilter
+   ├─ Check session
+   ├─ Verify authentication
+   └─ Continue chain (or redirect to login)
+
+5. RequestLoggingListener
+   ├─ Request initialized event
+   └─ Log request start
+
+6. DashboardServlet
+   ├─ Process request
+   ├─ Get session data
+   └─ Forward to JSP
+
+7. RequestLoggingListener
+   ├─ Request destroyed event
+   └─ Log request completion
+
+8. LoggingFilter (after)
+   ├─ Calculate duration
+   └─ Log response
+
+9. Response → Client
+```
+
+---
+
+## 📊 Monitoring Dashboard Example
+
+### Servlet for Application Statistics
+
+```java
+@WebServlet("/admin/stats")
+public class StatisticsServlet extends HttpServlet {
+    
+    @Override
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp)
+            throws ServletException, IOException {
+        
+        ServletContext context = getServletContext();
+        
+        // Get statistics from application scope
+        Integer activeSessions = 
+            (Integer) context.getAttribute("activeSessions");
+        Integer totalSessions = 
+            (Integer) context.getAttribute("totalSessions");
+        LocalDateTime startTime = 
+            (LocalDateTime) context.getAttribute("startTime");
+        
+        // Calculate uptime
+        Duration uptime = Duration.between(startTime, LocalDateTime.now());
+        
+        // Set attributes for JSP
+        req.setAttribute("activeSessions", activeSessions);
+        req.setAttribute("totalSessions", totalSessions);
+        req.setAttribute("uptime", formatDuration(uptime));
+        req.setAttribute("startTime", startTime);
+        
+        req.getRequestDispatcher("/WEB-INF/views/stats.jsp")
+           .forward(req, resp);
+    }
+    
+    private String formatDuration(Duration duration) {
+        long days = duration.toDays();
+        long hours = duration.toHours() % 24;
+        long minutes = duration.toMinutes() % 60;
+        return String.format("%d days, %d hours, %d minutes", 
+                           days, hours, minutes);
+    }
+}
+```
+
+---
+
 
 ## 📊 Lab 2 Preview
 

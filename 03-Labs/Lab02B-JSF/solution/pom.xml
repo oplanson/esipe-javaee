@@ -100,6 +100,8 @@
                     </runtimeArtifact>
                     <serverXmlFile>${project.basedir}/src/main/liberty/config/server.xml</serverXmlFile>
                     <bootstrapPropertiesFile>${project.basedir}/src/main/liberty/config/bootstrap.properties</bootstrapPropertiesFile>
+                    <!-- Disable automatic feature installation to avoid conflicts -->
+                    <installAppPackages>project</installAppPackages>
                 </configuration>
                 <executions>
                     <execution>
