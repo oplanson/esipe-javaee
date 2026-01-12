@@ -10,8 +10,8 @@
 ## 📊 Overall Progress
 
 **Total Tasks:** 21
-**Completed:** 6 (29%)
-**In Progress:** 1 (5%)
+**Completed:** 7 (33%)
+**In Progress:** 0 (0%)
 **Pending:** 14 (67%)
 
 ---
@@ -51,11 +51,45 @@
 
 ---
 
-## 🔄 In Progress
+## ✅ Completed Tasks (continued)
 
-### 3. 🔄 Enhance Lecture 2: Servlets & JSP - IN PROGRESS
+### 3. ✅ Enhance Lecture 2: Servlets & JSP - COMPLETED
 - **File:** `esipe-javaee/02-Lectures/02-servlets-jsp-microprofile.md`
-- **Enhancement:** Add section on HTTPSession, Filters, Listeners (1 hour content)
+- **Status:** Complete
+- **Enhancement:** Added section on HTTPSession, Filters, Listeners (1 hour content)
+- **Content Added:**
+  - HTTPSession Management (26 slides, ~1,100 lines)
+  - Servlet Filters (Authentication, Logging, CORS, Compression)
+  - Servlet Listeners (SessionCounter, ApplicationLifecycle)
+  - Code examples and best practices
+
+### 4. ✅ Enhance Lab 2: Servlets & JSP - COMPLETED
+- **Directory:** `esipe-javaee/03-Labs/Lab02-ServletsJSP/`
+- **Status:** Complete
+- **Enhancement:** Added Filter and Listener exercises (Part 7 - 90 minutes)
+- **Files Created:**
+  - 6 Filter classes (solution + starter with TODOs)
+  - 2 Listener classes (solution + starter with TODOs)
+  - `FILTERS-LISTENERS-GUIDE.md` (comprehensive guide)
+  - Updated `README.md` with Part 7 exercises
+- **Total Lines:** ~2,461 lines of new code
+
+### 5. ✅ Lecture 4B: EJB (Enterprise Java Beans) - COMPLETED
+- **File:** `esipe-javaee/02-Lectures/04b-ejb-enterprise-java-beans.md`
+- **Lines:** 2,976
+- **Status:** Complete
+- **Content:**
+  - Introduction to EJB (15 min)
+  - Session Beans: Stateless, Stateful, Singleton (45 min)
+  - Message-Driven Beans (30 min)
+  - EJB Lifecycle (20 min)
+  - Transaction Management (30 min)
+  - Security with EJB (20 min)
+  - Timer Service (20 min)
+  - Asynchronous Methods (15 min)
+  - EJB vs CDI (15 min)
+  - Best Practices (10 min)
+- **PowerPoint:** Auto-generated via Marp
 
 ---
 
@@ -63,21 +97,7 @@
 
 ### New Lectures (3 remaining)
 
-#### 3. ⏳ Lecture 4B: EJB (Enterprise Java Beans)
-- **File:** `esipe-javaee/02-Lectures/04b-ejb-enterprise-java-beans.md`
-- **Estimated Lines:** ~1,200
-- **Content to Cover:**
-  - EJB architecture and container services
-  - Session Beans (Stateless, Stateful, Singleton)
-  - Message-Driven Beans (MDB)
-  - EJB lifecycle and callbacks
-  - Transaction management with EJB
-  - Security with EJB
-  - EJB vs CDI comparison
-  - Timer Service and scheduling
-  - Asynchronous methods
-
-#### 4. ⏳ Lecture 5B: JMS (Enterprise Messaging)
+#### 6. ⏳ Lecture 5B: JMS (Enterprise Messaging)
 - **File:** `esipe-javaee/02-Lectures/05b-jms-enterprise-messaging.md`
 - **Estimated Lines:** ~1,000
 - **Content to Cover:**
@@ -91,7 +111,7 @@
   - Transaction management with JMS
   - Error handling and dead letter queues
 
-#### 5. ⏳ Lecture 9: Jakarta EE Security
+#### 7. ⏳ Lecture 9: Jakarta EE Security
 - **File:** `esipe-javaee/02-Lectures/09-jakarta-ee-security.md`
 - **Estimated Lines:** ~1,500
 - **Content to Cover:**
@@ -110,7 +130,7 @@
 
 ### New Labs (3 remaining)
 
-#### 4. ⏳ Lab 4B: EJB Banking Services
+#### 8. ⏳ Lab 4B: EJB Banking Services
 - **Directory:** `esipe-javaee/03-Labs/Lab04B-EJB/`
 - **Components:**
   - README.md with objectives and instructions
@@ -127,7 +147,7 @@
   - Message-Driven Bean for notifications
   - Scheduled task for reports
 
-#### 5. ⏳ Lab 5B: Asynchronous Transaction Processing
+#### 9. ⏳ Lab 5B: Asynchronous Transaction Processing
 - **Directory:** `esipe-javaee/03-Labs/Lab05B-JMS/`
 - **Components:**
   - README.md with objectives and instructions
@@ -144,7 +164,7 @@
   - Audit logging MDB
   - Dead letter queue handling
 
-#### 6. ⏳ Lab 9: Secure Banking Application
+#### 10. ⏳ Lab 9: Secure Banking Application
 - **Directory:** `esipe-javaee/03-Labs/Lab09-Security/`
 - **Components:**
   - README.md with objectives and instructions
@@ -166,17 +186,7 @@
 
 ### Lecture Enhancements (4 remaining)
 
-#### 7. ⏳ Enhance Lecture 2: Servlets & JSP
-- **File:** `esipe-javaee/02-Lectures/02-servlets-jsp-microprofile.md`
-- **Enhancement:** Add section on HTTPSession, Filters, Listeners (1 hour content)
-- **New Content:**
-  - HTTPSession Management (lifecycle, security, clustering)
-  - Servlet Filters (chain, authentication, logging, CORS)
-  - Servlet Listeners (context, session, request)
-  - Code examples for each
-  - Best practices
-
-#### 8. ⏳ Enhance Lecture 3: JPA & Database
+#### 11. ⏳ Enhance Lecture 3: JPA & Database
 - **File:** `esipe-javaee/02-Lectures/03-jpa-database-integration.md`
 - **Enhancement:** Add JNDI section (30 minutes content)
 - **New Content:**
@@ -187,7 +197,7 @@
   - Environment entries and configuration
   - Best practices
 
-#### 9. ⏳ Enhance Lecture 4: CDI
+#### 12. ⏳ Enhance Lecture 4: CDI
 - **File:** `esipe-javaee/02-Lectures/04-cdi-dependency-injection.md`
 - **Enhancement:** Add Transaction Management section (45 minutes content)
 - **New Content:**
@@ -201,7 +211,7 @@
   - Transaction isolation levels
   - Handling transaction failures
 
-#### 10. ⏳ Enhance Lecture 8: Microservices
+#### 13. ⏳ Enhance Lecture 8: Microservices
 - **File:** `esipe-javaee/02-Lectures/08-microservices-architecture.md`
 - **Enhancement:** Add Microservices Security section (1 hour content)
 - **New Content:**
@@ -216,17 +226,7 @@
 
 ### Lab Enhancements (4 remaining)
 
-#### 11. ⏳ Enhance Lab 2: Servlets & JSP
-- **Directory:** `esipe-javaee/03-Labs/Lab02-ServletsJSP/`
-- **Enhancement:** Add Filter and Listener exercises
-- **New Exercises:**
-  1. Implement authentication filter
-  2. Create logging filter with request/response timing
-  3. Add session listener for active user tracking
-  4. Implement CORS filter for REST API
-  5. Create compression filter for responses
-
-#### 12. ⏳ Enhance Lab 3: JPA
+#### 14. ⏳ Enhance Lab 3: JPA
 - **Directory:** `esipe-javaee/03-Labs/Lab03-JPA/`
 - **Enhancement:** Add JNDI exercises
 - **New Exercises:**
@@ -235,7 +235,7 @@
   3. Look up EJB references
   4. Use JNDI for configuration management
 
-#### 13. ⏳ Enhance Lab 4: CDI
+#### 15. ⏳ Enhance Lab 4: CDI
 - **Directory:** `esipe-javaee/03-Labs/Lab04-CDI/`
 - **Enhancement:** Add Transaction Management exercises
 - **New Exercises:**
@@ -245,7 +245,7 @@
   4. Handle distributed transactions
   5. Configure transaction timeout
 
-#### 14. ⏳ Enhance Lab 8: Microservices
+#### 16. ⏳ Enhance Lab 8: Microservices
 - **Directory:** `esipe-javaee/03-Labs/Lab08-Microservices/`
 - **Enhancement:** Add Security exercises
 - **New Exercises:**
