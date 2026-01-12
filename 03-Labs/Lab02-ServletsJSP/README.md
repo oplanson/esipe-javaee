@@ -8,12 +8,14 @@ In this lab, you will:
 - Implement the complete servlet lifecycle
 - Create dynamic web pages using JSP and JSTL
 - Apply the MVC pattern to build a web application
+- **Implement Filters for authentication, logging, CORS, and compression**
+- **Implement Listeners for session tracking and application lifecycle**
 - Use MicroProfile Config for web tier configuration
 - Add health checks for monitoring web components
 - Build a client management interface for the banking application
 
-**Duration:** 3 hours  
-**Difficulty:** Intermediate  
+**Duration:** 4.5 hours (includes 90 minutes for Filters & Listeners)
+**Difficulty:** Intermediate
 **Prerequisites:** Lab 01 completed
 
 ---
@@ -871,6 +873,358 @@ After completing this lab, you should understand:
    - Monitoring application status
 
 ---
+---
+
+## 🔧 Part 7: Filters and Listeners (90 minutes)
+
+This section introduces advanced Servlet features: Filters and Listeners. These components allow you to intercept requests, monitor application lifecycle, and implement cross-cutting concerns.
+
+### Exercise 1: Authentication Filter (20 minutes)
+
+**Objective:** Implement a filter that protects URLs requiring authentication.
+
+**Location:** `src/main/java/com/bank/filter/AuthenticationFilter.java`
+
+**Requirements:**
+1. Use `@WebFilter` annotation with URL pattern `/*`
+2. Check if user is authenticated (session attribute "user")
+3. Redirect to login page if not authenticated
+4. Allow public URLs: `/login`, `/logout`, `/public/*`, `/css/*`, `/js/*`, `/images/*`
+5. Protect URLs: `/clients/*`, `/admin/*`
+
+**Implementation Steps:**
+
+```java
+@WebFilter(filterName = "AuthenticationFilter", urlPatterns = "/*")
+public class AuthenticationFilter implements Filter {
+    
+    private static final List<String> PUBLIC_URLS = Arrays.asList(
+        "/login", "/logout", "/public/", "/css/", "/js/", "/images/", "/index.html", "/"
+    );
+    
+    private static final List<String> PROTECTED_URLS = Arrays.asList(
+        "/clients/", "/admin/"
+    );
+    
+    @Override
+    public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
+            throws IOException, ServletException {
+        
+        HttpServletRequest httpRequest = (HttpServletRequest) request;
+        HttpServletResponse httpResponse = (HttpServletResponse) response;
+        
+        String path = httpRequest.getRequestURI().substring(
+            httpRequest.getContextPath().length()
+        );
+        
+        // Check if URL is public
+        if (isPublicUrl(path)) {
+            chain.doFilter(request, response);
+            return;
+        }
+        
+        // Check if URL requires authentication
+        if (isProtectedUrl(path)) {
+            HttpSession session = httpRequest.getSession(false);
+            
+            if (session == null || session.getAttribute("user") == null) {
+                // Store original URL for redirect after login
+                httpRequest.getSession(true).setAttribute("originalUrl", 
+                    httpRequest.getRequestURI());
+                
+                // Redirect to login
+                httpResponse.sendRedirect(httpRequest.getContextPath() + "/login");
+                return;
+            }
+        }
+        
+        chain.doFilter(request, response);
+    }
+}
+```
+
+**Testing:**
+- Try accessing `/clients/list` without authentication → should redirect to login
+- Access public URLs → should work without authentication
+
+---
+
+### Exercise 2: Logging Filter (20 minutes)
+
+**Objective:** Implement a filter that logs all HTTP requests with timing information.
+
+**Location:** `src/main/java/com/bank/filter/LoggingFilter.java`
+
+**Requirements:**
+1. Log HTTP method, URI, and parameters
+2. Measure request execution time
+3. Log response status code
+4. Warn on slow requests (> 1 second)
+
+**Implementation Steps:**
+
+```java
+@WebFilter(filterName = "LoggingFilter", urlPatterns = "/*")
+public class LoggingFilter implements Filter {
+    
+    private static final Logger LOGGER = Logger.getLogger(LoggingFilter.class.getName());
+    
+    @Override
+    public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
+            throws IOException, ServletException {
+        
+        HttpServletRequest httpRequest = (HttpServletRequest) request;
+        HttpServletResponse httpResponse = (HttpServletResponse) response;
+        
+        long startTime = System.currentTimeMillis();
+        
+        // Log request
+        logRequest(httpRequest);
+        
+        // Wrap response to capture status
+        ResponseWrapper wrapper = new ResponseWrapper(httpResponse);
+        
+        try {
+            chain.doFilter(request, wrapper);
+        } finally {
+            long duration = System.currentTimeMillis() - startTime;
+            logResponse(httpRequest, wrapper, duration);
+        }
+    }
+    
+    private void logRequest(HttpServletRequest request) {
+        LOGGER.info(String.format("Request: %s %s", 
+            request.getMethod(), request.getRequestURI()));
+    }
+    
+    private void logResponse(HttpServletRequest request, ResponseWrapper response, long duration) {
+        LOGGER.info(String.format("Response: %s %s - Status: %d - Time: %d ms",
+            request.getMethod(), request.getRequestURI(), 
+            response.getStatus(), duration));
+            
+        if (duration > 1000) {
+            LOGGER.warning("Slow request detected: " + duration + " ms");
+        }
+    }
+}
+```
+
+**Testing:**
+- Check server logs for request/response logging
+- Verify timing information is displayed
+
+---
+
+### Exercise 3: Session Counter Listener (15 minutes)
+
+**Objective:** Implement a listener that tracks active user sessions.
+
+**Location:** `src/main/java/com/bank/listener/SessionCounterListener.java`
+
+**Requirements:**
+1. Count active sessions
+2. Track total sessions created
+3. Log session creation/destruction
+4. Store statistics in ServletContext
+
+**Implementation Steps:**
+
+```java
+@WebListener
+public class SessionCounterListener implements HttpSessionListener, HttpSessionAttributeListener {
+    
+    private static final Logger LOGGER = Logger.getLogger(SessionCounterListener.class.getName());
+    private static final AtomicInteger activeSessions = new AtomicInteger(0);
+    private static final AtomicInteger totalSessions = new AtomicInteger(0);
+    
+    @Override
+    public void sessionCreated(HttpSessionEvent se) {
+        int active = activeSessions.incrementAndGet();
+        int total = totalSessions.incrementAndGet();
+        
+        se.getSession().getServletContext().setAttribute("activeSessions", active);
+        se.getSession().getServletContext().setAttribute("totalSessions", total);
+        
+        LOGGER.info(String.format("Session created: %s | Active: %d | Total: %d",
+            se.getSession().getId(), active, total));
+    }
+    
+    @Override
+    public void sessionDestroyed(HttpSessionEvent se) {
+        int active = activeSessions.decrementAndGet();
+        se.getSession().getServletContext().setAttribute("activeSessions", active);
+        
+        LOGGER.info(String.format("Session destroyed: %s | Active: %d",
+            se.getSession().getId(), active));
+    }
+    
+    @Override
+    public void attributeAdded(HttpSessionBindingEvent se) {
+        if ("user".equals(se.getName())) {
+            LOGGER.info("User logged in: " + se.getValue());
+        }
+    }
+    
+    @Override
+    public void attributeRemoved(HttpSessionBindingEvent se) {
+        if ("user".equals(se.getName())) {
+            LOGGER.info("User logged out: " + se.getValue());
+        }
+    }
+}
+```
+
+**Testing:**
+- Check logs for session creation/destruction
+- Verify session counters in ServletContext
+
+---
+
+### Exercise 4: CORS Filter (15 minutes)
+
+**Objective:** Implement a CORS filter for REST API endpoints.
+
+**Location:** `src/main/java/com/bank/filter/CorsFilter.java`
+
+**Requirements:**
+1. Handle CORS headers for `/api/*` endpoints
+2. Support preflight requests (OPTIONS)
+3. Configure allowed origins, methods, and headers
+4. Set appropriate CORS headers
+
+**Implementation Steps:**
+
+```java
+@WebFilter(filterName = "CorsFilter", urlPatterns = "/api/*")
+public class CorsFilter implements Filter {
+    
+    private static final String ALLOWED_ORIGINS = "http://localhost:3000,http://localhost:4200";
+    private static final String ALLOWED_METHODS = "GET, POST, PUT, DELETE, OPTIONS";
+    private static final String ALLOWED_HEADERS = "Content-Type, Authorization, X-Requested-With";
+    
+    @Override
+    public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
+            throws IOException, ServletException {
+        
+        HttpServletRequest httpRequest = (HttpServletRequest) request;
+        HttpServletResponse httpResponse = (HttpServletResponse) response;
+        
+        String origin = httpRequest.getHeader("Origin");
+        
+        if (origin != null && isOriginAllowed(origin)) {
+            httpResponse.setHeader("Access-Control-Allow-Origin", origin);
+            httpResponse.setHeader("Access-Control-Allow-Methods", ALLOWED_METHODS);
+            httpResponse.setHeader("Access-Control-Allow-Headers", ALLOWED_HEADERS);
+            httpResponse.setHeader("Access-Control-Max-Age", "3600");
+            httpResponse.setHeader("Access-Control-Allow-Credentials", "true");
+        }
+        
+        // Handle preflight
+        if ("OPTIONS".equalsIgnoreCase(httpRequest.getMethod())) {
+            httpResponse.setStatus(HttpServletResponse.SC_OK);
+            return;
+        }
+        
+        chain.doFilter(request, response);
+    }
+    
+    private boolean isOriginAllowed(String origin) {
+        return Arrays.asList(ALLOWED_ORIGINS.split(","))
+            .stream()
+            .anyMatch(allowed -> allowed.trim().equals(origin));
+    }
+}
+```
+
+**Testing:**
+- Use browser developer tools to check CORS headers
+- Test with different origins
+
+---
+
+### Exercise 5: Compression Filter (20 minutes)
+
+**Objective:** Implement a filter that compresses HTTP responses using GZIP.
+
+**Location:** `src/main/java/com/bank/filter/CompressionFilter.java`
+
+**Requirements:**
+1. Check if client supports GZIP (Accept-Encoding header)
+2. Compress text-based content types
+3. Only compress responses above 1KB
+4. Set appropriate Content-Encoding header
+
+**Implementation Steps:**
+
+```java
+@WebFilter(filterName = "CompressionFilter", urlPatterns = "/*")
+public class CompressionFilter implements Filter {
+    
+    private static final int MIN_COMPRESSION_SIZE = 1024;
+    private static final String[] COMPRESSIBLE_TYPES = {
+        "text/html", "text/css", "application/javascript", "application/json"
+    };
+    
+    @Override
+    public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
+            throws IOException, ServletException {
+        
+        HttpServletRequest httpRequest = (HttpServletRequest) request;
+        HttpServletResponse httpResponse = (HttpServletResponse) response;
+        
+        String acceptEncoding = httpRequest.getHeader("Accept-Encoding");
+        boolean supportsGzip = acceptEncoding != null && 
+            acceptEncoding.toLowerCase().contains("gzip");
+        
+        if (supportsGzip) {
+            CompressionResponseWrapper wrapper = new CompressionResponseWrapper(httpResponse);
+            
+            try {
+                chain.doFilter(request, wrapper);
+                
+                byte[] content = wrapper.getCapturedContent();
+                String contentType = wrapper.getContentType();
+                
+                if (shouldCompress(content, contentType)) {
+                    byte[] compressed = compress(content);
+                    httpResponse.setHeader("Content-Encoding", "gzip");
+                    httpResponse.setContentLength(compressed.length);
+                    httpResponse.getOutputStream().write(compressed);
+                } else {
+                    httpResponse.getOutputStream().write(content);
+                }
+            } finally {
+                wrapper.finishResponse();
+            }
+        } else {
+            chain.doFilter(request, response);
+        }
+    }
+    
+    private boolean shouldCompress(byte[] content, String contentType) {
+        if (content.length < MIN_COMPRESSION_SIZE) return false;
+        if (contentType == null) return false;
+        
+        return Arrays.stream(COMPRESSIBLE_TYPES)
+            .anyMatch(type -> contentType.toLowerCase().contains(type));
+    }
+    
+    private byte[] compress(byte[] content) throws IOException {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        try (GZIPOutputStream gzip = new GZIPOutputStream(baos)) {
+            gzip.write(content);
+        }
+        return baos.toByteArray();
+    }
+}
+```
+
+**Testing:**
+- Check response headers for Content-Encoding: gzip
+- Compare response sizes with/without compression
+
+---
+
 
 ## 🚀 Going Further (Optional Challenges)
 
@@ -979,7 +1333,12 @@ Your lab is successful when:
 7. ✅ Health checks return UP status
 8. ✅ Configuration properties are loaded
 9. ✅ All JSP pages render correctly
-10. ✅ No console errors or warnings
+10. ✅ **Authentication filter protects URLs correctly**
+11. ✅ **Logging filter logs all requests with timing**
+12. ✅ **Session listener tracks active sessions**
+13. ✅ **CORS filter handles cross-origin requests**
+14. ✅ **Compression filter compresses responses**
+15. ✅ No console errors or warnings
 
 ---
 

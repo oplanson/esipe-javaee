@@ -2,12 +2,12 @@
 <!-- © Copyright 2026 Olivier Planson. All rights reserved. Reproduction prohibited. Made with IBM Bob. -->
 <web-app xmlns="https://jakarta.ee/xml/ns/jakartaee"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="https://jakarta.ee/xml/ns/jakartaee 
+         xsi:schemaLocation="https://jakarta.ee/xml/ns/jakartaee
          https://jakarta.ee/xml/ns/jakartaee/web-app_6_0.xsd"
          version="6.0">
 
     <display-name>Banking Web Application</display-name>
-    <description>Lab 02: Servlets, JSP and MicroProfile</description>
+    <description>Lab 02: Servlets, JSP and MicroProfile with Filters and Listeners</description>
 
     <!-- Context parameters for application configuration -->
     <context-param>

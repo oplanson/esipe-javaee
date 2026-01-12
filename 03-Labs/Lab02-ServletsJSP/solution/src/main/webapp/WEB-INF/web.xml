@@ -2,12 +2,12 @@
 <!-- © Copyright 2026 Olivier Planson. All rights reserved. Reproduction prohibited. Made with IBM Bob. -->
 <web-app xmlns="https://jakarta.ee/xml/ns/jakartaee"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="https://jakarta.ee/xml/ns/jakartaee 
+         xsi:schemaLocation="https://jakarta.ee/xml/ns/jakartaee
          https://jakarta.ee/xml/ns/jakartaee/web-app_6_0.xsd"
          version="6.0">
 
     <display-name>Banking Web Application</display-name>
-    <description>Lab 02: Servlets, JSP and MicroProfile</description>
+    <description>Lab 02: Servlets, JSP and MicroProfile with Filters and Listeners</description>
 
     <!-- Context parameters for application configuration -->
     <context-param>
@@ -24,6 +24,55 @@
         <param-name>feature.client.deletion.enabled</param-name>
         <param-value>true</param-value>
     </context-param>
+
+    <!--
+    ========================================
+    FILTERS CONFIGURATION
+    ========================================
+    Filters are configured using @WebFilter annotations in the code.
+    The following filters are available:
+    
+    1. AuthenticationFilter - Protects URLs requiring authentication
+       - URL Pattern: /*
+       - Protects: /clients/*, /admin/*
+       - Public: /login, /logout, /public/*, /css/*, /js/*, /images/*
+    
+    2. LoggingFilter - Logs all HTTP requests and responses with timing
+       - URL Pattern: /*
+       - Logs: Method, URI, parameters, status code, execution time
+    
+    3. CorsFilter - Handles CORS for REST API endpoints
+       - URL Pattern: /api/*
+       - Allowed Origins: localhost:3000, localhost:4200, localhost:8080
+       - Allowed Methods: GET, POST, PUT, DELETE, OPTIONS, HEAD
+    
+    4. CompressionFilter - Compresses responses using GZIP
+       - URL Pattern: /*
+       - Compresses: text/html, text/css, application/javascript, etc.
+       - Minimum size: 1KB
+    
+    Note: Filters are executed in the order they are loaded by the container.
+    To control filter order, use web.xml <filter-mapping> with <dispatcher> elements.
+    -->
+
+    <!--
+    ========================================
+    LISTENERS CONFIGURATION
+    ========================================
+    Listeners are configured using @WebListener annotations in the code.
+    The following listeners are available:
+    
+    1. ApplicationLifecycleListener - Monitors application startup/shutdown
+       - Logs application lifecycle events
+       - Initializes/cleans up resources
+       - Tracks application uptime
+    
+    2. SessionCounterListener - Tracks active user sessions
+       - Counts active sessions
+       - Logs session creation/destruction
+       - Tracks user login/logout
+       - Stores statistics in ServletContext
+    -->
 
     <!-- Welcome file list -->
     <welcome-file-list>
