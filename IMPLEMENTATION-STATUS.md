@@ -10,9 +10,9 @@
 ## 📊 Overall Progress
 
 **Total Tasks:** 21
-**Completed:** 8 (38%)
+**Completed:** 10 (48%)
 **In Progress:** 0 (0%)
-**Pending:** 13 (62%)
+**Pending:** 11 (52%)
 
 ---
 
@@ -128,6 +128,54 @@
   - ✅ Transaction management testing (CMT)
   - ✅ Fixed JPQL enum comparison in ReportGeneratorBean (use TransactionType enum instead of string literals)
 
+### 7. ✅ Enhance Lecture 3: JPA & Database - COMPLETED (Jan 15, 2026)
+- **File:** `esipe-javaee/02-Lectures/03-jpa-database-integration.md`
+- **Status:** Complete
+- **Enhancement:** JNDI section already present (Part 8 - 30 minutes content)
+- **Content Verified:**
+  - ✅ JNDI concepts and naming contexts
+  - ✅ Looking up resources (DataSources, JMS, EJB)
+  - ✅ JNDI naming conventions
+  - ✅ Resource injection vs JNDI lookup
+  - ✅ Environment entries and configuration
+  - ✅ Best practices and troubleshooting
+  - ✅ Complete examples with InitialContext
+  - ✅ Liberty configuration examples
+
+### 8. ✅ Enhance Lab 3: JPA - COMPLETED (Jan 15, 2026)
+- **Directory:** `esipe-javaee/03-Labs/Lab03-JPA/`
+- **Status:** Complete with comprehensive JNDI implementation
+- **Enhancement:** Added JNDI exercises and practical demonstration
+- **Files Created/Modified:**
+  - ✅ `JndiConfigService.java` (solution) - 234 lines
+  - ✅ `TransactionValidatorServlet.java` (solution) - 310 lines
+  - ✅ `JndiConfigService.java` (starter with TODOs)
+  - ✅ Updated `README.md` with Exercise 5 (4 parts: A-D)
+  - ✅ Updated `podman-test.sh` with 5 new JNDI tests
+  - ✅ Updated `index.html` with JNDI features
+  - ✅ Updated `COURSE-SUMMARY.md` with JNDI details
+- **New Exercises Implemented:**
+  1. ✅ Configure environment entries in web.xml (maxTransactionAmount, supportEmail, maxLoginAttempts)
+  2. ✅ Implement JndiConfigService with DataSource lookup
+  3. ✅ Implement JndiConfigService with environment entries lookup
+  4. ✅ Create TransactionValidatorServlet demonstrating JNDI usage
+  5. ✅ Test JNDI configuration via web interface and API
+- **Testing:**
+  - ✅ 11 automated tests total (6 existing + 5 new JNDI tests)
+  - ✅ Test validator endpoint (GET)
+  - ✅ Test valid transaction (€5,000 < €10,000)
+  - ✅ Test invalid transaction (€15,000 > €10,000)
+  - ✅ Test transaction at exact limit (€10,000)
+  - ✅ Test JSON API response structure
+- **Features:**
+  - ✅ Singleton pattern for servlet compatibility
+  - ✅ HTML interface with interactive form
+  - ✅ REST API with JSON responses
+  - ✅ Complete JNDI configuration display
+  - ✅ Transaction amount validation against JNDI limit
+  - ✅ Comprehensive error handling
+- **Commit:** `650d0ff` - Published to GitHub
+
 ---
 
 ## 📋 Pending Tasks
@@ -204,20 +252,9 @@
   - Password hashing utility
   - Security audit log
 
-### Lecture Enhancements (4 remaining)
+### Lecture Enhancements (2 remaining)
 
-#### 11. ⏳ Enhance Lecture 3: JPA & Database
-- **File:** `esipe-javaee/02-Lectures/03-jpa-database-integration.md`
-- **Enhancement:** Add JNDI section (30 minutes content)
-- **New Content:**
-  - JNDI concepts and naming contexts
-  - Looking up resources (DataSources, JMS, EJB)
-  - JNDI naming conventions
-  - Resource injection vs JNDI lookup
-  - Environment entries and configuration
-  - Best practices
-
-#### 12. ⏳ Enhance Lecture 4: CDI
+#### 9. ⏳ Enhance Lecture 4: CDI
 - **File:** `esipe-javaee/02-Lectures/04-cdi-dependency-injection.md`
 - **Enhancement:** Add Transaction Management section (45 minutes content)
 - **New Content:**
@@ -231,7 +268,7 @@
   - Transaction isolation levels
   - Handling transaction failures
 
-#### 13. ⏳ Enhance Lecture 8: Microservices
+#### 10. ⏳ Enhance Lecture 8: Microservices
 - **File:** `esipe-javaee/02-Lectures/08-microservices-architecture.md`
 - **Enhancement:** Add Microservices Security section (1 hour content)
 - **New Content:**
@@ -244,18 +281,9 @@
   - OAuth2 for microservices
   - Rate limiting and DDoS protection
 
-### Lab Enhancements (4 remaining)
+### Lab Enhancements (2 remaining)
 
-#### 14. ⏳ Enhance Lab 3: JPA
-- **Directory:** `esipe-javaee/03-Labs/Lab03-JPA/`
-- **Enhancement:** Add JNDI exercises
-- **New Exercises:**
-  1. Look up DataSource using JNDI
-  2. Configure environment entries in web.xml
-  3. Look up EJB references
-  4. Use JNDI for configuration management
-
-#### 15. ⏳ Enhance Lab 4: CDI
+#### 11. ⏳ Enhance Lab 4: CDI
 - **Directory:** `esipe-javaee/03-Labs/Lab04-CDI/`
 - **Enhancement:** Add Transaction Management exercises
 - **New Exercises:**
@@ -265,7 +293,7 @@
   4. Handle distributed transactions
   5. Configure transaction timeout
 
-#### 16. ⏳ Enhance Lab 8: Microservices
+#### 12. ⏳ Enhance Lab 8: Microservices
 - **Directory:** `esipe-javaee/03-Labs/Lab08-Microservices/`
 - **Enhancement:** Add Security exercises
 - **New Exercises:**
@@ -310,11 +338,11 @@
 5. ✅ Create Lecture 4B: EJB - DONE
 6. ✅ Create Lab 4B: EJB Banking Services - DONE
 
-### Phase 4: Database & Transactions
-7. Enhance Lecture 3: Add JNDI section
-8. Enhance Lab 3: Add JNDI exercises
-9. Enhance Lecture 4: Add Transaction Management
-10. Enhance Lab 4: Add Transaction Management exercises
+### Phase 4: Database & Transactions ✅ 50% COMPLETED
+7. ✅ Enhance Lecture 3: Add JNDI section - DONE (already present, verified)
+8. ✅ Enhance Lab 3: Add JNDI exercises - DONE (comprehensive implementation)
+9. ⏳ Enhance Lecture 4: Add Transaction Management
+10. ⏳ Enhance Lab 4: Add Transaction Management exercises
 
 ### Phase 5: Messaging
 11. Create Lecture 5B: JMS
@@ -368,10 +396,10 @@
    - ✅ Lecture 4B: EJB - DONE
    - ✅ Lab 4B: EJB Banking Services - DONE
    - ✅ Comprehensive testing scripts - DONE
-4. **Next:** Proceed to Phase 4: Database & Transactions
-   - Enhance Lecture 3: Add JNDI section
-   - Enhance Lab 3: Add JNDI exercises
-   - Enhance Lecture 4: Add Transaction Management
-   - Enhance Lab 4: Add Transaction Management exercises
+4. ✅ **Phase 4 Progress:** Database & Transactions (50% complete)
+   - ✅ Enhance Lecture 3: Add JNDI section - DONE
+   - ✅ Enhance Lab 3: Add JNDI exercises - DONE
+   - ⏳ Enhance Lecture 4: Add Transaction Management - NEXT
+   - ⏳ Enhance Lab 4: Add Transaction Management exercises - NEXT
 5. Continue systematic implementation through Phase 6
 6. **All labs include complete testing tools as required**
