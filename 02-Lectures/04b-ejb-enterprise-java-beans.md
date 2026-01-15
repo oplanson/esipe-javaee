@@ -1,15 +1,131 @@
 ---
 marp: true
-theme: esipe
+theme: default
 paginate: true
-header: 'Enterprise Java Beans (EJB) - Jakarta EE 10'
-footer: 'ESIPE - Advanced Java EE & Microservices'
+backgroundColor: #fff
+header: 'Jakarta EE & MicroProfile Course'
+footer: 'Lecture 4B: Enterprise Java Beans (EJB) | © 2026 Olivier Planson - All rights reserved. Reproduction prohibited.'
+style: |
+  section {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-size: 28px;
+    padding: 40px;
+  }
+  img {
+    display: block;
+    margin: 20px auto;
+    max-width: 90%;
+    height: auto;
+  }
+  pre {
+    background: #f5f5f5;
+    border-radius: 8px;
+    padding: 15px;
+    font-size: 20px;
+    line-height: 1.4;
+  }
+  code {
+    background: #f0f0f0;
+    padding: 2px 6px;
+    border-radius: 3px;
+    font-family: 'Courier New', monospace;
+    font-size: 0.9em;
+  }
+  ul, ol {
+    margin: 20px 0;
+    padding-left: 40px;
+  }
+  li {
+    margin: 10px 0;
+    line-height: 1.6;
+  }
+  h1 {
+    color: #2c3e50;
+    font-size: 48px;
+    font-weight: bold;
+    margin-bottom: 30px;
+    border-bottom: 4px solid #3498db;
+    padding-bottom: 10px;
+  }
+  h2 {
+    color: #34495e;
+    font-size: 40px;
+    margin-top: 40px;
+    margin-bottom: 20px;
+    border-bottom: 2px solid #3498db;
+    padding-bottom: 8px;
+  }
+  h3 {
+    color: #7f8c8d;
+    font-size: 32px;
+    margin-top: 30px;
+    margin-bottom: 15px;
+  }
+  table {
+    margin: 20px auto;
+    border-collapse: collapse;
+    width: 90%;
+    font-size: 24px;
+  }
+  td, th {
+    border: 2px solid #bdc3c7;
+    padding: 12px 15px;
+    text-align: left;
+  }
+  th {
+    background-color: #3498db;
+    color: white;
+    font-weight: bold;
+  }
+  tr:nth-child(even) {
+    background-color: #ecf0f1;
+  }
+  p {
+    line-height: 1.6;
+    margin: 15px 0;
+  }
+  strong {
+    color: #e74c3c;
+    font-weight: bold;
+  }
+  blockquote {
+    border-left: 5px solid #3498db;
+    padding-left: 20px;
+    margin: 20px 0;
+    font-style: italic;
+    background: #ecf0f1;
+    padding: 15px 20px;
+    border-radius: 5px;
+  }
+  .columns {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+  }
+  .columns-3 {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+  }
+  .columns-2-1 {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 20px;
+  }
+  .columns-1-2 {
+    display: grid;
+    grid-template-columns: 1fr 2fr;
+    gap: 20px;
+  }
 ---
 
 <!-- © Copyright 2026 Olivier Planson. All rights reserved. Reproduction prohibited. Made with IBM Bob. -->
 
 
-<!-- 
+
+
+
+<!--
 _class: lead
 _paginate: false
 _header: ''
