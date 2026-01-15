@@ -74,28 +74,64 @@ curl -u customer:customer123 "http://localhost:9080/banking"
 ```
 
 This script will:
-1. Check prerequisites
+1. Check prerequisites (Maven, PostgreSQL)
 2. Start PostgreSQL if needed
-3. Build the application
+3. Build the application with Maven
 4. Start Liberty server
-5. Run automated tests
-6. Display results
+5. Run comprehensive automated tests:
+   - **Test 1**: Create first account (Stateless EJB)
+   - **Test 2**: Create second account
+   - **Test 3**: Verify accounts list
+   - **Test 4**: Deposit operation (CMT)
+   - **Test 5**: Withdrawal operation
+   - **Test 6**: Transfer operation (Transaction Management)
+   - **Test 7**: Verify account balances
+   - **Test 8**: Singleton EJB (ConfigServiceBean)
+   - **Test 9**: Timer Service (ReportGeneratorBean)
+   - **Test 10**: EJB Security (Role-based access)
+6. Display test summary with pass/fail counts
+7. Keep server running for manual testing
 
-### Method 3: Container Testing with Podman
+### Method 3: Container Testing with Podman (Recommended)
 
 ```bash
 ./podman-test.sh
 ```
 
-This script will:
-1. Clean up existing containers
-2. Build the application
-3. Create Podman network
-4. Start PostgreSQL container
-5. Build Liberty container image
-6. Start Liberty container
-7. Run comprehensive tests
-8. Display results and management commands
+This script provides the most comprehensive testing and will:
+1. **Cleanup Phase**: Remove existing containers and networks
+2. **Build Phase**: Build application with Maven
+3. **Network Setup**: Create isolated Podman network
+4. **Database Setup**: Start PostgreSQL container
+5. **Container Build**: Build Liberty container image
+6. **Container Start**: Start Liberty container with environment variables
+7. **Comprehensive Testing**:
+   - **Test 1**: Create first account (Stateless EJB - AccountServiceBean)
+   - **Test 2**: Create second account
+   - **Test 3**: Verify accounts list
+   - **Test 4**: Deposit operation (Container-Managed Transaction)
+   - **Test 5**: Withdrawal operation
+   - **Test 6**: Transfer operation (Transaction Management)
+   - **Test 7**: Verify account balances after operations
+   - **Test 8**: Singleton EJB (ConfigServiceBean)
+   - **Test 9**: Timer Service (ReportGeneratorBean)
+   - **Test 10**: EJB Security (Role-based access)
+   - **Test 11**: Database persistence verification
+   - **Test 12**: JMS configuration check (for NotificationMDB)
+8. **Results**: Display test summary with pass/fail counts
+9. **Management Info**: Provide container management commands
+
+**Expected Output:**
+```
+========================================
+Test Summary
+========================================
+Tests Passed: 12
+Tests Failed: 0
+Total Tests: 12
+
+✓ All tests passed!
+```
 
 ### Method 4: Docker Compose
 
@@ -330,8 +366,100 @@ Check for:
 - Database connection pool settings
 - Transaction timeout configuration
 
+## Automated Test Details
+
+### Test Scenarios Covered
+
+#### Test 1: Account Creation (Stateless EJB)
+- **Component**: [`AccountServiceBean`](solution/src/main/java/com/bank/ejb/AccountServiceBean.java:1)
+- **Operation**: Create new checking account
+- **Verification**: Account number generated and returned
+- **Expected**: Account created with unique ACC-{timestamp} number
+
+#### Test 2: Multiple Account Creation
+- **Purpose**: Verify stateless bean can handle multiple requests
+- **Verification**: Second account created with different ID
+- **Expected**: Each account has unique identifier
+
+#### Test 3: Account List Verification
+- **Purpose**: Verify findAll() operation
+- **Verification**: Count of accounts in response
+- **Expected**: At least 2 accounts present
+
+#### Test 4: Deposit Operation (CMT)
+- **Component**: [`AccountServiceBean.deposit()`](solution/src/main/java/com/bank/ejb/AccountServiceBean.java:1)
+- **Transaction**: Container-Managed Transaction (REQUIRED)
+- **Operation**: Deposit $1000.00 to first account
+- **Verification**: Success message and balance update
+- **Expected**: Transaction commits automatically
+
+#### Test 5: Withdrawal Operation
+- **Component**: [`AccountServiceBean.withdraw()`](solution/src/main/java/com/bank/ejb/AccountServiceBean.java:1)
+- **Operation**: Withdraw $250.00 from first account
+- **Verification**: Success message and balance update
+- **Expected**: Balance reduced by withdrawal amount
+
+#### Test 6: Transfer Operation (Transaction Management)
+- **Component**: [`AccountServiceBean.transfer()`](solution/src/main/java/com/bank/ejb/AccountServiceBean.java:1)
+- **Transaction**: Tests atomic transaction across two accounts
+- **Operation**: Transfer $100.00 from first to second account
+- **Verification**: Both accounts updated atomically
+- **Expected**: Debit and credit happen in single transaction
+
+#### Test 7: Balance Verification
+- **Purpose**: Verify transaction integrity
+- **Calculations**:
+  - First account: $1000 - $250 - $100 = $650
+  - Second account: $0 + $100 = $100
+- **Expected**: Balances match calculated values
+
+#### Test 8: Singleton EJB
+- **Component**: [`ConfigServiceBean`](solution/src/main/java/com/bank/ejb/ConfigServiceBean.java:1)
+- **Purpose**: Verify singleton initialization and configuration
+- **Verification**: Application name retrieved from config
+- **Expected**: "EJB Banking Application" displayed
+
+#### Test 9: Timer Service
+- **Component**: [`ReportGeneratorBean`](solution/src/main/java/com/bank/ejb/ReportGeneratorBean.java:1)
+- **Purpose**: Verify scheduled task execution
+- **Verification**: Report statistics displayed
+- **Expected**: Timer service active and generating reports
+
+#### Test 10: EJB Security
+- **Component**: Role-based access control
+- **Purpose**: Verify `@RolesAllowed` enforcement
+- **Operation**: Admin creates account
+- **Expected**: Admin role has necessary permissions
+
+#### Test 11: Database Persistence (Podman only)
+- **Purpose**: Verify JPA persistence
+- **Operation**: Query PostgreSQL directly
+- **Verification**: Account count in database
+- **Expected**: Database contains created accounts
+
+#### Test 12: JMS Configuration (Podman only)
+- **Component**: [`NotificationMDB`](solution/src/main/java/com/bank/ejb/NotificationMDB.java:1)
+- **Purpose**: Verify JMS queue configuration
+- **Verification**: Health check includes JMS status
+- **Expected**: JMS infrastructure ready for MDB
+
 ## Verification Checklist
 
+### Automated Tests (via test-lab.sh or podman-test.sh)
+- [ ] Test 1: Account creation successful
+- [ ] Test 2: Multiple accounts created
+- [ ] Test 3: Account list verified
+- [ ] Test 4: Deposit operation works
+- [ ] Test 5: Withdrawal operation works
+- [ ] Test 6: Transfer operation works
+- [ ] Test 7: Balances calculated correctly
+- [ ] Test 8: Singleton ConfigService working
+- [ ] Test 9: Timer Service active
+- [ ] Test 10: Security roles enforced
+- [ ] Test 11: Database persistence verified (Podman)
+- [ ] Test 12: JMS configuration healthy (Podman)
+
+### Manual Verification
 - [ ] Application builds successfully
 - [ ] PostgreSQL connection established
 - [ ] Liberty server starts without errors
@@ -339,14 +467,11 @@ Check for:
 - [ ] Metrics endpoint accessible
 - [ ] Home page loads correctly
 - [ ] Banking operations work with authentication
-- [ ] Account creation successful
-- [ ] Deposit/withdrawal operations work
-- [ ] Transfer between accounts works
 - [ ] Role-based access control enforced
 - [ ] Transactions commit/rollback correctly
-- [ ] Timer service generates reports
-- [ ] MDB processes messages
-- [ ] Singleton bean initializes on startup
+- [ ] Timer service generates reports (check logs)
+- [ ] MDB processes messages (check logs)
+- [ ] Singleton bean initializes on startup (check logs)
 
 ## Cleanup
 

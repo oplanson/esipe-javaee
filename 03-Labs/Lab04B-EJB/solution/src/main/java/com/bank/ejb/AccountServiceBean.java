@@ -3,6 +3,7 @@ package com.bank.ejb;
 /* © Copyright 2026 Olivier Planson. All rights reserved. Reproduction prohibited. Made with IBM Bob. */
 
 import com.bank.model.Account;
+import com.bank.model.AccountStatus;
 import com.bank.model.AccountType;
 import com.bank.model.Transaction;
 import com.bank.model.TransactionType;
@@ -38,13 +39,34 @@ public class AccountServiceBean {
     
     /**
      * Create a new account.
-     * 
+     *
      * @param account The account to create
      * @return The persisted account with generated ID
      */
     @RolesAllowed({"admin", "teller"})
     public Account createAccount(Account account) {
         LOGGER.info("Creating new account: " + account.getAccountNumber());
+        em.persist(account);
+        em.flush();
+        return account;
+    }
+    
+    /**
+     * Create a new account with account number and type.
+     * Convenience method for creating accounts.
+     *
+     * @param accountNumber The account number
+     * @param type The account type
+     * @return The persisted account with generated ID
+     */
+    @RolesAllowed({"admin", "teller"})
+    public Account createAccount(String accountNumber, AccountType type) {
+        LOGGER.info("Creating new account: " + accountNumber + " of type " + type);
+        Account account = new Account();
+        account.setAccountNumber(accountNumber);
+        account.setType(type);
+        account.setBalance(BigDecimal.ZERO);
+        account.setStatus(AccountStatus.ACTIVE);
         em.persist(account);
         em.flush();
         return account;

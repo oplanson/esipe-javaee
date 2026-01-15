@@ -270,13 +270,4 @@ public class Account {
     }
 }
 
-/**
- * Account status enumeration.
- */
-enum AccountStatus {
-    ACTIVE,
-    SUSPENDED,
-    CLOSED
-}
-
 // Made with Bob

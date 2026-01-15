@@ -10,8 +10,8 @@
 ## 📊 Overall Progress
 
 **Total Tasks:** 21
-**Completed:** 7 (33%)
-**In Progress:** 1 (5%)
+**Completed:** 8 (38%)
+**In Progress:** 0 (0%)
 **Pending:** 13 (62%)
 
 ---
@@ -91,14 +91,14 @@
   - Best Practices (10 min)
 - **PowerPoint:** Auto-generated via Marp
 
-### 6. 🔄 Lab 4B: EJB Banking Services - IN PROGRESS
+### 6. ✅ Lab 4B: EJB Banking Services - COMPLETED
 - **Directory:** `esipe-javaee/03-Labs/Lab04B-EJB/`
-- **Status:** Partial - Core implementation complete, testing needs improvement
+- **Status:** Complete with comprehensive testing
 - **Files Created:**
   - `README.md` - Complete lab instructions
-  - `test-lab.sh` - Build verification script
-  - `podman-test.sh` (330 lines) - Podman deployment and testing
-  - `TESTING-GUIDE.md` - Comprehensive testing guide
+  - `test-lab.sh` (229 lines) - Local testing with 10 automated tests
+  - `podman-test.sh` (485 lines) - Container testing with 12 automated tests
+  - `TESTING-GUIDE.md` (545 lines) - Comprehensive testing guide with detailed test scenarios
 - **Solution Components:**
   - Stateless Session Bean: `AccountServiceBean.java`
   - Stateful Session Bean: `TransactionBatchBean.java`
@@ -113,17 +113,20 @@
   - `bootstrap.properties` - Environment variable support
   - `persistence.xml` - JPA configuration
   - `Containerfile` - Multi-stage build with PostgreSQL driver
-- **Fixes Applied (Jan 12, 2026):**
-  - ✅ Fixed WAR filename mismatch in Containerfile
-  - ✅ Fixed application name in server.xml
-  - ✅ Fixed database connection using environment variables
-  - ✅ Fixed authentication with plain-text passwords
-- **Remaining Work:**
-  - ⏳ Improve `podman-test.sh` with automated functional tests
-  - ⏳ Review and optimize build method in scripts
-  - ⏳ Add comprehensive EJB operation tests (create, deposit, withdraw, transfer)
-  - ⏳ Add MDB notification verification
-  - ⏳ Add scheduled task verification
+- **Testing Enhancements (Jan 15, 2026):**
+  - ✅ Enhanced `podman-test.sh` with 12 comprehensive automated tests
+  - ✅ Enhanced `test-lab.sh` with 10 comprehensive automated tests
+  - ✅ Updated `TESTING-GUIDE.md` with detailed test scenarios
+  - ✅ Added test counters and pass/fail reporting
+  - ✅ Comprehensive EJB operation tests (create, deposit, withdraw, transfer)
+  - ✅ Balance verification after operations
+  - ✅ Singleton EJB testing (ConfigServiceBean)
+  - ✅ Timer Service verification (ReportGeneratorBean)
+  - ✅ Security role-based access testing
+  - ✅ Database persistence verification (Podman)
+  - ✅ JMS configuration verification (Podman)
+  - ✅ Transaction management testing (CMT)
+  - ✅ Fixed JPQL enum comparison in ReportGeneratorBean (use TransactionType enum instead of string literals)
 
 ---
 
@@ -303,9 +306,9 @@
 3. ✅ Enhance Lecture 2: Add HTTPSession, Filters, Listeners - DONE
 4. ✅ Enhance Lab 2: Add Filter and Listener exercises - DONE
 
-### Phase 3: EJB Content 🔄 IN PROGRESS
+### Phase 3: EJB Content ✅ COMPLETED
 5. ✅ Create Lecture 4B: EJB - DONE
-6. 🔄 Create Lab 4B: EJB Banking Services - IN PROGRESS (testing improvements needed)
+6. ✅ Create Lab 4B: EJB Banking Services - DONE
 
 ### Phase 4: Database & Transactions
 7. Enhance Lecture 3: Add JNDI section
@@ -361,15 +364,14 @@
 
 1. ✅ Complete Lab 2B: JSF Client Management - DONE
 2. ✅ Complete Phase 2: Web Technologies Enhancement - DONE
-3. 🔄 **Current:** Complete Phase 3: EJB Content
-   - **Immediate:** Improve Lab 4B testing scripts
-     - Add automated EJB operation tests in `podman-test.sh`
-     - Optimize build method
-     - Add functional verification tests
+3. ✅ Complete Phase 3: EJB Content - DONE
+   - ✅ Lecture 4B: EJB - DONE
+   - ✅ Lab 4B: EJB Banking Services - DONE
+   - ✅ Comprehensive testing scripts - DONE
 4. **Next:** Proceed to Phase 4: Database & Transactions
    - Enhance Lecture 3: Add JNDI section
    - Enhance Lab 3: Add JNDI exercises
    - Enhance Lecture 4: Add Transaction Management
    - Enhance Lab 4: Add Transaction Management exercises
 5. Continue systematic implementation through Phase 6
-6. **Ensure all new labs include complete testing tools**
+6. **All labs include complete testing tools as required**

@@ -4,6 +4,7 @@ package com.bank.ejb;
 
 import com.bank.model.Account;
 import com.bank.model.Transaction;
+import com.bank.model.TransactionType;
 import jakarta.annotation.Resource;
 import jakarta.ejb.*;
 import jakarta.persistence.EntityManager;
@@ -254,8 +255,9 @@ public class ReportGeneratorBean {
     private BigDecimal getTotalDeposits(LocalDateTime start, LocalDateTime end) {
         BigDecimal total = em.createQuery(
             "SELECT SUM(t.amount) FROM Transaction t " +
-            "WHERE t.type = 'DEPOSIT' AND t.timestamp BETWEEN :start AND :end", 
+            "WHERE t.type = :type AND t.timestamp BETWEEN :start AND :end",
             BigDecimal.class)
+            .setParameter("type", TransactionType.DEPOSIT)
             .setParameter("start", start)
             .setParameter("end", end)
             .getSingleResult();
@@ -265,8 +267,9 @@ public class ReportGeneratorBean {
     private BigDecimal getTotalWithdrawals(LocalDateTime start, LocalDateTime end) {
         BigDecimal total = em.createQuery(
             "SELECT SUM(t.amount) FROM Transaction t " +
-            "WHERE t.type = 'WITHDRAWAL' AND t.timestamp BETWEEN :start AND :end", 
+            "WHERE t.type = :type AND t.timestamp BETWEEN :start AND :end",
             BigDecimal.class)
+            .setParameter("type", TransactionType.WITHDRAWAL)
             .setParameter("start", start)
             .setParameter("end", end)
             .getSingleResult();
