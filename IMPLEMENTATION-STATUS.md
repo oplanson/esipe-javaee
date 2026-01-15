@@ -10,9 +10,9 @@
 ## 📊 Overall Progress
 
 **Total Tasks:** 21
-**Completed:** 12 (57%)
+**Completed:** 14 (67%)
 **In Progress:** 0 (0%)
-**Pending:** 9 (43%)
+**Pending:** 7 (33%)
 
 ---
 
@@ -186,22 +186,22 @@
 
 ### 10. ✅ Enhance Lab 4: CDI - COMPLETED (Jan 15, 2026)
 - **Directory:** `esipe-javaee/03-Labs/Lab04-CDI/`
-- **Status:** Complete
+- **Status:** Complete with comprehensive BMT implementation
 - **Enhancement:** Added Exercise 6 - Advanced Transaction Management (BMT)
 - **Content Added:** ~450 lines in README.md
 - **Exercise Structure:**
   - **Part A:** Create BMT Transfer Service (20 min)
-    - `BatchTransferService.java` with UserTransaction
+    - `BatchTransferService.java` with UserTransaction (223 lines)
     - Batch processing with individual transaction boundaries
     - Transfer with retry logic and exponential backoff
     - Helper classes (TransferRequest, BatchTransferResult, TransferResult)
-    - `TransactionTestServlet.java` for testing
+    - `TransactionTestServlet.java` for testing (complete implementation)
   - **Part B:** Compare CMT vs BMT (15 min)
-    - `TransactionComparisonService.java`
+    - `TransactionComparisonService.java` (complete implementation)
     - Side-by-side CMT and BMT implementations
     - Performance measurement methods
   - **Part C:** Test Transaction Timeout (10 min)
-    - `TimeoutTestService.java`
+    - `TimeoutTestService.java` (complete implementation)
     - Short timeout test (2 seconds)
     - Adequate timeout test (10 seconds)
   - **Part D:** Update server.xml Configuration (5 min)
@@ -219,33 +219,22 @@
   - Performance considerations
 - **Verification Checklist:** 8 items
 - **Troubleshooting Guide:** 3 common issues with solutions
-  - ✅ `TransactionValidatorServlet.java` (solution) - 310 lines
-  - ✅ `JndiConfigService.java` (starter with TODOs)
-  - ✅ Updated `README.md` with Exercise 5 (4 parts: A-D)
-  - ✅ Updated `podman-test.sh` with 5 new JNDI tests
-  - ✅ Updated `index.html` with JNDI features
-  - ✅ Updated `COURSE-SUMMARY.md` with JNDI details
-- **New Exercises Implemented:**
-  1. ✅ Configure environment entries in web.xml (maxTransactionAmount, supportEmail, maxLoginAttempts)
-  2. ✅ Implement JndiConfigService with DataSource lookup
-  3. ✅ Implement JndiConfigService with environment entries lookup
-  4. ✅ Create TransactionValidatorServlet demonstrating JNDI usage
-  5. ✅ Test JNDI configuration via web interface and API
+- **Solution Files Created:**
+  - ✅ `BatchTransferService.java` (223 lines) - Complete BMT implementation
+  - ✅ `TransactionComparisonService.java` (complete) - CMT vs BMT comparison
+  - ✅ `TimeoutTestService.java` (complete) - Transaction timeout testing
+  - ✅ `TransactionTestServlet.java` (complete) - Web interface for testing
+- **Bug Fixes (Jan 15, 2026):**
+  - ✅ Fixed "double cannot be dereferenced" compilation errors
+  - ✅ Corrected type mismatches in BatchTransferService (lines 63, 70, 123, 128-129)
+  - ✅ Corrected type mismatches in TransactionComparisonService (lines 46, 50-51, 73, 78-79)
+  - ✅ Changed BigDecimal operations to primitive double operations
+  - ✅ Build verification: mvn clean package successful (10.821s)
 - **Testing:**
-  - ✅ 11 automated tests total (6 existing + 5 new JNDI tests)
-  - ✅ Test validator endpoint (GET)
-  - ✅ Test valid transaction (€5,000 < €10,000)
-  - ✅ Test invalid transaction (€15,000 > €10,000)
-  - ✅ Test transaction at exact limit (€10,000)
-  - ✅ Test JSON API response structure
-- **Features:**
-  - ✅ Singleton pattern for servlet compatibility
-  - ✅ HTML interface with interactive form
-  - ✅ REST API with JSON responses
-  - ✅ Complete JNDI configuration display
-  - ✅ Transaction amount validation against JNDI limit
-  - ✅ Comprehensive error handling
-- **Commit:** `650d0ff` - Published to GitHub
+  - ✅ All compilation errors resolved
+  - ✅ Application successfully packaged as WAR file
+  - ✅ Liberty server configuration validated
+- **Commit:** `8abadcf` - Published to GitHub (Jan 15, 2026)
 
 ---
 
@@ -409,11 +398,14 @@
 5. ✅ Create Lecture 4B: EJB - DONE
 6. ✅ Create Lab 4B: EJB Banking Services - DONE
 
-### Phase 4: Database & Transactions ✅ 100% COMPLETED
+### Phase 4: Database & Transactions ✅ 100% COMPLETED (Jan 15, 2026)
 7. ✅ Enhance Lecture 3: Add JNDI section - DONE (already present, verified)
 8. ✅ Enhance Lab 3: Add JNDI exercises - DONE (comprehensive implementation)
-9. ✅ Enhance Lecture 4: Add Transaction Management - DONE (Jan 15, 2026)
-10. ✅ Enhance Lab 4: Add Transaction Management exercises - DONE (Jan 15, 2026)
+9. ✅ Enhance Lecture 4: Add Transaction Management (BMT) - DONE (Jan 15, 2026)
+10. ✅ Enhance Lab 4: Add Transaction Management exercises (BMT) - DONE (Jan 15, 2026)
+   - ✅ Complete solution implementation with 4 new service classes
+   - ✅ Bug fixes for type mismatches (double vs BigDecimal)
+   - ✅ Build verification and testing completed
 
 ### Phase 5: Messaging
 11. Create Lecture 5B: JMS
@@ -467,10 +459,13 @@
    - ✅ Lecture 4B: EJB - DONE
    - ✅ Lab 4B: EJB Banking Services - DONE
    - ✅ Comprehensive testing scripts - DONE
-4. ✅ **Phase 4 Progress:** Database & Transactions (50% complete)
+4. ✅ **Phase 4 Complete:** Database & Transactions (100% complete - Jan 15, 2026)
    - ✅ Enhance Lecture 3: Add JNDI section - DONE
    - ✅ Enhance Lab 3: Add JNDI exercises - DONE
-   - ⏳ Enhance Lecture 4: Add Transaction Management - NEXT
-   - ⏳ Enhance Lab 4: Add Transaction Management exercises - NEXT
-5. Continue systematic implementation through Phase 6
+   - ✅ Enhance Lecture 4: Add Transaction Management (BMT) - DONE
+   - ✅ Enhance Lab 4: Add Transaction Management exercises (BMT) - DONE
+5. **Phase 5 Next:** Messaging (JMS)
+   - ⏳ Create Lecture 5B: JMS
+   - ⏳ Create Lab 5B: Asynchronous Transaction Processing
+6. Continue systematic implementation through Phase 6
 6. **All labs include complete testing tools as required**
