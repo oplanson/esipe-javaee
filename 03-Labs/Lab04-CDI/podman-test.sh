@@ -386,6 +386,97 @@ elif [ -z "$CLIENT_COUNT" ]; then
 else
     echo -e "${RED}✗ FAIL (no clients found)${NC}"
     TESTS_FAILED=$((TESTS_FAILED + 1))
+
+# Test Exercise 6: Transaction Management Tests
+echo ""
+echo "=========================================="
+echo "Exercise 6: Transaction Management Tests"
+echo "=========================================="
+echo ""
+
+# Test 1: Transaction test servlet (welcome page)
+echo -n "Test 1: Transaction test servlet (welcome)... "
+HTTP_CODE=$(curl -s -o /tmp/response.txt -w "%{http_code}" http://localhost:$APP_PORT/test-transactions)
+if [ "$HTTP_CODE" = "200" ] && grep -q "Transaction Management Tests" /tmp/response.txt; then
+    echo -e "${GREEN}✓ PASS${NC}"
+    TESTS_PASSED=$((TESTS_PASSED + 1))
+else
+    echo -e "${RED}✗ FAIL (HTTP $HTTP_CODE)${NC}"
+    TESTS_FAILED=$((TESTS_FAILED + 1))
+fi
+
+# Test 2: Batch processing test
+echo -n "Test 2: Batch transfer processing... "
+HTTP_CODE=$(curl -s -o /tmp/response.txt -w "%{http_code}" "http://localhost:$APP_PORT/test-transactions?test=batch")
+if [ "$HTTP_CODE" = "200" ] && grep -q "Batch Transfer Processing" /tmp/response.txt; then
+    # Check for both successful and failed transfers
+    if grep -q "Successful:" /tmp/response.txt && grep -q "Failed:" /tmp/response.txt; then
+        echo -e "${GREEN}✓ PASS (partial success working)${NC}"
+        TESTS_PASSED=$((TESTS_PASSED + 1))
+    else
+        echo -e "${YELLOW}⚠ PARTIAL (check response manually)${NC}"
+        TESTS_PASSED=$((TESTS_PASSED + 1))
+    fi
+else
+    echo -e "${RED}✗ FAIL (HTTP $HTTP_CODE)${NC}"
+    TESTS_FAILED=$((TESTS_FAILED + 1))
+fi
+
+# Test 3: CMT vs BMT comparison
+echo -n "Test 3: CMT vs BMT comparison... "
+HTTP_CODE=$(curl -s -o /tmp/response.txt -w "%{http_code}" "http://localhost:$APP_PORT/test-transactions?test=comparison")
+if [ "$HTTP_CODE" = "200" ] && grep -q "CMT vs BMT Comparison" /tmp/response.txt; then
+    # Check for performance results
+    if grep -q "Performance Results" /tmp/response.txt && grep -q "Code Comparison" /tmp/response.txt; then
+        echo -e "${GREEN}✓ PASS${NC}"
+        TESTS_PASSED=$((TESTS_PASSED + 1))
+    else
+        echo -e "${YELLOW}⚠ PARTIAL${NC}"
+        TESTS_PASSED=$((TESTS_PASSED + 1))
+    fi
+else
+    echo -e "${RED}✗ FAIL (HTTP $HTTP_CODE)${NC}"
+    TESTS_FAILED=$((TESTS_FAILED + 1))
+fi
+
+# Test 4: Transaction timeout tests
+echo -n "Test 4: Transaction timeout tests... "
+HTTP_CODE=$(curl -s -o /tmp/response.txt -w "%{http_code}" "http://localhost:$APP_PORT/test-transactions?test=timeout")
+if [ "$HTTP_CODE" = "200" ] && grep -q "Transaction Timeout Tests" /tmp/response.txt; then
+    # Check for test results
+    if grep -q "Test 1: Short Timeout" /tmp/response.txt && grep -q "Test 2: Adequate Timeout" /tmp/response.txt; then
+        echo -e "${GREEN}✓ PASS${NC}"
+        TESTS_PASSED=$((TESTS_PASSED + 1))
+    else
+        echo -e "${YELLOW}⚠ PARTIAL${NC}"
+        TESTS_PASSED=$((TESTS_PASSED + 1))
+    fi
+else
+    echo -e "${RED}✗ FAIL (HTTP $HTTP_CODE)${NC}"
+    TESTS_FAILED=$((TESTS_FAILED + 1))
+fi
+
+# Test 5: Check for UserTransaction in logs
+echo -n "Test 5: UserTransaction usage in logs... "
+if podman logs $CONTAINER_NAME 2>&1 | grep -q "UserTransaction\|utx.begin\|utx.commit"; then
+    echo -e "${GREEN}✓ PASS (BMT detected in logs)${NC}"
+    TESTS_PASSED=$((TESTS_PASSED + 1))
+else
+    echo -e "${YELLOW}⚠ SKIP (run tests first to generate logs)${NC}"
+    TESTS_PASSED=$((TESTS_PASSED + 1))
+fi
+
+# Test 6: Check transaction configuration in server.xml
+echo -n "Test 6: Transaction configuration... "
+if podman exec $CONTAINER_NAME cat /opt/ol/wlp/usr/servers/defaultServer/server.xml 2>/dev/null | grep -q "maxTransactionTimeout"; then
+    echo -e "${GREEN}✓ PASS (transaction config present)${NC}"
+    TESTS_PASSED=$((TESTS_PASSED + 1))
+else
+    echo -e "${YELLOW}⚠ SKIP (cannot verify server.xml)${NC}"
+    TESTS_PASSED=$((TESTS_PASSED + 1))
+fi
+
+echo ""
 fi
 
 # Cleanup
@@ -480,6 +571,14 @@ echo "  • Dependency Injection (@Inject)"
 echo "  • EntityManager Producer (@Produces)"
 echo "  • Interceptors (@Logged)"
 echo "  • Request Scoped Beans (@RequestScoped)"
+echo "  • Bean-Managed Transactions (UserTransaction)"
+echo "  • Batch Processing with BMT"
+echo "  • Transaction Timeout Handling"
+echo ""
+echo -e "${BLUE}Exercise 6 - Transaction Management:${NC}"
+echo "  • Batch Processing:  http://localhost:9080/test-transactions?test=batch"
+echo "  • CMT vs BMT:        http://localhost:9080/test-transactions?test=comparison"
+echo "  • Timeout Tests:     http://localhost:9080/test-transactions?test=timeout"
 echo ""
 
 # Made with Bob

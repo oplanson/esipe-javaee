@@ -1150,6 +1150,460 @@ public class ClientService {
 ```
 
 ---
+# Part 6B: Programmatic Transaction Management (BMT)
+
+---
+
+## Bean-Managed Transactions (BMT)
+
+While `@Transactional` (CMT) is convenient, sometimes you need **fine-grained control** over transactions:
+
+**When to use BMT:**
+- Complex business logic with multiple transaction boundaries
+- Need to commit/rollback at specific points
+- Conditional transaction behavior
+- Long-running operations with intermediate commits
+- Integration with non-JTA resources
+
+**Trade-off:** More control = More code and responsibility
+
+---
+
+## UserTransaction API
+
+```java
+@ApplicationScoped
+public class ComplexTransferService {
+    
+    @Inject
+    private EntityManager em;
+    
+    @Resource
+    private UserTransaction utx;
+    
+    public void complexTransfer(Long fromId, Long toId, BigDecimal amount) 
+            throws Exception {
+        try {
+            // Start transaction manually
+            utx.begin();
+            
+            Account from = em.find(Account.class, fromId);
+            Account to = em.find(Account.class, toId);
+            
+            // Business logic
+            from.withdraw(amount);
+            to.deposit(amount);
+            
+            // Commit manually
+            utx.commit();
+            
+        } catch (Exception e) {
+            // Rollback manually
+            if (utx.getStatus() == Status.STATUS_ACTIVE) {
+                utx.rollback();
+            }
+            throw e;
+        }
+    }
+}
+```
+
+---
+
+## CMT vs BMT Comparison
+
+| Aspect | CMT (@Transactional) | BMT (UserTransaction) |
+|--------|---------------------|----------------------|
+| **Code** | Minimal | More verbose |
+| **Control** | Container-managed | Developer-managed |
+| **Boundaries** | Method-level | Arbitrary |
+| **Rollback** | Automatic on exception | Manual |
+| **Complexity** | Simple | Complex |
+| **Use Case** | Most operations | Complex scenarios |
+| **Error Prone** | Low | Higher |
+| **Performance** | Optimized by container | Manual optimization |
+
+**Recommendation:** Use CMT by default, BMT only when necessary
+
+---
+
+## Multiple Transaction Boundaries
+
+```java
+@ApplicationScoped
+public class BatchProcessingService {
+    
+    @Inject
+    private EntityManager em;
+    
+    @Resource
+    private UserTransaction utx;
+    
+    public void processBatch(List<Transaction> transactions) throws Exception {
+        int count = 0;
+        
+        for (Transaction tx : transactions) {
+            try {
+                utx.begin();
+                
+                // Process single transaction
+                processTransaction(tx);
+                
+                utx.commit();
+                count++;
+                
+                // Commit every 100 transactions
+                if (count % 100 == 0) {
+                    logger.info("Processed {} transactions", count);
+                }
+                
+            } catch (Exception e) {
+                if (utx.getStatus() == Status.STATUS_ACTIVE) {
+                    utx.rollback();
+                }
+                logger.error("Failed to process transaction: {}", tx.getId(), e);
+                // Continue with next transaction
+            }
+        }
+    }
+}
+```
+
+**Benefits:** Partial success, better error handling, progress tracking
+
+---
+
+## Transaction Isolation Levels
+
+Control how transactions see each other's changes:
+
+```java
+@ApplicationScoped
+public class AccountService {
+    
+    @PersistenceContext
+    private EntityManager em;
+    
+    @Transactional
+    public Account getAccountWithLock(Long id) {
+        // Pessimistic locking - prevents concurrent modifications
+        return em.find(Account.class, id, LockModeType.PESSIMISTIC_WRITE);
+    }
+    
+    @Transactional
+    public Account getAccountOptimistic(Long id) {
+        // Optimistic locking - detects conflicts at commit time
+        return em.find(Account.class, id, LockModeType.OPTIMISTIC);
+    }
+}
+```
+
+---
+
+## Isolation Levels Explained
+
+| Level | Description | Dirty Read | Non-Repeatable Read | Phantom Read |
+|-------|-------------|------------|---------------------|--------------|
+| **READ_UNCOMMITTED** | Lowest isolation | Yes | Yes | Yes |
+| **READ_COMMITTED** | Default in most DBs | No | Yes | Yes |
+| **REPEATABLE_READ** | Locks read rows | No | No | Yes |
+| **SERIALIZABLE** | Highest isolation | No | No | No |
+
+**PostgreSQL Default:** READ_COMMITTED
+
+**Configure in persistence.xml:**
+```xml
+<property name="eclipselink.jdbc.transaction-isolation" 
+          value="TRANSACTION_READ_COMMITTED"/>
+```
+
+---
+
+## Distributed Transactions (JTS)
+
+When transactions span **multiple resources** (databases, JMS queues):
+
+```java
+@ApplicationScoped
+public class DistributedTransferService {
+    
+    @PersistenceContext(unitName = "bankingPU")
+    private EntityManager bankingEM;
+    
+    @PersistenceContext(unitName = "auditPU")
+    private EntityManager auditEM;
+    
+    @Resource(lookup = "jms/TransferQueue")
+    private Queue transferQueue;
+    
+    @Inject
+    private JMSContext jmsContext;
+    
+    @Transactional
+    public void transferWithAudit(Long fromId, Long toId, BigDecimal amount) {
+        // All operations in same distributed transaction
+        
+        // 1. Update banking database
+        Account from = bankingEM.find(Account.class, fromId);
+        Account to = bankingEM.find(Account.class, toId);
+        from.withdraw(amount);
+        to.deposit(amount);
+        
+        // 2. Write to audit database
+        AuditLog log = new AuditLog("TRANSFER", fromId, toId, amount);
+        auditEM.persist(log);
+        
+        // 3. Send JMS message
+        jmsContext.createProducer().send(transferQueue, 
+            new TransferNotification(fromId, toId, amount));
+        
+        // All commit together or all rollback together!
+    }
+}
+```
+
+---
+
+## Two-Phase Commit (2PC)
+
+How distributed transactions work:
+
+```
+┌─────────────────────────────────────────────────────┐
+│         Transaction Coordinator (JTA)               │
+└─────────────────────────────────────────────────────┘
+                    │
+        ┌───────────┼───────────┐
+        │           │           │
+        ▼           ▼           ▼
+   ┌────────┐  ┌────────┐  ┌────────┐
+   │  DB 1  │  │  DB 2  │  │  JMS   │
+   └────────┘  └────────┘  └────────┘
+
+Phase 1: PREPARE
+- Coordinator asks: "Can you commit?"
+- Each resource: "Yes, I'm ready" or "No, I can't"
+
+Phase 2: COMMIT/ROLLBACK
+- If all said "Yes": Coordinator says "COMMIT"
+- If any said "No": Coordinator says "ROLLBACK"
+```
+
+**Automatic in Jakarta EE with JTA!**
+
+---
+
+## Transaction Timeout
+
+Prevent long-running transactions from blocking resources:
+
+```java
+@ApplicationScoped
+public class TimeoutService {
+    
+    @Resource
+    private UserTransaction utx;
+    
+    public void operationWithTimeout() throws Exception {
+        try {
+            // Set timeout to 30 seconds
+            utx.setTransactionTimeout(30);
+            utx.begin();
+            
+            // Long-running operation
+            performComplexCalculation();
+            
+            utx.commit();
+            
+        } catch (Exception e) {
+            if (utx.getStatus() == Status.STATUS_ACTIVE) {
+                utx.rollback();
+            }
+            throw e;
+        }
+    }
+}
+```
+
+**Configure default timeout in server.xml:**
+```xml
+<transaction totalTranLifetimeTimeout="120s"/>
+```
+
+---
+
+## Transaction Status Codes
+
+```java
+import jakarta.transaction.Status;
+
+public void checkTransactionStatus(UserTransaction utx) throws Exception {
+    int status = utx.getStatus();
+    
+    switch (status) {
+        case Status.STATUS_ACTIVE:
+            // Transaction is active
+            break;
+        case Status.STATUS_COMMITTED:
+            // Transaction committed successfully
+            break;
+        case Status.STATUS_ROLLEDBACK:
+            // Transaction was rolled back
+            break;
+        case Status.STATUS_MARKED_ROLLBACK:
+            // Transaction marked for rollback only
+            break;
+        case Status.STATUS_NO_TRANSACTION:
+            // No transaction active
+            break;
+        // ... other statuses
+    }
+}
+```
+
+---
+
+## Best Practices: Transaction Management
+
+### ✅ DO:
+- **Use CMT (@Transactional) by default** - simpler and safer
+- **Keep transactions short** - minimize lock duration
+- **Use appropriate isolation levels** - balance consistency vs performance
+- **Handle exceptions properly** - ensure rollback on errors
+- **Set reasonable timeouts** - prevent resource exhaustion
+- **Use optimistic locking** - better concurrency for read-heavy workloads
+
+### ❌ DON'T:
+- **Don't use BMT unless necessary** - more error-prone
+- **Don't perform I/O in transactions** - network calls, file operations
+- **Don't call remote services** - increases transaction duration
+- **Don't mix CMT and BMT** - in same bean
+- **Don't forget to rollback** - in BMT error handling
+- **Don't use SERIALIZABLE** - unless absolutely required (performance impact)
+
+---
+
+## Complete BMT Example
+
+```java
+@ApplicationScoped
+public class ComplexBankingService {
+    
+    @Inject
+    private EntityManager em;
+    
+    @Resource
+    private UserTransaction utx;
+    
+    @Inject
+    private Logger logger;
+    
+    public TransferResult transferWithRetry(
+            Long fromId, Long toId, BigDecimal amount, int maxRetries) {
+        
+        int attempts = 0;
+        Exception lastException = null;
+        
+        while (attempts < maxRetries) {
+            try {
+                utx.setTransactionTimeout(30);
+                utx.begin();
+                
+                // Lock accounts to prevent concurrent modifications
+                Account from = em.find(Account.class, fromId, 
+                                     LockModeType.PESSIMISTIC_WRITE);
+                Account to = em.find(Account.class, toId, 
+                                   LockModeType.PESSIMISTIC_WRITE);
+                
+                // Validate
+                if (from.getBalance().compareTo(amount) < 0) {
+                    utx.rollback();
+                    return TransferResult.insufficient();
+                }
+                
+                // Execute transfer
+                from.withdraw(amount);
+                to.deposit(amount);
+                
+                // Create audit record
+                AuditLog log = new AuditLog("TRANSFER", fromId, toId, amount);
+                em.persist(log);
+                
+                utx.commit();
+                
+                logger.info("Transfer successful: {} -> {} amount {}", 
+                          fromId, toId, amount);
+                return TransferResult.success();
+                
+            } catch (OptimisticLockException e) {
+                // Retry on optimistic lock failure
+                attempts++;
+                lastException = e;
+                logger.warn("Optimistic lock failure, retry {}/{}", 
+                          attempts, maxRetries);
+                
+                try {
+                    if (utx.getStatus() == Status.STATUS_ACTIVE) {
+                        utx.rollback();
+                    }
+                    Thread.sleep(100 * attempts); // Exponential backoff
+                } catch (Exception ex) {
+                    logger.error("Error during retry", ex);
+                }
+                
+            } catch (Exception e) {
+                try {
+                    if (utx.getStatus() == Status.STATUS_ACTIVE) {
+                        utx.rollback();
+                    }
+                } catch (Exception ex) {
+                    logger.error("Error during rollback", ex);
+                }
+                logger.error("Transfer failed", e);
+                return TransferResult.error(e.getMessage());
+            }
+        }
+        
+        return TransferResult.error("Max retries exceeded: " + 
+                                   lastException.getMessage());
+    }
+}
+```
+
+---
+
+## When to Use Each Approach
+
+### Use CMT (@Transactional):
+- ✅ Standard CRUD operations
+- ✅ Single database operations
+- ✅ Simple business logic
+- ✅ Most REST endpoints
+- ✅ 95% of use cases
+
+### Use BMT (UserTransaction):
+- ✅ Multiple transaction boundaries in one method
+- ✅ Conditional commit/rollback logic
+- ✅ Batch processing with partial commits
+- ✅ Complex error recovery scenarios
+- ✅ Need to query transaction status
+- ✅ Integration with legacy systems
+
+---
+
+## Lab 4 Preview: Transaction Exercises
+
+In Lab 4, you will:
+1. **Compare CMT vs BMT** - implement same operation both ways
+2. **Handle transaction failures** - test rollback scenarios
+3. **Implement batch processing** - with UserTransaction
+4. **Configure timeouts** - prevent long-running transactions
+5. **Test isolation levels** - understand concurrent access
+
+**Get ready to master transaction management!**
+
+---
+
 
 # Part 7: CDI Events
 

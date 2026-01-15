@@ -416,6 +416,616 @@ public class ClientController extends HttpServlet {
 }
 ```
 
+
+## 📝 Exercise 6: Advanced Transaction Management (BMT)
+
+**Duration:** 60 minutes  
+**Difficulty:** Advanced  
+**Prerequisites:** Completion of Exercises 1-5
+
+### 🎯 Objectives
+
+In this exercise, you will:
+- Understand the difference between CMT and BMT
+- Implement programmatic transaction management with `UserTransaction`
+- Handle complex transaction scenarios
+- Test transaction rollback and timeout
+- Compare performance and complexity of both approaches
+
+### 📚 Background
+
+While `@Transactional` (Container-Managed Transactions) is convenient for most cases, some scenarios require **fine-grained control** over transaction boundaries:
+
+- **Batch processing** with partial commits
+- **Complex business logic** with multiple transaction boundaries
+- **Conditional transactions** based on runtime conditions
+- **Long-running operations** with intermediate commits
+- **Custom error recovery** strategies
+
+### Part A: Create BMT Transfer Service (20 minutes)
+
+#### Step 1: Create `BatchTransferService` with UserTransaction
+
+Create `src/main/java/com/bank/service/BatchTransferService.java`:
+
+```java
+package com.bank.service;
+
+import com.bank.model.Account;
+import jakarta.annotation.Resource;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
+import jakarta.persistence.EntityManager;
+import jakarta.transaction.Status;
+import jakarta.transaction.UserTransaction;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.logging.Logger;
+
+@ApplicationScoped
+public class BatchTransferService {
+    
+    @Inject
+    private EntityManager em;
+    
+    @Resource
+    private UserTransaction utx;
+    
+    @Inject
+    private Logger logger;
+    
+    /**
+     * Process multiple transfers with individual transaction boundaries.
+     * Each transfer is committed independently - partial success is possible.
+     */
+    public BatchTransferResult processBatch(List<TransferRequest> requests) {
+        List<String> successful = new ArrayList<>();
+        List<String> failed = new ArrayList<>();
+        
+        for (TransferRequest request : requests) {
+            try {
+                // Set timeout for each transaction
+                utx.setTransactionTimeout(30);
+                utx.begin();
+                
+                // Find accounts
+                Account from = em.find(Account.class, request.getFromId());
+                Account to = em.find(Account.class, request.getToId());
+                
+                if (from == null || to == null) {
+                    utx.rollback();
+                    failed.add("Transfer " + request.getId() + ": Account not found");
+                    continue;
+                }
+                
+                // Validate balance
+                if (from.getBalance().compareTo(request.getAmount()) < 0) {
+                    utx.rollback();
+                    failed.add("Transfer " + request.getId() + ": Insufficient funds");
+                    continue;
+                }
+                
+                // Execute transfer
+                from.setBalance(from.getBalance().subtract(request.getAmount()));
+                to.setBalance(to.getBalance().add(request.getAmount()));
+                
+                // Commit this transaction
+                utx.commit();
+                successful.add("Transfer " + request.getId() + ": Success");
+                
+                logger.info("Batch transfer completed: {} -> {} amount {}", 
+                          request.getFromId(), request.getToId(), request.getAmount());
+                
+            } catch (Exception e) {
+                try {
+                    if (utx.getStatus() == Status.STATUS_ACTIVE) {
+                        utx.rollback();
+                    }
+                } catch (Exception ex) {
+                    logger.severe("Error during rollback: " + ex.getMessage());
+                }
+                failed.add("Transfer " + request.getId() + ": " + e.getMessage());
+                logger.warning("Batch transfer failed: " + e.getMessage());
+            }
+        }
+        
+        return new BatchTransferResult(successful, failed);
+    }
+    
+    /**
+     * Process transfers with retry logic for optimistic lock failures.
+     */
+    public TransferResult transferWithRetry(Long fromId, Long toId, 
+                                           BigDecimal amount, int maxRetries) {
+        int attempts = 0;
+        Exception lastException = null;
+        
+        while (attempts < maxRetries) {
+            try {
+                utx.setTransactionTimeout(30);
+                utx.begin();
+                
+                Account from = em.find(Account.class, fromId);
+                Account to = em.find(Account.class, toId);
+                
+                if (from == null || to == null) {
+                    utx.rollback();
+                    return TransferResult.error("Account not found");
+                }
+                
+                if (from.getBalance().compareTo(amount) < 0) {
+                    utx.rollback();
+                    return TransferResult.error("Insufficient funds");
+                }
+                
+                from.setBalance(from.getBalance().subtract(amount));
+                to.setBalance(to.getBalance().add(amount));
+                
+                utx.commit();
+                
+                logger.info("Transfer with retry successful after {} attempts", attempts + 1);
+                return TransferResult.success();
+                
+            } catch (Exception e) {
+                attempts++;
+                lastException = e;
+                
+                try {
+                    if (utx.getStatus() == Status.STATUS_ACTIVE) {
+                        utx.rollback();
+                    }
+                    // Exponential backoff
+                    Thread.sleep(100 * attempts);
+                } catch (Exception ex) {
+                    logger.severe("Error during retry: " + ex.getMessage());
+                }
+                
+                logger.warning("Transfer attempt {} failed: {}", attempts, e.getMessage());
+            }
+        }
+        
+        return TransferResult.error("Max retries exceeded: " + 
+                                   (lastException != null ? lastException.getMessage() : "Unknown error"));
+    }
+    
+    // Helper classes
+    public static class TransferRequest {
+        private String id;
+        private Long fromId;
+        private Long toId;
+        private BigDecimal amount;
+        
+        // Constructor, getters, setters
+        public TransferRequest(String id, Long fromId, Long toId, BigDecimal amount) {
+            this.id = id;
+            this.fromId = fromId;
+            this.toId = toId;
+            this.amount = amount;
+        }
+        
+        public String getId() { return id; }
+        public Long getFromId() { return fromId; }
+        public Long getToId() { return toId; }
+        public BigDecimal getAmount() { return amount; }
+    }
+    
+    public static class BatchTransferResult {
+        private List<String> successful;
+        private List<String> failed;
+        
+        public BatchTransferResult(List<String> successful, List<String> failed) {
+            this.successful = successful;
+            this.failed = failed;
+        }
+        
+        public List<String> getSuccessful() { return successful; }
+        public List<String> getFailed() { return failed; }
+        public int getSuccessCount() { return successful.size(); }
+        public int getFailureCount() { return failed.size(); }
+    }
+    
+    public static class TransferResult {
+        private boolean success;
+        private String message;
+        
+        private TransferResult(boolean success, String message) {
+            this.success = success;
+            this.message = message;
+        }
+        
+        public static TransferResult success() {
+            return new TransferResult(true, "Transfer successful");
+        }
+        
+        public static TransferResult error(String message) {
+            return new TransferResult(false, message);
+        }
+        
+        public boolean isSuccess() { return success; }
+        public String getMessage() { return message; }
+    }
+}
+```
+
+#### Step 2: Create Test Servlet
+
+Create `src/main/java/com/bank/web/TransactionTestServlet.java`:
+
+```java
+package com.bank.web;
+
+import com.bank.service.BatchTransferService;
+import com.bank.service.BatchTransferService.TransferRequest;
+import com.bank.service.BatchTransferService.BatchTransferResult;
+import jakarta.inject.Inject;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
+
+@WebServlet("/test-transactions")
+public class TransactionTestServlet extends HttpServlet {
+    
+    @Inject
+    private BatchTransferService batchService;
+    
+    @Override
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp) 
+            throws ServletException, IOException {
+        
+        resp.setContentType("text/html");
+        PrintWriter out = resp.getWriter();
+        
+        out.println("<html><head><title>Transaction Tests</title></head><body>");
+        out.println("<h1>BMT Transaction Tests</h1>");
+        
+        // Test 1: Batch processing
+        out.println("<h2>Test 1: Batch Transfer Processing</h2>");
+        List<TransferRequest> requests = new ArrayList<>();
+        requests.add(new TransferRequest("T1", 1L, 2L, new BigDecimal("100")));
+        requests.add(new TransferRequest("T2", 2L, 3L, new BigDecimal("50")));
+        requests.add(new TransferRequest("T3", 1L, 3L, new BigDecimal("999999"))); // Will fail
+        requests.add(new TransferRequest("T4", 3L, 1L, new BigDecimal("25")));
+        
+        BatchTransferResult result = batchService.processBatch(requests);
+        
+        out.println("<p><strong>Successful:</strong> " + result.getSuccessCount() + "</p>");
+        out.println("<ul>");
+        for (String msg : result.getSuccessful()) {
+            out.println("<li style='color:green'>" + msg + "</li>");
+        }
+        out.println("</ul>");
+        
+        out.println("<p><strong>Failed:</strong> " + result.getFailureCount() + "</p>");
+        out.println("<ul>");
+        for (String msg : result.getFailed()) {
+            out.println("<li style='color:red'>" + msg + "</li>");
+        }
+        out.println("</ul>");
+        
+        out.println("<p><a href='/banking'>Back to Home</a></p>");
+        out.println("</body></html>");
+    }
+}
+```
+
+### Part B: Compare CMT vs BMT (15 minutes)
+
+#### Create Comparison Service
+
+Create `src/main/java/com/bank/service/TransactionComparisonService.java`:
+
+```java
+package com.bank.service;
+
+import com.bank.model.Account;
+import jakarta.annotation.Resource;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
+import jakarta.persistence.EntityManager;
+import jakarta.transaction.Transactional;
+import jakarta.transaction.UserTransaction;
+import java.math.BigDecimal;
+import java.util.logging.Logger;
+
+@ApplicationScoped
+public class TransactionComparisonService {
+    
+    @Inject
+    private EntityManager em;
+    
+    @Resource
+    private UserTransaction utx;
+    
+    @Inject
+    private Logger logger;
+    
+    /**
+     * CMT Approach: Simple and clean
+     */
+    @Transactional
+    public void transferCMT(Long fromId, Long toId, BigDecimal amount) {
+        Account from = em.find(Account.class, fromId);
+        Account to = em.find(Account.class, toId);
+        
+        if (from.getBalance().compareTo(amount) < 0) {
+            throw new IllegalStateException("Insufficient funds");
+        }
+        
+        from.setBalance(from.getBalance().subtract(amount));
+        to.setBalance(to.getBalance().add(amount));
+        
+        // Transaction automatically committed or rolled back
+    }
+    
+    /**
+     * BMT Approach: More control, more code
+     */
+    public void transferBMT(Long fromId, Long toId, BigDecimal amount) throws Exception {
+        try {
+            utx.begin();
+            
+            Account from = em.find(Account.class, fromId);
+            Account to = em.find(Account.class, toId);
+            
+            if (from.getBalance().compareTo(amount) < 0) {
+                utx.rollback();
+                throw new IllegalStateException("Insufficient funds");
+            }
+            
+            from.setBalance(from.getBalance().subtract(amount));
+            to.setBalance(to.getBalance().add(amount));
+            
+            utx.commit();
+            
+        } catch (Exception e) {
+            try {
+                utx.rollback();
+            } catch (Exception ex) {
+                logger.severe("Rollback failed: " + ex.getMessage());
+            }
+            throw e;
+        }
+    }
+    
+    /**
+     * Measure execution time for CMT
+     */
+    public long measureCMT(Long fromId, Long toId, BigDecimal amount) {
+        long start = System.nanoTime();
+        try {
+            transferCMT(fromId, toId, amount);
+        } catch (Exception e) {
+            logger.warning("CMT transfer failed: " + e.getMessage());
+        }
+        return System.nanoTime() - start;
+    }
+    
+    /**
+     * Measure execution time for BMT
+     */
+    public long measureBMT(Long fromId, Long toId, BigDecimal amount) {
+        long start = System.nanoTime();
+        try {
+            transferBMT(fromId, toId, amount);
+        } catch (Exception e) {
+            logger.warning("BMT transfer failed: " + e.getMessage());
+        }
+        return System.nanoTime() - start;
+    }
+}
+```
+
+### Part C: Test Transaction Timeout (10 minutes)
+
+#### Create Timeout Test Service
+
+Create `src/main/java/com/bank/service/TimeoutTestService.java`:
+
+```java
+package com.bank.service;
+
+import jakarta.annotation.Resource;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
+import jakarta.transaction.UserTransaction;
+import java.util.logging.Logger;
+
+@ApplicationScoped
+public class TimeoutTestService {
+    
+    @Resource
+    private UserTransaction utx;
+    
+    @Inject
+    private Logger logger;
+    
+    /**
+     * Test transaction timeout with short timeout
+     */
+    public String testShortTimeout() {
+        try {
+            // Set very short timeout (2 seconds)
+            utx.setTransactionTimeout(2);
+            utx.begin();
+            
+            logger.info("Transaction started with 2 second timeout");
+            
+            // Simulate long operation (5 seconds)
+            Thread.sleep(5000);
+            
+            utx.commit();
+            return "SUCCESS: Transaction committed (unexpected!)";
+            
+        } catch (Exception e) {
+            try {
+                utx.rollback();
+            } catch (Exception ex) {
+                // Ignore
+            }
+            return "EXPECTED: Transaction timed out - " + e.getMessage();
+        }
+    }
+    
+    /**
+     * Test transaction with adequate timeout
+     */
+    public String testAdequateTimeout() {
+        try {
+            // Set adequate timeout (10 seconds)
+            utx.setTransactionTimeout(10);
+            utx.begin();
+            
+            logger.info("Transaction started with 10 second timeout");
+            
+            // Simulate operation (2 seconds)
+            Thread.sleep(2000);
+            
+            utx.commit();
+            return "SUCCESS: Transaction committed within timeout";
+            
+        } catch (Exception e) {
+            try {
+                utx.rollback();
+            } catch (Exception ex) {
+                // Ignore
+            }
+            return "ERROR: Transaction failed - " + e.getMessage();
+        }
+    }
+}
+```
+
+### Part D: Update server.xml Configuration (5 minutes)
+
+Add transaction configuration to `src/main/liberty/config/server.xml`:
+
+```xml
+<!-- Transaction configuration -->
+<transaction 
+    totalTranLifetimeTimeout="120s"
+    maxTransactionTimeout="300s"
+    heuristicRetryInterval="10s"
+    heuristicRetryLimit="5"/>
+```
+
+### Part E: Testing Your Implementation (10 minutes)
+
+#### Test Batch Processing
+
+1. Start the application:
+```bash
+mvn clean liberty:dev
+```
+
+2. Access the test servlet:
+```
+http://localhost:9080/banking/test-transactions
+```
+
+3. Verify:
+   - Some transfers succeed
+   - Some transfers fail (insufficient funds)
+   - Each transaction is independent
+   - Failed transactions don't affect successful ones
+
+#### Test CMT vs BMT Performance
+
+Create a simple test in your browser console or use curl:
+
+```bash
+# Test CMT approach
+curl http://localhost:9080/banking/api/accounts/1/transfer \
+  -X POST \
+  -H "Content-Type: application/json" \
+  -d '{"toAccountId": 2, "amount": 100}'
+
+# Test BMT approach  
+curl http://localhost:9080/banking/test-bmt-transfer?from=1&to=2&amount=100
+```
+
+### 📊 Expected Results
+
+After completing this exercise:
+
+1. **Batch Processing:**
+   - ✅ Multiple transfers processed independently
+   - ✅ Partial success possible (some succeed, some fail)
+   - ✅ Each transaction has its own boundary
+
+2. **CMT vs BMT:**
+   - ✅ CMT: ~10-15 lines of code
+   - ✅ BMT: ~30-40 lines of code
+   - ✅ CMT: Automatic rollback
+   - ✅ BMT: Manual rollback required
+
+3. **Transaction Timeout:**
+   - ✅ Short timeout causes transaction to fail
+   - ✅ Adequate timeout allows completion
+   - ✅ Timeout configured in server.xml
+
+### 🎓 Key Learnings
+
+1. **When to Use CMT:**
+   - ✅ Standard CRUD operations
+   - ✅ Simple business logic
+   - ✅ Single transaction boundary
+   - ✅ 95% of use cases
+
+2. **When to Use BMT:**
+   - ✅ Batch processing with partial commits
+   - ✅ Multiple transaction boundaries
+   - ✅ Complex error recovery
+   - ✅ Conditional transaction logic
+
+3. **Best Practices:**
+   - ✅ Prefer CMT for simplicity
+   - ✅ Use BMT only when necessary
+   - ✅ Always handle rollback in BMT
+   - ✅ Set appropriate timeouts
+   - ✅ Log transaction boundaries
+
+### ✅ Verification Checklist
+
+- [ ] `BatchTransferService` created with UserTransaction
+- [ ] Batch processing works correctly
+- [ ] Partial success handled properly
+- [ ] CMT vs BMT comparison implemented
+- [ ] Transaction timeout tested
+- [ ] server.xml configured with transaction settings
+- [ ] All tests pass
+- [ ] Logs show transaction boundaries
+
+### 🔍 Troubleshooting
+
+**Issue:** UserTransaction is null
+
+**Solution:**
+- Verify `transaction-2.0` feature enabled in server.xml
+- Check `@Resource` annotation on UserTransaction field
+- Ensure bean is CDI-managed (@ApplicationScoped)
+
+**Issue:** Transaction timeout not working
+
+**Solution:**
+- Verify timeout configuration in server.xml
+- Check `setTransactionTimeout()` is called before `begin()`
+- Ensure timeout value is reasonable (not too short)
+
+**Issue:** Rollback not working
+
+**Solution:**
+- Check transaction status before rollback
+- Use `utx.getStatus() == Status.STATUS_ACTIVE`
+- Handle exceptions in rollback block
+
 ## 🧪 Testing
 
 ### Run with Maven

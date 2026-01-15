@@ -10,9 +10,9 @@
 ## 📊 Overall Progress
 
 **Total Tasks:** 21
-**Completed:** 10 (48%)
+**Completed:** 12 (57%)
 **In Progress:** 0 (0%)
-**Pending:** 11 (52%)
+**Pending:** 9 (43%)
 
 ---
 
@@ -148,6 +148,77 @@
 - **Enhancement:** Added JNDI exercises and practical demonstration
 - **Files Created/Modified:**
   - ✅ `JndiConfigService.java` (solution) - 234 lines
+  - ✅ `JndiConfigService.java` (starter) - 234 lines with TODOs
+  - ✅ `TransactionValidatorServlet.java` - 310 lines (HTML + JSON API)
+  - ✅ `web.xml` - Added 3 environment entries (maxTransactionAmount, supportEmail, maxLoginAttempts)
+  - ✅ `index.html` - Added JNDI features section and validator link
+  - ✅ `README.md` - Added Exercise 5 Part D (60+ lines) with complete JNDI documentation
+  - ✅ `podman-test.sh` - Added 5 new automated tests (11 total)
+  - ✅ `COURSE-SUMMARY.md` - Updated Lab 3 description with JNDI features
+- **Implementation Details:**
+  - Singleton pattern for servlet compatibility (no CDI in Lab 3)
+  - JNDI lookups for DataSource, environment entries, and JMS resources
+  - Transaction validator with configurable limits via JNDI
+  - Comprehensive error handling and logging
+  - HTML interface and JSON REST API
+  - Automated testing for all JNDI functionality
+
+### 9. ✅ Enhance Lecture 4: CDI - COMPLETED (Jan 15, 2026)
+- **File:** `esipe-javaee/02-Lectures/04-cdi-dependency-injection.md`
+- **Status:** Complete
+- **Enhancement:** Added Part 6B - Programmatic Transaction Management (BMT)
+- **Content Added:** ~450 lines
+- **Topics Covered:**
+  - Bean-Managed Transactions (BMT) overview
+  - UserTransaction API with complete examples
+  - CMT vs BMT comparison table
+  - Multiple transaction boundaries
+  - Transaction isolation levels (READ_COMMITTED, REPEATABLE_READ, SERIALIZABLE)
+  - Distributed transactions with JTS
+  - Two-phase commit (2PC) explanation with diagram
+  - Transaction timeout configuration
+  - Transaction status codes
+  - Best practices (DO/DON'T lists)
+  - Complete BMT example with retry logic
+  - When to use CMT vs BMT decision guide
+  - Lab 4 preview with transaction exercises
+- **Integration:** Seamlessly follows existing Part 6 (Declarative Transactions)
+
+### 10. ✅ Enhance Lab 4: CDI - COMPLETED (Jan 15, 2026)
+- **Directory:** `esipe-javaee/03-Labs/Lab04-CDI/`
+- **Status:** Complete
+- **Enhancement:** Added Exercise 6 - Advanced Transaction Management (BMT)
+- **Content Added:** ~450 lines in README.md
+- **Exercise Structure:**
+  - **Part A:** Create BMT Transfer Service (20 min)
+    - `BatchTransferService.java` with UserTransaction
+    - Batch processing with individual transaction boundaries
+    - Transfer with retry logic and exponential backoff
+    - Helper classes (TransferRequest, BatchTransferResult, TransferResult)
+    - `TransactionTestServlet.java` for testing
+  - **Part B:** Compare CMT vs BMT (15 min)
+    - `TransactionComparisonService.java`
+    - Side-by-side CMT and BMT implementations
+    - Performance measurement methods
+  - **Part C:** Test Transaction Timeout (10 min)
+    - `TimeoutTestService.java`
+    - Short timeout test (2 seconds)
+    - Adequate timeout test (10 seconds)
+  - **Part D:** Update server.xml Configuration (5 min)
+    - Transaction timeout settings
+    - Heuristic retry configuration
+  - **Part E:** Testing Implementation (10 min)
+    - Test batch processing
+    - Test CMT vs BMT performance
+    - Verify partial success scenarios
+- **Learning Outcomes:**
+  - When to use CMT vs BMT
+  - Batch processing patterns
+  - Transaction timeout handling
+  - Error recovery strategies
+  - Performance considerations
+- **Verification Checklist:** 8 items
+- **Troubleshooting Guide:** 3 common issues with solutions
   - ✅ `TransactionValidatorServlet.java` (solution) - 310 lines
   - ✅ `JndiConfigService.java` (starter with TODOs)
   - ✅ Updated `README.md` with Exercise 5 (4 parts: A-D)
@@ -338,11 +409,11 @@
 5. ✅ Create Lecture 4B: EJB - DONE
 6. ✅ Create Lab 4B: EJB Banking Services - DONE
 
-### Phase 4: Database & Transactions ✅ 50% COMPLETED
+### Phase 4: Database & Transactions ✅ 100% COMPLETED
 7. ✅ Enhance Lecture 3: Add JNDI section - DONE (already present, verified)
 8. ✅ Enhance Lab 3: Add JNDI exercises - DONE (comprehensive implementation)
-9. ⏳ Enhance Lecture 4: Add Transaction Management
-10. ⏳ Enhance Lab 4: Add Transaction Management exercises
+9. ✅ Enhance Lecture 4: Add Transaction Management - DONE (Jan 15, 2026)
+10. ✅ Enhance Lab 4: Add Transaction Management exercises - DONE (Jan 15, 2026)
 
 ### Phase 5: Messaging
 11. Create Lecture 5B: JMS

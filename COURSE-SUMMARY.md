@@ -66,12 +66,19 @@ This complete course package contains everything needed to teach or learn Jakart
    - ✅ Lab 4: CDI and Dependency Injection (complete)
      - Complete CDI implementation with @Inject
      - Converted from Singleton to @ApplicationScoped
-     - Declarative transactions with @Transactional
+     - Declarative transactions with @Transactional (CMT)
+     - **Bean-Managed Transactions with UserTransaction (BMT)**
+     - **Exercise 6: Advanced Transaction Management**
+       * Batch processing with individual transaction boundaries
+       * CMT vs BMT comparison with performance testing
+       * Transaction timeout handling and testing
+       * 4 new services (BatchTransferService, TransactionComparisonService, TimeoutTestService, TransactionTestServlet)
      - JTA transaction management (changed from RESOURCE_LOCAL)
      - Producer methods for EntityManager and Logger
      - Logging interceptor with @AroundInvoke
      - beans.xml for CDI activation
      - Complete solution with deployment scripts
+     - 12 automated tests in podman-test.sh
    - ✅ Lab 5: JAX-RS and RESTful Services (complete)
      - Complete REST API implementation
      - Client and Account REST resources
