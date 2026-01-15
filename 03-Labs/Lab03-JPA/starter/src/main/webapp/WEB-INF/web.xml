@@ -42,6 +42,36 @@
         </cookie-config>
     </session-config>
 
+    <!-- TODO: Add JNDI Resource References -->
+    <!-- 
+    Uncomment and complete the following resource-ref to declare the DataSource:
+    
+    <resource-ref>
+        <description>Banking Database DataSource</description>
+        <res-ref-name>jdbc/bankingDS</res-ref-name>
+        <res-type>javax.sql.DataSource</res-type>
+        <res-auth>Container</res-auth>
+        <res-sharing-scope>Shareable</res-sharing-scope>
+    </resource-ref>
+    -->
+
+    <!-- TODO: Add JNDI Environment Entries -->
+    <!-- 
+    Add three environment entries:
+    
+    1. app/maxLoginAttempts (Integer): Maximum login attempts (value: 3)
+    2. app/supportEmail (String): Support email (value: support@bank.com)
+    3. app/maxTransactionAmount (Double): Max transaction amount (value: 10000.00)
+    
+    Example structure:
+    <env-entry>
+        <description>Your description here</description>
+        <env-entry-name>app/yourEntryName</env-entry-name>
+        <env-entry-type>java.lang.YourType</env-entry-type>
+        <env-entry-value>yourValue</env-entry-value>
+    </env-entry>
+    -->
+
     <!-- Error Pages -->
     <error-page>
         <error-code>404</error-code>

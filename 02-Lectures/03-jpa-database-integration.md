@@ -138,6 +138,8 @@ By the end of this lecture, you will be able to:
 - Write queries using JPQL and Criteria API
 - Manage transactions effectively
 - Handle database migrations and schema evolution
+- Use JNDI to lookup resources (DataSources, EJBs, JMS)
+- Configure and access environment entries
 
 ---
 
@@ -150,6 +152,7 @@ By the end of this lecture, you will be able to:
 5. **Criteria API**
 6. **Transaction Management**
 7. **Database Migrations**
+8. **JNDI (Java Naming and Directory Interface)**
 
 ---
 
@@ -1648,6 +1651,563 @@ ALTER TABLE clients ADD COLUMN status VARCHAR(20) DEFAULT 'ACTIVE';
 </persistence>
 ```
 
+
+---
+
+# Part 8: JNDI (Java Naming and Directory Interface)
+
+---
+
+## What is JNDI?
+
+**JNDI** provides a unified interface to access naming and directory services in Java applications.
+
+**Key Concepts:**
+- 🔍 **Naming Service:** Maps names to objects (like a phone book)
+- 📁 **Directory Service:** Naming service with additional attributes
+- 🌐 **Unified API:** Access different naming systems (LDAP, DNS, RMI, etc.)
+
+**In Jakarta EE:**
+- Access DataSources, EJBs, JMS resources
+- Environment entries and configuration
+- Decouples resource location from code
+
+---
+
+## JNDI Architecture
+
+```
+┌─────────────────────────────────────────────────────┐
+│              Application Code                        │
+│         (Lookup resources by name)                   │
+└──────────────────────┬──────────────────────────────┘
+                       │
+┌──────────────────────▼──────────────────────────────┐
+│              JNDI API (javax.naming)                 │
+│    InitialContext │ Context │ NamingException        │
+└──────────────────────┬──────────────────────────────┘
+                       │
+┌──────────────────────▼──────────────────────────────┐
+│           JNDI Service Provider Interface            │
+│              (SPI Implementation)                    │
+└──────────────────────┬──────────────────────────────┘
+                       │
+┌──────────────────────▼──────────────────────────────┐
+│         Naming/Directory Service                     │
+│    (LDAP, DNS, File System, Application Server)     │
+└─────────────────────────────────────────────────────┘
+```
+
+---
+
+## JNDI Naming Contexts
+
+**Jakarta EE defines standard naming contexts:**
+
+| Context | Description | Example |
+|---------|-------------|---------|
+| `java:comp/env` | Component environment | `java:comp/env/jdbc/myDS` |
+| `java:module` | Module scope | `java:module/MyBean` |
+| `java:app` | Application scope | `java:app/SharedResource` |
+| `java:global` | Global scope | `java:global/myapp/MyEJB` |
+
+**Portable Names:**
+```java
+// Portable across servers
+java:comp/env/jdbc/bankDS
+
+// Server-specific (avoid in portable code)
+jdbc/bankDS  // WildFly
+java:jboss/datasources/BankDS  // JBoss
+```
+
+---
+
+## Looking Up DataSources
+
+<div class="columns">
+<div>
+
+**Using JNDI Lookup:**
+```java
+import javax.naming.InitialContext;
+import javax.naming.NamingException;
+import javax.sql.DataSource;
+import java.sql.Connection;
+
+public class DataSourceLookup {
+    
+    public Connection getConnection() 
+            throws NamingException, SQLException {
+        // Create initial context
+        InitialContext ctx = new InitialContext();
+        
+        // Lookup DataSource
+        DataSource ds = (DataSource) ctx.lookup(
+            "java:comp/env/jdbc/bankDS"
+        );
+        
+        // Get connection
+        return ds.getConnection();
+    }
+}
+```
+
+</div>
+<div>
+
+**Using Resource Injection:**
+```java
+import jakarta.annotation.Resource;
+import javax.sql.DataSource;
+import java.sql.Connection;
+
+public class DataSourceInjection {
+    
+    @Resource(lookup = "java:comp/env/jdbc/bankDS")
+    private DataSource dataSource;
+    
+    public Connection getConnection() 
+            throws SQLException {
+        return dataSource.getConnection();
+    }
+}
+```
+
+**Injection is preferred** (less code, container-managed)
+
+</div>
+</div>
+
+---
+
+## Configuring DataSource in web.xml
+
+**Define resource reference:**
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app xmlns="https://jakarta.ee/xml/ns/jakartaee"
+         version="6.0">
+    
+    <!-- DataSource resource reference -->
+    <resource-ref>
+        <description>Banking Database</description>
+        <res-ref-name>jdbc/bankDS</res-ref-name>
+        <res-type>javax.sql.DataSource</res-type>
+        <res-auth>Container</res-auth>
+        <res-sharing-scope>Shareable</res-sharing-scope>
+    </resource-ref>
+    
+    <!-- Environment entries -->
+    <env-entry>
+        <env-entry-name>app/maxTransactionAmount</env-entry-name>
+        <env-entry-type>java.lang.Double</env-entry-type>
+        <env-entry-value>10000.00</env-entry-value>
+    </env-entry>
+    
+</web-app>
+```
+
+---
+
+## Looking Up EJB References
+
+**EJB Lookup Example:**
+```java
+import javax.naming.InitialContext;
+import javax.naming.NamingException;
+
+public class EJBLookupExample {
+    
+    public void lookupEJB() throws NamingException {
+        InitialContext ctx = new InitialContext();
+        
+        // Lookup local EJB
+        AccountService accountService = (AccountService) ctx.lookup(
+            "java:module/AccountServiceBean"
+        );
+        
+        // Lookup remote EJB
+        AccountService remoteService = (AccountService) ctx.lookup(
+            "java:global/banking-app/AccountServiceBean!com.bank.ejb.AccountService"
+        );
+        
+        // Use the EJB
+        accountService.createAccount(new Account());
+    }
+}
+```
+
+**Prefer @EJB injection:**
+```java
+@EJB
+private AccountService accountService;
+```
+
+---
+
+## Environment Entries
+
+**Define in web.xml:**
+```xml
+<env-entry>
+    <env-entry-name>app/maxLoginAttempts</env-entry-name>
+    <env-entry-type>java.lang.Integer</env-entry-type>
+    <env-entry-value>3</env-entry-value>
+</env-entry>
+
+<env-entry>
+    <env-entry-name>app/supportEmail</env-entry-name>
+    <env-entry-type>java.lang.String</env-entry-type>
+    <env-entry-value>support@bank.com</env-entry-value>
+</env-entry>
+```
+
+**Lookup in code:**
+```java
+import javax.naming.InitialContext;
+
+public class ConfigService {
+    
+    public int getMaxLoginAttempts() throws NamingException {
+        InitialContext ctx = new InitialContext();
+        return (Integer) ctx.lookup("java:comp/env/app/maxLoginAttempts");
+    }
+    
+    public String getSupportEmail() throws NamingException {
+        InitialContext ctx = new InitialContext();
+        return (String) ctx.lookup("java:comp/env/app/supportEmail");
+    }
+}
+```
+
+---
+
+## JNDI Lookup Patterns
+
+**Pattern 1: Try-with-resources (Java 7+)**
+```java
+public DataSource getDataSource() throws NamingException {
+    try (InitialContext ctx = new InitialContext()) {
+        return (DataSource) ctx.lookup("java:comp/env/jdbc/bankDS");
+    }
+}
+```
+
+**Pattern 2: Singleton with caching**
+```java
+public class JNDICache {
+    private static final Map<String, Object> cache = new ConcurrentHashMap<>();
+    
+    @SuppressWarnings("unchecked")
+    public static <T> T lookup(String jndiName) throws NamingException {
+        return (T) cache.computeIfAbsent(jndiName, name -> {
+            try {
+                InitialContext ctx = new InitialContext();
+                return ctx.lookup(name);
+            } catch (NamingException e) {
+                throw new RuntimeException("JNDI lookup failed: " + name, e);
+            }
+        });
+    }
+}
+```
+
+---
+
+## JNDI vs Resource Injection
+
+<div class="columns">
+<div>
+
+**JNDI Lookup:**
+
+**Pros:**
+- ✅ Dynamic resource lookup
+- ✅ Runtime flexibility
+- ✅ Works in any Java class
+- ✅ Conditional resource access
+
+**Cons:**
+- ❌ More boilerplate code
+- ❌ Exception handling required
+- ❌ Type casting needed
+- ❌ Not container-managed
+
+**Use when:**
+- Dynamic resource selection
+- Non-managed classes
+- Conditional lookups
+
+</div>
+<div>
+
+**Resource Injection:**
+
+**Pros:**
+- ✅ Less code
+- ✅ Type-safe
+- ✅ Container-managed
+- ✅ No exception handling
+- ✅ Cleaner code
+
+**Cons:**
+- ❌ Static binding
+- ❌ Only in managed beans
+- ❌ Less flexible
+
+**Use when:**
+- Fixed resource references
+- Managed beans (Servlets, EJBs, CDI)
+- Standard use cases
+
+</div>
+</div>
+
+---
+
+## Looking Up JMS Resources
+
+**Queue Connection Factory:**
+```java
+import javax.naming.InitialContext;
+import jakarta.jms.ConnectionFactory;
+import jakarta.jms.Queue;
+
+public class JMSLookup {
+    
+    public void sendMessage(String message) throws Exception {
+        InitialContext ctx = new InitialContext();
+        
+        // Lookup connection factory
+        ConnectionFactory cf = (ConnectionFactory) ctx.lookup(
+            "java:comp/env/jms/ConnectionFactory"
+        );
+        
+        // Lookup queue
+        Queue queue = (Queue) ctx.lookup(
+            "java:comp/env/jms/NotificationQueue"
+        );
+        
+        // Use JMS resources
+        try (var connection = cf.createConnection();
+             var session = connection.createSession()) {
+            var producer = session.createProducer(queue);
+            producer.send(session.createTextMessage(message));
+        }
+    }
+}
+```
+
+---
+
+## JNDI Naming Conventions
+
+**Best Practices:**
+
+| Resource Type | Naming Pattern | Example |
+|---------------|----------------|---------|
+| DataSource | `jdbc/<name>DS` | `jdbc/bankDS` |
+| JMS Queue | `jms/<name>Queue` | `jms/notificationQueue` |
+| JMS Topic | `jms/<name>Topic` | `jms/eventTopic` |
+| EJB | `ejb/<name>` | `ejb/AccountService` |
+| Environment | `app/<name>` | `app/maxRetries` |
+
+**Portable JNDI Names:**
+```java
+// Always use java:comp/env for portability
+String portableName = "java:comp/env/jdbc/bankDS";
+
+// Avoid server-specific names
+String nonPortable = "jdbc/bankDS";  // May not work on all servers
+```
+
+---
+
+## Complete JNDI Example
+
+```java
+package com.bank.service;
+
+import javax.naming.InitialContext;
+import javax.naming.NamingException;
+import javax.sql.DataSource;
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.util.logging.Logger;
+
+public class DatabaseService {
+    private static final Logger logger = Logger.getLogger(DatabaseService.class.getName());
+    private static DataSource dataSource;
+    
+    // Initialize DataSource once
+    static {
+        try {
+            InitialContext ctx = new InitialContext();
+            dataSource = (DataSource) ctx.lookup("java:comp/env/jdbc/bankDS");
+            logger.info("DataSource initialized successfully");
+        } catch (NamingException e) {
+            logger.severe("Failed to lookup DataSource: " + e.getMessage());
+            throw new RuntimeException("DataSource initialization failed", e);
+        }
+    }
+    
+    public Connection getConnection() throws SQLException {
+        if (dataSource == null) {
+            throw new IllegalStateException("DataSource not initialized");
+        }
+        return dataSource.getConnection();
+    }
+    
+    public void executeQuery(String sql) {
+        try (Connection conn = getConnection();
+             var stmt = conn.createStatement();
+             var rs = stmt.executeQuery(sql)) {
+            
+            while (rs.next()) {
+                // Process results
+            }
+        } catch (SQLException e) {
+            logger.severe("Query execution failed: " + e.getMessage());
+            throw new RuntimeException("Database error", e);
+        }
+    }
+}
+```
+
+---
+
+## JNDI Configuration in Liberty
+
+**server.xml:**
+```xml
+<server>
+    <!-- DataSource definition -->
+    <dataSource id="bankDS" jndiName="jdbc/bankDS">
+        <jdbcDriver libraryRef="postgresql-lib"/>
+        <properties.postgresql 
+            serverName="localhost"
+            portNumber="5432"
+            databaseName="bankdb"
+            user="bankuser"
+            password="bankpass"/>
+    </dataSource>
+    
+    <!-- JMS Queue -->
+    <jmsQueue id="notificationQueue" jndiName="jms/notificationQueue">
+        <properties.wasJms queueName="NOTIFICATION_QUEUE"/>
+    </jmsQueue>
+    
+    <!-- Environment entries -->
+    <application location="banking-app.war">
+        <application-bnd>
+            <env-entry name="app/maxRetries" value="3"/>
+            <env-entry name="app/timeout" value="30000"/>
+        </application-bnd>
+    </application>
+</server>
+```
+
+---
+
+## JNDI Best Practices
+
+**DO:**
+- ✅ Use `java:comp/env` for portable names
+- ✅ Cache JNDI lookups when possible
+- ✅ Close InitialContext in finally block
+- ✅ Use resource injection when available
+- ✅ Handle NamingException properly
+- ✅ Document JNDI names in configuration
+- ✅ Use meaningful resource names
+
+**DON'T:**
+- ❌ Don't hardcode server-specific names
+- ❌ Don't lookup resources repeatedly
+- ❌ Don't ignore NamingException
+- ❌ Don't use JNDI for simple configuration
+- ❌ Don't forget to configure resource references
+
+---
+
+## Common JNDI Errors
+
+**Error 1: Name not found**
+```
+javax.naming.NameNotFoundException: jdbc/bankDS not bound
+```
+**Solution:** Check server.xml configuration and JNDI name spelling
+
+**Error 2: Class cast exception**
+```
+java.lang.ClassCastException: Cannot cast to DataSource
+```
+**Solution:** Verify resource type matches lookup
+
+**Error 3: Context not initialized**
+```
+javax.naming.NoInitialContextException
+```
+**Solution:** Ensure application server is running and JNDI is configured
+
+---
+
+## JNDI Troubleshooting
+
+**Debug JNDI lookups:**
+```java
+import javax.naming.InitialContext;
+import javax.naming.NameClassPair;
+import javax.naming.NamingEnumeration;
+
+public class JNDIDebug {
+    
+    public static void listBindings(String contextName) {
+        try {
+            InitialContext ctx = new InitialContext();
+            NamingEnumeration<NameClassPair> list = ctx.list(contextName);
+            
+            System.out.println("Bindings in " + contextName + ":");
+            while (list.hasMore()) {
+                NameClassPair nc = list.next();
+                System.out.println("  " + nc.getName() + " : " + nc.getClassName());
+            }
+        } catch (Exception e) {
+            System.err.println("Error listing bindings: " + e.getMessage());
+        }
+    }
+    
+    public static void main(String[] args) {
+        listBindings("java:comp/env");
+        listBindings("java:comp/env/jdbc");
+    }
+}
+```
+
+---
+
+## JNDI Summary
+
+**Key Points:**
+
+1. **JNDI provides unified access** to naming and directory services
+2. **Use `java:comp/env`** for portable resource references
+3. **Prefer resource injection** over manual lookups when possible
+4. **Cache lookups** to improve performance
+5. **Configure resources** in web.xml and server.xml
+6. **Handle exceptions** properly with try-catch or try-with-resources
+
+**When to use JNDI:**
+- Looking up DataSources, EJBs, JMS resources
+- Accessing environment configuration
+- Dynamic resource selection
+- Working with non-managed classes
+
+**When to use injection:**
+- Fixed resource references in managed beans
+- Cleaner, more maintainable code
+- Type-safe resource access
+
 ---
 
 ## 📊 Summary
@@ -1685,7 +2245,10 @@ ALTER TABLE clients ADD COLUMN status VARCHAR(20) DEFAULT 'ACTIVE';
 6. Manage transactions manually with EntityTransaction
 7. Set up Flyway migrations for database schema
 8. Use ServletContextListener for application initialization
-9. Test the complete persistence layer
+9. **NEW:** Use JNDI to lookup DataSource programmatically
+10. **NEW:** Configure environment entries in web.xml
+11. **NEW:** Implement configuration service using JNDI
+12. Test the complete persistence layer
 
 **Get ready to make your banking app database-backed!**
 

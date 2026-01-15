@@ -56,10 +56,13 @@ This complete course package contains everything needed to teach or learn Jakart
      - Flyway database migrations (3 migration scripts)
      - Singleton pattern service layer (no CDI)
      - RESOURCE_LOCAL transaction management
+     - **JNDI Configuration Service** for resource lookup
+     - **Transaction Validator Servlet** demonstrating JNDI usage
+     - Environment entries in web.xml (maxTransactionAmount, supportEmail, maxLoginAttempts)
      - Docker Compose for PostgreSQL
      - Complete solution with starter code
      - Error handling pages (error.jsp, 404, 500)
-     - Deployment scripts and testing guide
+     - Deployment scripts and testing guide with 11 automated tests
    - ✅ Lab 4: CDI and Dependency Injection (complete)
      - Complete CDI implementation with @Inject
      - Converted from Singleton to @ApplicationScoped

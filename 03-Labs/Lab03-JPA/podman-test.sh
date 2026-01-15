@@ -112,19 +112,116 @@ fi
 echo "Step 1: Starting PostgreSQL..."
 echo "----------------------------"
 
-# Always start fresh after cleanup
-docker-compose up -d
-
-echo "Waiting for PostgreSQL to be ready..."
-for i in {1..30}; do
-    if docker exec banking-db pg_isready -U bankuser -d bankdb > /dev/null 2>&1; then
-        echo -e "${GREEN}✓ PostgreSQL is ready${NC}"
-        break
+# Check if PostgreSQL is already running on port 5432
+DB_PORT_IN_USE=false
+if command -v lsof &> /dev/null; then
+    # macOS/Linux with lsof
+    if lsof -Pi :5432 -sTCP:LISTEN -t >/dev/null 2>&1; then
+        DB_PORT_IN_USE=true
     fi
-    sleep 2
-    echo -n "."
-done
-echo ""
+elif command -v netstat &> /dev/null; then
+    # Linux with netstat
+    if netstat -tuln 2>/dev/null | grep -q ":5432 "; then
+        DB_PORT_IN_USE=true
+    fi
+elif command -v ss &> /dev/null; then
+    # Linux with ss
+    if ss -tuln 2>/dev/null | grep -q ":5432 "; then
+        DB_PORT_IN_USE=true
+    fi
+fi
+
+# Check if database container is already running
+DB_CONTAINER_RUNNING=false
+if docker ps 2>/dev/null | grep -q "banking-db"; then
+    DB_CONTAINER_RUNNING=true
+elif podman ps 2>/dev/null | grep -q "banking-db"; then
+    DB_CONTAINER_RUNNING=true
+fi
+
+if [ "$DB_PORT_IN_USE" = true ] && [ "$DB_CONTAINER_RUNNING" = true ]; then
+    echo -e "${GREEN}✓ PostgreSQL is already running on port 5432${NC}"
+    echo "Skipping database startup (idempotent operation)"
+    
+    # Verify database is accessible
+    echo "Verifying database connection..."
+    if docker exec banking-db pg_isready -U bankuser -d bankdb > /dev/null 2>&1; then
+        echo -e "${GREEN}✓ Database connection verified${NC}"
+    elif podman exec banking-db pg_isready -U bankuser -d bankdb > /dev/null 2>&1; then
+        echo -e "${GREEN}✓ Database connection verified${NC}"
+    else
+        echo -e "${YELLOW}⚠ Database container exists but connection failed${NC}"
+        echo "Restarting database container..."
+        docker-compose down -v 2>/dev/null || true
+        docker-compose up -d
+    fi
+elif [ "$DB_PORT_IN_USE" = true ]; then
+    echo -e "${YELLOW}⚠ Port 5432 is in use by another process/container${NC}"
+    echo "Attempting to identify and stop the conflicting container..."
+    
+    # Find containers using port 5432
+    CONTAINERS_ON_5432=$(docker ps --format "{{.Names}}" 2>/dev/null | while read -r name; do
+        if docker port "$name" 2>/dev/null | grep -q ":5432->"; then
+            echo "$name"
+        fi
+    done)
+    
+    if [ -z "$CONTAINERS_ON_5432" ]; then
+        # Try with podman
+        CONTAINERS_ON_5432=$(podman ps --format "{{.Names}}" 2>/dev/null | while read -r name; do
+            if podman port "$name" 2>/dev/null | grep -q ":5432->"; then
+                echo "$name"
+            fi
+        done)
+    fi
+    
+    if [ -n "$CONTAINERS_ON_5432" ]; then
+        echo "Found container(s) using port 5432:"
+        echo "$CONTAINERS_ON_5432" | while read -r container; do
+            if [ -n "$container" ]; then
+                echo -e "${YELLOW}  Stopping and removing: $container${NC}"
+                docker stop "$container" > /dev/null 2>&1 || podman stop "$container" > /dev/null 2>&1 || true
+                docker rm "$container" > /dev/null 2>&1 || podman rm "$container" > /dev/null 2>&1 || true
+                echo -e "${GREEN}  ✓ $container removed${NC}"
+            fi
+        done
+        echo ""
+        echo "Starting fresh PostgreSQL database..."
+        docker-compose up -d
+    else
+        # Port is used by a non-container process
+        echo -e "${RED}❌ Port 5432 is in use by a non-container process${NC}"
+        echo ""
+        if command -v lsof &> /dev/null; then
+            echo "Process details:"
+            lsof -Pi :5432 -sTCP:LISTEN 2>/dev/null || echo "  (Unable to determine process)"
+        fi
+        echo ""
+        echo "Please stop the PostgreSQL service manually:"
+        echo "  - If using Homebrew: brew services stop postgresql"
+        echo "  - If using systemd: sudo systemctl stop postgresql"
+        echo "  - Or: sudo pkill -9 postgres"
+        exit 1
+    fi
+else
+    # Start fresh database
+    echo "Starting PostgreSQL database..."
+    docker-compose up -d
+fi
+
+# Wait for PostgreSQL to be ready (common for all paths that start the database)
+if [ "$DB_PORT_IN_USE" != true ] || [ "$DB_CONTAINER_RUNNING" != true ]; then
+    echo "Waiting for PostgreSQL to be ready..."
+    for i in {1..30}; do
+        if docker exec banking-db pg_isready -U bankuser -d bankdb > /dev/null 2>&1; then
+            echo -e "${GREEN}✓ PostgreSQL is ready${NC}"
+            break
+        fi
+        sleep 2
+        echo -n "."
+    done
+    echo ""
+fi
 
 echo ""
 
@@ -381,6 +478,61 @@ if [ -n "$CLIENT_COUNT" ] && [ "$CLIENT_COUNT" -ge 0 ] 2>/dev/null; then
     TESTS_PASSED=$((TESTS_PASSED + 1))
 else
     echo -e "${YELLOW}⚠ SKIP (cannot connect to database)${NC}"
+fi
+
+# Test transaction validator endpoint (JNDI demo)
+echo -n "Testing transaction validator endpoint... "
+HTTP_CODE=$(curl -s -o /tmp/response.txt -w "%{http_code}" http://localhost:$APP_PORT/validate-transaction)
+if [ "$HTTP_CODE" = "200" ] && grep -q "Transaction Validator" /tmp/response.txt; then
+    echo -e "${GREEN}✓ PASS${NC}"
+    TESTS_PASSED=$((TESTS_PASSED + 1))
+else
+    echo -e "${RED}✗ FAIL (HTTP $HTTP_CODE)${NC}"
+    TESTS_FAILED=$((TESTS_FAILED + 1))
+fi
+
+# Test valid transaction amount (5000.00 < 10000.00)
+echo -n "Testing valid transaction (€5000.00)... "
+HTTP_CODE=$(curl -s -o /tmp/response.txt -w "%{http_code}" -X POST http://localhost:$APP_PORT/validate-transaction -d "amount=5000.00&description=Test+valid")
+if [ "$HTTP_CODE" = "200" ] && grep -q "Transaction Valid" /tmp/response.txt; then
+    echo -e "${GREEN}✓ PASS${NC}"
+    TESTS_PASSED=$((TESTS_PASSED + 1))
+else
+    echo -e "${RED}✗ FAIL (HTTP $HTTP_CODE)${NC}"
+    TESTS_FAILED=$((TESTS_FAILED + 1))
+fi
+
+# Test invalid transaction amount (15000.00 > 10000.00)
+echo -n "Testing invalid transaction (€15000.00)... "
+HTTP_CODE=$(curl -s -o /tmp/response.txt -w "%{http_code}" -X POST http://localhost:$APP_PORT/validate-transaction -d "amount=15000.00&description=Test+invalid")
+if [ "$HTTP_CODE" = "200" ] && grep -q "Transaction Invalid" /tmp/response.txt; then
+    echo -e "${GREEN}✓ PASS${NC}"
+    TESTS_PASSED=$((TESTS_PASSED + 1))
+else
+    echo -e "${RED}✗ FAIL (HTTP $HTTP_CODE)${NC}"
+    TESTS_FAILED=$((TESTS_FAILED + 1))
+fi
+
+# Test transaction at exact limit (10000.00 = 10000.00)
+echo -n "Testing transaction at limit (€10000.00)... "
+HTTP_CODE=$(curl -s -o /tmp/response.txt -w "%{http_code}" -X POST http://localhost:$APP_PORT/validate-transaction -d "amount=10000.00&description=Test+limit")
+if [ "$HTTP_CODE" = "200" ] && grep -q "Transaction Valid" /tmp/response.txt; then
+    echo -e "${GREEN}✓ PASS${NC}"
+    TESTS_PASSED=$((TESTS_PASSED + 1))
+else
+    echo -e "${RED}✗ FAIL (HTTP $HTTP_CODE)${NC}"
+    TESTS_FAILED=$((TESTS_FAILED + 1))
+fi
+
+# Test JSON API response
+echo -n "Testing transaction validator JSON API... "
+HTTP_CODE=$(curl -s -o /tmp/response.txt -w "%{http_code}" -X POST http://localhost:$APP_PORT/validate-transaction -H "Accept: application/json" -d "amount=7500.00")
+if [ "$HTTP_CODE" = "200" ] && grep -q '"valid": true' /tmp/response.txt && grep -q '"maxAmount": 10000' /tmp/response.txt; then
+    echo -e "${GREEN}✓ PASS${NC}"
+    TESTS_PASSED=$((TESTS_PASSED + 1))
+else
+    echo -e "${RED}✗ FAIL (HTTP $HTTP_CODE)${NC}"
+    TESTS_FAILED=$((TESTS_FAILED + 1))
 fi
 
 # Cleanup

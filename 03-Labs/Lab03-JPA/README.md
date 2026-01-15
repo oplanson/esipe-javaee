@@ -15,6 +15,9 @@ Ce laboratoire est la **continuation directe du Lab 02**. Vous allez transformer
 - ✅ Configurer une DataSource PostgreSQL dans Liberty
 - ✅ Utiliser Flyway pour les migrations de base de données
 - ✅ Injecter des dépendances avec CDI (@Inject)
+- ✅ **Utiliser JNDI pour accéder aux ressources et à la configuration**
+- ✅ **Configurer des environment entries dans web.xml**
+- ✅ **Créer un service de configuration utilisant JNDI**
 - ✅ Comprendre la différence entre stockage en mémoire et persistance
 
 ## 🎯 Contexte
@@ -114,6 +117,7 @@ Ouvrez votre navigateur : http://localhost:9080/
 - 🏠 Page d'accueil : http://localhost:9080/
 - 👥 Liste des clients : http://localhost:9080/clients
 - ➕ Ajouter un client : http://localhost:9080/client?action=new
+- 💰 Validation de transaction (JNDI Demo) : http://localhost:9080/validate-transaction
 - 💊 Health check : http://localhost:9080/health
 - 📊 Métriques : http://localhost:9080/metrics
 
@@ -331,6 +335,271 @@ Redémarrez l'application et vérifiez que la migration s'exécute.
 
 2. Vérifiez que la relation est bien persistée dans la base de données.
 
+### Exercice 5 : Configuration JNDI (NOUVEAU)
+
+**Objectif** : Apprendre à utiliser JNDI pour accéder aux ressources et à la configuration.
+
+#### Partie A : Configurer les Entrées d'Environnement
+
+1. Ouvrez `src/main/webapp/WEB-INF/web.xml`
+
+2. Ajoutez une référence de ressource pour le DataSource :
+   ```xml
+   <resource-ref>
+       <description>Banking Database DataSource</description>
+       <res-ref-name>jdbc/bankingDS</res-ref-name>
+       <res-type>javax.sql.DataSource</res-type>
+       <res-auth>Container</res-auth>
+       <res-sharing-scope>Shareable</res-sharing-scope>
+   </resource-ref>
+   ```
+
+3. Ajoutez trois entrées d'environnement :
+   ```xml
+   <env-entry>
+       <description>Maximum number of login attempts</description>
+       <env-entry-name>app/maxLoginAttempts</env-entry-name>
+       <env-entry-type>java.lang.Integer</env-entry-type>
+       <env-entry-value>3</env-entry-value>
+   </env-entry>
+
+   <env-entry>
+       <description>Support email address</description>
+       <env-entry-name>app/supportEmail</env-entry-name>
+       <env-entry-type>java.lang.String</env-entry-type>
+       <env-entry-value>support@bank.com</env-entry-value>
+   </env-entry>
+
+   <env-entry>
+       <description>Maximum transaction amount</description>
+       <env-entry-name>app/maxTransactionAmount</env-entry-name>
+       <env-entry-type>java.lang.Double</env-entry-type>
+       <env-entry-value>10000.00</env-entry-value>
+   </env-entry>
+   ```
+
+#### Partie B : Implémenter le Service de Configuration JNDI
+
+1. Ouvrez `src/main/java/com/bank/config/JndiConfigService.java`
+
+2. Complétez la méthode `init()` :
+   ```java
+   @PostConstruct
+   public void init() {
+       logger.info("Initializing JNDI Configuration Service...");
+       try {
+           lookupDataSource();
+           lookupEnvironmentEntries();
+           logger.info("JNDI Configuration Service initialized successfully");
+       } catch (Exception e) {
+           logger.severe("Failed to initialize: " + e.getMessage());
+           throw new RuntimeException("JNDI initialization failed", e);
+       }
+   }
+   ```
+
+3. Implémentez `lookupDataSource()` :
+   ```java
+   private void lookupDataSource() throws NamingException {
+       InitialContext ctx = null;
+       try {
+           ctx = new InitialContext();
+           String jndiName = "java:comp/env/jdbc/bankingDS";
+           dataSource = (DataSource) ctx.lookup(jndiName);
+           logger.info("DataSource looked up: " + jndiName);
+           
+           // Test connection
+           try (var conn = dataSource.getConnection()) {
+               logger.info("DataSource connection test successful");
+           }
+       } finally {
+           if (ctx != null) {
+               ctx.close();
+           }
+       }
+   }
+   ```
+
+4. Implémentez `lookupEnvironmentEntries()` :
+   ```java
+   private void lookupEnvironmentEntries() throws NamingException {
+       InitialContext ctx = null;
+       try {
+           ctx = new InitialContext();
+           
+           try {
+               maxLoginAttempts = (Integer) ctx.lookup("java:comp/env/app/maxLoginAttempts");
+               logger.info("Max login attempts: " + maxLoginAttempts);
+           } catch (NamingException e) {
+               maxLoginAttempts = 3; // default
+           }
+           
+           try {
+               supportEmail = (String) ctx.lookup("java:comp/env/app/supportEmail");
+               logger.info("Support email: " + supportEmail);
+           } catch (NamingException e) {
+               supportEmail = "support@bank.com"; // default
+           }
+           
+           try {
+               maxTransactionAmount = (Double) ctx.lookup("java:comp/env/app/maxTransactionAmount");
+               logger.info("Max transaction amount: " + maxTransactionAmount);
+           } catch (NamingException e) {
+               maxTransactionAmount = 10000.0; // default
+           }
+       } finally {
+           if (ctx != null) {
+               ctx.close();
+           }
+       }
+   }
+   ```
+
+5. Implémentez les getters et méthodes utilitaires :
+   ```java
+   public DataSource getDataSource() {
+       if (dataSource == null) {
+           throw new IllegalStateException("DataSource not initialized");
+       }
+       return dataSource;
+   }
+   
+   public boolean isValidTransactionAmount(Double amount) {
+       if (amount == null || amount <= 0) {
+           return false;
+       }
+       return amount <= maxTransactionAmount;
+   }
+   ```
+
+#### Partie C : Tester le Service JNDI
+
+1. Démarrez l'application :
+   ```bash
+   mvn liberty:dev
+   ```
+
+2. Vérifiez les logs de démarrage :
+   ```
+   [INFO] Initializing JNDI Configuration Service...
+   [INFO] DataSource looked up: java:comp/env/jdbc/bankingDS
+   [INFO] DataSource connection test successful
+   [INFO] Max login attempts: 3
+   [INFO] Support email: support@bank.com
+   [INFO] Max transaction amount: 10000.0
+   [INFO] JNDI Configuration Service initialized successfully
+   ```
+
+3. Testez via un endpoint (optionnel - créez un servlet de test) :
+   ```java
+   @WebServlet("/config")
+   public class ConfigTestServlet extends HttpServlet {
+       @Inject
+       private JndiConfigService configService;
+       
+       protected void doGet(HttpServletRequest request, HttpServletResponse response) 
+               throws IOException {
+           response.setContentType("text/plain");
+           response.getWriter().println(configService.getConfigurationSummary());
+       }
+   }
+   ```
+
+#### Points Clés à Comprendre
+
+1. **JNDI Naming Contexts** :
+   - `java:comp/env` : Contexte portable pour les ressources
+   - Fonctionne sur tous les serveurs Jakarta EE
+
+2. **Resource References** :
+   - Déclarées dans `web.xml`
+   - Mappées aux ressources réelles dans `server.xml`
+
+3. **Environment Entries** :
+   - Configuration externalisée
+   - Modifiable sans recompilation
+   - Types supportés : String, Integer, Double, Boolean, etc.
+
+4. **Caching** :
+   - Lookups JNDI coûteux
+   - Cache les résultats dans des champs
+   - Initialisation au démarrage avec `@PostConstruct`
+
+5. **Error Handling** :
+   - Toujours fermer `InitialContext` dans finally
+   - Fournir des valeurs par défaut
+   - Logger les erreurs pour le débogage
+
+#### Partie D : Utiliser JNDI dans un Servlet (Transaction Validator)
+
+**Objectif** : Créer un servlet qui utilise la configuration JNDI pour valider les montants de transaction.
+
+1. Le servlet `TransactionValidatorServlet` est déjà implémenté dans la solution
+2. Il utilise `JndiConfigService` pour accéder au paramètre `app/maxTransactionAmount`
+3. Testez-le en accédant à : http://localhost:9080/validate-transaction
+
+**Fonctionnalités du servlet :**
+- Affiche la configuration JNDI actuelle (max amount, support email, max login attempts)
+- Formulaire pour valider un montant de transaction
+- Validation côté serveur utilisant le paramètre JNDI
+- Support des appels API (JSON) et interface web (HTML)
+
+**Exemples de test :**
+
+Via le navigateur :
+1. Accédez à http://localhost:9080/validate-transaction
+2. Entrez un montant (ex: 5000.00) et cliquez sur "Validate Transaction"
+3. Le système vérifie si le montant est ≤ maxTransactionAmount (10000.00 par défaut)
+
+Via curl (API) :
+```bash
+# Transaction valide
+curl -X POST http://localhost:9080/validate-transaction \
+  -d "amount=5000.00&description=Payment to supplier"
+
+# Transaction invalide (dépasse la limite)
+curl -X POST http://localhost:9080/validate-transaction \
+  -d "amount=15000.00&description=Large payment"
+
+# Réponse JSON
+curl -X POST http://localhost:9080/validate-transaction \
+  -H "Accept: application/json" \
+  -d "amount=8000.00"
+```
+
+**Réponses attendues :**
+
+Transaction valide (≤ 10000.00) :
+```
+✅ Transaction Valid
+Amount: €5,000.00
+Maximum Allowed: €10,000.00
+Status: APPROVED
+```
+
+Transaction invalide (> 10000.00) :
+```
+❌ Transaction Invalid
+Amount: €15,000.00
+Maximum Allowed: €10,000.00
+Status: REJECTED
+💡 Tip: For transactions above €10,000.00, please contact support@bank.com
+```
+
+**Modifier la limite de transaction :**
+
+Pour changer la limite maximale, modifiez `web.xml` :
+```xml
+<env-entry>
+    <env-entry-name>app/maxTransactionAmount</env-entry-name>
+    <env-entry-type>java.lang.Double</env-entry-type>
+    <env-entry-value>25000.00</env-entry-value>  <!-- Nouvelle limite -->
+</env-entry>
+```
+
+Puis redémarrez l'application pour que les changements prennent effet.
+
+
 ## 🧪 Tests et Validation
 
 ### Tester les Endpoints
@@ -409,6 +678,8 @@ docker-compose up -d
 5. **CDI** (@Inject) permet l'injection de dépendances
 6. **Relations JPA** (@OneToMany, @ManyToOne) remplacent les clés étrangères manuelles
 7. **Lazy Loading** optimise les performances en chargeant les données à la demande
+8. **JNDI** (NOUVEAU) permet l'accès programmatique aux ressources et à la configuration
+9. **Environment Entries** (NOUVEAU) externalisent la configuration dans web.xml
 
 ## 🚀 Prochaines Étapes
 

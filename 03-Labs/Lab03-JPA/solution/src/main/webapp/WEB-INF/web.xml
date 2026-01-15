@@ -42,6 +42,37 @@
         </cookie-config>
     </session-config>
 
+    <!-- JNDI Resource References -->
+    <resource-ref>
+        <description>Banking Database DataSource</description>
+        <res-ref-name>jdbc/bankingDS</res-ref-name>
+        <res-type>javax.sql.DataSource</res-type>
+        <res-auth>Container</res-auth>
+        <res-sharing-scope>Shareable</res-sharing-scope>
+    </resource-ref>
+
+    <!-- JNDI Environment Entries -->
+    <env-entry>
+        <description>Maximum number of login attempts before account lockout</description>
+        <env-entry-name>app/maxLoginAttempts</env-entry-name>
+        <env-entry-type>java.lang.Integer</env-entry-type>
+        <env-entry-value>3</env-entry-value>
+    </env-entry>
+
+    <env-entry>
+        <description>Support email address for customer assistance</description>
+        <env-entry-name>app/supportEmail</env-entry-name>
+        <env-entry-type>java.lang.String</env-entry-type>
+        <env-entry-value>support@bank.com</env-entry-value>
+    </env-entry>
+
+    <env-entry>
+        <description>Maximum transaction amount allowed per operation</description>
+        <env-entry-name>app/maxTransactionAmount</env-entry-name>
+        <env-entry-type>java.lang.Double</env-entry-type>
+        <env-entry-value>10000.00</env-entry-value>
+    </env-entry>
+
     <!-- Error Pages -->
     <error-page>
         <error-code>404</error-code>
