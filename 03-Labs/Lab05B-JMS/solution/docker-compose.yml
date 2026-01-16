@@ -1,0 +1,61 @@
+# © Copyright 2026 Olivier Planson. All rights reserved. Reproduction prohibited. Made with IBM Bob.
+
+version: '3.8'
+
+services:
+  # PostgreSQL Database
+  postgres:
+    image: postgres:16-alpine
+    container_name: banking-jms-db
+    environment:
+      POSTGRES_DB: bankingdb
+      POSTGRES_USER: bankuser
+      POSTGRES_PASSWORD: bankpass
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U bankuser -d bankingdb"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - banking-network
+
+  # Banking JMS Application
+  banking-app:
+    build:
+      context: .
+      dockerfile: Containerfile
+    container_name: banking-jms-app
+    environment:
+      - db.host=postgres
+      - db.port=5432
+      - db.name=bankingdb
+      - db.user=bankuser
+      - db.password=bankpass
+    ports:
+      - "9080:9080"
+      - "9443:9443"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9080/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+    networks:
+      - banking-network
+
+volumes:
+  postgres-data:
+    driver: local
+
+networks:
+  banking-network:
+    driver: bridge
+
+# Made with Bob

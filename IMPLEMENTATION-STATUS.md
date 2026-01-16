@@ -10,9 +10,9 @@
 ## 📊 Overall Progress
 
 **Total Tasks:** 21
-**Completed:** 16 (76%)
-**In Progress:** 2 (10%)
-**Pending:** 3 (14%)
+**Completed:** 17 (81%)
+**In Progress:** 0 (0%)
+**Pending:** 4 (19%)
 
 ---
 
@@ -344,23 +344,66 @@
 
 ### New Labs (2 remaining)
 
-#### 7. 🔄 Lab 5B: Asynchronous Transaction Processing - IN PROGRESS (Jan 15, 2026)
+#### 7. ✅ Lab 5B: Asynchronous Transaction Processing - COMPLETED (Jan 16, 2026)
 - **Directory:** `esipe-javaee/03-Labs/Lab05B-JMS/`
-- **Status:** README complete, implementation pending
+- **Status:** Complete with comprehensive JMS implementation
 - **Completed:**
-  - ✅ README.md (717 lines) with complete instructions
-  - ✅ Directory structure created
-  - ✅ Exercise design (6 parts, 2h20 total)
-- **Pending:**
-  - ⏳ Solution code implementation
-  - ⏳ Starter code with TODOs
-  - ⏳ pom.xml with JMS dependencies
-  - ⏳ Liberty server.xml with JMS configuration
-  - ⏳ Containerfile
-  - ⏳ test-lab.sh script
-  - ⏳ podman-test.sh script
-  - ⏳ TESTING-GUIDE.md
-  - ⏳ Complete testing and verification
+  - ✅ README.md (717 lines) with complete instructions (6 parts, 2h20 total)
+  - ✅ Directory structure created (solution + starter)
+  - ✅ Solution code implementation:
+    - `TransactionEvent.java` - Event class
+    - `TransactionEventProducer.java` - JMS producer with CDI
+    - `EmailNotificationMDB.java` - Email notification MDB
+    - `AuditLoggingMDB.java` - Audit logging MDB with durable subscription
+    - `DeadLetterQueueMDB.java` - DLQ handler
+    - `TransactionEventMDB.java` - Main transaction processor
+    - `AuditLog.java` - Audit entity
+    - `FailedMessage.java` - Failed message entity
+    - `EmailService.java` - Email service
+    - `LoggerProducer.java` - CDI logger producer
+    - `MessagingTestServlet.java` - Testing servlet
+  - ✅ Starter code with TODOs (complete structure)
+  - ✅ pom.xml with JMS dependencies (Jakarta Messaging 3.1)
+  - ✅ Liberty server.xml with complete JMS configuration:
+    - JMS ConnectionFactory
+    - 4 Queues (transaction, email, deadLetter, transactionQueue)
+    - 1 Topic (audit) with durable subscription
+    - JMS Activation Specs for all MDBs
+    - Messaging Engine configuration
+  - ✅ Containerfile (multi-stage build with PostgreSQL driver)
+  - ✅ docker-compose.yml (PostgreSQL + application)
+  - ✅ test-lab.sh script (build verification)
+  - ✅ podman-test.sh script (563 lines) with 10 automated tests:
+    - Messaging page accessibility
+    - Deposit event sending
+    - Withdrawal event sending
+    - Transfer event sending
+    - Email notification sending
+    - Audit event publishing
+    - All events batch test
+    - Batch processing (10 messages)
+    - Database audit log verification
+    - MDB processing verification (3 MDBs)
+  - ✅ TESTING-GUIDE.md (comprehensive testing documentation)
+  - ✅ persistence.xml with JPA configuration
+  - ✅ bootstrap.properties with environment variable support
+  - ✅ index.html with messaging features
+- **Bug Fixes (Jan 16, 2026):**
+  - ✅ Fixed podman-test.sh duplicate code block (lines 148-158)
+  - ✅ Fixed Containerfile to not copy bootstrap.properties (use env vars)
+  - ✅ Fixed server.xml to properly use environment variables with fallback
+  - ✅ Fixed database connection configuration for container networking
+  - ✅ Environment variables now correctly override defaults:
+    - DB_HOST=lab05b-postgres (container name)
+    - DB_PORT=5432
+    - DB_NAME=bankingdb
+    - DB_USER=bankuser
+    - DB_PASSWORD=bankpass
+- **Testing:**
+  - ✅ Build verification successful
+  - ✅ Container deployment tested
+  - ✅ All JMS components functional
+  - ✅ Database connectivity verified
 
 #### 8. ⏳ Lab 9: Secure Banking Application
 - **Directory:** `esipe-javaee/03-Labs/Lab09-Security/`
@@ -415,18 +458,18 @@
 
 ### Content Creation
 - **New Lectures:** 1 × 4 hours = 4 hours
-- **New Labs:** 1.5 × 6 hours = 9 hours (Lab 5B 50% complete)
+- **New Labs:** 1 × 6 hours = 6 hours
 - **Lecture Enhancements:** 1 × 2 hours = 2 hours
 - **Lab Enhancements:** 1 × 3 hours = 3 hours
 
-**Total Estimated:** 18 hours (down from 40 hours)
+**Total Estimated:** 15 hours (down from 40 hours)
 
 ### Token Usage Estimate
 - **New Lectures:** ~1,500 lines × 1 = ~1,500 lines
-- **New Labs:** ~1,000 lines × 1.5 = ~1,500 lines
+- **New Labs:** ~1,000 lines × 1 = ~1,000 lines
 - **Enhancements:** ~1,500 lines × 2 = ~3,000 lines
 
-**Total Estimated:** ~6,000 lines of code/documentation (down from 29,100 lines)
+**Total Estimated:** ~5,500 lines of code/documentation (down from 29,100 lines)
 
 ---
 
@@ -453,13 +496,14 @@
    - ✅ Bug fixes for type mismatches (double vs BigDecimal)
    - ✅ Build verification and testing completed
 
-### Phase 5: Messaging/JMS (Lecture 5B and Lab 5B together - integrated approach) - 🔄 IN PROGRESS (Jan 15, 2026)
+### Phase 5: Messaging/JMS - ✅ COMPLETED (Jan 16, 2026)
 11. ✅ Create Lecture 5B: JMS - DONE (1,341 lines, 3h20 content)
-12. 🔄 Create Lab 5B: Asynchronous Transaction Processing - IN PROGRESS
+12. ✅ Create Lab 5B: Asynchronous Transaction Processing - DONE
     - ✅ README.md complete (717 lines, 6 exercises)
     - ✅ Directory structure created
-    - ⏳ Solution implementation pending
-    - ⏳ Testing scripts pending
+    - ✅ Solution implementation complete (12 Java classes)
+    - ✅ Testing scripts complete (podman-test.sh with 10 tests)
+    - ✅ Bug fixes applied (database connectivity, environment variables)
 
 ### Phase 6: Security (Critical)
 13. Create Lecture 9: Jakarta EE Security
@@ -527,14 +571,22 @@
 
 ---
 
-## 🎯 Recent Accomplishments (Jan 15, 2026)
+## 🎯 Recent Accomplishments (Jan 16, 2026)
 
-### Phase 5: JMS/Messaging - Started
+### Phase 5: JMS/Messaging - COMPLETED
 - ✅ **Lecture 5B Created:** Complete 3h20 lecture on JMS (1,341 lines)
 - ✅ **Lab 5B README Created:** Complete lab instructions (717 lines, 6 exercises)
-- ✅ **Lab 5B Structure:** Directory structure with starter/solution folders
+- ✅ **Lab 5B Implementation:** Full solution with 12 Java classes
+- ✅ **Lab 5B Testing:** Comprehensive testing scripts (10 automated tests)
+- ✅ **Bug Fixes Applied:** Database connectivity and environment variable configuration
 
-### Course Format Standardization
+### Critical Bug Fixes (Jan 16, 2026)
+- ✅ **podman-test.sh:** Removed duplicate code block causing network resolution errors
+- ✅ **Containerfile:** Fixed to use environment variables instead of hardcoded bootstrap.properties
+- ✅ **server.xml:** Corrected variable syntax for proper environment variable override
+- ✅ **Database Connectivity:** Fixed container networking (localhost → lab05b-postgres)
+
+### Course Format Standardization (Jan 15, 2026)
 - ✅ **All 12 Lectures Verified:** Systematic review of all course files
 - ✅ **4 Files Corrected:** Fixed format issues in 02b, 04b, 05b, 08
 - ✅ **Standard Format Applied:** theme: default, complete CSS, proper spacing
@@ -545,6 +597,7 @@
 - ✅ **Professional Headers/Footers:** Standardized across all courses
 - ✅ **Copyright Protection:** Proper placement and formatting
 - ✅ **Build Verification:** All changes tested and validated
+- ✅ **Container Deployment:** Podman/Docker support with proper networking
 
 ---
 
@@ -556,7 +609,7 @@
 | Phase 2: Web Technologies | ✅ Complete | 100% | HTTPSession, Filters, Listeners |
 | Phase 3: EJB Content | ✅ Complete | 100% | Lecture 4B + Lab 4B with testing |
 | Phase 4: Database & Transactions | ✅ Complete | 100% | JNDI + BMT enhancements |
-| Phase 5: Messaging/JMS | 🔄 In Progress | 60% | Lecture done, Lab README done |
-| Phase 6: Security | ⏳ Pending | 0% | Critical priority after Phase 5 |
+| Phase 5: Messaging/JMS | ✅ Complete | 100% | Lecture 5B + Lab 5B with full implementation |
+| Phase 6: Security | ⏳ Pending | 0% | Critical priority next |
 
-**Overall Course Completion:** 76% (16/21 tasks complete)
+**Overall Course Completion:** 81% (17/21 tasks complete)

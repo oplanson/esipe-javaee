@@ -1,0 +1,44 @@
+# © Copyright 2026 Olivier Planson. All rights reserved. Reproduction prohibited. Made with IBM Bob.
+
+# Multi-stage build for Lab 05B - JMS Banking
+
+# Stage 1: Build the application
+FROM maven:3.9-eclipse-temurin-17 AS builder
+
+WORKDIR /build
+
+# Copy pom.xml and download dependencies
+COPY pom.xml .
+RUN mvn dependency:go-offline
+
+# Copy source code and build
+COPY src ./src
+RUN mvn clean package -DskipTests
+
+# Stage 2: Create runtime image
+FROM icr.io/appcafe/open-liberty:full-java17-openj9-ubi
+
+# Copy Liberty configuration
+COPY --chown=1001:0 src/main/liberty/config/server.xml /config/
+# Note: bootstrap.properties is NOT copied - we use environment variables instead
+
+# Copy PostgreSQL driver
+USER root
+RUN mkdir -p /opt/ol/wlp/usr/shared/resources/lib
+COPY --chown=1001:0 --from=builder /root/.m2/repository/org/postgresql/postgresql/42.7.1/postgresql-42.7.1.jar /opt/ol/wlp/usr/shared/resources/lib/
+USER 1001
+
+# Copy application WAR
+COPY --chown=1001:0 --from=builder /build/target/banking-jms-app.war /config/apps/
+
+# Configure Liberty
+RUN configure.sh
+
+# Expose ports
+EXPOSE 9080 9443
+
+# Health check
+HEALTHCHECK --interval=30s --timeout=10s --start-period=60s --retries=3 \
+  CMD curl -f http://localhost:9080/health || exit 1
+
+# Made with Bob

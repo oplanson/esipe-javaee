@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<!-- © Copyright 2026 Olivier Planson. All rights reserved. Reproduction prohibited. Made with IBM Bob. -->
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lab 05B - JMS Enterprise Messaging</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+        
+        header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 40px;
+            text-align: center;
+        }
+        
+        header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+        
+        header p {
+            font-size: 1.2em;
+            opacity: 0.9;
+        }
+        
+        .content {
+            padding: 40px;
+        }
+        
+        .section {
+            margin-bottom: 40px;
+        }
+        
+        .section h2 {
+            color: #667eea;
+            margin-bottom: 20px;
+            font-size: 1.8em;
+            border-bottom: 3px solid #667eea;
+            padding-bottom: 10px;
+        }
+        
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+        
+        .feature-card {
+            background: #f8f9fa;
+            padding: 25px;
+            border-radius: 10px;
+            border-left: 4px solid #667eea;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        
+        .feature-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+        }
+        
+        .feature-card h3 {
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 1.3em;
+        }
+        
+        .feature-card p {
+            color: #666;
+            line-height: 1.6;
+        }
+        
+        .actions {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            margin-top: 30px;
+        }
+        
+        .btn {
+            display: inline-block;
+            padding: 15px 30px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: bold;
+            transition: transform 0.3s, box-shadow 0.3s;
+            text-align: center;
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4);
+        }
+        
+        .btn-secondary {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        }
+        
+        .info-box {
+            background: #e3f2fd;
+            border-left: 4px solid #2196f3;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+        
+        .info-box h4 {
+            color: #1976d2;
+            margin-bottom: 10px;
+        }
+        
+        .info-box ul {
+            margin-left: 20px;
+            color: #555;
+        }
+        
+        .info-box li {
+            margin: 8px 0;
+        }
+        
+        footer {
+            background: #f8f9fa;
+            padding: 20px;
+            text-align: center;
+            color: #666;
+            border-top: 1px solid #dee2e6;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🚀 Lab 05B: JMS Enterprise Messaging</h1>
+            <p>Jakarta Messaging (JMS) 3.1 - Asynchronous Communication</p>
+        </header>
+        
+        <div class="content">
+            <div class="section">
+                <h2>📋 Lab Overview</h2>
+                <p>This lab demonstrates enterprise messaging using Jakarta Messaging (JMS) 3.1. You'll learn how to implement asynchronous communication patterns, message-driven beans, and error handling in a banking application.</p>
+            </div>
+            
+            <div class="section">
+                <h2>✨ Features Implemented</h2>
+                <div class="features">
+                    <div class="feature-card">
+                        <h3>📨 Message Producers</h3>
+                        <p>Send transaction events to JMS queues and topics using the simplified JMS 3.1 API with CDI integration.</p>
+                    </div>
+                    
+                    <div class="feature-card">
+                        <h3>🎯 Message-Driven Beans</h3>
+                        <p>Process messages asynchronously with MDBs for email notifications, audit logging, and transaction processing.</p>
+                    </div>
+                    
+                    <div class="feature-card">
+                        <h3>📊 Audit Logging</h3>
+                        <p>Durable topic subscription for audit events with database persistence for compliance.</p>
+                    </div>
+                    
+                    <div class="feature-card">
+                        <h3>💀 Dead Letter Queue</h3>
+                        <p>Handle failed messages after maximum redelivery attempts with comprehensive error logging.</p>
+                    </div>
+                    
+                    <div class="feature-card">
+                        <h3>📧 Email Notifications</h3>
+                        <p>Asynchronous email notifications for transaction events with message selectors.</p>
+                    </div>
+                    
+                    <div class="feature-card">
+                        <h3>🔄 Transaction Management</h3>
+                        <p>JTA transaction integration with JMS for reliable message processing.</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="section">
+                <h2>🧪 Testing</h2>
+                <div class="info-box">
+                    <h4>Available Test Scenarios:</h4>
+                    <ul>
+                        <li><strong>Deposit Event:</strong> Test deposit transaction messaging</li>
+                        <li><strong>Withdrawal Event:</strong> Test withdrawal transaction messaging</li>
+                        <li><strong>Transfer Event:</strong> Test transfer transaction messaging</li>
+                        <li><strong>Email Notification:</strong> Test email queue processing</li>
+                        <li><strong>Audit Event:</strong> Test audit topic publishing</li>
+                        <li><strong>All Events:</strong> Test complete messaging flow</li>
+                        <li><strong>Batch Processing:</strong> Test 10 concurrent messages</li>
+                    </ul>
+                </div>
+                
+                <div class="actions">
+                    <a href="/test-messaging" class="btn">🧪 Run JMS Tests</a>
+                    <a href="/health" class="btn btn-secondary">❤️ Health Check</a>
+                    <a href="/metrics" class="btn btn-secondary">📊 Metrics</a>
+                </div>
+            </div>
+            
+            <div class="section">
+                <h2>🏗️ Architecture</h2>
+                <div class="info-box">
+                    <h4>JMS Components:</h4>
+                    <ul>
+                        <li><strong>Connection Factory:</strong> jms/connectionFactory</li>
+                        <li><strong>Transaction Queue:</strong> jms/transactionQueue</li>
+                        <li><strong>Email Queue:</strong> jms/emailQueue</li>
+                        <li><strong>Audit Topic:</strong> jms/auditTopic</li>
+                        <li><strong>Dead Letter Queue:</strong> jms/deadLetterQueue</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="section">
+                <h2>📚 Learning Objectives</h2>
+                <div class="info-box">
+                    <ul>
+                        <li>Configure JMS resources in Open Liberty</li>
+                        <li>Implement message producers with CDI</li>
+                        <li>Create Message-Driven Beans (MDBs)</li>
+                        <li>Use message selectors for filtering</li>
+                        <li>Implement durable topic subscriptions</li>
+                        <li>Handle message failures with DLQ</li>
+                        <li>Integrate JMS with JTA transactions</li>
+                        <li>Monitor and test messaging scenarios</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        
+        <footer>
+            <p>&copy; 2026 Olivier Planson - All rights reserved. Reproduction prohibited.</p>
+            <p>Lab 05B: JMS Enterprise Messaging | Made with IBM Bob</p>
+        </footer>
+    </div>
+</body>
+</html>
+
+<!-- Made with Bob -->

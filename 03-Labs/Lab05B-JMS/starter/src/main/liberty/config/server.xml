@@ -1,0 +1,216 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- © Copyright 2026 Olivier Planson. All rights reserved. Reproduction prohibited. Made with IBM Bob. -->
+<server description="Lab 05B - JMS Banking Server">
+
+    <!-- Enable features -->
+    <featureManager>
+        <!-- Jakarta EE 10 Core Platform -->
+        <feature>jakartaee-10.0</feature>
+        
+        <!-- MicroProfile 6.0 -->
+        <feature>microProfile-6.0</feature>
+        
+        <!-- Additional features for development -->
+        <feature>localConnector-1.0</feature>
+    </featureManager>
+
+    <!-- HTTP Endpoint Configuration -->
+    <httpEndpoint id="defaultHttpEndpoint"
+                  httpPort="${http.port}"
+                  httpsPort="${https.port}"
+                  host="*">
+        <accessLogging 
+            filepath="${server.output.dir}/logs/http_access.log"
+            logFormat='%h %u %t "%r" %s %b %D %{User-agent}i'>
+        </accessLogging>
+    </httpEndpoint>
+
+    <!-- Application Configuration -->
+    <application id="banking-jms-app"
+                 name="banking-jms-app"
+                 location="banking-jms-app.war"
+                 type="war"
+                 context-root="/">
+        <classloader delegation="parentLast" />
+    </application>
+
+    <!-- PostgreSQL DataSource Configuration -->
+    <library id="postgresql-library">
+        <fileset dir="${shared.resource.dir}/lib" includes="postgresql-*.jar"/>
+    </library>
+
+    <dataSource id="DefaultDataSource" 
+                jndiName="jdbc/bankingDS"
+                jdbcDriverRef="postgresql-driver"
+                type="javax.sql.DataSource">
+        <properties.postgresql 
+            serverName="${db.host}"
+            portNumber="${db.port}"
+            databaseName="${db.name}"
+            user="${db.user}"
+            password="${db.password}"
+            currentSchema="public"
+            ssl="false"/>
+        <connectionManager 
+            maxPoolSize="20"
+            minPoolSize="5"
+            connectionTimeout="30s"
+            maxIdleTime="5m"
+            reapTime="3m"
+            agedTimeout="30m"
+            purgePolicy="EntirePool"/>
+    </dataSource>
+
+    <jdbcDriver id="postgresql-driver" libraryRef="postgresql-library"/>
+
+    <!-- JPA Configuration -->
+    <jpa defaultPersistenceProvider="org.eclipse.persistence.jpa.PersistenceProvider"/>
+
+    <!-- JMS Configuration -->
+    
+    <!-- Messaging Engine -->
+    <messagingEngine id="defaultME">
+        <queue id="transactionQueue" maxQueueDepth="5000"/>
+        <queue id="emailQueue" maxQueueDepth="5000"/>
+        <queue id="deadLetterQueue" maxQueueDepth="5000"/>
+        <topicSpace id="auditTopicSpace" maxTopicDepth="5000"/>
+    </messagingEngine>
+
+    <!-- JMS Connection Factory -->
+    <jmsConnectionFactory jndiName="jms/connectionFactory" connectionManagerRef="ConMgr1">
+        <properties.wasJms/>
+    </jmsConnectionFactory>
+
+    <connectionManager id="ConMgr1" maxPoolSize="20" minPoolSize="5"/>
+
+    <!-- Transaction Event Queue -->
+    <jmsQueue id="transactionQueue" jndiName="jms/transactionQueue">
+        <properties.wasJms 
+            queueName="transactionQueue"
+            deliveryMode="Persistent"
+            readAhead="Default"
+            forceReliability="ReliablePersistent"/>
+    </jmsQueue>
+
+    <!-- Email Notification Queue -->
+    <jmsQueue id="emailQueue" jndiName="jms/emailQueue">
+        <properties.wasJms 
+            queueName="emailQueue"
+            deliveryMode="Persistent"/>
+    </jmsQueue>
+
+    <!-- Audit Topic -->
+    <jmsTopic id="auditTopic" jndiName="jms/auditTopic">
+        <properties.wasJms 
+            topicName="auditTopic"
+            topicSpace="auditTopicSpace"/>
+    </jmsTopic>
+
+    <!-- Dead Letter Queue -->
+    <jmsQueue id="deadLetterQueue" jndiName="jms/deadLetterQueue">
+        <properties.wasJms 
+            queueName="deadLetterQueue"
+            deliveryMode="Persistent"/>
+    </jmsQueue>
+
+    <!-- JMS Activation Specs for MDBs -->
+    
+    <!-- Email Notification MDB -->
+    <jmsActivationSpec id="banking-jms-app/EmailNotificationMDB">
+        <properties.wasJms 
+            destinationRef="emailQueue"
+            destinationType="jakarta.jms.Queue"
+            maxConcurrency="5"
+            maxBatchSize="1"/>
+    </jmsActivationSpec>
+
+    <!-- Audit Logging MDB -->
+    <jmsActivationSpec id="banking-jms-app/AuditLoggingMDB">
+        <properties.wasJms 
+            destinationRef="auditTopic"
+            destinationType="jakarta.jms.Topic"
+            subscriptionDurability="Durable"
+            clientId="AuditClient"
+            subscriptionName="AuditSubscription"
+            maxConcurrency="3"/>
+    </jmsActivationSpec>
+
+    <!-- Dead Letter Queue MDB -->
+    <jmsActivationSpec id="banking-jms-app/DeadLetterQueueMDB">
+        <properties.wasJms 
+            destinationRef="deadLetterQueue"
+            destinationType="jakarta.jms.Queue"
+            maxConcurrency="2"/>
+    </jmsActivationSpec>
+
+    <!-- Transaction Event Processor MDB -->
+    <jmsActivationSpec id="banking-jms-app/TransactionEventMDB">
+        <properties.wasJms 
+            destinationRef="transactionQueue"
+            destinationType="jakarta.jms.Queue"
+            maxConcurrency="10"
+            maxBatchSize="1"
+            maxEndpointStartupAttempts="5"
+            maxEndpointStartupInterval="30"/>
+    </jmsActivationSpec>
+
+    <!-- EJB Container Configuration -->
+    <ejbContainer>
+        <!-- Stateless Session Bean Pool -->
+        <statelessCache max="100" />
+    </ejbContainer>
+
+    <!-- Transaction Manager Configuration -->
+    <transaction 
+        totalTranLifetimeTimeout="120s"
+        clientInactivityTimeout="60s"
+        heuristicRetryInterval="10"
+        heuristicRetryLimit="3"/>
+
+    <!-- Logging Configuration -->
+    <logging 
+        traceSpecification="*=info:com.bank.*=all:jakarta.jms.*=all:jakarta.messaging.*=all"
+        maxFileSize="50"
+        maxFiles="10"
+        consoleLogLevel="INFO"
+        copySystemStreams="true">
+    </logging>
+
+    <!-- Web Container Configuration -->
+    <webContainer 
+        deferServletLoad="false"
+        trustHostHeaderPort="true"
+        extractHostHeaderPort="true">
+    </webContainer>
+
+    <!-- MicroProfile Configuration -->
+    <mpMetrics authentication="false" />
+    <mpHealth />
+
+    <!-- CORS Configuration for REST APIs -->
+    <cors domain="/"
+          allowedOrigins="*"
+          allowedMethods="GET, POST, PUT, DELETE, OPTIONS"
+          allowedHeaders="*"
+          allowCredentials="true"
+          maxAge="3600" />
+
+    <!-- Development Mode Settings -->
+    <applicationMonitor 
+        updateTrigger="polled" 
+        pollingRate="2s"
+        dropins="dropins"
+        dropinsEnabled="true" />
+
+    <!-- Server Configuration Variables -->
+    <variable name="http.port" defaultValue="9080" />
+    <variable name="https.port" defaultValue="9443" />
+    <variable name="db.host" defaultValue="localhost" />
+    <variable name="db.port" defaultValue="5432" />
+    <variable name="db.name" defaultValue="bankingdb" />
+    <variable name="db.user" defaultValue="bankuser" />
+    <variable name="db.password" defaultValue="bankpass" />
+
+</server>
+
+<!-- Made with Bob -->
