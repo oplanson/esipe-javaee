@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- © Copyright 2026 Olivier Planson. All rights reserved. Reproduction prohibited. Made with IBM Bob. -->
+<server description="Bank Security Application Server">
+
+    <!-- Enable Liberty features -->
+    <featureManager>
+        <!-- Use webProfile instead of jakartaee to avoid EJB/ORB requirements -->
+        <feature>webProfile-10.0</feature>
+        <feature>microProfile-6.1</feature>
+    </featureManager>
+
+    <!-- HTTP Endpoint -->
+    <httpEndpoint id="defaultHttpEndpoint"
+                  host="*"
+                  httpPort="${http.port}"
+                  httpsPort="${https.port}">
+        <tcpOptions soReuseAddr="true"/>
+    </httpEndpoint>
+
+    <!-- Application -->
+    <webApplication id="bank-security" 
+                    location="bank-security.war" 
+                    contextRoot="/">
+        <classloader apiTypeVisibility="+third-party"/>
+    </webApplication>
+
+    <!-- PostgreSQL DataSource -->
+    <library id="postgresql-lib">
+        <fileset dir="${shared.resource.dir}/lib" includes="postgresql-*.jar"/>
+    </library>
+
+    <dataSource id="DefaultDataSource" jndiName="jdbc/bankDS">
+        <jdbcDriver libraryRef="postgresql-lib"/>
+        <properties.postgresql 
+            serverName="${env.DB_HOST}"
+            portNumber="${env.DB_PORT}"
+            databaseName="${env.DB_NAME}"
+            user="${env.DB_USER}"
+            password="${env.DB_PASSWORD}"
+            ssl="false"/>
+        <connectionManager 
+            maxPoolSize="20" 
+            minPoolSize="5"
+            connectionTimeout="30s"
+            maxIdleTime="5m"
+            reapTime="3m"
+            agedTimeout="30m"/>
+    </dataSource>
+
+    <!-- Transaction Manager -->
+    <transaction 
+        totalTranLifetimeTimeout="120s"
+        clientInactivityTimeout="60s"/>
+
+    <!-- Logging -->
+    <logging 
+        traceSpecification="*=info:com.bank.*=fine"
+        maxFileSize="20"
+        maxFiles="10"
+        consoleLogLevel="INFO"/>
+
+    <!-- Security Configuration -->
+    <enterpriseSecurity/>
+    
+    <!-- Application Security -->
+    <applicationSecurity
+        allowFailOverToBasicAuth="false"
+        useAuthenticationDataForUnprotectedResource="false"/>
+    
+    <!-- Allow unauthenticated access to metrics and health endpoints -->
+    <mpMetrics authentication="false"/>
+
+    <!-- CORS Configuration -->
+    <cors domain="/"
+          allowedOrigins="*"
+          allowedMethods="GET, POST, PUT, DELETE, OPTIONS"
+          allowedHeaders="Content-Type, Authorization, X-Requested-With"
+          allowCredentials="true"
+          maxAge="3600"/>
+
+    <!-- Variable Defaults -->
+    <variable name="http.port" defaultValue="9080"/>
+    <variable name="https.port" defaultValue="9443"/>
+    <variable name="env.DB_HOST" defaultValue="localhost"/>
+    <variable name="env.DB_PORT" defaultValue="5432"/>
+    <variable name="env.DB_NAME" defaultValue="bankdb"/>
+    <variable name="env.DB_USER" defaultValue="bankuser"/>
+    <variable name="env.DB_PASSWORD" defaultValue="bankpass"/>
+
+</server>
+
+<!-- Made with Bob -->

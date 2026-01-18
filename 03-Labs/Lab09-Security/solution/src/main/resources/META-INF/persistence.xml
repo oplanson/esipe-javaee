@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- © Copyright 2026 Olivier Planson. All rights reserved. Reproduction prohibited. Made with IBM Bob. -->
+<persistence version="3.0"
+             xmlns="https://jakarta.ee/xml/ns/persistence"
+             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+             xsi:schemaLocation="https://jakarta.ee/xml/ns/persistence
+                                 https://jakarta.ee/xml/ns/persistence/persistence_3_0.xsd">
+    
+    <persistence-unit name="bankPU" transaction-type="JTA">
+        <jta-data-source>jdbc/bankDS</jta-data-source>
+        
+        <!-- Entity classes -->
+        <class>com.bank.model.User</class>
+        <class>com.bank.model.Account</class>
+        <class>com.bank.model.SecurityAuditLog</class>
+        
+        <properties>
+            <!-- Database schema generation -->
+            <property name="jakarta.persistence.schema-generation.database.action" value="create"/>
+            <property name="jakarta.persistence.schema-generation.create-source" value="metadata"/>
+            
+            <!-- Logging -->
+            <property name="eclipselink.logging.level" value="INFO"/>
+            <property name="eclipselink.logging.level.sql" value="FINE"/>
+            <property name="eclipselink.logging.parameters" value="true"/>
+            
+            <!-- Connection pool -->
+            <property name="eclipselink.jdbc.batch-writing" value="JDBC"/>
+            <property name="eclipselink.jdbc.cache-statements" value="true"/>
+        </properties>
+    </persistence-unit>
+</persistence>
+
+<!-- Made with Bob -->

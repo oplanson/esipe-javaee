@@ -1,0 +1,176 @@
+<!-- © Copyright 2026 Olivier Planson. All rights reserved. Reproduction prohibited. Made with IBM Bob. -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bank Security Application</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background-color: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+            border-bottom: 2px solid #007bff;
+            padding-bottom: 10px;
+        }
+        h2 {
+            color: #555;
+            margin-top: 30px;
+        }
+        .endpoint {
+            background-color: #f8f9fa;
+            padding: 10px;
+            margin: 10px 0;
+            border-left: 4px solid #007bff;
+            font-family: monospace;
+        }
+        .method {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 3px;
+            font-weight: bold;
+            margin-right: 10px;
+        }
+        .get { background-color: #61affe; color: white; }
+        .post { background-color: #49cc90; color: white; }
+        .delete { background-color: #f93e3e; color: white; }
+        .role {
+            display: inline-block;
+            padding: 2px 8px;
+            background-color: #ffc107;
+            border-radius: 3px;
+            font-size: 0.9em;
+            margin-left: 10px;
+        }
+        .info {
+            background-color: #e7f3ff;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 20px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔐 Bank Security Application</h1>
+        
+        <div class="info">
+            <strong>Lab 9: Jakarta EE Security</strong><br>
+            This application demonstrates JWT authentication, role-based access control, 
+            and security audit logging.
+        </div>
+
+        <h2>Authentication Endpoints</h2>
+        <div class="endpoint">
+            <span class="method post">POST</span>
+            <strong>/api/auth/register</strong> - Register new user
+        </div>
+        <div class="endpoint">
+            <span class="method post">POST</span>
+            <strong>/api/auth/login</strong> - Login and get JWT token
+        </div>
+        <div class="endpoint">
+            <span class="method post">POST</span>
+            <strong>/api/auth/logout</strong> - Logout (audit only)
+        </div>
+        <div class="endpoint">
+            <span class="method get">GET</span>
+            <strong>/api/auth/me</strong> - Get current user info
+        </div>
+
+        <h2>Account Endpoints</h2>
+        <div class="endpoint">
+            <span class="method get">GET</span>
+            <strong>/api/accounts</strong>
+            <span class="role">ADMIN, MANAGER</span>
+            - Get all accounts
+        </div>
+        <div class="endpoint">
+            <span class="method get">GET</span>
+            <strong>/api/accounts/my</strong>
+            <span class="role">ALL ROLES</span>
+            - Get my accounts
+        </div>
+        <div class="endpoint">
+            <span class="method get">GET</span>
+            <strong>/api/accounts/{id}</strong>
+            <span class="role">ALL ROLES</span>
+            - Get account by ID
+        </div>
+        <div class="endpoint">
+            <span class="method post">POST</span>
+            <strong>/api/accounts</strong>
+            <span class="role">TELLER, MANAGER, ADMIN</span>
+            - Create account
+        </div>
+        <div class="endpoint">
+            <span class="method post">POST</span>
+            <strong>/api/accounts/{id}/deposit</strong>
+            <span class="role">TELLER, MANAGER, ADMIN</span>
+            - Deposit money
+        </div>
+        <div class="endpoint">
+            <span class="method post">POST</span>
+            <strong>/api/accounts/{id}/withdraw</strong>
+            <span class="role">TELLER, MANAGER, ADMIN</span>
+            - Withdraw money
+        </div>
+        <div class="endpoint">
+            <span class="method post">POST</span>
+            <strong>/api/accounts/transfer</strong>
+            <span class="role">MANAGER, ADMIN</span>
+            - Transfer money
+        </div>
+        <div class="endpoint">
+            <span class="method delete">DELETE</span>
+            <strong>/api/accounts/{id}</strong>
+            <span class="role">ADMIN</span>
+            - Delete account
+        </div>
+
+        <h2>Health & Metrics</h2>
+        <div class="endpoint">
+            <span class="method get">GET</span>
+            <strong>/health/live</strong> - Liveness probe
+        </div>
+        <div class="endpoint">
+            <span class="method get">GET</span>
+            <strong>/health/ready</strong> - Readiness probe
+        </div>
+        <div class="endpoint">
+            <span class="method get">GET</span>
+            <strong>/metrics</strong> - Application metrics
+        </div>
+
+        <h2>Security Features</h2>
+        <ul>
+            <li>✅ JWT Token Authentication</li>
+            <li>✅ Role-Based Access Control (RBAC)</li>
+            <li>✅ Password Hashing (PBKDF2 with 310,000 iterations)</li>
+            <li>✅ Account Lockout (5 failed attempts)</li>
+            <li>✅ Security Audit Logging</li>
+            <li>✅ Security Headers (CSP, X-Frame-Options, etc.)</li>
+            <li>✅ CORS Configuration</li>
+        </ul>
+
+        <h2>User Roles</h2>
+        <ul>
+            <li><strong>CUSTOMER</strong> - Can view own accounts</li>
+            <li><strong>TELLER</strong> - Can create accounts, deposit, withdraw</li>
+            <li><strong>MANAGER</strong> - Can transfer money, view all accounts</li>
+            <li><strong>ADMIN</strong> - Full access including delete</li>
+        </ul>
+    </div>
+</body>
+</html>
