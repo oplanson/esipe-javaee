@@ -1,7 +1,4 @@
 # © Copyright 2026 Olivier Planson. All rights reserved. Reproduction prohibited. Made with IBM Bob.
-
-version: '3.8'
-
 services:
   # PostgreSQL Database
   postgres:

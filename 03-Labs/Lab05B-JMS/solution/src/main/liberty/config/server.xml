@@ -161,11 +161,28 @@
     </ejbContainer>
 
     <!-- Transaction Manager Configuration -->
-    <transaction 
+    <transaction
         totalTranLifetimeTimeout="120s"
         clientInactivityTimeout="60s"
         heuristicRetryInterval="10"
         heuristicRetryLimit="3"/>
+
+    <!-- Security Configuration -->
+    <basicRegistry id="basic" realm="BankingRealm">
+        <user name="admin" password="{xor}PjsyNjFubWw=" />  <!-- admin123 -->
+        <user name="teller" password="{xor}PjsyNjFubWw=" /> <!-- teller123 -->
+        <user name="customer" password="{xor}PjsyNjFubWw=" /> <!-- customer123 -->
+        
+        <group name="administrators">
+            <member name="admin" />
+        </group>
+        <group name="tellers">
+            <member name="teller" />
+        </group>
+        <group name="customers">
+            <member name="customer" />
+        </group>
+    </basicRegistry>
 
     <!-- Logging Configuration -->
     <logging 
@@ -205,13 +222,11 @@
     <!-- Server Configuration Variables -->
     <variable name="http.port" defaultValue="9080" />
     <variable name="https.port" defaultValue="9443" />
-    
-    <!-- Database Configuration - Environment variables override these defaults -->
-    <variable name="db.host" value="${env.DB_HOST}" defaultValue="localhost" />
-    <variable name="db.port" value="${env.DB_PORT}" defaultValue="5432" />
-    <variable name="db.name" value="${env.DB_NAME}" defaultValue="bankingdb" />
-    <variable name="db.user" value="${env.DB_USER}" defaultValue="bankuser" />
-    <variable name="db.password" value="${env.DB_PASSWORD}" defaultValue="bankpass" />
+    <variable name="db.host" defaultValue="localhost" />
+    <variable name="db.port" defaultValue="5432" />
+    <variable name="db.name" defaultValue="bankingdb" />
+    <variable name="db.user" defaultValue="bankuser" />
+    <variable name="db.password" defaultValue="bankpass" />
 
 </server>
 

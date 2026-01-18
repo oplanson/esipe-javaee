@@ -87,9 +87,11 @@ public class CompressionFilter implements Filter {
                     // Compress the content
                     byte[] compressedContent = compress(content);
                     
-                    // Set compression headers
-                    httpResponse.setHeader("Content-Encoding", "gzip");
-                    httpResponse.setContentLength(compressedContent.length);
+                    // Set compression headers BEFORE writing content
+                    if (!httpResponse.isCommitted()) {
+                        httpResponse.setHeader("Content-Encoding", "gzip");
+                        httpResponse.setIntHeader("Content-Length", compressedContent.length);
+                    }
                     
                     // Write compressed content
                     httpResponse.getOutputStream().write(compressedContent);

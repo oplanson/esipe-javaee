@@ -1,6 +1,4 @@
 # © Copyright 2026 Olivier Planson. All rights reserved. Reproduction prohibited. Made with IBM Bob.
-version: '3.8'
-
 services:
   postgres:
     image: postgres:16-alpine
@@ -27,8 +25,8 @@ services:
       dockerfile: Containerfile
     container_name: lab04b-liberty
     ports:
-      - "9080:9080"
-      - "9443:9443"
+      - "9081:9081"
+      - "9444:9444"
     environment:
       DB_HOST: postgres
       DB_PORT: 5432
@@ -39,7 +37,7 @@ services:
       postgres:
         condition: service_healthy
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:9080/health"]
+      test: ["CMD", "curl", "-f", "http://localhost:9081/health"]
       interval: 30s
       timeout: 10s
       retries: 3

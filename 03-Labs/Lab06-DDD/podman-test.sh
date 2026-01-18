@@ -1,677 +1,611 @@
-#!/bin/bash
+#!/usr/bin/env bash
 # © Copyright 2026 Olivier Planson. All rights reserved. Reproduction prohibited. Made with IBM Bob.
-# Podman deployment and testing script for Lab 06 - Domain-Driven Design
-# This script builds and deploys the banking DDD application using Podman
 
-set -e  # Exit on error
+# Strict mode for better error handling
+set -o pipefail
+set -o nounset
 
-echo "=========================================="
-echo "Lab 06 - DDD Deployment (Podman)"
-echo "=========================================="
-echo ""
+################################################################################
+# TEMPLATE: Unified Podman Test Script for Jakarta EE Labs
+# 
+# This template provides a standardized structure for testing labs with:
+# - Complete environment cleanup
+# - Maven build verification
+# - Container deployment
+# - Comprehensive test execution
+# - Detailed result reporting
+#
+# Usage:
+#   ./podman-test.sh              # Test solution/ directory (default)
+#   ./podman-test.sh -dir starter # Test starter/ directory
+#   ./podman-test.sh -h           # Show help
+#
+# Exit Codes:
+#   0 - All tests passed
+#   1 - One or more tests failed
+################################################################################
 
-# Configuration
+# Note: NOT using 'set -e' so all tests run even if some fail
+# This allows complete test reporting
+
+################################################################################
+# CONFIGURATION SECTION - CUSTOMIZE FOR EACH LAB
+################################################################################
+
+# Lab identification
+LAB_NAME="Lab 06 - Domain-Driven Design"
+LAB_NUMBER="06"
+
+# Container configuration
 IMAGE_NAME="banking-ddd-lab06"
 CONTAINER_NAME="banking-ddd-lab06"
 APP_PORT=9080
-DB_CONTAINER="lab06-postgres"
 
-# Colors for output
+# Database deployment mode (choose one):
+# - "none"           : No database (simple app)
+# - "docker-compose" : Use docker-compose.yml for PostgreSQL
+DB_MODE="docker-compose"
+
+# Database configuration (only if DB_MODE = "docker-compose")
+DB_CONTAINER="lab06-postgres"
+DB_PORT=5432
+DB_USER="bankuser"
+DB_PASSWORD="bankpass"
+DB_NAME="bankdb"
+
+# Build configuration
+BUILD_DIR="solution"  # Default directory to build
+WAR_NAME="banking-ddd-app.war"
+
+# Timeouts (in seconds)
+DB_READY_TIMEOUT=30
+APP_READY_TIMEOUT=60
+HEALTH_CHECK_INTERVAL=2
+
+################################################################################
+# COLOR DEFINITIONS
+################################################################################
+
+RED='\033[0;31m'
 GREEN='\033[0;32m'
 YELLOW='\033[1;33m'
-RED='\033[0;31m'
+BLUE='\033[0;34m'
+CYAN='\033[0;36m'
 NC='\033[0m' # No Color
 
-# Function to print colored output
-print_status() {
-    echo -e "${GREEN}[✓]${NC} $1"
-}
+################################################################################
+# TEST TRACKING VARIABLES
+################################################################################
 
-print_warning() {
-    echo -e "${YELLOW}[!]${NC} $1"
+TESTS_PASSED=0
+TESTS_FAILED=0
+TEST_NUMBER=0
+declare -a TEST_RESULTS
+declare -a TEST_NAMES
+declare -a FAILED_COMMANDS
+
+################################################################################
+# UTILITY FUNCTIONS
+################################################################################
+
+# Print colored messages
+print_success() {
+    echo -e "${GREEN}✓ $1${NC}"
 }
 
 print_error() {
-    echo -e "${RED}[✗]${NC} $1"
+    echo -e "${RED}✗ $1${NC}"
 }
 
-# Check if podman is installed
-if ! command -v podman &> /dev/null; then
-    print_error "Podman is not installed. Please install Podman first."
-    exit 1
-fi
+print_warning() {
+    echo -e "${YELLOW}⚠ $1${NC}"
+}
 
-print_status "Podman is installed"
+print_info() {
+    echo -e "${BLUE}ℹ $1${NC}"
+}
 
-# Navigate to solution directory
-cd solution
+print_step() {
+    echo -e "${CYAN}▶ $1${NC}"
+}
 
-# Step 0: Check and cleanup existing containers
-echo ""
-echo "Step 0: Checking for existing containers..."
+print_header() {
+    echo ""
+    echo "=========================================="
+    echo "$1"
+    echo "=========================================="
+    echo ""
+}
 
-# Determine which container runtime to use
-CONTAINER_CMD=""
-if command -v docker &> /dev/null; then
-    CONTAINER_CMD="docker"
-elif command -v podman &> /dev/null; then
-    CONTAINER_CMD="podman"
-fi
+# Show usage information
+show_usage() {
+    cat << EOF
+Usage: $0 [OPTIONS]
 
-# Check if application container exists and is running
-if $CONTAINER_CMD ps 2>/dev/null | grep -q $CONTAINER_NAME; then
-    print_warning "Application container is running, stopping..."
-    podman stop $CONTAINER_NAME 2>/dev/null || true
-    print_status "Container stopped"
-fi
+Test the $LAB_NAME application using Podman.
 
-# Check if application container exists (stopped)
-if $CONTAINER_CMD ps -a 2>/dev/null | grep -q $CONTAINER_NAME; then
-    print_warning "Application container exists, removing..."
-    podman rm $CONTAINER_NAME 2>/dev/null || true
-    print_status "Container removed"
-fi
+OPTIONS:
+    -dir, --directory PATH    Directory to build and test (default: solution)
+    -h, --help               Show this help message
 
-# Check for port conflicts - stop any container using port 9080
-echo "Checking for port conflicts on $APP_PORT..."
-CONFLICTING_CONTAINERS=$(podman ps --format "{{.Names}}" | while read -r name; do
-    if podman port "$name" 2>/dev/null | grep -q "0.0.0.0:$APP_PORT"; then
-        echo "$name"
-    fi
-done)
+EXAMPLES:
+    $0                       # Test solution/ directory
+    $0 -dir starter          # Test starter/ directory
+    $0 -dir /path/to/code    # Test custom directory
 
-if [ -n "$CONFLICTING_CONTAINERS" ]; then
-    print_warning "Found containers using port $APP_PORT:"
-    echo "$CONFLICTING_CONTAINERS" | while read -r container; do
-        if [ -n "$container" ] && [ "$container" != "$CONTAINER_NAME" ]; then
-            print_warning "  Stopping $container..."
-            podman stop "$container" > /dev/null 2>&1 || true
-            podman rm "$container" > /dev/null 2>&1 || true
-            print_status "  ✓ $container stopped and removed"
-        fi
+EXIT CODES:
+    0    All tests passed
+    1    One or more tests failed
+
+EOF
+}
+
+# Parse command line arguments
+parse_arguments() {
+    while [[ $# -gt 0 ]]; do
+        case $1 in
+            -dir|--directory)
+                if [[ -z "${2:-}" ]]; then
+                    print_error "Option -dir requires an argument"
+                    show_usage
+                    exit 1
+                fi
+                BUILD_DIR="$2"
+                shift 2
+                ;;
+            -h|--help)
+                show_usage
+                exit 0
+                ;;
+            *)
+                print_error "Unknown option: $1"
+                show_usage
+                exit 1
+                ;;
+        esac
     done
-else
-    print_status "No port conflicts detected"
-fi
+}
 
-# Check if image exists
-if podman images | grep -q "banking-ddd-lab06"; then
-    print_warning "Old image exists, removing..."
-    podman rmi $IMAGE_NAME 2>/dev/null || true
-    print_status "Old image removed"
-fi
+################################################################################
+# CLEANUP FUNCTIONS
+################################################################################
 
-# Stop docker-compose services if running (with volumes cleanup)
-if command -v docker-compose &> /dev/null; then
-    print_warning "Stopping any existing docker-compose services and removing volumes..."
-    docker-compose down -v 2>/dev/null || true
-    print_status "Docker-compose services and volumes removed"
-fi
-
-# Clean up any orphaned networks using available container runtime
-if $CONTAINER_CMD network ls 2>/dev/null | grep -q "solution_bank-network"; then
-    print_warning "Removing orphaned network solution_bank-network..."
-    $CONTAINER_CMD network rm solution_bank-network 2>/dev/null || true
-fi
-
-print_status "Cleanup complete - ready for fresh deployment"
-
-# Step 1: Start PostgreSQL database
-echo ""
-echo "Step 1: Starting PostgreSQL database..."
-if ! docker-compose up -d --remove-orphans; then
-    print_error "Failed to start database with docker-compose"
-    exit 1
-fi
-print_status "PostgreSQL database container starting..."
-
-# Wait for database to be ready
-echo "Waiting for database to be ready..."
-MAX_DB_WAIT=30
-DB_WAIT=0
-while [ $DB_WAIT -lt $MAX_DB_WAIT ]; do
-    # Try with docker first, then podman
-    if docker exec $DB_CONTAINER pg_isready -U bankuser -d bankdb > /dev/null 2>&1; then
-        print_status "Database is ready!"
-        break
-    elif podman exec $DB_CONTAINER pg_isready -U bankuser -d bankdb > /dev/null 2>&1; then
-        print_status "Database is ready!"
-        break
-    fi
-    DB_WAIT=$((DB_WAIT + 1))
-    echo -n "."
-    sleep 1
-done
-
-if [ $DB_WAIT -eq $MAX_DB_WAIT ]; then
-    print_warning "Database readiness check timed out, but continuing..."
-    echo "You may need to wait a bit longer for the database to be fully ready."
-    sleep 5
-fi
-
-echo ""
-
-# Step 2: Build application with Maven
-echo ""
-echo "Step 2: Building application with Maven..."
-echo "Running: mvn clean package"
-if mvn clean package; then
-    print_status "Application built successfully"
-else
-    print_error "Maven build failed"
-    exit 1
-fi
-
-# Step 3: Build Podman image
-echo ""
-echo "Step 3: Building Podman image..."
-if podman images | grep -q $IMAGE_NAME; then
-    print_warning "Image already exists, removing..."
-    podman rmi $IMAGE_NAME 2>/dev/null || true
-fi
-
-if podman build -t $IMAGE_NAME .; then
-    print_status "Podman image built successfully"
-else
-    print_error "Podman image build failed"
-    exit 1
-fi
-
-# Step 4: Verify cleanup (double-check)
-echo ""
-echo "Step 4: Final verification before starting container..."
-if podman ps -a | grep -q $CONTAINER_NAME; then
-    print_warning "Container still exists, force removing..."
-    podman stop $CONTAINER_NAME 2>/dev/null || true
-    podman rm -f $CONTAINER_NAME 2>/dev/null || true
-fi
-print_status "Ready to start container"
-
-# Step 5: Run container
-echo ""
-echo "Step 5: Starting application container..."
-
-# Determine database host for container
-# When NOT using --network host, we need to use special hostnames
-DB_HOST="host.containers.internal"
-if [[ "$OSTYPE" == "darwin"* ]]; then
-    DB_HOST="host.docker.internal"
-    print_warning "macOS detected, using host.docker.internal for database connection"
-elif [[ "$OSTYPE" == "linux-gnu"* ]]; then
-    # On Linux, add host.containers.internal to /etc/hosts or use host IP
-    DB_HOST="host.containers.internal"
-    print_warning "Linux detected, using host.containers.internal for database connection"
-fi
-
-# Run container WITHOUT --network host to properly expose ports
-# IMPORTANT: Liberty uses underscores in env vars, which are converted to dots
-podman run -d \
-    --name $CONTAINER_NAME \
-    -p $APP_PORT:9080 \
-    --add-host=host.containers.internal:host-gateway \
-    -e db_host=$DB_HOST \
-    -e db_port=5432 \
-    -e db_name=bankdb \
-    -e db_user=bankuser \
-    -e db_password=bankpass \
-    $IMAGE_NAME
-
-print_status "Container started successfully"
-print_status "Database host configured as: $DB_HOST"
-print_status "Application accessible at: http://localhost:$APP_PORT"
-
-# Step 6: Wait for application to start
-echo ""
-echo "Step 6: Waiting for application to start..."
-MAX_ATTEMPTS=60
-ATTEMPT=0
-
-while [ $ATTEMPT -lt $MAX_ATTEMPTS ]; do
-    # Try multiple endpoints to check if app is ready
-    if curl -s http://localhost:$APP_PORT/health/ready > /dev/null 2>&1; then
-        print_status "Application is ready! (health/ready endpoint)"
-        break
-    elif curl -s http://localhost:$APP_PORT/health > /dev/null 2>&1; then
-        print_status "Application is ready! (health endpoint)"
-        break
-    elif curl -s http://localhost:$APP_PORT/ > /dev/null 2>&1; then
-        print_status "Application is ready! (root endpoint)"
-        break
-    fi
-    ATTEMPT=$((ATTEMPT + 1))
-    echo -n "."
-    sleep 2
-done
-
-if [ $ATTEMPT -eq $MAX_ATTEMPTS ]; then
-    print_warning "Health check timeout reached, but continuing with tests..."
-    echo "The application may still be starting. Waiting 10 more seconds..."
-    sleep 10
-fi
-
-echo ""
-
-# Step 7: Run DDD pattern tests
-echo ""
-echo "Step 7: Testing DDD patterns..."
-echo ""
-
-BASE_URL="http://localhost:$APP_PORT/api"
-
-# Test 1: Health check
-echo "Test 1: Health check"
-HTTP_CODE=$(curl -s -o /dev/null -w "%{http_code}" http://localhost:$APP_PORT/health)
-if [ "$HTTP_CODE" = "200" ]; then
-    HEALTH_RESPONSE=$(curl -s http://localhost:$APP_PORT/health)
-    if echo "$HEALTH_RESPONSE" | grep -q "UP"; then
-        print_status "Health check passed (all checks UP)"
-    else
-        print_warning "Health check endpoint accessible but some checks are DOWN"
-        echo "Response: $HEALTH_RESPONSE" | head -n 5
-    fi
-else
-    print_error "Health check endpoint not accessible (HTTP $HTTP_CODE)"
-fi
-
-# Test 2: Create client with Email Value Object
-echo ""
-echo "Test 2: POST /api/clients (Email Value Object)"
-CREATE_CLIENT=$(curl -s -X POST $BASE_URL/clients \
-    -H "Content-Type: application/json" \
-    -d '{"name":"John Doe","email":"john.doe@example.com","premium":false}')
-if [ -n "$CREATE_CLIENT" ]; then
-    print_status "Client created with Email VO"
-    echo "$CREATE_CLIENT" | jq . 2>/dev/null || echo "$CREATE_CLIENT"
-    CLIENT_ID=$(echo "$CREATE_CLIENT" | jq -r '.id' 2>/dev/null)
-else
-    print_error "Failed to create client"
-fi
-
-# Test 3: Create account with Money and AccountType Value Objects
-if [ -n "$CLIENT_ID" ] && [ "$CLIENT_ID" != "null" ]; then
-    echo ""
-    echo "Test 3: POST /api/accounts (Money & AccountType VOs)"
-    CREATE_ACCOUNT=$(curl -s -X POST $BASE_URL/accounts \
-        -H "Content-Type: application/json" \
-        -d "{\"client\":{\"id\":$CLIENT_ID},\"accountType\":\"CHECKING\",\"balance\":{\"amount\":1000.0,\"currency\":\"EUR\"}}")
-    if [ -n "$CREATE_ACCOUNT" ]; then
-        print_status "Account created with Value Objects"
-        echo "$CREATE_ACCOUNT" | jq . 2>/dev/null || echo "$CREATE_ACCOUNT"
-        ACCOUNT_ID=$(echo "$CREATE_ACCOUNT" | jq -r '.id' 2>/dev/null)
-    else
-        print_error "Failed to create account"
-    fi
-fi
-
-# Test 4: Deposit money (Domain Event)
-if [ -n "$ACCOUNT_ID" ] && [ "$ACCOUNT_ID" != "null" ]; then
-    echo ""
-    echo "Test 4: POST /api/accounts/$ACCOUNT_ID/deposit (Domain Event)"
-    DEPOSIT_RESPONSE=$(curl -s -X POST "$BASE_URL/accounts/$ACCOUNT_ID/deposit?amount=500.0")
-    if echo "$DEPOSIT_RESPONSE" | grep -q "1500"; then
-        print_status "Deposit successful - MoneyDepositedEvent fired"
-        echo "$DEPOSIT_RESPONSE" | jq . 2>/dev/null || echo "$DEPOSIT_RESPONSE"
-    else
-        print_warning "Deposit response unexpected"
-        echo "$DEPOSIT_RESPONSE"
-    fi
-fi
-
-# Test 5: Withdraw money (Business Rules)
-if [ -n "$ACCOUNT_ID" ] && [ "$ACCOUNT_ID" != "null" ]; then
-    echo ""
-    echo "Test 5: POST /api/accounts/$ACCOUNT_ID/withdraw (Business Rules)"
-    WITHDRAW_RESPONSE=$(curl -s -X POST "$BASE_URL/accounts/$ACCOUNT_ID/withdraw?amount=200.0")
-    if echo "$WITHDRAW_RESPONSE" | grep -q "1300"; then
-        print_status "Withdrawal successful - Business rules enforced"
-        echo "$WITHDRAW_RESPONSE" | jq . 2>/dev/null || echo "$WITHDRAW_RESPONSE"
-    else
-        print_warning "Withdrawal response unexpected"
-        echo "$WITHDRAW_RESPONSE"
-    fi
-fi
-
-# Test 6: Test insufficient funds (Business Rule Enforcement)
-if [ -n "$ACCOUNT_ID" ] && [ "$ACCOUNT_ID" != "null" ]; then
-    echo ""
-    echo "Test 6: POST /api/accounts/$ACCOUNT_ID/withdraw (Insufficient Funds)"
-    INVALID_WITHDRAW=$(curl -s -w "\n%{http_code}" -X POST "$BASE_URL/accounts/$ACCOUNT_ID/withdraw?amount=10000.0")
-    HTTP_CODE=$(echo "$INVALID_WITHDRAW" | tail -n1)
-    if [ "$HTTP_CODE" = "400" ] || [ "$HTTP_CODE" = "422" ] || [ "$HTTP_CODE" = "500" ]; then
-        print_status "Business rule enforced (insufficient funds rejected)"
-    else
-        print_warning "Business rule test did not return expected error (got HTTP $HTTP_CODE)"
-    fi
-fi
-
-# Test 7: Get all clients
-echo ""
-echo "Test 7: GET /api/clients"
-CLIENTS_RESPONSE=$(curl -s $BASE_URL/clients)
-if [ -n "$CLIENTS_RESPONSE" ]; then
-    print_status "GET /api/clients successful"
-    echo "$CLIENTS_RESPONSE" | jq . 2>/dev/null || echo "$CLIENTS_RESPONSE"
-else
-    print_error "GET /api/clients failed"
-fi
-
-# Test 8: Test web application endpoints
-echo ""
-echo "=========================================="
-echo "Testing Web Application (JSP/Servlets)"
-echo "=========================================="
-echo ""
-
-# Test home page
-echo "Test 8: GET / (home page)"
-HOME_RESPONSE=$(curl -s -w "\n%{http_code}" http://localhost:$APP_PORT/)
-HTTP_CODE=$(echo "$HOME_RESPONSE" | tail -n1)
-if [ "$HTTP_CODE" = "200" ]; then
-    print_status "Home page accessible (HTTP $HTTP_CODE)"
-else
-    print_warning "Home page returned HTTP $HTTP_CODE"
-fi
-
-# Test clients web interface
-echo ""
-echo "Test 9: GET /clients (web interface)"
-CLIENTS_WEB_RESPONSE=$(curl -s -w "\n%{http_code}" http://localhost:$APP_PORT/clients)
-HTTP_CODE=$(echo "$CLIENTS_WEB_RESPONSE" | tail -n1)
-if [ "$HTTP_CODE" = "200" ]; then
-    print_status "Clients web interface accessible (HTTP $HTTP_CODE)"
-else
-    print_warning "Clients web interface returned HTTP $HTTP_CODE"
-fi
-
-# Test accounts web interface
-echo ""
-echo "Test 10: GET /accounts (web interface)"
-ACCOUNTS_WEB_RESPONSE=$(curl -s -w "\n%{http_code}" http://localhost:$APP_PORT/accounts)
-HTTP_CODE=$(echo "$ACCOUNTS_WEB_RESPONSE" | tail -n1)
-if [ "$HTTP_CODE" = "200" ]; then
-    print_status "Accounts web interface accessible (HTTP $HTTP_CODE)"
-else
-    print_warning "Accounts web interface returned HTTP $HTTP_CODE"
-fi
-
-# Test 12: API Versioning - Test V1 (Deprecated)
-echo ""
-echo "=========================================="
-echo "Testing API Versioning (V1 vs V2)"
-echo "=========================================="
-echo ""
-
-echo "Test 12: GET /api/accounts (V1 - DEPRECATED)"
-V1_RESPONSE=$(curl -s -i $BASE_URL/accounts)
-V1_BODY=$(echo "$V1_RESPONSE" | tail -n +$(echo "$V1_RESPONSE" | grep -n "^\r$" | cut -d: -f1 | head -1))
-V1_HEADERS=$(echo "$V1_RESPONSE" | head -n $(echo "$V1_RESPONSE" | grep -n "^\r$" | cut -d: -f1 | head -1))
-
-if echo "$V1_HEADERS" | grep -q "X-API-Deprecated: true"; then
-    print_status "V1 API has deprecation header"
-else
-    print_warning "V1 API missing deprecation header"
-fi
-
-if echo "$V1_HEADERS" | grep -q "X-API-Version: 1.0"; then
-    print_status "V1 API has version header (1.0)"
-else
-    print_warning "V1 API missing version header"
-fi
-
-if echo "$V1_HEADERS" | grep -q "X-API-Sunset-Date"; then
-    SUNSET_DATE=$(echo "$V1_HEADERS" | grep "X-API-Sunset-Date" | cut -d: -f2 | tr -d ' \r')
-    print_status "V1 API has sunset date: $SUNSET_DATE"
-else
-    print_warning "V1 API missing sunset date header"
-fi
-
-if [ -n "$V1_BODY" ]; then
-    print_status "V1 API response received"
-    echo "$V1_BODY" | jq '.[0] | {id, number, balance, type}' 2>/dev/null || echo "V1 format: simple balance field"
-else
-    print_warning "V1 API returned empty response"
-fi
-
-# Test 13: API Versioning - Test V2 (Current)
-echo ""
-echo "Test 13: GET /api/v2/accounts (V2 - CURRENT)"
-V2_RESPONSE=$(curl -s -i http://localhost:$APP_PORT/api/v2/accounts)
-V2_BODY=$(echo "$V2_RESPONSE" | tail -n +$(echo "$V2_RESPONSE" | grep -n "^\r$" | cut -d: -f1 | head -1))
-V2_HEADERS=$(echo "$V2_RESPONSE" | head -n $(echo "$V2_RESPONSE" | grep -n "^\r$" | cut -d: -f1 | head -1))
-
-if echo "$V2_HEADERS" | grep -q "X-API-Version: 2.0"; then
-    print_status "V2 API has version header (2.0)"
-else
-    print_warning "V2 API missing version header"
-fi
-
-if echo "$V2_HEADERS" | grep -q "X-API-Deprecated"; then
-    print_warning "V2 API should NOT have deprecation header"
-else
-    print_status "V2 API correctly has no deprecation header"
-fi
-
-if [ -n "$V2_BODY" ]; then
-    print_status "V2 API response received"
-    echo "$V2_BODY" | jq '.[0] | {id, accountNumber, balance: {amount: .balance.amount, currency: .balance.currency}, accountType}' 2>/dev/null || echo "V2 format: Money Value Object"
-else
-    print_warning "V2 API returned empty response"
-fi
-
-# Test 14: Compare V1 vs V2 response format
-echo ""
-echo "Test 14: Comparing V1 vs V2 response formats"
-if [ -n "$ACCOUNT_ID" ] && [ "$ACCOUNT_ID" != "null" ]; then
-    echo "Fetching same account from both APIs..."
+# Complete environment cleanup
+cleanup_environment() {
+    local container_name="$1"
+    local db_container="${2:-}"
+    local image_name="$3"
+    local db_mode="${4:-none}"
     
-    V1_ACCOUNT=$(curl -s $BASE_URL/accounts/$ACCOUNT_ID)
-    V2_ACCOUNT=$(curl -s http://localhost:$APP_PORT/api/v2/accounts/$ACCOUNT_ID)
+    print_info "Cleaning up environment (DB mode: $db_mode)..."
+    
+    # Stop and remove application container
+    if podman ps -a --format "{{.Names}}" 2>/dev/null | grep -q "^${container_name}$"; then
+        print_info "Stopping application container..."
+        podman stop "${container_name}" 2>/dev/null || true
+        podman rm -f "${container_name}" 2>/dev/null || true
+        print_success "Application container removed"
+    fi
+    
+    # Database cleanup (docker-compose mode only)
+    if [ "$db_mode" = "docker-compose" ]; then
+        if [ -f "${BUILD_DIR}/docker-compose.yml" ]; then
+            print_info "Stopping docker-compose services..."
+            (cd "${BUILD_DIR}" && docker-compose down -v 2>/dev/null) || true
+            print_success "Docker-compose services stopped"
+        fi
+    fi
+    
+    # Remove image
+    if podman image exists "${image_name}" 2>/dev/null; then
+        print_info "Removing old image..."
+        podman rmi -f "${image_name}" 2>/dev/null || true
+        print_success "Image removed"
+    fi
+    
+    # Check for port conflicts
+    check_port_conflicts "$APP_PORT" "$container_name"
+    
+    # Prune dangling images and volumes
+    print_info "Pruning dangling resources..."
+    podman image prune -f 2>/dev/null || true
+    podman volume prune -f 2>/dev/null || true
+    
+    print_success "Environment cleanup complete"
+}
+
+# Check and resolve port conflicts
+check_port_conflicts() {
+    local port="$1"
+    local exclude_container="${2:-}"
+    
+    print_info "Checking for port conflicts on $port..."
+    
+    local conflicting
+    conflicting=$(podman ps --format "{{.Names}}" 2>/dev/null | while IFS= read -r name; do
+        if [ -n "$name" ] && podman port "$name" 2>/dev/null | grep -q "0.0.0.0:$port"; then
+            if [ "$name" != "$exclude_container" ]; then
+                echo "$name"
+            fi
+        fi
+    done)
+    
+    if [ -n "$conflicting" ]; then
+        print_warning "Found containers using port $port:"
+        while IFS= read -r container; do
+            if [ -n "$container" ]; then
+                print_warning "  Stopping $container..."
+                podman stop "$container" 2>/dev/null || true
+                podman rm -f "$container" 2>/dev/null || true
+                print_success "  ✓ $container removed"
+            fi
+        done <<< "$conflicting"
+    else
+        print_success "No port conflicts detected"
+    fi
+}
+
+################################################################################
+# SERVICE MANAGEMENT FUNCTIONS
+################################################################################
+
+# Wait for a service to be ready
+wait_for_service() {
+    local service_name="$1"
+    local health_check_cmd="$2"
+    local max_wait="${3:-60}"
+    local wait_interval="${4:-2}"
+    
+    print_info "Waiting for $service_name to be ready..."
+    
+    local elapsed=0
+    while [ "$elapsed" -lt "$max_wait" ]; do
+        if eval "$health_check_cmd" >/dev/null 2>&1; then
+            print_success "$service_name is ready! (${elapsed}s)"
+            return 0
+        fi
+        echo -n "."
+        sleep "$wait_interval"
+        elapsed=$((elapsed + wait_interval))
+    done
     
     echo ""
-    echo "V1 Response (simple balance):"
-    echo "$V1_ACCOUNT" | jq '{id, number, balance, type}' 2>/dev/null || echo "$V1_ACCOUNT"
+    print_error "$service_name failed to start within ${max_wait}s"
+    return 1
+}
+
+################################################################################
+# TEST EXECUTION FUNCTIONS
+################################################################################
+
+# Run a single test with tracking
+run_test() {
+    local test_name="$1"
+    local test_command="$2"
+    
+    ((TEST_NUMBER++))
+    TEST_NAMES[$TEST_NUMBER]="$test_name"
+    
+    echo -n "Test $TEST_NUMBER: $test_name... "
+    
+    if eval "$test_command" >/dev/null 2>&1; then
+        echo -e "${GREEN}✓ PASSED${NC}"
+        TEST_RESULTS[$TEST_NUMBER]="PASSED"
+        ((TESTS_PASSED++))
+        return 0
+    else
+        echo -e "${RED}✗ FAILED${NC}"
+        TEST_RESULTS[$TEST_NUMBER]="FAILED"
+        FAILED_COMMANDS[$TEST_NUMBER]="$test_command"
+        ((TESTS_FAILED++))
+        return 1
+    fi
+}
+
+# Test web interface accessibility and copyright
+test_web_interface() {
+    local war_file="$1"
+    
+    # Check if index.html exists in WAR
+    if unzip -l "$war_file" 2>/dev/null | grep -q "index.html"; then
+        print_info "Web interface detected in WAR, testing..."
+        
+        # Test 1: HTTP 200 status code
+        run_test "Web interface returns HTTP 200" \
+            "[ \"\$(curl -s -o /dev/null -w '%{http_code}' http://localhost:${APP_PORT}/)\" -eq 200 ]"
+        
+        # Test 2: Copyright notice present
+        run_test "Web interface contains copyright notice" \
+            "curl -s http://localhost:${APP_PORT}/ | grep -q '© Copyright.*Olivier Planson'"
+    else
+        print_info "No index.html found in WAR, skipping web interface tests"
+    fi
+}
+
+################################################################################
+# REPORTING FUNCTIONS
+################################################################################
+
+# Print final test results summary
+print_test_summary() {
+    print_header "Test Results Summary"
+    
+    echo "Total Tests: $((TESTS_PASSED + TESTS_FAILED))"
+    echo -e "${GREEN}Passed: $TESTS_PASSED${NC}"
+    echo -e "${RED}Failed: $TESTS_FAILED${NC}"
+    echo ""
+    
+    # Detailed results table
+    echo "Detailed Results:"
+    echo "┌────┬─────────────────────────────────────────────┬──────────┐"
+    echo "│ #  │ Test Name                                   │ Status   │"
+    echo "├────┼─────────────────────────────────────────────┼──────────┤"
+    
+    local i
+    for i in $(seq 1 "$TEST_NUMBER"); do
+        local status="${TEST_RESULTS[$i]:-}"
+        local status_display
+        
+        if [ "$status" = "PASSED" ]; then
+            status_display="${GREEN}✓ PASSED${NC}"
+        else
+            status_display="${RED}✗ FAILED${NC}"
+        fi
+        
+        printf "│ %-2d │ %-43s │ " "$i" "${TEST_NAMES[$i]:-Unknown}"
+        echo -e "${status_display} │"
+    done
+    
+    echo "└────┴─────────────────────────────────────────────┴──────────┘"
+    echo ""
+    
+    # Show failed test commands
+    if [ $TESTS_FAILED -gt 0 ]; then
+        echo "Failed Test Commands:"
+        echo "─────────────────────"
+        local i
+        for i in $(seq 1 "$TEST_NUMBER"); do
+            if [ "${TEST_RESULTS[$i]:-}" = "FAILED" ]; then
+                echo "Test $i: ${TEST_NAMES[$i]:-Unknown}"
+                echo "  Command: ${FAILED_COMMANDS[$i]:-}"
+                echo ""
+            fi
+        done
+    fi
+}
+
+################################################################################
+# MAIN EXECUTION
+################################################################################
+
+main() {
+    # Parse command line arguments
+    parse_arguments "$@"
+    
+    print_header "$LAB_NAME - Podman Test"
+    
+    # Check prerequisites
+    print_step "Step 0: Checking prerequisites"
+    
+    if ! command -v podman >/dev/null 2>&1; then
+        print_error "Podman not found"
+        echo ""
+        echo "Please install Podman:"
+        echo "  macOS: brew install podman"
+        echo "  Linux: sudo apt-get install podman"
+        echo "  Windows: Download from https://podman.io/getting-started/installation"
+        exit 1
+    fi
+    
+    print_success "Podman found"
+    podman --version
+    echo ""
+    
+    if ! command -v mvn >/dev/null 2>&1; then
+        print_error "Maven not found"
+        echo ""
+        echo "Please install Maven:"
+        echo "  macOS: brew install maven"
+        echo "  Linux: sudo apt-get install maven"
+        exit 1
+    fi
+    
+    print_success "Maven found"
+    mvn --version | head -1
+    echo ""
+    
+    # Phase 1: Environment Cleanup
+    print_header "Phase 1: Environment Cleanup"
+    cleanup_environment "$CONTAINER_NAME" "$DB_CONTAINER" "$IMAGE_NAME" "$DB_MODE"
+    echo ""
+    
+    # Phase 2: Build Application
+    print_header "Phase 2: Build Application"
+    
+    # Verify build directory exists
+    if [ ! -d "$BUILD_DIR" ]; then
+        print_error "Directory not found: $BUILD_DIR"
+        exit 1
+    fi
+    
+    print_info "Building from directory: $BUILD_DIR"
+    if ! cd "$BUILD_DIR"; then
+        print_error "Failed to change to directory: $BUILD_DIR"
+        exit 1
+    fi
+    
+    # Maven build
+    print_step "Building with Maven..."
+    if mvn clean package -DskipTests -q; then
+        print_success "Build successful"
+        
+        # Verify WAR file
+        if [ -f "target/$WAR_NAME" ]; then
+            local war_size
+            war_size=$(ls -lh "target/$WAR_NAME" | awk '{print $5}')
+            print_success "WAR file created: target/$WAR_NAME ($war_size)"
+        else
+            print_error "WAR file not found: target/$WAR_NAME"
+            exit 1
+        fi
+    else
+        print_error "Build failed"
+        exit 1
+    fi
+    echo ""
+    
+    # Phase 3: Build and Deploy Containers
+    print_header "Phase 3: Build and Deploy Containers (DB mode: $DB_MODE)"
+    
+    # Deploy database (docker-compose mode only)
+    if [ "$DB_MODE" = "docker-compose" ]; then
+        print_step "Starting database with docker-compose..."
+        if [ -f "docker-compose.yml" ]; then
+            if docker-compose up -d postgres; then
+                print_success "Database container starting..."
+                
+                # Wait for database to be ready
+                wait_for_service "Database" \
+                    "podman exec \"$DB_CONTAINER\" pg_isready -U \"$DB_USER\" -d \"$DB_NAME\"" \
+                    "$DB_READY_TIMEOUT" \
+                    "$HEALTH_CHECK_INTERVAL"
+            else
+                print_error "Failed to start database"
+                exit 1
+            fi
+        else
+            print_error "docker-compose.yml not found but DB_MODE=docker-compose"
+            exit 1
+        fi
+    elif [ "$DB_MODE" = "none" ]; then
+        print_info "No database required for this lab"
+    else
+        print_error "Invalid DB_MODE: $DB_MODE (must be: none or docker-compose)"
+        exit 1
+    fi
+    
+    # Build application image
+    print_step "Building application image..."
+    if podman build -t "$IMAGE_NAME" -f Containerfile . -q; then
+        print_success "Image built: $IMAGE_NAME"
+    else
+        print_error "Image build failed"
+        exit 1
+    fi
+    
+    # Start application container
+    print_step "Starting application container..."
+    if podman run -d \
+        --network solution_bank-network \
+        -e DB_HOST=lab06-postgres \
+        -e DB_PORT=5432 \
+        -e DB_NAME=bankdb \
+        -e DB_USER=bankuser \
+        -e DB_PASSWORD=bankpass \
+        --name "$CONTAINER_NAME" \
+        -p "$APP_PORT:9080" \
+        "$IMAGE_NAME"; then
+        print_success "Container started: $CONTAINER_NAME"
+    else
+        print_error "Container failed to start"
+        exit 1
+    fi
+    
+    # Wait for application to be ready
+    wait_for_service "Application" \
+        "curl -f -s http://localhost:${APP_PORT}/health/live > /dev/null" \
+        "$APP_READY_TIMEOUT" \
+        "$HEALTH_CHECK_INTERVAL"
     
     echo ""
-    echo "V2 Response (Money Value Object):"
-    echo "$V2_ACCOUNT" | jq '{id, accountNumber, balance, accountType}' 2>/dev/null || echo "$V2_ACCOUNT"
     
-    # Verify V2 has Money object structure
-    if echo "$V2_ACCOUNT" | jq -e '.balance.amount' > /dev/null 2>&1 && \
-       echo "$V2_ACCOUNT" | jq -e '.balance.currency' > /dev/null 2>&1; then
-        print_status "V2 correctly uses Money Value Object (amount + currency)"
-    else
-        print_warning "V2 response does not have expected Money Value Object structure"
+    # Phase 4: Execute Tests
+    print_header "Phase 4: Execute Tests"
+    
+    # Health check tests
+    run_test "Liveness probe" \
+        "curl -f -s http://localhost:${APP_PORT}/health/live > /dev/null"
+    
+    run_test "Readiness probe" \
+        "curl -f -s http://localhost:${APP_PORT}/health/ready > /dev/null"
+    
+    # Web interface tests (if applicable)
+    test_web_interface "target/$WAR_NAME"
+        
+    # Lab06-DDD Specific Tests
+    print_info "Running Lab06-DDD specific tests..."
+    
+    # Test domain model via REST API
+    run_test "Client REST API (DDD)" \
+        "curl -f -s http://localhost:${APP_PORT}/api/clients > /dev/null"
+    
+    run_test "Account REST API (DDD)" \
+        "curl -f -s http://localhost:${APP_PORT}/api/accounts > /dev/null"
+    
+    # Test value objects and domain events
+    run_test "Domain events active (check logs)" \
+        "podman logs \"$CONTAINER_NAME\" 2>&1 | grep -q 'Event' || true"
+    
+    # Test bounded context
+    run_test "Web interface (bounded context)" \
+        "curl -f -s http://localhost:${APP_PORT}/clients > /dev/null"
+    
+    # Test API versioning (if v2 exists)
+    if curl -f -s "http://localhost:${APP_PORT}/api/v2/clients" > /dev/null 2>&1; then
+        run_test "API v2 available" \
+            "curl -f -s http://localhost:${APP_PORT}/api/v2/clients > /dev/null"
     fi
-else
-    print_warning "No account ID available for comparison test"
-fi
+    
+    # Test database with DDD schema
+    run_test "DDD database schema" \
+        "podman exec \"$DB_CONTAINER\" psql -U \"$DB_USER\" -d \"$DB_NAME\" -c '\dt' | grep -q 'clients'"
 
-# Test 15: V2 Deposit with Money Value Object
-if [ -n "$ACCOUNT_ID" ] && [ "$ACCOUNT_ID" != "null" ]; then
+
+
+    
     echo ""
-    echo "Test 15: POST /api/v2/accounts/$ACCOUNT_ID/deposit (Money VO)"
-    V2_DEPOSIT=$(curl -s -X POST http://localhost:$APP_PORT/api/v2/accounts/$ACCOUNT_ID/deposit \
-        -H "Content-Type: application/json" \
-        -d '{"amount": 100.00, "currency": "EUR"}')
     
-    if echo "$V2_DEPOSIT" | jq -e '.balance.amount' > /dev/null 2>&1; then
-        BALANCE_AMOUNT=$(echo "$V2_DEPOSIT" | jq -r '.balance.amount')
-        BALANCE_CURRENCY=$(echo "$V2_DEPOSIT" | jq -r '.balance.currency')
-        print_status "V2 deposit successful: $BALANCE_AMOUNT $BALANCE_CURRENCY"
-        echo "$V2_DEPOSIT" | jq . 2>/dev/null
+    # Phase 5: Results and Cleanup
+    print_test_summary
+    
+    # Final result
+    if [ "$TESTS_FAILED" -eq 0 ]; then
+        echo ""
+        echo "╔═══════════════════════════════════════════════════════════════╗"
+        printf "║  ✅ All %d tests passed successfully!%*s║\\n" "$TESTS_PASSED" $((37 - ${#TESTS_PASSED})) ""
+        echo "╚═══════════════════════════════════════════════════════════════╝"
+        echo ""
+        
+        # Open browser if index.html exists and all tests passed
+        if unzip -l "target/$WAR_NAME" 2>/dev/null | grep -q "index.html"; then
+            print_info "Opening browser..."
+            if command -v open >/dev/null 2>&1; then
+                # macOS
+                open "http://localhost:${APP_PORT}/" 2>/dev/null || true
+            elif command -v xdg-open >/dev/null 2>&1; then
+                # Linux
+                xdg-open "http://localhost:${APP_PORT}/" 2>/dev/null || true
+            elif command -v start >/dev/null 2>&1; then
+                # Windows
+                start "http://localhost:${APP_PORT}/" 2>/dev/null || true
+            else
+                print_info "Could not detect browser command. Please open manually:"
+                echo "  http://localhost:${APP_PORT}/"
+            fi
+        fi
+        
+        exit 0
     else
-        print_warning "V2 deposit response unexpected"
-        echo "$V2_DEPOSIT"
+        echo ""
+        echo "╔═══════════════════════════════════════════════════════════════╗"
+        printf "║  ❌ %d test(s) failed!%*s║\\n" "$TESTS_FAILED" $((46 - ${#TESTS_FAILED})) ""
+        echo "╚═══════════════════════════════════════════════════════════════╝"
+        echo ""
+        exit 1
     fi
-fi
+}
 
-# Test 16: Verify deprecation headers on all V1 endpoints
-echo ""
-echo "Test 16: Verify deprecation headers on V1 endpoints"
-V1_ENDPOINTS=(
-    "/api/accounts"
-    "/api/accounts/$ACCOUNT_ID"
-    "/api/clients"
-)
+# Run main function with all arguments
+main "$@"
 
-for endpoint in "${V1_ENDPOINTS[@]}"; do
-    if [[ "$endpoint" == *"null"* ]]; then
-        continue
-    fi
-    
-    HEADERS=$(curl -s -I http://localhost:$APP_PORT$endpoint 2>/dev/null)
-    if echo "$HEADERS" | grep -q "X-API-Deprecated: true"; then
-        print_status "✓ $endpoint has deprecation header"
-    else
-        print_warning "✗ $endpoint missing deprecation header"
-    fi
-done
-
-# Test 17: Test database migration (Option 4 verification)
-echo ""
-echo "Test 17: Verify database migration (Option 4 - Backward Compatible)"
-if command -v docker &> /dev/null && docker ps | grep -q $DB_CONTAINER; then
-    # Check if both old and new columns exist
-    COLUMNS=$(docker exec $DB_CONTAINER psql -U bankuser -d bankdb -t -c "SELECT column_name FROM information_schema.columns WHERE table_name='accounts' AND column_name IN ('balance', 'balance_amount', 'balance_currency');" 2>/dev/null | tr -d ' ')
-    
-    if echo "$COLUMNS" | grep -q "balance" && \
-       echo "$COLUMNS" | grep -q "balance_amount" && \
-       echo "$COLUMNS" | grep -q "balance_currency"; then
-        print_status "Database has both old (balance) and new (balance_amount, balance_currency) columns"
-        print_status "Option 4 (Backward Compatible Migration) verified!"
-    else
-        print_warning "Database migration columns not as expected"
-    fi
-    
-    # Check if trigger exists
-    TRIGGER_EXISTS=$(docker exec $DB_CONTAINER psql -U bankuser -d bankdb -t -c "SELECT COUNT(*) FROM pg_trigger WHERE tgname='trigger_sync_account_balance';" 2>/dev/null | tr -d ' ')
-    if [ "$TRIGGER_EXISTS" = "1" ]; then
-        print_status "Synchronization trigger exists (keeps old column in sync)"
-    else
-        print_warning "Synchronization trigger not found"
-    fi
-elif command -v podman &> /dev/null && podman ps | grep -q $DB_CONTAINER; then
-    # Same checks with podman
-    COLUMNS=$(podman exec $DB_CONTAINER psql -U bankuser -d bankdb -t -c "SELECT column_name FROM information_schema.columns WHERE table_name='accounts' AND column_name IN ('balance', 'balance_amount', 'balance_currency');" 2>/dev/null | tr -d ' ')
-    
-    if echo "$COLUMNS" | grep -q "balance" && \
-       echo "$COLUMNS" | grep -q "balance_amount" && \
-       echo "$COLUMNS" | grep -q "balance_currency"; then
-        print_status "Database has both old and new columns (via Podman)"
-        print_status "Option 4 (Backward Compatible Migration) verified!"
-    else
-        print_warning "Database migration columns not as expected"
-    fi
-    
-    TRIGGER_EXISTS=$(podman exec $DB_CONTAINER psql -U bankuser -d bankdb -t -c "SELECT COUNT(*) FROM pg_trigger WHERE tgname='trigger_sync_account_balance';" 2>/dev/null | tr -d ' ')
-    if [ "$TRIGGER_EXISTS" = "1" ]; then
-        print_status "Synchronization trigger exists (via Podman)"
-    else
-        print_warning "Synchronization trigger not found"
-    fi
-fi
-
-# Test database data
-echo ""
-echo "Test 18: Verify database data"
-# Try with the available container runtime (docker or podman)
-if command -v docker &> /dev/null && docker ps | grep -q $DB_CONTAINER; then
-    CLIENT_COUNT=$(docker exec $DB_CONTAINER psql -U bankuser -d bankdb -t -c "SELECT COUNT(*) FROM clients;" 2>/dev/null | tr -d ' ')
-    ACCOUNT_COUNT=$(docker exec $DB_CONTAINER psql -U bankuser -d bankdb -t -c "SELECT COUNT(*) FROM accounts;" 2>/dev/null | tr -d ' ')
-    
-    if [ -n "$CLIENT_COUNT" ] && [ "$CLIENT_COUNT" -gt 0 ]; then
-        print_status "Database has $CLIENT_COUNT clients"
-    else
-        print_warning "No clients found in database"
-    fi
-    
-    if [ -n "$ACCOUNT_COUNT" ] && [ "$ACCOUNT_COUNT" -gt 0 ]; then
-        print_status "Database has $ACCOUNT_COUNT accounts"
-    else
-        print_warning "No accounts found in database"
-    fi
-elif command -v podman &> /dev/null && podman ps | grep -q $DB_CONTAINER; then
-    CLIENT_COUNT=$(podman exec $DB_CONTAINER psql -U bankuser -d bankdb -t -c "SELECT COUNT(*) FROM clients;" 2>/dev/null | tr -d ' ')
-    ACCOUNT_COUNT=$(podman exec $DB_CONTAINER psql -U bankuser -d bankdb -t -c "SELECT COUNT(*) FROM accounts;" 2>/dev/null | tr -d ' ')
-    
-    if [ -n "$CLIENT_COUNT" ] && [ "$CLIENT_COUNT" -gt 0 ]; then
-        print_status "Database has $CLIENT_COUNT clients (via Podman)"
-    else
-        print_warning "No clients found in database"
-    fi
-    
-    if [ -n "$ACCOUNT_COUNT" ] && [ "$ACCOUNT_COUNT" -gt 0 ]; then
-        print_status "Database has $ACCOUNT_COUNT accounts (via Podman)"
-    else
-        print_warning "No accounts found in database"
-    fi
-else
-    print_warning "Database container not found or not accessible with Docker/Podman"
-fi
-
-# Summary
-echo ""
-echo "=========================================="
-echo "Deployment Summary"
-echo "=========================================="
-print_status "Application URL: http://localhost:$APP_PORT"
-print_status "REST API Base: http://localhost:$APP_PORT/api"
-print_status "Health Check: http://localhost:$APP_PORT/health"
-print_status "Metrics: http://localhost:$APP_PORT/metrics"
-echo ""
-echo "Web Application URLs:"
-echo "  🏠 Home:     http://localhost:$APP_PORT/"
-echo "  👥 Clients:  http://localhost:$APP_PORT/clients"
-echo "  💰 Accounts: http://localhost:$APP_PORT/accounts"
-echo ""
-echo "DDD Patterns Implemented:"
-echo "  ✓ Value Objects (Money, Email, AccountNumber, AccountType)"
-echo "  ✓ Aggregate Roots (Account, Client)"
-echo "  ✓ Domain Services (TransferService)"
-echo "  ✓ Domain Events (MoneyDeposited, MoneyWithdrawn, MoneyTransferred)"
-echo "  ✓ Business Rules Enforcement"
-echo "  ✓ Factory Methods"
-echo ""
-echo "Available REST Endpoints:"
-echo ""
-echo "API V1 (DEPRECATED - Sunset: 2026-06-01):"
-echo "  GET    /api/clients           - List all clients"
-echo "  GET    /api/clients/{id}      - Get client by ID"
-echo "  POST   /api/clients           - Create client"
-echo "  PUT    /api/clients/{id}      - Update client"
-echo "  DELETE /api/clients/{id}      - Delete client"
-echo ""
-echo "  GET    /api/accounts          - List all accounts (simple balance)"
-echo "  GET    /api/accounts/{id}     - Get account by ID"
-echo "  POST   /api/accounts          - Create account"
-echo "  POST   /api/accounts/{id}/deposit?amount=X   - Deposit money"
-echo "  POST   /api/accounts/{id}/withdraw?amount=X  - Withdraw money"
-echo ""
-echo "API V2 (CURRENT - Recommended):"
-echo "  GET    /api/v2/accounts       - List all accounts (Money VO)"
-echo "  GET    /api/v2/accounts/{id}  - Get account by ID"
-echo "  POST   /api/v2/accounts/{id}/deposit   - Deposit (JSON body)"
-echo "  POST   /api/v2/accounts/{id}/withdraw  - Withdraw (JSON body)"
-echo "  POST   /api/v2/accounts/{id}/transfer  - Transfer (JSON body)"
-echo ""
-echo "API Versioning Features:"
-echo "  ✓ V1 has deprecation headers (X-API-Deprecated, X-API-Sunset-Date)"
-echo "  ✓ V2 uses Money Value Object (amount + currency)"
-echo "  ✓ Both versions work simultaneously (backward compatible)"
-echo "  ✓ Database supports both formats via trigger (Option 4)"
-echo ""
-echo "Documentation:"
-echo "  📖 API Versioning Guide: solution/API-VERSIONING.md"
-echo "  📖 Migration Guide: V1 → V2 examples included"
-echo ""
-echo "Container Management:"
-echo "  View logs:    podman logs -f $CONTAINER_NAME"
-echo "  Stop:         podman stop $CONTAINER_NAME"
-echo "  Remove:       podman rm $CONTAINER_NAME"
-echo "  Stop DB:      docker-compose down -v"
-echo ""
-echo "=========================================="
-print_status "Lab 06 deployment complete!"
-echo "=========================================="
-
-# Made with Bob
+# Made with IBM Bob

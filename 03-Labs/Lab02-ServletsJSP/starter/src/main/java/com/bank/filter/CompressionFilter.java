@@ -72,9 +72,10 @@ public class CompressionFilter implements Filter {
                     // TODO: Compress the content
                     byte[] compressedContent = null; // TODO: Call compress method
                     
-                    // TODO: Set compression headers
+                    // TODO: Set compression headers BEFORE writing content
+                    // Check if response is not committed: if (!httpResponse.isCommitted())
                     // - Content-Encoding: gzip
-                    // - Content-Length: compressed size
+                    // - Content-Length: compressed size (use setIntHeader)
                     
                     // TODO: Write compressed content to response
                     

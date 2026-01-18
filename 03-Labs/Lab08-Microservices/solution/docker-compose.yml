@@ -1,7 +1,4 @@
 # © Copyright 2026 Olivier Planson. All rights reserved. Reproduction prohibited. Made with IBM Bob.
-
-version: '3.8'
-
 services:
   # ============================================
   # Database Services Only
@@ -26,7 +23,7 @@ services:
       retries: 5
       start_period: 10s
     networks:
-      - banking-network
+      - lab08-network
     restart: unless-stopped
 
   # Account Service Database
@@ -48,7 +45,7 @@ services:
       retries: 5
       start_period: 10s
     networks:
-      - banking-network
+      - lab08-network
     restart: unless-stopped
 
 # ============================================
@@ -64,8 +61,8 @@ volumes:
 # Networks
 # ============================================
 networks:
-  banking-network:
-    name: banking-network
+  lab08-network:
+    name: lab08-network
     driver: bridge
 
 # Made with Bob

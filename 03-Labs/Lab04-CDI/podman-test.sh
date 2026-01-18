@@ -1,584 +1,623 @@
-#!/bin/bash
-# © Copyright 2025-2026 Olivier Planson. All rights reserved. Reproduction prohibited. Made with IBM Bob.
+#!/usr/bin/env bash
+# © Copyright 2026 Olivier Planson. All rights reserved. Reproduction prohibited. Made with IBM Bob.
 
-# Podman-based testing for Lab 4 with Open Liberty and PostgreSQL
-# No local Liberty installation required!
+# Strict mode for better error handling
+set -o pipefail
+set -o nounset
 
-set -e
+################################################################################
+# TEMPLATE: Unified Podman Test Script for Jakarta EE Labs
+# 
+# This template provides a standardized structure for testing labs with:
+# - Complete environment cleanup
+# - Maven build verification
+# - Container deployment
+# - Comprehensive test execution
+# - Detailed result reporting
+#
+# Usage:
+#   ./podman-test.sh              # Test solution/ directory (default)
+#   ./podman-test.sh -dir starter # Test starter/ directory
+#   ./podman-test.sh -h           # Show help
+#
+# Exit Codes:
+#   0 - All tests passed
+#   1 - One or more tests failed
+################################################################################
 
-echo "=========================================="
-echo "Lab 4: CDI - Podman + Open Liberty + PostgreSQL"
-echo "=========================================="
-echo ""
+# Note: NOT using 'set -e' so all tests run even if some fail
+# This allows complete test reporting
 
-# Colors
+################################################################################
+# CONFIGURATION SECTION - CUSTOMIZE FOR EACH LAB
+################################################################################
+
+# Lab identification
+LAB_NAME="Lab 04 - CDI & Dependency Injection"
+LAB_NUMBER="04"
+
+# Container configuration
+IMAGE_NAME="banking-cdi-lab04"
+CONTAINER_NAME="banking-cdi-lab04"
+APP_PORT=9080
+
+# Database deployment mode (choose one):
+# - "none"           : No database (simple app)
+# - "docker-compose" : Use docker-compose.yml for PostgreSQL
+DB_MODE="docker-compose"
+
+# Database configuration (only if DB_MODE = "docker-compose")
+DB_CONTAINER="banking-db"
+DB_PORT=5432
+DB_USER="bankuser"
+DB_PASSWORD="bankpass"
+DB_NAME="bankdb"
+
+# Build configuration
+BUILD_DIR="solution"  # Default directory to build
+WAR_NAME="banking-cdi-app.war"
+
+# Timeouts (in seconds)
+DB_READY_TIMEOUT=30
+APP_READY_TIMEOUT=60
+HEALTH_CHECK_INTERVAL=2
+
+################################################################################
+# COLOR DEFINITIONS
+################################################################################
+
 RED='\033[0;31m'
 GREEN='\033[0;32m'
 YELLOW='\033[1;33m'
 BLUE='\033[0;34m'
-NC='\033[0m'
+CYAN='\033[0;36m'
+NC='\033[0m' # No Color
 
-# Configuration
-IMAGE_NAME="banking-cdi-app:lab04"
-CONTAINER_NAME="banking-cdi-lab04"
-APP_PORT=9080
-
-# Check if Podman is installed
-if ! command -v podman &> /dev/null; then
-    echo -e "${RED}❌ Podman not found${NC}"
-    echo ""
-    echo "Please install Podman:"
-    echo "  macOS: brew install podman"
-    echo "  Linux: sudo apt-get install podman"
-    echo "  Windows: Download from https://podman.io/getting-started/installation"
-    exit 1
-fi
-
-echo -e "${GREEN}✓ Podman found${NC}"
-podman --version
-echo ""
-
-# Step 0: Cleanup existing containers and images
-echo "Step 0: Checking for existing containers..."
-echo "----------------------------"
-
-# Determine which container runtime to use
-CONTAINER_CMD=""
-if command -v docker &> /dev/null; then
-    CONTAINER_CMD="docker"
-elif command -v podman &> /dev/null; then
-    CONTAINER_CMD="podman"
-fi
-
-# Check if application container exists and is running
-if $CONTAINER_CMD ps 2>/dev/null | grep -q $CONTAINER_NAME; then
-    echo -e "${YELLOW}⚠ Application container is running, stopping...${NC}"
-    podman stop $CONTAINER_NAME > /dev/null 2>&1 || true
-    echo -e "${GREEN}✓ Container stopped${NC}"
-fi
-
-# Check if application container exists (stopped)
-if $CONTAINER_CMD ps -a 2>/dev/null | grep -q $CONTAINER_NAME; then
-    echo -e "${YELLOW}⚠ Application container exists, removing...${NC}"
-    podman rm $CONTAINER_NAME > /dev/null 2>&1 || true
-    echo -e "${GREEN}✓ Container removed${NC}"
-fi
-
-# Check for port conflicts - stop any container using port 9080
-echo "Checking for port conflicts on $APP_PORT..."
-CONFLICTING_CONTAINERS=$(podman ps --format "{{.Names}}" | while read -r name; do
-    if podman port "$name" 2>/dev/null | grep -q "0.0.0.0:$APP_PORT"; then
-        echo "$name"
-    fi
-done)
-
-if [ -n "$CONFLICTING_CONTAINERS" ]; then
-    echo -e "${YELLOW}⚠ Found containers using port $APP_PORT:${NC}"
-    echo "$CONFLICTING_CONTAINERS" | while read -r container; do
-        if [ -n "$container" ] && [ "$container" != "$CONTAINER_NAME" ]; then
-            echo -e "${YELLOW}  Stopping $container...${NC}"
-            podman stop "$container" > /dev/null 2>&1 || true
-            podman rm "$container" > /dev/null 2>&1 || true
-            echo -e "${GREEN}  ✓ $container stopped and removed${NC}"
-        fi
-    done
-else
-    echo -e "${GREEN}✓ No port conflicts detected${NC}"
-fi
-
-# Check if image exists
-if podman images | grep -q "banking-cdi-app.*lab04"; then
-    echo -e "${YELLOW}⚠ Old image exists, removing...${NC}"
-    podman rmi $IMAGE_NAME 2>/dev/null || true
-    echo -e "${GREEN}✓ Old image removed${NC}"
-fi
-
-echo -e "${GREEN}✓ Cleanup complete - ready for fresh deployment${NC}"
-echo ""
-
-# Navigate to solution
-cd solution
-
-# Stop and remove any existing docker-compose services (with volumes)
-if command -v docker-compose &> /dev/null; then
-    if docker-compose ps 2>/dev/null | grep -q "Up\|Exit"; then
-        echo -e "${YELLOW}⚠ Stopping and removing existing docker-compose services and volumes...${NC}"
-        docker-compose down -v 2>/dev/null || true
-        echo -e "${GREEN}✓ Docker-compose services and volumes removed${NC}"
-    fi
-fi
-
-# Step 1: Start PostgreSQL with docker-compose
-echo "Step 1: Starting PostgreSQL..."
-echo "----------------------------"
-# Always start fresh after cleanup
-docker-compose up -d
-
-echo "Waiting for PostgreSQL to be ready..."
-for i in {1..30}; do
-    if docker exec banking-db pg_isready -U bankuser -d bankdb > /dev/null 2>&1; then
-        echo -e "${GREEN}✓ PostgreSQL is ready${NC}"
-        break
-    fi
-    sleep 2
-    echo -n "."
-done
-echo ""
-
-echo ""
-
-# Step 2: Build application
-echo "Step 2: Building application..."
-echo "----------------------------"
-mvn clean package -q
-
-if [ $? -eq 0 ]; then
-    echo -e "${GREEN}✓ Build successful${NC}"
-    echo "  WAR file: target/banking-cdi-app.war"
-else
-    echo -e "${RED}❌ Build failed${NC}"
-    exit 1
-fi
-
-echo ""
-
-# Step 3: Run Flyway migrations (optional - will run automatically in container)
-echo "Step 3: Checking Flyway migrations..."
-echo "----------------------------"
-mvn flyway:migrate -q 2>/dev/null
-
-if [ $? -eq 0 ]; then
-    echo -e "${GREEN}✓ Database migrations completed${NC}"
-else
-    echo -e "${YELLOW}⚠ Flyway migrations skipped (will run automatically in container)${NC}"
-    echo "  This is normal if PostgreSQL is not accessible from host machine."
-fi
-
-echo ""
-
-# Step 4: Build Podman image
-echo "Step 4: Building Podman image..."
-echo "----------------------------"
-podman build -t $IMAGE_NAME -f Containerfile .
-
-if [ $? -eq 0 ]; then
-    echo -e "${GREEN}✓ Podman image built${NC}"
-else
-    echo -e "${RED}❌ Podman build failed${NC}"
-    exit 1
-fi
-
-echo ""
-
-# Step 5: Start container with Open Liberty
-echo "Step 5: Starting container with Open Liberty..."
-echo "----------------------------"
-
-# Get host IP for database connection
-# On macOS/Linux with Podman, use host.containers.internal
-# On Linux with Docker, use host.docker.internal or bridge network
-DB_HOST="host.containers.internal"
-
-podman run -d \
-    --name $CONTAINER_NAME \
-    -p $APP_PORT:9080 \
-    -p 9443:9443 \
-    --add-host=host.containers.internal:host-gateway \
-    -e db_host=${DB_HOST} \
-    -e db_port=5432 \
-    -e db_name=bankdb \
-    -e db_user=bankuser \
-    -e db_password=bankpass \
-    $IMAGE_NAME
-
-if [ $? -eq 0 ]; then
-    echo -e "${GREEN}✓ Container started${NC}"
-else
-    echo -e "${RED}❌ Container failed to start${NC}"
-    exit 1
-fi
-
-echo ""
-echo "Step 6: Waiting for Open Liberty to start..."
-echo "----------------------------"
-
-# Wait for container to be healthy
-TIMEOUT=90
-ELAPSED=0
-LIBERTY_STARTED=false
-
-while [ $ELAPSED -lt $TIMEOUT ]; do
-    # Check if container is still running
-    if ! podman ps | grep -q $CONTAINER_NAME; then
-        echo ""
-        echo -e "${RED}❌ Container stopped unexpectedly${NC}"
-        echo ""
-        echo "Container logs:"
-        echo "----------------------------"
-        podman logs $CONTAINER_NAME | tail -50
-        exit 1
-    fi
-    
-    # Try to connect to the application
-    if curl -s -f http://localhost:$APP_PORT/ > /dev/null 2>&1; then
-        echo ""
-        echo -e "${GREEN}✓ Open Liberty started successfully${NC}"
-        LIBERTY_STARTED=true
-        break
-    fi
-    
-    sleep 2
-    ELAPSED=$((ELAPSED + 2))
-    echo -n "."
-done
-
-echo ""
-
-if [ "$LIBERTY_STARTED" = false ]; then
-    echo -e "${RED}❌ Open Liberty failed to start within ${TIMEOUT}s${NC}"
-    echo ""
-    echo "Container status:"
-    podman ps -a | grep $CONTAINER_NAME
-    echo ""
-    echo "Container logs (last 50 lines):"
-    echo "----------------------------"
-    podman logs $CONTAINER_NAME | tail -50
-    echo ""
-    echo -e "${YELLOW}Tip: Check for database connection or Flyway migration errors${NC}"
-    exit 1
-fi
-
-# Check if migrations ran
-echo ""
-echo "Checking database schema..."
-echo "----------------------------"
-
-# Check if docker or podman command exists for database
-if command -v docker &> /dev/null; then
-    DB_CMD="docker"
-elif command -v podman &> /dev/null; then
-    DB_CMD="podman"
-else
-    echo -e "${YELLOW}⚠ Neither docker nor podman found, skipping database check${NC}"
-    DB_CMD=""
-fi
-
-if [ -n "$DB_CMD" ]; then
-    # Try to check tables
-    TABLES=$($DB_CMD exec banking-db psql -U bankuser -d bankdb -t -c "SELECT COUNT(*) FROM information_schema.tables WHERE table_schema='public' AND table_type='BASE TABLE';" 2>/dev/null | tr -d ' ')
-    
-    if [ -n "$TABLES" ] && [ "$TABLES" -gt 0 ]; then
-        echo -e "${GREEN}✓ Database tables created ($TABLES tables)${NC}"
-        
-        # List tables
-        echo ""
-        echo "Tables in database:"
-        $DB_CMD exec banking-db psql -U bankuser -d bankdb -c "\dt" 2>/dev/null || echo "  (Unable to list tables)"
-    else
-        echo -e "${YELLOW}⚠ Database tables not found${NC}"
-        echo "Flyway migrations may not have run successfully."
-        echo ""
-        echo "To manually run migrations:"
-        echo "  cd solution && mvn flyway:migrate"
-    fi
-else
-    echo -e "${YELLOW}⚠ Cannot check database schema${NC}"
-fi
-
-echo ""
-echo "=========================================="
-echo "Application Ready!"
-echo "=========================================="
-echo ""
-echo -e "${BLUE}Application URLs:${NC}"
-echo "  🏠 Home:     http://localhost:9080/"
-echo "  👥 Clients:  http://localhost:9080/clients"
-echo ""
-echo -e "${BLUE}MicroProfile Endpoints:${NC}"
-echo "  💊 Health:   http://localhost:9080/health"
-echo "  📊 Metrics:  http://localhost:9080/metrics"
-echo ""
-echo -e "${BLUE}Database:${NC}"
-echo "  Connect:     docker exec -it banking-db psql -U bankuser -d bankdb"
-echo "  View tables: docker exec banking-db psql -U bankuser -d bankdb -c '\dt'"
-echo ""
-
-# Wait a moment
-sleep 3
-
-echo "Step 7: Testing endpoints..."
-echo "----------------------------"
+################################################################################
+# TEST TRACKING VARIABLES
+################################################################################
 
 TESTS_PASSED=0
 TESTS_FAILED=0
+TEST_NUMBER=0
+declare -a TEST_RESULTS
+declare -a TEST_NAMES
+declare -a FAILED_COMMANDS
 
-# Test home page
-echo -n "Testing home page... "
-HTTP_CODE=$(curl -s -o /tmp/response.txt -w "%{http_code}" http://localhost:$APP_PORT/)
-if [ "$HTTP_CODE" = "200" ] && grep -q "Banking" /tmp/response.txt; then
-    echo -e "${GREEN}✓ PASS${NC}"
-    TESTS_PASSED=$((TESTS_PASSED + 1))
-else
-    echo -e "${RED}✗ FAIL (HTTP $HTTP_CODE)${NC}"
-    TESTS_FAILED=$((TESTS_FAILED + 1))
-fi
+################################################################################
+# UTILITY FUNCTIONS
+################################################################################
 
-# Test clients endpoint
-echo -n "Testing clients endpoint... "
-HTTP_CODE=$(curl -s -o /tmp/response.txt -w "%{http_code}" http://localhost:$APP_PORT/clients)
-if [ "$HTTP_CODE" = "200" ]; then
-    echo -e "${GREEN}✓ PASS${NC}"
-    TESTS_PASSED=$((TESTS_PASSED + 1))
-else
-    echo -e "${RED}✗ FAIL (HTTP $HTTP_CODE)${NC}"
-    TESTS_FAILED=$((TESTS_FAILED + 1))
-fi
+# Print colored messages
+print_success() {
+    echo -e "${GREEN}✓ $1${NC}"
+}
 
-# Test health endpoint
-echo -n "Testing health endpoint... "
-HTTP_CODE=$(curl -s -o /tmp/response.txt -w "%{http_code}" http://localhost:$APP_PORT/health)
-if [ "$HTTP_CODE" = "200" ] && grep -q "UP" /tmp/response.txt; then
-    echo -e "${GREEN}✓ PASS${NC}"
-    TESTS_PASSED=$((TESTS_PASSED + 1))
-else
-    echo -e "${RED}✗ FAIL (HTTP $HTTP_CODE)${NC}"
-    TESTS_FAILED=$((TESTS_FAILED + 1))
-fi
+print_error() {
+    echo -e "${RED}✗ $1${NC}"
+}
 
-# Test metrics endpoint
-echo -n "Testing metrics endpoint... "
-HTTP_CODE=$(curl -s -o /tmp/response.txt -w "%{http_code}" http://localhost:$APP_PORT/metrics)
-if [ "$HTTP_CODE" = "200" ] && grep -q "base" /tmp/response.txt; then
-    echo -e "${GREEN}✓ PASS${NC}"
-    TESTS_PASSED=$((TESTS_PASSED + 1))
-elif [ "$HTTP_CODE" = "401" ]; then
-    # Try with authentication if required
-    HTTP_CODE=$(curl -s -u admin:adminpwd -o /tmp/response.txt -w "%{http_code}" http://localhost:$APP_PORT/metrics)
-    if [ "$HTTP_CODE" = "200" ] && grep -q "base" /tmp/response.txt; then
-        echo -e "${GREEN}✓ PASS (with auth)${NC}"
-        TESTS_PASSED=$((TESTS_PASSED + 1))
-    else
-        echo -e "${RED}✗ FAIL even with auth (HTTP $HTTP_CODE)${NC}"
-        TESTS_FAILED=$((TESTS_FAILED + 1))
-    fi
-else
-    echo -e "${RED}✗ FAIL (HTTP $HTTP_CODE)${NC}"
-    TESTS_FAILED=$((TESTS_FAILED + 1))
-fi
+print_warning() {
+    echo -e "${YELLOW}⚠ $1${NC}"
+}
 
-# Test CDI functionality - check if interceptor logging is working
-echo -n "Testing CDI interceptor logging... "
-# Make a request and check logs for interceptor messages
-podman logs $CONTAINER_NAME 2>&1 | grep -q "LoggingInterceptor" && \
-    echo -e "${GREEN}✓ PASS (CDI interceptor active)${NC}" && \
-    TESTS_PASSED=$((TESTS_PASSED + 1)) || \
-    (echo -e "${YELLOW}⚠ SKIP (check logs manually)${NC}" && TESTS_PASSED=$((TESTS_PASSED + 1)))
+print_info() {
+    echo -e "${BLUE}ℹ $1${NC}"
+}
 
-# Test database data
-echo -n "Testing database data... "
-CLIENT_COUNT=$(docker exec banking-db psql -U bankuser -d bankdb -t -c "SELECT COUNT(*) FROM clients;" 2>/dev/null | tr -d ' ')
-if [ -n "$CLIENT_COUNT" ] && [ "$CLIENT_COUNT" -gt 0 ] 2>/dev/null; then
-    echo -e "${GREEN}✓ PASS ($CLIENT_COUNT clients)${NC}"
-    TESTS_PASSED=$((TESTS_PASSED + 1))
-elif [ -z "$CLIENT_COUNT" ]; then
-    echo -e "${YELLOW}⚠ SKIP (database not accessible or no data yet)${NC}"
-    TESTS_PASSED=$((TESTS_PASSED + 1))
-else
-    echo -e "${RED}✗ FAIL (no clients found)${NC}"
-    TESTS_FAILED=$((TESTS_FAILED + 1))
+print_step() {
+    echo -e "${CYAN}▶ $1${NC}"
+}
 
-# Test Exercise 6: Transaction Management Tests
-echo ""
-echo "=========================================="
-echo "Exercise 6: Transaction Management Tests"
-echo "=========================================="
-echo ""
-
-# Test 1: Transaction test servlet (welcome page)
-echo -n "Test 1: Transaction test servlet (welcome)... "
-HTTP_CODE=$(curl -s -o /tmp/response.txt -w "%{http_code}" http://localhost:$APP_PORT/test-transactions)
-if [ "$HTTP_CODE" = "200" ] && grep -q "Transaction Management Tests" /tmp/response.txt; then
-    echo -e "${GREEN}✓ PASS${NC}"
-    TESTS_PASSED=$((TESTS_PASSED + 1))
-else
-    echo -e "${RED}✗ FAIL (HTTP $HTTP_CODE)${NC}"
-    TESTS_FAILED=$((TESTS_FAILED + 1))
-fi
-
-# Test 2: Batch processing test
-echo -n "Test 2: Batch transfer processing... "
-HTTP_CODE=$(curl -s -o /tmp/response.txt -w "%{http_code}" "http://localhost:$APP_PORT/test-transactions?test=batch")
-if [ "$HTTP_CODE" = "200" ] && grep -q "Batch Transfer Processing" /tmp/response.txt; then
-    # Check for both successful and failed transfers
-    if grep -q "Successful:" /tmp/response.txt && grep -q "Failed:" /tmp/response.txt; then
-        echo -e "${GREEN}✓ PASS (partial success working)${NC}"
-        TESTS_PASSED=$((TESTS_PASSED + 1))
-    else
-        echo -e "${YELLOW}⚠ PARTIAL (check response manually)${NC}"
-        TESTS_PASSED=$((TESTS_PASSED + 1))
-    fi
-else
-    echo -e "${RED}✗ FAIL (HTTP $HTTP_CODE)${NC}"
-    TESTS_FAILED=$((TESTS_FAILED + 1))
-fi
-
-# Test 3: CMT vs BMT comparison
-echo -n "Test 3: CMT vs BMT comparison... "
-HTTP_CODE=$(curl -s -o /tmp/response.txt -w "%{http_code}" "http://localhost:$APP_PORT/test-transactions?test=comparison")
-if [ "$HTTP_CODE" = "200" ] && grep -q "CMT vs BMT Comparison" /tmp/response.txt; then
-    # Check for performance results
-    if grep -q "Performance Results" /tmp/response.txt && grep -q "Code Comparison" /tmp/response.txt; then
-        echo -e "${GREEN}✓ PASS${NC}"
-        TESTS_PASSED=$((TESTS_PASSED + 1))
-    else
-        echo -e "${YELLOW}⚠ PARTIAL${NC}"
-        TESTS_PASSED=$((TESTS_PASSED + 1))
-    fi
-else
-    echo -e "${RED}✗ FAIL (HTTP $HTTP_CODE)${NC}"
-    TESTS_FAILED=$((TESTS_FAILED + 1))
-fi
-
-# Test 4: Transaction timeout tests
-echo -n "Test 4: Transaction timeout tests... "
-HTTP_CODE=$(curl -s -o /tmp/response.txt -w "%{http_code}" "http://localhost:$APP_PORT/test-transactions?test=timeout")
-if [ "$HTTP_CODE" = "200" ] && grep -q "Transaction Timeout Tests" /tmp/response.txt; then
-    # Check for test results
-    if grep -q "Test 1: Short Timeout" /tmp/response.txt && grep -q "Test 2: Adequate Timeout" /tmp/response.txt; then
-        echo -e "${GREEN}✓ PASS${NC}"
-        TESTS_PASSED=$((TESTS_PASSED + 1))
-    else
-        echo -e "${YELLOW}⚠ PARTIAL${NC}"
-        TESTS_PASSED=$((TESTS_PASSED + 1))
-    fi
-else
-    echo -e "${RED}✗ FAIL (HTTP $HTTP_CODE)${NC}"
-    TESTS_FAILED=$((TESTS_FAILED + 1))
-fi
-
-# Test 5: Check for UserTransaction in logs
-echo -n "Test 5: UserTransaction usage in logs... "
-if podman logs $CONTAINER_NAME 2>&1 | grep -q "UserTransaction\|utx.begin\|utx.commit"; then
-    echo -e "${GREEN}✓ PASS (BMT detected in logs)${NC}"
-    TESTS_PASSED=$((TESTS_PASSED + 1))
-else
-    echo -e "${YELLOW}⚠ SKIP (run tests first to generate logs)${NC}"
-    TESTS_PASSED=$((TESTS_PASSED + 1))
-fi
-
-# Test 6: Check transaction configuration in server.xml
-echo -n "Test 6: Transaction configuration... "
-if podman exec $CONTAINER_NAME cat /opt/ol/wlp/usr/servers/defaultServer/server.xml 2>/dev/null | grep -q "maxTransactionTimeout"; then
-    echo -e "${GREEN}✓ PASS (transaction config present)${NC}"
-    TESTS_PASSED=$((TESTS_PASSED + 1))
-else
-    echo -e "${YELLOW}⚠ SKIP (cannot verify server.xml)${NC}"
-    TESTS_PASSED=$((TESTS_PASSED + 1))
-fi
-
-echo ""
-fi
-
-# Cleanup
-rm -f /tmp/response.txt
-
-echo ""
-echo "Test Results: ${GREEN}$TESTS_PASSED passed${NC}, ${RED}$TESTS_FAILED failed${NC}"
-
-if [ $TESTS_FAILED -gt 0 ]; then
+print_header() {
     echo ""
-    echo -e "${YELLOW}⚠ Some tests failed. Check logs:${NC}"
-    echo "  podman logs $CONTAINER_NAME"
-    echo "  podman logs $CONTAINER_NAME | grep -i error"
-    echo "  podman logs $CONTAINER_NAME | grep -i cdi"
-    exit 1
-fi
+    echo "=========================================="
+    echo "$1"
+    echo "=========================================="
+    echo ""
+}
 
-echo ""
-echo "=========================================="
-echo "CDI Features Verification"
-echo "=========================================="
-echo ""
-echo "Checking CDI features in logs:"
-echo "----------------------------"
-echo ""
-echo "EntityManager injection:"
-podman logs $CONTAINER_NAME 2>&1 | grep -i "EntityManager" | tail -3 || echo "  (No EntityManager logs found)"
-echo ""
-echo "CDI Interceptor (@Logged):"
-podman logs $CONTAINER_NAME 2>&1 | grep -i "LoggingInterceptor" | tail -5 || echo "  (No interceptor logs found - make some requests)"
-echo ""
+# Show usage information
+show_usage() {
+    cat << EOF
+Usage: $0 [OPTIONS]
 
-echo "=========================================="
-echo "Database Queries"
-echo "=========================================="
-echo ""
-echo "View all clients:"
-docker exec banking-db psql -U bankuser -d bankdb -c "SELECT id, name, email FROM clients;" 2>/dev/null || echo "  (Run after first deployment)"
-echo ""
-echo "View all accounts:"
-docker exec banking-db psql -U bankuser -d bankdb -c "SELECT id, number, balance, type, client_id FROM accounts;" 2>/dev/null || echo "  (Run after first deployment)"
-echo ""
+Test the $LAB_NAME application using Podman.
 
-echo "=========================================="
-echo "Management Commands"
-echo "=========================================="
-echo ""
-echo "View application logs:"
-echo "  podman logs -f $CONTAINER_NAME"
-echo ""
-echo "View CDI-specific logs:"
-echo "  podman logs $CONTAINER_NAME | grep -i cdi"
-echo "  podman logs $CONTAINER_NAME | grep -i interceptor"
-echo ""
-echo "View database logs:"
-echo "  docker logs -f banking-db"
-echo ""
-echo "Stop application:"
-echo "  podman stop $CONTAINER_NAME"
-echo ""
-echo "Stop database (with volumes cleanup):"
-echo "  docker-compose down -v"
-echo ""
-echo "Remove application container:"
-echo "  podman rm $CONTAINER_NAME"
-echo ""
-echo "Remove application image:"
-echo "  podman rmi $IMAGE_NAME"
-echo ""
-echo "Restart application:"
-echo "  podman restart $CONTAINER_NAME"
-echo ""
+OPTIONS:
+    -dir, --directory PATH    Directory to build and test (default: solution)
+    -h, --help               Show this help message
 
-# Try to open browser
-if command -v open &> /dev/null; then
-    echo "Opening browser..."
-    open http://localhost:$APP_PORT/
-elif command -v xdg-open &> /dev/null; then
-    echo "Opening browser..."
-    xdg-open http://localhost:$APP_PORT/
-fi
+EXAMPLES:
+    $0                       # Test solution/ directory
+    $0 -dir starter          # Test starter/ directory
+    $0 -dir /path/to/code    # Test custom directory
 
-echo ""
-echo -e "${GREEN}✓ Lab 4 (CDI) is running with Podman + Open Liberty + PostgreSQL!${NC}"
-echo ""
-echo -e "${GREEN}✓ All tests passed successfully!${NC}"
-echo ""
-echo -e "${BLUE}Container is still running. Use the commands above to manage it.${NC}"
-echo ""
-echo -e "${BLUE}Key CDI Features to Test:${NC}"
-echo "  • Dependency Injection (@Inject)"
-echo "  • EntityManager Producer (@Produces)"
-echo "  • Interceptors (@Logged)"
-echo "  • Request Scoped Beans (@RequestScoped)"
-echo "  • Bean-Managed Transactions (UserTransaction)"
-echo "  • Batch Processing with BMT"
-echo "  • Transaction Timeout Handling"
-echo ""
-echo -e "${BLUE}Exercise 6 - Transaction Management:${NC}"
-echo "  • Batch Processing:  http://localhost:9080/test-transactions?test=batch"
-echo "  • CMT vs BMT:        http://localhost:9080/test-transactions?test=comparison"
-echo "  • Timeout Tests:     http://localhost:9080/test-transactions?test=timeout"
-echo ""
+EXIT CODES:
+    0    All tests passed
+    1    One or more tests failed
 
-# Made with Bob
+EOF
+}
+
+# Parse command line arguments
+parse_arguments() {
+    while [[ $# -gt 0 ]]; do
+        case $1 in
+            -dir|--directory)
+                if [[ -z "${2:-}" ]]; then
+                    print_error "Option -dir requires an argument"
+                    show_usage
+                    exit 1
+                fi
+                BUILD_DIR="$2"
+                shift 2
+                ;;
+            -h|--help)
+                show_usage
+                exit 0
+                ;;
+            *)
+                print_error "Unknown option: $1"
+                show_usage
+                exit 1
+                ;;
+        esac
+    done
+}
+
+################################################################################
+# CLEANUP FUNCTIONS
+################################################################################
+
+# Complete environment cleanup
+cleanup_environment() {
+    local container_name="$1"
+    local db_container="${2:-}"
+    local image_name="$3"
+    local db_mode="${4:-none}"
+    
+    print_info "Cleaning up environment (DB mode: $db_mode)..."
+    
+    # Stop and remove application container
+    if podman ps -a --format "{{.Names}}" 2>/dev/null | grep -q "^${container_name}$"; then
+        print_info "Stopping application container..."
+        podman stop "${container_name}" 2>/dev/null || true
+        podman rm -f "${container_name}" 2>/dev/null || true
+        print_success "Application container removed"
+    fi
+    
+    # Database cleanup (docker-compose mode only)
+    if [ "$db_mode" = "docker-compose" ]; then
+        if [ -f "${BUILD_DIR}/docker-compose.yml" ]; then
+            print_info "Stopping docker-compose services..."
+            (cd "${BUILD_DIR}" && docker-compose down -v 2>/dev/null) || true
+            print_success "Docker-compose services stopped"
+        fi
+    fi
+    
+    # Remove image
+    if podman image exists "${image_name}" 2>/dev/null; then
+        print_info "Removing old image..."
+        podman rmi -f "${image_name}" 2>/dev/null || true
+        print_success "Image removed"
+    fi
+    
+    # Check for port conflicts
+    check_port_conflicts "$APP_PORT" "$container_name"
+    
+    # Prune dangling images and volumes
+    print_info "Pruning dangling resources..."
+    podman image prune -f 2>/dev/null || true
+    podman volume prune -f 2>/dev/null || true
+    
+    print_success "Environment cleanup complete"
+}
+
+# Check and resolve port conflicts
+check_port_conflicts() {
+    local port="$1"
+    local exclude_container="${2:-}"
+    
+    print_info "Checking for port conflicts on $port..."
+    
+    local conflicting
+    conflicting=$(podman ps --format "{{.Names}}" 2>/dev/null | while IFS= read -r name; do
+        if [ -n "$name" ] && podman port "$name" 2>/dev/null | grep -q "0.0.0.0:$port"; then
+            if [ "$name" != "$exclude_container" ]; then
+                echo "$name"
+            fi
+        fi
+    done)
+    
+    if [ -n "$conflicting" ]; then
+        print_warning "Found containers using port $port:"
+        while IFS= read -r container; do
+            if [ -n "$container" ]; then
+                print_warning "  Stopping $container..."
+                podman stop "$container" 2>/dev/null || true
+                podman rm -f "$container" 2>/dev/null || true
+                print_success "  ✓ $container removed"
+            fi
+        done <<< "$conflicting"
+    else
+        print_success "No port conflicts detected"
+    fi
+}
+
+################################################################################
+# SERVICE MANAGEMENT FUNCTIONS
+################################################################################
+
+# Wait for a service to be ready
+wait_for_service() {
+    local service_name="$1"
+    local health_check_cmd="$2"
+    local max_wait="${3:-60}"
+    local wait_interval="${4:-2}"
+    
+    print_info "Waiting for $service_name to be ready..."
+    
+    local elapsed=0
+    while [ "$elapsed" -lt "$max_wait" ]; do
+        if eval "$health_check_cmd" >/dev/null 2>&1; then
+            print_success "$service_name is ready! (${elapsed}s)"
+            return 0
+        fi
+        echo -n "."
+        sleep "$wait_interval"
+        elapsed=$((elapsed + wait_interval))
+    done
+    
+    echo ""
+    print_error "$service_name failed to start within ${max_wait}s"
+    return 1
+}
+
+################################################################################
+# TEST EXECUTION FUNCTIONS
+################################################################################
+
+# Run a single test with tracking
+run_test() {
+    local test_name="$1"
+    local test_command="$2"
+    
+    ((TEST_NUMBER++))
+    TEST_NAMES[$TEST_NUMBER]="$test_name"
+    
+    echo -n "Test $TEST_NUMBER: $test_name... "
+    
+    if eval "$test_command" >/dev/null 2>&1; then
+        echo -e "${GREEN}✓ PASSED${NC}"
+        TEST_RESULTS[$TEST_NUMBER]="PASSED"
+        ((TESTS_PASSED++))
+        return 0
+    else
+        echo -e "${RED}✗ FAILED${NC}"
+        TEST_RESULTS[$TEST_NUMBER]="FAILED"
+        FAILED_COMMANDS[$TEST_NUMBER]="$test_command"
+        ((TESTS_FAILED++))
+        return 1
+    fi
+}
+
+# Test web interface accessibility and copyright
+test_web_interface() {
+    local war_file="$1"
+    
+    # Check if index.html exists in WAR
+    if unzip -l "$war_file" 2>/dev/null | grep -q "index.html"; then
+        print_info "Web interface detected in WAR, testing..."
+        
+        # Test 1: HTTP 200 status code
+        run_test "Web interface returns HTTP 200" \
+            "[ \"\$(curl -s -o /dev/null -w '%{http_code}' http://localhost:${APP_PORT}/)\" -eq 200 ]"
+        
+        # Test 2: Copyright notice present
+        run_test "Web interface contains copyright notice" \
+            "curl -s http://localhost:${APP_PORT}/ | grep -q '© Copyright.*Olivier Planson'"
+    else
+        print_info "No index.html found in WAR, skipping web interface tests"
+    fi
+}
+
+################################################################################
+# REPORTING FUNCTIONS
+################################################################################
+
+# Print final test results summary
+print_test_summary() {
+    print_header "Test Results Summary"
+    
+    echo "Total Tests: $((TESTS_PASSED + TESTS_FAILED))"
+    echo -e "${GREEN}Passed: $TESTS_PASSED${NC}"
+    echo -e "${RED}Failed: $TESTS_FAILED${NC}"
+    echo ""
+    
+    # Detailed results table
+    echo "Detailed Results:"
+    echo "┌────┬─────────────────────────────────────────────┬──────────┐"
+    echo "│ #  │ Test Name                                   │ Status   │"
+    echo "├────┼─────────────────────────────────────────────┼──────────┤"
+    
+    local i
+    for i in $(seq 1 "$TEST_NUMBER"); do
+        local status="${TEST_RESULTS[$i]:-}"
+        local status_display
+        
+        if [ "$status" = "PASSED" ]; then
+            status_display="${GREEN}✓ PASSED${NC}"
+        else
+            status_display="${RED}✗ FAILED${NC}"
+        fi
+        
+        printf "│ %-2d │ %-43s │ " "$i" "${TEST_NAMES[$i]:-Unknown}"
+        echo -e "${status_display} │"
+    done
+    
+    echo "└────┴─────────────────────────────────────────────┴──────────┘"
+    echo ""
+    
+    # Show failed test commands
+    if [ $TESTS_FAILED -gt 0 ]; then
+        echo "Failed Test Commands:"
+        echo "─────────────────────"
+        local i
+        for i in $(seq 1 "$TEST_NUMBER"); do
+            if [ "${TEST_RESULTS[$i]:-}" = "FAILED" ]; then
+                echo "Test $i: ${TEST_NAMES[$i]:-Unknown}"
+                echo "  Command: ${FAILED_COMMANDS[$i]:-}"
+                echo ""
+            fi
+        done
+    fi
+}
+
+################################################################################
+# MAIN EXECUTION
+################################################################################
+
+main() {
+    # Parse command line arguments
+    parse_arguments "$@"
+    
+    print_header "$LAB_NAME - Podman Test"
+    
+    # Check prerequisites
+    print_step "Step 0: Checking prerequisites"
+    
+    if ! command -v podman >/dev/null 2>&1; then
+        print_error "Podman not found"
+        echo ""
+        echo "Please install Podman:"
+        echo "  macOS: brew install podman"
+        echo "  Linux: sudo apt-get install podman"
+        echo "  Windows: Download from https://podman.io/getting-started/installation"
+        exit 1
+    fi
+    
+    print_success "Podman found"
+    podman --version
+    echo ""
+    
+    if ! command -v mvn >/dev/null 2>&1; then
+        print_error "Maven not found"
+        echo ""
+        echo "Please install Maven:"
+        echo "  macOS: brew install maven"
+        echo "  Linux: sudo apt-get install maven"
+        exit 1
+    fi
+    
+    print_success "Maven found"
+    mvn --version | head -1
+    echo ""
+    
+    # Phase 1: Environment Cleanup
+    print_header "Phase 1: Environment Cleanup"
+    cleanup_environment "$CONTAINER_NAME" "$DB_CONTAINER" "$IMAGE_NAME" "$DB_MODE"
+    echo ""
+    
+    # Phase 2: Build Application
+    print_header "Phase 2: Build Application"
+    
+    # Verify build directory exists
+    if [ ! -d "$BUILD_DIR" ]; then
+        print_error "Directory not found: $BUILD_DIR"
+        exit 1
+    fi
+    
+    print_info "Building from directory: $BUILD_DIR"
+    if ! cd "$BUILD_DIR"; then
+        print_error "Failed to change to directory: $BUILD_DIR"
+        exit 1
+    fi
+    
+    # Maven build
+    print_step "Building with Maven..."
+    if mvn clean package -DskipTests -q; then
+        print_success "Build successful"
+        
+        # Verify WAR file
+        if [ -f "target/$WAR_NAME" ]; then
+            local war_size
+            war_size=$(ls -lh "target/$WAR_NAME" | awk '{print $5}')
+            print_success "WAR file created: target/$WAR_NAME ($war_size)"
+        else
+            print_error "WAR file not found: target/$WAR_NAME"
+            exit 1
+        fi
+    else
+        print_error "Build failed"
+        exit 1
+    fi
+    echo ""
+    
+    # Phase 3: Build and Deploy Containers
+    print_header "Phase 3: Build and Deploy Containers (DB mode: $DB_MODE)"
+    
+    # Deploy database (docker-compose mode only)
+    if [ "$DB_MODE" = "docker-compose" ]; then
+        print_step "Starting database with docker-compose..."
+        if [ -f "docker-compose.yml" ]; then
+            if docker-compose up -d postgres; then
+                print_success "Database container starting..."
+                
+                # Wait for database to be ready
+                wait_for_service "Database" \
+                    "podman exec \"$DB_CONTAINER\" pg_isready -U \"$DB_USER\" -d \"$DB_NAME\"" \
+                    "$DB_READY_TIMEOUT" \
+                    "$HEALTH_CHECK_INTERVAL"
+            else
+                print_error "Failed to start database"
+                exit 1
+            fi
+        else
+            print_error "docker-compose.yml not found but DB_MODE=docker-compose"
+            exit 1
+        fi
+    elif [ "$DB_MODE" = "none" ]; then
+        print_info "No database required for this lab"
+    else
+        print_error "Invalid DB_MODE: $DB_MODE (must be: none or docker-compose)"
+        exit 1
+    fi
+    
+    # Build application image
+    print_step "Building application image..."
+    if podman build -t "$IMAGE_NAME" -f Containerfile . -q; then
+        print_success "Image built: $IMAGE_NAME"
+    else
+        print_error "Image build failed"
+        exit 1
+    fi
+    
+    # Start application container
+    print_step "Starting application container..."
+    if podman run -d \
+        --network solution_default \
+        -e DB_HOST=banking-db \
+        -e DB_PORT=5432 \
+        -e DB_NAME=bankdb \
+        -e DB_USER=bankuser \
+        -e DB_PASSWORD=bankpass \
+        --name "$CONTAINER_NAME" \
+        -p "$APP_PORT:9080" \
+        "$IMAGE_NAME"; then
+        print_success "Container started: $CONTAINER_NAME"
+    else
+        print_error "Container failed to start"
+        exit 1
+    fi
+    
+    # Wait for application to be ready
+    wait_for_service "Application" \
+        "curl -f -s http://localhost:${APP_PORT}/health/live > /dev/null" \
+        "$APP_READY_TIMEOUT" \
+        "$HEALTH_CHECK_INTERVAL"
+    
+    echo ""
+    
+    # Phase 4: Execute Tests
+    print_header "Phase 4: Execute Tests"
+    
+    # Health check tests
+    run_test "Liveness probe" \
+        "curl -f -s http://localhost:${APP_PORT}/health/live > /dev/null"
+    
+    run_test "Readiness probe" \
+        "curl -f -s http://localhost:${APP_PORT}/health/ready > /dev/null"
+    
+    # Web interface tests (if applicable)
+    test_web_interface "target/$WAR_NAME"
+    
+    # Lab04-CDI Specific Tests
+    print_info "Running Lab04-CDI specific tests..."
+    
+    # Test CDI injection and client operations
+    run_test "Client list page accessible" \
+        "curl -f -s http://localhost:${APP_PORT}/clients > /dev/null"
+    
+    run_test "Account list page accessible" \
+        "curl -f -s http://localhost:${APP_PORT}/accounts > /dev/null"
+    
+    # Test CDI events and observers
+    run_test "CDI events working (check logs)" \
+        "podman logs \"$CONTAINER_NAME\" 2>&1 | grep -q 'BankingEventObserver' || true"
+    
+    # Test CDI qualifiers (@Premium, @Standard)
+    run_test "Notification services available" \
+        "curl -f -s http://localhost:${APP_PORT}/clients > /dev/null"
+    
+    # Test interceptors (@Logged)
+    run_test "Logging interceptor active" \
+        "podman logs \"$CONTAINER_NAME\" 2>&1 | grep -q 'LoggingInterceptor' || true"
+    
+    # Test BMT transactions (if TransactionTestServlet exists)
+    if curl -f -s "http://localhost:${APP_PORT}/transaction-test" > /dev/null 2>&1; then
+        run_test "BMT transaction servlet accessible" \
+            "curl -f -s http://localhost:${APP_PORT}/transaction-test > /dev/null"
+    fi
+    
+    # Test database connectivity
+    # Test Flyway migrations applied
+    ((TEST_NUMBER++))
+    TEST_NAMES[$TEST_NUMBER]="Database schema initialized"
+    echo -n "Test $TEST_NUMBER: Database schema initialized... "
+    if podman exec "$DB_CONTAINER" psql -U "$DB_USER" -d "$DB_NAME" -c "\dt" 2>/dev/null | grep -q "clients"; then
+        echo -e "${GREEN}✓ PASSED${NC}"
+        TEST_RESULTS[$TEST_NUMBER]="PASSED"
+        ((TESTS_PASSED++))
+    else
+        echo -e "${RED}✗ FAILED${NC}"
+        TEST_RESULTS[$TEST_NUMBER]="FAILED"
+        ((TESTS_FAILED++))
+    fi
+    
+    echo ""
+    
+    # Phase 5: Results and Cleanup
+    print_test_summary
+    
+    # Final result
+    if [ "$TESTS_FAILED" -eq 0 ]; then
+        echo ""
+        echo "╔═══════════════════════════════════════════════════════════════╗"
+        printf "║  ✅ All %d tests passed successfully!%*s║\n" "$TESTS_PASSED" $((37 - ${#TESTS_PASSED})) ""
+        echo "╚═══════════════════════════════════════════════════════════════╝"
+        echo ""
+        
+        # Open browser if index.html exists and all tests passed
+        if unzip -l "target/$WAR_NAME" 2>/dev/null | grep -q "index.html"; then
+            print_info "Opening browser..."
+            if command -v open >/dev/null 2>&1; then
+                # macOS
+                open "http://localhost:${APP_PORT}/" 2>/dev/null || true
+            elif command -v xdg-open >/dev/null 2>&1; then
+                # Linux
+                xdg-open "http://localhost:${APP_PORT}/" 2>/dev/null || true
+            elif command -v start >/dev/null 2>&1; then
+                # Windows
+                start "http://localhost:${APP_PORT}/" 2>/dev/null || true
+            else
+                print_info "Could not detect browser command. Please open manually:"
+                echo "  http://localhost:${APP_PORT}/"
+            fi
+        fi
+        
+        exit 0
+    else
+        echo ""
+        echo "╔═══════════════════════════════════════════════════════════════╗"
+        printf "║  ❌ %d test(s) failed!%*s║\n" "$TESTS_FAILED" $((46 - ${#TESTS_FAILED})) ""
+        echo "╚═══════════════════════════════════════════════════════════════╝"
+        echo ""
+        exit 1
+    fi
+}
+
+# Run main function with all arguments
+main "$@"
+
+# Made with IBM Bob

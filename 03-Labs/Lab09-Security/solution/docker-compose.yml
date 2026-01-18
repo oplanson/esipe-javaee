@@ -1,16 +1,12 @@
 # © Copyright 2026 Olivier Planson. All rights reserved. Reproduction prohibited. Made with IBM Bob.
-
-version: '3.8'
-
 services:
-  # PostgreSQL Database
   postgres:
     image: postgres:16-alpine
     container_name: bank-security-db
     environment:
-      POSTGRES_DB: bankdb
       POSTGRES_USER: bankuser
       POSTGRES_PASSWORD: bankpass
+      POSTGRES_DB: bankdb
     ports:
       - "5432:5432"
     volumes:
@@ -20,41 +16,8 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
-    networks:
-      - bank-network
-
-  # Bank Security Application
-  app:
-    build:
-      context: .
-      dockerfile: Containerfile
-    container_name: bank-security-app
-    environment:
-      DB_HOST: postgres
-      DB_PORT: 5432
-      DB_NAME: bankdb
-      DB_USER: bankuser
-      DB_PASSWORD: bankpass
-    ports:
-      - "9080:9080"
-      - "9443:9443"
-    depends_on:
-      postgres:
-        condition: service_healthy
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:9080/health/live"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
-      start_period: 60s
-    networks:
-      - bank-network
 
 volumes:
   postgres-data:
-
-networks:
-  bank-network:
-    driver: bridge
 
 # Made with Bob
