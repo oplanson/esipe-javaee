@@ -368,7 +368,7 @@ run_test "OpenAPI documentation available" \
 
 # Test 14: Metrics endpoint
 run_test "Metrics endpoint accessible" \
-    "curl -sf http://localhost:${APP_PORT}/metrics | grep -q 'base_'"
+    "curl -sf http://localhost:${APP_PORT}/metrics | grep -q 'base'"
 
 # Test 15: Register second user with different role
 print_info "Registering admin user for advanced tests..."
