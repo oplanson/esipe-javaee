@@ -35,10 +35,10 @@ COPY --chown=1001:0 --from=builder /build/target/banking-ejb-app.war /config/app
 RUN configure.sh
 
 # Expose ports
-EXPOSE 9080 9443
+EXPOSE 9081 9444
 
 # Health check
 HEALTHCHECK --interval=30s --timeout=10s --start-period=60s --retries=3 \
-  CMD curl -f http://localhost:9080/health || exit 1
+  CMD curl -f http://localhost:9081/health || exit 1
 
 # Made with Bob

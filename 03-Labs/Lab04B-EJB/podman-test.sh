@@ -496,8 +496,8 @@ main() {
     # Start application container
     print_step "Starting application container..."
     if podman run -d \
-        --network solution_default \
-        -e DB_HOST=banking-db \
+        --network solution_banking-network \
+        -e DB_HOST=postgres \
         -e DB_PORT=5432 \
         -e DB_NAME=bankingdb \
         -e DB_USER=bankuser \
@@ -535,17 +535,17 @@ main() {
     # Lab04B-EJB Specific Tests
     print_info "Running Lab04B-EJB specific tests..."
     
-    # Test EJB operations via servlet
-    run_test "Banking servlet accessible" \
-        "curl -f -s http://localhost:${APP_PORT}/banking > /dev/null"
+    # Test EJB operations via servlet (with authentication)
+    run_test "Banking servlet accessible (with auth)" \
+        "curl -f -s -u admin:admin123 http://localhost:${APP_PORT}/banking > /dev/null"
     
     # Test stateless session bean (AccountServiceBean)
     run_test "Account operations available" \
-        "curl -s http://localhost:${APP_PORT}/banking | grep -q 'Account' || true"
+        "curl -s -u admin:admin123 http://localhost:${APP_PORT}/banking | grep -q 'Account' || true"
     
     # Test singleton session bean (ConfigServiceBean)
     run_test "Configuration service available" \
-        "curl -s http://localhost:${APP_PORT}/banking | grep -q 'Config' || true"
+        "curl -s -u admin:admin123 http://localhost:${APP_PORT}/banking | grep -q 'Config' || true"
     
     # Test timer service (ReportGeneratorBean)
     run_test "Timer service active (check logs)" \

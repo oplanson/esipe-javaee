@@ -44,7 +44,7 @@ public class Account {
     @Column(nullable = false, precision = 19, scale = 2)
     private BigDecimal balance;
     
-    @Column(nullable = false, length = 20)
+    @Column(name = "account_type", nullable = false, length = 20)
     @Enumerated(EnumType.STRING)
     private AccountType type;
     
