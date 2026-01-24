@@ -72,8 +72,9 @@ By completing this lab, you will be able to:
 
 ```
 ┌─────────────────────────────────────────────────────────┐
-│                      API Gateway                         │
-│                    (Port 9080)                          │
+│                   API Gateway                            │
+│                  (Port 9080)                             │
+│  ← Application principale                                │
 │  - Request routing                                       │
 │  - Response aggregation                                  │
 │  - Authentication (basic)                                │
@@ -97,8 +98,19 @@ By completing this lab, you will be able to:
     │  PostgreSQL     │        │   PostgreSQL    │
     │ banking_client  │        │ banking_account │
     │      _db        │        │      _db        │
+    │   (Port 5433)   │        │   (Port 5434)   │
     └─────────────────┘        └─────────────────┘
 ```
+
+### Architecture de déploiement
+
+L'**API Gateway** (port 9080) est l'application principale et le point d'entrée unique pour tous les clients. Elle route les requêtes vers les microservices appropriés et agrège les réponses.
+
+**Flux de communication:**
+1. Client → API Gateway (9080)
+2. API Gateway → Client Service (9081) ou Account Service (9082)
+3. Account Service → Client Service (9081) pour validation
+4. Services → Bases de données respectives
 
 ### Service Responsibilities
 

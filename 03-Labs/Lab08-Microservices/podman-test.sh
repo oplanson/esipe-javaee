@@ -36,9 +36,9 @@ set -o nounset
 LAB_NAME="Lab 08 - Microservices Architecture"
 LAB_NUMBER="08"
 
-# Container configuration
-IMAGE_NAME="banking-microservices-lab08"
-CONTAINER_NAME="banking-microservices-lab08"
+# Container configuration - API Gateway is the main application
+IMAGE_NAME="banking-api-gateway-lab08"
+CONTAINER_NAME="banking-api-gateway-lab08"
 APP_PORT=9080
 
 # Database deployment mode (choose one):
@@ -178,15 +178,19 @@ cleanup_environment() {
     local image_name="$3"
     local db_mode="${4:-none}"
     
-    print_info "Cleaning up environment (DB mode: $db_mode)..."
+    print_info "Cleaning up Lab08 microservices environment (DB mode: $db_mode)..."
     
-    # Stop and remove application container
-    if podman ps -a --format "{{.Names}}" 2>/dev/null | grep -q "^${container_name}$"; then
-        print_info "Stopping application container..."
-        podman stop "${container_name}" 2>/dev/null || true
-        podman rm -f "${container_name}" 2>/dev/null || true
-        print_success "Application container removed"
-    fi
+    # Stop and remove all Lab08 microservice containers
+    local lab08_containers=("banking-client-service-lab08" "banking-account-service-lab08" "banking-api-gateway-lab08")
+    
+    for container in "${lab08_containers[@]}"; do
+        if podman ps -a --format "{{.Names}}" 2>/dev/null | grep -q "^${container}$"; then
+            print_info "Stopping $container..."
+            podman stop "${container}" 2>/dev/null || true
+            podman rm -f "${container}" 2>/dev/null || true
+            print_success "$container removed"
+        fi
+    done
     
     # Database cleanup (docker-compose mode only)
     if [ "$db_mode" = "docker-compose" ]; then
@@ -197,15 +201,31 @@ cleanup_environment() {
         fi
     fi
     
-    # Remove image
-    if podman image exists "${image_name}" 2>/dev/null; then
-        print_info "Removing old image..."
-        podman rmi -f "${image_name}" 2>/dev/null || true
-        print_success "Image removed"
+    # Remove network if exists
+    local network_name="lab08-network"
+    if podman network exists "$network_name" 2>/dev/null; then
+        print_info "Removing network $network_name..."
+        podman network rm "$network_name" 2>/dev/null || true
+        print_success "Network removed"
     fi
     
-    # Check for port conflicts
-    check_port_conflicts "$APP_PORT" "$container_name"
+    # Remove all Lab08 images
+    local lab08_images=("banking-client-service-lab08" "banking-account-service-lab08" "banking-api-gateway-lab08")
+    
+    for image in "${lab08_images[@]}"; do
+        if podman image exists "${image}" 2>/dev/null; then
+            print_info "Removing image $image..."
+            podman rmi -f "${image}" 2>/dev/null || true
+        fi
+    done
+    print_success "All Lab08 images removed"
+    
+    # Check for port conflicts on all microservice ports
+    local microservice_ports=("9080" "9081" "9082")
+    
+    for port in "${microservice_ports[@]}"; do
+        check_port_conflicts "$port" ""
+    done
     
     # Prune dangling images and volumes
     print_info "Pruning dangling resources..."
@@ -463,6 +483,28 @@ main() {
         fi
         
         if mvn clean package -DskipTests -q; then
+            # Special handling for api-gateway: build and copy root-redirect AFTER main build
+            if [ "$service" = "api-gateway" ] && [ -d "root-redirect" ]; then
+                print_info "Building root-redirect submodule..."
+                # Build in subshell but check result in parent shell
+                if (cd root-redirect && mvn clean package -DskipTests -q); then
+                    # Copy root-redirect WAR to parent target directory for Containerfile
+                    local root_redirect_war="root-redirect/target/root-redirect-1.0.0.war"
+                    if [ -f "$root_redirect_war" ]; then
+                        cp "$root_redirect_war" target/
+                        print_success "root-redirect submodule built and copied to target/"
+                        print_info "WAR files in target/:"
+                        ls -lh target/*.war 2>/dev/null
+                    else
+                        print_warning "root-redirect WAR not found at: $root_redirect_war"
+                        print_info "Contents of root-redirect/target/:"
+                        ls -la root-redirect/target/ 2>/dev/null || print_error "Directory not found"
+                    fi
+                else
+                    print_warning "root-redirect submodule build failed (non-critical)"
+                fi
+            fi
+            
             # Find WAR file in target directory
             local war_file
             war_file=$(find target -name "*.war" -type f 2>/dev/null | head -1)
@@ -495,18 +537,24 @@ main() {
     
     # Deploy database (docker-compose mode only)
     if [ "$DB_MODE" = "docker-compose" ]; then
-        print_step "Starting database with docker-compose..."
+        print_step "Starting databases with docker-compose..."
         if [ -f "docker-compose.yml" ]; then
             if docker-compose up -d; then
-                print_success "Database container starting..."
+                print_success "Database containers starting..."
                 
-                # Wait for database to be ready
-                wait_for_service "Database" \
-                    "podman exec \"$DB_CONTAINER\" pg_isready -U \"$DB_USER\" -d \"$DB_NAME\"" \
+                # Wait for each database to be ready
+                # Lab08 has 2 databases: client-db and account-db
+                wait_for_service "Client Database" \
+                    "podman exec \"banking-client-db\" pg_isready -U \"$DB_USER\" -d \"banking_client_db\"" \
+                    "$DB_READY_TIMEOUT" \
+                    "$HEALTH_CHECK_INTERVAL"
+                
+                wait_for_service "Account Database" \
+                    "podman exec \"banking-account-db\" pg_isready -U \"$DB_USER\" -d \"banking_account_db\"" \
                     "$DB_READY_TIMEOUT" \
                     "$HEALTH_CHECK_INTERVAL"
             else
-                print_error "Failed to start database"
+                print_error "Failed to start databases"
                 exit 1
             fi
         else
@@ -520,76 +568,173 @@ main() {
         exit 1
     fi
     
-    # Build application image
-    print_step "Building application image..."
-    if podman build -t "$IMAGE_NAME" -f Containerfile . -q; then
-        print_success "Image built: $IMAGE_NAME"
+    # Get the network created by docker-compose
+    local network_name
+    network_name=$(podman network ls --format "{{.Name}}" | grep -E "lab08|solution" | head -1)
+    
+    if [ -z "$network_name" ]; then
+        print_warning "No docker-compose network found, creating lab08-network..."
+        network_name="lab08-network"
+        if podman network create "$network_name" 2>/dev/null; then
+            print_success "Network created: $network_name"
+        else
+            print_error "Failed to create network"
+            exit 1
+        fi
     else
-        print_error "Image build failed"
+        print_success "Using existing network: $network_name"
+    fi
+    
+    # Build and deploy each microservice container
+    local container_failed=0
+    
+    for service in "${microservices[@]}"; do
+        local service_image="banking-${service}-lab08"
+        local service_container="banking-${service}-lab08"
+        
+        # Assign ports based on service name
+        local service_port
+        case "$service" in
+            "client-service")
+                service_port="9081"
+                ;;
+            "account-service")
+                service_port="9082"
+                ;;
+            "api-gateway")
+                service_port="9080"  # Main application
+                ;;
+            *)
+                print_warning "$service: Unknown service, using default port 9090"
+                service_port="9090"
+                ;;
+        esac
+        
+        print_step "Building container image for $service..."
+        
+        if ! cd "$service"; then
+            print_error "Failed to change to directory: $service"
+            container_failed=1
+            continue
+        fi
+        
+        # Check if Containerfile exists
+        if [ ! -f "Containerfile" ]; then
+            print_error "$service: No Containerfile found"
+            container_failed=1
+            cd ..
+            continue
+        fi
+        
+        # Build image
+        if podman build -t "$service_image" -f Containerfile . -q; then
+            print_success "$service: Image built ($service_image)"
+        else
+            print_error "$service: Image build failed"
+            container_failed=1
+            cd ..
+            continue
+        fi
+        
+        # Start container with network and environment variables
+        print_step "Starting $service container on port $service_port..."
+        
+        # Set environment variables based on service
+        local env_vars=""
+        case "$service" in
+            "client-service")
+                env_vars="-e DB_HOST=banking-client-db -e DB_PORT=5432 -e DB_NAME=banking_client_db -e DB_USER=$DB_USER -e DB_PASSWORD=$DB_PASSWORD"
+                ;;
+            "account-service")
+                env_vars="-e DB_HOST=banking-account-db -e DB_PORT=5432 -e DB_NAME=banking_account_db -e DB_USER=$DB_USER -e DB_PASSWORD=$DB_PASSWORD -e CLIENT_SERVICE_URL=http://banking-client-service-lab08:9080"
+                ;;
+            "api-gateway")
+                env_vars="-e CLIENT_SERVICE_URL=http://banking-client-service-lab08:9080 -e ACCOUNT_SERVICE_URL=http://banking-account-service-lab08:9080"
+                ;;
+        esac
+        
+        if podman run -d \
+            --name "$service_container" \
+            --network "$network_name" \
+            -p "$service_port:9080" \
+            $env_vars \
+            "$service_image"; then
+            print_success "$service: Container started ($service_container)"
+        else
+            print_error "$service: Container failed to start"
+            container_failed=1
+            cd ..
+            continue
+        fi
+        
+        # Wait for service to be ready
+        wait_for_service "$service" \
+            "curl -f -s http://localhost:${service_port}/health/live > /dev/null" \
+            "$APP_READY_TIMEOUT" \
+            "$HEALTH_CHECK_INTERVAL"
+        
+        cd ..
+    done
+    
+    if [ $container_failed -eq 1 ]; then
+        print_error "One or more microservice containers failed to deploy"
         exit 1
     fi
     
-    # Start application container
-    print_step "Starting application container..."
-    if podman run -d \
-        --name "$CONTAINER_NAME" \
-        -p "$APP_PORT:9080" \
-        "$IMAGE_NAME"; then
-        print_success "Container started: $CONTAINER_NAME"
-    else
-        print_error "Container failed to start"
-        exit 1
-    fi
-    
-    # Wait for application to be ready
-    wait_for_service "Application" \
-        "curl -f -s http://localhost:${APP_PORT}/health/live > /dev/null" \
-        "$APP_READY_TIMEOUT" \
-        "$HEALTH_CHECK_INTERVAL"
+    print_success "All microservice containers deployed successfully"
     
     echo ""
     
     # Phase 4: Execute Tests
     print_header "Phase 4: Execute Tests"
     
-    # Health check tests
-    run_test "Liveness probe" \
-        "curl -f -s http://localhost:${APP_PORT}/health/live > /dev/null"
+    # Test each microservice
+    print_info "Testing individual microservices..."
     
-    run_test "Readiness probe" \
-        "curl -f -s http://localhost:${APP_PORT}/health/ready > /dev/null"
+    run_test "Client Service: Liveness probe" \
+        "curl -f -s http://localhost:9081/health/live > /dev/null"
     
-    # Web interface tests (if applicable)
-    test_web_interface "target/$WAR_NAME"
-        
-    # Lab08-Microservices Specific Tests
-    print_info "Running Lab08-Microservices specific tests..."
+    run_test "Client Service: Readiness probe" \
+        "curl -f -s http://localhost:9081/health/ready > /dev/null"
     
-    # Test microservices endpoints
-    run_test "Microservices API accessible" \
-        "curl -f -s http://localhost:${APP_PORT}/api/clients > /dev/null"
+    run_test "Account Service: Liveness probe" \
+        "curl -f -s http://localhost:9082/health/live > /dev/null"
     
-    # Test service discovery (if configured)
-    run_test "Service health endpoints" \
-        "curl -f -s http://localhost:${APP_PORT}/health > /dev/null"
+    run_test "Account Service: Readiness probe" \
+        "curl -f -s http://localhost:9082/health/ready > /dev/null"
     
-    # Test metrics endpoint
-    if curl -f -s "http://localhost:${APP_PORT}/metrics" > /dev/null 2>&1; then
-        run_test "Metrics endpoint available" \
-            "curl -f -s http://localhost:${APP_PORT}/metrics > /dev/null"
-    fi
+    # Test API Gateway (main application on port 9080)
+    print_info "Testing API Gateway (main application)..."
     
-    # Test config (MicroProfile Config)
-    run_test "MicroProfile Config active" \
-        "podman logs \"$CONTAINER_NAME\" 2>&1 | grep -q 'CWWKZ0001I' || true"
+    run_test "API Gateway: Liveness probe" \
+        "curl -f -s http://localhost:9080/health/live > /dev/null"
     
-    # Test fault tolerance (if configured)
-    run_test "Fault tolerance configured" \
-        "podman logs \"$CONTAINER_NAME\" 2>&1 | grep -q 'mpFaultTolerance' || true"
+    run_test "API Gateway: Readiness probe" \
+        "curl -f -s http://localhost:9080/health/ready > /dev/null"
+    
+    run_test "API Gateway: Root redirect (/api/ -> /web/api/)" \
+        "curl -f -s http://localhost:9080/api/clients > /dev/null"
+    
+    # Test API Gateway routing to microservices
+    print_info "Testing API Gateway routing..."
+    
+    run_test "API Gateway: Clients API routing (via redirect)" \
+        "curl -f -s -L http://localhost:9080/api/clients > /dev/null"
+    
+    run_test "API Gateway: Accounts API routing (via redirect)" \
+        "curl -f -s -L http://localhost:9080/api/accounts > /dev/null"
+    
+    run_test "API Gateway: Direct web endpoint" \
+        "curl -f -s http://localhost:9080/web/api/clients > /dev/null"
     
     # Test database connectivity
-    run_test "Database schema initialized" \
-        "podman exec \"$DB_CONTAINER\" psql -U \"$DB_USER\" -d \"$DB_NAME\" -c '\dt' | grep -q 'clients'"
+    print_info "Testing database connectivity..."
+    
+    run_test "Client DB: Schema initialized" \
+        "podman exec banking-client-db psql -U \"$DB_USER\" -d banking_client_db -c '\dt' | grep -q 'clients'"
+    
+    run_test "Account DB: Schema initialized" \
+        "podman exec banking-account-db psql -U \"$DB_USER\" -d banking_account_db -c '\dt' | grep -q 'accounts'"
 
 
 
@@ -607,22 +752,22 @@ main() {
         echo "╚═══════════════════════════════════════════════════════════════╝"
         echo ""
         
-        # Open browser if index.html exists and all tests passed
-        if unzip -l "target/$WAR_NAME" 2>/dev/null | grep -q "index.html"; then
-            print_info "Opening browser..."
-            if command -v open >/dev/null 2>&1; then
-                # macOS
-                open "http://localhost:${APP_PORT}/" 2>/dev/null || true
-            elif command -v xdg-open >/dev/null 2>&1; then
-                # Linux
-                xdg-open "http://localhost:${APP_PORT}/" 2>/dev/null || true
-            elif command -v start >/dev/null 2>&1; then
-                # Windows
-                start "http://localhost:${APP_PORT}/" 2>/dev/null || true
-            else
-                print_info "Could not detect browser command. Please open manually:"
-                echo "  http://localhost:${APP_PORT}/"
-            fi
+        # Open browser to API Gateway (main application)
+        print_info "Opening API Gateway in browser..."
+        if command -v open >/dev/null 2>&1; then
+            # macOS
+            open "http://localhost:9080/" 2>/dev/null || true
+        elif command -v xdg-open >/dev/null 2>&1; then
+            # Linux
+            xdg-open "http://localhost:9080/" 2>/dev/null || true
+        elif command -v start >/dev/null 2>&1; then
+            # Windows
+            start "http://localhost:9080/" 2>/dev/null || true
+        else
+            print_info "Could not detect browser command. Please open manually:"
+            echo "  API Gateway: http://localhost:9080/"
+            echo "  Client Service: http://localhost:9081/"
+            echo "  Account Service: http://localhost:9082/"
         fi
         
         exit 0
