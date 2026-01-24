@@ -1,0 +1,46 @@
+# © Copyright 2026 Olivier Planson. All rights reserved. Reproduction prohibited. Made with IBM Bob.
+
+# Multi-stage build for Bank Security Application
+
+# Stage 1: Build stage
+FROM maven:3.9-eclipse-temurin-21 AS builder
+
+WORKDIR /app
+
+# Copy pom.xml and download dependencies
+COPY pom.xml .
+RUN mvn dependency:go-offline -B
+
+# Copy source code
+COPY src ./src
+
+# Build application
+RUN mvn clean package -DskipTests
+
+# Stage 2: Runtime stage
+FROM icr.io/appcafe/open-liberty:full-java21-openj9-ubi-minimal
+
+# Copy Liberty configuration
+COPY --chown=1001:0 src/main/liberty/config/server.xml /config/
+COPY --chown=1001:0 src/main/liberty/config/bootstrap.properties /config/
+
+# Copy application WAR
+COPY --chown=1001:0 --from=builder /app/target/bank-security.war /config/apps/
+
+# Download PostgreSQL JDBC driver
+USER root
+RUN mkdir -p /opt/ol/wlp/usr/shared/resources/lib && \
+    curl -o /opt/ol/wlp/usr/shared/resources/lib/postgresql-42.7.1.jar \
+    https://jdbc.postgresql.org/download/postgresql-42.7.1.jar && \
+    chown -R 1001:0 /opt/ol/wlp/usr/shared/resources/lib
+USER 1001
+
+# Configure Liberty
+RUN configure.sh
+
+# Expose ports
+EXPOSE 9080 9443
+
+# Health check
+HEALTHCHECK --interval=30s --timeout=10s --start-period=60s --retries=3 \
+    CMD curl -f http://localhost:9080/health/live || exit 1
