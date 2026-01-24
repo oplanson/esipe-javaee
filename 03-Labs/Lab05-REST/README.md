@@ -272,6 +272,218 @@ Ensure your `server.xml` includes the necessary features:
 
 **Note:** `webProfile-10.0` includes JAX-RS, JSON-B, and Bean Validation.
 
+### Step 1.4: Create Root API Endpoint (Best Practice)
+
+**Why a Root Endpoint?**
+
+When accessing the root of your API (`/api`), it's a best practice to return useful information rather than a 404 error. This follows REST principles and improves developer experience.
+
+**Benefits:**
+- ✅ **API Discovery** - Clients can explore available endpoints
+- ✅ **HATEOAS** - Hypermedia As The Engine Of Application State
+- ✅ **Self-Documentation** - The API describes itself
+- ✅ **Better DX** - Clear entry point for developers
+
+#### Create ApiInfo DTO
+
+Create `src/main/java/com/bank/dto/ApiInfo.java`:
+
+```java
+package com.bank.dto;
+
+import java.time.LocalDateTime;
+import java.util.LinkedHashMap;
+import java.util.Map;
+
+/**
+ * API Information DTO for the root endpoint.
+ * Provides metadata about the API, available endpoints, and useful links.
+ * 
+ * This follows REST best practices for API discovery and HATEOAS principles.
+ * 
+ * @author Banking Application Team
+ * @version 1.0
+ * @since Lab 05
+ */
+public class ApiInfo {
+    
+    private String name;
+    private String version;
+    private String description;
+    private Map<String, String> endpoints;
+    private Map<String, String> links;
+    private LocalDateTime timestamp;
+    
+    public ApiInfo() {
+        this.timestamp = LocalDateTime.now();
+        this.endpoints = new LinkedHashMap<>();
+        this.links = new LinkedHashMap<>();
+    }
+    
+    public ApiInfo(String name, String version, String description) {
+        this();
+        this.name = name;
+        this.version = version;
+        this.description = description;
+    }
+    
+    // Getters, setters, and helper methods
+    // ... (see solution for complete implementation)
+    
+    public ApiInfo addEndpoint(String name, String url) {
+        this.endpoints.put(name, url);
+        return this;
+    }
+    
+    public ApiInfo addLink(String name, String url) {
+        this.links.put(name, url);
+        return this;
+    }
+}
+```
+
+#### Create Root Resource
+
+Create `src/main/java/com/bank/api/RootResource.java`:
+
+```java
+package com.bank.api;
+
+import com.bank.dto.ApiInfo;
+
+import jakarta.ws.rs.GET;
+import jakarta.ws.rs.Path;
+import jakarta.ws.rs.Produces;
+import jakarta.ws.rs.core.Context;
+import jakarta.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.Response;
+import jakarta.ws.rs.core.UriInfo;
+import java.util.logging.Logger;
+
+/**
+ * Root REST resource for API information.
+ * 
+ * This resource provides metadata about the API, including:
+ * - API name, version, and description
+ * - Available endpoints (API discovery)
+ * - Useful links (OpenAPI, health checks, metrics)
+ * 
+ * This follows REST best practices:
+ * - API Discovery: Clients can explore available endpoints
+ * - HATEOAS: Hypermedia As The Engine Of Application State
+ * - Self-documentation: The API describes itself
+ * 
+ * Base URL: /api
+ * 
+ * @author Banking Application Team
+ * @version 1.0
+ * @since Lab 05
+ */
+@Path("/")
+@Produces(MediaType.APPLICATION_JSON)
+public class RootResource {
+    
+    private static final Logger LOGGER = Logger.getLogger(RootResource.class.getName());
+    
+    /**
+     * Get API information.
+     * 
+     * This endpoint provides metadata about the API and available resources.
+     * It uses UriInfo to dynamically generate absolute URLs based on the
+     * current request context.
+     * 
+     * @param uriInfo JAX-RS context for building URIs
+     * @return Response containing ApiInfo with metadata and links
+     */
+    @GET
+    public Response getApiInfo(@Context UriInfo uriInfo) {
+        LOGGER.fine("API root endpoint accessed");
+        
+        // Get base URI (e.g., http://localhost:9080/api)
+        String baseUri = uriInfo.getBaseUri().toString();
+        if (baseUri.endsWith("/")) {
+            baseUri = baseUri.substring(0, baseUri.length() - 1);
+        }
+        
+        // Get root URI (e.g., http://localhost:9080)
+        String absolutePath = uriInfo.getAbsolutePath().toString();
+        String rootUri = absolutePath.substring(0, absolutePath.indexOf("/api"));
+        
+        // Build API information
+        ApiInfo apiInfo = new ApiInfo(
+            "Banking REST API",
+            "1.0.0",
+            "RESTful API for banking operations with Jakarta EE"
+        );
+        
+        // Add available endpoints
+        apiInfo.addEndpoint("clients", baseUri + "/clients")
+               .addEndpoint("accounts", baseUri + "/accounts");
+        
+        // Add useful links
+        apiInfo.addLink("openapi", rootUri + "/openapi")
+               .addLink("openapi-ui", rootUri + "/openapi/ui")
+               .addLink("health", rootUri + "/health")
+               .addLink("health-ready", rootUri + "/health/ready")
+               .addLink("health-live", rootUri + "/health/live")
+               .addLink("metrics", rootUri + "/metrics");
+        
+        LOGGER.info("API info returned with " + apiInfo.getEndpoints().size() + 
+                   " endpoints and " + apiInfo.getLinks().size() + " links");
+        
+        return Response.ok(apiInfo).build();
+    }
+}
+```
+
+#### Test Root Endpoint
+
+```bash
+# Test the root endpoint
+curl http://localhost:9080/api | jq
+
+# Expected response:
+# {
+#   "name": "Banking REST API",
+#   "version": "1.0.0",
+#   "description": "RESTful API for banking operations with Jakarta EE",
+#   "endpoints": {
+#     "clients": "http://localhost:9080/api/clients",
+#     "accounts": "http://localhost:9080/api/accounts"
+#   },
+#   "links": {
+#     "openapi": "http://localhost:9080/openapi",
+#     "openapi-ui": "http://localhost:9080/openapi/ui",
+#     "health": "http://localhost:9080/health",
+#     "health-ready": "http://localhost:9080/health/ready",
+#     "health-live": "http://localhost:9080/health/live",
+#     "metrics": "http://localhost:9080/metrics"
+#   },
+#   "timestamp": "2026-01-24T17:00:00"
+# }
+```
+
+**What this provides:**
+- **API Discovery** - Clients can find all available endpoints
+- **Dynamic URLs** - URLs are generated based on the request context
+- **Documentation Links** - Direct links to OpenAPI, health checks, and metrics
+- **Version Information** - API version for compatibility tracking
+- **Timestamp** - When the information was generated
+
+**Alternative Approaches Considered:**
+
+1. ❌ **Return 404** - Bad developer experience, no information provided
+2. ❌ **Redirect to documentation** - Loses programmatic access to endpoint list
+3. ✅ **Return API information** - Best practice, follows HATEOAS principles
+
+**Standards Followed:**
+- RESTful API Design principles
+- HATEOAS Level 2 (Richardson Maturity Model)
+- OpenAPI/Swagger integration ready
+- MicroProfile compatibility
+
+---
+
 ---
 
 ## Part 2: Client REST Resources
