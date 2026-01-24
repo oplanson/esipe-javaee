@@ -88,9 +88,12 @@ public class CompressionFilter implements Filter {
                     byte[] compressedContent = compress(content);
                     
                     // Set compression headers BEFORE writing content
-                    if (!httpResponse.isCommitted()) {
-                        httpResponse.setHeader("Content-Encoding", "gzip");
-                        httpResponse.setIntHeader("Content-Length", compressedContent.length);
+                    httpResponse.setHeader("Content-Encoding", "gzip");
+                    httpResponse.setContentLength(compressedContent.length);
+                    
+                    // Preserve content type from wrapped response
+                    if (contentType != null) {
+                        httpResponse.setContentType(contentType);
                     }
                     
                     // Write compressed content
@@ -100,6 +103,11 @@ public class CompressionFilter implements Filter {
                         content.length, compressedContent.length,
                         (1 - (double) compressedContent.length / content.length) * 100));
                 } else {
+                    // Preserve content type from wrapped response
+                    if (contentType != null) {
+                        httpResponse.setContentType(contentType);
+                    }
+                    
                     // Write original content without compression
                     httpResponse.getOutputStream().write(content);
                     
@@ -215,6 +223,32 @@ public class CompressionFilter implements Filter {
             }
             
             return writer;
+        }
+        
+        @Override
+        public void flushBuffer() throws IOException {
+            // Don't flush to prevent committing the response
+            if (writer != null) {
+                writer.flush();
+            }
+        }
+        
+        @Override
+        public void setContentLength(int len) {
+            // Don't set content length on wrapped response
+        }
+        
+        @Override
+        public void setContentLengthLong(long len) {
+            // Don't set content length on wrapped response
+        }
+        
+        @Override
+        public void setHeader(String name, String value) {
+            // Allow headers to be set on the wrapper but don't propagate
+            if (!"Content-Length".equalsIgnoreCase(name) && !"Content-Encoding".equalsIgnoreCase(name)) {
+                super.setHeader(name, value);
+            }
         }
         
         public byte[] getCapturedContent() {
