@@ -4,6 +4,7 @@
 # Strict mode for better error handling
 set -o pipefail
 set -o nounset
+#set -x
 
 ################################################################################
 # TEMPLATE: Unified Podman Test Script for Jakarta EE Labs
@@ -40,6 +41,14 @@ LAB_NUMBER="08"
 IMAGE_NAME="banking-api-gateway-lab08"
 CONTAINER_NAME="banking-api-gateway-lab08"
 APP_PORT=9080
+# Container configuration - Client Application
+CLIENT_IMAGE_NAME="banking-client-service-lab08"
+CLIENT_CONTAINER_NAME="banking-client-service-lab08"
+CLIENT_APP_PORT=9081
+# Container configuration - Account Application
+ACCOUNT_IMAGE_NAME="banking-account-service-lab08"
+ACCOUNT_CONTAINER_NAME="banking-account-service-lab08"    
+ACCOUNT_APP_PORT=9082
 
 # Database deployment mode (choose one):
 # - "none"           : No database (simple app)
@@ -62,6 +71,10 @@ WAR_NAME="banking-microservices.war"
 DB_READY_TIMEOUT=30
 APP_READY_TIMEOUT=60
 HEALTH_CHECK_INTERVAL=2
+
+lab08_containers=($CONTAINER_NAME $CLIENT_CONTAINER_NAME $ACCOUNT_CONTAINER_NAME) 
+lab08_images=($IMAGE_NAME $CLIENT_IMAGE_NAME $ACCOUNT_IMAGE_NAME)
+lab08_ports=($APP_PORT $CLIENT_APP_PORT $ACCOUNT_APP_PORT)
 
 ################################################################################
 # COLOR DEFINITIONS
@@ -181,9 +194,9 @@ cleanup_environment() {
     print_info "Cleaning up Lab08 microservices environment (DB mode: $db_mode)..."
     
     # Stop and remove all Lab08 microservice containers
-    local lab08_containers=("banking-client-service-lab08" "banking-account-service-lab08" "banking-api-gateway-lab08")
+#    local lab08_containers=("banking-client-service-lab08" "banking-account-service-lab08" "banking-api-gateway-lab08")
     
-    for container in "${lab08_containers[@]}"; do
+    for container in "${lab08_containers}[@]"; do
         if podman ps -a --format "{{.Names}}" 2>/dev/null | grep -q "^${container}$"; then
             print_info "Stopping $container..."
             podman stop "${container}" 2>/dev/null || true
@@ -210,7 +223,7 @@ cleanup_environment() {
     fi
     
     # Remove all Lab08 images
-    local lab08_images=("banking-client-service-lab08" "banking-account-service-lab08" "banking-api-gateway-lab08")
+#    local lab08_images=("banking-client-service-lab08" "banking-account-service-lab08" "banking-api-gateway-lab08")
     
     for image in "${lab08_images[@]}"; do
         if podman image exists "${image}" 2>/dev/null; then
@@ -221,9 +234,9 @@ cleanup_environment() {
     print_success "All Lab08 images removed"
     
     # Check for port conflicts on all microservice ports
-    local microservice_ports=("9080" "9081" "9082")
+#    local microservice_ports=("9080" "9081" "9082")
     
-    for port in "${microservice_ports[@]}"; do
+    for port in "${lab08_ports[@]}"; do
         check_port_conflicts "$port" ""
     done
     
@@ -596,13 +609,13 @@ main() {
         local service_port
         case "$service" in
             "client-service")
-                service_port="9081"
+                service_port=$CLIENT_APP_PORT
                 ;;
             "account-service")
-                service_port="9082"
+                service_port=$ACCOUNT_APP_PORT
                 ;;
             "api-gateway")
-                service_port="9080"  # Main application
+                service_port=$APP_PORT  # Main application
                 ;;
             *)
                 print_warning "$service: Unknown service, using default port 9090"
@@ -692,40 +705,40 @@ main() {
     print_info "Testing individual microservices..."
     
     run_test "Client Service: Liveness probe" \
-        "curl -f -s http://localhost:9081/health/live > /dev/null"
+        "curl -f -s http://localhost:$CLIENT_APP_PORT/health/live > /dev/null"
     
     run_test "Client Service: Readiness probe" \
-        "curl -f -s http://localhost:9081/health/ready > /dev/null"
+        "curl -f -s http://localhost:$CLIENT_APP_PORT/health/ready > /dev/null"
     
     run_test "Account Service: Liveness probe" \
-        "curl -f -s http://localhost:9082/health/live > /dev/null"
+        "curl -f -s http://localhost:$ACCOUNT_APP_PORT/health/live > /dev/null"
     
     run_test "Account Service: Readiness probe" \
-        "curl -f -s http://localhost:9082/health/ready > /dev/null"
+        "curl -f -s http://localhost:$ACCOUNT_APP_PORT/health/ready > /dev/null"
     
     # Test API Gateway (main application on port 9080)
     print_info "Testing API Gateway (main application)..."
     
     run_test "API Gateway: Liveness probe" \
-        "curl -f -s http://localhost:9080/health/live > /dev/null"
+        "curl -f -s http://localhost:$APP_PORT/health/live > /dev/null"
     
     run_test "API Gateway: Readiness probe" \
-        "curl -f -s http://localhost:9080/health/ready > /dev/null"
+        "curl -f -s http://localhost:$APP_PORT/health/ready > /dev/null"
     
     run_test "API Gateway: Root redirect (/api/ -> /web/api/)" \
-        "curl -f -s http://localhost:9080/api/clients > /dev/null"
+        "curl -f -s http://localhost:$APP_PORT/api/clients > /dev/null"
     
     # Test API Gateway routing to microservices
     print_info "Testing API Gateway routing..."
     
     run_test "API Gateway: Clients API routing (via redirect)" \
-        "curl -f -s -L http://localhost:9080/api/clients > /dev/null"
+        "curl -f -s -L http://localhost:$APP_PORT/api/clients > /dev/null"
     
     run_test "API Gateway: Accounts API routing (via redirect)" \
-        "curl -f -s -L http://localhost:9080/api/accounts > /dev/null"
+        "curl -f -s -L http://localhost:$APP_PORT/api/accounts > /dev/null"
     
     run_test "API Gateway: Direct web endpoint" \
-        "curl -f -s http://localhost:9080/web/api/clients > /dev/null"
+        "curl -f -s http://localhost:$APP_PORT/web/api/clients > /dev/null"
     
     # Test database connectivity
     print_info "Testing database connectivity..."
@@ -736,9 +749,49 @@ main() {
     run_test "Account DB: Schema initialized" \
         "podman exec banking-account-db psql -U \"$DB_USER\" -d banking_account_db -c '\dt' | grep -q 'accounts'"
 
+    # Test logs files with no ERROR
+    print_info "Checking server logs for errors..."
 
-
+    # Function to check logs for errors
+    check_container_logs() {
+        local container_name="$1"
+        local image_name="$2"
+        local log_file="${3:-/logs/messages.log}"
+        local error_pattern="${4:- E }"
     
+        # Check if container exists and is running
+        if ! podman ps --format "{{.Names}}" 2>/dev/null | grep -q "^${container_name}$"; then
+            print_warning "Container $container_name not running, skipping log check"
+            return 0
+        fi
+    
+        # Check if log file exists (with error suppression)
+        if ! podman exec "$container_name" test -f "$log_file" 2>/dev/null; then
+            print_warning "Log file $log_file not found in $container_name"
+            return 0
+        fi
+    
+        # Count error lines (with full error suppression and fallback)
+        local error_count=0
+        error_count=$(podman exec "$container_name" grep -E "$error_pattern" "$log_file" 2>/dev/null | wc -l 2>/dev/null | tr -d ' ' 2>/dev/null) || error_count=0
+    
+        # Ensure error_count is a valid number
+        if ! [[ "$error_count" =~ ^[0-9]+$ ]]; then
+            error_count=0
+        fi
+    
+        # Run test - this will record pass/fail but won't exit
+        run_test "Server $image_name: Logs check (errors: $error_count)" \
+            "[ \"$error_count\" -eq 0 ]" || true
+    
+        return 0
+    }
+
+    # Check logs for all containers (each call returns 0 to continue)
+    check_container_logs "$CONTAINER_NAME" "$IMAGE_NAME" || true
+    check_container_logs "$CLIENT_CONTAINER_NAME" "$CLIENT_IMAGE_NAME" || true
+    check_container_logs "$ACCOUNT_CONTAINER_NAME" "$ACCOUNT_IMAGE_NAME" || true
+
     echo ""
     
     # Phase 5: Results and Cleanup
@@ -756,13 +809,13 @@ main() {
         print_info "Opening API Gateway in browser..."
         if command -v open >/dev/null 2>&1; then
             # macOS
-            open "http://localhost:9080/" 2>/dev/null || true
+            open "http://localhost:9080/web" 2>/dev/null || true
         elif command -v xdg-open >/dev/null 2>&1; then
             # Linux
-            xdg-open "http://localhost:9080/" 2>/dev/null || true
+            xdg-open "http://localhost:9080/web" 2>/dev/null || true
         elif command -v start >/dev/null 2>&1; then
             # Windows
-            start "http://localhost:9080/" 2>/dev/null || true
+            start "http://localhost:9080/web" 2>/dev/null || true
         else
             print_info "Could not detect browser command. Please open manually:"
             echo "  API Gateway: http://localhost:9080/"
