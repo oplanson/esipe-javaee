@@ -19,13 +19,13 @@
         
         <main>
             <div class="actions" style="justify-content: space-between; margin-bottom: 30px;">
-                <a href="${pageContext.request.contextPath}/clients" class="button secondary">← Back to List</a>
+                <a href="${pageContext.request.contextPath}/web/clients" class="button secondary">← Back to List</a>
                 <div>
-                    <a href="${pageContext.request.contextPath}/clients/edit?id=${clientWithAccounts.client.id}" 
+                    <a href="${pageContext.request.contextPath}/web/clients/edit?id=${clientWithAccounts.client.id}"
                        class="button">Edit Client</a>
-                    <a href="${pageContext.request.contextPath}/accounts/new?clientId=${clientWithAccounts.client.id}" 
+                    <a href="${pageContext.request.contextPath}/web/accounts/new?clientId=${clientWithAccounts.client.id}"
                        class="button success">+ Add Account</a>
-                    <a href="${pageContext.request.contextPath}/clients/delete?id=${clientWithAccounts.client.id}" 
+                    <a href="${pageContext.request.contextPath}/web/clients/delete?id=${clientWithAccounts.client.id}"
                        class="button danger"
                        onclick="return confirm('Are you sure you want to delete this client?')">Delete</a>
                 </div>
@@ -77,7 +77,7 @@
                     <c:when test="${empty clientWithAccounts.accounts}">
                         <div class="service-box">
                             <p>No accounts found for this client.</p>
-                            <a href="${pageContext.request.contextPath}/accounts/new?clientId=${clientWithAccounts.client.id}" 
+                            <a href="${pageContext.request.contextPath}/web/accounts/new?clientId=${clientWithAccounts.client.id}"
                                class="button success" style="margin-top: 15px;">+ Create First Account</a>
                         </div>
                     </c:when>
@@ -113,12 +113,12 @@
                                             </span>
                                         </td>
                                         <td>
-                                            <a href="${pageContext.request.contextPath}/accounts/view?id=${account.id}" 
+                                            <a href="${pageContext.request.contextPath}/web/accounts/view?id=${account.id}"
                                                class="button" style="padding: 8px 15px; font-size: 0.9em;">View</a>
                                             <c:if test="${account.status.name() == 'ACTIVE'}">
-                                                <a href="${pageContext.request.contextPath}/accounts/deposit?id=${account.id}" 
+                                                <a href="${pageContext.request.contextPath}/web/accounts/deposit?id=${account.id}"
                                                    class="button success" style="padding: 8px 15px; font-size: 0.9em;">Deposit</a>
-                                                <a href="${pageContext.request.contextPath}/accounts/withdraw?id=${account.id}" 
+                                                <a href="${pageContext.request.contextPath}/web/accounts/withdraw?id=${account.id}"
                                                    class="button secondary" style="padding: 8px 15px; font-size: 0.9em;">Withdraw</a>
                                             </c:if>
                                         </td>

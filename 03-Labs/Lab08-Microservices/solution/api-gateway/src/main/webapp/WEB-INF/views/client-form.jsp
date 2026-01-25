@@ -18,10 +18,10 @@
         
         <main>
             <div class="actions" style="justify-content: flex-start; margin-bottom: 30px;">
-                <a href="${pageContext.request.contextPath}/clients" class="button secondary">← Back to List</a>
+                <a href="${pageContext.request.contextPath}/web/clients" class="button secondary">← Back to List</a>
             </div>
             
-            <form method="post" action="${pageContext.request.contextPath}/${empty client ? 'clients/new' : 'clients/edit'}">
+            <form method="post" action="${pageContext.request.contextPath}/web/${empty client ? 'clients/new' : 'clients/edit'}">
                 <c:if test="${not empty client}">
                     <input type="hidden" name="id" value="${client.id}">
                 </c:if>
@@ -71,7 +71,7 @@
                 </div>
                 
                 <div class="form-actions">
-                    <a href="${pageContext.request.contextPath}/clients" class="button secondary">Cancel</a>
+                    <a href="${pageContext.request.contextPath}/web/clients" class="button secondary">Cancel</a>
                     <button type="submit" class="button">${empty client ? 'Create Client' : 'Update Client'}</button>
                 </div>
             </form>

@@ -334,9 +334,9 @@ print_test_summary() {
     
     # Detailed results table
     echo "Detailed Results:"
-    echo "┌────┬─────────────────────────────────────────────┬──────────┐"
-    echo "│ #  │ Test Name                                   │ Status   │"
-    echo "├────┼─────────────────────────────────────────────┼──────────┤"
+    echo "┌────┬────────────────────────────────────────────────┬──────────┐"
+    echo "│ #  │ Test Name                                      │ Status   │"
+    echo "├────┼────────────────────────────────────────────────┼──────────┤"
     
     local i
     for i in $(seq 1 "$TEST_NUMBER"); do
@@ -353,7 +353,7 @@ print_test_summary() {
         echo -e "${status_display} │"
     done
     
-    echo "└────┴─────────────────────────────────────────────┴──────────┘"
+    echo "└────┴────────────────────────────────────────────────┴──────────┘"
     echo ""
     
     # Show failed test commands
@@ -513,6 +513,47 @@ main() {
         "curl -f -s http://localhost:${APP_PORT}/metrics >/dev/null || curl -f -s -u admin:adminpwd http://localhost:${APP_PORT}/metrics >/dev/null"
     
     echo ""
+
+    # Test logs files with no ERROR
+    print_info "Checking server logs for errors..."
+
+    # Function to check logs for errors
+    check_container_logs() {
+        local container_name="$1"
+        local image_name="$2"
+        local log_file="${3:-/logs/messages.log}"
+        local error_pattern="${4:- E }"
+    
+        # Check if container exists and is running
+        if ! podman ps --format "{{.Names}}" 2>/dev/null | grep -q "^${container_name}$"; then
+            print_warning "Container $container_name not running, skipping log check"
+            return 0
+        fi
+    
+        # Check if log file exists (with error suppression)
+        if ! podman exec "$container_name" test -f "$log_file" 2>/dev/null; then
+            print_warning "Log file $log_file not found in $container_name"
+            return 0
+        fi
+    
+        # Count error lines (with full error suppression and fallback)
+        local error_count=0
+        error_count=$(podman exec "$container_name" grep -E "$error_pattern" "$log_file" 2>/dev/null | wc -l 2>/dev/null | tr -d ' ' 2>/dev/null) || error_count=0
+    
+        # Ensure error_count is a valid number
+        if ! [[ "$error_count" =~ ^[0-9]+$ ]]; then
+            error_count=0
+        fi
+    
+        # Run test - this will record pass/fail but won't exit
+        run_test "Server $image_name: Logs check (errors: $error_count)" \
+            "[ \"$error_count\" -eq 0 ]" || true
+    
+        return 0
+    }
+
+    # Check logs for all containers (each call returns 0 to continue)
+    check_container_logs "$CONTAINER_NAME" "$IMAGE_NAME" || true
     
     # Phase 5: Results and Cleanup
     print_test_summary

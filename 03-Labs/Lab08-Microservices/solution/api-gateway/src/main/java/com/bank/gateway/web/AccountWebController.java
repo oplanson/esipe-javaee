@@ -7,61 +7,36 @@ import com.bank.gateway.client.ClientServiceClient;
 import com.bank.gateway.dto.AccountDTO;
 import com.bank.gateway.dto.ClientDTO;
 import com.bank.gateway.dto.TransactionDTO;
+import jakarta.inject.Inject;
 import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import org.eclipse.microprofile.config.ConfigProvider;
-import org.eclipse.microprofile.rest.client.RestClientBuilder;
+import org.eclipse.microprofile.rest.client.inject.RestClient;
 
 import java.io.IOException;
 import java.math.BigDecimal;
-import java.net.URI;
 import java.util.List;
 import java.util.logging.Logger;
 
 /**
  * Web Controller for Account operations
  * Handles JSP-based web interface requests
- * Uses RestClientBuilder for programmatic REST client creation
- * Configured in web.xml
+ * Uses CDI injection for REST clients to enable fault tolerance
  */
+@WebServlet(urlPatterns = {"/web/accounts", "/web/accounts/*"})
 public class AccountWebController extends HttpServlet {
     
     private static final Logger LOGGER = Logger.getLogger(AccountWebController.class.getName());
     
+    @Inject
+    @RestClient
     private AccountServiceClient accountServiceClient;
+    
+    @Inject
+    @RestClient
     private ClientServiceClient clientServiceClient;
-    
-    @Override
-    public void init() throws ServletException {
-        super.init();
-        
-        // Get service URLs from MicroProfile Config
-        String accountServiceUrl = ConfigProvider.getConfig()
-            .getValue("account.service.url", String.class);
-        String clientServiceUrl = ConfigProvider.getConfig()
-            .getValue("client.service.url", String.class);
-        
-        // Build REST clients programmatically
-        accountServiceClient = RestClientBuilder.newBuilder()
-            .baseUri(URI.create(accountServiceUrl))
-            .build(AccountServiceClient.class);
-            
-        clientServiceClient = RestClientBuilder.newBuilder()
-            .baseUri(URI.create(clientServiceUrl))
-            .build(ClientServiceClient.class);
-        
-        LOGGER.info("AccountWebController initialized with account service URL: " + accountServiceUrl);
-    }
-    
-    private AccountServiceClient getAccountServiceClient() {
-        return accountServiceClient;
-    }
-    
-    private ClientServiceClient getClientServiceClient() {
-        return clientServiceClient;
-    }
     
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) 
@@ -71,43 +46,43 @@ public class AccountWebController extends HttpServlet {
         
         try {
             switch (path) {
-                case "/accounts":
+                case "/web/accounts":
                     listAccounts(request, response);
                     break;
                     
-                case "/accounts/new":
+                case "/web/accounts/new":
                     showNewForm(request, response);
                     break;
                     
-                case "/accounts/view":
+                case "/web/accounts/view":
                     viewAccount(request, response);
                     break;
                     
-                case "/accounts/deposit":
+                case "/web/accounts/deposit":
                     showDepositForm(request, response);
                     break;
                     
-                case "/accounts/withdraw":
+                case "/web/accounts/withdraw":
                     showWithdrawForm(request, response);
                     break;
                     
-                case "/accounts/transfer":
+                case "/web/accounts/transfer":
                     showTransferForm(request, response);
                     break;
                     
-                case "/accounts/suspend":
+                case "/web/accounts/suspend":
                     suspendAccount(request, response);
                     break;
                     
-                case "/accounts/activate":
+                case "/web/accounts/activate":
                     activateAccount(request, response);
                     break;
                     
-                case "/accounts/close":
+                case "/web/accounts/close":
                     closeAccount(request, response);
                     break;
                     
-                case "/accounts/delete":
+                case "/web/accounts/delete":
                     deleteAccount(request, response);
                     break;
                     
@@ -129,19 +104,19 @@ public class AccountWebController extends HttpServlet {
         
         try {
             switch (path) {
-                case "/accounts/new":
+                case "/web/accounts/new":
                     createAccount(request, response);
                     break;
                     
-                case "/accounts/deposit":
+                case "/web/accounts/deposit":
                     processDeposit(request, response);
                     break;
                     
-                case "/accounts/withdraw":
+                case "/web/accounts/withdraw":
                     processWithdraw(request, response);
                     break;
                     
-                case "/accounts/transfer":
+                case "/web/accounts/transfer":
                     processTransfer(request, response);
                     break;
                     
@@ -165,15 +140,15 @@ public class AccountWebController extends HttpServlet {
             Long clientId = Long.parseLong(clientIdParam);
             LOGGER.info("Listing accounts for client: " + clientId);
             
-            ClientDTO client = getClientServiceClient().getClientById(clientId);
-            List<AccountDTO> accounts = getAccountServiceClient().getAccountsByClientId(clientId);
+            ClientDTO client = clientServiceClient.getClientById(clientId);
+            List<AccountDTO> accounts = accountServiceClient.getAccountsByClientId(clientId);
             
             request.setAttribute("client", client);
             request.setAttribute("accounts", accounts);
         } else {
             // List all accounts
             LOGGER.info("Listing all accounts");
-            List<AccountDTO> accounts = getAccountServiceClient().getAllAccounts();
+            List<AccountDTO> accounts = accountServiceClient.getAllAccounts();
             request.setAttribute("accounts", accounts);
         }
         
@@ -186,8 +161,8 @@ public class AccountWebController extends HttpServlet {
         Long id = Long.parseLong(request.getParameter("id"));
         LOGGER.info("Viewing account: " + id);
         
-        AccountDTO account = getAccountServiceClient().getAccountById(id);
-        ClientDTO client = getClientServiceClient().getClientById(account.getClientId());
+        AccountDTO account = accountServiceClient.getAccountById(id);
+        ClientDTO client = clientServiceClient.getClientById(account.getClientId());
         
         request.setAttribute("account", account);
         request.setAttribute("client", client);
@@ -200,7 +175,7 @@ public class AccountWebController extends HttpServlet {
         LOGGER.info("Showing new account form");
         
         // Get all clients for the dropdown
-        List<ClientDTO> clients = getClientServiceClient().getAllClients();
+        List<ClientDTO> clients = clientServiceClient.getAllClients();
         request.setAttribute("clients", clients);
         
         // Pre-select client if provided
@@ -227,9 +202,9 @@ public class AccountWebController extends HttpServlet {
             account.setBalance(new BigDecimal(balanceParam));
         }
         
-        getAccountServiceClient().createAccount(account);
+        accountServiceClient.createAccount(account);
         
-        response.sendRedirect(request.getContextPath() + "/accounts?clientId=" + account.getClientId());
+        response.sendRedirect(request.getContextPath() + "/web/accounts?clientId=" + account.getClientId());
     }
     
     private void showDepositForm(HttpServletRequest request, HttpServletResponse response)
@@ -238,7 +213,7 @@ public class AccountWebController extends HttpServlet {
         Long id = Long.parseLong(request.getParameter("id"));
         LOGGER.info("Showing deposit form for account: " + id);
         
-        AccountDTO account = getAccountServiceClient().getAccountById(id);
+        AccountDTO account = accountServiceClient.getAccountById(id);
         request.setAttribute("account", account);
         request.setAttribute("operation", "deposit");
         request.getRequestDispatcher("/WEB-INF/views/transaction-form.jsp").forward(request, response);
@@ -253,9 +228,9 @@ public class AccountWebController extends HttpServlet {
         LOGGER.info("Processing deposit of " + amount + " to account: " + id);
         
         TransactionDTO transaction = new TransactionDTO(amount);
-        getAccountServiceClient().deposit(id, transaction);
+        accountServiceClient.deposit(id, transaction);
         
-        response.sendRedirect(request.getContextPath() + "/accounts/view?id=" + id);
+        response.sendRedirect(request.getContextPath() + "/web/accounts/view?id=" + id);
     }
     
     private void showWithdrawForm(HttpServletRequest request, HttpServletResponse response)
@@ -264,7 +239,7 @@ public class AccountWebController extends HttpServlet {
         Long id = Long.parseLong(request.getParameter("id"));
         LOGGER.info("Showing withdraw form for account: " + id);
         
-        AccountDTO account = getAccountServiceClient().getAccountById(id);
+        AccountDTO account = accountServiceClient.getAccountById(id);
         request.setAttribute("account", account);
         request.setAttribute("operation", "withdraw");
         request.getRequestDispatcher("/WEB-INF/views/transaction-form.jsp").forward(request, response);
@@ -279,9 +254,9 @@ public class AccountWebController extends HttpServlet {
         LOGGER.info("Processing withdrawal of " + amount + " from account: " + id);
         
         TransactionDTO transaction = new TransactionDTO(amount);
-        getAccountServiceClient().withdraw(id, transaction);
+        accountServiceClient.withdraw(id, transaction);
         
-        response.sendRedirect(request.getContextPath() + "/accounts/view?id=" + id);
+        response.sendRedirect(request.getContextPath() + "/web/accounts/view?id=" + id);
     }
     
     private void showTransferForm(HttpServletRequest request, HttpServletResponse response)
@@ -290,8 +265,8 @@ public class AccountWebController extends HttpServlet {
         Long fromId = Long.parseLong(request.getParameter("id"));
         LOGGER.info("Showing transfer form for account: " + fromId);
         
-        AccountDTO fromAccount = getAccountServiceClient().getAccountById(fromId);
-        List<AccountDTO> allAccounts = getAccountServiceClient().getAllAccounts();
+        AccountDTO fromAccount = accountServiceClient.getAccountById(fromId);
+        List<AccountDTO> allAccounts = accountServiceClient.getAllAccounts();
         
         request.setAttribute("fromAccount", fromAccount);
         request.setAttribute("allAccounts", allAccounts);
@@ -309,9 +284,9 @@ public class AccountWebController extends HttpServlet {
         LOGGER.info("Processing transfer of " + amount + " from account " + fromId + " to " + toId);
         
         TransactionDTO transaction = new TransactionDTO(amount);
-        getAccountServiceClient().transfer(fromId, toId, transaction);
+        accountServiceClient.transfer(fromId, toId, transaction);
         
-        response.sendRedirect(request.getContextPath() + "/accounts/view?id=" + fromId);
+        response.sendRedirect(request.getContextPath() + "/web/accounts/view?id=" + fromId);
     }
     
     private void suspendAccount(HttpServletRequest request, HttpServletResponse response)
@@ -320,9 +295,9 @@ public class AccountWebController extends HttpServlet {
         Long id = Long.parseLong(request.getParameter("id"));
         LOGGER.info("Suspending account: " + id);
         
-        getAccountServiceClient().suspendAccount(id);
+        accountServiceClient.suspendAccount(id);
         
-        response.sendRedirect(request.getContextPath() + "/accounts/view?id=" + id);
+        response.sendRedirect(request.getContextPath() + "/web/accounts/view?id=" + id);
     }
     
     private void activateAccount(HttpServletRequest request, HttpServletResponse response)
@@ -331,9 +306,9 @@ public class AccountWebController extends HttpServlet {
         Long id = Long.parseLong(request.getParameter("id"));
         LOGGER.info("Activating account: " + id);
         
-        getAccountServiceClient().activateAccount(id);
+        accountServiceClient.activateAccount(id);
         
-        response.sendRedirect(request.getContextPath() + "/accounts/view?id=" + id);
+        response.sendRedirect(request.getContextPath() + "/web/accounts/view?id=" + id);
     }
     
     private void closeAccount(HttpServletRequest request, HttpServletResponse response)
@@ -342,9 +317,9 @@ public class AccountWebController extends HttpServlet {
         Long id = Long.parseLong(request.getParameter("id"));
         LOGGER.info("Closing account: " + id);
         
-        getAccountServiceClient().closeAccount(id);
+        accountServiceClient.closeAccount(id);
         
-        response.sendRedirect(request.getContextPath() + "/accounts/view?id=" + id);
+        response.sendRedirect(request.getContextPath() + "/web/accounts/view?id=" + id);
     }
     
     private void deleteAccount(HttpServletRequest request, HttpServletResponse response)
@@ -354,9 +329,9 @@ public class AccountWebController extends HttpServlet {
         Long clientId = Long.parseLong(request.getParameter("clientId"));
         LOGGER.info("Deleting account: " + id);
         
-        getAccountServiceClient().deleteAccount(id);
+        accountServiceClient.deleteAccount(id);
         
-        response.sendRedirect(request.getContextPath() + "/accounts?clientId=" + clientId);
+        response.sendRedirect(request.getContextPath() + "/web/accounts?clientId=" + clientId);
     }
 }
 

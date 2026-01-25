@@ -12,8 +12,9 @@ import org.eclipse.microprofile.openapi.annotations.servers.Server;
 
 /**
  * JAX-RS Application configuration for Account Service REST API
+ * Note: The /api path is configured in server.xml as contextRoot
  */
-@ApplicationPath("/api")
+@ApplicationPath("/")
 @OpenAPIDefinition(
     info = @Info(
         title = "Account Service API",

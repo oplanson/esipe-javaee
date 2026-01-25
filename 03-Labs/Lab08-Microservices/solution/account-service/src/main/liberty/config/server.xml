@@ -16,9 +16,9 @@
                   host="*" />
 
     <!-- Application -->
-    <webApplication id="account-service" 
-                    location="account-service.war" 
-                    contextRoot="/">
+    <webApplication id="account-service"
+                    location="account-service.war"
+                    contextRoot="/api">
         <classloader apiTypeVisibility="+third-party"/>
     </webApplication>
 

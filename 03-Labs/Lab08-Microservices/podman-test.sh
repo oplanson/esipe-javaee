@@ -710,11 +710,17 @@ main() {
     run_test "Client Service: Readiness probe" \
         "curl -f -s http://localhost:$CLIENT_APP_PORT/health/ready > /dev/null"
     
+    run_test "Client Service: Direct API call" \
+        "curl -f -s http://localhost:$CLIENT_APP_PORT/api/clients > /dev/null"
+    
     run_test "Account Service: Liveness probe" \
         "curl -f -s http://localhost:$ACCOUNT_APP_PORT/health/live > /dev/null"
     
     run_test "Account Service: Readiness probe" \
         "curl -f -s http://localhost:$ACCOUNT_APP_PORT/health/ready > /dev/null"
+    
+    run_test "Account Service: Direct API call" \
+        "curl -f -s http://localhost:$ACCOUNT_APP_PORT/api/accounts > /dev/null"
     
     # Test API Gateway (main application on port 9080)
     print_info "Testing API Gateway (main application)..."
@@ -725,8 +731,11 @@ main() {
     run_test "API Gateway: Readiness probe" \
         "curl -f -s http://localhost:$APP_PORT/health/ready > /dev/null"
     
-    run_test "API Gateway: Root redirect (/api/ -> /web/api/)" \
-        "curl -f -s http://localhost:$APP_PORT/api/clients > /dev/null"
+    run_test "API Gateway: Clients web" \
+        "curl -f -s http://localhost:$APP_PORT/web/clients > /dev/null"
+
+    run_test "API Gateway: Accounts web" \
+        "curl -f -s -L http://localhost:$APP_PORT/web/accounts > /dev/null"
     
     # Test API Gateway routing to microservices
     print_info "Testing API Gateway routing..."
@@ -738,7 +747,7 @@ main() {
         "curl -f -s -L http://localhost:$APP_PORT/api/accounts > /dev/null"
     
     run_test "API Gateway: Direct web endpoint" \
-        "curl -f -s http://localhost:$APP_PORT/web/api/clients > /dev/null"
+        "curl -f -s http://localhost:$APP_PORT/index.html > /dev/null"
     
     # Test database connectivity
     print_info "Testing database connectivity..."
@@ -809,13 +818,13 @@ main() {
         print_info "Opening API Gateway in browser..."
         if command -v open >/dev/null 2>&1; then
             # macOS
-            open "http://localhost:9080/web" 2>/dev/null || true
+            open "http://localhost:9080/index.html" 2>/dev/null || true
         elif command -v xdg-open >/dev/null 2>&1; then
             # Linux
-            xdg-open "http://localhost:9080/web" 2>/dev/null || true
+            xdg-open "http://localhost:9080/index.html" 2>/dev/null || true
         elif command -v start >/dev/null 2>&1; then
             # Windows
-            start "http://localhost:9080/web" 2>/dev/null || true
+            start "http://localhost:9080/index.html" 2>/dev/null || true
         else
             print_info "Could not detect browser command. Please open manually:"
             echo "  API Gateway: http://localhost:9080/"

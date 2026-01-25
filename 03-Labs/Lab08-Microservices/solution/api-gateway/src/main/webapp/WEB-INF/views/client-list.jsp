@@ -20,7 +20,7 @@
         <main>
             <div class="actions" style="justify-content: space-between; margin-bottom: 30px;">
                 <a href="${pageContext.request.contextPath}/" class="button secondary">← Back to Home</a>
-                <a href="${pageContext.request.contextPath}/clients/new" class="button">+ Add New Client</a>
+                <a href="${pageContext.request.contextPath}/web/clients/new" class="button">+ Add New Client</a>
             </div>
             
             <c:if test="${not empty error}">
@@ -32,7 +32,7 @@
             <c:choose>
                 <c:when test="${empty clientsWithAccounts}">
                     <div class="info-section">
-                        <p>No clients found. <a href="${pageContext.request.contextPath}/clients/new">Add your first client</a></p>
+                        <p>No clients found. <a href="${pageContext.request.contextPath}/web/clients/new">Add your first client</a></p>
                     </div>
                 </c:when>
                 <c:otherwise>
@@ -69,11 +69,11 @@
                                         </strong>
                                     </td>
                                     <td>
-                                        <a href="${pageContext.request.contextPath}/clients?action=view&id=${clientWithAccounts.client.id}" 
+                                        <a href="${pageContext.request.contextPath}/web/clients?action=view&id=${clientWithAccounts.client.id}"
                                            class="button" style="padding: 8px 15px; font-size: 0.9em;">View</a>
-                                        <a href="${pageContext.request.contextPath}/clients/edit?id=${clientWithAccounts.client.id}" 
+                                        <a href="${pageContext.request.contextPath}/web/clients/edit?id=${clientWithAccounts.client.id}"
                                            class="button secondary" style="padding: 8px 15px; font-size: 0.9em;">Edit</a>
-                                        <a href="${pageContext.request.contextPath}/accounts?clientId=${clientWithAccounts.client.id}" 
+                                        <a href="${pageContext.request.contextPath}/web/accounts?clientId=${clientWithAccounts.client.id}"
                                            class="button success" style="padding: 8px 15px; font-size: 0.9em;">Accounts</a>
                                     </td>
                                 </tr>
