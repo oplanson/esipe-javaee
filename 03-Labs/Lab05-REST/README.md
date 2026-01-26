@@ -37,10 +37,12 @@ In this lab, you will add a complete REST API to the banking application while k
 
 ### What You'll Build
 
-- **RESTful API** for clients and accounts
+- **RESTful API** for clients, accounts, and transactions
 - **JSON-B** integration for automatic JSON conversion
 - **Exception handling** with custom mappers
 - **Bean validation** for input validation
+- **Transaction management** (deposits, withdrawals, transfers)
+- **Transaction history** with filtering and search
 - **MicroProfile Rest Client** for type-safe client
 - **Comprehensive testing** with curl and scripts
 
@@ -157,7 +159,8 @@ Lab05-REST/
             │   ├── api/        # REST resources
             │   │   ├── ClientResource.java
             │   │   ├── AccountResource.java
-            │   │   └── TransferResource.java
+            │   │   ├── TransactionResource.java
+            │   │   └── RootResource.java
             │   ├── client/     # Rest Client
             │   │   └── BankingRestClient.java
             │   ├── dto/        # Data Transfer Objects
@@ -418,7 +421,8 @@ public class RootResource {
         
         // Add available endpoints
         apiInfo.addEndpoint("clients", baseUri + "/clients")
-               .addEndpoint("accounts", baseUri + "/accounts");
+               .addEndpoint("accounts", baseUri + "/accounts")
+               .addEndpoint("transactions", baseUri + "/transactions");
         
         // Add useful links
         apiInfo.addLink("openapi", rootUri + "/openapi")
@@ -1867,6 +1871,6 @@ In this lab, you have:
 
 ---
 
-**© 2025 ESIPE - All Rights Reserved**
+**© 2026 Olivier Planson - All Rights Reserved**
 
 **Lab 5: JAX-RS and RESTful Web Services**

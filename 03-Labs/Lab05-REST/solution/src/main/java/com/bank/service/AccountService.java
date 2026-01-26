@@ -4,6 +4,7 @@ package com.bank.service;
 
 import com.bank.model.Account;
 import com.bank.model.Client;
+import com.bank.model.Transaction;
 import com.bank.config.Logged;
 import com.bank.event.AccountCreatedEvent;
 import com.bank.event.TransactionEvent;
@@ -46,6 +47,9 @@ public class AccountService {
     
     @Inject
     private Event<TransactionEvent> transactionEvent;
+    
+    @Inject
+    private TransactionService transactionService;
     
     /**
      * Retrieve all accounts.
@@ -247,8 +251,18 @@ public class AccountService {
             return false;
         }
         
+        // Save balance before transaction
+        double balanceBefore = account.getBalance();
+        
+        // Perform deposit
         account.deposit(amount);
         em.merge(account);
+        
+        // Save balance after transaction
+        double balanceAfter = account.getBalance();
+        
+        // Persist transaction record
+        transactionService.createDeposit(account, amount, balanceBefore, balanceAfter);
         
         logger.info("Deposit successful. New balance: " + account.getBalance());
         
@@ -281,9 +295,20 @@ public class AccountService {
             return false;
         }
         
+        // Save balance before transaction
+        double balanceBefore = account.getBalance();
+        
+        // Perform withdrawal
         boolean success = account.withdraw(amount);
         if (success) {
             em.merge(account);
+            
+            // Save balance after transaction
+            double balanceAfter = account.getBalance();
+            
+            // Persist transaction record
+            transactionService.createWithdrawal(account, amount, balanceBefore, balanceAfter);
+            
             logger.info("Withdrawal successful. New balance: " + account.getBalance());
             
             // Fire CDI event for withdrawal transaction
@@ -321,6 +346,10 @@ public class AccountService {
             return false;
         }
         
+        // Save balances before transaction
+        double fromBalanceBefore = fromAccount.getBalance();
+        double toBalanceBefore = toAccount.getBalance();
+        
         // Withdraw from source account
         boolean withdrawn = fromAccount.withdraw(amount);
         if (!withdrawn) {
@@ -334,6 +363,15 @@ public class AccountService {
         // Merge both accounts
         em.merge(fromAccount);
         em.merge(toAccount);
+        
+        // Save balances after transaction
+        double fromBalanceAfter = fromAccount.getBalance();
+        double toBalanceAfter = toAccount.getBalance();
+        
+        // Persist transaction records (both outgoing and incoming)
+        transactionService.createTransfer(fromAccount, toAccount, amount,
+                                         fromBalanceBefore, fromBalanceAfter,
+                                         toBalanceBefore, toBalanceAfter);
         
         logger.info("Transfer successful");
         

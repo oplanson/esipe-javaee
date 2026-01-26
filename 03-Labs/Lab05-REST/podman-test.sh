@@ -545,6 +545,9 @@ main() {
     run_test "Account REST endpoint" \
         "curl -f -s http://localhost:${APP_PORT}/api/accounts > /dev/null"
     
+    run_test "Transaction REST endpoint" \
+        "curl -f -s http://localhost:${APP_PORT}/api/transactions > /dev/null"
+    
     # Test JSON response
     run_test "JSON response format" \
         "curl -s http://localhost:${APP_PORT}/api/clients | grep -q '\[' || true"
@@ -559,11 +562,11 @@ main() {
             "curl -f -s http://localhost:${APP_PORT}/openapi > /dev/null"
     fi
     
-    # Test database connectivity
-    # Test Flyway migrations applied
+    # Test database connectivity and schema
+    # Test Flyway migrations applied - clients table
     ((TEST_NUMBER++))
-    TEST_NAMES[$TEST_NUMBER]="Database schema initialized"
-    echo -n "Test $TEST_NUMBER: Database schema initialized... "
+    TEST_NAMES[$TEST_NUMBER]="Database schema: clients table"
+    echo -n "Test $TEST_NUMBER: Database schema: clients table... "
     if podman exec "$DB_CONTAINER" psql -U "$DB_USER" -d "$DB_NAME" -c "\dt" 2>/dev/null | grep -q "clients"; then
         echo -e "${GREEN}✓ PASSED${NC}"
         TEST_RESULTS[$TEST_NUMBER]="PASSED"
@@ -573,6 +576,44 @@ main() {
         TEST_RESULTS[$TEST_NUMBER]="FAILED"
         ((TESTS_FAILED++))
     fi
+    
+    # Test Flyway migrations applied - accounts table
+    ((TEST_NUMBER++))
+    TEST_NAMES[$TEST_NUMBER]="Database schema: accounts table"
+    echo -n "Test $TEST_NUMBER: Database schema: accounts table... "
+    if podman exec "$DB_CONTAINER" psql -U "$DB_USER" -d "$DB_NAME" -c "\dt" 2>/dev/null | grep -q "accounts"; then
+        echo -e "${GREEN}✓ PASSED${NC}"
+        TEST_RESULTS[$TEST_NUMBER]="PASSED"
+        ((TESTS_PASSED++))
+    else
+        echo -e "${RED}✗ FAILED${NC}"
+        TEST_RESULTS[$TEST_NUMBER]="FAILED"
+        ((TESTS_FAILED++))
+    fi
+    
+    # Test Flyway migrations applied - transactions table
+    ((TEST_NUMBER++))
+    TEST_NAMES[$TEST_NUMBER]="Database schema: transactions table"
+    echo -n "Test $TEST_NUMBER: Database schema: transactions table... "
+    if podman exec "$DB_CONTAINER" psql -U "$DB_USER" -d "$DB_NAME" -c "\dt" 2>/dev/null | grep -q "transactions"; then
+        echo -e "${GREEN}✓ PASSED${NC}"
+        TEST_RESULTS[$TEST_NUMBER]="PASSED"
+        ((TESTS_PASSED++))
+    else
+        echo -e "${RED}✗ FAILED${NC}"
+        TEST_RESULTS[$TEST_NUMBER]="FAILED"
+        ((TESTS_FAILED++))
+    fi
+    
+    # Test transaction REST API endpoints
+    print_info "Testing transaction-specific endpoints..."
+    
+    run_test "Transaction count endpoint" \
+        "curl -f -s http://localhost:${APP_PORT}/api/transactions/count > /dev/null"
+    
+    # Test transaction web interface
+    run_test "Transaction web interface" \
+        "curl -f -s http://localhost:${APP_PORT}/transactions > /dev/null"
 
     echo ""
 
