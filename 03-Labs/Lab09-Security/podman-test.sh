@@ -466,6 +466,14 @@ main() {
             if docker-compose up -d postgres; then
                 print_success "Database container starting..."
                 
+                # Detect the actual network name created by docker-compose
+                COMPOSE_NETWORK=$(podman network ls --format "{{.Name}}" | grep -E "solution.*bank-network|bank-network" | head -n 1)
+                if [ -z "$COMPOSE_NETWORK" ]; then
+                    print_error "Could not detect docker-compose network"
+                    exit 1
+                fi
+                print_info "Detected network: $COMPOSE_NETWORK"
+                
                 # Wait for database to be ready
                 wait_for_service "Database" \
                     "podman exec \"$DB_CONTAINER\" pg_isready -U \"$DB_USER\" -d \"$DB_NAME\"" \
@@ -498,12 +506,12 @@ main() {
     # Start application container
     print_step "Starting application container..."
     if podman run -d \
-        --network solution_default \
-        -e DB_HOST=banking-db \
-        -e DB_PORT=5432 \
-        -e DB_NAME=bankdb \
-        -e DB_USER=bankuser \
-        -e DB_PASSWORD=bankpass \
+        --network "$COMPOSE_NETWORK" \
+        -e env.DB_HOST="$DB_CONTAINER" \
+        -e env.DB_PORT=5432 \
+        -e env.DB_NAME=bankdb \
+        -e env.DB_USER=bankuser \
+        -e env.DB_PASSWORD=bankpass \
         --name "$CONTAINER_NAME" \
         -p "$APP_PORT:9080" \
         "$IMAGE_NAME"; then

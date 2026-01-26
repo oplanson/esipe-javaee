@@ -3,16 +3,18 @@ package com.bank.security;
 
 import com.bank.model.Role;
 import com.bank.model.User;
+import jakarta.annotation.Resource;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.persistence.EntityManager;
+import jakarta.persistence.EntityManagerFactory;
 import jakarta.persistence.NoResultException;
-import jakarta.persistence.PersistenceContext;
+import jakarta.persistence.PersistenceUnit;
 import jakarta.security.enterprise.credential.Credential;
 import jakarta.security.enterprise.credential.UsernamePasswordCredential;
 import jakarta.security.enterprise.identitystore.CredentialValidationResult;
 import jakarta.security.enterprise.identitystore.IdentityStore;
-import jakarta.transaction.Transactional;
+import jakarta.transaction.UserTransaction;
 
 import java.time.LocalDateTime;
 import java.util.Set;
@@ -29,8 +31,11 @@ public class DatabaseIdentityStore implements IdentityStore {
     private static final Logger LOGGER = Logger.getLogger(DatabaseIdentityStore.class.getName());
     private static final int MAX_FAILED_ATTEMPTS = 5;
     
-    @PersistenceContext(unitName = "bankPU")
-    private EntityManager em;
+    @PersistenceUnit(unitName = "bankPU")
+    private EntityManagerFactory emf;
+    
+    @Resource
+    private UserTransaction utx;
     
     @Inject
     private PasswordService passwordService;
@@ -96,38 +101,53 @@ public class DatabaseIdentityStore implements IdentityStore {
      * Find user by username
      */
     private User findUserByUsername(String username) {
+        EntityManager em = emf.createEntityManager();
         try {
             return em.createNamedQuery("User.findByUsername", User.class)
                     .setParameter("username", username)
                     .getSingleResult();
         } catch (NoResultException e) {
             return null;
+        } finally {
+            em.close();
         }
     }
     
     /**
      * Reset failed login attempts after successful login
      */
-    @Transactional
     private void resetFailedAttempts(User user) {
+        EntityManager em = emf.createEntityManager();
         try {
+            utx.begin();
+            em.joinTransaction();
             user.setFailedLoginAttempts(0);
             user.setLastLogin(LocalDateTime.now());
             em.merge(user);
             em.flush();
+            utx.commit();
             
             LOGGER.info("Reset failed attempts for user: " + user.getUsername());
         } catch (Exception e) {
+            try {
+                utx.rollback();
+            } catch (Exception ex) {
+                LOGGER.severe("Error rolling back transaction: " + ex.getMessage());
+            }
             LOGGER.severe("Error resetting failed attempts: " + e.getMessage());
+        } finally {
+            em.close();
         }
     }
     
     /**
      * Increment failed login attempts and lock account if threshold reached
      */
-    @Transactional
     private void incrementFailedAttempts(User user) {
+        EntityManager em = emf.createEntityManager();
         try {
+            utx.begin();
+            em.joinTransaction();
             int attempts = user.getFailedLoginAttempts() + 1;
             user.setFailedLoginAttempts(attempts);
             
@@ -139,11 +159,19 @@ public class DatabaseIdentityStore implements IdentityStore {
             
             em.merge(user);
             em.flush();
+            utx.commit();
             
-            LOGGER.info("Incremented failed attempts for user: " + user.getUsername() + 
+            LOGGER.info("Incremented failed attempts for user: " + user.getUsername() +
                        " (attempts: " + attempts + ")");
         } catch (Exception e) {
+            try {
+                utx.rollback();
+            } catch (Exception ex) {
+                LOGGER.severe("Error rolling back transaction: " + ex.getMessage());
+            }
             LOGGER.severe("Error incrementing failed attempts: " + e.getMessage());
+        } finally {
+            em.close();
         }
     }
     
@@ -158,12 +186,15 @@ public class DatabaseIdentityStore implements IdentityStore {
      * Get user by email
      */
     public User getUserByEmail(String email) {
+        EntityManager em = emf.createEntityManager();
         try {
             return em.createNamedQuery("User.findByEmail", User.class)
                     .setParameter("email", email)
                     .getSingleResult();
         } catch (NoResultException e) {
             return null;
+        } finally {
+            em.close();
         }
     }
     
@@ -184,40 +215,69 @@ public class DatabaseIdentityStore implements IdentityStore {
     /**
      * Create new user
      */
-    @Transactional
     public User createUser(String username, String email, String password, Set<Role> roles) {
-        User user = new User();
-        user.setUsername(username);
-        user.setEmail(email);
-        user.setPassword(passwordService.hashPassword(password));
-        user.setEnabled(true);
-        user.setAccountLocked(false);
-        user.setFailedLoginAttempts(0);
-        
-        for (Role role : roles) {
-            user.addRole(role);
+        EntityManager em = emf.createEntityManager();
+        try {
+            utx.begin();
+            em.joinTransaction();
+            User user = new User();
+            user.setUsername(username);
+            user.setEmail(email);
+            user.setPassword(passwordService.hashPassword(password));
+            user.setEnabled(true);
+            user.setAccountLocked(false);
+            user.setFailedLoginAttempts(0);
+            
+            for (Role role : roles) {
+                user.addRole(role);
+            }
+            
+            em.persist(user);
+            em.flush();
+            utx.commit();
+            
+            LOGGER.info("Created new user: " + username);
+            return user;
+        } catch (Exception e) {
+            try {
+                utx.rollback();
+            } catch (Exception ex) {
+                LOGGER.severe("Error rolling back transaction: " + ex.getMessage());
+            }
+            LOGGER.severe("Error creating user: " + e.getMessage());
+            throw new RuntimeException("Failed to create user", e);
+        } finally {
+            em.close();
         }
-        
-        em.persist(user);
-        em.flush();
-        
-        LOGGER.info("Created new user: " + username);
-        return user;
     }
     
     /**
      * Unlock user account (admin function)
      */
-    @Transactional
     public void unlockAccount(String username) {
-        User user = findUserByUsername(username);
-        if (user != null) {
-            user.setAccountLocked(false);
-            user.setFailedLoginAttempts(0);
-            em.merge(user);
-            em.flush();
-            
-            LOGGER.info("Unlocked account: " + username);
+        EntityManager em = emf.createEntityManager();
+        try {
+            utx.begin();
+            em.joinTransaction();
+            User user = findUserByUsername(username);
+            if (user != null) {
+                user.setAccountLocked(false);
+                user.setFailedLoginAttempts(0);
+                em.merge(user);
+                em.flush();
+                utx.commit();
+                
+                LOGGER.info("Unlocked account: " + username);
+            }
+        } catch (Exception e) {
+            try {
+                utx.rollback();
+            } catch (Exception ex) {
+                LOGGER.severe("Error rolling back transaction: " + ex.getMessage());
+            }
+            LOGGER.severe("Error unlocking account: " + e.getMessage());
+        } finally {
+            em.close();
         }
     }
 }

@@ -15,6 +15,9 @@
         <class>com.bank.model.SecurityAuditLog</class>
         
         <properties>
+            <!-- Database platform -->
+            <property name="eclipselink.target-database" value="PostgreSQL"/>
+            
             <!-- Database schema generation -->
             <property name="jakarta.persistence.schema-generation.database.action" value="create"/>
             <property name="jakarta.persistence.schema-generation.create-source" value="metadata"/>

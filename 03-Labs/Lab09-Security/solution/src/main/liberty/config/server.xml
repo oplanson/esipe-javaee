@@ -81,11 +81,6 @@
     <!-- Variable Defaults -->
     <variable name="http.port" defaultValue="9080"/>
     <variable name="https.port" defaultValue="9443"/>
-    <variable name="env.DB_HOST" defaultValue="localhost"/>
-    <variable name="env.DB_PORT" defaultValue="5432"/>
-    <variable name="env.DB_NAME" defaultValue="bankdb"/>
-    <variable name="env.DB_USER" defaultValue="bankuser"/>
-    <variable name="env.DB_PASSWORD" defaultValue="bankpass"/>
 
 </server>
 

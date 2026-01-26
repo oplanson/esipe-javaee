@@ -16,6 +16,38 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
+    networks:
+      - bank-network
+
+  app:
+    build:
+      context: .
+      dockerfile: Containerfile
+    container_name: bank-security-app
+    environment:
+      env.DB_HOST: postgres
+      env.DB_PORT: 5432
+      env.DB_NAME: bankdb
+      env.DB_USER: bankuser
+      env.DB_PASSWORD: bankpass
+    ports:
+      - "9080:9080"
+      - "9443:9443"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - bank-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9080/health/live"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+
+networks:
+  bank-network:
+    driver: bridge
 
 volumes:
   postgres-data:
