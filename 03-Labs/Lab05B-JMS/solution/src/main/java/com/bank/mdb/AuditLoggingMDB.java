@@ -85,7 +85,6 @@ public class AuditLoggingMDB implements MessageListener {
             // Log message properties
             String eventType = message.getStringProperty("eventType");
             String transactionType = message.getStringProperty("transactionType");
-            long timestamp = message.getLongProperty("timestamp");
             
             logger.info(String.format(
                 "Processing audit log: EventType=%s, TransactionType=%s, Transaction=%d",

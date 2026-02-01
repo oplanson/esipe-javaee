@@ -9,8 +9,6 @@ import jakarta.inject.Inject;
 import jakarta.jms.*;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
-import java.io.ByteArrayOutputStream;
-import java.io.ObjectOutputStream;
 import java.time.LocalDateTime;
 import java.util.Base64;
 import java.util.logging.Level;
