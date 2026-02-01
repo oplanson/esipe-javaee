@@ -4,6 +4,7 @@ package com.bank.mdb;
 
 import com.bank.event.TransactionEvent;
 import com.bank.model.AuditLog;
+import com.bank.util.JsonMessageUtil;
 import jakarta.ejb.ActivationConfigProperty;
 import jakarta.ejb.MessageDriven;
 import jakarta.inject.Inject;
@@ -17,6 +18,9 @@ import java.util.logging.Logger;
  * Message-Driven Bean for audit logging.
  * Subscribes to the audit topic and persists audit logs to database.
  * Uses durable subscription to ensure no audit events are lost.
+ *
+ * Security: Uses JSON deserialization from TextMessage instead of ObjectMessage
+ * to prevent Java deserialization vulnerabilities.
  */
 @MessageDriven(
     name = "AuditLoggingMDB",
@@ -57,7 +61,8 @@ public class AuditLoggingMDB implements MessageListener {
     
     /**
      * Process incoming audit messages and persist to database.
-     * 
+     * Securely deserializes JSON from TextMessage.
+     *
      * @param message The JMS message containing transaction event
      */
     @Override
@@ -65,22 +70,30 @@ public class AuditLoggingMDB implements MessageListener {
         try {
             logger.info("AuditLoggingMDB: Received audit message");
             
-            // Verify message type
-            if (!(message instanceof ObjectMessage)) {
-                logger.warning("Received non-ObjectMessage, ignoring");
+            // Verify message type - expect TextMessage with JSON
+            if (!(message instanceof TextMessage)) {
+                logger.warning("Received non-TextMessage, ignoring. Type: " +
+                             message.getClass().getName());
                 return;
             }
             
-            ObjectMessage objectMessage = (ObjectMessage) message;
-            Object payload = objectMessage.getObject();
+            TextMessage textMessage = (TextMessage) message;
+            String jsonPayload = textMessage.getText();
             
-            // Verify payload type
-            if (!(payload instanceof TransactionEvent)) {
-                logger.warning("Received non-TransactionEvent object, ignoring");
+            // Verify JSON format
+            String messageFormat = message.getStringProperty("messageFormat");
+            if (!"JSON".equals(messageFormat)) {
+                logger.warning("Message format is not JSON, ignoring");
                 return;
             }
             
-            TransactionEvent event = (TransactionEvent) payload;
+            // Securely deserialize JSON to TransactionEvent
+            TransactionEvent event = JsonMessageUtil.fromJson(jsonPayload, TransactionEvent.class);
+            
+            if (event == null) {
+                logger.warning("Failed to deserialize transaction event from JSON");
+                return;
+            }
             
             // Log message properties
             String eventType = message.getStringProperty("eventType");
@@ -104,17 +117,17 @@ public class AuditLoggingMDB implements MessageListener {
             // Persist to database
             em.persist(auditLog);
             
-            logger.info("Audit log persisted successfully: ID=" + auditLog.getId() 
+            logger.info("Audit log persisted successfully: ID=" + auditLog.getId()
                        + ", Transaction=" + event.getTransactionId());
             
         } catch (JMSException e) {
-            logger.log(Level.SEVERE, "JMS error processing audit message: " 
+            logger.log(Level.SEVERE, "JMS error processing audit message: "
                       + e.getMessage(), e);
             // Message will be redelivered
             throw new RuntimeException("Failed to process audit message", e);
             
         } catch (Exception e) {
-            logger.log(Level.SEVERE, "Error processing audit message: " 
+            logger.log(Level.SEVERE, "Error processing audit message: "
                       + e.getMessage(), e);
             // Message will be redelivered
             throw new RuntimeException("Failed to process audit message", e);

@@ -3,6 +3,7 @@
 package com.bank.mdb;
 
 import com.bank.event.TransactionEvent;
+import com.bank.util.JsonMessageUtil;
 import jakarta.ejb.ActivationConfigProperty;
 import jakarta.ejb.MessageDriven;
 import jakarta.inject.Inject;
@@ -13,6 +14,9 @@ import java.util.logging.Logger;
 /**
  * Message-Driven Bean for processing transaction events.
  * Listens to the transaction queue and processes transaction events.
+ *
+ * Security: Uses JSON deserialization from TextMessage instead of ObjectMessage
+ * to prevent Java deserialization vulnerabilities.
  */
 @MessageDriven(
     name = "TransactionEventMDB",
@@ -42,7 +46,8 @@ public class TransactionEventMDB implements MessageListener {
     
     /**
      * Process incoming transaction event messages.
-     * 
+     * Securely deserializes JSON from TextMessage.
+     *
      * @param message The JMS message containing transaction event
      */
     @Override
@@ -50,22 +55,30 @@ public class TransactionEventMDB implements MessageListener {
         try {
             logger.info("TransactionEventMDB: Received message");
             
-            // Verify message type
-            if (!(message instanceof ObjectMessage)) {
-                logger.warning("Received non-ObjectMessage, ignoring");
+            // Verify message type - expect TextMessage with JSON
+            if (!(message instanceof TextMessage)) {
+                logger.warning("Received non-TextMessage, ignoring. Type: " +
+                             message.getClass().getName());
                 return;
             }
             
-            ObjectMessage objectMessage = (ObjectMessage) message;
-            Object payload = objectMessage.getObject();
+            TextMessage textMessage = (TextMessage) message;
+            String jsonPayload = textMessage.getText();
             
-            // Verify payload type
-            if (!(payload instanceof TransactionEvent)) {
-                logger.warning("Received non-TransactionEvent object, ignoring");
+            // Verify JSON format
+            String messageFormat = message.getStringProperty("messageFormat");
+            if (!"JSON".equals(messageFormat)) {
+                logger.warning("Message format is not JSON, ignoring");
                 return;
             }
             
-            TransactionEvent event = (TransactionEvent) payload;
+            // Securely deserialize JSON to TransactionEvent
+            TransactionEvent event = JsonMessageUtil.fromJson(jsonPayload, TransactionEvent.class);
+            
+            if (event == null) {
+                logger.warning("Failed to deserialize transaction event from JSON");
+                return;
+            }
             
             // Log message properties
             String transactionType = message.getStringProperty("transactionType");
@@ -83,13 +96,13 @@ public class TransactionEventMDB implements MessageListener {
             logger.info("Transaction event processed successfully: " + event.getTransactionId());
             
         } catch (JMSException e) {
-            logger.log(Level.SEVERE, "JMS error processing transaction event: " 
+            logger.log(Level.SEVERE, "JMS error processing transaction event: "
                       + e.getMessage(), e);
             // Message will be redelivered
             throw new RuntimeException("Failed to process transaction event", e);
             
         } catch (Exception e) {
-            logger.log(Level.SEVERE, "Error processing transaction event: " 
+            logger.log(Level.SEVERE, "Error processing transaction event: "
                       + e.getMessage(), e);
             // Message will be redelivered
             throw new RuntimeException("Failed to process transaction event", e);

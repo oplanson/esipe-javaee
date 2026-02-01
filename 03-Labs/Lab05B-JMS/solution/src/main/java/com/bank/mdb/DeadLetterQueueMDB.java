@@ -17,6 +17,11 @@ import java.util.logging.Logger;
 /**
  * Message-Driven Bean for handling messages in the Dead Letter Queue.
  * Logs failed messages and stores them in the database for later analysis.
+ *
+ * SECURITY FIX: This MDB now safely handles TextMessage with JSON instead of
+ * ObjectMessage to prevent Java deserialization vulnerabilities (CVE-2015-7501 class).
+ * The previous implementation called getObject() on ObjectMessage which could execute
+ * arbitrary code via malicious serialized payloads.
  */
 @MessageDriven(
     name = "DeadLetterQueueMDB",
@@ -110,20 +115,30 @@ public class DeadLetterQueueMDB implements MessageListener {
     
     /**
      * Extract message content as string.
-     * 
+     *
+     * SECURITY: This method no longer calls getObject() on ObjectMessage to prevent
+     * deserialization attacks. Only TextMessage and BytesMessage are safely handled.
+     *
      * @param message The JMS message
      * @return Message content
      */
     private String extractMessageContent(Message message) {
         try {
             if (message instanceof TextMessage) {
+                // Safe: TextMessage contains plain text or JSON
                 return ((TextMessage) message).getText();
                 
             } else if (message instanceof ObjectMessage) {
-                Object obj = ((ObjectMessage) message).getObject();
-                return obj != null ? obj.toString() : "null";
+                // SECURITY: Do NOT call getObject() - it triggers deserialization!
+                // Instead, log a warning and return metadata only
+                logger.warning("SECURITY: ObjectMessage detected in DLQ. " +
+                             "This message type is deprecated due to deserialization vulnerabilities. " +
+                             "Content will not be extracted.");
+                return "[ObjectMessage - Content not extracted for security reasons. " +
+                       "Message type: " + message.getClass().getName() + "]";
                 
             } else if (message instanceof BytesMessage) {
+                // Safe: BytesMessage contains raw bytes
                 BytesMessage bytesMessage = (BytesMessage) message;
                 byte[] bytes = new byte[(int) bytesMessage.getBodyLength()];
                 bytesMessage.readBytes(bytes);

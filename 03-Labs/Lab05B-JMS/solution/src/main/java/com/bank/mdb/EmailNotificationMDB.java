@@ -4,6 +4,7 @@ package com.bank.mdb;
 
 import com.bank.event.TransactionEvent;
 import com.bank.service.EmailService;
+import com.bank.util.JsonMessageUtil;
 import jakarta.ejb.ActivationConfigProperty;
 import jakarta.ejb.MessageDriven;
 import jakarta.inject.Inject;
@@ -14,6 +15,9 @@ import java.util.logging.Logger;
 /**
  * Message-Driven Bean for processing email notifications.
  * Listens to the email queue and sends email notifications for transactions.
+ *
+ * Security: Uses JSON deserialization from TextMessage instead of ObjectMessage
+ * to prevent Java deserialization vulnerabilities.
  */
 @MessageDriven(
     name = "EmailNotificationMDB",
@@ -46,7 +50,8 @@ public class EmailNotificationMDB implements MessageListener {
     
     /**
      * Process incoming email notification messages.
-     * 
+     * Securely deserializes JSON from TextMessage.
+     *
      * @param message The JMS message containing transaction event
      */
     @Override
@@ -54,22 +59,30 @@ public class EmailNotificationMDB implements MessageListener {
         try {
             logger.info("EmailNotificationMDB: Received message");
             
-            // Verify message type
-            if (!(message instanceof ObjectMessage)) {
-                logger.warning("Received non-ObjectMessage, ignoring");
+            // Verify message type - expect TextMessage with JSON
+            if (!(message instanceof TextMessage)) {
+                logger.warning("Received non-TextMessage, ignoring. Type: " +
+                             message.getClass().getName());
                 return;
             }
             
-            ObjectMessage objectMessage = (ObjectMessage) message;
-            Object payload = objectMessage.getObject();
+            TextMessage textMessage = (TextMessage) message;
+            String jsonPayload = textMessage.getText();
             
-            // Verify payload type
-            if (!(payload instanceof TransactionEvent)) {
-                logger.warning("Received non-TransactionEvent object, ignoring");
+            // Verify JSON format
+            String messageFormat = message.getStringProperty("messageFormat");
+            if (!"JSON".equals(messageFormat)) {
+                logger.warning("Message format is not JSON, ignoring");
                 return;
             }
             
-            TransactionEvent event = (TransactionEvent) payload;
+            // Securely deserialize JSON to TransactionEvent
+            TransactionEvent event = JsonMessageUtil.fromJson(jsonPayload, TransactionEvent.class);
+            
+            if (event == null) {
+                logger.warning("Failed to deserialize transaction event from JSON");
+                return;
+            }
             
             // Log message properties
             String notificationType = message.getStringProperty("notificationType");
@@ -83,17 +96,17 @@ public class EmailNotificationMDB implements MessageListener {
             // Send email notification
             emailService.sendTransactionNotification(event);
             
-            logger.info("Email notification processed successfully for transaction: " 
+            logger.info("Email notification processed successfully for transaction: "
                        + event.getTransactionId());
             
         } catch (JMSException e) {
-            logger.log(Level.SEVERE, "JMS error processing email notification: " 
+            logger.log(Level.SEVERE, "JMS error processing email notification: "
                       + e.getMessage(), e);
             // Message will be redelivered
             throw new RuntimeException("Failed to process email notification", e);
             
         } catch (Exception e) {
-            logger.log(Level.SEVERE, "Error processing email notification: " 
+            logger.log(Level.SEVERE, "Error processing email notification: "
                       + e.getMessage(), e);
             // Message will be redelivered
             throw new RuntimeException("Failed to process email notification", e);

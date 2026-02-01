@@ -6,6 +6,21 @@
 
 This lab introduces **Jakarta Messaging (JMS) 3.1** for asynchronous communication in enterprise applications. You'll implement a complete messaging solution for the banking application, including message producers, Message-Driven Beans (MDBs), transaction management, and error handling.
 
+## 🔒 Security Notice
+
+**This lab uses secure JSON serialization instead of Java Object Serialization.**
+
+The solution implements **TextMessage with JSON-B** to prevent Java deserialization vulnerabilities (CVE-2015-7501 class attacks). Traditional `ObjectMessage` with `getObject()` can lead to Remote Code Execution via malicious serialized payloads.
+
+**Key Security Features:**
+- ✅ JSON serialization using Jakarta JSON-B
+- ✅ TextMessage instead of ObjectMessage
+- ✅ No Java deserialization vulnerabilities
+- ✅ Type-safe message handling
+- ✅ Human-readable message format
+
+See `solution/SECURITY-FIX-JMS-DESERIALIZATION.md` for complete security documentation.
+
 ## Learning Objectives
 
 By completing this lab, you will:
@@ -151,17 +166,20 @@ Lab05B-JMS/
 
 ### Tasks
 
-1. **Create TransactionEvent class**:
+1. **Create TransactionEvent class** (using JSON, not Java Serialization):
 
 ```java
 package com.bank.event;
 
-import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
-public class TransactionEvent implements Serializable {
-    private static final long serialVersionUID = 1L;
+/**
+ * Event representing a banking transaction.
+ * Serialized as JSON for security (not Java Serialization).
+ */
+public class TransactionEvent {
+    // Note: No Serializable interface - we use JSON!
     
     private Long transactionId;
     private Long accountId;
@@ -175,11 +193,13 @@ public class TransactionEvent implements Serializable {
 }
 ```
 
-2. **Create TransactionEventProducer**:
+2. **Create TransactionEventProducer** (using JSON serialization):
 
 ```java
 package com.bank.producer;
 
+import com.bank.event.TransactionEvent;
+import com.bank.util.JsonMessageUtil;
 import jakarta.annotation.Resource;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
@@ -199,13 +219,18 @@ public class TransactionEventProducer {
     private Topic auditTopic;
     
     public void sendTransactionEvent(TransactionEvent event) {
-        // TODO: Send event to queue
-        // TODO: Set message properties
+        // SECURITY: Use JSON serialization, not ObjectMessage
+        String jsonPayload = JsonMessageUtil.toJson(event);
+        TextMessage message = context.createTextMessage(jsonPayload);
+        message.setStringProperty("messageFormat", "JSON");
+        
+        // TODO: Set other message properties
+        // TODO: Send message
         // TODO: Handle exceptions
     }
     
     public void publishAuditEvent(TransactionEvent event) {
-        // TODO: Publish to topic
+        // TODO: Publish to topic using JSON
     }
 }
 ```
@@ -283,7 +308,12 @@ public class EmailNotificationMDB implements MessageListener {
     
     @Override
     public void onMessage(Message message) {
-        // TODO: Extract TransactionEvent from message
+        // SECURITY: Deserialize JSON from TextMessage
+        TextMessage textMessage = (TextMessage) message;
+        String jsonPayload = textMessage.getText();
+        TransactionEvent event = JsonMessageUtil.fromJson(
+            jsonPayload, TransactionEvent.class);
+        
         // TODO: Send email notification
         // TODO: Handle errors
     }
@@ -467,8 +497,11 @@ public class DeadLetterQueueMDB implements MessageListener {
             String messageId = message.getJMSMessageID();
             int deliveryCount = message.getIntProperty("JMSXDeliveryCount");
             
-            logger.severe("Message failed after " + deliveryCount + 
+            logger.severe("Message failed after " + deliveryCount +
                          " attempts: " + messageId);
+            
+            // SECURITY: Extract content safely without deserializing ObjectMessage
+            String content = extractMessageContent(message);
             
             // TODO: Store failed message in database
             // TODO: Send alert notification
@@ -476,6 +509,16 @@ public class DeadLetterQueueMDB implements MessageListener {
         } catch (JMSException e) {
             logger.severe("Error processing DLQ message: " + e.getMessage());
         }
+    }
+    
+    private String extractMessageContent(Message message) {
+        if (message instanceof TextMessage) {
+            return ((TextMessage) message).getText();
+        } else if (message instanceof ObjectMessage) {
+            // SECURITY: Do NOT call getObject() - deserialization vulnerability!
+            return "[ObjectMessage - Content not extracted for security]";
+        }
+        return "Unknown message type";
     }
 }
 ```
@@ -661,11 +704,38 @@ podman logs -f banking-jms-app
 - Verify DLQ JNDI name
 - Check Liberty messaging configuration
 
+## Security Best Practices
+
+### Why JSON Instead of Java Serialization?
+
+**Java Serialization Risks:**
+- Remote Code Execution via gadget chains
+- CVE-2015-7501, CVE-2015-4852, CVE-2016-0638
+- Exploitable with tools like ysoserial
+
+**JSON Serialization Benefits:**
+- No deserialization vulnerabilities
+- Type-safe with explicit class specification
+- Human-readable for debugging
+- Language-agnostic interoperability
+
+### Implementation Guidelines
+
+1. **Always use TextMessage with JSON**
+2. **Never call ObjectMessage.getObject()**
+3. **Use JsonMessageUtil for serialization**
+4. **Validate message format property**
+5. **Handle deserialization errors gracefully**
+
+See `solution/SECURITY-FIX-JMS-DESERIALIZATION.md` for complete details.
+
 ## Additional Resources
 
 - [Jakarta Messaging 3.1 Specification](https://jakarta.ee/specifications/messaging/3.1/)
+- [Jakarta JSON Binding Specification](https://jakarta.ee/specifications/jsonb/)
 - [Open Liberty Messaging](https://openliberty.io/docs/latest/reference/feature/messaging-3.1.html)
 - [Message-Driven Beans Guide](https://openliberty.io/docs/latest/reference/feature/mdb-4.0.html)
+- [OWASP Deserialization Cheat Sheet](https://cheatsheetseries.owasp.org/cheatsheets/Deserialization_Cheat_Sheet.html)
 - [Enterprise Integration Patterns](https://www.enterpriseintegrationpatterns.com/)
 
 ## Next Steps

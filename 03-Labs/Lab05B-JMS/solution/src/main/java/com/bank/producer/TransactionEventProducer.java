@@ -3,6 +3,7 @@
 package com.bank.producer;
 
 import com.bank.event.TransactionEvent;
+import com.bank.util.JsonMessageUtil;
 import jakarta.annotation.Resource;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
@@ -13,6 +14,9 @@ import java.util.logging.Logger;
 /**
  * JMS Producer for sending transaction events.
  * Uses CDI and JMS 3.1 simplified API.
+ *
+ * Security: Uses JSON serialization via TextMessage instead of ObjectMessage
+ * to prevent Java deserialization vulnerabilities.
  */
 @ApplicationScoped
 public class TransactionEventProducer {
@@ -35,20 +39,25 @@ public class TransactionEventProducer {
     
     /**
      * Send transaction event to the transaction queue.
-     * 
+     * Uses JSON serialization for security.
+     *
      * @param event The transaction event to send
      */
     public void sendTransactionEvent(TransactionEvent event) {
         try {
             logger.info("Sending transaction event to queue: " + event);
             
-            // Create message
-            ObjectMessage message = context.createObjectMessage(event);
+            // Serialize event to JSON (secure alternative to Java serialization)
+            String jsonPayload = JsonMessageUtil.toJson(event);
+            
+            // Create TextMessage with JSON payload
+            TextMessage message = context.createTextMessage(jsonPayload);
             
             // Set message properties for filtering
             message.setStringProperty("transactionType", event.getType());
             message.setStringProperty("status", event.getStatus());
             message.setLongProperty("accountId", event.getAccountId());
+            message.setStringProperty("messageFormat", "JSON"); // Indicate JSON format
             
             // Set priority based on transaction type
             int priority = getPriority(event.getType());
@@ -69,19 +78,24 @@ public class TransactionEventProducer {
     
     /**
      * Send email notification event.
-     * 
+     * Uses JSON serialization for security.
+     *
      * @param event The transaction event for email notification
      */
     public void sendEmailNotification(TransactionEvent event) {
         try {
             logger.info("Sending email notification for transaction: " + event.getTransactionId());
             
-            // Create message
-            ObjectMessage message = context.createObjectMessage(event);
+            // Serialize event to JSON
+            String jsonPayload = JsonMessageUtil.toJson(event);
+            
+            // Create TextMessage with JSON payload
+            TextMessage message = context.createTextMessage(jsonPayload);
             
             // Set message properties
             message.setStringProperty("notificationType", "EMAIL");
             message.setStringProperty("customerEmail", event.getCustomerEmail());
+            message.setStringProperty("messageFormat", "JSON");
             
             // Send message
             context.createProducer()
@@ -98,20 +112,25 @@ public class TransactionEventProducer {
     
     /**
      * Publish audit event to topic (multiple subscribers).
-     * 
+     * Uses JSON serialization for security.
+     *
      * @param event The transaction event for audit
      */
     public void publishAuditEvent(TransactionEvent event) {
         try {
             logger.info("Publishing audit event for transaction: " + event.getTransactionId());
             
-            // Create message
-            ObjectMessage message = context.createObjectMessage(event);
+            // Serialize event to JSON
+            String jsonPayload = JsonMessageUtil.toJson(event);
+            
+            // Create TextMessage with JSON payload
+            TextMessage message = context.createTextMessage(jsonPayload);
             
             // Set message properties
             message.setStringProperty("eventType", "AUDIT");
             message.setStringProperty("transactionType", event.getType());
             message.setLongProperty("timestamp", System.currentTimeMillis());
+            message.setStringProperty("messageFormat", "JSON");
             
             // Publish to topic
             context.createProducer()

@@ -2,16 +2,18 @@
 
 package com.bank.event;
 
-import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 /**
  * Event representing a banking transaction.
- * This event is sent via JMS when transactions occur.
+ * This event is sent via JMS as JSON (not Java Serialization).
+ *
+ * Security Note: This class no longer implements Serializable to avoid
+ * Java deserialization vulnerabilities. Messages are serialized as JSON
+ * using Jakarta JSON-B, which is secure and language-agnostic.
  */
-public class TransactionEvent implements Serializable {
-    private static final long serialVersionUID = 1L;
+public class TransactionEvent {
     
     private Long transactionId;
     private Long accountId;
