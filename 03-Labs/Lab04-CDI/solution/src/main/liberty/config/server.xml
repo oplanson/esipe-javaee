@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- © Copyright 2026 Olivier Planson. All rights reserved. Reproduction prohibited. Made with IBM Bob. -->
+<server description="Banking Application Server - Lab 04 CDI">
+
+    <!-- Enable features -->
+    <featureManager>
+        <!-- Jakarta EE Web Profile (includes CDI, JPA, Servlet, JSP, Transactions, etc.) -->
+        <feature>webProfile-10.0</feature>
+        
+        <!-- MicroProfile -->
+        <feature>mpConfig-3.0</feature>
+        <feature>mpHealth-4.0</feature>
+        <feature>mpMetrics-5.0</feature>
+    </featureManager>
+
+    <!-- HTTP Endpoint -->
+    <httpEndpoint id="defaultHttpEndpoint"
+                  httpPort="${http.port}"
+                  httpsPort="${https.port}"
+                  host="*" />
+    
+    <!-- MicroProfile Metrics Configuration -->
+    <!-- Disable authentication for metrics endpoint in development -->
+    <mpMetrics authentication="false" />
+
+    <!-- PostgreSQL JDBC Driver -->
+    <library id="postgresql-library">
+        <fileset dir="${shared.resource.dir}/postgresql" includes="*.jar"/>
+    </library>
+
+    <!-- DataSource Configuration -->
+    <dataSource id="bankingDS" jndiName="jdbc/bankingDS">
+        <jdbcDriver libraryRef="postgresql-library"/>
+        <properties.postgresql
+            serverName="${db.host}"
+            portNumber="${db.port}"
+            databaseName="${db.name}"
+            user="${db.user}"
+            password="${db.password}"
+            currentSchema="public"/>
+        <connectionManager
+            maxPoolSize="10"
+            minPoolSize="2"
+            connectionTimeout="30s"
+            maxIdleTime="5m"
+            reapTime="3m"/>
+    </dataSource>
+
+    <!-- Application Configuration -->
+    <webApplication id="banking-cdi-app"
+                    location="banking-cdi-app.war"
+                    contextRoot="/" />
+
+    <!-- Logging Configuration -->
+    <logging
+        traceSpecification="*=info:com.bank.*=fine"
+        maxFileSize="20"
+        maxFiles="10"
+        consoleLogLevel="INFO"/>
+
+    <!-- Web Container Configuration -->
+    <webContainer
+        deferServletLoad="false"
+        trustHostHeaderPort="true"/>
+
+    <!-- CDI Configuration -->
+    <!-- CDI is automatically enabled when cdi-4.0 feature is present -->
+    <!-- beans.xml in WEB-INF controls bean discovery mode -->
+
+    <!-- Transaction Manager Configuration -->
+    <!-- Enhanced for Exercise 6: Advanced Transaction Management -->
+    <transaction
+        totalTranLifetimeTimeout="120s"
+        maxTransactionTimeout="300s"
+        clientInactivityTimeout="60s"
+        heuristicRetryInterval="10s"
+        heuristicRetryLimit="5"/>
+
+</server>
+
+<!-- Made with Bob -->
