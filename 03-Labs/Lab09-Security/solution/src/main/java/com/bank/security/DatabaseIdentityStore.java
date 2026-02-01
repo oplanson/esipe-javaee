@@ -72,8 +72,8 @@ public class DatabaseIdentityStore implements IdentityStore {
             
             // Verify password
             if (passwordService.verifyPassword(password, user.getPassword())) {
-                // Password correct
-                // Note: Failed attempts reset is handled by UserService after successful login
+                // Password correct - reset failed attempts counter
+                resetFailedAttempts(user);
                 
                 // Convert roles to string set
                 Set<String> roles = user.getRoles().stream()
@@ -84,8 +84,8 @@ public class DatabaseIdentityStore implements IdentityStore {
                 return new CredentialValidationResult(username, roles);
                 
             } else {
-                // Password incorrect
-                // Note: Failed attempts increment is handled by UserService after failed login
+                // Password incorrect - increment failed attempts counter
+                incrementFailedAttempts(user);
                 
                 LOGGER.warning("Invalid password for user: " + username);
                 return CredentialValidationResult.INVALID_RESULT;

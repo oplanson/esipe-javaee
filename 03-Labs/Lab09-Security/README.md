@@ -293,6 +293,8 @@ public class PasswordService {
 
 ### Step 5: Implement Database Identity Store
 
+**⚠️ IMPORTANT FIX (February 2026):** The original implementation had unused methods `incrementFailedAttempts()` and `resetFailedAttempts()` that were never called, making the account lockout feature non-functional. The solution now properly integrates these methods in the `validate()` method to track failed login attempts and lock accounts after 5 failures.
+
 Create `src/main/java/com/bank/security/DatabaseIdentityStore.java`:
 
 ```java
@@ -998,8 +1000,9 @@ After completing all parts, verify:
 - [ ] Role-based access control works correctly
 - [ ] Customers can only access their own accounts
 - [ ] Admin can access all resources
-- [ ] Failed login attempts are tracked
-- [ ] Accounts are locked after 5 failed attempts
+- [ ] Failed login attempts are tracked ✅ **FIXED: Now properly implemented**
+- [ ] Accounts are locked after 5 failed attempts ✅ **FIXED: Now properly implemented**
+- [ ] Failed attempt counter resets on successful login ✅ **FIXED: Now properly implemented**
 - [ ] Security events are logged in database
 - [ ] Security headers are present in responses
 - [ ] CORS is configured correctly
@@ -1078,6 +1081,41 @@ Run the test scripts:
    - Clickjacking prevention
    - Content Security Policy
    - HTTPS enforcement
+
+---
+
+## 🐛 Known Issues and Fixes
+
+### Account Lockout Feature Fix (February 2026)
+
+**Problem:** The original implementation of [`DatabaseIdentityStore.java`](solution/src/main/java/com/bank/security/DatabaseIdentityStore.java) contained methods `incrementFailedAttempts()` and `resetFailedAttempts()` that were defined but never invoked, rendering the account lockout security feature completely non-functional.
+
+**Root Cause:** The `validate()` method performed password verification but did not call the helper methods to track failed login attempts or reset the counter on successful login.
+
+**Solution:** Modified the `validate()` method (lines 73-92) to:
+1. Call `resetFailedAttempts(user)` after successful password verification to clear the failed attempt counter
+2. Call `incrementFailedAttempts(user)` after failed password verification to track failures and automatically lock the account after 5 attempts
+
+**Impact:** This fix ensures that:
+- Failed login attempts are properly tracked in the database
+- Accounts are automatically locked after 5 consecutive failed login attempts
+- The failed attempt counter is reset upon successful login
+- The security audit log correctly reflects all authentication events
+
+**Code Changes:**
+```java
+// After successful password verification (line 73-80)
+if (passwordService.verifyPassword(password, user.getPassword())) {
+    resetFailedAttempts(user);  // ← Added
+    // ... rest of success logic
+}
+
+// After failed password verification (line 82-92)
+else {
+    incrementFailedAttempts(user);  // ← Added
+    // ... rest of failure logic
+}
+```
 
 ---
 
