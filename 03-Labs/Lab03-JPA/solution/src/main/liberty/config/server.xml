@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- © Copyright 2026 Olivier Planson. All rights reserved. Reproduction prohibited. Made with IBM Bob. -->
+<server description="Banking JPA Application Server - Lab 03">
+
+    <!-- Enable features -->
+    <featureManager>
+        <!-- Core Web Features (without CDI) -->
+        <feature>servlet-6.0</feature>
+        <feature>pages-3.1</feature>
+        <feature>expressionLanguage-5.0</feature>
+        <feature>jsonb-3.0</feature>
+        <feature>jsonp-2.1</feature>
+        
+        <!-- JPA Features -->
+        <feature>persistence-3.1</feature>
+        <feature>persistenceContainer-3.1</feature>
+        <feature>jdbc-4.2</feature>
+        
+        <!-- MicroProfile Features (without CDI dependencies) -->
+        <feature>mpHealth-4.0</feature>
+        <feature>mpConfig-3.0</feature>
+        <feature>mpMetrics-5.0</feature>
+        <feature>mpOpenAPI-3.1</feature>
+    </featureManager>
+
+    <!-- HTTP Endpoint -->
+    <httpEndpoint id="defaultHttpEndpoint"
+                  httpPort="${http.port}"
+                  httpsPort="${https.port}"
+                  host="*" />
+
+    <!-- Application Configuration -->
+    <webApplication id="banking-jpa-app"
+                    location="banking-jpa-app.war"
+                    contextRoot="/" />
+
+    <!-- PostgreSQL DataSource -->
+    <library id="postgresql-lib">
+        <fileset dir="${shared.resource.dir}/postgresql" includes="*.jar"/>
+    </library>
+
+    <!-- Non-transactional DataSource for Flyway migrations -->
+    <dataSource id="FlywayDataSource" jndiName="jdbc/flywayDS" transactional="false">
+        <jdbcDriver libraryRef="postgresql-lib"/>
+        <properties.postgresql
+            serverName="${env.DB_HOST}"
+            portNumber="${env.DB_PORT}"
+            databaseName="${env.DB_NAME}"
+            user="${env.DB_USER}"
+            password="${env.DB_PASSWORD}"
+            ssl="false"/>
+        <connectionManager maxPoolSize="5" minPoolSize="1"/>
+    </dataSource>
+
+    <!-- JTA DataSource for application use -->
+    <dataSource id="DefaultDataSource" jndiName="jdbc/bankingDS">
+        <jdbcDriver libraryRef="postgresql-lib"/>
+        <properties.postgresql
+            serverName="${env.DB_HOST}"
+            portNumber="${env.DB_PORT}"
+            databaseName="${env.DB_NAME}"
+            user="${env.DB_USER}"
+            password="${env.DB_PASSWORD}"
+            ssl="false"/>
+        <connectionManager maxPoolSize="10" minPoolSize="2"/>
+    </dataSource>
+
+    <!-- JPA Configuration -->
+    <jpa defaultPersistenceProvider="org.eclipse.persistence.jpa.PersistenceProvider"/>
+
+    <!-- Quick Start Security for MicroProfile endpoints -->
+    <quickStartSecurity userName="admin" userPassword="adminpwd"/>
+    
+    <!-- Allow unauthenticated access to MicroProfile endpoints -->
+    <mpMetrics authentication="false"/>
+
+    <!-- Logging -->
+    <logging 
+        consoleLogLevel="INFO"
+        traceSpecification="*=info:com.bank.*=all"/>
+
+    <!-- Web Container Configuration -->
+    <webContainer deferServletLoad="false"/>
+
+</server>
+
+<!-- Made with Bob -->
