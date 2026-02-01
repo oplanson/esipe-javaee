@@ -15,7 +15,6 @@ import com.bank.application.port.out.EventPublisher;
 import com.bank.domain.model.Account;
 import com.bank.domain.model.Client;
 import com.bank.domain.valueobject.AccountNumber;
-import com.bank.domain.valueobject.AccountType;
 import com.bank.domain.valueobject.Money;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
