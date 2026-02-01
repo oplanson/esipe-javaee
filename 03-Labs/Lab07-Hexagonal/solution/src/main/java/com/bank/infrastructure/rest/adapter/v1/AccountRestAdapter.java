@@ -219,28 +219,70 @@ public class AccountRestAdapter {
     
     // Request/Response DTOs for REST API
     
+    /**
+     * @deprecated Use V2 API request format instead
+     */
+    @Deprecated(since = "1.0", forRemoval = true)
     public static class OpenAccountRequest {
+        /** @deprecated Use V2 API request format instead */
+        @Deprecated(since = "1.0", forRemoval = true)
         public Long clientId;
+        /** @deprecated Use V2 API request format instead */
+        @Deprecated(since = "1.0", forRemoval = true)
         public double initialBalance;
+        /** @deprecated Use V2 API request format instead */
+        @Deprecated(since = "1.0", forRemoval = true)
         public String currency;
+        /** @deprecated Use V2 API request format instead */
+        @Deprecated(since = "1.0", forRemoval = true)
         public String accountType;
     }
     
+    /**
+     * @deprecated Use V2 API request format instead
+     */
+    @Deprecated(since = "1.0", forRemoval = true)
     public static class MoneyOperationRequest {
+        /** @deprecated Use V2 API request format instead */
+        @Deprecated(since = "1.0", forRemoval = true)
         public BigDecimal amount;
+        /** @deprecated Use V2 API request format instead */
+        @Deprecated(since = "1.0", forRemoval = true)
         public String currency;
     }
     
+    /**
+     * @deprecated Use V2 API request format instead
+     */
+    @Deprecated(since = "1.0", forRemoval = true)
     public static class TransferRequest {
+        /** @deprecated Use V2 API request format instead */
+        @Deprecated(since = "1.0", forRemoval = true)
         public Long fromAccountId;
+        /** @deprecated Use V2 API request format instead */
+        @Deprecated(since = "1.0", forRemoval = true)
         public Long toAccountId;
+        /** @deprecated Use V2 API request format instead */
+        @Deprecated(since = "1.0", forRemoval = true)
         public BigDecimal amount;
+        /** @deprecated Use V2 API request format instead */
+        @Deprecated(since = "1.0", forRemoval = true)
         public String currency;
     }
     
+    /**
+     * @deprecated Use V2 API response format instead
+     */
+    @Deprecated(since = "1.0", forRemoval = true)
     public static class ErrorResponse {
+        /** @deprecated Use V2 API response format instead */
+        @Deprecated(since = "1.0", forRemoval = true)
         public String message;
         
+        /**
+         * @deprecated Use V2 API response format instead
+         */
+        @Deprecated(since = "1.0", forRemoval = true)
         public ErrorResponse(String message) {
             this.message = message;
         }

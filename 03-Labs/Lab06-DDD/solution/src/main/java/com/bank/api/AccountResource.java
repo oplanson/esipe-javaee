@@ -60,8 +60,10 @@ public class AccountResource {
      *   {"id": 1, "number": "ACC001", "balance": 1000.00, "type": "CHECKING"},
      *   {"id": 2, "number": "ACC002", "balance": 5000.00, "type": "SAVINGS"}
      * ]
+     * @deprecated Use {@link com.bank.api.v2.AccountResourceV2#getAllAccounts()} instead
      */
     @GET
+    @Deprecated(since = "1.0", forRemoval = true)
     public Response getAllAccounts() {
         logger.info("REST V1 (DEPRECATED): Getting all accounts");
         List<Account> accounts = accountService.findAll();
@@ -87,9 +89,11 @@ public class AccountResource {
      * 
      * Response: 200 OK
      * {"id": 1, "number": "ACC001", "balance": 1000.00, "type": "CHECKING"}
+     * @deprecated Use {@link com.bank.api.v2.AccountResourceV2#getAccount(Long)} instead
      */
     @GET
     @Path("/{id}")
+    @Deprecated(since = "1.0", forRemoval = true)
     public Response getAccount(@PathParam("id") Long id) {
         logger.info("REST V1 (DEPRECATED): Getting account with ID: " + id);
         
@@ -121,8 +125,10 @@ public class AccountResource {
      * 
      * Response: 201 Created
      * {"id": 1, "number": "ACC001", "balance": 1000.00, "type": "CHECKING"}
+     * @deprecated Use {@link com.bank.api.v2.AccountResourceV2#createAccount(com.bank.application.dto.AccountDTO)} instead
      */
     @POST
+    @Deprecated(since = "1.0", forRemoval = true)
     public Response createAccount(@Valid Account account) {
         logger.info("REST V1 (DEPRECATED): Creating account: " + account.getNumber());
         
@@ -159,9 +165,11 @@ public class AccountResource {
      * 
      * Response: 200 OK
      * {"id": 1, "number": "ACC001", "balance": 1500.00, "type": "CHECKING"}
+     * @deprecated Use {@link com.bank.api.v2.AccountResourceV2#updateAccount(Long, com.bank.application.dto.AccountDTO)} instead
      */
     @PUT
     @Path("/{id}")
+    @Deprecated(since = "1.0", forRemoval = true)
     public Response updateAccount(@PathParam("id") Long id, @Valid Account account) {
         logger.info("REST V1 (DEPRECATED): Updating account with ID: " + id);
         
@@ -195,9 +203,11 @@ public class AccountResource {
      * DELETE /api/accounts/1
      * 
      * Response: 204 No Content
+     * @deprecated Use {@link com.bank.api.v2.AccountResourceV2#deleteAccount(Long)} instead
      */
     @DELETE
     @Path("/{id}")
+    @Deprecated(since = "1.0", forRemoval = true)
     public Response deleteAccount(@PathParam("id") Long id) {
         logger.info("REST V1 (DEPRECATED): Deleting account with ID: " + id);
         
@@ -228,9 +238,11 @@ public class AccountResource {
      *   {"id": 1, "number": "ACC001", "balance": 1000.00, "type": "CHECKING"},
      *   {"id": 2, "number": "ACC002", "balance": 5000.00, "type": "SAVINGS"}
      * ]
+     * @deprecated Use {@link com.bank.api.v2.AccountResourceV2#getClientAccounts(Long)} instead
      */
     @GET
     @Path("/client/{clientId}")
+    @Deprecated(since = "1.0", forRemoval = true)
     public Response getClientAccounts(@PathParam("clientId") Long clientId) {
         logger.info("REST V1 (DEPRECATED): Getting accounts for client ID: " + clientId);
         List<Account> accounts = accountService.findByClient(clientId);
@@ -253,9 +265,11 @@ public class AccountResource {
      * 
      * Response: 200 OK
      * [{"id": 1, "number": "ACC001", "balance": 1000.00, "type": "CHECKING"}]
+     * @deprecated Use {@link com.bank.api.v2.AccountResourceV2#getAccountsByType(String)} instead
      */
     @GET
     @Path("/type/{type}")
+    @Deprecated(since = "1.0", forRemoval = true)
     public Response getAccountsByType(@PathParam("type") String type) {
         logger.info("REST V1 (DEPRECATED): Getting accounts by type: " + type);
         List<Account> accounts = accountService.findByType(type);
@@ -280,9 +294,11 @@ public class AccountResource {
      * 
      * Response: 200 OK
      * {"id": 1, "number": "ACC001", "balance": 1500.00, "type": "CHECKING"}
+     * @deprecated Use {@link com.bank.api.v2.AccountResourceV2#deposit(Long, double)} instead
      */
     @POST
     @Path("/{id}/deposit")
+    @Deprecated(since = "1.0", forRemoval = true)
     public Response deposit(@PathParam("id") Long id, @QueryParam("amount") double amount) {
         logger.info("REST V1 (DEPRECATED): Depositing " + amount + " to account ID: " + id);
         
@@ -321,9 +337,11 @@ public class AccountResource {
      * 
      * Response: 200 OK
      * {"id": 1, "number": "ACC001", "balance": 800.00, "type": "CHECKING"}
+     * @deprecated Use {@link com.bank.api.v2.AccountResourceV2#withdraw(Long, double)} instead
      */
     @POST
     @Path("/{id}/withdraw")
+    @Deprecated(since = "1.0", forRemoval = true)
     public Response withdraw(@PathParam("id") Long id, @QueryParam("amount") double amount) {
         logger.info("REST V1 (DEPRECATED): Withdrawing " + amount + " from account ID: " + id);
         
@@ -372,9 +390,11 @@ public class AccountResource {
      *   "fromAccount": {"id": 1, "balance": 900.00},
      *   "toAccount": {"id": 2, "balance": 1100.00}
      * }
+     * @deprecated Use {@link com.bank.api.v2.AccountResourceV2#transfer(Long, Long, double)} instead
      */
     @POST
     @Path("/{fromId}/transfer")
+    @Deprecated(since = "1.0", forRemoval = true)
     public Response transfer(
             @PathParam("fromId") Long fromId,
             @QueryParam("toId") Long toId,
@@ -424,13 +444,19 @@ public class AccountResource {
     
     /**
      * Inner class for transfer response.
+     * @deprecated Use V2 API response format instead
      */
+    @Deprecated(since = "1.0", forRemoval = true)
     public static class TransferResponse {
         private boolean success;
         private String message;
         private Account fromAccount;
         private Account toAccount;
         
+        /**
+         * @deprecated Use V2 API response format instead
+         */
+        @Deprecated(since = "1.0", forRemoval = true)
         public TransferResponse(boolean success, String message, Account fromAccount, Account toAccount) {
             this.success = success;
             this.message = message;
@@ -438,34 +464,66 @@ public class AccountResource {
             this.toAccount = toAccount;
         }
         
+        /**
+         * @deprecated Use V2 API response format instead
+         */
+        @Deprecated(since = "1.0", forRemoval = true)
         public boolean isSuccess() {
             return success;
         }
         
+        /**
+         * @deprecated Use V2 API response format instead
+         */
+        @Deprecated(since = "1.0", forRemoval = true)
         public void setSuccess(boolean success) {
             this.success = success;
         }
         
+        /**
+         * @deprecated Use V2 API response format instead
+         */
+        @Deprecated(since = "1.0", forRemoval = true)
         public String getMessage() {
             return message;
         }
         
+        /**
+         * @deprecated Use V2 API response format instead
+         */
+        @Deprecated(since = "1.0", forRemoval = true)
         public void setMessage(String message) {
             this.message = message;
         }
         
+        /**
+         * @deprecated Use V2 API response format instead
+         */
+        @Deprecated(since = "1.0", forRemoval = true)
         public Account getFromAccount() {
             return fromAccount;
         }
         
+        /**
+         * @deprecated Use V2 API response format instead
+         */
+        @Deprecated(since = "1.0", forRemoval = true)
         public void setFromAccount(Account fromAccount) {
             this.fromAccount = fromAccount;
         }
         
+        /**
+         * @deprecated Use V2 API response format instead
+         */
+        @Deprecated(since = "1.0", forRemoval = true)
         public Account getToAccount() {
             return toAccount;
         }
         
+        /**
+         * @deprecated Use V2 API response format instead
+         */
+        @Deprecated(since = "1.0", forRemoval = true)
         public void setToAccount(Account toAccount) {
             this.toAccount = toAccount;
         }
@@ -481,10 +539,12 @@ public class AccountResource {
      * 
      * Response: 200 OK
      * {"count": 15}
+     * @deprecated Use {@link com.bank.api.v2.AccountResourceV2#getAccountCount()} instead
      */
     @GET
     @Path("/count")
     @Produces(MediaType.APPLICATION_JSON)
+    @Deprecated(since = "1.0", forRemoval = true)
     public Response getAccountCount() {
         logger.info("REST: Getting account count");
         

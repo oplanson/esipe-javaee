@@ -55,8 +55,10 @@ public class ClientResource {
      *   {"id": 1, "name": "John Doe", "email": "john@example.com", "premium": false},
      *   {"id": 2, "name": "Jane Smith", "email": "jane@example.com", "premium": true}
      * ]
+     * @deprecated Use {@link com.bank.api.v2.ClientResourceV2#getAllClients()} instead
      */
     @GET
+    @Deprecated(since = "1.0", forRemoval = true)
     public Response getAllClients() {
         logger.info("REST V1 (DEPRECATED): Getting all clients");
         List<Client> clients = clientService.findAll();
@@ -81,9 +83,11 @@ public class ClientResource {
      * 
      * Response: 200 OK
      * {"id": 1, "name": "John Doe", "email": "john@example.com", "premium": false}
+     * @deprecated Use {@link com.bank.api.v2.ClientResourceV2#getClient(Long)} instead
      */
     @GET
     @Path("/{id}")
+    @Deprecated(since = "1.0", forRemoval = true)
     public Response getClient(@PathParam("id") Long id) {
         logger.info("REST V1 (DEPRECATED): Getting client with ID: " + id);
         
@@ -114,8 +118,10 @@ public class ClientResource {
      * 
      * Response: 201 Created
      * {"id": 1, "name": "John Doe", "email": "john@example.com", "premium": false}
+     * @deprecated Use {@link com.bank.api.v2.ClientResourceV2#createClient(com.bank.application.dto.ClientDTO)} instead
      */
     @POST
+    @Deprecated(since = "1.0", forRemoval = true)
     public Response createClient(@Valid Client client) {
         logger.info("REST V1 (DEPRECATED): Creating client: " + client.getName());
         
@@ -149,9 +155,11 @@ public class ClientResource {
      * 
      * Response: 200 OK
      * {"id": 1, "name": "John Updated", "email": "john.updated@example.com", "premium": true}
+     * @deprecated Use {@link com.bank.api.v2.ClientResourceV2#updateClient(Long, com.bank.application.dto.ClientDTO)} instead
      */
     @PUT
     @Path("/{id}")
+    @Deprecated(since = "1.0", forRemoval = true)
     public Response updateClient(@PathParam("id") Long id, @Valid Client client) {
         logger.info("REST V1 (DEPRECATED): Updating client with ID: " + id);
         
@@ -197,9 +205,11 @@ public class ClientResource {
      * DELETE /api/clients/1
      * 
      * Response: 204 No Content
+     * @deprecated Use {@link com.bank.api.v2.ClientResourceV2#deleteClient(Long)} instead
      */
     @DELETE
     @Path("/{id}")
+    @Deprecated(since = "1.0", forRemoval = true)
     public Response deleteClient(@PathParam("id") Long id) {
         logger.info("REST V1 (DEPRECATED): Deleting client with ID: " + id);
         
@@ -227,9 +237,11 @@ public class ClientResource {
      * 
      * Response: 200 OK
      * [{"id": 1, "name": "John Doe", "email": "john@example.com", "premium": false}]
+     * @deprecated Use {@link com.bank.api.v2.ClientResourceV2#searchClients(String)} instead
      */
     @GET
     @Path("/search")
+    @Deprecated(since = "1.0", forRemoval = true)
     public Response searchClients(@QueryParam("name") String name) {
         logger.info("REST V1 (DEPRECATED): Searching clients by name: " + name);
         
@@ -257,10 +269,12 @@ public class ClientResource {
      * 
      * Response: 200 OK
      * {"count": 42}
+     * @deprecated Use {@link com.bank.api.v2.ClientResourceV2#getClientCount()} instead
      */
     @GET
     @Path("/count")
     @Produces(MediaType.APPLICATION_JSON)
+    @Deprecated(since = "1.0", forRemoval = true)
     public Response getClientCount() {
         logger.info("REST: Getting client count");
         
