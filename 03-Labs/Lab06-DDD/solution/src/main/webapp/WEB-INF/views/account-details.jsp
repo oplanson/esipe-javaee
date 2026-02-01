@@ -116,7 +116,7 @@
             <% if (account != null) { %>
                 <div class="balance-display">
                     <div>Current Balance</div>
-                    <div>$<%= String.format("%.2f", account.getBalance()) %></div>
+                    <div>$<%= String.format("%.2f", account.getBalanceAsDouble()) %></div>
                 </div>
 
                 <div class="account-info">
@@ -170,7 +170,7 @@
                         <input type="hidden" name="id" value="<%= account.getId() %>">
                         <div class="form-group" style="flex: 1; margin: 0;">
                             <label for="withdrawAmount">Amount:</label>
-                            <input type="number" id="withdrawAmount" name="amount" step="0.01" min="0.01" max="<%= account.getBalance() %>" required>
+                            <input type="number" id="withdrawAmount" name="amount" step="0.01" min="0.01" max="<%= account.getBalanceAsDouble() %>" required>
                         </div>
                         <button type="submit" class="button secondary">Withdraw</button>
                     </form>
@@ -189,7 +189,7 @@
                             </div>
                             <div class="form-group" style="flex: 1; min-width: 150px; margin: 0;">
                                 <label for="transferAmount">Amount:</label>
-                                <input type="number" id="transferAmount" name="amount" step="0.01" min="0.01" max="<%= account.getBalance() %>" required>
+                                <input type="number" id="transferAmount" name="amount" step="0.01" min="0.01" max="<%= account.getBalanceAsDouble() %>" required>
                             </div>
                             <button type="submit" class="button">Transfer</button>
                         </form>

@@ -8,7 +8,6 @@ import com.bank.service.AccountService;
 import com.bank.service.ClientService;
 import com.bank.config.Logged;
 import com.bank.domain.valueobject.Money;
-import com.bank.domain.valueobject.AccountNumber;
 import com.bank.domain.valueobject.AccountType;
 
 import jakarta.inject.Inject;
@@ -34,59 +33,55 @@ import java.util.logging.Logger;
  * - @Logged custom interceptor
  * - Clean separation of concerns
  */
-@WebServlet(
-    name = "AccountController",
-    urlPatterns = {"/accounts", "/account"},
-    loadOnStartup = 2
-)
+@WebServlet(name = "AccountController", urlPatterns = { "/accounts", "/account" }, loadOnStartup = 2)
 public class AccountController extends HttpServlet {
-    
+
     /**
      * AccountService injected by CDI.
      */
     @Inject
     private AccountService accountService;
-    
+
     /**
      * ClientService injected by CDI.
      */
     @Inject
     private ClientService clientService;
-    
+
     /**
      * Logger injected by CDI.
      */
     @Inject
     private Logger logger;
-    
+
     /**
      * Configuration properties injected by MicroProfile Config.
      */
     @Inject
     @ConfigProperty(name = "feature.account.deletion.enabled", defaultValue = "true")
     private Boolean deletionEnabled;
-    
+
     @Inject
     @ConfigProperty(name = "feature.account.transfer.enabled", defaultValue = "true")
     private Boolean transferEnabled;
-    
+
     @Inject
     @ConfigProperty(name = "app.name", defaultValue = "Banking Application")
     private String appName;
-    
+
     /**
      * Initialize the servlet.
      */
     @Override
     public void init() throws ServletException {
         super.init();
-        
+
         logger.info("AccountController initialized with CDI");
         logger.info("App name: " + appName);
         logger.info("Deletion enabled: " + deletionEnabled);
         logger.info("Transfer enabled: " + transferEnabled);
     }
-    
+
     /**
      * Handle GET requests.
      */
@@ -94,10 +89,10 @@ public class AccountController extends HttpServlet {
     @Logged
     protected void doGet(HttpServletRequest req, HttpServletResponse resp)
             throws ServletException, IOException {
-        
+
         String action = req.getParameter("action");
         String path = req.getServletPath();
-        
+
         try {
             if ("/accounts".equals(path)) {
                 listAccounts(req, resp);
@@ -122,7 +117,7 @@ public class AccountController extends HttpServlet {
             req.getRequestDispatcher("/WEB-INF/views/error.jsp").forward(req, resp);
         }
     }
-    
+
     /**
      * Handle POST requests.
      */
@@ -130,9 +125,9 @@ public class AccountController extends HttpServlet {
     @Logged
     protected void doPost(HttpServletRequest req, HttpServletResponse resp)
             throws ServletException, IOException {
-        
+
         String action = req.getParameter("action");
-        
+
         try {
             if ("create".equals(action)) {
                 createAccount(req, resp);
@@ -155,17 +150,17 @@ public class AccountController extends HttpServlet {
             req.getRequestDispatcher("/WEB-INF/views/error.jsp").forward(req, resp);
         }
     }
-    
+
     /**
      * Display list of all accounts.
      */
     private void listAccounts(HttpServletRequest req, HttpServletResponse resp)
             throws ServletException, IOException {
-        
+
         String clientIdParam = req.getParameter("clientId");
         List<Account> accounts;
         Client client = null;
-        
+
         if (clientIdParam != null && !clientIdParam.trim().isEmpty()) {
             try {
                 Long clientId = Long.parseLong(clientIdParam);
@@ -180,90 +175,90 @@ public class AccountController extends HttpServlet {
             accounts = accountService.findAll();
             logger.info("Listing all accounts - Total: " + accounts.size());
         }
-        
+
         req.setAttribute("accounts", accounts);
         req.setAttribute("client", client);
         req.setAttribute("appName", appName);
         req.setAttribute("deletionEnabled", deletionEnabled);
         req.setAttribute("transferEnabled", transferEnabled);
-        
+
         req.getRequestDispatcher("/WEB-INF/views/account-list.jsp").forward(req, resp);
     }
-    
+
     /**
      * Display details of a specific account.
      */
     private void viewAccount(HttpServletRequest req, HttpServletResponse resp)
             throws ServletException, IOException {
-        
+
         String idParam = req.getParameter("id");
-        
+
         if (idParam == null || idParam.trim().isEmpty()) {
             resp.sendError(HttpServletResponse.SC_BAD_REQUEST, "Account ID is required");
             return;
         }
-        
+
         try {
             Long id = Long.parseLong(idParam);
             Account account = accountService.findById(id);
-            
+
             if (account == null) {
                 logger.warning("Account not found: " + id);
                 resp.sendError(HttpServletResponse.SC_NOT_FOUND, "Account not found");
                 return;
             }
-            
+
             logger.info("Viewing account: " + id);
             req.setAttribute("account", account);
             req.setAttribute("deletionEnabled", deletionEnabled);
             req.setAttribute("transferEnabled", transferEnabled);
             req.getRequestDispatcher("/WEB-INF/views/account-details.jsp").forward(req, resp);
-            
+
         } catch (NumberFormatException e) {
             resp.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid account ID");
         }
     }
-    
+
     /**
      * Show form for editing an account.
      */
     private void editAccount(HttpServletRequest req, HttpServletResponse resp)
             throws ServletException, IOException {
-        
+
         String idParam = req.getParameter("id");
-        
+
         if (idParam == null || idParam.trim().isEmpty()) {
             resp.sendError(HttpServletResponse.SC_BAD_REQUEST, "Account ID is required");
             return;
         }
-        
+
         try {
             Long id = Long.parseLong(idParam);
             Account account = accountService.findById(id);
-            
+
             if (account == null) {
                 logger.warning("Account not found for edit: " + id);
                 resp.sendError(HttpServletResponse.SC_NOT_FOUND, "Account not found");
                 return;
             }
-            
+
             showForm(req, resp, account);
-            
+
         } catch (NumberFormatException e) {
             resp.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid account ID");
         }
     }
-    
+
     /**
      * Show account form (for create or edit).
      */
     private void showForm(HttpServletRequest req, HttpServletResponse resp, Account account)
             throws ServletException, IOException {
-        
+
         // Get client ID if provided
         String clientIdParam = req.getParameter("clientId");
         Client client = null;
-        
+
         if (clientIdParam != null && !clientIdParam.trim().isEmpty()) {
             try {
                 Long clientId = Long.parseLong(clientIdParam);
@@ -274,282 +269,319 @@ public class AccountController extends HttpServlet {
         } else if (account != null && account.getClient() != null) {
             client = account.getClient();
         }
-        
+
         // Get all clients for dropdown
         List<Client> clients = clientService.findAll();
-        
+
         req.setAttribute("account", account);
         req.setAttribute("client", client);
         req.setAttribute("clients", clients);
         req.getRequestDispatcher("/WEB-INF/views/account-form.jsp").forward(req, resp);
-    }
-    
-    /**
-     * Create a new account.
-     */
+}
+
+/**
+ * Create a new account.
+ */
+
     private void createAccount(HttpServletRequest req, HttpServletResponse resp)
             throws IOException {
-        
-        String clientIdParam = req.getParameter("clientId");
-        String number = req.getParameter("number");
-        String balanceParam = req.getParameter("balance");
-        String type = req.getParameter("type");
-        
-        // Validate input
-        if (clientIdParam == null || clientIdParam.trim().isEmpty()) {
-            resp.sendRedirect(req.getContextPath() + "/account?action=new&error=client_required");
+
+        AccountCreationRequest request = parseAccountCreationRequest(req);
+
+        if (!request.isValid()) {
+            resp.sendRedirect(buildRedirect(req, "/account", "action", "new", "clientId", request.clientIdParam,
+                    "error", request.getValidationError()));
             return;
         }
-        
-        if (number == null || number.trim().isEmpty()) {
-            resp.sendRedirect(req.getContextPath() + "/account?action=new&clientId=" + clientIdParam + "&error=number_required");
-            return;
-        }
-        
-        if (type == null || type.trim().isEmpty()) {
-            resp.sendRedirect(req.getContextPath() + "/account?action=new&clientId=" + clientIdParam + "&error=type_required");
-            return;
-        }
-        
+
         try {
-            Long clientId = Long.parseLong(clientIdParam);
-            double balanceAmount = balanceParam != null && !balanceParam.trim().isEmpty()
-                ? Double.parseDouble(balanceParam) : 10.0; // Minimum initial deposit
-            
-            // Get client to determine currency
-            Client client = clientService.findById(clientId);
+            Client client = clientService.findById(request.clientId);
             if (client == null) {
                 resp.sendError(HttpServletResponse.SC_NOT_FOUND, "Client not found");
                 return;
             }
-            
-            // Create account using factory method with Value Objects
-            Money initialBalance = Money.euros(balanceAmount);
-            AccountType accountType = AccountType.valueOf(type.trim().toUpperCase());
-            
+
+            Money initialBalance = Money.euros(request.balanceAmount);
+            AccountType accountType = AccountType.valueOf(request.type.trim().toUpperCase());
+
             Account account = Account.create(client, accountType, initialBalance);
-            accountService.create(account, clientId);
-            
-            logger.info("Created new account: " + account.getId() + " for client: " + clientId);
-            
-            // Redirect to client details
-            resp.sendRedirect(req.getContextPath() + "/client?action=view&id=" + clientId + "&message=account_created");
-            
+            accountService.create(account, request.clientId);
+
+            logger.info(
+                    () -> String.format("Created new account: %s for client: %d", account.getId(), request.clientId));
+
+            resp.sendRedirect(buildRedirect(req, "/client", "action", "view", "id", String.valueOf(request.clientId),
+                    "message", "account_created"));
+
         } catch (NumberFormatException e) {
             resp.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid client ID or balance");
         } catch (IllegalArgumentException e) {
-            logger.warning("Error creating account: " + e.getMessage());
-            resp.sendRedirect(req.getContextPath() + "/account?action=new&clientId=" + clientIdParam + "&error=" + e.getMessage());
+            logger.warning(() -> String.format("Error creating account: %s", e.getMessage()));
+            resp.sendRedirect(buildRedirect(req, "/account", "action", "new", "clientId", request.clientIdParam,
+                    "error", e.getMessage()));
         }
     }
-    
-    /**
-     * Update an existing account.
-     */
+
+    private AccountCreationRequest parseAccountCreationRequest(HttpServletRequest req) {
+        AccountCreationRequest request = new AccountCreationRequest();
+        request.clientIdParam = req.getParameter("clientId");
+        request.number = req.getParameter("number");
+        request.balanceParam = req.getParameter("balance");
+        request.type = req.getParameter("type");
+
+        if (request.clientIdParam != null && !request.clientIdParam.trim().isEmpty()) {
+            try {
+                request.clientId = Long.parseLong(request.clientIdParam);
+            } catch (NumberFormatException e) {
+                request.validationError = "invalid_client_id";
+                return request;
+            }
+        } else {
+            request.validationError = "client_required";
+            return request;
+        }
+
+        if (request.number == null || request.number.trim().isEmpty()) {
+            request.validationError = "number_required";
+            return request;
+        }
+
+        if (request.type == null || request.type.trim().isEmpty()) {
+            request.validationError = "type_required";
+            return request;
+        }
+
+        request.balanceAmount = request.balanceParam != null && !request.balanceParam.trim().isEmpty()
+                ? Double.parseDouble(request.balanceParam)
+                : 10.0;
+
+        return request;
+    }
+
+    private String buildRedirect(HttpServletRequest req, String path, String... params) {
+        StringBuilder url = new StringBuilder(req.getContextPath()).append(path);
+
+        for (int i = 0; i < params.length; i += 2) {
+            String key = params[i];
+            String value = i + 1 < params.length ? params[i + 1] : "";
+
+            if (value != null && !value.isEmpty()) {
+                url.append(i == 0 ? "?" : "&").append(key).append("=").append(value);
+            }
+        }
+
+        return url.toString();
+    }
+
+    private static class AccountCreationRequest {
+        String clientIdParam;
+        String number;
+        String balanceParam;
+        String type;
+        Long clientId;
+        double balanceAmount;
+        String validationError;
+
+        boolean isValid() {
+            return validationError == null;
+        }
+
+        String getValidationError() {
+            return validationError != null ? validationError : "";
+        }
+    }
+
     private void updateAccount(HttpServletRequest req, HttpServletResponse resp)
             throws IOException {
-        
+
         String idParam = req.getParameter("id");
-        String number = req.getParameter("number");
         String balanceParam = req.getParameter("balance");
-        String type = req.getParameter("type");
-        
-        // Validate input
+
         if (idParam == null || idParam.trim().isEmpty()) {
             resp.sendError(HttpServletResponse.SC_BAD_REQUEST, "Account ID is required");
             return;
         }
-        
+
         try {
             Long id = Long.parseLong(idParam);
             Account account = accountService.findById(id);
-            
+
             if (account == null) {
                 resp.sendError(HttpServletResponse.SC_NOT_FOUND, "Account not found");
                 return;
             }
-            
-            // Note: In DDD, we don't directly update account fields
-            // Balance changes should go through deposit/withdraw
-            // Account type and number are immutable after creation
-            // For this controller, we'll just log a warning
-            logger.warning("Direct account updates not supported in DDD model. Use deposit/withdraw for balance changes.");
-            
-            // If balance changed, calculate difference and deposit/withdraw
+
+            logger.warning(
+                    "Direct account updates not supported in DDD model. Use deposit/withdraw for balance changes.");
+
             if (balanceParam != null && !balanceParam.trim().isEmpty()) {
                 double newBalance = Double.parseDouble(balanceParam);
                 Money currentBalance = account.getBalance();
                 double difference = newBalance - currentBalance.getAmount().doubleValue();
-                
+
                 if (difference > 0) {
                     account.deposit(Money.of(difference, currentBalance.getCurrency()));
                 } else if (difference < 0) {
                     account.withdraw(Money.of(Math.abs(difference), currentBalance.getCurrency()));
                 }
-                
+
                 accountService.update(account);
             }
-            
-            logger.info("Updated account: " + id);
-            
-            resp.sendRedirect(req.getContextPath() + "/account?action=view&id=" + id + "&message=updated");
-            
+
+            logger.info(() -> String.format("Updated account: %d", id));
+
+            resp.sendRedirect(
+                    buildRedirect(req, "/account", "action", "view", "id", String.valueOf(id), "message", "updated"));
+
         } catch (NumberFormatException e) {
             resp.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid account ID or balance");
         }
     }
-    
-    /**
-     * Delete an account.
-     */
+
     private void deleteAccount(HttpServletRequest req, HttpServletResponse resp)
             throws IOException {
-        
+
         if (!deletionEnabled) {
             resp.sendError(HttpServletResponse.SC_FORBIDDEN, "Account deletion is disabled");
             return;
         }
-        
+
         String idParam = req.getParameter("id");
         String clientIdParam = req.getParameter("clientId");
-        
+
         if (idParam == null || idParam.trim().isEmpty()) {
             resp.sendError(HttpServletResponse.SC_BAD_REQUEST, "Account ID is required");
             return;
         }
-        
+
         try {
             Long id = Long.parseLong(idParam);
-            
+
             boolean deleted = accountService.delete(id);
-            
+
             if (deleted) {
-                logger.info("Deleted account: " + id);
-                
-                // Redirect to client details if clientId provided
+                logger.info(() -> String.format("Deleted account: %d", id));
+
                 if (clientIdParam != null && !clientIdParam.trim().isEmpty()) {
-                    resp.sendRedirect(req.getContextPath() + "/client?action=view&id=" + clientIdParam + "&message=account_deleted");
+                    resp.sendRedirect(buildRedirect(req, "/client", "action", "view", "id", clientIdParam, "message",
+                            "account_deleted"));
                 } else {
-                    resp.sendRedirect(req.getContextPath() + "/accounts?message=deleted");
+                    resp.sendRedirect(buildRedirect(req, "/accounts", "message", "deleted"));
                 }
             } else {
-                logger.warning("Account not found for deletion: " + id);
+                logger.warning(() -> String.format("Account not found for deletion: %d", id));
                 resp.sendError(HttpServletResponse.SC_NOT_FOUND, "Account not found");
             }
-            
+
         } catch (NumberFormatException e) {
             resp.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid account ID");
         }
     }
-    
-    /**
-     * Deposit money into an account.
-     */
+
     private void deposit(HttpServletRequest req, HttpServletResponse resp)
             throws IOException {
-        
+
         String idParam = req.getParameter("id");
         String amountParam = req.getParameter("amount");
-        
+
         if (idParam == null || amountParam == null) {
             resp.sendError(HttpServletResponse.SC_BAD_REQUEST, "Account ID and amount are required");
             return;
         }
-        
+
         try {
             Long id = Long.parseLong(idParam);
             double amount = Double.parseDouble(amountParam);
-            
+
             boolean success = accountService.deposit(id, amount);
-            
+
             if (success) {
-                logger.info("Deposited " + amount + " to account: " + id);
-                resp.sendRedirect(req.getContextPath() + "/account?action=view&id=" + id + "&message=deposit_success");
+                logger.info(() -> String.format("Deposited %.2f to account: %d", amount, id));
+                resp.sendRedirect(buildRedirect(req, "/account", "action", "view", "id", String.valueOf(id), "message",
+                        "deposit_success"));
             } else {
-                resp.sendRedirect(req.getContextPath() + "/account?action=view&id=" + id + "&error=deposit_failed");
+                resp.sendRedirect(buildRedirect(req, "/account", "action", "view", "id", String.valueOf(id), "error",
+                        "deposit_failed"));
             }
-            
+
         } catch (NumberFormatException e) {
             resp.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid account ID or amount");
         }
     }
-    
-    /**
-     * Withdraw money from an account.
-     */
+
     private void withdraw(HttpServletRequest req, HttpServletResponse resp)
             throws IOException {
-        
+
         String idParam = req.getParameter("id");
         String amountParam = req.getParameter("amount");
-        
+
         if (idParam == null || amountParam == null) {
             resp.sendError(HttpServletResponse.SC_BAD_REQUEST, "Account ID and amount are required");
             return;
         }
-        
+
         try {
             Long id = Long.parseLong(idParam);
             double amount = Double.parseDouble(amountParam);
-            
+
             boolean success = accountService.withdraw(id, amount);
-            
+
             if (success) {
-                logger.info("Withdrew " + amount + " from account: " + id);
-                resp.sendRedirect(req.getContextPath() + "/account?action=view&id=" + id + "&message=withdraw_success");
+                logger.info(() -> String.format("Withdrew %.2f from account: %d", amount, id));
+                resp.sendRedirect(buildRedirect(req, "/account", "action", "view", "id", String.valueOf(id), "message",
+                        "withdraw_success"));
             } else {
-                resp.sendRedirect(req.getContextPath() + "/account?action=view&id=" + id + "&error=insufficient_funds");
+                resp.sendRedirect(buildRedirect(req, "/account", "action", "view", "id", String.valueOf(id), "error",
+                        "insufficient_funds"));
             }
-            
+
         } catch (NumberFormatException e) {
             resp.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid account ID or amount");
         }
     }
-    
-    /**
-     * Transfer money between accounts.
-     */
+
     private void transfer(HttpServletRequest req, HttpServletResponse resp)
             throws IOException {
-        
+
         if (!transferEnabled) {
             resp.sendError(HttpServletResponse.SC_FORBIDDEN, "Account transfer is disabled");
             return;
         }
-        
+
         String fromIdParam = req.getParameter("fromId");
         String toIdParam = req.getParameter("toId");
         String amountParam = req.getParameter("amount");
-        
+
         if (fromIdParam == null || toIdParam == null || amountParam == null) {
             resp.sendError(HttpServletResponse.SC_BAD_REQUEST, "From account, to account, and amount are required");
             return;
         }
-        
+
         try {
             Long fromId = Long.parseLong(fromIdParam);
             Long toId = Long.parseLong(toIdParam);
             double amount = Double.parseDouble(amountParam);
-            
+
             boolean success = accountService.transfer(fromId, toId, amount);
-            
+
             if (success) {
-                logger.info("Transferred " + amount + " from account " + fromId + " to " + toId);
-                resp.sendRedirect(req.getContextPath() + "/account?action=view&id=" + fromId + "&message=transfer_success");
+                logger.info(() -> String.format("Transferred %.2f from account %d to %d", amount, fromId, toId));
+                resp.sendRedirect(buildRedirect(req, "/account", "action", "view", "id", String.valueOf(fromId),
+                        "message", "transfer_success"));
             } else {
-                resp.sendRedirect(req.getContextPath() + "/account?action=view&id=" + fromId + "&error=transfer_failed");
+                resp.sendRedirect(buildRedirect(req, "/account", "action", "view", "id", String.valueOf(fromId),
+                        "error", "transfer_failed"));
             }
-            
+
         } catch (NumberFormatException e) {
             resp.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid account ID or amount");
         }
     }
-    
+
     @Override
     public void destroy() {
         logger.info("AccountController destroyed");
         super.destroy();
     }
-}
 
-// Made with Bob
+}

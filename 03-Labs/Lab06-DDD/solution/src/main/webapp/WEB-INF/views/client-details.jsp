@@ -141,7 +141,7 @@
                                             </c:choose>
                                         </td>
                                         <td>
-                                            <fmt:formatNumber value="${account.balance}"
+                                            <fmt:formatNumber value="${account.balance.amount}"
                                                             type="currency"
                                                             currencySymbol="€"
                                                             maxFractionDigits="2"
@@ -174,12 +174,12 @@
                                         <strong>
                                             <c:set var="totalBalance" value="0" />
                                             <c:forEach var="account" items="${client.accounts}">
-                                                <c:set var="totalBalance" value="${totalBalance + account.balance}" />
+                                                <c:set var="totalBalance" value="${totalBalance + account.balance.amount}" />
                                             </c:forEach>
-                                            <fmt:formatNumber value="${totalBalance}" 
-                                                            type="currency" 
-                                                            currencySymbol="€" 
-                                                            maxFractionDigits="2" 
+                                            <fmt:formatNumber value="${totalBalance}"
+                                                            type="currency"
+                                                            currencySymbol="€"
+                                                            maxFractionDigits="2"
                                                             minFractionDigits="2" />
                                         </strong>
                                     </td>
