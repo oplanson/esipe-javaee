@@ -39,7 +39,7 @@ LAB_NUMBER="04B"
 # Container configuration
 IMAGE_NAME="banking-ejb-lab04b"
 CONTAINER_NAME="banking-ejb-lab04b"
-APP_PORT=9081
+APP_PORT=9080
 
 # Database deployment mode (choose one):
 # - "none"           : No database (simple app)
@@ -503,7 +503,7 @@ main() {
         -e DB_USER=bankuser \
         -e DB_PASSWORD=bankpass \
         --name "$CONTAINER_NAME" \
-        -p "$APP_PORT:9081" \
+        -p "$APP_PORT:$APP_PORT" \
         "$IMAGE_NAME"; then
         print_success "Container started: $CONTAINER_NAME"
     else

@@ -12,7 +12,6 @@ buildNumber.properties
 
 # Liberty
 .libertyls/
-liberty/
 
 # IDE
 .idea/
