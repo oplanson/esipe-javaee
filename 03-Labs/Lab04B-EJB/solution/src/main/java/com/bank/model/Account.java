@@ -57,7 +57,11 @@ public class Account {
     
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
-    
+
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
+    @JoinColumn(name = "client_id", nullable = false)
+    private Client client;
+
     @OneToMany(mappedBy = "account", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private List<Transaction> transactions = new ArrayList<>();
     
@@ -244,6 +248,15 @@ public class Account {
     public Long getVersion() {
         return version;
     }
+
+    public Client getClient() {
+        return client;
+    }
+
+    public void setClient(Client client) {
+        this.client = client;
+    }
+
     
     @Override
     public String toString() {

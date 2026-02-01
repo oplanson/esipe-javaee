@@ -5,6 +5,7 @@ package com.bank.ejb;
 import com.bank.model.Account;
 import com.bank.model.AccountStatus;
 import com.bank.model.AccountType;
+import com.bank.model.Client;
 import com.bank.model.Transaction;
 import com.bank.model.TransactionType;
 import jakarta.annotation.security.DeclareRoles;
@@ -57,14 +58,20 @@ public class AccountServiceBean {
      *
      * @param accountNumber The account number
      * @param type The account type
+     * @param clientId The client ID
      * @return The persisted account with generated ID
      */
     @RolesAllowed({"admin", "teller"})
-    public Account createAccount(String accountNumber, AccountType type) {
-        LOGGER.info("Creating new account: " + accountNumber + " of type " + type);
+    public Account createAccount(String accountNumber, AccountType type, Long clientId) {
+        Client client = em.find(Client.class, clientId);
+        if (client == null) {
+            throw new EJBException("Client not found: " + clientId);
+        }
+    
         Account account = new Account();
         account.setAccountNumber(accountNumber);
         account.setType(type);
+        account.setClient(client);  // Set the managed client
         account.setBalance(BigDecimal.ZERO);
         account.setStatus(AccountStatus.ACTIVE);
         em.persist(account);
