@@ -3,7 +3,6 @@ package com.bank.web;
 /* © Copyright 2025-2026 Olivier Planson. All rights reserved. Reproduction prohibited. Made with IBM Bob. */
 
 import com.bank.model.Client;
-import com.bank.model.Account;
 import com.bank.service.ClientService;
 
 import jakarta.servlet.ServletException;
