@@ -40,7 +40,6 @@ public class TransactionController extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         
-        String path = request.getServletPath();
         String pathInfo = request.getPathInfo();
         
         try {

@@ -36,9 +36,6 @@ public class EJBHealthCheck implements HealthCheck {
                     .build();
             }
             
-            // Test configuration service
-            String testValue = configService.getConfig("app.name");
-            
             return HealthCheckResponse
                 .named("ejb-container")
                 .up()

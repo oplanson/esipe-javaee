@@ -27,6 +27,7 @@ public class ClientController extends HttpServlet {
     private ClientService clientService;
 
     // Configuration properties (read from ServletContext init parameters)
+    @SuppressWarnings("unused")
     private int defaultPageSize;
     private boolean deletionEnabled;
     private String appName;

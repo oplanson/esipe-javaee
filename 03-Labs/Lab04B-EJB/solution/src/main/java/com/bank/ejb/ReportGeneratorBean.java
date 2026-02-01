@@ -2,8 +2,6 @@ package com.bank.ejb;
 
 /* © Copyright 2026 Olivier Planson. All rights reserved. Reproduction prohibited. Made with IBM Bob. */
 
-import com.bank.model.Account;
-import com.bank.model.Transaction;
 import com.bank.model.TransactionType;
 import jakarta.annotation.Resource;
 import jakarta.ejb.*;
