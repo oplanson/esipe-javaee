@@ -6,179 +6,112 @@ import jakarta.persistence.Embeddable;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import java.util.Objects;
-import java.util.Random;
+import java.util.UUID;
 
 /**
  * AccountNumber Value Object representing a bank account number.
- * Immutable and defined by its value.
  * 
  * DDD Pattern: Value Object
- * - Immutable: All fields are final
- * - No identity: Equality based on value
- * - Self-validating: Enforces format rules
- * - Rich behavior: Contains generation and validation logic
- * 
- * Format: IBAN-like format (simplified)
- * Example: FR7612345678901234567890123
+ * - Immutable
+ * - Self-validating
+ * - Encapsulates account number validation logic
+ * - Provides domain-specific behavior
  */
 @Embeddable
 public class AccountNumber {
     
-    private static final String COUNTRY_CODE = "FR";
-    private static final int ACCOUNT_LENGTH = 23; // FR + 2 check digits + 23 digits
-    private static final String ACCOUNT_PATTERN = "^FR\\d{25}$";
+    private static final String IBAN_PATTERN = "^[A-Z]{2}[0-9]{2}[A-Z0-9]{1,30}$";
     
     @NotNull(message = "Account number is required")
-    @Pattern(regexp = ACCOUNT_PATTERN, message = "Invalid account number format")
-    private final String value;
+    @Pattern(regexp = IBAN_PATTERN, message = "Invalid IBAN format")
+    private String value;
     
     /**
-     * Default constructor for JPA.
+     * Default constructor required by JPA.
      */
     protected AccountNumber() {
-        this.value = null;
     }
     
     /**
-     * Private constructor to enforce factory methods.
+     * Creates a new AccountNumber value object.
      * 
-     * @param value The account number value
+     * @param value the account number (IBAN format)
+     * @throws IllegalArgumentException if account number is invalid
      */
-    private AccountNumber(String value) {
+    public AccountNumber(String value) {
         if (value == null || value.trim().isEmpty()) {
             throw new IllegalArgumentException("Account number cannot be null or empty");
         }
         
-        String normalized = value.trim().toUpperCase();
+        String normalized = value.trim().toUpperCase().replaceAll("\\s", "");
         
-        if (!normalized.matches(ACCOUNT_PATTERN)) {
-            throw new IllegalArgumentException(
-                "Invalid account number format. Expected format: " + ACCOUNT_PATTERN + ", got: " + normalized
-            );
+        if (!normalized.matches(IBAN_PATTERN)) {
+            throw new IllegalArgumentException("Invalid IBAN format: " + value);
         }
         
         this.value = normalized;
     }
     
     /**
-     * Factory method to create AccountNumber from string.
+     * Generates a new random account number in IBAN format.
+     * Format: FR76 followed by 23 random digits
      * 
-     * @param value The account number value
-     * @return A new AccountNumber instance
-     */
-    public static AccountNumber of(String value) {
-        return new AccountNumber(value);
-    }
-    
-    /**
-     * Factory method to generate a new random account number.
-     * Uses simplified IBAN format with French country code.
-     * 
-     * @return A new AccountNumber instance with generated value
+     * @return a new AccountNumber
      */
     public static AccountNumber generate() {
-        Random random = new Random();
-        StringBuilder sb = new StringBuilder(COUNTRY_CODE);
+        String uuid = UUID.randomUUID().toString().replaceAll("-", "");
+        String digits = uuid.replaceAll("[^0-9]", "");
         
-        // Generate check digits (simplified - not real IBAN check)
-        int checkDigits = random.nextInt(100);
-        sb.append(String.format("%02d", checkDigits));
-        
-        // Generate 23 random digits
-        for (int i = 0; i < ACCOUNT_LENGTH; i++) {
-            sb.append(random.nextInt(10));
+        if (digits.length() < 23) {
+            digits = digits + "00000000000000000000000";
         }
         
-        return new AccountNumber(sb.toString());
+        String iban = "FR76" + digits.substring(0, 23);
+        return new AccountNumber(iban);
     }
     
     /**
-     * Factory method to generate account number with specific bank code.
+     * Gets the account number value.
      * 
-     * @param bankCode The 5-digit bank code
-     * @return A new AccountNumber instance
-     */
-    public static AccountNumber generateWithBankCode(String bankCode) {
-        if (bankCode == null || !bankCode.matches("\\d{5}")) {
-            throw new IllegalArgumentException("Bank code must be 5 digits");
-        }
-        
-        Random random = new Random();
-        StringBuilder sb = new StringBuilder(COUNTRY_CODE);
-        
-        // Generate check digits
-        int checkDigits = random.nextInt(100);
-        sb.append(String.format("%02d", checkDigits));
-        
-        // Add bank code
-        sb.append(bankCode);
-        
-        // Generate remaining 18 random digits
-        for (int i = 0; i < 18; i++) {
-            sb.append(random.nextInt(10));
-        }
-        
-        return new AccountNumber(sb.toString());
-    }
-    
-    /**
-     * Get the account number value.
-     * 
-     * @return The account number value
+     * @return the account number
      */
     public String getValue() {
         return value;
     }
     
     /**
-     * Get the country code from the account number.
+     * Gets the country code (first 2 characters).
      * 
-     * @return The country code (first 2 characters)
+     * @return the country code
      */
     public String getCountryCode() {
-        return value != null ? value.substring(0, 2) : null;
+        return value.substring(0, 2);
     }
     
     /**
-     * Get the check digits from the account number.
+     * Gets the check digits (characters 3-4).
      * 
-     * @return The check digits (characters 3-4)
+     * @return the check digits
      */
     public String getCheckDigits() {
-        return value != null && value.length() >= 4 ? value.substring(2, 4) : null;
+        return value.substring(2, 4);
     }
     
     /**
-     * Get the bank code from the account number.
+     * Returns a formatted version of the account number with spaces.
+     * Example: FR76 1234 5678 9012 3456 7890 123
      * 
-     * @return The bank code (characters 5-9)
+     * @return formatted account number
      */
-    public String getBankCode() {
-        return value != null && value.length() >= 9 ? value.substring(4, 9) : null;
-    }
-    
-    /**
-     * Get a masked version of the account number for display.
-     * Shows only the last 4 digits.
-     * 
-     * @return Masked account number (e.g., "FR**...***1234")
-     */
-    public String getMasked() {
-        if (value == null || value.length() < 4) {
-            return "****";
+    public String getFormatted() {
+        StringBuilder formatted = new StringBuilder();
+        for (int i = 0; i < value.length(); i++) {
+            if (i > 0 && i % 4 == 0) {
+                formatted.append(' ');
+            }
+            formatted.append(value.charAt(i));
         }
-        String lastFour = value.substring(value.length() - 4);
-        return value.substring(0, 2) + "**...***" + lastFour;
-    }
-    
-    /**
-     * Check if this account number is valid.
-     * Validates format and basic structure.
-     * 
-     * @return true if valid
-     */
-    public boolean isValid() {
-        return value != null && value.matches(ACCOUNT_PATTERN);
+        return formatted.toString();
     }
     
     @Override

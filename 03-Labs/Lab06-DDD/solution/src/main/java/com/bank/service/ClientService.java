@@ -260,7 +260,12 @@ public class ClientService {
             return false;
         }
         
-        client.removeAccount(account);
+        // Remove from client's collection first to maintain in-memory consistency
+        // Use the method that doesn't update the account's client reference
+        // This avoids setting client_id to null before DELETE (which would cause constraint violation)
+        client.removeAccountFromCollection(account);
+        
+        // Now remove the account - JPA will handle the database DELETE
         em.remove(account);
         
         logger.info("Account removed from client: " + clientId);

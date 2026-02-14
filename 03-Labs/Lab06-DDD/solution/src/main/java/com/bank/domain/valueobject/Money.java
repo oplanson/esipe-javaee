@@ -3,56 +3,56 @@ package com.bank.domain.valueobject;
 /* © Copyright 2026 Olivier Planson. All rights reserved. Reproduction prohibited. Made with IBM Bob. */
 
 import jakarta.persistence.Embeddable;
-import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.NotNull;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.util.Currency;
 import java.util.Objects;
 
 /**
- * Money Value Object representing monetary amounts.
- * Immutable and defined by its attributes (amount and currency).
+ * Money Value Object representing a monetary amount with currency.
  * 
  * DDD Pattern: Value Object
- * - Immutable: All fields are final
- * - No identity: Equality based on attributes
- * - Self-validating: Enforces business rules
- * - Rich behavior: Contains business logic
+ * - Immutable
+ * - Self-validating
+ * - Encapsulates monetary calculations
+ * - Provides domain-specific behavior
  */
 @Embeddable
 public class Money {
     
     @NotNull(message = "Amount is required")
-    @DecimalMin(value = "0.0", message = "Amount cannot be negative")
-    private final BigDecimal amount;
+    private BigDecimal amount;
     
     @NotNull(message = "Currency is required")
-    private final String currency;
+    private String currency;
     
     /**
-     * Default constructor for JPA.
-     * Creates a Money object with zero amount in EUR.
+     * Default constructor required by JPA.
      */
     protected Money() {
-        this.amount = BigDecimal.ZERO;
-        this.currency = "EUR";
     }
     
     /**
-     * Private constructor to enforce factory methods.
+     * Creates a new Money value object.
      * 
-     * @param amount The monetary amount
-     * @param currency The currency code (ISO 4217)
+     * @param amount the monetary amount
+     * @param currency the currency code (ISO 4217)
+     * @throws IllegalArgumentException if amount or currency is invalid
      */
-    private Money(BigDecimal amount, String currency) {
+    public Money(BigDecimal amount, String currency) {
         if (amount == null) {
             throw new IllegalArgumentException("Amount cannot be null");
         }
-        if (amount.compareTo(BigDecimal.ZERO) < 0) {
-            throw new IllegalArgumentException("Amount cannot be negative: " + amount);
-        }
+        
         if (currency == null || currency.trim().isEmpty()) {
             throw new IllegalArgumentException("Currency cannot be null or empty");
+        }
+        
+        try {
+            Currency.getInstance(currency.toUpperCase());
+        } catch (IllegalArgumentException e) {
+            throw new IllegalArgumentException("Invalid currency code: " + currency);
         }
         
         this.amount = amount.setScale(2, RoundingMode.HALF_UP);
@@ -60,169 +60,196 @@ public class Money {
     }
     
     /**
-     * Factory method to create Money from BigDecimal.
+     * Creates a Money object in Euros.
      * 
-     * @param amount The amount
-     * @param currency The currency code
-     * @return A new Money instance
-     */
-    public static Money of(BigDecimal amount, String currency) {
-        return new Money(amount, currency);
-    }
-    
-    /**
-     * Factory method to create Money from double.
-     * 
-     * @param amount The amount
-     * @param currency The currency code
-     * @return A new Money instance
-     */
-    public static Money of(double amount, String currency) {
-        return new Money(BigDecimal.valueOf(amount), currency);
-    }
-    
-    /**
-     * Factory method to create Money in EUR.
-     * 
-     * @param amount The amount
-     * @return A new Money instance in EUR
+     * @param amount the amount in euros
+     * @return a Money object
      */
     public static Money euros(BigDecimal amount) {
         return new Money(amount, "EUR");
     }
     
     /**
-     * Factory method to create Money in EUR from double.
+     * Creates a Money object in Euros from a double value.
      * 
-     * @param amount The amount
-     * @return A new Money instance in EUR
+     * @param amount the amount in euros
+     * @return a Money object
      */
     public static Money euros(double amount) {
-        return new Money(BigDecimal.valueOf(amount), "EUR");
+        return euros(BigDecimal.valueOf(amount));
     }
     
     /**
-     * Factory method to create zero Money.
-     * 
-     * @param currency The currency code
-     * @return A new Money instance with zero amount
+     * Creates a zero Money object in the specified currency.
+     *
+     * @param currency the currency code
+     * @return a Money object with zero amount
      */
     public static Money zero(String currency) {
         return new Money(BigDecimal.ZERO, currency);
     }
     
     /**
-     * Add money to this amount.
-     * Returns a new Money instance (immutability).
+     * Factory method for creating Money from BigDecimal (for backward compatibility).
+     *
+     * @param amount the amount
+     * @param currency the currency code
+     * @return a Money object
+     */
+    public static Money of(BigDecimal amount, String currency) {
+        return new Money(amount, currency);
+    }
+    
+    /**
+     * Factory method for creating Money from double (for backward compatibility).
+     *
+     * @param amount the amount
+     * @param currency the currency code
+     * @return a Money object
+     */
+    public static Money of(double amount, String currency) {
+        return new Money(BigDecimal.valueOf(amount), currency);
+    }
+    
+    /**
+     * Gets the amount.
      * 
-     * @param other The money to add
-     * @return A new Money instance with the sum
+     * @return the monetary amount
+     */
+    public BigDecimal getAmount() {
+        return amount;
+    }
+    
+    /**
+     * Gets the currency code.
+     *
+     * @return the currency code
+     */
+    public String getCurrency() {
+        return currency;
+    }
+    
+    /**
+     * Gets the amount as a double value (for backward compatibility).
+     *
+     * @return the amount as double
+     */
+    public double getAmountAsDouble() {
+        return amount.doubleValue();
+    }
+    
+    /**
+     * Adds another Money object to this one.
+     * 
+     * @param other the Money to add
+     * @return a new Money object with the sum
      * @throws IllegalArgumentException if currencies don't match
      */
     public Money add(Money other) {
         if (!this.currency.equals(other.currency)) {
-            throw new IllegalArgumentException(
-                "Cannot add money with different currencies: " + this.currency + " and " + other.currency
-            );
+            throw new IllegalArgumentException("Cannot add money with different currencies: " + 
+                this.currency + " and " + other.currency);
         }
         return new Money(this.amount.add(other.amount), this.currency);
     }
     
     /**
-     * Subtract money from this amount.
-     * Returns a new Money instance (immutability).
+     * Subtracts another Money object from this one.
      * 
-     * @param other The money to subtract
-     * @return A new Money instance with the difference
-     * @throws IllegalArgumentException if currencies don't match or result is negative
+     * @param other the Money to subtract
+     * @return a new Money object with the difference
+     * @throws IllegalArgumentException if currencies don't match
      */
     public Money subtract(Money other) {
         if (!this.currency.equals(other.currency)) {
-            throw new IllegalArgumentException(
-                "Cannot subtract money with different currencies: " + this.currency + " and " + other.currency
-            );
+            throw new IllegalArgumentException("Cannot subtract money with different currencies: " + 
+                this.currency + " and " + other.currency);
         }
-        BigDecimal result = this.amount.subtract(other.amount);
-        if (result.compareTo(BigDecimal.ZERO) < 0) {
-            throw new IllegalArgumentException("Result cannot be negative: " + result);
-        }
-        return new Money(result, this.currency);
+        return new Money(this.amount.subtract(other.amount), this.currency);
     }
     
     /**
-     * Multiply money by a factor.
-     * Returns a new Money instance (immutability).
+     * Multiplies this Money by a factor.
      * 
-     * @param factor The multiplication factor
-     * @return A new Money instance with the product
+     * @param factor the multiplication factor
+     * @return a new Money object with the product
      */
     public Money multiply(BigDecimal factor) {
-        if (factor.compareTo(BigDecimal.ZERO) < 0) {
-            throw new IllegalArgumentException("Factor cannot be negative: " + factor);
-        }
         return new Money(this.amount.multiply(factor), this.currency);
     }
     
     /**
-     * Multiply money by a factor.
+     * Multiplies this Money by a factor.
      * 
-     * @param factor The multiplication factor
-     * @return A new Money instance with the product
+     * @param factor the multiplication factor
+     * @return a new Money object with the product
      */
     public Money multiply(double factor) {
         return multiply(BigDecimal.valueOf(factor));
     }
     
     /**
-     * Check if this money is greater than another.
+     * Checks if this Money is greater than another.
      * 
-     * @param other The money to compare
+     * @param other the Money to compare with
      * @return true if this is greater than other
      * @throws IllegalArgumentException if currencies don't match
      */
     public boolean isGreaterThan(Money other) {
         if (!this.currency.equals(other.currency)) {
-            throw new IllegalArgumentException(
-                "Cannot compare money with different currencies: " + this.currency + " and " + other.currency
-            );
+            throw new IllegalArgumentException("Cannot compare money with different currencies: " + 
+                this.currency + " and " + other.currency);
         }
         return this.amount.compareTo(other.amount) > 0;
     }
     
     /**
-     * Check if this money is greater than or equal to another.
+     * Checks if this Money is greater than or equal to another.
      * 
-     * @param other The money to compare
+     * @param other the Money to compare with
      * @return true if this is greater than or equal to other
      * @throws IllegalArgumentException if currencies don't match
      */
     public boolean isGreaterThanOrEqualTo(Money other) {
         if (!this.currency.equals(other.currency)) {
-            throw new IllegalArgumentException(
-                "Cannot compare money with different currencies: " + this.currency + " and " + other.currency
-            );
+            throw new IllegalArgumentException("Cannot compare money with different currencies: " + 
+                this.currency + " and " + other.currency);
         }
         return this.amount.compareTo(other.amount) >= 0;
     }
     
     /**
-     * Check if this money is less than another.
+     * Checks if this Money is less than another.
      * 
-     * @param other The money to compare
+     * @param other the Money to compare with
      * @return true if this is less than other
      * @throws IllegalArgumentException if currencies don't match
      */
     public boolean isLessThan(Money other) {
         if (!this.currency.equals(other.currency)) {
-            throw new IllegalArgumentException(
-                "Cannot compare money with different currencies: " + this.currency + " and " + other.currency
-            );
+            throw new IllegalArgumentException("Cannot compare money with different currencies: " + 
+                this.currency + " and " + other.currency);
         }
         return this.amount.compareTo(other.amount) < 0;
     }
     
     /**
-     * Check if this money is zero.
+     * Checks if this Money is less than or equal to another.
+     * 
+     * @param other the Money to compare with
+     * @return true if this is less than or equal to other
+     * @throws IllegalArgumentException if currencies don't match
+     */
+    public boolean isLessThanOrEqualTo(Money other) {
+        if (!this.currency.equals(other.currency)) {
+            throw new IllegalArgumentException("Cannot compare money with different currencies: " + 
+                this.currency + " and " + other.currency);
+        }
+        return this.amount.compareTo(other.amount) <= 0;
+    }
+    
+    /**
+     * Checks if this Money is zero.
      * 
      * @return true if amount is zero
      */
@@ -231,40 +258,39 @@ public class Money {
     }
     
     /**
-     * Check if this money is positive (greater than zero).
+     * Checks if this Money is positive.
      * 
-     * @return true if amount is positive
+     * @return true if amount is greater than zero
      */
     public boolean isPositive() {
         return this.amount.compareTo(BigDecimal.ZERO) > 0;
     }
     
     /**
-     * Get the amount as BigDecimal.
+     * Checks if this Money is negative.
      * 
-     * @return The amount
+     * @return true if amount is less than zero
      */
-    public BigDecimal getAmount() {
-        return amount;
+    public boolean isNegative() {
+        return this.amount.compareTo(BigDecimal.ZERO) < 0;
     }
     
     /**
-     * Get the amount as double.
-     * Use with caution due to precision issues.
+     * Returns the absolute value of this Money.
      * 
-     * @return The amount as double
+     * @return a new Money object with absolute amount
      */
-    public double getAmountAsDouble() {
-        return amount.doubleValue();
+    public Money abs() {
+        return new Money(this.amount.abs(), this.currency);
     }
     
     /**
-     * Get the currency code.
+     * Returns the negated value of this Money.
      * 
-     * @return The currency code
+     * @return a new Money object with negated amount
      */
-    public String getCurrency() {
-        return currency;
+    public Money negate() {
+        return new Money(this.amount.negate(), this.currency);
     }
     
     @Override
@@ -272,7 +298,8 @@ public class Money {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Money money = (Money) o;
-        return amount.compareTo(money.amount) == 0 && currency.equals(money.currency);
+        return Objects.equals(amount, money.amount) && 
+               Objects.equals(currency, money.currency);
     }
     
     @Override
@@ -282,7 +309,7 @@ public class Money {
     
     @Override
     public String toString() {
-        return amount.toString() + " " + currency;
+        return amount + " " + currency;
     }
 }
 

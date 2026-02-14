@@ -204,20 +204,19 @@ public class AccountService {
             return false;
         }
         
-        // Get client reference before deletion for logging
+        // Get client reference before deletion
         Client client = account.getClient();
         Long clientId = client != null ? client.getId() : null;
         
-        // Remove the account directly - JPA will handle the relationship cleanup
-        // We don't call client.removeAccount() because it would set client_id to null
-        // before the DELETE, causing a constraint violation on UPDATE
-        em.remove(account);
-        
-        // After removal, manually remove from client's collection if still in memory
-        // This keeps the in-memory state consistent without triggering an UPDATE
+        // Remove from client's collection first to maintain in-memory consistency
+        // Use package-private method that doesn't update the account's client reference
+        // This avoids setting client_id to null before DELETE (which would cause constraint violation)
         if (client != null) {
-            client.getAccounts().remove(account);
+            client.removeAccountFromCollection(account);
         }
+        
+        // Now remove the account - JPA will handle the database DELETE
+        em.remove(account);
         
         logger.info("Account deleted: " + id + " (client: " + clientId + ")");
         

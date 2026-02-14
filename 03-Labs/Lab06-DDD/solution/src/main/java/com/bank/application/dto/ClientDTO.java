@@ -6,30 +6,30 @@ import com.bank.model.Client;
 
 /**
  * ClientDTO for transferring client data between layers.
- * 
+ *
  * DDD Pattern: Data Transfer Object (DTO)
  * - Separates domain model from presentation/API layer
  * - Provides a stable interface for external consumers
  * - Prevents exposing domain model internals
  * - Simplifies serialization (JSON, XML)
+ *
+ * Refactored to Java Record (JDK 17+):
+ * - Immutable by design
+ * - Concise syntax (no boilerplate)
+ * - Automatic equals/hashCode/toString
+ * - Perfect for DTOs (data carriers)
  */
-public class ClientDTO {
-    
-    private Long id;
-    private String name;
-    private String email;
-    private boolean premium;
-    private int accountCount;
-    
-    /**
-     * Default constructor.
-     */
-    public ClientDTO() {
-    }
+public record ClientDTO(
+    Long id,
+    String name,
+    String email,
+    boolean premium,
+    int accountCount
+) {
     
     /**
      * Create DTO from Client entity.
-     * 
+     *
      * @param client The client entity
      * @return ClientDTO
      */
@@ -38,62 +38,18 @@ public class ClientDTO {
             return null;
         }
         
-        ClientDTO dto = new ClientDTO();
-        dto.id = client.getId();
-        dto.name = client.getName();
-        dto.email = client.getEmail() != null ? 
-            client.getEmail().getValue() : null;
-        dto.premium = client.isPremium();
-        dto.accountCount = client.getAccountCount();
-        
-        return dto;
-    }
-    
-    // Getters and Setters
-    
-    public Long getId() {
-        return id;
-    }
-    
-    public void setId(Long id) {
-        this.id = id;
-    }
-    
-    public String getName() {
-        return name;
-    }
-    
-    public void setName(String name) {
-        this.name = name;
-    }
-    
-    public String getEmail() {
-        return email;
-    }
-    
-    public void setEmail(String email) {
-        this.email = email;
-    }
-    
-    public boolean isPremium() {
-        return premium;
-    }
-    
-    public void setPremium(boolean premium) {
-        this.premium = premium;
-    }
-    
-    public int getAccountCount() {
-        return accountCount;
-    }
-    
-    public void setAccountCount(int accountCount) {
-        this.accountCount = accountCount;
+        return new ClientDTO(
+            client.getId(),
+            client.getName(),
+            client.getEmail() != null ? client.getEmail().getValue() : null,
+            client.isPremium(),
+            client.getAccountCount()
+        );
     }
     
     /**
      * Get masked email for display.
-     * 
+     *
      * @return Masked email
      */
     public String getMaskedEmail() {
@@ -114,17 +70,6 @@ public class ClientDTO {
         }
         
         return localPart.substring(0, 2) + "***" + domain;
-    }
-    
-    @Override
-    public String toString() {
-        return "ClientDTO{" +
-                "id=" + id +
-                ", name='" + name + '\'' +
-                ", email='" + email + '\'' +
-                ", premium=" + premium +
-                ", accountCount=" + accountCount +
-                '}';
     }
 }
 

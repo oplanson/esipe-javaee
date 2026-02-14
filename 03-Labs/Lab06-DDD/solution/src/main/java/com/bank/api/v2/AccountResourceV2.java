@@ -294,14 +294,8 @@ public class AccountResourceV2 {
      * Convert Account entity to DTO.
      */
     private AccountDTO toDTO(Account account) {
-        AccountDTO dto = new AccountDTO();
-        dto.setId(account.getId());
-        dto.setAccountNumber(account.getAccountNumber() != null ? account.getAccountNumber().getValue() : null);
-        dto.setBalance(account.getBalance() != null ? account.getBalance().getAmount() : BigDecimal.ZERO);
-        dto.setCurrency(account.getBalance() != null ? account.getBalance().getCurrency() : "EUR");
-        dto.setAccountType(account.getAccountType() != null ? account.getAccountType().name() : null);
-        dto.setClientId(account.getClient() != null ? account.getClient().getId() : null);
-        return dto;
+        // Use the static factory method from AccountDTO Record
+        return AccountDTO.fromEntity(account);
     }
     
     /**

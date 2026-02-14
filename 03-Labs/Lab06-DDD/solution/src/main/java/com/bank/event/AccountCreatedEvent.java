@@ -9,52 +9,42 @@ import com.bank.model.Account;
  * Demonstrates CDI event-driven architecture.
  *
  * Lab 06 - DDD: Events (from Lab 04)
+ *
+ * Refactored to Java Record (JDK 17+):
+ * - Immutable by design (perfect for events)
+ * - Thread-safe
+ * - Concise syntax
+ * - Events should never be modified after creation
  */
-public class AccountCreatedEvent {
+public record AccountCreatedEvent(
+    Account account,
+    Long clientId,
+    String createdBy,
+    long timestamp
+) {
     
-    private final Account account;
-    private final Long clientId;
-    private final String createdBy;
-    private final long timestamp;
-    
+    /**
+     * Convenience constructor with default createdBy.
+     *
+     * @param account The created account
+     */
     public AccountCreatedEvent(Account account) {
         this(account, "system");
     }
     
+    /**
+     * Constructor with custom createdBy.
+     *
+     * @param account The created account
+     * @param createdBy Who created the account
+     */
     public AccountCreatedEvent(Account account, String createdBy) {
-        this.account = account;
-        this.clientId = account != null && account.getClient() != null 
-            ? account.getClient().getId() 
-            : null;
-        this.createdBy = createdBy;
-        this.timestamp = System.currentTimeMillis();
-    }
-    
-    public Account getAccount() {
-        return account;
-    }
-    
-    public Long getClientId() {
-        return clientId;
-    }
-    
-    public String getCreatedBy() {
-        return createdBy;
-    }
-    
-    public long getTimestamp() {
-        return timestamp;
-    }
-    
-    @Override
-    public String toString() {
-        return "AccountCreatedEvent{" +
-                "accountId=" + (account != null ? account.getId() : "null") +
-                ", accountNumber='" + (account != null ? account.getNumber() : "null") + '\'' +
-                ", clientId=" + clientId +
-                ", createdBy='" + createdBy + '\'' +
-                ", timestamp=" + timestamp +
-                '}';
+        this(
+            account,
+            account != null && account.getClient() != null ? account.getClient().getId() : null,
+            createdBy,
+            System.currentTimeMillis()
+        );
     }
 }
 

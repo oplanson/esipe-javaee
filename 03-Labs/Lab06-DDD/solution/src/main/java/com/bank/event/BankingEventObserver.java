@@ -51,17 +51,17 @@ public class BankingEventObserver {
      */
     public void onClientCreated(@Observes ClientCreatedEvent event) {
         logger.info("📢 EVENT OBSERVED: Client created - " + event);
-        logger.info("   Client ID: " + event.getClient().getId());
-        logger.info("   Client Name: " + event.getClient().getName());
-        logger.info("   Client Status: " + (event.getClient().isPremium() ? "PREMIUM" : "STANDARD"));
-        logger.info("   Created By: " + event.getCreatedBy());
+        logger.info("   Client ID: " + event.client().getId());
+        logger.info("   Client Name: " + event.client().getName());
+        logger.info("   Client Status: " + (event.client().isPremium() ? "PREMIUM" : "STANDARD"));
+        logger.info("   Created By: " + event.createdBy());
         
         // Select notification service based on client status
-        NotificationService notificationService = selectNotificationService(event.getClient().isPremium());
+        NotificationService notificationService = selectNotificationService(event.client().isPremium());
         logger.info("   Notification Service: " + notificationService.getServiceLevel());
         
         // Send welcome notification using selected service
-        notificationService.sendWelcomeNotification(event.getClient());
+        notificationService.sendWelcomeNotification(event.client());
         
         // Here you could also:
         // - Create audit log entry
@@ -77,20 +77,20 @@ public class BankingEventObserver {
      */
     public void onAccountCreated(@Observes AccountCreatedEvent event) {
         logger.info("📢 EVENT OBSERVED: Account created - " + event);
-        logger.info("   Account ID: " + event.getAccount().getId());
-        logger.info("   Account Number: " + event.getAccount().getNumber());
-        logger.info("   Account Type: " + event.getAccount().getType());
-        logger.info("   Client ID: " + event.getClientId());
-        logger.info("   Created By: " + event.getCreatedBy());
+        logger.info("   Account ID: " + event.account().getId());
+        logger.info("   Account Number: " + event.account().getNumber());
+        logger.info("   Account Type: " + event.account().getType());
+        logger.info("   Client ID: " + event.clientId());
+        logger.info("   Created By: " + event.createdBy());
         
         // Select notification service based on client status
-        boolean isPremium = event.getAccount().getClient() != null && event.getAccount().getClient().isPremium();
+        boolean isPremium = event.account().getClient() != null && event.account().getClient().isPremium();
         NotificationService notificationService = selectNotificationService(isPremium);
         logger.info("   Client Status: " + (isPremium ? "PREMIUM" : "STANDARD"));
         logger.info("   Notification Service: " + notificationService.getServiceLevel());
         
         // Send account creation notification using selected service
-        notificationService.sendAccountCreatedNotification(event.getAccount());
+        notificationService.sendAccountCreatedNotification(event.account());
         
         // Here you could also:
         // - Generate account documents
@@ -106,28 +106,28 @@ public class BankingEventObserver {
      */
     public void onTransaction(@Observes TransactionEvent event) {
         logger.info("📢 EVENT OBSERVED: Transaction - " + event);
-        logger.info("   Account ID: " + event.getAccount().getId());
-        logger.info("   Transaction Type: " + event.getType());
-        logger.info("   Amount: $" + String.format("%.2f", event.getAmount()));
-        logger.info("   New Balance: $" + String.format("%.2f", event.getAccount().getBalance()));
+        logger.info("   Account ID: " + event.account().getId());
+        logger.info("   Transaction Type: " + event.type());
+        logger.info("   Amount: $" + String.format("%.2f", event.amount()));
+        logger.info("   New Balance: $" + String.format("%.2f", event.account().getBalanceAsDouble()));
         
-        if (event.getTargetAccountId() != null) {
-            logger.info("   Target Account ID: " + event.getTargetAccountId());
+        if (event.targetAccountId() != null) {
+            logger.info("   Target Account ID: " + event.targetAccountId());
         }
         
-        logger.info("   Performed By: " + event.getPerformedBy());
+        logger.info("   Performed By: " + event.performedBy());
         
         // Select notification service based on client status
-        boolean isPremium = event.getAccount().getClient() != null && event.getAccount().getClient().isPremium();
+        boolean isPremium = event.account().getClient() != null && event.account().getClient().isPremium();
         NotificationService notificationService = selectNotificationService(isPremium);
         logger.info("   Client Status: " + (isPremium ? "PREMIUM" : "STANDARD"));
         logger.info("   Notification Service: " + notificationService.getServiceLevel());
         
         // Send transaction notification using selected service
         notificationService.sendTransactionNotification(
-            event.getAccount(),
-            event.getType().toString(),
-            event.getAmount()
+            event.account(),
+            event.type().toString(),
+            event.amount()
         );
         
         // Here you could also:
@@ -144,11 +144,11 @@ public class BankingEventObserver {
      * @param event The transaction event
      */
     public void onLargeTransaction(@Observes TransactionEvent event) {
-        if (event.getAmount() > 10000) {
+        if (event.amount() > 10000) {
             logger.warning("⚠️  LARGE TRANSACTION DETECTED!");
-            logger.warning("   Account ID: " + event.getAccount().getId());
-            logger.warning("   Amount: $" + String.format("%.2f", event.getAmount()));
-            logger.warning("   Type: " + event.getType());
+            logger.warning("   Account ID: " + event.account().getId());
+            logger.warning("   Amount: $" + String.format("%.2f", event.amount()));
+            logger.warning("   Type: " + event.type());
             
             // Here you could:
             // - Alert compliance team

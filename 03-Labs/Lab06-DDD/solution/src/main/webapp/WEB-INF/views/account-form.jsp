@@ -112,7 +112,7 @@
                     <input type="number" 
                            id="balance" 
                            name="balance" 
-                           value="<%= account != null ? account.getBalance() : 0.0 %>"
+                           value="<%= account != null ? account.getBalanceAsDouble() : 0.0 %>"
                            step="0.01"
                            min="0">
                     <small>Starting balance for the account (default: $0.00)</small>
@@ -138,7 +138,7 @@
                 <div class="info-box">
                     <h3>ℹ️ Account Information</h3>
                     <p><strong>Account ID:</strong> <%= account.getId() %></p>
-                    <p><strong>Current Balance:</strong> $<%= String.format("%.2f", account.getBalance()) %></p>
+                    <p><strong>Current Balance:</strong> $<%= String.format("%.2f", account.getBalanceAsDouble()) %></p>
                     <p><strong>Client:</strong> <%= account.getClient() != null ? account.getClient().getName() : "N/A" %></p>
                 </div>
             <% } %>

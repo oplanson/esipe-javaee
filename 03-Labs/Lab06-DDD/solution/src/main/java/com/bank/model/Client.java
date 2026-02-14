@@ -232,6 +232,19 @@ public class Client {
     }
     
     /**
+     * Remove an account from this client's collection only.
+     * Does NOT update the account's client reference.
+     * Used internally when the account is being deleted from the database.
+     *
+     * @param account The account to remove from collection
+     */
+    public void removeAccountFromCollection(Account account) {
+        if (account != null) {
+            accounts.remove(account);
+        }
+    }
+    
+    /**
      * Get maximum number of accounts allowed.
      * Business rule: Premium clients can have more accounts.
      *

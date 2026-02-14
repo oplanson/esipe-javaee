@@ -12,7 +12,16 @@ This lab demonstrates the refactoring of an anemic domain model into a rich doma
 
 ## 📚 Documentation
 
-- **[API-VERSIONING.md](solution/API-VERSIONING.md)** - ⭐ **NEW!** Complete guide to API versioning strategy:
+- **[RECORDS-MIGRATION-GUIDE.md](RECORDS-MIGRATION-GUIDE.md)** - 🆕 **NEW!** Complete guide to Java Records migration (JDK 17+):
+  - Migration of DTOs, Events, and Value Objects to Records
+  - Before/After code comparisons
+  - ~310 lines of boilerplate eliminated
+  - JPA @Embeddable support with Records
+  - Best practices and patterns
+  - Testing strategies
+  - Complete implementation examples
+
+- **[API-VERSIONING.md](solution/API-VERSIONING.md)** - ⭐ Complete guide to API versioning strategy:
   - V1 vs V2 API comparison
   - Migration guide with code examples
   - Deprecation headers and timeline

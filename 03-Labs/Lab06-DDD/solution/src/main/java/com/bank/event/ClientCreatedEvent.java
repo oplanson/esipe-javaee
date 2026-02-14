@@ -9,43 +9,36 @@ import com.bank.model.Client;
  * Demonstrates CDI event-driven architecture.
  *
  * Lab 06 - DDD: Events (from Lab 04)
+ *
+ * Refactored to Java Record (JDK 17+):
+ * - Immutable by design (perfect for events)
+ * - Thread-safe
+ * - Concise syntax
+ * - Events should never be modified after creation
  */
-public class ClientCreatedEvent {
+public record ClientCreatedEvent(
+    Client client,
+    String createdBy,
+    long timestamp
+) {
     
-    private final Client client;
-    private final String createdBy;
-    private final long timestamp;
-    
+    /**
+     * Convenience constructor with default createdBy.
+     *
+     * @param client The created client
+     */
     public ClientCreatedEvent(Client client) {
         this(client, "system");
     }
     
+    /**
+     * Constructor with custom createdBy.
+     *
+     * @param client The created client
+     * @param createdBy Who created the client
+     */
     public ClientCreatedEvent(Client client, String createdBy) {
-        this.client = client;
-        this.createdBy = createdBy;
-        this.timestamp = System.currentTimeMillis();
-    }
-    
-    public Client getClient() {
-        return client;
-    }
-    
-    public String getCreatedBy() {
-        return createdBy;
-    }
-    
-    public long getTimestamp() {
-        return timestamp;
-    }
-    
-    @Override
-    public String toString() {
-        return "ClientCreatedEvent{" +
-                "clientId=" + (client != null ? client.getId() : "null") +
-                ", clientName='" + (client != null ? client.getName() : "null") + '\'' +
-                ", createdBy='" + createdBy + '\'' +
-                ", timestamp=" + timestamp +
-                '}';
+        this(client, createdBy, System.currentTimeMillis());
     }
 }
 
