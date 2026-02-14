@@ -1486,6 +1486,392 @@ public class TransferService {
 ### Remember:
 **DDD is about understanding the domain and modeling it in code using a shared language.**
 
+## 🎯 Modern Java: Records in DDD (JDK 17+)
+
+Java Records provide a concise way to create immutable data carriers, making them ideal for certain DDD patterns.
+
+### What are Records?
+
+Records are a special kind of class introduced in JDK 17 that:
+- Are **immutable by default**
+- Provide **automatic** `equals()`, `hashCode()`, and `toString()`
+- Have **compact syntax** (no boilerplate)
+- Are **final** (cannot be extended)
+
+```java
+// Traditional class (50+ lines)
+public class ClientDTO {
+    private final Long id;
+    private final String name;
+    private final String email;
+    
+    public ClientDTO(Long id, String name, String email) {
+        this.id = id;
+        this.name = name;
+        this.email = email;
+    }
+    
+    public Long getId() { return id; }
+    public String getName() { return name; }
+    public String getEmail() { return email; }
+    
+    @Override
+    public boolean equals(Object o) { /* ... */ }
+    @Override
+    public int hashCode() { /* ... */ }
+    @Override
+    public String toString() { /* ... */ }
+}
+
+// Record (1 line!)
+public record ClientDTO(Long id, String name, String email) {}
+```
+
+---
+
+## 📊 Records in DDD: Compatibility Matrix
+
+Not all DDD patterns are compatible with Records due to Jakarta EE constraints.
+
+| DDD Pattern | Record Compatible? | Reason |
+|-------------|-------------------|---------|
+| **DTOs** | ✅ Yes | Perfect fit - immutable data transfer |
+| **Events** | ✅ Yes | Immutable by nature |
+| **Commands** | ✅ Yes | Immutable intent objects |
+| **Value Objects** | ❌ No* | Cannot be `@Embeddable` in JPA |
+| **Entities** | ❌ No | Need mutable state, JPA requires no-arg constructor |
+| **Aggregates** | ❌ No | Complex lifecycle, mutable state |
+
+**\*Value Objects:** While philosophically compatible, JPA's `@Embeddable` requires a no-arg constructor that Records don't have.
+
+---
+
+## ✅ Best Practices: When to Use Records
+
+### 1. Data Transfer Objects (DTOs)
+
+**Perfect use case** - DTOs are immutable data carriers between layers.
+
+```java
+// Application Layer DTO
+public record AccountDTO(
+    Long id,
+    String accountNumber,
+    double balance,
+    String accountType,
+    Long clientId
+) {
+    // Factory method for domain-to-DTO conversion
+    public static AccountDTO from(Account account) {
+        return new AccountDTO(
+            account.getId(),
+            account.getAccountNumber().getValue(),
+            account.getBalance().getAmount(),
+            account.getAccountType().name(),
+            account.getClient().getId()
+        );
+    }
+}
+```
+
+**Benefits:**
+- ~90 lines of code eliminated
+- Automatic immutability
+- Clear intent: "this is just data"
+
+---
+
+### 2. Domain Events
+
+**Excellent use case** - Events should never be modified after creation.
+
+```java
+public record AccountCreatedEvent(
+    Account account,
+    long timestamp
+) {
+    // Compact constructor for validation
+    public AccountCreatedEvent {
+        if (account == null) {
+            throw new IllegalArgumentException("Account cannot be null");
+        }
+        if (timestamp <= 0) {
+            timestamp = System.currentTimeMillis();
+        }
+    }
+    
+    // Convenience constructor
+    public AccountCreatedEvent(Account account) {
+        this(account, System.currentTimeMillis());
+    }
+}
+```
+
+**Benefits:**
+- Thread-safe by design
+- Cannot be accidentally modified
+- Clear event semantics
+
+---
+
+### 3. Complex Events with Nested Data
+
+Records can contain other Records and enums for rich event structures.
+
+```java
+public record TransactionEvent(
+    Account account,
+    TransactionType type,
+    double amount,
+    Long targetAccountId,
+    String performedBy,
+    long timestamp
+) {
+    public enum TransactionType {
+        DEPOSIT, WITHDRAWAL, TRANSFER
+    }
+    
+    // Multiple constructors for different scenarios
+    public TransactionEvent(Account account, TransactionType type, double amount) {
+        this(account, type, amount, null, "system", System.currentTimeMillis());
+    }
+    
+    public TransactionEvent(Account account, TransactionType type, 
+                           double amount, Long targetAccountId) {
+        this(account, type, amount, targetAccountId, "system", System.currentTimeMillis());
+    }
+}
+```
+
+---
+
+## ⚠️ Records Limitations in Jakarta EE
+
+### 1. Cannot Use as @Embeddable Value Objects
+
+**Problem:** JPA requires a no-arg constructor for `@Embeddable` types.
+
+```java
+// ❌ This DOES NOT work
+@Embeddable
+public record Money(BigDecimal amount, String currency) {}
+
+// Error: NoSuchMethodException: Money.<init>()
+```
+
+**Solution:** Keep Value Objects as regular classes.
+
+```java
+// ✅ This works
+@Embeddable
+public class Money {
+    private BigDecimal amount;
+    private String currency;
+    
+    protected Money() {} // Required by JPA
+    
+    private Money(BigDecimal amount, String currency) {
+        this.amount = amount;
+        this.currency = currency;
+    }
+    
+    // Factory method (Record-like API)
+    public static Money of(BigDecimal amount, String currency) {
+        return new Money(amount, currency);
+    }
+    
+    // Getters, equals, hashCode...
+}
+```
+
+---
+
+### 2. Immutable Collections Pattern
+
+Records return immutable views to protect internal state.
+
+```java
+@Entity
+public class Client {
+    @OneToMany(mappedBy = "client")
+    private List<Account> accounts = new ArrayList<>();
+    
+    // Return immutable view (DDD best practice)
+    public List<Account> getAccounts() {
+        return Collections.unmodifiableList(accounts);
+    }
+    
+    // Separate method for internal modifications
+    public void removeAccountFromCollection(Account account) {
+        accounts.remove(account);
+    }
+}
+```
+
+**Why this matters:**
+- Prevents external code from modifying internal collections
+- Maintains aggregate consistency
+- Requires careful handling in delete operations
+
+---
+
+## 🎓 Records Migration Strategy
+
+### Step 1: Identify Candidates
+
+Analyze your codebase for immutable data carriers:
+
+```bash
+# Good candidates:
+- DTOs in application layer
+- Domain events
+- Command objects
+- Query result objects
+
+# Bad candidates:
+- JPA entities
+- Value objects with @Embeddable
+- Classes with mutable state
+- Classes requiring inheritance
+```
+
+### Step 2: Convert Incrementally
+
+Start with DTOs and Events, which have the highest benefit-to-risk ratio.
+
+```java
+// Before: 90 lines
+public class AccountDTO {
+    private final Long id;
+    private final String accountNumber;
+    // ... 15 fields
+    // ... constructor
+    // ... 15 getters
+    // ... equals, hashCode, toString
+}
+
+// After: 8 lines
+public record AccountDTO(
+    Long id,
+    String accountNumber,
+    // ... 15 fields
+) {
+    // Optional: factory methods
+}
+```
+
+---
+
+### Step 3: Handle Edge Cases
+
+**Formatting Issues:**
+
+```java
+// Problem: Cannot format Money object directly
+String.format("%.2f", account.getBalance()) // ❌ Error!
+
+// Solution: Add conversion method
+public class Money {
+    public double getAmountAsDouble() {
+        return amount.doubleValue();
+    }
+}
+
+String.format("%.2f", account.getBalanceAsDouble()) // ✅ Works!
+```
+
+**Collection Modifications:**
+
+```java
+// Problem: Trying to modify immutable collection
+client.getAccounts().remove(account); // ❌ UnsupportedOperationException!
+
+// Solution: Use dedicated method
+client.removeAccountFromCollection(account); // ✅ Works!
+```
+
+---
+
+## 📈 Records Benefits in DDD
+
+### Code Reduction
+
+Real-world example from Lab06-DDD:
+
+| Class | Before | After | Reduction |
+|-------|--------|-------|-----------|
+| AccountDTO | 95 lines | 8 lines | **-92%** |
+| ClientDTO | 78 lines | 6 lines | **-92%** |
+| AccountCreatedEvent | 45 lines | 12 lines | **-73%** |
+| TransactionEvent | 68 lines | 22 lines | **-68%** |
+| **Total** | **286 lines** | **48 lines** | **-83%** |
+
+### Maintainability Improvements
+
+- **Less boilerplate** = fewer bugs
+- **Immutability** = thread-safe by default
+- **Clear intent** = easier to understand
+- **Automatic methods** = consistent behavior
+
+---
+
+## 🔍 Records vs Traditional Classes
+
+### When to Use Records
+
+✅ **Use Records when:**
+- Data is immutable
+- No complex business logic
+- Simple data transfer
+- Event objects
+- Query results
+
+❌ **Don't Use Records when:**
+- Need mutable state
+- JPA entity or @Embeddable
+- Complex inheritance hierarchy
+- Need custom serialization
+- Framework requires no-arg constructor
+
+### Hybrid Approach
+
+**Best practice:** Combine Records and traditional classes based on constraints.
+
+```java
+// DTOs: Use Records
+public record ClientDTO(Long id, String name, String email) {}
+
+// Value Objects: Use Classes (JPA constraint)
+@Embeddable
+public class Email {
+    private String value;
+    protected Email() {}
+    public static Email of(String value) { /* ... */ }
+}
+
+// Entities: Use Classes (mutable, JPA)
+@Entity
+public class Client {
+    @Id private Long id;
+    @Embedded private Email email;
+    // ...
+}
+```
+
+---
+
+## 💡 Key Takeaways: Records in DDD
+
+1. **Records are perfect for DTOs and Events** - immutable data carriers
+2. **Cannot use Records for JPA @Embeddable** - EclipseLink limitation
+3. **Hybrid approach works best** - Records where possible, classes where required
+4. **Significant code reduction** - 80-90% less boilerplate
+5. **Immutability by default** - thread-safe, predictable behavior
+6. **Modern Java feature** - requires JDK 17+
+
+### Remember:
+**Records are a tool, not a silver bullet. Use them where they fit naturally in your DDD design.**
+
 ---
 ## 📝 Documenting Your DDD Implementation
 
