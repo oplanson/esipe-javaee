@@ -42,8 +42,8 @@ public class AccountWebController extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response) 
             throws ServletException, IOException {
         
-        String path = request.getServletPath();
-        
+        String path = request.getServletPath() + (request.getPathInfo() != null ? request.getPathInfo() : "");
+
         try {
             switch (path) {
                 case "/web/accounts":
@@ -100,8 +100,8 @@ public class AccountWebController extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response) 
             throws ServletException, IOException {
         
-        String path = request.getServletPath();
-        
+        String path = request.getServletPath() + (request.getPathInfo() != null ? request.getPathInfo() : "");
+
         try {
             switch (path) {
                 case "/web/accounts/new":

@@ -158,8 +158,16 @@ By the end of this lecture, you will be able to:
 - **Open-source:** Community-driven development under Eclipse Foundation
 
 ### Evolution Timeline:
-```
-J2EE (1999) → Java EE (2006) → Jakarta EE (2019) → Jakarta EE 10 (2022)
+```mermaid
+graph LR
+    A["J2EE (1999)"] --> B["Java EE (2006)"]
+    B --> C["Jakarta EE (2019)"]
+    C --> D["Jakarta EE 10 (2022)"]
+
+    style A fill:#e1f5ff
+    style B fill:#4facfe
+    style C fill:#667eea
+    style D fill:#43e97b
 ```
 
 ---
@@ -175,8 +183,12 @@ J2EE (1999) → Java EE (2006) → Jakarta EE (2019) → Jakarta EE 10 (2022)
 - **Rapid innovation:** Faster release cycles than Jakarta EE
 
 ### Timeline:
-```
-MicroProfile 1.0 (2016) → MicroProfile 6.0 (2023)
+```mermaid
+graph LR
+    A["MicroProfile 1.0 (2016)"] --> B["MicroProfile 6.0 (2023)"]
+
+    style A fill:#f093fb
+    style B fill:#43e97b
 ```
 
 ---
@@ -557,6 +569,7 @@ banking-app/
 ```java
 package com.bank.web;
 
+import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -569,7 +582,7 @@ public class HelloServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request,
                         HttpServletResponse response)
-            throws IOException {
+            throws ServletException, IOException {
         response.setContentType("text/html");
         response.getWriter().println("""
             <html><body>

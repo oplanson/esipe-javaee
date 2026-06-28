@@ -218,29 +218,22 @@ Client client = entityManager.find(
 
 ## JPA Architecture
 
-```
-┌─────────────────────────────────────────────────────┐
-│                  Application Layer                   │
-│              (Business Logic & Services)             │
-└──────────────────────┬──────────────────────────────┘
-                       │
-┌──────────────────────▼──────────────────────────────┐
-│              JPA API (jakarta.persistence)           │
-│  EntityManager │ EntityManagerFactory │ Query        │
-└──────────────────────┬──────────────────────────────┘
-                       │
-┌──────────────────────▼──────────────────────────────┐
-│           JPA Provider (Hibernate, EclipseLink)      │
-│              (Implementation of JPA Spec)            │
-└──────────────────────┬──────────────────────────────┘
-                       │
-┌──────────────────────▼──────────────────────────────┐
-│                  JDBC Driver                         │
-└──────────────────────┬──────────────────────────────┘
-                       │
-┌──────────────────────▼──────────────────────────────┐
-│              Database (PostgreSQL, MySQL, etc.)      │
-└─────────────────────────────────────────────────────┘
+```mermaid
+graph TB
+    A["Application Layer<br/>(Business Logic & Services)"]
+    B["JPA API (jakarta.persistence)<br/>EntityManager · EntityManagerFactory · Query"]
+    C["JPA Provider (Hibernate, EclipseLink)<br/>(Implementation of JPA Spec)"]
+    D["JDBC Driver"]
+    E["Database (PostgreSQL, MySQL, etc.)"]
+    A --> B
+    B --> C
+    C --> D
+    D --> E
+    style A fill:#e3f2fd
+    style B fill:#e8f5e9
+    style C fill:#fff3e0
+    style D fill:#f3e5f5
+    style E fill:#fce4ec
 ```
 
 ---
@@ -1366,35 +1359,21 @@ public class ClientService {
 
 ## Entity States
 
-```
-┌─────────────┐
-│  Transient  │  New entity, not in database
-└──────┬──────┘
-       │ persist()
-       ▼
-┌─────────────┐
-│  Managed    │  In persistence context, changes tracked
-└──────┬──────┘
-       │ commit() / flush()
-       ▼
-┌─────────────┐
-│  Database   │  Saved to database
-└─────────────┘
-       │ detach() / clear() / close()
-       ▼
-┌─────────────┐
-│  Detached   │  Was managed, now disconnected
-└──────┬──────┘
-       │ merge()
-       ▼
-┌─────────────┐
-│  Managed    │  Back in persistence context
-└──────┬──────┘
-       │ remove()
-       ▼
-┌─────────────┐
-│  Removed    │  Marked for deletion
-└─────────────┘
+```mermaid
+stateDiagram-v2
+    [*] --> Transient: new
+    Transient --> Managed: persist()
+    Managed --> Database: commit() / flush()
+    Managed --> Detached: detach() / clear() / close()
+    Detached --> Managed: merge()
+    Managed --> Removed: remove()
+    Removed --> [*]
+
+    note right of Transient: New entity, not in database
+    note right of Managed: In persistence context, changes tracked
+    note right of Database: Saved to database
+    note right of Detached: Was managed, now disconnected
+    note right of Removed: Marked for deletion
 ```
 
 ---

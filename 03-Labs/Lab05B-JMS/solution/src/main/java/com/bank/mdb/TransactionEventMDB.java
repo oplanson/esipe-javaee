@@ -73,7 +73,7 @@ public class TransactionEventMDB implements MessageListener {
             }
             
             // Securely deserialize JSON to TransactionEvent
-            TransactionEvent event = JsonMessageUtil.fromJson(jsonPayload, TransactionEvent.class);
+            TransactionEvent event = JsonMessageUtil.fromJsonSafe(jsonPayload, TransactionEvent.class);
             
             if (event == null) {
                 logger.warning("Failed to deserialize transaction event from JSON");
@@ -116,7 +116,13 @@ public class TransactionEventMDB implements MessageListener {
      */
     private void processTransactionEvent(TransactionEvent event) {
         String type = event.getType();
-        
+
+        if (type == null) {
+            logger.warning("Transaction event has null type, skipping processing: "
+                          + event.getTransactionId());
+            return;
+        }
+
         logger.info("Processing " + type + " transaction: " + event.getTransactionId());
         
         // Simulate processing time

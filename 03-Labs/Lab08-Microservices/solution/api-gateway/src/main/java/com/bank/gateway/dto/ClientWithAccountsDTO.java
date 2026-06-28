@@ -34,7 +34,7 @@ public class ClientWithAccountsDTO {
     private void calculateTotals() {
         this.accountCount = accounts.size();
         this.totalBalance = accounts.stream()
-            .map(AccountDTO::getBalance)
+            .map(a -> a.getBalance() == null ? java.math.BigDecimal.ZERO : a.getBalance())
             .reduce(BigDecimal.ZERO, BigDecimal::add);
     }
     

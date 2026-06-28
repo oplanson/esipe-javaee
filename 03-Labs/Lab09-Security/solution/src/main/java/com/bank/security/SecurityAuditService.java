@@ -175,13 +175,15 @@ public class SecurityAuditService {
      * @return Number of failed login attempts
      */
     public long countRecentFailedLogins(String username) {
+        java.time.LocalDateTime cutoff = java.time.LocalDateTime.now().minusHours(1);
         return em.createQuery(
                 "SELECT COUNT(l) FROM SecurityAuditLog l " +
                 "WHERE l.username = :username " +
                 "AND l.action = 'LOGIN' " +
                 "AND l.result = 'FAILURE' " +
-                "AND l.timestamp > CURRENT_TIMESTAMP - 1 HOUR", Long.class)
+                "AND l.timestamp > :cutoff", Long.class)
                 .setParameter("username", username)
+                .setParameter("cutoff", cutoff)
                 .getSingleResult();
     }
 }

@@ -241,7 +241,7 @@ public class TransactionValidatorServlet extends HttpServlet {
         out.println("                <div class='result-details'>");
         out.println("                    <p><strong>Amount:</strong> €" + String.format("%.2f", amount) + "</p>");
         if (description != null && !description.trim().isEmpty()) {
-            out.println("                    <p><strong>Description:</strong> " + description + "</p>");
+            out.println("                    <p><strong>Description:</strong> " + escapeHtml(description) + "</p>");
         }
         out.println("                    <p><strong>Maximum Allowed:</strong> €" + String.format("%.2f", maxAmount) + "</p>");
         out.println("                    <p><strong>Status:</strong> <span class='" + 
@@ -310,7 +310,7 @@ public class TransactionValidatorServlet extends HttpServlet {
         out.println("    <div class='container'>");
         out.println("        <div class='alert alert-error'>");
         out.println("            <h2>❌ Validation Error</h2>");
-        out.println("            <p>" + errorMessage + "</p>");
+        out.println("            <p>" + escapeHtml(errorMessage) + "</p>");
         out.println("        </div>");
         out.println("        <a href='validate-transaction' class='btn btn-primary'>← Try Again</a>");
         out.println("    </div>");
@@ -318,6 +318,14 @@ public class TransactionValidatorServlet extends HttpServlet {
         out.println("</html>");
     }
     
+    /**
+     * Escape HTML special characters to prevent reflected XSS.
+     */
+    private String escapeHtml(String text) {
+        if (text == null) return "";
+        return text.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;").replace("\"", "&quot;").replace("'", "&#39;");
+    }
+
     @Override
     public void destroy() {
         log("TransactionValidatorServlet destroyed");

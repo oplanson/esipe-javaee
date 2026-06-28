@@ -121,9 +121,14 @@ public enum AccountType {
         }
         
         // Simple interest calculation: (balance * rate * days) / 365
-        double dailyRate = annualRate / 365.0;
-        double interestAmount = balance.getAmountAsDouble() * dailyRate * days;
-        
+        // Use BigDecimal end-to-end to avoid floating-point money errors.
+        java.math.BigDecimal dailyRate = java.math.BigDecimal.valueOf(annualRate)
+                .divide(java.math.BigDecimal.valueOf(365), 10, java.math.RoundingMode.HALF_UP);
+        java.math.BigDecimal interestAmount = balance.getAmount()
+                .multiply(dailyRate)
+                .multiply(java.math.BigDecimal.valueOf(days))
+                .setScale(2, java.math.RoundingMode.HALF_UP);
+
         return Money.of(interestAmount, balance.getCurrency());
     }
     

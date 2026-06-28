@@ -118,8 +118,7 @@ public class JwtService {
                 return Set.of();
             }
             
-            return Set.of(rolesString.split(","))
-                    .stream()
+            return java.util.Arrays.stream(rolesString.split(","))
                     .map(String::trim)
                     .map(Role::valueOf)
                     .collect(Collectors.toSet());

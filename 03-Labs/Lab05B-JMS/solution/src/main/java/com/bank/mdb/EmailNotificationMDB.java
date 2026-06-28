@@ -77,7 +77,7 @@ public class EmailNotificationMDB implements MessageListener {
             }
             
             // Securely deserialize JSON to TransactionEvent
-            TransactionEvent event = JsonMessageUtil.fromJson(jsonPayload, TransactionEvent.class);
+            TransactionEvent event = JsonMessageUtil.fromJsonSafe(jsonPayload, TransactionEvent.class);
             
             if (event == null) {
                 logger.warning("Failed to deserialize transaction event from JSON");

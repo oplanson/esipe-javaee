@@ -246,7 +246,7 @@ public class AccountService {
             return false;
         }
         
-        Money depositAmount = Money.euros(amount);
+        Money depositAmount = Money.of(java.math.BigDecimal.valueOf(amount), account.getBalance().getCurrency());
         account.deposit(depositAmount);
         em.merge(account);
         
@@ -281,7 +281,7 @@ public class AccountService {
             return false;
         }
         
-        Money withdrawAmount = Money.euros(amount);
+        Money withdrawAmount = Money.of(java.math.BigDecimal.valueOf(amount), account.getBalance().getCurrency());
         account.withdraw(withdrawAmount);
         em.merge(account);
         logger.info("Withdrawal successful. New balance: " + account.getBalance().getAmount());

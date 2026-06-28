@@ -2,9 +2,6 @@ package com.bank.domain.valueobject;
 
 /* © Copyright 2026 Olivier Planson. All rights reserved. Reproduction prohibited. Made with IBM Bob. */
 
-import jakarta.persistence.Embeddable;
-import jakarta.validation.constraints.DecimalMin;
-import jakarta.validation.constraints.NotNull;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.Objects;
@@ -19,14 +16,10 @@ import java.util.Objects;
  * - Self-validating: Enforces business rules
  * - Rich behavior: Contains business logic
  */
-@Embeddable
 public class Money {
-    
-    @NotNull(message = "Amount is required")
-    @DecimalMin(value = "0.0", message = "Amount cannot be negative")
+
     private final BigDecimal amount;
-    
-    @NotNull(message = "Currency is required")
+
     private final String currency;
     
     /**

@@ -6,6 +6,8 @@ import com.bank.model.Client;
 import com.bank.model.Account;
 
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Collectors;
 
 /**
@@ -15,9 +17,10 @@ import java.util.stream.Collectors;
  */
 public class ClientService {
     
-    // In-memory storage
-    private Map<Long, Client> clients = new HashMap<>();
-    private Long nextId = 1L;
+    // In-memory storage. A single ClientService instance is shared across all
+    // request threads, so the map and the ID counter must be thread-safe.
+    private final Map<Long, Client> clients = new ConcurrentHashMap<>();
+    private final AtomicLong nextId = new AtomicLong(1L);
     
     /**
      * Retrieve all clients.
@@ -50,7 +53,7 @@ public class ClientService {
         }
         
         // Generate new ID
-        Long id = nextId++;
+        Long id = nextId.getAndIncrement();
         client.setId(id);
         
         // Save client
@@ -193,7 +196,7 @@ public class ClientService {
      */
     public void clear() {
         clients.clear();
-        nextId = 1L;
+        nextId.set(1L);
     }
     
     /**

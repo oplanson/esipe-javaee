@@ -160,12 +160,14 @@ A **servlet** is a Java class that handles HTTP requests and generates dynamic r
 - **Lifecycle-managed:** Container controls creation and destruction
 
 ### Servlet API Hierarchy:
-```
-GenericServlet (abstract)
-    ↓
-HttpServlet (abstract)
-    ↓
-Your Custom Servlet (concrete)
+```mermaid
+graph TB
+    A["GenericServlet (abstract)"] --> B["HttpServlet (abstract)"]
+    B --> C["Your Custom Servlet (concrete)"]
+
+    style A fill:#f3e5f5
+    style B fill:#fff3e0
+    style C fill:#e8f5e9
 ```
 
 ---
@@ -1836,24 +1838,22 @@ String redirectUrl = resp.encodeRedirectURL("/checkout");
 
 ### How Filter Chain Works
 
-```
-Client Request
-    ↓
-Filter 1 (before)
-    ↓
-Filter 2 (before)
-    ↓
-Filter 3 (before)
-    ↓
-Servlet/Resource
-    ↓
-Filter 3 (after)
-    ↓
-Filter 2 (after)
-    ↓
-Filter 1 (after)
-    ↓
-Client Response
+```mermaid
+sequenceDiagram
+    participant Client
+    participant Filter1 as Filter 1
+    participant Filter2 as Filter 2
+    participant Filter3 as Filter 3
+    participant Servlet as Servlet/Resource
+
+    Client->>Filter1: Request
+    Filter1->>Filter2: before
+    Filter2->>Filter3: before
+    Filter3->>Servlet: before
+    Servlet-->>Filter3: after
+    Filter3-->>Filter2: after
+    Filter2-->>Filter1: after
+    Filter1-->>Client: Response
 ```
 
 ### Filter Ordering

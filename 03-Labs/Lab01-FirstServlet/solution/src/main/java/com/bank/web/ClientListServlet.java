@@ -11,8 +11,8 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * Client List Servlet - Manages client listing and creation.
@@ -24,7 +24,9 @@ import java.util.List;
 public class ClientListServlet extends HttpServlet {
     
     private static final long serialVersionUID = 1L;
-    private List<Client> clients = new ArrayList<>();
+    // Single servlet instance is shared across all request threads, so the
+    // backing list must be thread-safe (concurrent doGet iteration / doPost add).
+    private final List<Client> clients = new CopyOnWriteArrayList<>();
     
     @Override
     public void init() throws ServletException {
@@ -111,7 +113,11 @@ public class ClientListServlet extends HttpServlet {
     
     private String escapeHtml(String text) {
         if (text == null) return "";
-        return text.replace("&", "&").replace("<", "<").replace(">", ">");
+        return text.replace("&", "&amp;")
+                   .replace("<", "&lt;")
+                   .replace(">", "&gt;")
+                   .replace("\"", "&quot;")
+                   .replace("'", "&#39;");
     }
     
     @Override
