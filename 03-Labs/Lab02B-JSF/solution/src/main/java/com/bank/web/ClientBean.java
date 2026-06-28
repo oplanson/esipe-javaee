@@ -60,9 +60,10 @@ public class ClientBean implements Serializable {
      */
     public String save() {
         try {
+            boolean isNew = (client.getId() == null);
             clientService.save(client);
-            addMessage(FacesMessage.SEVERITY_INFO, "Success", 
-                      client.getId() == null ? "Client created successfully" : "Client updated successfully");
+            addMessage(FacesMessage.SEVERITY_INFO, "Success",
+                      isNew ? "Client created successfully" : "Client updated successfully");
             loadClients();
             reset();
             return "client-list?faces-redirect=true";

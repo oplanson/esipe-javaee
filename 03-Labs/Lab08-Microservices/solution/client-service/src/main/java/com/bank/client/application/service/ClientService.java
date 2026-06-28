@@ -91,7 +91,6 @@ public class ClientService {
      */
     public List<ClientDTO> getAllClients() {
         LOGGER.info("Fetching all clients");
-        System.out.println("ClientService : getAllClients : Fetching all clients");
         
         return clientRepository.findAll().stream()
                 .map(clientMapper::toDTO)

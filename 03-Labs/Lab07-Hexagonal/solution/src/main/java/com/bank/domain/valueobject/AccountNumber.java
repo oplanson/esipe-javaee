@@ -2,9 +2,6 @@ package com.bank.domain.valueobject;
 
 /* © Copyright 2026 Olivier Planson. All rights reserved. Reproduction prohibited. Made with IBM Bob. */
 
-import jakarta.persistence.Embeddable;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Pattern;
 import java.util.Objects;
 import java.util.Random;
 
@@ -21,15 +18,12 @@ import java.util.Random;
  * Format: IBAN-like format (simplified)
  * Example: FR7612345678901234567890123
  */
-@Embeddable
 public class AccountNumber {
     
     private static final String COUNTRY_CODE = "FR";
     private static final int ACCOUNT_LENGTH = 23; // FR + 2 check digits + 23 digits
     private static final String ACCOUNT_PATTERN = "^FR\\d{25}$";
     
-    @NotNull(message = "Account number is required")
-    @Pattern(regexp = ACCOUNT_PATTERN, message = "Invalid account number format")
     private final String value;
     
     /**

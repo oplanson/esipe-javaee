@@ -29,9 +29,6 @@ public class CorsFilter implements ContainerResponseFilter {
         responseContext.getHeaders().add("Access-Control-Allow-Headers", 
                 "Content-Type, Authorization, X-Requested-With, Accept, Origin");
         
-        // Allow credentials
-        responseContext.getHeaders().add("Access-Control-Allow-Credentials", "true");
-        
         // Cache preflight response for 1 hour
         responseContext.getHeaders().add("Access-Control-Max-Age", "3600");
         

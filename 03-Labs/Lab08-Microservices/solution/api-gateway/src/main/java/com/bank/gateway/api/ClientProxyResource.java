@@ -32,7 +32,6 @@ public class ClientProxyResource {
     public Response getAllClients() {
         LOGGER.info("Proxying GET /clients to Client Service");
         try {
-            System.out.println("ClientProxyResource : getAllClients : Proxying GET /clients to Client Service");
             List<ClientDTO> clients = clientServiceClient.getAllClients();
             return Response.ok(clients).build();
         } catch (Exception e) {

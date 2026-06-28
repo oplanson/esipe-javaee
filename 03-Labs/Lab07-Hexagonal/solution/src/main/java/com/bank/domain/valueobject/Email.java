@@ -2,8 +2,6 @@ package com.bank.domain.valueobject;
 
 /* © Copyright 2026 Olivier Planson. All rights reserved. Reproduction prohibited. Made with IBM Bob. */
 
-import jakarta.persistence.Embeddable;
-import jakarta.validation.constraints.NotNull;
 import java.util.Objects;
 import java.util.regex.Pattern;
 
@@ -17,7 +15,6 @@ import java.util.regex.Pattern;
  * - Self-validating: Enforces email format rules
  * - Rich behavior: Contains validation and normalization logic
  */
-@Embeddable
 public class Email {
     
     // RFC 5322 compliant email pattern (simplified)
@@ -26,7 +23,6 @@ public class Email {
     
     private static final Pattern PATTERN = Pattern.compile(EMAIL_PATTERN);
     
-    @NotNull(message = "Email is required")
     private final String value;
     
     /**

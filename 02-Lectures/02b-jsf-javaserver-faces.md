@@ -172,35 +172,39 @@ ESIPE - Advanced Java Enterprise Development
 
 ## JSF Architecture
 
-```
-┌─────────────────────────────────────────────────────────┐
-│                    Browser (Client)                      │
-│  ┌──────────────────────────────────────────────────┐  │
-│  │         Rendered HTML + JavaScript                │  │
-│  └──────────────────────────────────────────────────┘  │
-└─────────────────────────────────────────────────────────┘
-                          ↕ HTTP
-┌─────────────────────────────────────────────────────────┐
-│                  Application Server                      │
-│  ┌──────────────────────────────────────────────────┐  │
-│  │              Faces Servlet                        │  │
-│  │  ┌────────────────────────────────────────────┐  │  │
-│  │  │         JSF Lifecycle                       │  │  │
-│  │  │  1. Restore View                           │  │  │
-│  │  │  2. Apply Request Values                   │  │  │
-│  │  │  3. Process Validations                    │  │  │
-│  │  │  4. Update Model Values                    │  │  │
-│  │  │  5. Invoke Application                     │  │  │
-│  │  │  6. Render Response                        │  │  │
-│  │  └────────────────────────────────────────────┘  │  │
-│  └──────────────────────────────────────────────────┘  │
-│  ┌──────────────────────────────────────────────────┐  │
-│  │           Managed Beans (CDI)                     │  │
-│  └──────────────────────────────────────────────────┘  │
-│  ┌──────────────────────────────────────────────────┐  │
-│  │         Business Logic (Services)                 │  │
-│  └──────────────────────────────────────────────────┘  │
-└─────────────────────────────────────────────────────────┘
+```mermaid
+graph TB
+    subgraph Browser["Browser (Client)"]
+        HTML["Rendered HTML + JavaScript"]
+    end
+
+    subgraph Server["Application Server"]
+        subgraph Servlet["Faces Servlet"]
+            subgraph Lifecycle["JSF Lifecycle"]
+                P1["1. Restore View"]
+                P2["2. Apply Request Values"]
+                P3["3. Process Validations"]
+                P4["4. Update Model Values"]
+                P5["5. Invoke Application"]
+                P6["6. Render Response"]
+                P1 --> P2 --> P3 --> P4 --> P5 --> P6
+            end
+        end
+        Beans["Managed Beans (CDI)"]
+        Logic["Business Logic (Services)"]
+        Servlet --> Beans
+        Beans --> Logic
+    end
+
+    Browser <-->|HTTP| Server
+
+    style Browser fill:#e1f5ff
+    style HTML fill:#fff3e0
+    style Server fill:#f3e5f5
+    style Servlet fill:#e8f5e9
+    style Lifecycle fill:#fff3e0
+    style Beans fill:#4facfe
+    style Logic fill:#43e97b
 ```
 
 ---
@@ -251,14 +255,23 @@ ESIPE - Advanced Java Enterprise Development
 
 ## Lifecycle Diagram
 
-```
-Request → [Restore View] → [Apply Request] → [Process Validations]
-                ↓                                      ↓
-         [Render Response] ← ← ← ← ← ← ← ← ← ← ← ← ← ┘
-                ↓                                      
-         [Update Model] → [Invoke Application] → [Render Response]
-                                                        ↓
-                                                    Response
+```mermaid
+stateDiagram-v2
+    [*] --> RestoreView: Request
+    RestoreView --> ApplyRequest
+    ApplyRequest --> ProcessValidations
+    ProcessValidations --> UpdateModel
+    UpdateModel --> InvokeApplication
+    InvokeApplication --> RenderResponse
+    ProcessValidations --> RenderResponse: Validation errors
+    RenderResponse --> [*]: Response
+
+    RestoreView: 1. Restore View
+    ApplyRequest: 2. Apply Request Values
+    ProcessValidations: 3. Process Validations
+    UpdateModel: 4. Update Model Values
+    InvokeApplication: 5. Invoke Application
+    RenderResponse: 6. Render Response
 ```
 
 **Short-circuit scenarios:**

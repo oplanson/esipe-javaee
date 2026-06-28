@@ -9,8 +9,10 @@ import com.bank.service.AccountService;
 import jakarta.inject.Inject;
 import jakarta.validation.Valid;
 import jakarta.ws.rs.*;
+import jakarta.ws.rs.core.Context;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
+import jakarta.ws.rs.core.UriInfo;
 import java.util.List;
 import java.util.logging.Logger;
 
@@ -33,7 +35,10 @@ public class AccountResource {
     
     @Inject
     private Logger logger;
-    
+
+    @Context
+    private UriInfo uriInfo;
+
     /**
      * Get all accounts.
      * 
@@ -107,9 +112,9 @@ public class AccountResource {
         
         Long clientId = account.getClient().getId();
         Account created = accountService.create(account, clientId);
-        
+
         return Response
-            .status(Response.Status.CREATED)
+            .created(uriInfo.getAbsolutePathBuilder().path(String.valueOf(created.getId())).build())
             .entity(created)
             .build();
     }
@@ -419,10 +424,8 @@ public class AccountResource {
         logger.info("REST: Getting account count");
         
         long count = accountService.count();
-        
-        return Response.ok()
-            .entity("{\"count\": " + count + "}")
-            .build();
+
+        return Response.ok(java.util.Map.of("count", count)).build();
     }
 }
 

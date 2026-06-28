@@ -10,6 +10,7 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Collectors;
 
@@ -88,7 +89,7 @@ public class ClientService implements Serializable {
      */
     public Client findById(Long id) {
         return clients.stream()
-                .filter(c -> c.getId().equals(id))
+                .filter(c -> Objects.equals(c.getId(), id))
                 .findFirst()
                 .orElse(null);
     }
@@ -103,8 +104,8 @@ public class ClientService implements Serializable {
         
         String lowerSearchTerm = searchTerm.toLowerCase();
         return clients.stream()
-                .filter(c -> c.getName().toLowerCase().contains(lowerSearchTerm) ||
-                           c.getEmail().toLowerCase().contains(lowerSearchTerm))
+                .filter(c -> (c.getName() != null && c.getName().toLowerCase().contains(lowerSearchTerm)) ||
+                           (c.getEmail() != null && c.getEmail().toLowerCase().contains(lowerSearchTerm)))
                 .collect(Collectors.toList());
     }
     

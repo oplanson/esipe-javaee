@@ -42,7 +42,11 @@ public class TransactionComparisonService {
     public void transferCMT(Long fromId, Long toId, BigDecimal amount) {
         Account from = em.find(Account.class, fromId);
         Account to = em.find(Account.class, toId);
-        
+
+        if (from == null || to == null) {
+            throw new IllegalArgumentException("Account not found: " + (from == null ? fromId : toId));
+        }
+
         if (from.getBalance() < amount.doubleValue()) {
             throw new IllegalStateException("Insufficient funds");
         }
@@ -69,7 +73,12 @@ public class TransactionComparisonService {
             
             Account from = em.find(Account.class, fromId);
             Account to = em.find(Account.class, toId);
-            
+
+            if (from == null || to == null) {
+                utx.rollback();
+                throw new IllegalArgumentException("Account not found: " + (from == null ? fromId : toId));
+            }
+
             if (from.getBalance() < amount.doubleValue()) {
                 utx.rollback();
                 throw new IllegalStateException("Insufficient funds");
