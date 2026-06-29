@@ -192,16 +192,24 @@ A **Bounded Context** is an explicit boundary within which a domain model is def
 - **Integration points:** Explicit interfaces between contexts
 
 ### Banking Example:
+<details>
+<summary>📝 Original Mermaid Code (click to expand)</summary>
+
+```mermaid
+graph LR
+    A["Account Management Context<br/>- Account<br/>- Balance<br/>- AccountType"]
+    B["Transaction Processing Context<br/>- Transaction<br/>- Transfer<br/>- Payment"]
+    C["Customer Management Context<br/>- Customer<br/>- Profile<br/>- Contact Info"]
+
+    style A fill:#e1f5ff
+    style B fill:#fff3e0
+    style C fill:#f3e5f5
 ```
-┌─────────────────────┐  ┌──────────────────────┐  ┌─────────────────────┐
-│  Account Management │  │  Transaction         │  │  Customer           │
-│  Context            │  │  Processing Context  │  │  Management Context │
-│                     │  │                      │  │                     │
-│  - Account          │  │  - Transaction       │  │  - Customer         │
-│  - Balance          │  │  - Transfer          │  │  - Profile          │
-│  - AccountType      │  │  - Payment           │  │  - Contact Info     │
-└─────────────────────┘  └──────────────────────┘  └─────────────────────┘
-```
+
+</details>
+
+![width:70%](images/06-domain-driven-design-diagram-1.png)
+
 
 ---
 
@@ -727,22 +735,32 @@ An **Aggregate** is a cluster of domain objects treated as a single unit for dat
 - **Reference by ID:** External objects reference root by ID only
 
 ### Aggregate Structure:
+<details>
+<summary>📝 Original Mermaid Code (click to expand)</summary>
+
+```mermaid
+graph TB
+    subgraph AGG["Account Aggregate"]
+        Root["Account (Root)<br/>- id<br/>- accountNumber<br/>- balance"]
+        T1["Transaction 1"]
+        T2["Transaction 2"]
+        T3["Transaction 3"]
+        Root --> T1
+        Root --> T2
+        Root --> T3
+    end
+
+    style AGG fill:#e1f5ff
+    style Root fill:#4facfe
+    style T1 fill:#e8f5e9
+    style T2 fill:#e8f5e9
+    style T3 fill:#e8f5e9
 ```
-┌─────────────────────────────────────┐
-│  Account Aggregate                  │
-│  ┌───────────────────────────────┐  │
-│  │  Account (Root)               │  │
-│  │  - id                         │  │
-│  │  - accountNumber              │  │
-│  │  - balance                    │  │
-│  │  └─────────────────────────┐  │  │
-│  │  Transactions (Children)   │  │  │
-│  │  - Transaction 1           │  │  │
-│  │  - Transaction 2           │  │  │
-│  │  - Transaction 3           │  │  │
-│  └────────────────────────────┘  │  │
-└─────────────────────────────────────┘
-```
+
+</details>
+
+![width:70%](images/06-domain-driven-design-diagram-2.png)
+
 
 ---
 
@@ -1038,30 +1056,30 @@ public class AccountEventHandler {
 
 ## 🏗️ DDD Layered Architecture
 
+<details>
+<summary>📝 Original Mermaid Code (click to expand)</summary>
+
+```mermaid
+graph TB
+    A["Presentation Layer (REST API, Web UI)<br/>- Controllers, Resources, DTOs"]
+    B["Application Layer (Use Cases)<br/>- Application Services, DTOs, Mappers"]
+    C["Domain Layer (Business Logic) ← CORE<br/>- Entities, Value Objects, Aggregates<br/>- Domain Services, Repositories (interfaces)<br/>- Domain Events"]
+    D["Infrastructure Layer (Technical Details)<br/>- Repository Implementations (JPA)<br/>- External Services, Database, Messaging"]
+
+    A --> B
+    B --> C
+    C --> D
+
+    style A fill:#fff3e0
+    style B fill:#f3e5f5
+    style C fill:#43e97b
+    style D fill:#fce4ec
 ```
-┌─────────────────────────────────────────────────────────┐
-│  Presentation Layer (REST API, Web UI)                 │
-│  - Controllers, Resources, DTOs                         │
-└─────────────────────────────────────────────────────────┘
-                          ↓
-┌─────────────────────────────────────────────────────────┐
-│  Application Layer (Use Cases)                          │
-│  - Application Services, DTOs, Mappers                  │
-└─────────────────────────────────────────────────────────┘
-                          ↓
-┌─────────────────────────────────────────────────────────┐
-│  Domain Layer (Business Logic) ← CORE                   │
-│  - Entities, Value Objects, Aggregates                  │
-│  - Domain Services, Repositories (interfaces)           │
-│  - Domain Events                                        │
-└─────────────────────────────────────────────────────────┘
-                          ↓
-┌─────────────────────────────────────────────────────────┐
-│  Infrastructure Layer (Technical Details)               │
-│  - Repository Implementations (JPA)                     │
-│  - External Services, Database, Messaging               │
-└─────────────────────────────────────────────────────────┘
-```
+
+</details>
+
+![width:70%](images/06-domain-driven-design-diagram-3.png)
+
 
 **Key Principle:** Domain layer has **no dependencies** on other layers!
 
@@ -1228,24 +1246,31 @@ public class AccountService {
 ## 💰 Value Object: Money
 
 ```java
+@Embeddable
 public class Money {
-    private final BigDecimal amount;
-    private final String currency;
+    private BigDecimal amount;
+    private String currency;
     
-    private Money(BigDecimal amount, String currency) {
-        if (amount == null || amount.compareTo(BigDecimal.ZERO) < 0) {
-            throw new IllegalArgumentException("Amount cannot be negative");
+    protected Money() {} // Required by JPA
+    
+    public Money(BigDecimal amount, String currency) {
+        if (amount == null) {
+            throw new IllegalArgumentException("Amount cannot be null");
         }
-        this.amount = amount;
-        this.currency = currency != null ? currency : "USD";
+        if (currency == null || currency.trim().isEmpty()) {
+            throw new IllegalArgumentException("Currency cannot be null or empty");
+        }
+        Currency.getInstance(currency.toUpperCase()); // Validate ISO 4217
+        this.amount = amount.setScale(2, RoundingMode.HALF_UP);
+        this.currency = currency.toUpperCase();
     }
     
     public static Money of(BigDecimal amount, String currency) {
         return new Money(amount, currency);
     }
     
-    public static Money usd(BigDecimal amount) {
-        return new Money(amount, "USD");
+    public static Money euros(BigDecimal amount) {
+        return new Money(amount, "EUR");
     }
     
     public Money add(Money other) {
@@ -1278,25 +1303,30 @@ public class Money {
 ## 🔢 Value Object: AccountNumber
 
 ```java
+@Embeddable
 public class AccountNumber {
-    private final String value;
+    private static final String IBAN_PATTERN = "^[A-Z]{2}[0-9]{2}[A-Z0-9]{1,30}$";
     
-    private AccountNumber(String value) {
-        if (value == null || !value.matches("\\d{10}")) {
-            throw new IllegalArgumentException("Account number must be 10 digits");
+    private String value;
+    
+    protected AccountNumber() {} // Required by JPA
+    
+    public AccountNumber(String value) {
+        if (value == null || value.trim().isEmpty()) {
+            throw new IllegalArgumentException("Account number cannot be null or empty");
         }
-        this.value = value;
-    }
-    
-    public static AccountNumber of(String value) {
-        return new AccountNumber(value);
+        String normalized = value.trim().toUpperCase().replaceAll("\\s", "");
+        if (!normalized.matches(IBAN_PATTERN)) {
+            throw new IllegalArgumentException("Invalid IBAN format: " + value);
+        }
+        this.value = normalized;
     }
     
     public static AccountNumber generate() {
-        // Generate random 10-digit number
-        Random random = new Random();
-        String number = String.format("%010d", random.nextInt(1000000000));
-        return new AccountNumber(number);
+        // Generate a random IBAN: FR76 + 23 digits
+        String digits = UUID.randomUUID().toString().replaceAll("[^0-9]", "");
+        digits = (digits + "00000000000000000000000").substring(0, 23);
+        return new AccountNumber("FR76" + digits);
     }
     
     public String getValue() {
@@ -1306,9 +1336,9 @@ public class AccountNumber {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof AccountNumber)) return false;
+        if (o == null || getClass() != o.getClass()) return false;
         AccountNumber that = (AccountNumber) o;
-        return value.equals(that.value);
+        return Objects.equals(value, that.value);
     }
     
     @Override
@@ -1361,12 +1391,18 @@ public class Account {
     
     // Business methods
     public void deposit(Money amount) {
+        if (amount == null || !amount.isPositive()) {
+            throw new IllegalArgumentException("Deposit amount must be positive");
+        }
         this.balance = this.balance.add(amount);
         this.transactions.add(Transaction.deposit(amount));
     }
     
     public void withdraw(Money amount) {
-        if (this.balance.isGreaterThan(amount)) {
+        if (amount == null || !amount.isPositive()) {
+            throw new IllegalArgumentException("Withdrawal amount must be positive");
+        }
+        if (amount.isGreaterThan(this.balance)) {
             throw new InsufficientFundsException("Insufficient funds");
         }
         this.balance = this.balance.subtract(amount);
@@ -1557,18 +1593,25 @@ Not all DDD patterns are compatible with Records due to Jakarta EE constraints.
 public record AccountDTO(
     Long id,
     String accountNumber,
-    double balance,
+    BigDecimal balance,
+    String currency,
     String accountType,
-    Long clientId
+    Long clientId,
+    String clientName
 ) {
     // Factory method for domain-to-DTO conversion
-    public static AccountDTO from(Account account) {
+    public static AccountDTO fromEntity(Account account) {
+        if (account == null) {
+            return null;
+        }
         return new AccountDTO(
             account.getId(),
             account.getAccountNumber().getValue(),
             account.getBalance().getAmount(),
+            account.getBalance().getCurrency(),
             account.getAccountType().name(),
-            account.getClient().getId()
+            account.getClientId(),
+            account.getClient() != null ? account.getClient().getName() : null
         );
     }
 }
@@ -1984,31 +2027,35 @@ public interface AccountRepository {
 
 Visual representation of context relationships:
 
-```
-┌─────────────────────────────────────┐
-│     Banking Core Context            │
-│  (Account & Client Management)      │
-│                                     │
-│  Aggregates: Account, Client        │
-│  Services: TransferService          │
-└─────────────────────────────────────┘
-            │
-            │ Published Language (Events)
-            │
-    ┌───────┴────────┬──────────────┐
-    │                │               │
-    ▼                ▼               ▼
-┌─────────┐    ┌─────────┐    ┌─────────┐
-│Notifica-│    │  Audit  │    │Reporting│
-│tion     │    │ Context │    │ Context │
-│Context  │    │         │    │         │
-└─────────┘    └─────────┘    └─────────┘
+<details>
+<summary>📝 Original Mermaid Code (click to expand)</summary>
 
-Relationship: Customer/Supplier
+```mermaid
+graph TB
+    Core["Banking Core Context<br/>(Account & Client Management)<br/>Aggregates: Account, Client<br/>Services: TransferService"]
+    Notification["Notification Context"]
+    Audit["Audit Context"]
+    Reporting["Reporting Context"]
+
+    Core -->|"Published Language (Events)"| Notification
+    Core -->|"Published Language (Events)"| Audit
+    Core -->|"Published Language (Events)"| Reporting
+
+    style Core fill:#43e97b
+    style Notification fill:#e1f5ff
+    style Audit fill:#fff3e0
+    style Reporting fill:#f3e5f5
+```
+
+</details>
+
+![width:70%](images/06-domain-driven-design-diagram-4.png)
+
+
+**Relationship: Customer/Supplier**
 - Banking Core is Supplier (upstream)
 - Others are Customers (downstream)
 - Integration via Domain Events
-```
 
 ### Documentation Best Practices
 

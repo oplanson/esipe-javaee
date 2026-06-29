@@ -160,6 +160,9 @@ A **servlet** is a Java class that handles HTTP requests and generates dynamic r
 - **Lifecycle-managed:** Container controls creation and destruction
 
 ### Servlet API Hierarchy:
+<details>
+<summary>📝 Original Mermaid Code (click to expand)</summary>
+
 ```mermaid
 graph TB
     A["GenericServlet (abstract)"] --> B["HttpServlet (abstract)"]
@@ -169,6 +172,11 @@ graph TB
     style B fill:#fff3e0
     style C fill:#e8f5e9
 ```
+
+</details>
+
+![width:70%](images/02-servlets-jsp-microprofile-diagram-1.png)
+
 
 ---
 
@@ -1838,6 +1846,9 @@ String redirectUrl = resp.encodeRedirectURL("/checkout");
 
 ### How Filter Chain Works
 
+<details>
+<summary>📝 Original Mermaid Code (click to expand)</summary>
+
 ```mermaid
 sequenceDiagram
     participant Client
@@ -1855,6 +1866,11 @@ sequenceDiagram
     Filter2-->>Filter1: after
     Filter1-->>Client: Response
 ```
+
+</details>
+
+![width:70%](images/02-servlets-jsp-microprofile-diagram-5.png)
+
 
 ### Filter Ordering
 
@@ -2683,42 +2699,35 @@ src/main/java/com/bank/
 
 ### Complete Request Processing Flow
 
+<details>
+<summary>📝 Original Mermaid Code (click to expand)</summary>
+
+```mermaid
+graph TB
+    A["1. Client Request<br/>http://localhost:9080/bank/dashboard"] --> B["2. CharacterEncodingFilter<br/>Set UTF-8 encoding, continue chain"]
+    B --> C["3. LoggingFilter<br/>Log request details, start timer, continue chain"]
+    C --> D["4. AuthenticationFilter<br/>Check session, verify authentication<br/>(continue chain or redirect to login)"]
+    D --> E["5. RequestLoggingListener<br/>Request initialized event, log request start"]
+    E --> F["6. DashboardServlet<br/>Process request, get session data, forward to JSP"]
+    F --> G["7. RequestLoggingListener<br/>Request destroyed event, log request completion"]
+    G --> H["8. LoggingFilter (after)<br/>Calculate duration, log response"]
+    H --> I["9. Response → Client"]
+
+    style A fill:#e1f5ff
+    style B fill:#fff3e0
+    style C fill:#fff3e0
+    style D fill:#fff3e0
+    style E fill:#f3e5f5
+    style F fill:#e8f5e9
+    style G fill:#f3e5f5
+    style H fill:#fff3e0
+    style I fill:#e1f5ff
 ```
-1. Client Request → http://localhost:9080/bank/dashboard
 
-2. CharacterEncodingFilter
-   ├─ Set UTF-8 encoding
-   └─ Continue chain
+</details>
 
-3. LoggingFilter
-   ├─ Log request details
-   ├─ Start timer
-   └─ Continue chain
+![width:70%](images/02-servlets-jsp-microprofile-diagram-6.png)
 
-4. AuthenticationFilter
-   ├─ Check session
-   ├─ Verify authentication
-   └─ Continue chain (or redirect to login)
-
-5. RequestLoggingListener
-   ├─ Request initialized event
-   └─ Log request start
-
-6. DashboardServlet
-   ├─ Process request
-   ├─ Get session data
-   └─ Forward to JSP
-
-7. RequestLoggingListener
-   ├─ Request destroyed event
-   └─ Log request completion
-
-8. LoggingFilter (after)
-   ├─ Calculate duration
-   └─ Log response
-
-9. Response → Client
-```
 
 ---
 

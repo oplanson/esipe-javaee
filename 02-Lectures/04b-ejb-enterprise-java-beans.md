@@ -236,29 +236,36 @@ public class AccountService {
 
 # EJB Architecture
 
+<details>
+<summary>📝 Original Mermaid Code (click to expand)</summary>
+
+```mermaid
+graph TB
+    subgraph Container["EJB Container"]
+        Services["Container Services<br/>• Transaction Management<br/>• Security<br/>• Concurrency<br/>• Lifecycle Management<br/>• Dependency Injection<br/>• Pooling & Caching"]
+        Stateless["Stateless Bean"]
+        Stateful["Stateful Bean"]
+        Singleton["Singleton Bean"]
+        MDB["Message-Driven Bean"]
+    end
+
+    Services --> Stateless
+    Services --> Stateful
+    Services --> Singleton
+    Services --> MDB
+
+    style Container fill:#eaf2f8
+    style Services fill:#d6eaf8
+    style Stateless fill:#d5f5e3
+    style Stateful fill:#fcf3cf
+    style Singleton fill:#fadbd8
+    style MDB fill:#e8daef
 ```
-┌─────────────────────────────────────────────────┐
-│              EJB Container                       │
-│  ┌──────────────────────────────────────────┐  │
-│  │         Container Services               │  │
-│  │  • Transaction Management                │  │
-│  │  • Security                              │  │
-│  │  • Concurrency                           │  │
-│  │  • Lifecycle Management                  │  │
-│  │  • Dependency Injection                  │  │
-│  │  • Pooling & Caching                     │  │
-│  └──────────────────────────────────────────┘  │
-│                                                  │
-│  ┌──────────┐  ┌──────────┐  ┌──────────┐     │
-│  │Stateless │  │ Stateful │  │Singleton │     │
-│  │   Bean   │  │   Bean   │  │   Bean   │     │
-│  └──────────┘  └──────────┘  └──────────┘     │
-│                                                  │
-│  ┌──────────────────────────────────────────┐  │
-│  │      Message-Driven Bean                 │  │
-│  └──────────────────────────────────────────┘  │
-└─────────────────────────────────────────────────┘
-```
+
+</details>
+
+![width:70%](images/04b-ejb-enterprise-java-beans-diagram-1.png)
+
 
 ---
 
@@ -446,19 +453,36 @@ public class AccountService {
 
 # Stateless Bean Pooling
 
-```
-Container Pool (Size: 10)
-┌─────────────────────────────────────┐
-│  [Bean1] [Bean2] [Bean3] ... [Bean10] │
-└─────────────────────────────────────┘
-         ↓         ↓         ↓
-    Client1   Client2   Client3
+<details>
+<summary>📝 Original Mermaid Code (click to expand)</summary>
 
-• Beans are reused across clients
-• No state between method calls
-• Highly scalable
-• Efficient resource usage
+```mermaid
+graph TB
+    subgraph Pool["Container Pool (Size: 10)"]
+        Bean1["Bean1"]
+        Bean2["Bean2"]
+        Bean3["Bean3"]
+        BeanN["... Bean10"]
+    end
+
+    Bean1 --> Client1["Client1"]
+    Bean2 --> Client2["Client2"]
+    Bean3 --> Client3["Client3"]
+
+    Note["• Beans reused across clients<br/>• No state between method calls<br/>• Highly scalable<br/>• Efficient resource usage"]
+
+    style Pool fill:#d6eaf8
+    style Bean1 fill:#d5f5e3
+    style Bean2 fill:#d5f5e3
+    style Bean3 fill:#d5f5e3
+    style BeanN fill:#d5f5e3
+    style Note fill:#fef9e7
 ```
+
+</details>
+
+![width:70%](images/04b-ejb-enterprise-java-beans-diagram-2.png)
+
 
 **Configuration:**
 ```xml
@@ -568,33 +592,24 @@ public class ShoppingCart implements Serializable {
 
 # Stateful Bean Lifecycle
 
+<details>
+<summary>📝 Original Mermaid Code (click to expand)</summary>
+
+```mermaid
+stateDiagram-v2
+    [*] --> Ready : @PostConstruct
+    Ready --> Passivated : Timeout / Container Decision<br/>@PrePassivate
+    Passivated --> Ready : @PostActivate
+    Passivated --> [*] : @Remove or Timeout
+
+    note right of Ready : Active
+    note right of Passivated : Inactive
 ```
-┌──────────────┐
-│ Does Not     │
-│ Exist        │
-└──────┬───────┘
-       │ @PostConstruct
-       ↓
-┌──────────────┐
-│   Ready      │←──────────────┐
-│  (Active)    │               │
-└──────┬───────┘               │
-       │ Timeout/              │ @PostActivate
-       │ Container             │
-       │ Decision              │
-       ↓                       │
-┌──────────────┐               │
-│  Passivated  │───────────────┘
-│  (Inactive)  │ @PrePassivate
-└──────┬───────┘
-       │ @Remove or
-       │ Timeout
-       ↓
-┌──────────────┐
-│ Does Not     │
-│ Exist        │
-└──────────────┘
-```
+
+</details>
+
+![width:70%](images/04b-ejb-enterprise-java-beans-diagram-3.png)
+
 
 ---
 
@@ -836,25 +851,28 @@ public class AccountCache {
 
 # MDB Architecture
 
+<details>
+<summary>📝 Original Mermaid Code (click to expand)</summary>
+
+```mermaid
+sequenceDiagram
+    participant Producer
+    participant Queue as JMS Queue/Topic
+    participant MDB as MDB (EJB Container)
+    participant Logic as Business Logic
+
+    Producer->>Queue: send message
+    Queue->>MDB: deliver
+    activate MDB
+    MDB->>MDB: onMessage()
+    MDB->>Logic: process
+    deactivate MDB
 ```
-┌─────────────┐         ┌─────────────┐
-│   Producer  │────────→│ JMS Queue/  │
-│             │         │   Topic     │
-└─────────────┘         └──────┬──────┘
-                               │
-                               ↓
-                    ┌──────────────────┐
-                    │  EJB Container   │
-                    │  ┌────────────┐  │
-                    │  │    MDB     │  │
-                    │  │ onMessage()│  │
-                    │  └────────────┘  │
-                    └──────────────────┘
-                               ↓
-                    ┌──────────────────┐
-                    │  Business Logic  │
-                    └──────────────────┘
-```
+
+</details>
+
+![width:70%](images/04b-ejb-enterprise-java-beans-diagram-4.png)
+
 
 ---
 
@@ -938,7 +956,7 @@ public class TransactionProcessor implements MessageListener {
         propertyValue = "java:/jms/queue/TransactionQueue"
     ),
     @ActivationConfigProperty(
-        propertyName = "maxSession",
+        propertyName = "maxSessions",
         propertyValue = "10"  // Concurrent consumers
     )
 })
@@ -1106,36 +1124,24 @@ public class AccountEventListener implements MessageListener {
 
 # Stateless Bean Lifecycle
 
+<details>
+<summary>📝 Original Mermaid Code (click to expand)</summary>
+
+```mermaid
+stateDiagram-v2
+    [*] --> PostConstruct : Container creates instance<br/>Dependency injection
+    PostConstruct --> Ready : @PostConstruct
+    Ready --> Ready : Business methods
+    Ready --> PreDestroy : Container removes instance
+    PreDestroy --> [*] : @PreDestroy
+
+    note right of Ready : In Pool
 ```
-┌──────────────┐
-│ Does Not     │
-│ Exist        │
-└──────┬───────┘
-       │ Container creates instance
-       │ Dependency injection
-       ↓
-┌──────────────┐
-│@PostConstruct│
-└──────┬───────┘
-       │
-       ↓
-┌──────────────┐
-│   Ready      │←──┐
-│   (Pool)     │   │ Business methods
-└──────┬───────┘   │
-       │           │
-       └───────────┘
-       │ Container removes instance
-       ↓
-┌──────────────┐
-│ @PreDestroy  │
-└──────┬───────┘
-       ↓
-┌──────────────┐
-│ Does Not     │
-│ Exist        │
-└──────────────┘
-```
+
+</details>
+
+![width:70%](images/04b-ejb-enterprise-java-beans-diagram-5.png)
+
 
 ---
 
@@ -1415,32 +1421,44 @@ public class AccountService {
 
 # CMT - Transaction Propagation
 
-```
-Scenario 1: REQUIRED
-┌─────────────────────────────────┐
-│ Method A (REQUIRED)             │
-│ ┌─────────────────────────────┐ │
-│ │ Transaction T1              │ │
-│ │                             │ │
-│ │ Method B (REQUIRED)         │ │
-│ │ ↓ Joins T1                  │ │
-│ └─────────────────────────────┘ │
-└─────────────────────────────────┘
+<details>
+<summary>📝 Original Mermaid Code (click to expand)</summary>
 
-Scenario 2: REQUIRES_NEW
-┌─────────────────────────────────┐
-│ Method A (REQUIRED)             │
-│ ┌─────────────────────────────┐ │
-│ │ Transaction T1              │ │
-│ │                             │ │
-│ │ Method B (REQUIRES_NEW)     │ │
-│ │ ┌─────────────────────────┐ │ │
-│ │ │ Transaction T2          │ │ │
-│ │ │ (New transaction)       │ │ │
-│ │ └─────────────────────────┘ │ │
-│ └─────────────────────────────┘ │
-└─────────────────────────────────┘
+```mermaid
+sequenceDiagram
+    participant Client
+    participant A as Method A (REQUIRED)
+    participant B as Method B
+
+    Note over A,B: Scenario 1: REQUIRED
+    Client->>A: call
+    activate A
+    Note over A: Transaction T1 begins
+    A->>B: call (REQUIRED)
+    activate B
+    Note over B: Joins T1
+    B-->>A: return
+    deactivate B
+    A-->>Client: commit T1
+    deactivate A
+
+    Note over A,B: Scenario 2: REQUIRES_NEW
+    Client->>A: call
+    activate A
+    Note over A: Transaction T1 begins
+    A->>B: call (REQUIRES_NEW)
+    activate B
+    Note over B: New Transaction T2
+    B-->>A: commit T2
+    deactivate B
+    A-->>Client: commit T1
+    deactivate A
 ```
+
+</details>
+
+![width:70%](images/04b-ejb-enterprise-java-beans-diagram-6.png)
+
 
 ---
 
@@ -2590,8 +2608,6 @@ public class SimpleService {
 ---
 
 # Decision Matrix
-
-```
 
 | Feature | Use EJB | Use CDI |
 |---------|---------|---------|

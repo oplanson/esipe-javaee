@@ -230,29 +230,30 @@ public class ClientController extends HttpServlet {
 
 ### How CDI Works:
 
+<details>
+<summary>📝 Original Mermaid Code (click to expand)</summary>
+
+```mermaid
+graph TB
+    Container["CDI Container (Weld)"]
+    Discovery["Bean Discovery<br/>- Scan classes<br/>- Find @Inject points"]
+    Creation["Bean Creation<br/>- Instantiate beans<br/>- Inject dependencies"]
+    Lifecycle["Lifecycle Management<br/>- Manage scopes<br/>- Handle destruction"]
+
+    Container --> Discovery
+    Discovery --> Creation
+    Creation --> Lifecycle
+
+    style Container fill:#667eea
+    style Discovery fill:#e1f5ff
+    style Creation fill:#fff3e0
+    style Lifecycle fill:#e8f5e9
 ```
-┌─────────────────────────────────────┐
-│     CDI Container (Weld)            │
-│                                     │
-│  ┌──────────────────────────────┐  │
-│  │   Bean Discovery             │  │
-│  │   - Scan classes             │  │
-│  │   - Find @Inject points      │  │
-│  └──────────────────────────────┘  │
-│                                     │
-│  ┌──────────────────────────────┐  │
-│  │   Bean Creation              │  │
-│  │   - Instantiate beans        │  │
-│  │   - Inject dependencies      │  │
-│  └──────────────────────────────┘  │
-│                                     │
-│  ┌──────────────────────────────┐  │
-│  │   Lifecycle Management       │  │
-│  │   - Manage scopes            │  │
-│  │   - Handle destruction       │  │
-│  └──────────────────────────────┘  │
-└─────────────────────────────────────┘
-```
+
+</details>
+
+![width:70%](images/04-cdi-dependency-injection-diagram-1.png)
+
 
 ---
 
@@ -1368,26 +1369,38 @@ public class DistributedTransferService {
 
 How distributed transactions work:
 
-```
-┌─────────────────────────────────────────────────────┐
-│         Transaction Coordinator (JTA)               │
-└─────────────────────────────────────────────────────┘
-                    │
-        ┌───────────┼───────────┐
-        │           │           │
-        ▼           ▼           ▼
-   ┌────────┐  ┌────────┐  ┌────────┐
-   │  DB 1  │  │  DB 2  │  │  JMS   │
-   └────────┘  └────────┘  └────────┘
+<details>
+<summary>📝 Original Mermaid Code (click to expand)</summary>
 
-Phase 1: PREPARE
+```mermaid
+graph TB
+    Coordinator["Transaction Coordinator (JTA)"]
+    DB1["DB 1"]
+    DB2["DB 2"]
+    JMS["JMS"]
+
+    Coordinator --> DB1
+    Coordinator --> DB2
+    Coordinator --> JMS
+
+    style Coordinator fill:#667eea
+    style DB1 fill:#4facfe
+    style DB2 fill:#4facfe
+    style JMS fill:#43e97b
+```
+
+</details>
+
+![width:70%](images/04-cdi-dependency-injection-diagram-2.png)
+
+
+**Phase 1: PREPARE**
 - Coordinator asks: "Can you commit?"
 - Each resource: "Yes, I'm ready" or "No, I can't"
 
-Phase 2: COMMIT/ROLLBACK
+**Phase 2: COMMIT/ROLLBACK**
 - If all said "Yes": Coordinator says "COMMIT"
 - If any said "No": Coordinator says "ROLLBACK"
-```
 
 **Automatic in Jakarta EE with JTA!**
 
@@ -1621,9 +1634,25 @@ In Lab 4, you will:
 
 ### Event Flow:
 
+<details>
+<summary>📝 Original Mermaid Code (click to expand)</summary>
+
+```mermaid
+graph LR
+    Producer["Producer Bean"] --> Fire["Fire Event"]
+    Fire --> Container["CDI Container"]
+    Container --> Observers["Notify Observers"]
+
+    style Producer fill:#667eea
+    style Fire fill:#f093fb
+    style Container fill:#4facfe
+    style Observers fill:#43e97b
 ```
-Producer Bean → Fire Event → CDI Container → Notify Observers
-```
+
+</details>
+
+![width:70%](images/04-cdi-dependency-injection-diagram-3.png)
+
 
 ---
 

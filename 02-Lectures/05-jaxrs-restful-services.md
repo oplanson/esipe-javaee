@@ -336,23 +336,30 @@ GET /api/clients/123
 
 ## Richardson Model: Visual Summary
 
+<details>
+<summary>📝 Original Mermaid Code (click to expand)</summary>
+
+```mermaid
+graph TB
+    L0["Level 0: POX<br/>Single endpoint<br/>RPC-style"]
+    L1["Level 1: Resources<br/>Multiple URIs<br/>Resource identification"]
+    L2["Level 2: HTTP Verbs (Most APIs stop here)<br/>GET, POST, PUT, DELETE<br/>Status codes (200, 201, 404, etc.)"]
+    L3["Level 3: HATEOAS<br/>Hypermedia controls<br/>Self-documenting"]
+
+    L0 --> L1
+    L1 --> L2
+    L2 --> L3
+
+    style L0 fill:#fce4ec
+    style L1 fill:#fff3e0
+    style L2 fill:#e1f5ff
+    style L3 fill:#e8f5e9
 ```
-Level 3: HATEOAS
-    ↑ Hypermedia controls
-    │ Self-documenting
-    │
-Level 2: HTTP Verbs ← Most APIs stop here
-    ↑ GET, POST, PUT, DELETE
-    │ Status codes (200, 201, 404, etc.)
-    │
-Level 1: Resources
-    ↑ Multiple URIs
-    │ Resource identification
-    │
-Level 0: POX
-    Single endpoint
-    RPC-style
-```
+
+</details>
+
+![width:70%](images/05-jaxrs-restful-services-diagram-1.png)
+
 
 **Most production APIs:** Level 2
 **True REST:** Level 3
@@ -1079,10 +1086,10 @@ public class NotFoundExceptionMapper
     public Response toResponse(NotFoundException exception) {
         ErrorResponse error = new ErrorResponse(
             404,
-            "Resource not found",
+            "Not Found",
             exception.getMessage()
         );
-        return Response.status(404).entity(error).build();
+        return Response.status(Response.Status.NOT_FOUND).entity(error).build();
     }
 }
 ```
@@ -1101,8 +1108,12 @@ public class NotFoundException extends RuntimeException {
 public class ValidationException extends RuntimeException {
     private List<String> errors;
     
-    public ValidationException(List<String> errors) {
-        super("Validation failed");
+    public ValidationException(String message) {
+        super(message);
+    }
+    
+    public ValidationException(String message, List<String> errors) {
+        super(message);
         this.errors = errors;
     }
     
@@ -1122,12 +1133,19 @@ public class ErrorResponse {
     private String error;
     private String message;
     private LocalDateTime timestamp;
+    private List<String> details;
     
     public ErrorResponse(int status, String error, String message) {
         this.status = status;
         this.error = error;
         this.message = message;
         this.timestamp = LocalDateTime.now();
+    }
+    
+    public ErrorResponse(int status, String error, String message, 
+                         List<String> details) {
+        this(status, error, message);
+        this.details = details;
     }
     
     // getters/setters
@@ -1250,10 +1268,11 @@ public class ValidationExceptionMapper
         ErrorResponse error = new ErrorResponse(
             400,
             "Validation Failed",
-            errors.toString()
+            "Input validation failed",
+            errors
         );
         
-        return Response.status(400).entity(error).build();
+        return Response.status(Response.Status.BAD_REQUEST).entity(error).build();
     }
 }
 ```
@@ -1277,10 +1296,11 @@ public class GenericExceptionMapper
         ErrorResponse error = new ErrorResponse(
             500,
             "Internal Server Error",
-            "An unexpected error occurred"
+            "An unexpected error occurred. Please contact support."
         );
         
-        return Response.status(500).entity(error).build();
+        return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
+            .entity(error).build();
     }
 }
 ```
@@ -1667,33 +1687,37 @@ In Lab 5, you will:
 
 ## Lab 5 Architecture
 
+<details>
+<summary>📝 Original Mermaid Code (click to expand)</summary>
+
+```mermaid
+graph TB
+    Client["Web Browser / REST Client"]
+    JSP["JSP UI"]
+    REST["REST API (JAX-RS)"]
+    Services["Services (CDI)"]
+    JPA["JPA"]
+    DB["PostgreSQL"]
+
+    Client --> JSP
+    Client --> REST
+    JSP --> Services
+    REST --> Services
+    Services --> JPA
+    JPA --> DB
+
+    style Client fill:#667eea
+    style JSP fill:#fff3e0
+    style REST fill:#e1f5ff
+    style Services fill:#f3e5f5
+    style JPA fill:#e8f5e9
+    style DB fill:#fce4ec
 ```
-┌─────────────────────────────────────────┐
-│         Web Browser / REST Client       │
-└────────────┬────────────────────────────┘
-             │
-    ┌────────┴────────┐
-    │                 │
-┌───▼────┐      ┌────▼─────┐
-│  JSP   │      │ REST API │
-│  UI    │      │ (JAX-RS) │
-└───┬────┘      └────┬─────┘
-    │                │
-    └────────┬───────┘
-             │
-      ┌──────▼──────┐
-      │   Services  │
-      │    (CDI)    │
-      └──────┬──────┘
-             │
-      ┌──────▼──────┐
-      │     JPA     │
-      └──────┬──────┘
-             │
-      ┌──────▼──────┐
-      │  PostgreSQL │
-      └─────────────┘
-```
+
+</details>
+
+![width:70%](images/05-jaxrs-restful-services-diagram-2.png)
+
 
 ---
 

@@ -218,6 +218,9 @@ Client client = entityManager.find(
 
 ## JPA Architecture
 
+<details>
+<summary>📝 Original Mermaid Code (click to expand)</summary>
+
 ```mermaid
 graph TB
     A["Application Layer<br/>(Business Logic & Services)"]
@@ -235,6 +238,11 @@ graph TB
     style D fill:#f3e5f5
     style E fill:#fce4ec
 ```
+
+</details>
+
+![width:70%](images/03-jpa-database-integration-diagram-1.png)
+
 
 ---
 
@@ -472,15 +480,14 @@ public class Account {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     
-    @Column(nullable = false, unique = true)
+    @Column(nullable = false, unique = true, length = 34)
     private String number;
     
     @Column(nullable = false)
-    private Double balance;
+    private double balance;
     
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
-    private AccountType type;
+    @Column(nullable = false, length = 20)
+    private String type; // CHECKING or SAVINGS
     
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "client_id", nullable = false)
@@ -512,7 +519,7 @@ private List<Account> accounts;
 
 // When you persist a client, all accounts are also persisted
 Client client = new Client("John Doe", "john@example.com");
-client.addAccount(new Account("ACC001", 1000.0, AccountType.CHECKING));
+client.addAccount(new Account("ACC001", 1000.0, "CHECKING"));
 entityManager.persist(client); // Account is also persisted
 ```
 
@@ -723,7 +730,7 @@ List<Client> clients = entityManager
 String jpql = "SELECT a FROM Account a JOIN FETCH a.client WHERE a.type = :type";
 List<Account> accounts = entityManager
     .createQuery(jpql, Account.class)
-    .setParameter("type", AccountType.CHECKING)
+    .setParameter("type", "CHECKING")
     .getResultList();
 ```
 
@@ -749,7 +756,7 @@ List<Object[]> results = entityManager
     .getResultList();
 
 for (Object[] row : results) {
-    AccountType type = (AccountType) row[0];
+    String type = (String) row[0];
     Double avgBalance = (Double) row[1];
     Long count = (Long) row[2];
     System.out.println(type + ": " + avgBalance + " (" + count + " accounts)");
@@ -808,7 +815,7 @@ Client client = entityManager
 String jpql = "UPDATE Account a SET a.balance = a.balance * 1.05 WHERE a.type = :type";
 int updatedCount = entityManager
     .createQuery(jpql)
-    .setParameter("type", AccountType.SAVINGS)
+    .setParameter("type", "SAVINGS")
     .executeUpdate();
 
 // Delete query
@@ -1359,6 +1366,9 @@ public class ClientService {
 
 ## Entity States
 
+<details>
+<summary>📝 Original Mermaid Code (click to expand)</summary>
+
 ```mermaid
 stateDiagram-v2
     [*] --> Transient: new
@@ -1375,6 +1385,11 @@ stateDiagram-v2
     note right of Detached: Was managed, now disconnected
     note right of Removed: Marked for deletion
 ```
+
+</details>
+
+![width:70%](images/03-jpa-database-integration-diagram-2.png)
+
 
 ---
 
@@ -1609,22 +1624,24 @@ ALTER TABLE clients ADD COLUMN status VARCHAR(20) DEFAULT 'ACTIVE';
              https://jakarta.ee/xml/ns/persistence/persistence_3_0.xsd"
              version="3.0">
     
-    <persistence-unit name="bankPU" transaction-type="JTA">
-        <jta-data-source>java:jboss/datasources/BankDS</jta-data-source>
+    <persistence-unit name="bankingPU" transaction-type="RESOURCE_LOCAL">
+        <provider>org.eclipse.persistence.jpa.PersistenceProvider</provider>
+        <non-jta-data-source>jdbc/bankingDS</non-jta-data-source>
         
         <class>com.bank.model.Client</class>
         <class>com.bank.model.Account</class>
         
         <properties>
-            <!-- Hibernate properties -->
-            <property name="hibernate.dialect" 
-                      value="org.hibernate.dialect.PostgreSQLDialect"/>
-            <property name="hibernate.show_sql" value="true"/>
-            <property name="hibernate.format_sql" value="true"/>
+            <!-- EclipseLink properties -->
+            <property name="eclipselink.target-database" value="PostgreSQL"/>
+            <property name="eclipselink.logging.level" value="FINE"/>
+            <property name="eclipselink.logging.parameters" value="true"/>
             
             <!-- Schema generation: NONE (use Flyway instead) -->
-            <property name="jakarta.persistence.schema-generation.database.action" 
-                      value="none"/>
+            <property name="eclipselink.ddl-generation" value="none"/>
+            
+            <!-- Weaving -->
+            <property name="eclipselink.weaving" value="static"/>
         </properties>
     </persistence-unit>
 </persistence>
@@ -1655,27 +1672,28 @@ ALTER TABLE clients ADD COLUMN status VARCHAR(20) DEFAULT 'ACTIVE';
 
 ## JNDI Architecture
 
+<details>
+<summary>📝 Original Mermaid Code (click to expand)</summary>
+
+```mermaid
+graph TB
+    A["Application Code<br/>(Lookup resources by name)"]
+    B["JNDI API (javax.naming)<br/>InitialContext · Context · NamingException"]
+    C["JNDI Service Provider Interface<br/>(SPI Implementation)"]
+    D["Naming/Directory Service<br/>(LDAP, DNS, File System, Application Server)"]
+    A --> B
+    B --> C
+    C --> D
+    style A fill:#e3f2fd
+    style B fill:#e8f5e9
+    style C fill:#fff3e0
+    style D fill:#fce4ec
 ```
-┌─────────────────────────────────────────────────────┐
-│              Application Code                        │
-│         (Lookup resources by name)                   │
-└──────────────────────┬──────────────────────────────┘
-                       │
-┌──────────────────────▼──────────────────────────────┐
-│              JNDI API (javax.naming)                 │
-│    InitialContext │ Context │ NamingException        │
-└──────────────────────┬──────────────────────────────┘
-                       │
-┌──────────────────────▼──────────────────────────────┐
-│           JNDI Service Provider Interface            │
-│              (SPI Implementation)                    │
-└──────────────────────┬──────────────────────────────┘
-                       │
-┌──────────────────────▼──────────────────────────────┐
-│         Naming/Directory Service                     │
-│    (LDAP, DNS, File System, Application Server)     │
-└─────────────────────────────────────────────────────┘
-```
+
+</details>
+
+![width:70%](images/03-jpa-database-integration-diagram-3.png)
+
 
 ---
 

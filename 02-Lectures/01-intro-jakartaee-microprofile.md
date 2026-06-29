@@ -158,6 +158,9 @@ By the end of this lecture, you will be able to:
 - **Open-source:** Community-driven development under Eclipse Foundation
 
 ### Evolution Timeline:
+<details>
+<summary>📝 Original Mermaid Code (click to expand)</summary>
+
 ```mermaid
 graph LR
     A["J2EE (1999)"] --> B["Java EE (2006)"]
@@ -169,6 +172,11 @@ graph LR
     style C fill:#667eea
     style D fill:#43e97b
 ```
+
+</details>
+
+![width:70%](images/01-intro-jakartaee-microprofile-diagram-1.png)
+
 
 ---
 
@@ -183,6 +191,9 @@ graph LR
 - **Rapid innovation:** Faster release cycles than Jakarta EE
 
 ### Timeline:
+<details>
+<summary>📝 Original Mermaid Code (click to expand)</summary>
+
 ```mermaid
 graph LR
     A["MicroProfile 1.0 (2016)"] --> B["MicroProfile 6.0 (2023)"]
@@ -190,6 +201,11 @@ graph LR
     style A fill:#f093fb
     style B fill:#43e97b
 ```
+
+</details>
+
+![width:70%](images/01-intro-jakartaee-microprofile-diagram-2.png)
+
 
 ---
 

@@ -164,17 +164,28 @@ By the end of this lecture, you will be able to:
 ## 🏛️ Architecture Evolution
 
 ### Traditional Layered Architecture
+<details>
+<summary>📝 Original Mermaid Code (click to expand)</summary>
+
+```mermaid
+graph TB
+    A["Presentation Layer<br/>(UI, Controllers)"]
+    B["Business Logic Layer<br/>(Services, Domain)"]
+    C["Data Access Layer<br/>(Repositories, DAOs)"]
+    D["Database<br/>(PostgreSQL, etc.)"]
+    A --> B
+    B --> C
+    C --> D
+    style A fill:#e3f2fd
+    style B fill:#e8f5e9
+    style C fill:#fff3e0
+    style D fill:#fce4ec
 ```
-┌─────────────────────────────────┐
-│     Presentation Layer          │  ← UI, Controllers
-├─────────────────────────────────┤
-│     Business Logic Layer        │  ← Services, Domain
-├─────────────────────────────────┤
-│     Data Access Layer           │  ← Repositories, DAOs
-├─────────────────────────────────┤
-│     Database                    │  ← PostgreSQL, etc.
-└─────────────────────────────────┘
-```
+
+</details>
+
+![width:70%](images/07-hexagonal-architecture-diagram-1.png)
+
 
 **Problem:** Dependencies flow downward, making business logic depend on infrastructure.
 
@@ -228,27 +239,37 @@ public class TransferUseCase {
 
 ## 🏗️ Hexagonal Architecture Structure
 
+<details>
+<summary>📝 Original Mermaid Code (click to expand)</summary>
+
+```mermaid
+graph TB
+    subgraph inbound["Primary (Driving) Adapters"]
+        REST["REST Adapter"]
+        WEB["Web Adapter"]
+    end
+    subgraph core["Application & Domain"]
+        APP["Application<br/>(Use Cases)"]
+        DOMAIN["Domain Core"]
+    end
+    subgraph outbound["Secondary (Driven) Adapters"]
+        JPA["JPA Adapter"]
+    end
+    REST --> APP
+    WEB --> APP
+    APP --> DOMAIN
+    DOMAIN --> JPA
+    style REST fill:#e3f2fd
+    style WEB fill:#e3f2fd
+    style APP fill:#e8f5e9
+    style DOMAIN fill:#fff3e0
+    style JPA fill:#fce4ec
 ```
-                    ┌─────────────────────────────────┐
-                    │                                 │
-    ┌───────────────┤         APPLICATION             ├───────────────┐
-    │               │         (Use Cases)             │               │
-    │               │                                 │               │
-    │               └────────────┬────────────────────┘               │
-    │                            │                                    │
-    │                            │                                    │
-┌───▼────┐                  ┌───▼────┐                          ┌───▼────┐
-│  REST  │                  │ DOMAIN │                          │  WEB   │
-│ Adapter│◄─────────────────┤  CORE  ├─────────────────────────►│ Adapter│
-│(Primary)                  │        │                          │(Primary)
-└────────┘                  └───┬────┘                          └────────┘
-                                │
-                                │
-                    ┌───────────▼────────────┐
-                    │   JPA Adapter          │
-                    │   (Secondary)          │
-                    └────────────────────────┘
-```
+
+</details>
+
+![width:70%](images/07-hexagonal-architecture-diagram-2.png)
+
 
 ---
 
@@ -476,11 +497,28 @@ com.bank/
 ## 🔄 Dependency Flow
 
 ### Traditional Layered Architecture
+<details>
+<summary>📝 Original Mermaid Code (click to expand)</summary>
+
+```mermaid
+graph LR
+    P["Presentation"]
+    B["Business Logic"]
+    D["Data Access"]
+    DB["Database"]
+    P -->|"depends on"| B
+    B -->|"depends on"| D
+    D -->|"depends on"| DB
+    style P fill:#e3f2fd
+    style B fill:#e8f5e9
+    style D fill:#fff3e0
+    style DB fill:#fce4ec
 ```
-Presentation → Business Logic → Data Access → Database
-     ↓              ↓                ↓
-  Depends on    Depends on      Depends on
-```
+
+</details>
+
+![width:70%](images/07-hexagonal-architecture-diagram-3.png)
+
 
 **Problem:** Business logic depends on infrastructure
 
@@ -489,14 +527,28 @@ Presentation → Business Logic → Data Access → Database
 ## 🔄 Dependency Flow
 
 ### Hexagonal Architecture
+<details>
+<summary>📝 Original Mermaid Code (click to expand)</summary>
+
+```mermaid
+graph LR
+    REST["REST Adapter"]
+    APP["Application<br/>(Use Cases)"]
+    JPA["JPA Adapter"]
+    DOMAIN["Domain Core<br/>(No dependencies)"]
+    REST -->|"depends on"| APP
+    JPA -.->|"implements port"| APP
+    APP -->|"depends on"| DOMAIN
+    style REST fill:#e3f2fd
+    style APP fill:#e8f5e9
+    style JPA fill:#fce4ec
+    style DOMAIN fill:#fff3e0
 ```
-REST Adapter → Application (Use Cases) ← JPA Adapter
-     ↓                  ↓                    ↑
-  Depends on       Depends on          Implements
-                       ↓
-                   Domain Core
-                  (No dependencies)
-```
+
+</details>
+
+![width:70%](images/07-hexagonal-architecture-diagram-4.png)
+
 
 **Solution:** All dependencies point inward toward domain
 
@@ -670,9 +722,9 @@ public class AccountManagementService implements AccountManagementUseCase {
             .orElseThrow(() -> new ClientNotFoundException(command.clientId()));
         
         Account account = Account.open(
-            new AccountNumber(command.accountNumber()),
+            AccountNumber.of(command.accountNumber()),
+            Money.of(command.initialDeposit(), "EUR"),
             AccountType.valueOf(command.accountType()),
-            new Money(command.initialDeposit()),
             client
         );
         
@@ -838,8 +890,8 @@ public class AccountMapper {
         
         return new Account(
             entity.getId(),
-            new AccountNumber(entity.getAccountNumber()),
-            new Money(entity.getBalance(), entity.getCurrency()),
+            AccountNumber.of(entity.getAccountNumber()),
+            Money.of(entity.getBalance(), entity.getCurrency()),
             AccountType.valueOf(entity.getType().name()),
             ClientMapper.toDomain(entity.getClient())
         );
@@ -941,25 +993,28 @@ public class InMemoryAccountRepository implements AccountRepository {
 ### The Dependency Rule
 **Dependencies must point inward:**
 
+<details>
+<summary>📝 Original Mermaid Code (click to expand)</summary>
+
+```mermaid
+graph TB
+    subgraph infra["Infrastructure (Frameworks, Drivers)"]
+        subgraph adapters["Interface Adapters (Controllers, Gateways)"]
+            subgraph app["Application (Use Cases)"]
+                domain["Domain (Entities, Value Objects)<br/>No dependencies"]
+            end
+        end
+    end
+    style infra fill:#f3e5f5
+    style adapters fill:#e3f2fd
+    style app fill:#e8f5e9
+    style domain fill:#fff3e0
 ```
-┌─────────────────────────────────────────────────┐
-│  Infrastructure (Frameworks, Drivers)           │
-│  ┌───────────────────────────────────────────┐ │
-│  │  Interface Adapters (Controllers, Gateways)│ │
-│  │  ┌─────────────────────────────────────┐  │ │
-│  │  │  Application (Use Cases)            │  │ │
-│  │  │  ┌───────────────────────────────┐  │  │ │
-│  │  │  │  Domain (Entities, Value Objs)│  │  │ │
-│  │  │  │                               │  │  │ │
-│  │  │  │  No dependencies              │  │  │ │
-│  │  │  └───────────────────────────────┘  │  │ │
-│  │  │                                     │  │ │
-│  │  └─────────────────────────────────────┘  │ │
-│  │                                           │ │
-│  └───────────────────────────────────────────┘ │
-│                                                 │
-└─────────────────────────────────────────────────┘
-```
+
+</details>
+
+![width:70%](images/07-hexagonal-architecture-diagram-5.png)
+
 
 **Rule:** Inner layers know nothing about outer layers
 
@@ -1221,25 +1276,30 @@ public class JpaAccountAdapter implements AccountRepository {
 @Test
 public void testAccountDeposit() {
     // No mocks needed - pure domain logic
-    Account account = new Account(
-        new AccountNumber("ACC001"),
-        new Money(BigDecimal.valueOf(1000), "EUR")
+    Account account = Account.open(
+        AccountNumber.generate(),
+        Money.of(BigDecimal.valueOf(1000), "EUR"),
+        AccountType.CHECKING,
+        client
     );
     
-    account.deposit(new Money(BigDecimal.valueOf(500), "EUR"));
+    account.deposit(Money.of(BigDecimal.valueOf(500), "EUR"));
     
     assertEquals(BigDecimal.valueOf(1500), account.getBalance().getAmount());
 }
 
 @Test
 public void testAccountDepositNegativeAmount() {
-    Account account = new Account(
-        new AccountNumber("ACC001"),
-        new Money(BigDecimal.valueOf(1000), "EUR")
+    Account account = Account.open(
+        AccountNumber.generate(),
+        Money.of(BigDecimal.valueOf(1000), "EUR"),
+        AccountType.CHECKING,
+        client
     );
     
+    // Money.of rejects negative amounts at construction
     assertThrows(IllegalArgumentException.class, () -> {
-        account.deposit(new Money(BigDecimal.valueOf(-100), "EUR"));
+        account.deposit(Money.of(BigDecimal.valueOf(-100), "EUR"));
     });
 }
 ```

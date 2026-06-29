@@ -219,24 +219,25 @@ By the end of this lecture, you will be able to:
 
 ## Security Layers
 
+<details>
+<summary>📝 Original Mermaid Code (click to expand)</summary>
+
+```mermaid
+graph TB
+    A["Application Security<br/>- Authentication<br/>- Authorization<br/>- Input Validation"]
+    B["Transport Security<br/>- HTTPS/TLS<br/>- Certificate Management"]
+    C["Infrastructure Security<br/>- Firewalls<br/>- Network Segmentation"]
+    A --> B
+    B --> C
+    style A fill:#667eea
+    style B fill:#4facfe
+    style C fill:#43e97b
 ```
-┌─────────────────────────────────────┐
-│   Application Security              │
-│   - Authentication                  │
-│   - Authorization                   │
-│   - Input Validation                │
-└─────────────────────────────────────┘
-┌─────────────────────────────────────┐
-│   Transport Security                │
-│   - HTTPS/TLS                       │
-│   - Certificate Management          │
-└─────────────────────────────────────┘
-┌─────────────────────────────────────┐
-│   Infrastructure Security           │
-│   - Firewalls                       │
-│   - Network Segmentation            │
-└─────────────────────────────────────┘
-```
+
+</details>
+
+![width:70%](images/09-jakarta-ee-security-diagram-1.png)
+
 
 ---
 
@@ -310,28 +311,24 @@ Admin can delete users
 
 ## Authentication Flow
 
+<details>
+<summary>📝 Original Mermaid Code (click to expand)</summary>
+
+```mermaid
+sequenceDiagram
+    participant Client
+    participant Server
+    Client->>Server: 1. Login Request (username, password)
+    Note over Server: 2. Validate Credentials
+    Server-->>Client: 3. Session Token/JWT
+    Client->>Server: 4. Authenticated Request (with token)
+    Server-->>Client: 5. Response
 ```
-┌──────────┐                    ┌──────────┐
-│  Client  │                    │  Server  │
-└────┬─────┘                    └────┬─────┘
-     │                               │
-     │  1. Login Request             │
-     │  (username, password)         │
-     │─────────────────────────────>│
-     │                               │
-     │                          2. Validate
-     │                          Credentials
-     │                               │
-     │  3. Session Token/JWT         │
-     │<─────────────────────────────│
-     │                               │
-     │  4. Authenticated Request     │
-     │  (with token)                 │
-     │─────────────────────────────>│
-     │                               │
-     │  5. Response                  │
-     │<─────────────────────────────│
-```
+
+</details>
+
+![width:70%](images/09-jakarta-ee-security-diagram-2.png)
+
 
 ---
 
