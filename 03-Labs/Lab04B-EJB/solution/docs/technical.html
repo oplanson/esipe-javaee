@@ -1,0 +1,286 @@
+<!-- © Copyright 2026 Olivier Planson. All rights reserved. Reproduction prohibited. Made with IBM Bob. -->
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Banking EJB App — Architecture Technique</title>
+  <link rel="stylesheet" href="assets/carbon.css"/>
+</head>
+<body>
+
+<header class="cds--header">
+  <a class="cds--header__name" href="index.html">
+    🏦 Banking EJB Application <span>Lab 04B</span>
+  </a>
+  <span class="cds--header__divider">|</span>
+  <span style="font-size:.8125rem;color:#c6c6c6;">Jakarta EE 10 · Open Liberty 23 · EJB 4.0</span>
+</header>
+
+<div class="cds--shell">
+  <nav class="cds--side-nav">
+    <p class="cds--side-nav__section-title">Documentation</p>
+    <a class="cds--side-nav__link" href="index.html"><i class="icon">⊞</i> Vue d'ensemble</a>
+    <a class="cds--side-nav__link" href="functional.html"><i class="icon">⬡</i> Architecture Fonctionnelle</a>
+    <a class="cds--side-nav__link active" href="technical.html"><i class="icon">⚙</i> Architecture Technique</a>
+    <a class="cds--side-nav__link" href="sequences.html"><i class="icon">⇄</i> Diagrammes de Séquence</a>
+    <a class="cds--side-nav__link" href="rules.html"><i class="icon">§</i> Règles Métier</a>
+  </nav>
+
+  <main class="cds--content">
+
+    <nav class="cds--breadcrumb">
+      <a href="index.html">Vue d'ensemble</a>
+      <span class="sep">/</span>
+      <span class="current">Architecture Technique</span>
+    </nav>
+
+    <h1>Architecture Technique</h1>
+    <p class="page-lead">
+      Vue en couches de l'infrastructure technique : du navigateur jusqu'à PostgreSQL, en passant
+      par le conteneur EJB Open Liberty, les pools de données JTA/Flyway et la couche JPA EclipseLink.
+    </p>
+
+    <!-- ─── Layers SVG ─── -->
+    <h2>Vue en couches</h2>
+    <div class="arch-box">
+      <svg viewBox="0 0 820 360" xmlns="http://www.w3.org/2000/svg"
+           style="width:100%;max-width:820px;font-family:'IBM Plex Sans',sans-serif;font-size:11px;">
+
+        <!-- Layer 1: Browser -->
+        <rect x="10" y="10" width="800" height="55" rx="3" fill="#d0e2ff" stroke="#0043ce" stroke-width="1.5"/>
+        <text x="40" y="32" font-weight="700" fill="#0043ce" font-size="12">Navigateur / Client HTTP</text>
+        <text x="40" y="50" fill="#0043ce" font-size="10">BASIC Auth — HTTP/HTTPS — GET / POST / DELETE</text>
+        <text x="600" y="50" fill="#0043ce" font-size="10">Rôles : admin · teller · customer</text>
+
+        <!-- Arrow 1 -->
+        <line x1="410" y1="65" x2="410" y2="80" stroke="#8d8d8d" stroke-width="2" marker-end="url(#arr)"/>
+
+        <!-- Layer 2: Servlet -->
+        <rect x="10" y="80" width="800" height="55" rx="3" fill="#e8daff" stroke="#491d8b" stroke-width="1.5"/>
+        <text x="40" y="102" font-weight="700" fill="#491d8b" font-size="12">BankingServlet — Servlet 6.0</text>
+        <text x="40" y="120" fill="#491d8b" font-size="10">@WebServlet("/banking") · @EJB injection · @DeclareRoles · BASIC auth constraint</text>
+        <text x="580" y="120" fill="#491d8b" font-size="10">Routage HTTP → EJB</text>
+
+        <!-- Arrow 2 -->
+        <line x1="410" y1="135" x2="410" y2="150" stroke="#8d8d8d" stroke-width="2" marker-end="url(#arr)"/>
+
+        <!-- Layer 3: EJB Container -->
+        <rect x="10" y="150" width="800" height="90" rx="3" fill="#f4f4f4" stroke="#8d8d8d" stroke-width="1.5" stroke-dasharray="5,3"/>
+        <text x="40" y="170" font-weight="700" fill="#525252" font-size="12">EJB Container (enterpriseBeansLite-4.0 + mdb-4.0)</text>
+
+        <rect x="30"  y="178" width="160" height="50" rx="2" fill="#defbe6" stroke="#198038"/>
+        <text x="110" y="196" text-anchor="middle" font-weight="600" fill="#0e6027" font-size="10">@Stateless Pool</text>
+        <text x="110" y="210" text-anchor="middle" fill="#0e6027" font-size="9">AccountService</text>
+        <text x="110" y="222" text-anchor="middle" fill="#0e6027" font-size="9">ClientService · CMT</text>
+
+        <rect x="205" y="178" width="160" height="50" rx="2" fill="#ffd7d9" stroke="#750e13"/>
+        <text x="285" y="196" text-anchor="middle" font-weight="600" fill="#750e13" font-size="10">@Stateful Session</text>
+        <text x="285" y="210" text-anchor="middle" fill="#750e13" font-size="9">TransactionBatchBean</text>
+        <text x="285" y="222" text-anchor="middle" fill="#750e13" font-size="9">conversationnel · @Remove</text>
+
+        <rect x="380" y="178" width="160" height="50" rx="2" fill="#f5e0c3" stroke="#5d3b1e"/>
+        <text x="460" y="196" text-anchor="middle" font-weight="600" fill="#5d3b1e" font-size="10">@Singleton</text>
+        <text x="460" y="210" text-anchor="middle" fill="#5d3b1e" font-size="9">Config · Migration</text>
+        <text x="460" y="222" text-anchor="middle" fill="#5d3b1e" font-size="9">@Startup · @Lock · BMT</text>
+
+        <rect x="555" y="178" width="160" height="50" rx="2" fill="#d9fbfb" stroke="#004144"/>
+        <text x="635" y="196" text-anchor="middle" font-weight="600" fill="#004144" font-size="10">@MessageDriven</text>
+        <text x="635" y="210" text-anchor="middle" fill="#004144" font-size="9">NotificationMDB</text>
+        <text x="635" y="222" text-anchor="middle" fill="#004144" font-size="9">JMS Queue · async</text>
+
+        <!-- Arrow 3 -->
+        <line x1="280" y1="240" x2="280" y2="255" stroke="#8d8d8d" stroke-width="2" marker-end="url(#arr)"/>
+
+        <!-- Layer 4: JPA -->
+        <rect x="10" y="255" width="550" height="55" rx="3" fill="#e0e0e0" stroke="#8d8d8d" stroke-width="1.5"/>
+        <text x="40" y="277" font-weight="700" fill="#161616" font-size="12">JPA 3.1 — EclipseLink</text>
+        <text x="40" y="295" fill="#525252" font-size="10">bankingPU (JTA) · cache partagé 500 items · batch writing 100 items · @Version optimiste</text>
+        <text x="40" y="307" fill="#525252" font-size="10">DefaultDataSource (JTA pool 2–10) · FlywayDataSource (pool 1–5)</text>
+
+        <!-- JMS -->
+        <rect x="575" y="255" width="235" height="55" rx="3" fill="#d9fbfb" stroke="#004144" stroke-width="1.5"/>
+        <text x="692" y="277" text-anchor="middle" font-weight="700" fill="#004144" font-size="12">JMS Broker</text>
+        <text x="692" y="295" text-anchor="middle" fill="#004144" font-size="10">messaging-3.1</text>
+        <text x="692" y="307" text-anchor="middle" fill="#004144" font-size="10">jms/notificationQueue</text>
+
+        <!-- Arrow 4 -->
+        <line x1="280" y1="310" x2="280" y2="325" stroke="#8d8d8d" stroke-width="2" marker-end="url(#arr)"/>
+
+        <!-- Layer 5: DB -->
+        <rect x="10" y="325" width="550" height="30" rx="3" fill="#161616" stroke="#161616"/>
+        <text x="285" y="345" text-anchor="middle" font-weight="700" fill="#f4f4f4" font-size="11">PostgreSQL 15 — Stockage relationnel transactionnel</text>
+
+        <!-- Markers -->
+        <defs>
+          <marker id="arr" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+            <path d="M0,0 L0,6 L8,3 z" fill="#8d8d8d"/>
+          </marker>
+        </defs>
+      </svg>
+    </div>
+
+    <!-- ─── EJB Types table ─── -->
+    <h2>Types d'EJB — comparatif</h2>
+    <div class="cds--data-table-container">
+      <table class="cds--data-table">
+        <thead>
+          <tr><th>Type</th><th>Cycle de vie</th><th>État</th><th>Gestion transactions</th><th>Cas d'usage</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><span class="cds--tag cds--tag--blue">@Stateless</span></td>
+            <td>Pool d'instances, aucun affinité client</td>
+            <td>Sans état (stateless)</td>
+            <td>CMT par défaut, <code>REQUIRED</code></td>
+            <td>Services bancaires, CRUD, logique métier réutilisable</td>
+          </tr>
+          <tr>
+            <td><span class="cds--tag cds--tag--green">@Stateful</span></td>
+            <td>Une instance par client, détruite sur <code>@Remove</code></td>
+            <td>État conversationnel maintenu</td>
+            <td>CMT, <code>@TransactionAttribute</code> par méthode</td>
+            <td>Lots de transferts, paniers, workflows multi-étapes</td>
+          </tr>
+          <tr>
+            <td><span class="cds--tag cds--tag--purple">@Singleton</span></td>
+            <td>Instance unique dans le conteneur</td>
+            <td>Partagé, protégé par <code>@Lock</code></td>
+            <td>CMT ou BMT, <code>@Lock(READ/WRITE)</code></td>
+            <td>Configuration globale, migration, caches applicatifs</td>
+          </tr>
+          <tr>
+            <td><span class="cds--tag cds--tag--teal">@MessageDriven</span></td>
+            <td>Activé par message JMS entrant</td>
+            <td>Sans état, asynchrone</td>
+            <td>CMT, chaque message = une transaction</td>
+            <td>Notifications async EMAIL/SMS/PUSH/ALERT</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- ─── Transaction Management ─── -->
+    <h2>Gestion des transactions</h2>
+
+    <h3>CMT — Container-Managed Transactions</h3>
+    <p>Mode par défaut pour les EJBs. Le conteneur démarre, suspend, commit ou rollback les transactions automatiquement selon l'annotation <code>@TransactionAttribute</code>.</p>
+    <div class="cds--data-table-container">
+      <table class="cds--data-table">
+        <thead><tr><th>Attribut</th><th>Tx cliente existante</th><th>Pas de Tx cliente</th><th>Usage typique</th></tr></thead>
+        <tbody>
+          <tr><td><code>REQUIRED</code> (défaut)</td><td>Rejoint la Tx existante</td><td>Crée une nouvelle Tx</td><td><code>transfer()</code>, <code>deposit()</code>, <code>withdraw()</code></td></tr>
+          <tr><td><code>REQUIRES_NEW</code></td><td>Suspend la Tx, crée une nouvelle</td><td>Crée une nouvelle Tx</td><td><code>commitBatch()</code> dans TransactionBatchBean</td></tr>
+          <tr><td><code>SUPPORTS</code></td><td>Rejoint la Tx existante</td><td>Pas de Tx (non-transactionnel)</td><td><code>getAccount()</code>, <code>findClientByName()</code></td></tr>
+          <tr><td><code>NOT_SUPPORTED</code></td><td>Suspend la Tx</td><td>Pas de Tx</td><td><code>addToQueue()</code>, <code>rollbackBatch()</code></td></tr>
+          <tr><td><code>MANDATORY</code></td><td>Rejoint la Tx existante</td><td>Lève <code>EJBTransactionRequiredException</code></td><td>Méthodes internes nécessitant impérativement une Tx</td></tr>
+          <tr><td><code>NEVER</code></td><td>Lève <code>EJBException</code></td><td>Pas de Tx</td><td>Méthodes non-transactionnelles strictes</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3>BMT — Bean-Managed Transactions</h3>
+    <p>
+      Utilisé par <code>DatabaseMigrationStartup</code> via
+      <code>@TransactionManagement(BEAN)</code>. Le bean contrôle explicitement la transaction via
+      <code>UserTransaction</code> injecté.
+    </p>
+    <pre>@TransactionManagement(TransactionManagementType.BEAN)
+@Singleton @Startup
+public class DatabaseMigrationStartup {
+    @Resource UserTransaction utx;
+
+    @PostConstruct
+    public void migrate() throws Exception {
+        utx.begin();
+        try {
+            flyway.migrate();
+            utx.commit();
+        } catch (Exception e) {
+            utx.rollback();
+            throw e;
+        }
+    }
+}</pre>
+
+    <!-- ─── Timer Service ─── -->
+    <h2>Timer Service</h2>
+    <div class="cds--data-table-container">
+      <table class="cds--data-table">
+        <thead><tr><th>Mécanisme</th><th>Annotation / API</th><th>Persistant</th><th>Description</th></tr></thead>
+        <tbody>
+          <tr><td>Timer déclaratif</td><td><code>@Schedule</code></td><td>Non (non-persistent)</td><td>Timers automatiques définis à la compilation, ne survivent pas au redémarrage</td></tr>
+          <tr><td>Timer programmatique</td><td><code>TimerService.createTimer()</code></td><td>Configurable</td><td>Création dynamique de timers à l'exécution</td></tr>
+          <tr><td>Handler timeout</td><td><code>@Timeout</code></td><td>—</td><td>Méthode callback invoquée par le Timer Service</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- ─── Liberty Features ─── -->
+    <h2>Features Open Liberty</h2>
+    <div class="cds--data-table-container">
+      <table class="cds--data-table">
+        <thead><tr><th>Feature</th><th>Version</th><th>Description</th></tr></thead>
+        <tbody>
+          <tr><td><code>servlet-6.0</code></td><td>6.0</td><td>Jakarta Servlet 6.0 — HTTP endpoint principal</td></tr>
+          <tr><td><code>enterpriseBeansLite-4.0</code></td><td>4.0</td><td>EJB Lite : @Stateless, @Stateful, @Singleton, Timer Service</td></tr>
+          <tr><td><code>mdb-4.0</code></td><td>4.0</td><td>Message-Driven Beans (@MessageDriven)</td></tr>
+          <tr><td><code>persistence-3.1</code></td><td>3.1</td><td>Jakarta Persistence 3.1 (JPA)</td></tr>
+          <tr><td><code>jdbc-4.2</code></td><td>4.2</td><td>Accès JDBC avec pools de connexions</td></tr>
+          <tr><td><code>messaging-3.1</code></td><td>3.1</td><td>Jakarta Messaging (JMS) 3.1</td></tr>
+          <tr><td><code>mpHealth-4.0</code></td><td>4.0</td><td>MicroProfile Health — endpoints /health</td></tr>
+          <tr><td><code>mpConfig-3.0</code></td><td>3.0</td><td>MicroProfile Config — externalisation de la configuration</td></tr>
+          <tr><td><code>mpMetrics-5.0</code></td><td>5.0</td><td>MicroProfile Metrics — métriques Prometheus</td></tr>
+          <tr><td><code>mpOpenAPI-3.1</code></td><td>3.1</td><td>MicroProfile OpenAPI — documentation API auto-générée</td></tr>
+          <tr><td><code>cdi-4.0</code></td><td>4.0</td><td>Jakarta CDI 4.0 — injection de dépendances</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- ─── DataSources ─── -->
+    <h2>Sources de données</h2>
+    <div class="tile-grid">
+      <div class="cds--tile">
+        <h3>FlywayDataSource</h3>
+        <p><strong>Type :</strong> Non-JTA (utilisé par DatabaseMigrationStartup via BMT)</p>
+        <p><strong>Pool :</strong> min 1 — max 5 connexions</p>
+        <p><strong>Usage :</strong> Migrations Flyway au démarrage exclusivement</p>
+        <p><strong>Driver :</strong> <code>org.postgresql.Driver</code></p>
+      </div>
+      <div class="cds--tile">
+        <h3>DefaultDataSource</h3>
+        <p><strong>Type :</strong> JTA (géré par le conteneur Liberty)</p>
+        <p><strong>Pool :</strong> min 2 — max 10 connexions</p>
+        <p><strong>Usage :</strong> Toutes les opérations JPA transactionnelles (CMT)</p>
+        <p><strong>Driver :</strong> <code>org.postgresql.Driver</code></p>
+      </div>
+    </div>
+
+    <!-- ─── JPA Configuration ─── -->
+    <h2>Configuration JPA</h2>
+    <div class="cds--data-table-container">
+      <table class="cds--data-table">
+        <thead><tr><th>Paramètre</th><th>Valeur</th><th>Description</th></tr></thead>
+        <tbody>
+          <tr><td>Unité de persistance</td><td><code>bankingPU</code></td><td>Nom de la persistence-unit dans persistence.xml</td></tr>
+          <tr><td>Type de transaction</td><td><code>JTA</code></td><td>Transactions gérées par le conteneur</td></tr>
+          <tr><td>Fournisseur ORM</td><td><code>EclipseLink</code></td><td>Implémentation JPA par défaut dans Liberty</td></tr>
+          <tr><td>Cache partagé</td><td><code>500 items</code></td><td>Réduction des requêtes SQL répétitives</td></tr>
+          <tr><td>Batch writing</td><td><code>100 items</code></td><td>Optimisation des INSERT/UPDATE en lot</td></tr>
+          <tr><td>Verrouillage optimiste</td><td><code>@Version</code></td><td>Champ version sur entité Account pour la concurrence</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <hr class="cds--divider"/>
+    <p style="font-size:.75rem;color:#a8a8a8;">Jakarta EE 10 · EJB 4.0 · Open Liberty 23 · Lab 04B — ESIPE</p>
+
+  </main>
+</div>
+
+<footer class="cds--footer">
+  Banking EJB Application · Lab 04B · Jakarta EE 10 · Open Liberty 23 · © 2025 ESIPE
+</footer>
+
+</body>
+</html>

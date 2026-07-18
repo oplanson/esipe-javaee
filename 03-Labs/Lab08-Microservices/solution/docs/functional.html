@@ -1,0 +1,405 @@
+<!-- © Copyright 2026 Olivier Planson. All rights reserved. Reproduction prohibited. Made with IBM Bob. -->
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Architecture Fonctionnelle — Lab 08</title>
+  <link rel="stylesheet" href="assets/carbon.css"/>
+</head>
+<body>
+
+<!-- ── Header ── -->
+<header class="cds--header">
+  <a href="index.html" class="cds--header__name">🏦 Banking Microservices<span>Lab 08</span></a>
+  <span class="cds--header__divider">|</span>
+  <span style="font-size:.8125rem;color:#c6c6c6;">Architecture Fonctionnelle</span>
+</header>
+
+<div class="cds--shell">
+  <nav class="cds--side-nav">
+    <p class="cds--side-nav__section-title">Navigation</p>
+    <a href="index.html" class="cds--side-nav__link"><i class="icon">🏠</i> Vue d'ensemble</a>
+    <a href="functional.html" class="cds--side-nav__link active"><i class="icon">⚙️</i> Architecture fonctionnelle</a>
+    <a href="technical.html" class="cds--side-nav__link"><i class="icon">🔧</i> Architecture technique</a>
+    <a href="sequences.html" class="cds--side-nav__link"><i class="icon">↔️</i> Diagrammes de séquence</a>
+    <a href="rules.html" class="cds--side-nav__link"><i class="icon">📋</i> Règles métier</a>
+    <p class="cds--side-nav__section-title" style="margin-top:1.5rem;">Domaines</p>
+    <a href="#domain-client" class="cds--side-nav__link"><i class="icon">👤</i> Domaine Client</a>
+    <a href="#domain-account" class="cds--side-nav__link"><i class="icon">💳</i> Domaine Account</a>
+    <a href="#domain-gateway" class="cds--side-nav__link"><i class="icon">🌐</i> Domaine Gateway</a>
+    <a href="#arch-diagram" class="cds--side-nav__link"><i class="icon">📐</i> Diagramme</a>
+  </nav>
+
+  <main class="cds--content">
+    <nav class="cds--breadcrumb">
+      <a href="index.html">Vue d'ensemble</a>
+      <span class="sep">/</span>
+      <span class="current">Architecture Fonctionnelle</span>
+    </nav>
+
+    <h1>Architecture Fonctionnelle</h1>
+    <p class="page-lead">Trois domaines métier indépendants, chacun encapsulé dans son propre service avec sa propre base de données. Aucun appel SQL cross-service — la communication se fait exclusivement via REST.</p>
+
+    <!-- ══════════════════════════════════════════════════
+         DOMAINE 1 — CLIENT SERVICE
+    ══════════════════════════════════════════════════ -->
+    <h2 id="domain-client">👤 Domaine 1 — Client Service (port 9081)</h2>
+
+    <h3>Endpoints REST — ClientResource</h3>
+    <div class="cds--data-table-container">
+      <table class="cds--data-table">
+        <thead>
+          <tr><th>Méthode</th><th>Chemin</th><th>Description</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><code>GET</code></td><td><code>/api/clients</code></td><td>Lister tous les clients</td></tr>
+          <tr><td><code>GET</code></td><td><code>/api/clients/{id}</code></td><td>Récupérer un client par ID</td></tr>
+          <tr><td><code>GET</code></td><td><code>/api/clients/search?email=…</code></td><td>Recherche par email</td></tr>
+          <tr><td><code>GET</code></td><td><code>/api/clients/premium</code></td><td>Lister les clients premium</td></tr>
+          <tr><td><code>POST</code></td><td><code>/api/clients</code></td><td>Créer un nouveau client</td></tr>
+          <tr><td><code>PUT</code></td><td><code>/api/clients/{id}</code></td><td>Mettre à jour un client</td></tr>
+          <tr><td><code>DELETE</code></td><td><code>/api/clients/{id}</code></td><td>Supprimer un client</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3>Modèle de domaine — <code>Client</code></h3>
+    <div class="tile-grid">
+      <div class="cds--tile">
+        <h3>Attributs</h3>
+        <ul>
+          <li><code>id</code> — Long</li>
+          <li><code>firstName</code>, <code>lastName</code> — String</li>
+          <li><code>email</code> — String (unique)</li>
+          <li><code>isPremium</code> — boolean</li>
+          <li><code>createdAt</code> — LocalDateTime</li>
+        </ul>
+      </div>
+      <div class="cds--tile">
+        <h3>Comportements métier</h3>
+        <ul>
+          <li><code>upgradeToPremium()</code></li>
+          <li><code>downgradeFromPremium()</code></li>
+          <li><code>updateContactInfo(email, lastName…)</code></li>
+        </ul>
+      </div>
+      <div class="cds--tile">
+        <h3>Validation — ClientDTO</h3>
+        <ul>
+          <li><code>@NotBlank</code> firstName, lastName</li>
+          <li><code>@Email</code> email</li>
+          <li><code>@Size(max=255)</code> champs texte</li>
+        </ul>
+      </div>
+    </div>
+
+    <h3>Architecture hexagonale — Client Service</h3>
+    <div class="cds--data-table-container">
+      <table class="cds--data-table">
+        <thead><tr><th>Couche</th><th>Composant</th><th>Rôle</th></tr></thead>
+        <tbody>
+          <tr><td>REST Adapter</td><td><code>ClientResource</code></td><td>@Path JAX-RS — expose les endpoints HTTP</td></tr>
+          <tr><td>Application</td><td><code>ClientService</code></td><td>@ApplicationScoped @Transactional — orchestration métier</td></tr>
+          <tr><td>Port (interface)</td><td><code>ClientRepository</code></td><td>Interface pure — indépendante de l'infrastructure</td></tr>
+          <tr><td>JPA Adapter</td><td><code>ClientRepositoryAdapter</code></td><td>Implémente ClientRepository via Jakarta Persistence</td></tr>
+          <tr><td>Entité JPA</td><td><code>ClientEntity</code></td><td>@Entity mappée sur la table <code>clients</code></td></tr>
+          <tr><td>Mapping</td><td><code>ClientMapper</code></td><td>Conversion ClientEntity ↔ Client ↔ ClientDTO</td></tr>
+          <tr><td>Migration</td><td><code>DatabaseMigrationStartup</code></td><td>Flyway au démarrage — V1__create_clients_table.sql</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3>Migration Flyway — V1 (table <code>clients</code>)</h3>
+    <pre>CREATE TABLE clients (
+    id         BIGSERIAL PRIMARY KEY,
+    first_name VARCHAR(255) NOT NULL,
+    last_name  VARCHAR(255) NOT NULL,
+    email      VARCHAR(255) NOT NULL UNIQUE,
+    is_premium BOOLEAN      NOT NULL DEFAULT FALSE,
+    created_at TIMESTAMP    NOT NULL DEFAULT NOW()
+);</pre>
+
+    <hr class="cds--divider"/>
+
+    <!-- ══════════════════════════════════════════════════
+         DOMAINE 2 — ACCOUNT SERVICE
+    ══════════════════════════════════════════════════ -->
+    <h2 id="domain-account">💳 Domaine 2 — Account Service (port 9082)</h2>
+
+    <h3>Endpoints REST — AccountResource</h3>
+    <div class="cds--data-table-container">
+      <table class="cds--data-table">
+        <thead><tr><th>Méthode</th><th>Chemin</th><th>Description</th></tr></thead>
+        <tbody>
+          <tr><td><code>GET</code></td><td><code>/api/accounts</code></td><td>Lister tous les comptes</td></tr>
+          <tr><td><code>GET</code></td><td><code>/api/accounts/{id}</code></td><td>Récupérer un compte</td></tr>
+          <tr><td><code>GET</code></td><td><code>/api/accounts/client/{clientId}</code></td><td>Comptes d'un client</td></tr>
+          <tr><td><code>POST</code></td><td><code>/api/accounts</code></td><td>Créer un compte (valide le client via Client Service)</td></tr>
+          <tr><td><code>PUT</code></td><td><code>/api/accounts/{id}</code></td><td>Modifier un compte</td></tr>
+          <tr><td><code>DELETE</code></td><td><code>/api/accounts/{id}</code></td><td>Supprimer un compte</td></tr>
+          <tr><td><code>POST</code></td><td><code>/api/accounts/{id}/deposit</code></td><td>Déposer un montant</td></tr>
+          <tr><td><code>POST</code></td><td><code>/api/accounts/{id}/withdraw</code></td><td>Retirer un montant</td></tr>
+          <tr><td><code>POST</code></td><td><code>/api/accounts/{id}/transfer</code></td><td>Virement entre comptes</td></tr>
+          <tr><td><code>POST</code></td><td><code>/api/accounts/{id}/suspend</code></td><td>Suspendre un compte</td></tr>
+          <tr><td><code>POST</code></td><td><code>/api/accounts/{id}/activate</code></td><td>Réactiver un compte</td></tr>
+          <tr><td><code>POST</code></td><td><code>/api/accounts/{id}/close</code></td><td>Clôturer un compte (solde = 0)</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3>Modèle de domaine — <code>Account</code></h3>
+    <div class="tile-grid">
+      <div class="cds--tile">
+        <h3>Types de compte</h3>
+        <ul>
+          <li><code>CHECKING</code> — Compte courant</li>
+          <li><code>SAVINGS</code> — Compte épargne</li>
+          <li><code>BUSINESS</code> — Compte professionnel</li>
+        </ul>
+      </div>
+      <div class="cds--tile">
+        <h3>Cycle de vie (statut)</h3>
+        <ul>
+          <li><code>ACTIVE</code> → <code>SUSPENDED</code> (suspend())</li>
+          <li><code>SUSPENDED</code> → <code>ACTIVE</code> (activate())</li>
+          <li><code>ACTIVE</code> → <code>CLOSED</code> si solde = 0 (close())</li>
+          <li>Opérations financières bloquées si SUSPENDED ou CLOSED</li>
+        </ul>
+      </div>
+      <div class="cds--tile">
+        <h3>Validation — AccountDTO</h3>
+        <ul>
+          <li><code>@NotBlank</code> accountName</li>
+          <li><code>@NotNull</code> clientId, accountType</li>
+          <li><code>@DecimalMin("0.0")</code> initialBalance</li>
+          <li><code>@Size(max=255)</code> champs texte</li>
+        </ul>
+      </div>
+    </div>
+
+    <h3>Communication inter-service — <code>ClientServiceClient</code></h3>
+    <div class="cds--tile">
+      <p>Lors de la création d'un compte, <code>AccountService</code> appelle <code>ClientServiceClient</code> pour vérifier que le client existe dans le Client Service.</p>
+      <div class="tag-stack">
+        <span class="cds--tag cds--tag--purple">@RegisterRestClient</span>
+        <span class="cds--tag cds--tag--purple">@Retry(maxRetries=3, delay=1000ms)</span>
+        <span class="cds--tag cds--tag--purple">@Timeout(value=2000ms)</span>
+        <span class="cds--tag cds--tag--purple">@CircuitBreaker(threshold=4, failure=50%, wait=5s, success=2)</span>
+        <span class="cds--tag cds--tag--purple">@Fallback → ClientDTO{name="Unknown"}</span>
+      </div>
+      <p>En cas d'indisponibilité du Client Service, le fallback retourne un <code>ClientDTO</code> avec le nom "Unknown" — le compte est tout de même créé (dégradation gracieuse).</p>
+    </div>
+
+    <h3>Architecture hexagonale — Account Service</h3>
+    <div class="cds--data-table-container">
+      <table class="cds--data-table">
+        <thead><tr><th>Couche</th><th>Composant</th><th>Rôle</th></tr></thead>
+        <tbody>
+          <tr><td>REST Adapter</td><td><code>AccountResource</code></td><td>@Path JAX-RS — expose les endpoints HTTP</td></tr>
+          <tr><td>Application</td><td><code>AccountService</code></td><td>@ApplicationScoped @Transactional — orchestration métier</td></tr>
+          <tr><td>REST Client</td><td><code>ClientServiceClient</code></td><td>@RegisterRestClient — appel inter-service vers Client Service</td></tr>
+          <tr><td>Port (interface)</td><td><code>AccountRepository</code></td><td>Interface pure — indépendante de l'infrastructure</td></tr>
+          <tr><td>JPA Adapter</td><td><code>AccountRepositoryAdapter</code></td><td>Implémente AccountRepository via Jakarta Persistence</td></tr>
+          <tr><td>Entité JPA</td><td><code>AccountEntity</code></td><td>@Entity mappée sur la table <code>accounts</code></td></tr>
+          <tr><td>Mapping</td><td><code>AccountMapper</code></td><td>Conversion AccountEntity ↔ Account ↔ AccountDTO</td></tr>
+          <tr><td>Migration</td><td><code>DatabaseMigrationStartup</code></td><td>Flyway au démarrage — V1__create_accounts_table.sql</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3>Migration Flyway — V1 (table <code>accounts</code>)</h3>
+    <pre>CREATE TABLE accounts (
+    id           BIGSERIAL PRIMARY KEY,
+    client_id    BIGINT         NOT NULL,
+    account_name VARCHAR(255)   NOT NULL,
+    account_type VARCHAR(50)    NOT NULL,
+    status       VARCHAR(50)    NOT NULL DEFAULT 'ACTIVE',
+    balance      DECIMAL(15,2)  NOT NULL DEFAULT 0.00,
+    created_at   TIMESTAMP      NOT NULL DEFAULT NOW()
+);</pre>
+
+    <hr class="cds--divider"/>
+
+    <!-- ══════════════════════════════════════════════════
+         DOMAINE 3 — API GATEWAY / BFF
+    ══════════════════════════════════════════════════ -->
+    <h2 id="domain-gateway">🌐 Domaine 3 — API Gateway / BFF (port 9080)</h2>
+
+    <h3>Agrégation — BankingResource + BankingAggregationService</h3>
+    <div class="cds--tile">
+      <p><code>BankingResource.getClientWithAccounts(id)</code> invoque <code>BankingAggregationService</code> qui appelle en parallèle :</p>
+      <ul>
+        <li><code>ClientServiceClient.getClient(id)</code> → récupère les infos client</li>
+        <li><code>AccountServiceClient.getAccountsByClient(id)</code> → récupère la liste des comptes</li>
+      </ul>
+      <p style="margin-top:.75rem;">Le résultat est assemblé dans un <code>ClientWithAccountsDTO</code> enrichi :</p>
+      <ul>
+        <li><code>client</code> — ClientDTO complet</li>
+        <li><code>accounts</code> — List&lt;AccountDTO&gt;</li>
+        <li><code>totalBalance</code> — somme des soldes calculée à la volée</li>
+        <li><code>accountCount</code> — nombre de comptes</li>
+      </ul>
+      <div class="tag-stack" style="margin-top:.75rem;">
+        <span class="cds--tag cds--tag--purple">@Retry(maxRetries=2)</span>
+        <span class="cds--tag cds--tag--purple">@CircuitBreaker</span>
+        <span class="cds--tag cds--tag--purple">@Bulkhead(10)</span>
+        <span class="cds--tag cds--tag--purple">@Fallback → données partielles</span>
+      </div>
+    </div>
+
+    <h3>Ressources Proxy</h3>
+    <div class="tile-grid">
+      <div class="cds--tile">
+        <h3>AccountProxyResource</h3>
+        <p>@Path <code>/api/accounts</code> — redirige toutes les requêtes vers Account Service via <code>AccountServiceClient</code>.</p>
+        <p>Tous les endpoints CRUD + opérations financières sont proxifiés.</p>
+      </div>
+      <div class="cds--tile">
+        <h3>ClientProxyResource</h3>
+        <p>@Path <code>/api/clients</code> — redirige toutes les requêtes vers Client Service via <code>ClientServiceClient</code>.</p>
+        <p>Tous les endpoints CRUD + recherche/premium sont proxifiés.</p>
+      </div>
+    </div>
+
+    <h3>Health Checks — API Gateway</h3>
+    <div class="tile-grid">
+      <div class="cds--tile">
+        <h3>ServicesHealthCheck — @Readiness</h3>
+        <p>Vérifie la disponibilité des deux services amont :</p>
+        <ul>
+          <li>Appel HTTP vers <code>http://localhost:9081/health</code></li>
+          <li>Appel HTTP vers <code>http://localhost:9082/health</code></li>
+          <li>DOWN si l'un ou l'autre est inaccessible</li>
+        </ul>
+      </div>
+      <div class="cds--tile">
+        <h3>GatewayLivenessCheck — @Liveness</h3>
+        <p>Vérifie que la gateway est en vie (mémoire, état interne).</p>
+        <p>Indépendant de l'état des services amont.</p>
+      </div>
+    </div>
+
+    <hr class="cds--divider"/>
+
+    <!-- ══════════════════════════════════════════════════
+         DIAGRAMME D'ARCHITECTURE
+    ══════════════════════════════════════════════════ -->
+    <h2 id="arch-diagram">📐 Diagramme d'Architecture</h2>
+
+    <div class="arch-box">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 480" font-family="IBM Plex Sans, Arial, sans-serif" font-size="13">
+
+        <!-- Background zones -->
+        <rect x="10" y="10" width="880" height="460" fill="#f4f4f4" rx="4"/>
+
+        <!-- Client Browser -->
+        <rect x="30" y="190" width="120" height="60" fill="#d0e2ff" stroke="#0f62fe" stroke-width="1.5" rx="3"/>
+        <text x="90" y="216" text-anchor="middle" font-weight="600" fill="#0043ce">Client</text>
+        <text x="90" y="234" text-anchor="middle" fill="#0043ce">Browser</text>
+
+        <!-- Arrow Browser → Gateway -->
+        <line x1="150" y1="220" x2="220" y2="220" stroke="#525252" stroke-width="1.5" marker-end="url(#arrow)"/>
+        <text x="185" y="213" text-anchor="middle" font-size="11" fill="#525252">HTTP</text>
+
+        <!-- API Gateway box -->
+        <rect x="220" y="100" width="180" height="240" fill="#e8daff" stroke="#491d8b" stroke-width="1.5" rx="3"/>
+        <text x="310" y="125" text-anchor="middle" font-weight="700" fill="#491d8b">API Gateway</text>
+        <text x="310" y="143" text-anchor="middle" font-size="11" fill="#491d8b">BFF — Port 9080</text>
+        <rect x="235" y="155" width="150" height="28" fill="#fff" stroke="#c6c6c6" rx="2"/>
+        <text x="310" y="174" text-anchor="middle" font-size="11" fill="#161616">BankingResource</text>
+        <rect x="235" y="191" width="150" height="28" fill="#fff" stroke="#c6c6c6" rx="2"/>
+        <text x="310" y="210" text-anchor="middle" font-size="11" fill="#161616">AccountProxyResource</text>
+        <rect x="235" y="227" width="150" height="28" fill="#fff" stroke="#c6c6c6" rx="2"/>
+        <text x="310" y="246" text-anchor="middle" font-size="11" fill="#161616">ClientProxyResource</text>
+        <rect x="235" y="263" width="150" height="28" fill="#fff" stroke="#c6c6c6" rx="2"/>
+        <text x="310" y="278" text-anchor="middle" font-size="11" fill="#161616">BankingAggregationSvc</text>
+        <rect x="235" y="299" width="150" height="28" fill="#fff" stroke="#c6c6c6" rx="2"/>
+        <text x="310" y="314" text-anchor="middle" font-size="11" fill="#161616">ServicesHealthCheck</text>
+
+        <!-- Arrow Gateway → Client Service -->
+        <line x1="400" y1="200" x2="490" y2="200" stroke="#525252" stroke-width="1.5" marker-end="url(#arrow)"/>
+        <text x="445" y="194" text-anchor="middle" font-size="11" fill="#525252">REST</text>
+        <!-- Circuit breaker icon -->
+        <circle cx="445" cy="206" r="7" fill="#fdf6dd" stroke="#f1c21b" stroke-width="1.5"/>
+        <text x="445" y="211" text-anchor="middle" font-size="9" fill="#8c4f00">CB</text>
+
+        <!-- Arrow Gateway → Account Service -->
+        <line x1="400" y1="270" x2="490" y2="330" stroke="#525252" stroke-width="1.5" marker-end="url(#arrow)"/>
+        <text x="437" y="310" text-anchor="middle" font-size="11" fill="#525252">REST</text>
+        <circle cx="453" cy="319" r="7" fill="#fdf6dd" stroke="#f1c21b" stroke-width="1.5"/>
+        <text x="453" y="324" text-anchor="middle" font-size="9" fill="#8c4f00">CB</text>
+
+        <!-- Client Service box -->
+        <rect x="490" y="130" width="170" height="160" fill="#defbe6" stroke="#198038" stroke-width="1.5" rx="3"/>
+        <text x="575" y="155" text-anchor="middle" font-weight="700" fill="#0e6027">Client Service</text>
+        <text x="575" y="173" text-anchor="middle" font-size="11" fill="#0e6027">Port 9081</text>
+        <rect x="503" y="182" width="144" height="22" fill="#fff" stroke="#c6c6c6" rx="2"/>
+        <text x="575" y="197" text-anchor="middle" font-size="11" fill="#161616">ClientResource (JAX-RS)</text>
+        <rect x="503" y="210" width="144" height="22" fill="#fff" stroke="#c6c6c6" rx="2"/>
+        <text x="575" y="225" text-anchor="middle" font-size="11" fill="#161616">ClientService @Tx</text>
+        <rect x="503" y="238" width="144" height="22" fill="#fff" stroke="#c6c6c6" rx="2"/>
+        <text x="575" y="253" text-anchor="middle" font-size="11" fill="#161616">ClientRepository (JPA)</text>
+        <!-- DB -->
+        <ellipse cx="575" cy="318" rx="55" ry="15" fill="#a7f0ba" stroke="#198038" stroke-width="1.5"/>
+        <rect x="520" y="318" width="110" height="24" fill="#a7f0ba" stroke="#198038" stroke-width="1.5"/>
+        <ellipse cx="575" cy="342" rx="55" ry="15" fill="#a7f0ba" stroke="#198038" stroke-width="1.5"/>
+        <text x="575" y="335" text-anchor="middle" font-size="11" font-weight="600" fill="#0e6027">bank_client_db</text>
+        <text x="575" y="360" text-anchor="middle" font-size="10" fill="#0e6027">PostgreSQL :5433</text>
+        <!-- Arrow CS → DB -->
+        <line x1="575" y1="293" x2="575" y2="302" stroke="#198038" stroke-width="1.5" marker-end="url(#arrowGreen)"/>
+
+        <!-- Account Service box -->
+        <rect x="690" y="280" width="175" height="165" fill="#ffd7d9" stroke="#da1e28" stroke-width="1.5" rx="3"/>
+        <text x="778" y="305" text-anchor="middle" font-weight="700" fill="#750e13">Account Service</text>
+        <text x="778" y="323" text-anchor="middle" font-size="11" fill="#750e13">Port 9082</text>
+        <rect x="703" y="332" width="149" height="22" fill="#fff" stroke="#c6c6c6" rx="2"/>
+        <text x="778" y="347" text-anchor="middle" font-size="11" fill="#161616">AccountResource (JAX-RS)</text>
+        <rect x="703" y="360" width="149" height="22" fill="#fff" stroke="#c6c6c6" rx="2"/>
+        <text x="778" y="375" text-anchor="middle" font-size="11" fill="#161616">AccountService @Tx</text>
+        <rect x="703" y="388" width="149" height="22" fill="#fff" stroke="#c6c6c6" rx="2"/>
+        <text x="778" y="403" text-anchor="middle" font-size="11" fill="#161616">AccountRepository (JPA)</text>
+        <!-- DB Account -->
+        <text x="778" y="430" text-anchor="middle" font-size="10" fill="#750e13">banking_account_db :5434</text>
+
+        <!-- Arrow Account → Client Service (inter-service) -->
+        <line x1="690" y1="340" x2="662" y2="250" stroke="#8a3ffc" stroke-width="1.5" stroke-dasharray="6,3" marker-end="url(#arrowPurple)"/>
+        <text x="692" y="288" text-anchor="middle" font-size="10" fill="#491d8b">ClientServiceClient</text>
+        <text x="692" y="300" text-anchor="middle" font-size="10" fill="#491d8b">@CircuitBreaker</text>
+
+        <!-- Arrow markers -->
+        <defs>
+          <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+            <path d="M 0 0 L 10 5 L 0 10 z" fill="#525252"/>
+          </marker>
+          <marker id="arrowGreen" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+            <path d="M 0 0 L 10 5 L 0 10 z" fill="#198038"/>
+          </marker>
+          <marker id="arrowPurple" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+            <path d="M 0 0 L 10 5 L 0 10 z" fill="#8a3ffc"/>
+          </marker>
+        </defs>
+
+        <!-- Legend -->
+        <rect x="30" y="410" width="12" height="12" fill="#e8daff" stroke="#491d8b"/>
+        <text x="48" y="421" font-size="11" fill="#525252">API Gateway BFF</text>
+        <rect x="140" y="410" width="12" height="12" fill="#defbe6" stroke="#198038"/>
+        <text x="158" y="421" font-size="11" fill="#525252">Client Service</text>
+        <rect x="250" y="410" width="12" height="12" fill="#ffd7d9" stroke="#da1e28"/>
+        <text x="268" y="421" font-size="11" fill="#525252">Account Service</text>
+        <line x1="360" y1="416" x2="385" y2="416" stroke="#8a3ffc" stroke-width="1.5" stroke-dasharray="4,2"/>
+        <text x="392" y="421" font-size="11" fill="#525252">Appel inter-service (REST + CB)</text>
+        <circle cx="598" cy="416" r="6" fill="#fdf6dd" stroke="#f1c21b" stroke-width="1.5"/>
+        <text x="608" y="421" font-size="11" fill="#525252">CB = Circuit Breaker</text>
+      </svg>
+    </div>
+
+    <hr class="cds--divider"/>
+  </main>
+</div>
+
+<footer class="cds--footer">
+  Lab 08 — Banking Microservices Architecture · Java 17 / Jakarta EE 10 / MicroProfile 6.0 / Open Liberty · © 2025 Olivier Planson
+</footer>
+</body>
+</html>

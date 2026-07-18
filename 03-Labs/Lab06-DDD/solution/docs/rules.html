@@ -1,0 +1,334 @@
+<!-- © Copyright 2026 Olivier Planson. All rights reserved. Reproduction prohibited. Made with IBM Bob. -->
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>Règles de Gestion — Banking DDD Application Documentation</title>
+  <link rel="stylesheet" href="assets/carbon.css"/>
+</head>
+<body>
+<header class="cds--header">
+  <a class="cds--header__name" href="index.html">Banking DDD<span>Documentation Technique</span></a>
+</header>
+<div class="cds--shell">
+  <nav class="cds--side-nav">
+    <p class="cds--side-nav__section-title">Documentation</p>
+    <a class="cds--side-nav__link" href="index.html">⊙ Vue d'ensemble</a>
+    <a class="cds--side-nav__link" href="functional.html">⊞ Architecture Fonctionnelle</a>
+    <a class="cds--side-nav__link" href="technical.html">⊟ Architecture Technique</a>
+    <a class="cds--side-nav__link" href="sequences.html">⇄ Diagrammes de Séquences</a>
+    <a class="cds--side-nav__link active" href="rules.html">≡ Règles de Gestion</a>
+  </nav>
+  <main class="cds--content">
+    <div class="breadcrumb"><a href="index.html">Banking DDD</a> / <span>Règles de Gestion</span></div>
+    <h1>Règles de Gestion</h1>
+    <p class="page-lead">20 règles numérotées R1–R20, extraites directement du code source. Chaque règle est tracée vers son fichier d'origine.</p>
+
+    <!-- ── Légende ── -->
+    <div class="tile-grid">
+      <div class="cds--tile" style="border-left:4px solid #0f62fe;">
+        <h3>Standard</h3>
+        <p>Règle métier ordinaire imposée par la logique domaine ou la configuration.</p>
+      </div>
+      <div class="cds--tile" style="border-left:4px solid #da1e28;">
+        <h3>Critique</h3>
+        <p>Règle d'intégrité des données ou de sécurité — violation entraîne exception ou refus d'opération.</p>
+      </div>
+      <div class="cds--tile" style="border-left:4px solid #f1c21b;">
+        <h3>Avertissement</h3>
+        <p>Limitation connue, comportement déprécié ou contrainte à surveiller.</p>
+      </div>
+    </div>
+
+    <!-- ── Index rapide ── -->
+    <h2>Index rapide</h2>
+    <div class="rules-index">
+      <a href="#r1">R1</a>
+      <a href="#r2">R2</a>
+      <a href="#r3" class="crit">R3</a>
+      <a href="#r4">R4</a>
+      <a href="#r5">R5</a>
+      <a href="#r6" class="crit">R6</a>
+      <a href="#r7" class="crit">R7</a>
+      <a href="#r8" class="crit">R8</a>
+      <a href="#r9">R9</a>
+      <a href="#r10" class="warn">R10</a>
+      <a href="#r11">R11</a>
+      <a href="#r12" class="warn">R12</a>
+      <a href="#r13">R13</a>
+      <a href="#r14">R14</a>
+      <a href="#r15">R15</a>
+      <a href="#r16" class="crit">R16</a>
+      <a href="#r17">R17</a>
+      <a href="#r18">R18</a>
+      <a href="#r19" class="warn">R19</a>
+      <a href="#r20" class="warn">R20</a>
+    </div>
+
+    <!-- ════════════════════════════════════════════════════════ -->
+    <!-- Catégorie 1 : Validation des données -->
+    <!-- ════════════════════════════════════════════════════════ -->
+    <p class="rule-category">1. Validation des données</p>
+
+    <div class="rule-card" id="r1">
+      <div class="rule-id">R1 <span class="cds--tag cds--tag--blue">Validation Client</span></div>
+      <div class="rule-title">Nom du client : obligatoire, 2 à 100 caractères</div>
+      <div class="rule-desc">
+        Le champ <code>name</code> est annoté <code>@NotNull @Size(min=2, max=100)</code> sur l'entité <code>Client</code>. Le formulaire HTML impose <code>required maxlength="100"</code>. La méthode <code>Client.create(name, email)</code> normalise le nom avec <code>name.trim()</code> et rejette les chaînes vides avec <code>IllegalArgumentException("Name cannot be null or empty")</code>. La colonne DB est <code>VARCHAR(100) NOT NULL</code>.
+      </div>
+    </div>
+
+    <div class="rule-card" id="r2">
+      <div class="rule-id">R2 <span class="cds--tag cds--tag--blue">Validation Client</span></div>
+      <div class="rule-title">Email client : obligatoire, format valide, unique en base</div>
+      <div class="rule-desc">
+        Le Value Object <code>Email</code> valide le format avec la regex <code>^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$</code>. L'email est normalisé en minuscules (<code>value.trim().toLowerCase()</code>). La colonne DB est <code>VARCHAR(100) NOT NULL UNIQUE</code>. Le formulaire HTML impose <code>type="email" required maxlength="100"</code>. Un index <code>idx_clients_email</code> accélère les recherches.
+      </div>
+    </div>
+
+    <div class="rule-card critical" id="r3">
+      <div class="rule-id">R3 <span class="cds--tag cds--tag--red">Critique</span></div>
+      <div class="rule-title">Numéro de compte : format IBAN obligatoire, unique</div>
+      <div class="rule-desc">
+        Le Value Object <code>AccountNumber</code> valide le format avec la regex <code>^[A-Z]{2}[0-9]{2}[A-Z0-9]{1,30}$</code> après normalisation <code>toUpperCase().replaceAll("\\s", "")</code>. La colonne DB est <code>account_number VARCHAR(34) NOT NULL UNIQUE</code>. La méthode <code>AccountNumber.generate()</code> produit automatiquement un IBAN FR76 + 23 chiffres (via UUID sans tirets). Le formulaire HTML impose <code>maxlength="34"</code>.
+      </div>
+    </div>
+
+    <div class="rule-card" id="r4">
+      <div class="rule-id">R4 <span class="cds--tag cds--tag--blue">Validation Compte</span></div>
+      <div class="rule-title">Type de compte : CHECKING ou SAVINGS uniquement</div>
+      <div class="rule-desc">
+        L'enum <code>AccountType</code> ne contient que <code>CHECKING</code> et <code>SAVINGS</code>. La méthode <code>AccountType.fromString()</code> normalise en <code>toUpperCase()</code> avant <code>valueOf()</code>. La colonne DB a une contrainte CHECK <code>(account_type IN ('CHECKING', 'SAVINGS'))</code>. Le formulaire HTML utilise un <code>&lt;select&gt;</code> avec exactement ces deux valeurs.
+      </div>
+    </div>
+
+    <div class="rule-card critical" id="r5">
+      <div class="rule-id">R5 <span class="cds--tag cds--tag--red">Critique</span></div>
+      <div class="rule-title">Dépôt initial minimum de 10 EUR pour la création de compte</div>
+      <div class="rule-desc">
+        La factory method <code>Account.create(client, accountType, initialDeposit)</code> impose un dépôt minimum de <code>Money.euros(10.0)</code>. Si <code>initialDeposit.isLessThan(minimumDeposit)</code> est vrai, une <code>IllegalArgumentException("Initial deposit must be at least 10.00 EUR")</code> est levée. Cette règle est appliquée exclusivement côté serveur dans le domaine.
+      </div>
+    </div>
+
+    <div class="rule-card critical" id="r6">
+      <div class="rule-id">R6 <span class="cds--tag cds--tag--red">Critique</span></div>
+      <div class="rule-title">Solde CHECKING ≥ -500 EUR ; solde SAVINGS ≥ 0 EUR</div>
+      <div class="rule-desc">
+        L'enum <code>AccountType.CHECKING</code> définit <code>overdraftLimit = -500.0</code> et <code>SAVINGS</code> définit <code>overdraftLimit = 0.0</code>. La méthode <code>canWithdraw(balance, amount)</code> calcule le solde résultant et le compare à <code>getMinimumBalance(currency)</code>. En cas de violation lors d'un <code>withdraw()</code>, une <code>IllegalStateException("Insufficient funds...")</code> est levée. La migration V5 impose la même contrainte DB : <code>CHECK ((account_type = 'CHECKING' AND balance_amount >= -500.0) OR (account_type = 'SAVINGS' AND balance_amount >= 0.0))</code>.
+      </div>
+    </div>
+
+    <div class="rule-card critical" id="r7">
+      <div class="rule-id">R7 <span class="cds--tag cds--tag--red">Critique</span></div>
+      <div class="rule-title">Montant de dépôt/retrait/virement strictement positif</div>
+      <div class="rule-desc">
+        Les méthodes <code>Account.deposit(amount)</code>, <code>Account.withdraw(amount)</code> et <code>Account.transferTo(toAccount, amount)</code> appellent <code>amount.isPositive()</code> (compare avec BigDecimal.ZERO). Si négatif ou zéro, <code>IllegalArgumentException</code> est levée. L'API v1 vérifie <code>amount &lt;= 0</code> côté ressource JAX-RS. L'API v2 vérifie <code>request.amount.compareTo(BigDecimal.ZERO) &lt;= 0</code>.
+      </div>
+    </div>
+
+    <div class="rule-card critical" id="r8">
+      <div class="rule-id">R8 <span class="cds--tag cds--tag--red">Critique</span></div>
+      <div class="rule-title">Devise identique obligatoire pour toutes les opérations monétaires</div>
+      <div class="rule-desc">
+        Le Value Object <code>Money</code> vérifie la correspondance de devise dans <code>add()</code>, <code>subtract()</code>, <code>isLessThan()</code>, <code>isGreaterThan()</code>. Les méthodes <code>deposit()</code> et <code>withdraw()</code> de <code>Account</code> comparent <code>amount.getCurrency().equals(balance.getCurrency())</code>. En cas de mismatch, <code>IllegalArgumentException("Currency mismatch: account uses EUR, deposit is USD")</code>. Toutes les opérations de seed data sont en EUR.
+      </div>
+    </div>
+
+    <div class="rule-card" id="r9">
+      <div class="rule-id">R9 <span class="cds--tag cds--tag--blue">Validation Virement</span></div>
+      <div class="rule-title">Virement vers soi-même interdit</div>
+      <div class="rule-desc">
+        La méthode <code>Account.transferTo(toAccount, amount)</code> vérifie <code>this.equals(toAccount)</code>. Si les deux comptes sont identiques (même <code>id</code>), <code>IllegalArgumentException("Cannot transfer to the same account")</code> est levée. Le <code>TransferService.validateTransferParameters()</code> effectue la même vérification avec <code>fromAccount.equals(toAccount)</code>.
+      </div>
+    </div>
+
+    <div class="rule-card warning" id="r10">
+      <div class="rule-id">R10 <span class="cds--tag cds--tag--warm">Avertissement</span></div>
+      <div class="rule-title">Montant <code>Money</code> arrondi à 2 décimales (HALF_UP)</div>
+      <div class="rule-desc">
+        Le constructeur de <code>Money</code> appelle <code>amount.setScale(2, RoundingMode.HALF_UP)</code>. Cela signifie que les montants avec plus de 2 décimales sont arrondis. Par exemple, 1.005 EUR devient 1.01 EUR. La colonne DB est <code>DECIMAL(19,2)</code>. Ce comportement peut entraîner des écarts cumulés lors de nombreuses petites opérations.
+      </div>
+    </div>
+
+    <!-- ════════════════════════════════════════════════════════ -->
+    <!-- Catégorie 2 : Stockage des données -->
+    <!-- ════════════════════════════════════════════════════════ -->
+    <p class="rule-category">2. Stockage des données</p>
+
+    <div class="rule-card" id="r11">
+      <div class="rule-id">R11 <span class="cds--tag cds--tag--blue">Persistance</span></div>
+      <div class="rule-title">Persistance PostgreSQL via JPA/EclipseLink — aucun stockage en mémoire</div>
+      <div class="rule-desc">
+        Toutes les données sont persistées dans PostgreSQL via JPA (<code>persistence.xml</code>, PU <code>bankingPU</code>, JTA). L'<code>EntityManager</code> est <code>@RequestScoped</code> (via producer CDI). Les transactions sont déclaratives (<code>@Transactional</code>). La propriété JPA <code>eclipselink.ddl-generation=none</code> délègue le schéma entièrement à Flyway. Aucune liste statique ou cache applicatif n'est utilisé.
+      </div>
+    </div>
+
+    <div class="rule-card" id="r12">
+      <div class="rule-id">R12 <span class="cds--tag cds--tag--warm">Compatibilité</span></div>
+      <div class="rule-title">Colonne <code>balance</code> maintenue par trigger pour compatibilité ascendante</div>
+      <div class="rule-desc">
+        La migration V5 ajoute <code>balance_amount</code> et <code>balance_currency</code> (colonnes Money VO) tout en conservant l'ancienne colonne <code>balance</code>. Un trigger PostgreSQL <code>trigger_sync_account_balance</code> synchronise <code>balance = balance_amount</code> à chaque INSERT/UPDATE. La colonne <code>balance</code> est documentée comme DEPRECATED (à supprimer en V6). Cette migration est un exemple de OPTION 4 : Backward Compatible Migration.
+      </div>
+    </div>
+
+    <div class="rule-card" id="r13">
+      <div class="rule-id">R13 <span class="cds--tag cds--tag--blue">Intégrité</span></div>
+      <div class="rule-title">Suppression d'un client en cascade sur ses comptes</div>
+      <div class="rule-desc">
+        La relation <code>@OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)</code> dans <code>Client</code> assure que la suppression d'un client supprime tous ses comptes. La FK DB est <code>CONSTRAINT fk_accounts_client FOREIGN KEY (client_id) REFERENCES clients(id) ON DELETE CASCADE</code>. Avant suppression, <code>client.removeAccountFromCollection(account)</code> est appelé pour éviter de mettre <code>client_id = null</code> avant le DELETE.
+      </div>
+    </div>
+
+    <div class="rule-card" id="r14">
+      <div class="rule-id">R14 <span class="cds--tag cds--tag--blue">Capacité</span></div>
+      <div class="rule-title">Nombre maximum de comptes par client : 5 (standard) ou 10 (premium)</div>
+      <div class="rule-desc">
+        La méthode <code>Client.getMaxAccountsAllowed()</code> retourne <code>10</code> si <code>premium == true</code>, sinon <code>5</code>. La méthode <code>Client.addAccount(account)</code> vérifie <code>accounts.size() &gt;= getMaxAccountsAllowed()</code> et lève <code>IllegalStateException("Client has reached maximum number of accounts: N")</code>. <code>Client.canOpenNewAccount()</code> expose cette règle de manière interrogative.
+      </div>
+    </div>
+
+    <div class="rule-card" id="r15">
+      <div class="rule-id">R15 <span class="cds--tag cds--tag--blue">Seed Data</span></div>
+      <div class="rule-title">Données initiales chargées par Flyway au premier démarrage</div>
+      <div class="rule-desc">
+        Les migrations V1 et V2 insèrent des données de démarrage : 5 clients (Jean Dupont, Marie Martin, Pierre Durand, Sophie Bernard, Luc Petit) et 6 comptes avec des soldes EUR réalistes. V4 passe les 2 premiers clients en premium. Flyway utilise <code>baselineOnMigrate(true)</code> pour gérer les bases existantes. Le <code>DatabaseMigrationStartup</code> ne lance pas d'exception si les migrations échouent (application continue).
+      </div>
+    </div>
+
+    <!-- ════════════════════════════════════════════════════════ -->
+    <!-- Catégorie 3 : Navigation et interface -->
+    <!-- ════════════════════════════════════════════════════════ -->
+    <p class="rule-category">3. Navigation et interface</p>
+
+    <div class="rule-card critical" id="r16">
+      <div class="rule-id">R16 <span class="cds--tag cds--tag--red">Critique</span></div>
+      <div class="rule-title">Pattern PRG (Post-Redirect-Get) sur toutes les actions d'écriture</div>
+      <div class="rule-desc">
+        Toutes les actions POST (<code>createAccount</code>, <code>deleteAccount</code>, <code>deposit</code>, <code>withdraw</code>, <code>transfer</code>, <code>createClient</code>, <code>updateClient</code>) se terminent par <code>resp.sendRedirect(...)</code> et jamais par un <code>forward</code>. Cela prévient la double soumission lors d'un rechargement F5. Les paramètres de confirmation sont transmis en query string (<code>?message=account_created</code>).
+      </div>
+    </div>
+
+    <div class="rule-card" id="r17">
+      <div class="rule-id">R17 <span class="cds--tag cds--tag--blue">Interface</span></div>
+      <div class="rule-title">Confirmation des suppressions par dialogue JavaScript</div>
+      <div class="rule-desc">
+        Les formulaires de suppression dans les vues JSP utilisent <code>onsubmit="return confirm('Are you sure you want to delete this client?')"</code> (dans <code>client-list.jsp</code>) et <code>confirm('Are you sure you want to delete this account?')"</code> (dans <code>account-list.jsp</code>). Cette confirmation est côté client uniquement — la vraie validation de droits est dans le serveur (<code>deletionEnabled</code> flag).
+      </div>
+    </div>
+
+    <div class="rule-card" id="r18">
+      <div class="rule-id">R18 <span class="cds--tag cds--tag--blue">Feature Flags</span></div>
+      <div class="rule-title">Suppression et virement conditionnés par feature flags MicroProfile Config</div>
+      <div class="rule-desc">
+        Les booléens <code>feature.account.deletion.enabled</code> (défaut <code>true</code>) et <code>feature.account.transfer.enabled</code> (défaut <code>true</code>) sont injectés via <code>@Inject @ConfigProperty</code> dans <code>AccountController</code>. Si <code>deletionEnabled == false</code>, le contrôleur retourne HTTP 403 Forbidden. De même pour <code>transferEnabled</code>. La propriété <code>feature.client.deletion.enabled</code> contrôle la suppression de clients.
+      </div>
+    </div>
+
+    <!-- ════════════════════════════════════════════════════════ -->
+    <!-- Catégorie 4 : Sécurité et session -->
+    <!-- ════════════════════════════════════════════════════════ -->
+    <p class="rule-category">4. Sécurité et session</p>
+
+    <div class="rule-card critical" id="r19">
+      <div class="rule-id">R19 <span class="cds--tag cds--tag--warm">Avertissement</span></div>
+      <div class="rule-title">Cookie de session HttpOnly activé — Secure désactivé en développement</div>
+      <div class="rule-desc">
+        Le <code>web.xml</code> configure <code>&lt;http-only&gt;true&lt;/http-only&gt;</code> (protection XSS) mais <code>&lt;secure&gt;false&lt;/secure&gt;</code> (cookies transmissibles en HTTP). Le timeout de session est de <code>30 minutes</code>. En production, <code>secure</code> doit être mis à <code>true</code> et l'accès doit se faire via HTTPS (port 9443). Aucun mécanisme d'authentification/autorisation n'est implémenté dans ce lab.
+      </div>
+    </div>
+
+    <div class="rule-card" id="r20">
+      <div class="rule-id">R20 <span class="cds--tag cds--tag--blue">Sécurité Données</span></div>
+      <div class="rule-title">Encodage HTML des sorties JSP via JSTL &lt;c:out&gt;</div>
+      <div class="rule-desc">
+        Les vues JSP qui utilisent JSTL (<code>client-list.jsp</code>, <code>client-form.jsp</code>) protègent les données utilisateurs contre le XSS via <code>&lt;c:out value='${client.name}'/&gt;</code> qui échappe les caractères HTML (<code>&lt;</code>, <code>&gt;</code>, <code>&amp;</code>, <code>"</code>). Les vues en JSP scriptlet pur (<code>account-list.jsp</code>) affichent les données sans escaping — limitation identifiée.
+      </div>
+    </div>
+
+    <!-- ════════════════════════════════════════════════════════ -->
+    <!-- Catégorie 5 : Observabilité et opérations -->
+    <!-- ════════════════════════════════════════════════════════ -->
+    <p class="rule-category">5. Observabilité et opérations</p>
+
+    <div class="rule-card" id="r21">
+      <div class="rule-id">R21 <span class="cds--tag cds--tag--blue">Logging</span></div>
+      <div class="rule-title">Intercepteur @Logged pour traçabilité automatique des méthodes de service</div>
+      <div class="rule-desc">
+        L'annotation <code>@Logged</code> applique <code>LoggingInterceptor</code> (priorité APPLICATION) sur toutes les méthodes annotées. L'intercepteur loggue : entrée (<code>→ Entering: ClassName.method(params)</code>), sortie avec durée (<code>← Exiting: ClassName.method — Duration: Nms</code>) et exceptions (<code>✗ Exception in: ClassName.method</code>). Les paramètres et résultats sont tronqués à 100 caractères. Le niveau de trace Liberty est <code>com.bank.*=fine</code>.
+      </div>
+    </div>
+
+    <div class="rule-card" id="r22">
+      <div class="rule-id">R22 <span class="cds--tag cds--tag--blue">Health</span></div>
+      <div class="rule-title">Health check de connectivité DB via MicroProfile Health Liveness</div>
+      <div class="rule-desc">
+        <code>DatabaseHealthCheck</code> implémente <code>@Liveness HealthCheck</code>. Il exécute <code>SELECT 1</code> sur la DB via un <code>EntityManagerFactory</code> singleton local. Retourne <code>UP {"status":"connected","type":"postgresql"}</code> ou <code>DOWN {"status":"disconnected"}</code>. Accessible sur <code>/health/live</code>. La configuration Liberty désactive l'authentification sur <code>/metrics</code> (<code>mpMetrics authentication="false"</code>) en mode dev.
+      </div>
+    </div>
+
+    <div class="rule-card" id="r23">
+      <div class="rule-id">R23 <span class="cds--tag cds--tag--blue">Événements</span></div>
+      <div class="rule-title">CDI Events pour chaque opération créatrice et transactionnelle</div>
+      <div class="rule-desc">
+        Trois types d'événements CDI sont émis : <code>ClientCreatedEvent</code> (dans <code>ClientService.create()</code>), <code>AccountCreatedEvent</code> (dans <code>AccountService.create()</code>), et <code>TransactionEvent</code> (dans <code>AccountService.deposit()</code>, <code>withdraw()</code>, <code>transfer()</code>). Le <code>BankingEventObserver</code> les observe et sélectionne le service de notification approprié (<code>@Premium</code> ou <code>@Standard</code>) selon le statut du client. Les transactions de plus de 10 000 EUR déclenchent une alerte <code>logger.warning</code> supplémentaire.
+      </div>
+    </div>
+
+    <div class="rule-card warning" id="r24">
+      <div class="rule-id">R24 <span class="cds--tag cds--tag--warm">Dépréciation</span></div>
+      <div class="rule-title">API v1 dépréciée avec sunset date 2026-06-01</div>
+      <div class="rule-desc">
+        Toutes les ressources JAX-RS de <code>com.bank.api</code> (v1) sont annotées <code>@Deprecated(since="1.0", forRemoval=true)</code>. Chaque réponse v1 ajoute les headers HTTP : <code>X-API-Version: 1.0</code>, <code>X-API-Deprecated: true</code>, <code>X-API-Deprecation-Info</code>, <code>X-API-Sunset-Date: 2026-06-01</code>. L'API v2 (<code>RestApplicationV2</code>) enregistre explicitement uniquement <code>AccountResourceV2</code> et ne retourne pas ces headers de dépréciation.
+      </div>
+    </div>
+
+    <div class="rule-card" id="r25">
+      <div class="rule-id">R25 <span class="cds--tag cds--tag--blue">Frais de virement</span></div>
+      <div class="rule-title">Frais de virement : 1% (min 1 EUR, max 50 EUR) pour les clients standard — gratuit premium</div>
+      <div class="rule-desc">
+        Le Domain Service <code>TransferService.calculateTransferFee(amount, isPremiumClient)</code> implémente cette règle : si <code>isPremiumClient</code> → <code>Money.zero(currency)</code> ; sinon <code>amount.multiply(0.01)</code>, plafonné entre <code>Money.of(1.0, currency)</code> et <code>Money.of(50.0, currency)</code>. La méthode <code>transferWithFee()</code> déduit les frais du compte source mais ne les dépose pas sur le compte destination (frais bancaires). Cette logique est dans le domaine, indépendante de l'infrastructure.
+      </div>
+    </div>
+
+    <!-- ── Tableau récapitulatif ── -->
+    <h2>Tableau récapitulatif</h2>
+    <div class="cds--data-table-container">
+      <table class="cds--data-table">
+        <thead><tr><th>ID</th><th>Titre</th><th>Catégorie</th><th>Niveau</th><th>Source</th></tr></thead>
+        <tbody>
+          <tr><td><a href="#r1">R1</a></td><td>Nom client : obligatoire, 2–100 caractères</td><td>Validation données</td><td><span class="cds--tag cds--tag--blue">Standard</span></td><td><code>Client.java</code></td></tr>
+          <tr><td><a href="#r2">R2</a></td><td>Email client : format valide, unique</td><td>Validation données</td><td><span class="cds--tag cds--tag--blue">Standard</span></td><td><code>Email.java</code></td></tr>
+          <tr><td><a href="#r3">R3</a></td><td>Numéro compte : IBAN obligatoire, unique</td><td>Validation données</td><td><span class="cds--tag cds--tag--red">Critique</span></td><td><code>AccountNumber.java</code></td></tr>
+          <tr><td><a href="#r4">R4</a></td><td>Type compte : CHECKING ou SAVINGS</td><td>Validation données</td><td><span class="cds--tag cds--tag--blue">Standard</span></td><td><code>AccountType.java</code></td></tr>
+          <tr><td><a href="#r5">R5</a></td><td>Dépôt initial minimum 10 EUR</td><td>Validation données</td><td><span class="cds--tag cds--tag--red">Critique</span></td><td><code>Account.java#create()</code></td></tr>
+          <tr><td><a href="#r6">R6</a></td><td>Solde CHECKING ≥ -500 EUR ; SAVINGS ≥ 0 EUR</td><td>Validation données</td><td><span class="cds--tag cds--tag--red">Critique</span></td><td><code>AccountType.java</code>, <code>V5.sql</code></td></tr>
+          <tr><td><a href="#r7">R7</a></td><td>Montant opération strictement positif</td><td>Validation données</td><td><span class="cds--tag cds--tag--red">Critique</span></td><td><code>Account.java</code>, <code>Money.java</code></td></tr>
+          <tr><td><a href="#r8">R8</a></td><td>Devise identique obligatoire</td><td>Validation données</td><td><span class="cds--tag cds--tag--red">Critique</span></td><td><code>Money.java</code>, <code>Account.java</code></td></tr>
+          <tr><td><a href="#r9">R9</a></td><td>Virement vers soi-même interdit</td><td>Validation données</td><td><span class="cds--tag cds--tag--blue">Standard</span></td><td><code>Account.java#transferTo()</code></td></tr>
+          <tr><td><a href="#r10">R10</a></td><td>Montant arrondi 2 décimales HALF_UP</td><td>Validation données</td><td><span class="cds--tag cds--tag--warm">Avertissement</span></td><td><code>Money.java</code></td></tr>
+          <tr><td><a href="#r11">R11</a></td><td>Persistance PostgreSQL — aucun cache mémoire</td><td>Stockage</td><td><span class="cds--tag cds--tag--blue">Standard</span></td><td><code>persistence.xml</code></td></tr>
+          <tr><td><a href="#r12">R12</a></td><td>Colonne <code>balance</code> maintenue par trigger V5</td><td>Stockage</td><td><span class="cds--tag cds--tag--warm">Avertissement</span></td><td><code>V5__refactor_for_ddd.sql</code></td></tr>
+          <tr><td><a href="#r13">R13</a></td><td>Suppression client en cascade</td><td>Stockage</td><td><span class="cds--tag cds--tag--blue">Standard</span></td><td><code>Client.java</code>, <code>V2.sql</code></td></tr>
+          <tr><td><a href="#r14">R14</a></td><td>Max comptes par client : 5 standard / 10 premium</td><td>Stockage</td><td><span class="cds--tag cds--tag--blue">Standard</span></td><td><code>Client.java#addAccount()</code></td></tr>
+          <tr><td><a href="#r15">R15</a></td><td>Seed data au premier démarrage (Flyway)</td><td>Stockage</td><td><span class="cds--tag cds--tag--blue">Standard</span></td><td><code>V1.sql</code>, <code>V2.sql</code></td></tr>
+          <tr><td><a href="#r16">R16</a></td><td>Pattern PRG sur toutes les actions d'écriture</td><td>Navigation</td><td><span class="cds--tag cds--tag--red">Critique</span></td><td><code>AccountController.java</code>, <code>ClientController.java</code></td></tr>
+          <tr><td><a href="#r17">R17</a></td><td>Confirmation suppression JS côté client</td><td>Navigation</td><td><span class="cds--tag cds--tag--blue">Standard</span></td><td><code>client-list.jsp</code>, <code>account-list.jsp</code></td></tr>
+          <tr><td><a href="#r18">R18</a></td><td>Feature flags MicroProfile Config</td><td>Navigation</td><td><span class="cds--tag cds--tag--blue">Standard</span></td><td><code>microprofile-config.properties</code></td></tr>
+          <tr><td><a href="#r19">R19</a></td><td>Cookie HttpOnly / Secure désactivé en dev</td><td>Sécurité</td><td><span class="cds--tag cds--tag--warm">Avertissement</span></td><td><code>web.xml</code></td></tr>
+          <tr><td><a href="#r20">R20</a></td><td>Encodage HTML via JSTL c:out (partiel)</td><td>Sécurité</td><td><span class="cds--tag cds--tag--blue">Standard</span></td><td><code>client-list.jsp</code>, <code>client-form.jsp</code></td></tr>
+          <tr><td><a href="#r21">R21</a></td><td>Intercepteur @Logged — traçabilité automatique</td><td>Observabilité</td><td><span class="cds--tag cds--tag--blue">Standard</span></td><td><code>LoggingInterceptor.java</code></td></tr>
+          <tr><td><a href="#r22">R22</a></td><td>Health check DB — MicroProfile Liveness</td><td>Observabilité</td><td><span class="cds--tag cds--tag--blue">Standard</span></td><td><code>DatabaseHealthCheck.java</code></td></tr>
+          <tr><td><a href="#r23">R23</a></td><td>CDI Events pour créations et transactions</td><td>Observabilité</td><td><span class="cds--tag cds--tag--blue">Standard</span></td><td><code>BankingEventObserver.java</code></td></tr>
+          <tr><td><a href="#r24">R24</a></td><td>API v1 dépréciée — sunset 2026-06-01</td><td>Observabilité</td><td><span class="cds--tag cds--tag--warm">Avertissement</span></td><td><code>AccountResource.java</code>, <code>ClientResource.java</code></td></tr>
+          <tr><td><a href="#r25">R25</a></td><td>Frais virement : 1% standard / gratuit premium</td><td>Validation données</td><td><span class="cds--tag cds--tag--blue">Standard</span></td><td><code>TransferService.java</code></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </main>
+</div>
+<footer class="cds--footer">
+  Banking DDD App · Documentation Technique v1.0 · © 2026 Olivier Planson · Made with IBM Bob
+</footer>
+</body>
+</html>

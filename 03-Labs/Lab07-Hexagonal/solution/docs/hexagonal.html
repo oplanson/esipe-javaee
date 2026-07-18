@@ -1,0 +1,263 @@
+<!-- © Copyright 2026 Olivier Planson. All rights reserved. Reproduction prohibited. Made with IBM Bob. -->
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Architecture Hexagonale — Banking Hexagonal App · Lab 07</title>
+  <link rel="stylesheet" href="assets/carbon.css"/>
+</head>
+<body>
+<header class="cds--header">
+  <a class="cds--header__name" href="index.html">🏦 Banking App<span>Lab 07 — Hexagonal</span></a>
+</header>
+<div class="cds--shell">
+  <nav class="cds--side-nav">
+    <p class="cds--side-nav__section-title">Navigation</p>
+    <a class="cds--side-nav__link" href="index.html"><i class="icon">⊞</i> Vue d'ensemble</a>
+    <a class="cds--side-nav__link" href="functional.html"><i class="icon">⚙</i> Architecture Fonctionnelle</a>
+    <a class="cds--side-nav__link" href="technical.html"><i class="icon">🔧</i> Architecture Technique</a>
+    <a class="cds--side-nav__link active" href="hexagonal.html"><i class="icon">⬡</i> Architecture Hexagonale</a>
+    <a class="cds--side-nav__link" href="ddd.html"><i class="icon">◈</i> Bounded Contexts DDD</a>
+    <a class="cds--side-nav__link" href="sequences.html"><i class="icon">↔</i> Diagrammes de Séquence</a>
+    <a class="cds--side-nav__link" href="rules.html"><i class="icon">📋</i> Règles Métier</a>
+  </nav>
+  <main class="cds--content">
+    <div class="cds--breadcrumb">
+      <a href="index.html">Vue d'ensemble</a><span class="sep">/</span>
+      <span class="current">Architecture Hexagonale</span>
+    </div>
+    <h1>Architecture Hexagonale</h1>
+    <p class="page-lead">Le pattern Ports &amp; Adapters (Alistair Cockburn, 2005) isole le cœur applicatif de toute technologie externe. Le domaine et les ports définissent les règles — les adaptateurs branchent les technologies.</p>
+
+    <div class="cds--inline-notification success">
+      <span>✓</span>
+      <div><strong>Bénéfice clé — Indépendance technologique :</strong> On peut remplacer REST→GraphQL, JPA→MongoDB, CDI→Kafka sans toucher à une seule ligne de domaine ou de service applicatif.</div>
+    </div>
+
+    <!-- ═══════════════════ Hexagon SVG ═══════════════════ -->
+    <h2>Diagramme Hexagonal Complet</h2>
+    <div class="arch-box" style="text-align:center;padding:2rem;">
+      <svg viewBox="0 0 760 560" width="100%" style="max-width:760px;font-family:'IBM Plex Sans',sans-serif;">
+        <defs>
+          <marker id="ha" markerWidth="7" markerHeight="6" refX="6" refY="3" orient="auto"><polygon points="0 0,7 3,0 6" fill="#0f62fe"/></marker>
+          <marker id="hb" markerWidth="7" markerHeight="6" refX="6" refY="3" orient="auto"><polygon points="0 0,7 3,0 6" fill="#6929c4"/></marker>
+        </defs>
+
+        <!-- Outer hex background (6-sided polygon) -->
+        <polygon points="380,30 650,110 650,390 380,480 110,390 110,110" fill="#f4f4f4" stroke="#c6c6c6" stroke-width="2"/>
+
+        <!-- Middle ring (application layer) -->
+        <polygon points="380,95 590,165 590,345 380,415 170,345 170,165" fill="#edf5ff" stroke="#0f62fe" stroke-width="2"/>
+
+        <!-- Inner hex (domain) -->
+        <polygon points="380,160 510,220 510,320 380,380 250,320 250,220" fill="#defbe6" stroke="#198038" stroke-width="2.5"/>
+
+        <!-- ── Domain center ── -->
+        <text x="380" y="258" text-anchor="middle" font-size="13" font-weight="700" fill="#0e6027">DOMAINE PUR</text>
+        <text x="380" y="275" text-anchor="middle" font-size="10" fill="#198038">Account · Client</text>
+        <text x="380" y="290" text-anchor="middle" font-size="10" fill="#198038">TransferService</text>
+        <text x="380" y="305" text-anchor="middle" font-size="10" fill="#198038">Money · AccountNumber · Email</text>
+
+        <!-- ── Application ring labels ── -->
+        <!-- Top: Ports in label -->
+        <text x="380" y="130" text-anchor="middle" font-size="10" font-weight="600" fill="#0043ce">Ports Primaires (IN)</text>
+        <text x="380" y="144" text-anchor="middle" font-size="9" fill="#0043ce">AccountMgmtUseCase · ClientMgmtUseCase · MoneyOpsUseCase</text>
+
+        <!-- Bottom: Ports out label -->
+        <text x="380" y="402" text-anchor="middle" font-size="10" font-weight="600" fill="#6929c4">Ports Secondaires (OUT)</text>
+        <text x="380" y="416" text-anchor="middle" font-size="9" fill="#6929c4">AccountRepository · ClientRepository · EventPublisher</text>
+
+        <!-- Left inside app ring: Services -->
+        <text x="200" y="255" text-anchor="middle" font-size="10" font-weight="600" fill="#0043ce">Services</text>
+        <text x="200" y="268" text-anchor="middle" font-size="9" fill="#0043ce">Account</text>
+        <text x="200" y="280" text-anchor="middle" font-size="9" fill="#0043ce">Client</text>
+        <text x="200" y="292" text-anchor="middle" font-size="9" fill="#0043ce">MoneyOps</text>
+
+        <!-- Right inside app ring: Commands/DTOs -->
+        <text x="560" y="255" text-anchor="middle" font-size="10" font-weight="600" fill="#0043ce">Commands</text>
+        <text x="560" y="268" text-anchor="middle" font-size="9" fill="#0043ce">OpenAccount</text>
+        <text x="560" y="280" text-anchor="middle" font-size="9" fill="#0043ce">Deposit · Withdraw</text>
+        <text x="560" y="292" text-anchor="middle" font-size="9" fill="#0043ce">Transfer · Create</text>
+
+        <!-- ── PRIMARY adapters (LEFT side of hexagon) ── -->
+        <!-- Left top: REST V2 -->
+        <rect x="15" y="110" width="82" height="38" rx="3" fill="#ffd7d9" stroke="#da1e28" stroke-width="1.5"/>
+        <text x="56" y="126" text-anchor="middle" font-size="9" font-weight="700" fill="#750e13">REST V2</text>
+        <text x="56" y="139" text-anchor="middle" font-size="8" fill="#750e13">Account · Client</text>
+
+        <!-- Left mid: REST V1 -->
+        <rect x="15" y="165" width="82" height="38" rx="3" fill="#ffd7d9" stroke="#da1e28" stroke-width="1.5" stroke-dasharray="4,2"/>
+        <text x="56" y="181" text-anchor="middle" font-size="9" font-weight="700" fill="#750e13">REST V1 ⚠</text>
+        <text x="56" y="194" text-anchor="middle" font-size="8" fill="#750e13">@Deprecated</text>
+
+        <!-- Left bot: Web Servlets -->
+        <rect x="15" y="220" width="82" height="38" rx="3" fill="#ffd7d9" stroke="#da1e28" stroke-width="1.5"/>
+        <text x="56" y="236" text-anchor="middle" font-size="9" font-weight="700" fill="#750e13">Web / Servlet</text>
+        <text x="56" y="249" text-anchor="middle" font-size="8" fill="#750e13">Client · Account</text>
+
+        <!-- Arrows primary → port -->
+        <line x1="97" y1="129" x2="165" y2="175" stroke="#da1e28" stroke-width="1.5" marker-end="url(#ha)"/>
+        <line x1="97" y1="184" x2="165" y2="220" stroke="#da1e28" stroke-width="1.5" stroke-dasharray="4,2" marker-end="url(#ha)"/>
+        <line x1="97" y1="239" x2="165" y2="260" stroke="#da1e28" stroke-width="1.5" marker-end="url(#ha)"/>
+
+        <!-- ── SECONDARY adapters (RIGHT side of hexagon) ── -->
+        <!-- Right top: JpaClientAdapter -->
+        <rect x="663" y="110" width="88" height="38" rx="3" fill="#d9fbfb" stroke="#004144" stroke-width="1.5"/>
+        <text x="707" y="126" text-anchor="middle" font-size="9" font-weight="700" fill="#004144">JpaClient</text>
+        <text x="707" y="139" text-anchor="middle" font-size="8" fill="#004144">Adapter</text>
+
+        <!-- Right mid: JpaAccountAdapter -->
+        <rect x="663" y="165" width="88" height="38" rx="3" fill="#d9fbfb" stroke="#004144" stroke-width="1.5"/>
+        <text x="707" y="181" text-anchor="middle" font-size="9" font-weight="700" fill="#004144">JpaAccount</text>
+        <text x="707" y="194" text-anchor="middle" font-size="8" fill="#004144">Adapter</text>
+
+        <!-- Right bot: CDI Events -->
+        <rect x="663" y="220" width="88" height="38" rx="3" fill="#e8daff" stroke="#6929c4" stroke-width="1.5"/>
+        <text x="707" y="236" text-anchor="middle" font-size="9" font-weight="700" fill="#491d8b">CDIEvent</text>
+        <text x="707" y="249" text-anchor="middle" font-size="8" fill="#491d8b">Publisher</text>
+
+        <!-- Arrows port → secondary -->
+        <line x1="595" y1="340" x2="663" y2="145" stroke="#6929c4" stroke-width="1.5" marker-end="url(#hb)"/>
+        <line x1="595" y1="345" x2="663" y2="185" stroke="#6929c4" stroke-width="1.5" marker-end="url(#hb)"/>
+        <line x1="595" y1="355" x2="663" y2="236" stroke="#6929c4" stroke-width="1.5" marker-end="url(#hb)"/>
+
+        <!-- Infrastructure bottom labels -->
+        <rect x="60" y="500" width="150" height="30" rx="3" fill="#f5e0c3" stroke="#8d8d8d" stroke-width="1"/>
+        <text x="135" y="520" text-anchor="middle" font-size="10" fill="#5d3b1e">HTTP / Browser</text>
+
+        <rect x="550" y="500" width="150" height="30" rx="3" fill="#f5e0c3" stroke="#8d8d8d" stroke-width="1"/>
+        <text x="625" y="520" text-anchor="middle" font-size="10" fill="#5d3b1e">PostgreSQL · CDI Bus</text>
+
+        <line x1="135" y1="500" x2="200" y2="420" stroke="#8d8d8d" stroke-width="1" stroke-dasharray="4,3"/>
+        <line x1="625" y1="500" x2="580" y2="420" stroke="#8d8d8d" stroke-width="1" stroke-dasharray="4,3"/>
+
+        <!-- Legend -->
+        <rect x="250" y="500" width="260" height="50" rx="3" fill="none" stroke="#c6c6c6" stroke-width="1"/>
+        <rect x="262" y="514" width="12" height="10" rx="1" fill="#defbe6" stroke="#198038" stroke-width="1"/><text x="280" y="523" font-size="9" fill="#525252">Domaine pur</text>
+        <rect x="330" y="514" width="12" height="10" rx="1" fill="#edf5ff" stroke="#0f62fe" stroke-width="1"/><text x="348" y="523" font-size="9" fill="#525252">Application</text>
+        <rect x="262" y="532" width="12" height="10" rx="1" fill="#ffd7d9" stroke="#da1e28" stroke-width="1"/><text x="280" y="541" font-size="9" fill="#525252">Adaptateurs primaires</text>
+        <rect x="380" y="532" width="12" height="10" rx="1" fill="#d9fbfb" stroke="#004144" stroke-width="1"/><text x="398" y="541" font-size="9" fill="#525252">Adaptateurs secondaires</text>
+      </svg>
+    </div>
+
+    <!-- ═══════ PRIMARY PORTS TABLE ═══════ -->
+    <h2>Ports Primaires (Entrants — Port IN)</h2>
+    <p>Interfaces définies dans la couche application (<code>com.bank.application.port.in</code>). Les adaptateurs primaires dépendent de ces interfaces — jamais des implémentations.</p>
+    <div class="cds--data-table-container">
+      <table class="cds--data-table">
+        <thead><tr><th>Interface (Port)</th><th>Cas d'utilisation principaux</th><th>Adaptateurs qui l'utilisent</th></tr></thead>
+        <tbody>
+          <tr>
+            <td><code>AccountManagementUseCase</code></td>
+            <td>openAccount, closeAccount, reactivateAccount, getAccount, listAccounts</td>
+            <td><code>AccountRestAdapterV2</code>, <code>AccountRestAdapter</code> (v1), <code>AccountWebAdapter</code></td>
+          </tr>
+          <tr>
+            <td><code>ClientManagementUseCase</code></td>
+            <td>createClient, updateClient, deleteClient, getClient, listClients, upgradeToPremium, downgradeFromPremium</td>
+            <td><code>ClientRestAdapterV2</code>, <code>ClientRestAdapter</code> (v1), <code>ClientWebAdapter</code></td>
+          </tr>
+          <tr>
+            <td><code>MoneyOperationsUseCase</code></td>
+            <td>deposit, withdraw, transfer</td>
+            <td><code>AccountRestAdapterV2</code>, <code>AccountRestAdapter</code> (v1)</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- ═══════ SECONDARY PORTS TABLE ═══════ -->
+    <h2>Ports Secondaires (Sortants — Port OUT)</h2>
+    <p>Interfaces définies dans la couche application (<code>com.bank.application.port.out</code>). Les adaptateurs secondaires <strong>implémentent</strong> ces interfaces — inversion de dépendance (DIP).</p>
+    <div class="cds--data-table-container">
+      <table class="cds--data-table">
+        <thead><tr><th>Interface (Port)</th><th>Méthodes clés</th><th>Implémentation(s)</th><th>Technologie</th></tr></thead>
+        <tbody>
+          <tr>
+            <td><code>AccountRepository</code></td>
+            <td>findById, findByClientId, save, delete, existsByAccountNumber</td>
+            <td><code>JpaAccountAdapter</code></td>
+            <td>EclipseLink JPA + PostgreSQL</td>
+          </tr>
+          <tr>
+            <td><code>ClientRepository</code></td>
+            <td>findById, findAll, save, delete, existsByEmail</td>
+            <td><code>JpaClientAdapter</code></td>
+            <td>EclipseLink JPA + PostgreSQL</td>
+          </tr>
+          <tr>
+            <td><code>EventPublisher</code></td>
+            <td>publish(DomainEvent)</td>
+            <td><code>CDIEventPublisherAdapter</code></td>
+            <td>CDI 4.0 Event Bus (jakarta.enterprise.event.Event)</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- ═══════ DEPENDENCY DIRECTION ═══════ -->
+    <h2>Direction des Dépendances — Récapitulatif</h2>
+    <div class="cds--data-table-container">
+      <table class="cds--data-table">
+        <thead><tr><th>Couche</th><th>Dépend de</th><th>Ne dépend PAS de</th><th>Mécanisme</th></tr></thead>
+        <tbody>
+          <tr>
+            <td><strong>Adaptateurs primaires</strong><br/><small>REST v1/v2, Web/Servlet</small></td>
+            <td>Ports primaires (interfaces use case)</td>
+            <td>Services applicatifs, domaine, JPA</td>
+            <td>Injection CDI de l'interface port</td>
+          </tr>
+          <tr>
+            <td><strong>Services applicatifs</strong><br/><small>AccountMgmt, ClientMgmt, MoneyOps</small></td>
+            <td>Domaine pur + Ports secondaires (interfaces)</td>
+            <td>JPA, REST, CDI Event, PostgreSQL</td>
+            <td>Injection CDI du port secondaire</td>
+          </tr>
+          <tr>
+            <td><strong>Domaine pur</strong><br/><small>Account, Client, TransferService…</small></td>
+            <td>Rien (Java pur)</td>
+            <td>Tout framework et technologie</td>
+            <td>—</td>
+          </tr>
+          <tr>
+            <td><strong>Adaptateurs secondaires</strong><br/><small>JpaAccountAdapter, CDIEventPublisher…</small></td>
+            <td>Ports secondaires (implémentent) + JPA / CDI</td>
+            <td>Adaptateurs primaires, REST</td>
+            <td>Inversion de dépendance (DIP)</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Technology swap benefit -->
+    <h2>Exemples d'Indépendance Technologique</h2>
+    <div class="tile-grid">
+      <div class="cds--tile">
+        <h3>🔄 REST → GraphQL</h3>
+        <p>Créer un nouvel adaptateur primaire GraphQL implémentant les mêmes ports use case. Zéro modification du domaine ou des services.</p>
+        <div class="tag-stack"><span class="cds--tag cds--tag--blue">Port IN</span></div>
+      </div>
+      <div class="cds--tile">
+        <h3>🔄 JPA → MongoDB</h3>
+        <p>Créer <code>MongoAccountAdapter implements AccountRepository</code>. Le domaine et les services n'en savent rien.</p>
+        <div class="tag-stack"><span class="cds--tag cds--tag--purple">Port OUT</span></div>
+      </div>
+      <div class="cds--tile">
+        <h3>🔄 CDI Events → Kafka</h3>
+        <p>Créer <code>KafkaEventPublisherAdapter implements EventPublisher</code>. Les agrégats continuent d'émettre des <code>DomainEvent</code> sans changement.</p>
+        <div class="tag-stack"><span class="cds--tag cds--tag--teal">EventPublisher</span></div>
+      </div>
+      <div class="cds--tile">
+        <h3>🔄 Tests unitaires purs</h3>
+        <p>Les services applicatifs et le domaine se testent avec des ports mockés — aucune base de données, aucun serveur nécessaire.</p>
+        <div class="tag-stack"><span class="cds--tag cds--tag--green">Testabilité</span></div>
+      </div>
+    </div>
+
+    <hr class="cds--divider"/>
+  </main>
+</div>
+<footer class="cds--footer">Banking Hexagonal Architecture Application — Lab 07 · Jakarta EE 10 · Java 17 · © 2025 Olivier Planson</footer>
+</body>
+</html>

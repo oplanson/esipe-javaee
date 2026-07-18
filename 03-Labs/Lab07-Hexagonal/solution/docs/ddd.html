@@ -1,0 +1,284 @@
+<!-- © Copyright 2026 Olivier Planson. All rights reserved. Reproduction prohibited. Made with IBM Bob. -->
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Bounded Contexts DDD — Banking Hexagonal App · Lab 07</title>
+  <link rel="stylesheet" href="assets/carbon.css"/>
+</head>
+<body>
+<header class="cds--header">
+  <a class="cds--header__name" href="index.html">🏦 Banking App<span>Lab 07 — Hexagonal</span></a>
+</header>
+<div class="cds--shell">
+  <nav class="cds--side-nav">
+    <p class="cds--side-nav__section-title">Navigation</p>
+    <a class="cds--side-nav__link" href="index.html"><i class="icon">⊞</i> Vue d'ensemble</a>
+    <a class="cds--side-nav__link" href="functional.html"><i class="icon">⚙</i> Architecture Fonctionnelle</a>
+    <a class="cds--side-nav__link" href="technical.html"><i class="icon">🔧</i> Architecture Technique</a>
+    <a class="cds--side-nav__link" href="hexagonal.html"><i class="icon">⬡</i> Architecture Hexagonale</a>
+    <a class="cds--side-nav__link active" href="ddd.html"><i class="icon">◈</i> Bounded Contexts DDD</a>
+    <a class="cds--side-nav__link" href="sequences.html"><i class="icon">↔</i> Diagrammes de Séquence</a>
+    <a class="cds--side-nav__link" href="rules.html"><i class="icon">📋</i> Règles Métier</a>
+  </nav>
+  <main class="cds--content">
+    <div class="cds--breadcrumb">
+      <a href="index.html">Vue d'ensemble</a><span class="sep">/</span>
+      <span class="current">Bounded Contexts DDD</span>
+    </div>
+    <h1>Bounded Contexts — Domain-Driven Design</h1>
+    <p class="page-lead">Application du Domain-Driven Design (Eric Evans) dans l'architecture bancaire : agrégats, objets-valeurs, services de domaine, événements de domaine, repositories comme ports, et langage ubiquitaire.</p>
+
+    <div class="tag-stack">
+      <span class="cds--tag cds--tag--purple">Aggregate Root</span>
+      <span class="cds--tag cds--tag--purple">Value Object</span>
+      <span class="cds--tag cds--tag--purple">Domain Service</span>
+      <span class="cds--tag cds--tag--purple">Domain Event</span>
+      <span class="cds--tag cds--tag--blue">Repository Port</span>
+      <span class="cds--tag cds--tag--teal">Bounded Context</span>
+      <span class="cds--tag cds--tag--green">Ubiquitous Language</span>
+    </div>
+
+    <!-- ═══════════════════ 1. AGGREGATES ═══════════════════ -->
+    <h2>1 · Agrégats (Aggregate Roots)</h2>
+    <p>Un agrégat est une grappe d'entités et d'objets-valeurs traitée comme une unité de cohérence transactionnelle. La racine d'agrégat est le seul point d'entrée pour modifier l'état.</p>
+
+    <div class="tile-grid" style="margin-bottom:1.5rem;">
+
+      <!-- Account aggregate -->
+      <div class="cds--tile" style="border-top:3px solid #198038;">
+        <h3>Account — Agrégat Compte</h3>
+        <div class="tag-stack"><span class="cds--tag cds--tag--green">Aggregate Root</span><span class="cds--tag cds--tag--teal">com.bank.domain.model</span></div>
+        <p style="margin-top:.75rem;"><strong>État principal :</strong></p>
+        <ul>
+          <li><code>accountNumber : AccountNumber</code> — identifiant métier IBAN-like</li>
+          <li><code>balance : Money</code> — solde courant (immutable value object)</li>
+          <li><code>accountType : AccountType</code> — CHECKING ou SAVINGS</li>
+          <li><code>active : boolean</code> — invariant central de toutes les opérations</li>
+          <li><code>clientId : UUID</code> — référence au client propriétaire</li>
+        </ul>
+        <p style="margin-top:.75rem;"><strong>Comportements :</strong></p>
+        <ul>
+          <li><code>deposit(Money)</code> — vérifie actif + devise, crédite, émet MoneyDepositedEvent</li>
+          <li><code>withdraw(Money)</code> — vérifie actif + solde + devise, débite, émet MoneyWithdrawnEvent</li>
+          <li><code>close()</code> — vérifie actif + solde=0, désactive</li>
+          <li><code>reactivate()</code> — réactive le compte</li>
+          <li><code>getDomainEvents()</code> — retourne les événements accumulés</li>
+        </ul>
+      </div>
+
+      <!-- Client aggregate -->
+      <div class="cds--tile" style="border-top:3px solid #0f62fe;">
+        <h3>Client — Agrégat Client</h3>
+        <div class="tag-stack"><span class="cds--tag cds--tag--blue">Aggregate Root</span><span class="cds--tag cds--tag--teal">com.bank.domain.model</span></div>
+        <p style="margin-top:.75rem;"><strong>État principal :</strong></p>
+        <ul>
+          <li><code>firstName, lastName : String</code> — identité civile</li>
+          <li><code>email : Email</code> — identifiant unique (value object)</li>
+          <li><code>premium : boolean</code> — statut influençant les frais de transfert</li>
+          <li><code>accountIds : List&lt;UUID&gt;</code> — références aux comptes</li>
+        </ul>
+        <p style="margin-top:.75rem;"><strong>Comportements :</strong></p>
+        <ul>
+          <li><code>updateInfo(firstName, lastName, Email)</code> — mise à jour informations</li>
+          <li><code>upgradeToPremium()</code> — passage premium (valide pas déjà premium)</li>
+          <li><code>downgradeFromPremium()</code> — rétrogradation (valide est bien premium)</li>
+          <li><code>addAccount(accountId)</code> — association d'un compte</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- ═══════════════════ 2. VALUE OBJECTS ═══════════════════ -->
+    <h2>2 · Objets-Valeurs (Value Objects)</h2>
+    <p>Immuables, sans identité propre, définis uniquement par leurs attributs. Deux instances avec les mêmes attributs sont identiques. Encapsulent les invariants de format et de règles métier.</p>
+
+    <div class="cds--data-table-container">
+      <table class="cds--data-table">
+        <thead><tr><th>Value Object</th><th>Attributs</th><th>Invariants &amp; Contraintes</th><th>Méthodes notables</th></tr></thead>
+        <tbody>
+          <tr>
+            <td><strong><code>Money</code></strong></td>
+            <td><code>amount : BigDecimal</code><br/><code>currency : String</code></td>
+            <td>
+              Immuable (R8). <code>amount ≥ 0</code> à la construction.<br/>
+              Opérations inter-devises interdites (R4).
+            </td>
+            <td><code>add(Money)</code>, <code>subtract(Money)</code>, <code>multiply(BigDecimal)</code>, <code>isGreaterThan(Money)</code>, <code>isZero()</code></td>
+          </tr>
+          <tr>
+            <td><strong><code>AccountNumber</code></strong></td>
+            <td><code>value : String</code></td>
+            <td>
+              Format : <code>FR</code> + 27 chiffres exactement (R6).<br/>
+              Validation regex à la construction.
+            </td>
+            <td><code>generate()</code> — génère un numéro valide<br/><code>getMasked()</code> — affichage masqué</td>
+          </tr>
+          <tr>
+            <td><strong><code>Email</code></strong></td>
+            <td><code>value : String</code></td>
+            <td>
+              RFC 5322 simplifié. Max 254 chars. Stocké en minuscules (R7).<br/>
+              Unique dans le système (R12 — vérifié par service).
+            </td>
+            <td><code>of(String)</code> — factory + validation<br/><code>getMasked()</code>, <code>getDomain()</code></td>
+          </tr>
+          <tr>
+            <td><strong><code>AccountType</code></strong></td>
+            <td><code>CHECKING</code><br/><code>SAVINGS</code></td>
+            <td>
+              CHECKING : overdraft ≤ −500€, pas d'intérêts (R9).<br/>
+              SAVINGS : pas de découvert, intérêts quotidiens (R9).
+            </td>
+            <td><code>getAllowedOverdraft()</code>, <code>getInterestRate()</code></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- ═══════════════════ 3. DOMAIN SERVICE ═══════════════════ -->
+    <h2>3 · Service de Domaine — TransferService</h2>
+    <div class="cds--tile">
+      <div class="tag-stack" style="margin-top:0;"><span class="cds--tag cds--tag--purple">Domain Service</span><span class="cds--tag cds--tag--teal">com.bank.domain.service</span></div>
+      <p style="margin-top:.75rem;"><strong>Pourquoi un service de domaine et non une méthode dans l'agrégat ?</strong></p>
+      <p>Le transfert implique <strong>deux agrégats distincts</strong> (<code>Account</code> source + <code>Account</code> destination) ainsi que l'état du <code>Client</code> pour le calcul des frais. Cette logique ne peut pas résider dans un seul agrégat sans en violer les frontières de cohérence.</p>
+
+      <p><strong>Responsabilités :</strong></p>
+      <ul>
+        <li>Vérifie que les comptes source et destination sont différents</li>
+        <li>Vérifie la cohérence de devise entre les deux comptes</li>
+        <li>Calcule les frais selon le statut client :<br/>
+          — Premium → frais = 0€<br/>
+          — Standard → frais = max(1€, min(50€, montant × 1%))
+        </li>
+        <li>Appelle <code>from.withdraw(amount + fee)</code></li>
+        <li>Appelle <code>to.deposit(amount)</code></li>
+        <li>Les deux agrégats émettent leurs événements de domaine</li>
+      </ul>
+
+      <div class="cds--inline-notification" style="margin-top:1rem;">
+        <span>ℹ️</span>
+        <div><strong>Pattern DDD :</strong> Le service de domaine est un objet sans état. Il orchestre les agrégats mais ne détient aucune donnée propre. Il est instancié et invoqué par le service applicatif <code>MoneyOperationsService</code>.</div>
+      </div>
+    </div>
+
+    <!-- ═══════════════════ 4. DOMAIN EVENTS ═══════════════════ -->
+    <h2>4 · Événements de Domaine</h2>
+    <p>Les événements de domaine capturent les faits métier importants qui se sont produits dans le domaine. Ils permettent un couplage lâche entre le domaine et l'infrastructure.</p>
+
+    <div class="cds--data-table-container">
+      <table class="cds--data-table">
+        <thead><tr><th>Événement</th><th>Émetteur (Agrégat)</th><th>Données transportées</th><th>Consommateurs potentiels</th></tr></thead>
+        <tbody>
+          <tr>
+            <td><code>MoneyDepositedEvent</code></td>
+            <td><code>Account.deposit()</code></td>
+            <td>accountId, amount, currency, newBalance, timestamp</td>
+            <td>Audit, notification, analytics</td>
+          </tr>
+          <tr>
+            <td><code>MoneyWithdrawnEvent</code></td>
+            <td><code>Account.withdraw()</code></td>
+            <td>accountId, amount, currency, newBalance, timestamp</td>
+            <td>Audit, alerte découvert, analytics</td>
+          </tr>
+          <tr>
+            <td><code>MoneyTransferredEvent</code></td>
+            <td><code>Account.withdraw() + Account.deposit()</code> (via TransferService)</td>
+            <td>fromAccountId, toAccountId, amount, fee, currency, timestamp</td>
+            <td>Audit, fraude, réconciliation</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3>Cycle de vie des événements</h3>
+    <div class="arch-box">
+      <svg viewBox="0 0 700 120" width="100%" style="max-width:700px;font-family:'IBM Plex Sans',sans-serif;font-size:11px;">
+        <defs>
+          <marker id="de" markerWidth="7" markerHeight="6" refX="6" refY="3" orient="auto"><polygon points="0 0,7 3,0 6" fill="#491d8b"/></marker>
+        </defs>
+        <!-- Boxes -->
+        <rect x="10"  y="35" width="130" height="40" rx="3" fill="#defbe6" stroke="#198038" stroke-width="1.5"/>
+        <text x="75"  y="56" text-anchor="middle" font-weight="700" fill="#0e6027">Agrégat</text>
+        <text x="75"  y="70" text-anchor="middle" fill="#198038">Account / Client</text>
+
+        <rect x="185" y="35" width="150" height="40" rx="3" fill="#defbe6" stroke="#198038" stroke-width="1.5"/>
+        <text x="260" y="56" text-anchor="middle" font-weight="700" fill="#0e6027">domainEvents.add()</text>
+        <text x="260" y="70" text-anchor="middle" fill="#198038">stockage en mémoire</text>
+
+        <rect x="380" y="35" width="150" height="40" rx="3" fill="#edf5ff" stroke="#0f62fe" stroke-width="1.5"/>
+        <text x="455" y="56" text-anchor="middle" font-weight="700" fill="#0f62fe">Service Applicatif</text>
+        <text x="455" y="70" text-anchor="middle" fill="#0043ce">après persistence</text>
+
+        <rect x="575" y="35" width="115" height="40" rx="3" fill="#e8daff" stroke="#6929c4" stroke-width="1.5"/>
+        <text x="632" y="56" text-anchor="middle" font-weight="700" fill="#491d8b">EventPublisher</text>
+        <text x="632" y="70" text-anchor="middle" fill="#6929c4">CDI Event Bus</text>
+
+        <!-- Arrows -->
+        <line x1="140" y1="55" x2="183" y2="55" stroke="#491d8b" stroke-width="1.5" marker-end="url(#de)"/>
+        <line x1="335" y1="55" x2="378" y2="55" stroke="#491d8b" stroke-width="1.5" marker-end="url(#de)"/>
+        <line x1="530" y1="55" x2="573" y2="55" stroke="#491d8b" stroke-width="1.5" marker-end="url(#de)"/>
+
+        <!-- Labels -->
+        <text x="161" y="47" text-anchor="middle" font-size="9" fill="#8a3ffc">émet</text>
+        <text x="357" y="47" text-anchor="middle" font-size="9" fill="#8a3ffc">publie</text>
+        <text x="551" y="47" text-anchor="middle" font-size="9" fill="#8a3ffc">fire</text>
+      </svg>
+    </div>
+
+    <!-- ═══════════════════ 5. REPOSITORIES AS PORTS ═══════════════════ -->
+    <h2>5 · Repositories comme Ports Secondaires</h2>
+    <p>Conformément au DDD, les repositories sont définis comme des interfaces dans la couche application. Ils représentent des abstractions de persistance — pas des implémentations JPA.</p>
+
+    <div class="cds--data-table-container">
+      <table class="cds--data-table">
+        <thead><tr><th>Interface (Port)</th><th>Package (Application)</th><th>Implémentation (Infrastructure)</th><th>Pourquoi séparé ?</th></tr></thead>
+        <tbody>
+          <tr>
+            <td><code>AccountRepository</code></td>
+            <td><code>com.bank.application.port.out</code></td>
+            <td><code>JpaAccountAdapter</code><br/><small>com.bank.infrastructure.persistence.adapter</small></td>
+            <td>Le domaine ne dépend pas de JPA. Testable avec un mock en mémoire.</td>
+          </tr>
+          <tr>
+            <td><code>ClientRepository</code></td>
+            <td><code>com.bank.application.port.out</code></td>
+            <td><code>JpaClientAdapter</code><br/><small>com.bank.infrastructure.persistence.adapter</small></td>
+            <td>Séparation infrastructure/domaine. Remplacement JPA→MongoDB sans toucher le domaine.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- ═══════════════════ 6. UBIQUITOUS LANGUAGE ═══════════════════ -->
+    <h2>6 · Langage Ubiquitaire</h2>
+    <p>Le langage ubiquitaire est partagé entre les experts métier et les développeurs. Chaque terme est précisément défini et utilisé de manière cohérente dans le code et la documentation.</p>
+
+    <div class="cds--data-table-container">
+      <table class="cds--data-table">
+        <thead><tr><th>Terme métier</th><th>Classe / Concept technique</th><th>Définition métier</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Account</strong></td><td><code>Account</code> (agrégat)</td><td>Compte bancaire appartenant à un client. Peut être CHECKING (courant) ou SAVINGS (épargne). A un solde et un statut actif/inactif.</td></tr>
+          <tr><td><strong>Client</strong></td><td><code>Client</code> (agrégat)</td><td>Personne physique titulaire de un ou plusieurs comptes. Peut avoir le statut premium.</td></tr>
+          <tr><td><strong>Money</strong></td><td><code>Money</code> (value object)</td><td>Montant monétaire immuable associé à une devise. Unité fondamentale des opérations financières.</td></tr>
+          <tr><td><strong>Deposit (Dépôt)</strong></td><td><code>Account.deposit()</code> + <code>DepositCommand</code></td><td>Opération créditant un montant sur un compte actif. Génère un MoneyDepositedEvent.</td></tr>
+          <tr><td><strong>Withdrawal (Retrait)</strong></td><td><code>Account.withdraw()</code> + <code>WithdrawCommand</code></td><td>Opération débitant un montant d'un compte actif avec vérification du solde disponible.</td></tr>
+          <tr><td><strong>Transfer (Virement)</strong></td><td><code>TransferService</code> + <code>TransferCommand</code></td><td>Mouvement de fonds entre deux comptes. Soumis à des frais pour les clients standards.</td></tr>
+          <tr><td><strong>Premium</strong></td><td><code>Client.premium</code></td><td>Statut accordé à un client lui donnant des avantages (transferts gratuits). Modifiable via upgrade/downgrade.</td></tr>
+          <tr><td><strong>AccountNumber</strong></td><td><code>AccountNumber</code> (value object)</td><td>Identifiant métier unique d'un compte. Format IBAN-like FR+27 chiffres. Généré automatiquement à l'ouverture.</td></tr>
+          <tr><td><strong>Port (Entrant)</strong></td><td>Interface <code>*UseCase</code></td><td>Interface définissant ce que l'application offre aux acteurs externes (API, UI).</td></tr>
+          <tr><td><strong>Port (Sortant)</strong></td><td>Interface <code>*Repository</code>, <code>EventPublisher</code></td><td>Interface définissant ce que l'application attend des systèmes externes (base de données, messaging).</td></tr>
+          <tr><td><strong>Adapter (Primaire)</strong></td><td><code>*RestAdapterV2</code>, <code>*WebAdapter</code></td><td>Composant traduisant les appels entrants (HTTP, form) en commandes métier.</td></tr>
+          <tr><td><strong>Adapter (Secondaire)</strong></td><td><code>Jpa*Adapter</code>, <code>CDIEventPublisherAdapter</code></td><td>Composant implémentant un port sortant avec une technologie spécifique (JPA, CDI).</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <hr class="cds--divider"/>
+  </main>
+</div>
+<footer class="cds--footer">Banking Hexagonal Architecture Application — Lab 07 · Jakarta EE 10 · Java 17 · © 2025 Olivier Planson</footer>
+</body>
+</html>

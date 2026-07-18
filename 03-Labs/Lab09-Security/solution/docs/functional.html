@@ -1,0 +1,280 @@
+<!-- © Copyright 2026 Olivier Planson. All rights reserved. Reproduction prohibited. Made with IBM Bob. -->
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Bank Security — Lab 09 | Architecture Fonctionnelle</title>
+  <link rel="stylesheet" href="assets/carbon.css"/>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;600&family=IBM+Plex+Mono&display=swap" rel="stylesheet"/>
+</head>
+<body>
+
+<!-- ═══ HEADER ═══ -->
+<header class="cds--header">
+  <a class="cds--header__name" href="index.html">
+    🔐 Bank Security Application
+    <span>— Lab 09</span>
+  </a>
+  <span class="cds--header__divider">|</span>
+  <span style="font-size:.75rem;color:#8d8d8d;">Jakarta EE 10 · MicroProfile 6.1 · Open Liberty 24.0.0.1</span>
+</header>
+
+<div class="cds--shell">
+  <nav class="cds--side-nav" aria-label="Navigation principale">
+    <p class="cds--side-nav__section-title">Documentation</p>
+    <a class="cds--side-nav__link" href="index.html"><i class="icon">🏠</i> Vue d'ensemble</a>
+    <a class="cds--side-nav__link active" href="functional.html"><i class="icon">⚙️</i> Architecture Fonctionnelle</a>
+    <a class="cds--side-nav__link" href="technical.html"><i class="icon">🏗️</i> Architecture Technique</a>
+    <a class="cds--side-nav__link" href="sequences.html"><i class="icon">🔄</i> Diagrammes de Séquence</a>
+    <a class="cds--side-nav__link" href="rules.html"><i class="icon">📋</i> Règles de Sécurité</a>
+  </nav>
+
+  <main class="cds--content">
+    <nav class="cds--breadcrumb">
+      <a href="index.html">Vue d'ensemble</a>
+      <span class="sep">/</span>
+      <span class="current">Architecture Fonctionnelle</span>
+    </nav>
+
+    <h1>Architecture Fonctionnelle</h1>
+    <p class="page-lead">
+      Cinq domaines fonctionnels couvrent l'ensemble de la sécurité de l'application :
+      authentification JWT, magasin d'identité persistant, autorisation RBAC déclarative et programmatique,
+      piste d'audit complète et filtres de sécurité HTTP.
+    </p>
+
+    <!-- ── Flux global SVG ── -->
+    <h2>Flux de traitement d'une requête</h2>
+    <div class="arch-box">
+      <svg viewBox="0 0 860 110" xmlns="http://www.w3.org/2000/svg" font-family="IBM Plex Sans,Arial,sans-serif" font-size="11" width="100%">
+        <!-- Boxes -->
+        <rect x="4"   y="30" width="90"  height="48" rx="3" fill="#d0e2ff" stroke="#0043ce" stroke-width="1.2"/>
+        <rect x="118" y="30" width="130" height="48" rx="3" fill="#e8daff" stroke="#491d8b" stroke-width="1.2"/>
+        <rect x="272" y="30" width="140" height="48" rx="3" fill="#e8daff" stroke="#491d8b" stroke-width="1.2"/>
+        <rect x="436" y="30" width="110" height="48" rx="3" fill="#defbe6" stroke="#0e6027" stroke-width="1.2"/>
+        <rect x="570" y="30" width="90"  height="48" rx="3" fill="#defbe6" stroke="#0e6027" stroke-width="1.2"/>
+        <rect x="684" y="30" width="86"  height="48" rx="3" fill="#ffd7d9" stroke="#da1e28" stroke-width="1.2"/>
+        <rect x="794" y="30" width="60"  height="48" rx="3" fill="#d9fbfb" stroke="#004144" stroke-width="1.2"/>
+        <!-- Labels -->
+        <text x="49"  y="51" text-anchor="middle" fill="#0043ce" font-weight="600">Requête</text>
+        <text x="49"  y="66" text-anchor="middle" fill="#0043ce">HTTP</text>
+        <text x="183" y="48" text-anchor="middle" fill="#491d8b" font-weight="600">CorsFilter</text>
+        <text x="183" y="63" text-anchor="middle" fill="#491d8b">+ SecurityHeaders</text>
+        <text x="183" y="74" text-anchor="middle" fill="#491d8b">Filter</text>
+        <text x="342" y="48" text-anchor="middle" fill="#491d8b" font-weight="600">JwtAuthentication</text>
+        <text x="342" y="63" text-anchor="middle" fill="#491d8b">Mechanism</text>
+        <text x="342" y="74" text-anchor="middle" fill="#491d8b">+ IdentityStore</text>
+        <text x="491" y="51" text-anchor="middle" fill="#0e6027" font-weight="600">JAX-RS</text>
+        <text x="491" y="66" text-anchor="middle" fill="#0e6027">@RolesAllowed</text>
+        <text x="615" y="51" text-anchor="middle" fill="#0e6027" font-weight="600">Security</text>
+        <text x="615" y="66" text-anchor="middle" fill="#0e6027">Context</text>
+        <text x="727" y="51" text-anchor="middle" fill="#da1e28" font-weight="600">Account</text>
+        <text x="727" y="66" text-anchor="middle" fill="#da1e28">Service</text>
+        <text x="824" y="51" text-anchor="middle" fill="#004144" font-weight="600">PgSQL</text>
+        <text x="824" y="66" text-anchor="middle" fill="#004144">+ Audit</text>
+        <!-- Arrows -->
+        <line x1="94"  y1="54" x2="116" y2="54" stroke="#525252" stroke-width="1.5" marker-end="url(#arr)"/>
+        <line x1="248" y1="54" x2="270" y2="54" stroke="#525252" stroke-width="1.5" marker-end="url(#arr)"/>
+        <line x1="412" y1="54" x2="434" y2="54" stroke="#525252" stroke-width="1.5" marker-end="url(#arr)"/>
+        <line x1="546" y1="54" x2="568" y2="54" stroke="#525252" stroke-width="1.5" marker-end="url(#arr)"/>
+        <line x1="660" y1="54" x2="682" y2="54" stroke="#525252" stroke-width="1.5" marker-end="url(#arr)"/>
+        <line x1="770" y1="54" x2="792" y2="54" stroke="#525252" stroke-width="1.5" marker-end="url(#arr)"/>
+        <defs>
+          <marker id="arr" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto">
+            <path d="M0,0 L6,3 L0,6 Z" fill="#525252"/>
+          </marker>
+        </defs>
+      </svg>
+    </div>
+
+    <!-- ── Domaine 1 ── -->
+    <h2>Domaine 1 — Authentification</h2>
+    <div class="tile-grid">
+      <div class="cds--tile">
+        <h3>JwtAuthenticationMechanism</h3>
+        <div class="tag-stack" style="margin-top:0;margin-bottom:.75rem;">
+          <span class="cds--tag cds--tag--purple">@ApplicationScoped</span>
+          <span class="cds--tag cds--tag--blue">HttpAuthenticationMechanism</span>
+        </div>
+        <ul>
+          <li>Intercepte <strong>toutes</strong> les requêtes entrantes</li>
+          <li>Extrait l'en-tête <code>Authorization: Bearer &lt;token&gt;</code></li>
+          <li>Délègue la validation à <code>JwtService.parseToken()</code></li>
+          <li>Appelle <code>DatabaseIdentityStore.validate()</code> si nécessaire</li>
+          <li>Peuple le <code>SecurityContext</code> (principal + rôles)</li>
+        </ul>
+      </div>
+      <div class="cds--tile">
+        <h3>JwtService</h3>
+        <div class="tag-stack" style="margin-top:0;margin-bottom:.75rem;">
+          <span class="cds--tag cds--tag--blue">HS256</span>
+          <span class="cds--tag cds--tag--teal">@ApplicationScoped</span>
+        </div>
+        <ul>
+          <li>Génère des tokens signés HS256 avec secret ≥ 256 bits</li>
+          <li>Claims : <code>sub</code> (username), <code>roles</code>, <code>iss</code>, <code>iat</code>, <code>exp</code></li>
+          <li>Expiration configurable — valeur par défaut : <strong>24 h</strong></li>
+          <li>Méthodes : <code>generateToken()</code>, <code>validateToken()</code>, <code>parseToken()</code></li>
+          <li>Valide simultanément la signature ET l'expiration</li>
+        </ul>
+      </div>
+      <div class="cds--tile">
+        <h3>PasswordService</h3>
+        <div class="tag-stack" style="margin-top:0;margin-bottom:.75rem;">
+          <span class="cds--tag cds--tag--red">PBKDF2-SHA512</span>
+          <span class="cds--tag cds--tag--teal">@ApplicationScoped</span>
+        </div>
+        <ul>
+          <li>Algorithme : PBKDF2WithHmacSHA512 — <strong>310 000 itérations</strong> (OWASP 2023)</li>
+          <li>Sel aléatoire de <strong>64 octets</strong> par mot de passe</li>
+          <li>Comparaison en <strong>temps constant</strong> (résistance timing)</li>
+          <li><code>isPasswordStrong()</code> : 8+ cars, majuscule, minuscule, chiffre, spécial</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- ── Domaine 2 ── -->
+    <h2>Domaine 2 — Magasin d'identité</h2>
+    <div class="cds--tile">
+      <h3>DatabaseIdentityStore</h3>
+      <div class="tag-stack" style="margin-top:0;margin-bottom:.75rem;">
+        <span class="cds--tag cds--tag--purple">@ApplicationScoped</span>
+        <span class="cds--tag cds--tag--blue">IdentityStore</span>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;">
+        <div>
+          <p><strong>Validation de credentials</strong></p>
+          <ul>
+            <li>Accepte <code>UsernamePasswordCredential</code></li>
+            <li>Requête JPA : <code>User.findByUsername</code> ou <code>findByEmail</code></li>
+            <li>Vérifie <code>account_locked</code> avant toute tentative</li>
+            <li>Délègue la vérification du mot de passe à <code>PasswordService.verifyPassword()</code></li>
+          </ul>
+        </div>
+        <div>
+          <p><strong>Verrouillage de compte</strong></p>
+          <ul>
+            <li>Compteur <code>failed_login_attempts</code> incrémenté à chaque échec</li>
+            <li>Verrouillage automatique après <strong>5 tentatives</strong> échouées</li>
+            <li>Trace <code>last_login</code> à la connexion réussie</li>
+            <li>Retourne <code>INVALID_RESULT</code> pour comptes verrouillés</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── Domaine 3 ── -->
+    <h2>Domaine 3 — Autorisation RBAC</h2>
+    <div class="cds--tile">
+      <h3>AccountResource — Matrice d'accès</h3>
+      <div class="cds--data-table-container" style="margin-bottom:0;">
+        <table class="cds--data-table">
+          <thead>
+            <tr>
+              <th>Endpoint</th>
+              <th>Méthode</th>
+              <th>Rôles autorisés</th>
+              <th>Contrôle supplémentaire</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td><code>GET /api/accounts</code></td><td>listAll</td><td><span class="cds--tag cds--tag--red">ADMIN</span> <span class="cds--tag cds--tag--purple">MANAGER</span></td><td>—</td></tr>
+            <tr><td><code>GET /api/accounts/my</code></td><td>myAccounts</td><td><span class="cds--tag cds--tag--red">ADMIN</span> <span class="cds--tag cds--tag--purple">MANAGER</span> <span class="cds--tag cds--tag--blue">TELLER</span> <span class="cds--tag cds--tag--green">CUSTOMER</span></td><td>—</td></tr>
+            <tr><td><code>GET /api/accounts/{id}</code></td><td>getById</td><td>Tous les rôles</td><td><code>isUserInRole(CUSTOMER)</code> → ownership check</td></tr>
+            <tr><td><code>POST /api/accounts</code></td><td>create</td><td><span class="cds--tag cds--tag--red">ADMIN</span> <span class="cds--tag cds--tag--purple">MANAGER</span> <span class="cds--tag cds--tag--blue">TELLER</span></td><td>—</td></tr>
+            <tr><td><code>POST /{id}/deposit</code></td><td>deposit</td><td><span class="cds--tag cds--tag--red">ADMIN</span> <span class="cds--tag cds--tag--purple">MANAGER</span> <span class="cds--tag cds--tag--blue">TELLER</span></td><td>—</td></tr>
+            <tr><td><code>POST /{id}/withdraw</code></td><td>withdraw</td><td><span class="cds--tag cds--tag--red">ADMIN</span> <span class="cds--tag cds--tag--purple">MANAGER</span> <span class="cds--tag cds--tag--blue">TELLER</span></td><td>—</td></tr>
+            <tr><td><code>POST /transfer</code></td><td>transfer</td><td><span class="cds--tag cds--tag--red">ADMIN</span> <span class="cds--tag cds--tag--purple">MANAGER</span></td><td>—</td></tr>
+            <tr><td><code>DELETE /{id}</code></td><td>delete</td><td><span class="cds--tag cds--tag--red">ADMIN</span></td><td>—</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="cds--inline-notification" role="note">
+      <span>🔒</span>
+      <div>
+        <strong>Isolation CUSTOMER :</strong> lorsque l'utilisateur possède uniquement le rôle CUSTOMER,
+        <code>SecurityContext.isUserInRole("CUSTOMER")</code> est vrai et le système vérifie que
+        <code>account.ownerUsername == principal.getName()</code>. Tout accès à un compte tiers retourne <strong>403 Forbidden</strong>.
+      </div>
+    </div>
+
+    <!-- ── Domaine 4 ── -->
+    <h2>Domaine 4 — Piste d'audit</h2>
+    <div class="cds--tile">
+      <h3>SecurityAuditService</h3>
+      <div class="tag-stack" style="margin-top:0;margin-bottom:.75rem;">
+        <span class="cds--tag cds--tag--warm">@ApplicationScoped</span>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;">
+        <div>
+          <p><strong>Événements tracés</strong></p>
+          <ul>
+            <li><code>LOGIN</code> — tentative de connexion (SUCCESS/FAILURE)</li>
+            <li><code>LOGOUT</code> — déconnexion</li>
+            <li><code>ACCESS</code> — accès à une ressource protégée</li>
+            <li><code>ACCESS_DENIED</code> — accès refusé (403)</li>
+            <li><code>ACCOUNT_LOCKED</code> — verrouillage de compte</li>
+            <li><code>PASSWORD_CHANGE</code> — changement de mot de passe</li>
+            <li><code>REGISTRATION</code> — inscription d'un nouvel utilisateur</li>
+          </ul>
+        </div>
+        <div>
+          <p><strong>Données capturées</strong></p>
+          <ul>
+            <li>Adresse IP via <code>X-Forwarded-For</code> → <code>X-Real-IP</code> → <code>getRemoteAddr()</code></li>
+            <li>User-Agent du client</li>
+            <li>Horodatage précis</li>
+            <li>Résultat : <code>SUCCESS</code> / <code>FAILURE</code> / <code>DENIED</code></li>
+            <li>Ressource accédée et détails textuels</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── Domaine 5 ── -->
+    <h2>Domaine 5 — Filtres de sécurité</h2>
+    <div class="tile-grid">
+      <div class="cds--tile">
+        <h3>SecurityHeadersFilter</h3>
+        <span class="cds--tag cds--tag--green">@Provider</span>
+        <ul style="margin-top:.75rem;">
+          <li><code>X-Frame-Options: DENY</code> — anti-clickjacking</li>
+          <li><code>X-Content-Type-Options: nosniff</code> — anti-MIME sniffing</li>
+          <li><code>X-XSS-Protection: 1; mode=block</code></li>
+          <li><code>Content-Security-Policy</code> — restriction des sources</li>
+          <li><code>Referrer-Policy: strict-origin-when-cross-origin</code></li>
+          <li><code>Permissions-Policy</code> — désactivation des API sensibles</li>
+          <li><code>Strict-Transport-Security</code> (HSTS) — HTTPS forcé</li>
+        </ul>
+      </div>
+      <div class="cds--tile">
+        <h3>CorsFilter</h3>
+        <span class="cds--tag cds--tag--blue">@Provider</span>
+        <ul style="margin-top:.75rem;">
+          <li><code>Access-Control-Allow-Origin: *</code> (configurable)</li>
+          <li>Méthodes : <code>GET, POST, PUT, DELETE, OPTIONS</code></li>
+          <li>Gestion du preflight <code>OPTIONS</code></li>
+          <li>Applicable sur <code>/api/*</code></li>
+        </ul>
+        <div class="cds--inline-notification warning" style="margin-top:.75rem;margin-bottom:0;">
+          <span>⚠️</span>
+          <div>L'origine <code>*</code> est trop permissive pour la production ; restreindre aux domaines connus.</div>
+        </div>
+      </div>
+    </div>
+
+    <hr class="cds--divider"/>
+    <p style="font-size:.75rem;color:#a8a8a8;">
+      Groupe : <code>com.bank</code> · Artefact : <code>bank-security</code> · Java 17 · Jakarta EE 10 · Open Liberty 24.0.0.1
+    </p>
+  </main>
+</div>
+
+<footer class="cds--footer">
+  Bank Security Application — Lab 09 · Jakarta EE 10 Security · © 2025 Olivier Planson
+</footer>
+</body>
+</html>

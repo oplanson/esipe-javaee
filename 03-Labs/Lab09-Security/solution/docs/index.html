@@ -1,0 +1,146 @@
+<!-- © Copyright 2026 Olivier Planson. All rights reserved. Reproduction prohibited. Made with IBM Bob. -->
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Bank Security — Lab 09 — Vue d'ensemble</title>
+  <link rel="stylesheet" href="assets/carbon.css"/>
+</head>
+<body>
+
+<header class="cds--header">
+  <a class="cds--header__name" href="index.html">🔐 Bank Security<span>Lab 09 — Sécurité Jakarta EE 10</span></a>
+  <a href="../../../index.html" style="margin-left:auto;font-size:.75rem;color:#c6c6c6;text-decoration:none;border:1px solid #393939;padding:.2rem .75rem;border-radius:2px;white-space:nowrap;">← Tous les Labs</a>
+</header>
+
+<div class="cds--shell">
+  <nav class="cds--side-nav">
+    <p class="cds--side-nav__section-title">Navigation</p>
+    <a class="cds--side-nav__link active" href="index.html"><i class="icon">🏠</i>Vue d'ensemble</a>
+    <a class="cds--side-nav__link" href="functional.html"><i class="icon">⚙️</i>Architecture Fonctionnelle</a>
+    <a class="cds--side-nav__link" href="technical.html"><i class="icon">🔧</i>Architecture Technique</a>
+    <a class="cds--side-nav__link" href="sequences.html"><i class="icon">🔄</i>Diagrammes de Séquence</a>
+    <a class="cds--side-nav__link" href="rules.html"><i class="icon">📋</i>Règles de Sécurité</a>
+  </nav>
+
+  <main class="cds--content">
+    <nav class="cds--breadcrumb">
+      <span class="current">Vue d'ensemble</span>
+    </nav>
+
+    <h1>Bank Security Application</h1>
+    <p class="page-lead">Lab 09 — Sécurité Jakarta EE 10 complète : authentification JWT personnalisée, RBAC déclaratif, stockage d'identité en base de données, hachage PBKDF2-SHA512 et piste d'audit sécurisée.</p>
+
+    <div class="cds--inline-notification">
+      <span>ℹ️</span>
+      <div><strong>Lab 09</strong> — Sécurité Jakarta EE 10 complète : authentification JWT personnalisée, RBAC déclaratif, stockage d'identité en base de données, hachage PBKDF2-SHA512 et piste d'audit sécurisée.</div>
+    </div>
+
+    <h2>Carte du projet</h2>
+    <div class="cds--tile">
+      <div class="tile-grid" style="margin-bottom:0">
+        <div>
+          <p style="margin-bottom:.25rem"><strong>Nom</strong></p>
+          <p>Bank Security Application — Lab 09</p>
+          <p style="margin-bottom:.25rem"><strong>ArtifactId / GroupId</strong></p>
+          <p><code>bank-security</code> / <code>com.bank</code></p>
+          <p style="margin-bottom:.25rem"><strong>Java</strong></p>
+          <p>Java 17</p>
+        </div>
+        <div>
+          <p style="margin-bottom:.25rem"><strong>Plateforme</strong></p>
+          <p>Jakarta EE 10 · MicroProfile 6.1</p>
+          <p style="margin-bottom:.25rem"><strong>Serveur</strong></p>
+          <p>Open Liberty 24.0.0.1</p>
+          <p style="margin-bottom:.25rem"><strong>Base de données</strong></p>
+          <p>PostgreSQL</p>
+        </div>
+        <div>
+          <p style="margin-bottom:.25rem"><strong>Authentification</strong></p>
+          <p>JWT — JJWT 0.12.5, HS256, 24 h</p>
+          <p style="margin-bottom:.25rem"><strong>Autorisation</strong></p>
+          <p>RBAC déclaratif + programmatique</p>
+          <p style="margin-bottom:.25rem"><strong>Architecture</strong></p>
+          <p>Monolithique (pas de DDD / Hexagonal)</p>
+        </div>
+      </div>
+    </div>
+
+    <h2>Stack technique</h2>
+    <div class="cds--data-table-container">
+      <table class="cds--data-table">
+        <thead><tr><th>Dépendance</th><th>Version</th><th>Rôle</th></tr></thead>
+        <tbody>
+          <tr><td><code>jakarta.jakartaee-api</code></td><td>10.0.0</td><td>API Jakarta EE 10 (CDI, JAX-RS, Security, JPA…)</td></tr>
+          <tr><td><code>microprofile</code></td><td>6.1</td><td>MicroProfile (Health, Metrics, OpenAPI…)</td></tr>
+          <tr><td><code>jjwt-api / jjwt-impl / jjwt-jackson</code></td><td>0.12.5</td><td>Génération et validation des tokens JWT (HS256)</td></tr>
+          <tr><td><code>postgresql</code></td><td>42.x</td><td>Driver JDBC — base de données relationnelle</td></tr>
+          <tr><td><code>junit-jupiter</code></td><td>5.x</td><td>Tests unitaires et d'intégration</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h2>Nuage de concepts</h2>
+    <div class="tag-stack">
+      <span class="cds--tag cds--tag--blue">JWT</span>
+      <span class="cds--tag cds--tag--red">PBKDF2</span>
+      <span class="cds--tag cds--tag--purple">HttpAuthenticationMechanism</span>
+      <span class="cds--tag cds--tag--green">IdentityStore</span>
+      <span class="cds--tag cds--tag--blue">@RolesAllowed</span>
+      <span class="cds--tag cds--tag--teal">@PermitAll</span>
+      <span class="cds--tag cds--tag--red">@DenyAll</span>
+      <span class="cds--tag cds--tag--purple">@SecurityContext</span>
+      <span class="cds--tag cds--tag--blue">RBAC</span>
+      <span class="cds--tag cds--tag--warm">SecurityHeaders</span>
+      <span class="cds--tag cds--tag--teal">CORS</span>
+      <span class="cds--tag cds--tag--red">AccountLockout</span>
+      <span class="cds--tag cds--tag--green">AuditTrail</span>
+      <span class="cds--tag cds--tag--blue">HS256</span>
+      <span class="cds--tag cds--tag--purple">Bearer Token</span>
+      <span class="cds--tag cds--tag--warm">CSP</span>
+      <span class="cds--tag cds--tag--teal">HSTS</span>
+      <span class="cds--tag cds--tag--red">OWASP</span>
+    </div>
+
+    <h2>Accès rapide</h2>
+    <div class="tile-grid">
+      <a class="cds--tile" href="functional.html" style="text-decoration:none;display:block;">
+        <h3>⚙️ Architecture Fonctionnelle</h3>
+        <p>Cinq domaines : Authentification JWT, Magasin d'identité, Autorisation RBAC, Piste d'audit, Filtres de sécurité.</p>
+      </a>
+      <a class="cds--tile" href="technical.html" style="text-decoration:none;display:block;">
+        <h3>🔧 Architecture Technique</h3>
+        <p>Couches de sécurité, cycle de vie du JWT, schéma de base de données, configuration Liberty et endpoints.</p>
+      </a>
+      <a class="cds--tile" href="sequences.html" style="text-decoration:none;display:block;">
+        <h3>🔄 Diagrammes de Séquence</h3>
+        <p>Flux de connexion, accès à une ressource protégée avec isolation CUSTOMER, et flux d'inscription.</p>
+      </a>
+      <a class="cds--tile" href="rules.html" style="text-decoration:none;display:block;">
+        <h3>📋 Règles de Sécurité</h3>
+        <p>12 règles couvrant JWT, PBKDF2, verrouillage de compte, isolation CUSTOMER, en-têtes HTTP et piste d'audit.</p>
+      </a>
+    </div>
+
+    <h2>Rôles et hiérarchie</h2>
+    <div class="cds--data-table-container">
+      <table class="cds--data-table">
+        <thead><tr><th>Rôle</th><th>Niveau</th><th>Accès</th></tr></thead>
+        <tbody>
+          <tr><td><span class="cds--tag cds--tag--red">ADMIN</span></td><td>1 — le plus élevé</td><td>Toutes les opérations, y compris la suppression de comptes</td></tr>
+          <tr><td><span class="cds--tag cds--tag--purple">MANAGER</span></td><td>2</td><td>Toutes les opérations sauf suppression ; virement inclus</td></tr>
+          <tr><td><span class="cds--tag cds--tag--blue">TELLER</span></td><td>3</td><td>Dépôt, retrait, création de compte ; pas de virement</td></tr>
+          <tr><td><span class="cds--tag cds--tag--green">CUSTOMER</span></td><td>4 — le plus bas</td><td>Consultation de ses propres comptes uniquement</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+  </main>
+</div>
+
+<footer class="cds--footer">
+  Bank Security Application — Lab 09 · Jakarta EE 10 · Open Liberty 24.0.0.1 · © 2025 Olivier Planson
+</footer>
+</body>
+</html>

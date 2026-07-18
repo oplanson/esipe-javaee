@@ -1,0 +1,5 @@
+En tant que Senior Developer, je dois reprendre une application dont j'ai perdu la documentation. 
+Peux tu me faire une documentation html de l'application avec la description de l'architecture fonctionnelle, 
+technique et les diagrammes de sequences. 
+Tu mettras aussi les regles de gestion dans une page html en les numérotant sous le type RX ou X represente le numéro de la regle. 
+La documentation sera dans un site html static sous design IBM Carbon Design.

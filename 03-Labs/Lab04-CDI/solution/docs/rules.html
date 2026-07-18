@@ -1,0 +1,273 @@
+<!-- © Copyright 2026 Olivier Planson. All rights reserved. Reproduction prohibited. Made with IBM Bob. -->
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Règles Métier — Banking CDI Lab 04</title>
+  <link rel="stylesheet" href="assets/carbon.css"/>
+</head>
+<body>
+
+<header class="cds--header">
+  <a class="cds--header__name" href="index.html">⬡ IBM Carbon <span>/ Banking CDI Application — Lab 04</span></a>
+</header>
+
+<div class="cds--shell">
+  <nav class="cds--side-nav">
+    <p class="cds--side-nav__section-title">Documentation</p>
+    <a class="cds--side-nav__link" href="index.html"><i class="icon">⊞</i> Vue d'ensemble</a>
+    <a class="cds--side-nav__link" href="functional.html"><i class="icon">◈</i> Architecture Fonctionnelle</a>
+    <a class="cds--side-nav__link" href="technical.html"><i class="icon">⚙</i> Architecture Technique</a>
+    <a class="cds--side-nav__link" href="sequences.html"><i class="icon">↔</i> Diagrammes de Séquence</a>
+    <a class="cds--side-nav__link active" href="rules.html"><i class="icon">✓</i> Règles Métier</a>
+    <p class="cds--side-nav__section-title" style="margin-top:1.5rem">Catégories</p>
+    <a class="cds--side-nav__link" href="#metier"><i class="icon">💼</i> Règles Métier</a>
+    <a class="cds--side-nav__link" href="#notifications"><i class="icon">🔔</i> Notifications</a>
+    <a class="cds--side-nav__link" href="#cdi"><i class="icon">◈</i> Règles CDI</a>
+    <a class="cds--side-nav__link" href="#transactions"><i class="icon">⇄</i> Transactions</a>
+  </nav>
+
+  <main class="cds--content">
+    <nav class="cds--breadcrumb">
+      <a href="index.html">Lab 04</a>
+      <span class="sep">/</span>
+      <span class="current">Règles Métier</span>
+    </nav>
+
+    <h1>Règles Métier</h1>
+    <p class="page-lead">
+      10 règles documentées couvrant les validations métier, les contraintes transactionnelles,
+      les stratégies de notification et les règles de cycle de vie CDI.
+      Les règles critiques lèvent une exception en cas de violation ; les règles d'avertissement
+      génèrent un log et une alerte sans bloquer l'opération.
+    </p>
+
+    <!-- Summary stats -->
+    <div class="tile-grid" style="grid-template-columns:repeat(4,1fr);margin-bottom:1.5rem">
+      <div class="cds--tile" style="text-align:center;border-top:3px solid var(--cds-support-error)">
+        <div style="font-size:2rem;font-weight:300;color:var(--cds-support-error)">2</div>
+        <div style="font-size:.75rem;text-transform:uppercase;letter-spacing:.06em;color:#525252">Critiques</div>
+      </div>
+      <div class="cds--tile" style="text-align:center;border-top:3px solid var(--cds-support-warning)">
+        <div style="font-size:2rem;font-weight:300;color:#8c4f00">1</div>
+        <div style="font-size:.75rem;text-transform:uppercase;letter-spacing:.06em;color:#525252">Avertissements</div>
+      </div>
+      <div class="cds--tile" style="text-align:center;border-top:3px solid var(--cds-interactive)">
+        <div style="font-size:2rem;font-weight:300;color:var(--cds-interactive)">7</div>
+        <div style="font-size:.75rem;text-transform:uppercase;letter-spacing:.06em;color:#525252">Informationnelles</div>
+      </div>
+      <div class="cds--tile" style="text-align:center;border-top:3px solid var(--cds-support-success)">
+        <div style="font-size:2rem;font-weight:300;color:var(--cds-support-success)">10</div>
+        <div style="font-size:.75rem;text-transform:uppercase;letter-spacing:.06em;color:#525252">Total</div>
+      </div>
+    </div>
+
+    <!-- ══ Règles Métier ══ -->
+    <h2 id="metier">Règles Métier Bancaires</h2>
+
+    <div class="rule-card critical">
+      <div class="rule-id">
+        <span>R1</span>
+        <span class="cds--tag cds--tag--red">CRITIQUE</span>
+      </div>
+      <div class="rule-title">Dépôt uniquement pour un montant strictement positif</div>
+      <div class="rule-desc">
+        Tout appel à <code>account.deposit(amount)</code> avec un montant négatif ou nul lève une
+        <code>IllegalArgumentException</code>. La transaction est annulée automatiquement (rollback CMT).
+        <br/><br/>
+        <strong>Source :</strong> <code>Account.deposit(BigDecimal amount)</code>
+        &nbsp;·&nbsp; <strong>Exception :</strong> <code>IllegalArgumentException("Le montant du dépôt doit être positif")</code>
+        &nbsp;·&nbsp; <strong>Rollback :</strong> automatique (<code>@Transactional</code>)
+      </div>
+    </div>
+
+    <div class="rule-card critical">
+      <div class="rule-id">
+        <span>R2</span>
+        <span class="cds--tag cds--tag--red">CRITIQUE</span>
+      </div>
+      <div class="rule-title">Retrait uniquement si le solde est suffisant</div>
+      <div class="rule-desc">
+        Tout appel à <code>account.withdraw(amount)</code> dont le montant excède le solde disponible
+        lève une <code>InsufficientFundsException</code>. Le solde ne peut pas devenir négatif.
+        <br/><br/>
+        <strong>Source :</strong> <code>Account.withdraw(BigDecimal amount)</code>
+        &nbsp;·&nbsp; <strong>Condition :</strong> <code>balance &lt; amount</code>
+        &nbsp;·&nbsp; <strong>Exception :</strong> <code>InsufficientFundsException</code>
+        &nbsp;·&nbsp; <strong>Rollback :</strong> automatique (<code>@Transactional</code>)
+      </div>
+    </div>
+
+    <div class="rule-card">
+      <div class="rule-id"><span>R3</span></div>
+      <div class="rule-title">Virement atomique — débit et crédit dans la même transaction</div>
+      <div class="rule-desc">
+        <code>AccountService.transfer(sourceId, destId, amount)</code> exécute le retrait et le dépôt
+        dans une transaction unique. Si l'une des deux opérations échoue, les deux sont annulées (atomicité).
+        <br/><br/>
+        <strong>Source :</strong> <code>AccountService.transfer()</code>
+        &nbsp;·&nbsp; <strong>Garantie :</strong> ACID via <code>@Transactional</code> CMT
+        &nbsp;·&nbsp; <strong>Événement :</strong> <code>TransactionEvent.TRANSFER</code> en cas de succès
+      </div>
+    </div>
+
+    <div class="rule-card">
+      <div class="rule-id"><span>R10</span></div>
+      <div class="rule-title">Type de compte limité à CHECKING ou SAVINGS</div>
+      <div class="rule-desc">
+        La propriété <code>accountType</code> de l'entité <code>Account</code> est contrainte à l'enum
+        <code>AccountType { CHECKING, SAVINGS }</code>. Toute tentative de création avec un autre type
+        est rejetée par la validation Jakarta Bean Validation.
+        <br/><br/>
+        <strong>Source :</strong> <code>Account.accountType</code> (<code>@Enumerated(EnumType.STRING)</code>)
+        &nbsp;·&nbsp; <strong>Validation :</strong> <code>@NotNull</code> sur le champ
+      </div>
+    </div>
+
+    <!-- ══ Notifications ══ -->
+    <h2 id="notifications">Règles de Notification</h2>
+
+    <div class="rule-card warning">
+      <div class="rule-id">
+        <span>R4</span>
+        <span class="cds--tag cds--tag--warm">AVERTISSEMENT</span>
+      </div>
+      <div class="rule-title">Alerte de conformité pour les transactions dépassant 10 000 €</div>
+      <div class="rule-desc">
+        Toute transaction d'un montant supérieur à 10 000 € déclenche une alerte de conformité via
+        <code>BankingEventObserver.onLargeTransaction()</code>. Cette alerte est non-bloquante :
+        l'opération est traitée normalement mais un <code>WARNING</code> est émis pour audit réglementaire.
+        <br/><br/>
+        <strong>Source :</strong> <code>BankingEventObserver.onLargeTransaction()</code>
+        &nbsp;·&nbsp; <strong>Seuil :</strong> <code>amount.compareTo(BigDecimal.valueOf(10_000)) &gt; 0</code>
+        &nbsp;·&nbsp; <strong>Action :</strong> <code>logger.warning("⚠ Large transaction: " + amount)</code>
+      </div>
+    </div>
+
+    <div class="rule-card">
+      <div class="rule-id"><span>R5</span></div>
+      <div class="rule-title">Stratégie de notification différenciée par qualifier CDI</div>
+      <div class="rule-desc">
+        Le service de notification est résolu dynamiquement via les qualifieurs CDI selon le type du client :
+        <br/><br/>
+        <strong>Client <code>@Premium</code></strong> → <code>PremiumNotificationService</code> :
+        Email + SMS + Push + In-App (tous les canaux, sans seuil de montant minimum).
+        <br/>
+        <strong>Client <code>@Standard</code></strong> → <code>StandardNotificationService</code> :
+        Email uniquement, et seulement si le montant de la transaction est supérieur à 1 000 €.
+        <br/><br/>
+        <strong>Source :</strong> <code>PremiumNotificationService (@Premium)</code> /
+        <code>StandardNotificationService (@Standard)</code>
+        &nbsp;·&nbsp; <strong>Résolution :</strong> <code>BankingEventObserver</code> via qualifieurs CDI
+      </div>
+    </div>
+
+    <!-- ══ CDI Rules ══ -->
+    <h2 id="cdi">Règles de Cycle de Vie CDI</h2>
+
+    <div class="rule-card">
+      <div class="rule-id"><span>R6</span></div>
+      <div class="rule-title">LoggingInterceptor trace toutes les méthodes annotées @Logged</div>
+      <div class="rule-desc">
+        L'intercepteur <code>LoggingInterceptor</code> est activé par l'annotation de liaison
+        <code>@Logged</code> (posée sur la classe ou la méthode). Il enregistre systématiquement :
+        <ul style="margin:.5rem 0 .5rem 1.5rem">
+          <li>→ Entrée : nom de méthode et arguments</li>
+          <li>← Sortie : valeur retournée et durée d'exécution (ms)</li>
+          <li>✗ Exception : type et message de l'exception relancée</li>
+        </ul>
+        <strong>Source :</strong> <code>LoggingInterceptor (@AroundInvoke)</code>
+        &nbsp;·&nbsp; <strong>Binding :</strong> <code>@Logged (@InterceptorBinding)</code>
+        &nbsp;·&nbsp; <strong>Activé sur :</strong> <code>AccountService</code>
+      </div>
+    </div>
+
+    <div class="rule-card">
+      <div class="rule-id"><span>R7</span></div>
+      <div class="rule-title">EntityManager @RequestScoped — un EM par requête HTTP</div>
+      <div class="rule-desc">
+        L'<code>EntityManager</code> est produit avec le scope <code>@RequestScoped</code> par
+        <code>EntityManagerProducer</code>. Cela garantit qu'un EM distinct est créé pour chaque requête HTTP
+        et détruit à sa fin, évitant tout problème de concurrence sur un EM partagé.
+        <br/><br/>
+        <strong>Source :</strong> <code>EntityManagerProducer.createEntityManager() (@Produces @RequestScoped)</code>
+        &nbsp;·&nbsp; <strong>Dispose :</strong> <code>closeEntityManager(@Disposes)</code>
+      </div>
+    </div>
+
+    <!-- ══ Transaction Rules ══ -->
+    <h2 id="transactions">Règles Transactionnelles</h2>
+
+    <div class="rule-card">
+      <div class="rule-id"><span>R8</span></div>
+      <div class="rule-title">CMT (@Transactional) — rollback automatique sur RuntimeException</div>
+      <div class="rule-desc">
+        Les services <code>ClientService</code> et <code>AccountService</code> sont annotés
+        <code>@Transactional</code> (Container-Managed Transaction). Tout <code>RuntimeException</code>
+        non attrapée déclenche un rollback automatique par le container, sans code boilerplate.
+        <br/><br/>
+        <strong>Source :</strong> Services <code>@ApplicationScoped @Transactional</code>
+        &nbsp;·&nbsp; <strong>Comportement :</strong> <code>REQUIRED</code> (par défaut — participe ou crée)
+        &nbsp;·&nbsp; <strong>Rollback sur :</strong> <code>RuntimeException</code> et sous-classes
+      </div>
+    </div>
+
+    <div class="rule-card">
+      <div class="rule-id"><span>R9</span></div>
+      <div class="rule-title">BMT (UserTransaction) — contrôle programmatique dans BatchTransferService</div>
+      <div class="rule-desc">
+        <code>BatchTransferService</code> utilise <code>UserTransaction</code> injecté pour un contrôle
+        fin du cycle de vie transactionnel. Le timeout est configurable par lot pour éviter les verrous
+        longue durée en base de données.
+        <br/><br/>
+        <strong>Source :</strong> <code>BatchTransferService.processBatch()</code>
+        &nbsp;·&nbsp; <strong>Séquence :</strong>
+        <code>utx.setTransactionTimeout(n)</code> →
+        <code>utx.begin()</code> →
+        <em>[traitement]</em> →
+        <code>utx.commit()</code> ou <code>utx.rollback()</code>
+        <br/>
+        <strong>Avantage :</strong> Possibilité de commit/rollback partiels, timeouts différenciés par opération.
+        <strong>Inconvénient :</strong> Code plus verbeux, gestion manuelle obligatoire des cas d'erreur.
+      </div>
+    </div>
+
+    <hr class="cds--divider"/>
+
+    <!-- Summary table -->
+    <h2>Récapitulatif</h2>
+    <div class="cds--data-table-container">
+      <table class="cds--data-table">
+        <thead>
+          <tr>
+            <th>Règle</th>
+            <th>Catégorie</th>
+            <th>Sévérité</th>
+            <th>Source principale</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td><strong>R1</strong> — Dépôt positif uniquement</td><td>Métier</td><td><span class="cds--tag cds--tag--red">Critique</span></td><td><code>Account.deposit()</code></td></tr>
+          <tr><td><strong>R2</strong> — Retrait solde suffisant</td><td>Métier</td><td><span class="cds--tag cds--tag--red">Critique</span></td><td><code>Account.withdraw()</code></td></tr>
+          <tr><td><strong>R3</strong> — Virement atomique</td><td>Métier</td><td><span class="cds--tag cds--tag--blue">Info</span></td><td><code>AccountService.transfer()</code></td></tr>
+          <tr><td><strong>R4</strong> — Alerte &gt; 10 000 € (compliance)</td><td>Notification</td><td><span class="cds--tag cds--tag--warm">Avertissement</span></td><td><code>BankingEventObserver.onLargeTransaction()</code></td></tr>
+          <tr><td><strong>R5</strong> — Notifications Premium vs Standard</td><td>Notification</td><td><span class="cds--tag cds--tag--blue">Info</span></td><td><code>PremiumNotificationService / StandardNotificationService</code></td></tr>
+          <tr><td><strong>R6</strong> — @Logged intercepts toutes méthodes</td><td>CDI / AOP</td><td><span class="cds--tag cds--tag--blue">Info</span></td><td><code>LoggingInterceptor</code></td></tr>
+          <tr><td><strong>R7</strong> — EntityManager @RequestScoped</td><td>CDI / Scope</td><td><span class="cds--tag cds--tag--blue">Info</span></td><td><code>EntityManagerProducer</code></td></tr>
+          <tr><td><strong>R8</strong> — CMT rollback sur RuntimeException</td><td>Transaction</td><td><span class="cds--tag cds--tag--blue">Info</span></td><td><code>@Transactional</code> services</td></tr>
+          <tr><td><strong>R9</strong> — BMT contrôle programmatique</td><td>Transaction</td><td><span class="cds--tag cds--tag--blue">Info</span></td><td><code>BatchTransferService</code></td></tr>
+          <tr><td><strong>R10</strong> — Type compte CHECKING ou SAVINGS</td><td>Métier</td><td><span class="cds--tag cds--tag--blue">Info</span></td><td><code>Account.accountType</code></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <p style="font-size:.75rem;color:var(--cds-text-placeholder)">Règles métier — Lab 04 · CDI 4.0 / Jakarta EE 10 · ESIPE</p>
+  </main>
+</div>
+
+<footer class="cds--footer">
+  Banking CDI Application — Lab 04 · Jakarta EE 10 · CDI 4.0 · © 2025 Olivier Planson
+</footer>
+</body>
+</html>

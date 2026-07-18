@@ -1,0 +1,325 @@
+<!-- © Copyright 2026 Olivier Planson. All rights reserved. Reproduction prohibited. Made with IBM Bob. -->
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Règles Métier — Lab 08</title>
+  <link rel="stylesheet" href="assets/carbon.css"/>
+</head>
+<body>
+
+<header class="cds--header">
+  <a class="cds--header__name" href="index.html">🏦 Banking Microservices<span>Lab 08</span></a>
+  <span class="cds--header__divider">|</span>
+  <span style="font-size:.8125rem;color:#c6c6c6;">Règles Métier</span>
+</header>
+
+<div class="cds--shell">
+  <nav class="cds--side-nav">
+    <p class="cds--side-nav__section-title">Navigation</p>
+    <a class="cds--side-nav__link" href="index.html"><i class="icon">🏠</i>Vue d'ensemble</a>
+    <a class="cds--side-nav__link" href="functional.html"><i class="icon">⚙️</i>Architecture Fonctionnelle</a>
+    <a class="cds--side-nav__link" href="technical.html"><i class="icon">🔧</i>Architecture Technique</a>
+    <a class="cds--side-nav__link" href="sequences.html"><i class="icon">🔄</i>Diagrammes de séquence</a>
+    <a class="cds--side-nav__link active" href="rules.html"><i class="icon">📋</i>Règles métier</a>
+    <p class="cds--side-nav__section-title" style="margin-top:1.5rem;">Catégories</p>
+    <a class="cds--side-nav__link" href="#rules-critical"><i class="icon">🔴</i>Règles critiques</a>
+    <a class="cds--side-nav__link" href="#rules-fault-tolerance"><i class="icon">🛡️</i>Fault Tolerance</a>
+    <a class="cds--side-nav__link" href="#rules-architecture"><i class="icon">🏛️</i>Architecture</a>
+  </nav>
+
+  <main class="cds--content">
+    <nav class="cds--breadcrumb">
+      <a href="index.html">Vue d'ensemble</a>
+      <span class="sep">/</span>
+      <span class="current">Règles Métier</span>
+    </nav>
+
+    <h1>Règles Métier</h1>
+    <p class="page-lead">12 règles définissent le comportement de l'architecture Banking Microservices : 4 règles critiques de domaine, 5 règles de résilience MicroProfile Fault Tolerance, et 3 règles d'architecture.</p>
+
+    <div class="tag-stack">
+      <span class="cds--tag cds--tag--red">4 Règles critiques</span>
+      <span class="cds--tag cds--tag--purple">5 Fault Tolerance</span>
+      <span class="cds--tag cds--tag--teal">3 Architecture</span>
+    </div>
+
+    <!-- ═══════════════════════════════════════════════
+         RÈGLES CRITIQUES
+    ═══════════════════════════════════════════════ -->
+    <h2 id="rules-critical">🔴 Règles Métier Critiques</h2>
+
+    <div class="rule-card critical">
+      <div class="rule-id">🔴 R1 — CRITIQUE &nbsp;<span class="cds--tag cds--tag--red">Inter-service</span></div>
+      <div class="rule-title">Un client doit exister avant la création d'un compte</div>
+      <div class="rule-desc">
+        <p>Lors de la création d'un compte, le <code>AccountService</code> appelle <code>ClientServiceClient</code> pour vérifier que le client référencé (<code>clientId</code>) existe dans le Client Service. Cette validation inter-service garantit l'intégrité référentielle entre les deux domaines.</p>
+        <p>En cas d'indisponibilité du Client Service, le <code>@Fallback</code> retourne un <code>ClientDTO</code> fictif (<code>name="Unknown"</code>) — le compte est tout de même créé (dégradation gracieuse acceptable). En revanche, un <code>clientId</code> connu comme inexistant ne peut pas être utilisé.</p>
+        <p><strong>Source :</strong> <code>AccountService.createAccount()</code> + <code>ClientServiceClient</code> avec <code>@CircuitBreaker</code> + <code>@Fallback</code></p>
+      </div>
+    </div>
+
+    <div class="rule-card critical">
+      <div class="rule-id">🔴 R2 — CRITIQUE &nbsp;<span class="cds--tag cds--tag--red">Domaine financier</span></div>
+      <div class="rule-title">Le solde d'un compte ne peut pas être négatif</div>
+      <div class="rule-desc">
+        <p>Toutes les opérations financières (dépôt, retrait, transfert) vérifient que le solde résultant est supérieur ou égal à zéro.</p>
+        <ul>
+          <li><code>Account.deposit(amount)</code> — amount doit être positif</li>
+          <li><code>Account.withdraw(amount)</code> — <code>balance - amount &gt;= 0</code> obligatoire</li>
+          <li><code>Account.transfer(amount, target)</code> — vérification sur le compte source</li>
+        </ul>
+        <p>Une <code>IllegalArgumentException</code> ou <code>InsufficientFundsException</code> est levée si la règle est violée.</p>
+        <p><strong>Source :</strong> Modèle de domaine <code>Account</code> — méthodes <code>deposit()</code>, <code>withdraw()</code>, <code>transfer()</code></p>
+      </div>
+    </div>
+
+    <div class="rule-card critical">
+      <div class="rule-id">🔴 R3 — CRITIQUE &nbsp;<span class="cds--tag cds--tag--red">Statut</span></div>
+      <div class="rule-title">Aucune opération financière sur un compte SUSPENDED ou CLOSED</div>
+      <div class="rule-desc">
+        <p>Les méthodes financières du modèle de domaine <code>Account</code> vérifient en premier lieu le statut du compte.</p>
+        <ul>
+          <li>Statut <code>ACTIVE</code> → toutes opérations autorisées</li>
+          <li>Statut <code>SUSPENDED</code> → dépôt, retrait, transfert <strong>bloqués</strong></li>
+          <li>Statut <code>CLOSED</code> → toutes opérations <strong>définitivement bloquées</strong></li>
+        </ul>
+        <p>Un compte suspendu peut être réactivé via <code>AccountResource POST /api/accounts/{id}/activate</code>. Un compte fermé ne peut plus être rouvert.</p>
+        <p><strong>Source :</strong> Guards dans <code>Account.deposit()</code>, <code>Account.withdraw()</code>, <code>Account.transfer()</code> — vérification <code>this.status == ACTIVE</code></p>
+      </div>
+    </div>
+
+    <div class="rule-card critical">
+      <div class="rule-id">🔴 R4 — CRITIQUE &nbsp;<span class="cds--tag cds--tag--red">Clôture</span></div>
+      <div class="rule-title">Un compte ne peut être clôturé que si son solde est nul</div>
+      <div class="rule-desc">
+        <p>La méthode <code>Account.close()</code> vérifie que <code>balance == 0</code> avant d'autoriser la clôture. Si le solde est positif, une exception métier est levée.</p>
+        <p>Le client doit d'abord retirer ou transférer son solde vers un autre compte avant de pouvoir procéder à la clôture.</p>
+        <p><strong>Endpoint :</strong> <code>POST /api/accounts/{id}/close</code></p>
+        <p><strong>Source :</strong> <code>Account.close()</code> — guard <code>if (this.balance != 0) throw new AccountException("Solde doit être nul")</code></p>
+      </div>
+    </div>
+
+    <hr class="cds--divider"/>
+
+    <!-- ═══════════════════════════════════════════════
+         RÈGLES FAULT TOLERANCE
+    ═══════════════════════════════════════════════ -->
+    <h2 id="rules-fault-tolerance">🛡️ Règles Fault Tolerance</h2>
+
+    <div class="rule-card warning">
+      <div class="rule-id">⚡ R5 &nbsp;<span class="cds--tag cds--tag--warm">@CircuitBreaker</span></div>
+      <div class="rule-title">Circuit Breaker — s'ouvre après 50% d'échecs sur 4+ requêtes</div>
+      <div class="rule-desc">
+        <p>Configuration appliquée sur toutes les méthodes des REST clients inter-services :</p>
+        <ul>
+          <li><code>requestVolumeThreshold=4</code> — analyse sur les 4 dernières requêtes minimum</li>
+          <li><code>failureRatio=0.5</code> — s'ouvre si ≥ 50% d'échecs</li>
+          <li><code>delay=5000ms</code> — circuit ouvert pendant 5 secondes</li>
+          <li><code>successThreshold=2</code> — referme après 2 succès consécutifs (état half-open)</li>
+        </ul>
+        <p><strong>Source :</strong> <code>@CircuitBreaker</code> sur <code>AccountServiceClient</code>, <code>ClientServiceClient</code> (Account Service et API Gateway)</p>
+      </div>
+    </div>
+
+    <div class="rule-card warning">
+      <div class="rule-id">🔄 R6 &nbsp;<span class="cds--tag cds--tag--warm">@Retry</span></div>
+      <div class="rule-title">Retry — 3 tentatives espacées de 1 seconde avant échec</div>
+      <div class="rule-desc">
+        <p>En cas d'exception (timeout, erreur réseau, 5xx), les appels REST sont automatiquement retentés :</p>
+        <ul>
+          <li><code>maxRetries=3</code> — jusqu'à 3 nouvelles tentatives (4 appels au total)</li>
+          <li><code>delay=1000ms</code> — attente entre chaque tentative</li>
+        </ul>
+        <p>Si toutes les tentatives échouent, le <code>@Fallback</code> est invoqué.</p>
+        <p><strong>Source :</strong> <code>@Retry(maxRetries=3, delay=1000)</code> sur toutes les méthodes des REST clients inter-services</p>
+      </div>
+    </div>
+
+    <div class="rule-card warning">
+      <div class="rule-id">⏱ R7 &nbsp;<span class="cds--tag cds--tag--warm">@Timeout</span></div>
+      <div class="rule-title">Timeout — 2s (lectures Client Service), 3–5s (API Gateway)</div>
+      <div class="rule-desc">
+        <p>Chaque appel REST distant dispose d'un timeout pour éviter les cascades de latence :</p>
+        <ul>
+          <li>Account Service → Client Service : <code>@Timeout(value=2000)</code> (lectures rapides)</li>
+          <li>API Gateway → services : <code>@Timeout(value=3000)</code> à <code>@Timeout(value=5000)</code> selon l'opération</li>
+        </ul>
+        <p>Un dépassement de timeout génère une <code>TimeoutException</code> qui déclenche la logique <code>@Retry</code>.</p>
+        <p><strong>Source :</strong> <code>@Timeout</code> sur les méthodes de <code>ClientServiceClient</code> (Account Service) et <code>AccountServiceClient</code> / <code>ClientServiceClient</code> (API Gateway)</p>
+      </div>
+    </div>
+
+    <div class="rule-card success">
+      <div class="rule-id">🛡️ R8 &nbsp;<span class="cds--tag cds--tag--green">@Fallback</span></div>
+      <div class="rule-title">Fallback — toutes les méthodes REST ont une réponse de secours</div>
+      <div class="rule-desc">
+        <p>Chaque méthode des REST clients dispose d'une méthode fallback dédiée qui retourne une valeur sûre :</p>
+        <ul>
+          <li><code>getClient(id)</code> → fallback : <code>ClientDTO{id:id, firstName:"Unknown", lastName:"Unknown"}</code></li>
+          <li><code>getAccountsByClient(id)</code> → fallback : <code>new ArrayList&lt;&gt;()</code> (liste vide)</li>
+          <li>Autres méthodes → valeurs nullables, objets vides ou defaults métier sûrs</li>
+        </ul>
+        <p>Cette règle garantit que l'application ne retourne jamais d'erreur 500 non maîtrisée due à une panne inter-service.</p>
+        <p><strong>Source :</strong> <code>@Fallback(fallbackMethod="…")</code> sur toutes les méthodes des REST clients</p>
+      </div>
+    </div>
+
+    <div class="rule-card">
+      <div class="rule-id">📦 R9 &nbsp;<span class="cds--tag cds--tag--blue">@Bulkhead</span></div>
+      <div class="rule-title">Bulkhead — maximum 10 appels concurrents vers BankingAggregationService</div>
+      <div class="rule-desc">
+        <p>L'annotation <code>@Bulkhead(value=10)</code> limite le nombre de threads pouvant exécuter simultanément <code>BankingAggregationService.getClientWithAccounts()</code>.</p>
+        <p>Au-delà de 10 appels concurrents, une <code>BulkheadException</code> est levée — le @Fallback est activé (retour données partielles). Cela protège le système contre les surcharges en cascade.</p>
+        <p><strong>Source :</strong> <code>@Bulkhead(10)</code> sur <code>BankingAggregationService.getClientWithAccounts()</code></p>
+      </div>
+    </div>
+
+    <hr class="cds--divider"/>
+
+    <!-- ═══════════════════════════════════════════════
+         RÈGLES D'ARCHITECTURE
+    ═══════════════════════════════════════════════ -->
+    <h2 id="rules-architecture">🏛️ Règles d'Architecture</h2>
+
+    <div class="rule-card">
+      <div class="rule-id">🗄️ R10 &nbsp;<span class="cds--tag cds--tag--teal">Database per Service</span></div>
+      <div class="rule-title">Chaque service possède sa propre base de données — aucun accès SQL croisé</div>
+      <div class="rule-desc">
+        <p>Pattern <strong>Database per Service</strong> rigoureusement appliqué :</p>
+        <ul>
+          <li><strong>Client Service</strong> → <code>bank_client_db</code> (PostgreSQL port 5433)</li>
+          <li><strong>Account Service</strong> → <code>banking_account_db</code> (PostgreSQL port 5434)</li>
+          <li>L'API Gateway n'a <strong>aucune</strong> base de données</li>
+        </ul>
+        <p>Aucune requête SQL cross-service n'est autorisée. Les données partagées (ex: informations client dans Account Service) transitent exclusivement par appels REST inter-services.</p>
+        <p><strong>Source :</strong> Décision d'architecture — configurations <code>server.xml</code> et <code>persistence.xml</code> par service</p>
+      </div>
+    </div>
+
+    <div class="rule-card">
+      <div class="rule-id">🔢 R11 &nbsp;<span class="cds--tag cds--tag--blue">Versioning API</span></div>
+      <div class="rule-title">Versionnement des APIs : /api/v1 (deprecated) et /api/v2</div>
+      <div class="rule-desc">
+        <p>Les ressources REST exposent deux versions pour assurer la compatibilité ascendante :</p>
+        <ul>
+          <li><code>/api/v1/clients</code>, <code>/api/v1/accounts</code> — version dépréciée (maintenue pour compatibilité)</li>
+          <li><code>/api/v2/clients</code>, <code>/api/v2/accounts</code> — version courante avec fonctionnalités complètes</li>
+        </ul>
+        <p>Les nouveaux clients doivent utiliser les endpoints v2. Les endpoints v1 sont maintenus mais signalés comme dépréciés dans la documentation OpenAPI (<code>@Deprecated</code>).</p>
+        <p><strong>Source :</strong> <code>ClientResource</code> et <code>AccountResource</code> — adaptateurs REST avec double mapping @Path</p>
+      </div>
+    </div>
+
+    <div class="rule-card">
+      <div class="rule-id">💓 R12 &nbsp;<span class="cds--tag cds--tag--green">Health Checks</span></div>
+      <div class="rule-title">Readiness vérifie la base de données locale ET les services amont (API Gateway)</div>
+      <div class="rule-desc">
+        <p>Stratégie de health check différenciée par service :</p>
+        <ul>
+          <li><strong>Client Service</strong> <code>@Readiness</code> : vérifie la connexion à <code>bank_client_db</code> (PostgreSQL :5433)</li>
+          <li><strong>Account Service</strong> <code>@Readiness</code> : vérifie la connexion à <code>banking_account_db</code> (PostgreSQL :5434)</li>
+          <li><strong>API Gateway</strong> <code>ServicesHealthCheck @Readiness</code> : appelle <code>GET /health/ready</code> des deux services — DOWN si l'un est indisponible</li>
+        </ul>
+        <p>Les sondes <code>@Liveness</code> (<code>ClientServiceLivenessCheck</code>, <code>AccountServiceLivenessCheck</code>, <code>GatewayLivenessCheck</code>) vérifient uniquement l'état interne (mémoire, threads) sans dépendances externes.</p>
+        <p><strong>Endpoints exposés :</strong> <code>GET /health/ready</code> et <code>GET /health/live</code> (MicroProfile Health 4.0)</p>
+        <p><strong>Source :</strong> <code>ServicesHealthCheck</code> (API Gateway), <code>ClientServiceHealthCheck</code>, <code>AccountServiceHealthCheck</code></p>
+      </div>
+    </div>
+
+    <hr class="cds--divider"/>
+
+    <!-- Récapitulatif -->
+    <h2>Récapitulatif des 12 Règles</h2>
+    <div class="cds--data-table-container">
+      <table class="cds--data-table">
+        <thead>
+          <tr><th>#</th><th>Règle</th><th>Catégorie</th><th>Source principale</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>R1</strong></td>
+            <td>Client doit exister avant création d'un compte</td>
+            <td><span class="cds--tag cds--tag--red">Critique</span></td>
+            <td><code>AccountService</code> + <code>ClientServiceClient @Fallback</code></td>
+          </tr>
+          <tr>
+            <td><strong>R2</strong></td>
+            <td>Solde ≥ 0 — dépôt/retrait/transfert validés</td>
+            <td><span class="cds--tag cds--tag--red">Critique</span></td>
+            <td>Modèle de domaine <code>Account</code></td>
+          </tr>
+          <tr>
+            <td><strong>R3</strong></td>
+            <td>Compte SUSPENDED ou CLOSED — aucune opération financière</td>
+            <td><span class="cds--tag cds--tag--red">Critique</span></td>
+            <td>Guards <code>Account.status</code></td>
+          </tr>
+          <tr>
+            <td><strong>R4</strong></td>
+            <td>Compte ne peut être CLOSED qu'avec solde = 0</td>
+            <td><span class="cds--tag cds--tag--red">Critique</span></td>
+            <td><code>Account.close()</code></td>
+          </tr>
+          <tr>
+            <td><strong>R5</strong></td>
+            <td>Circuit Breaker : 50% échecs / 4 req → ouvert 5s → 2 succès</td>
+            <td><span class="cds--tag cds--tag--warm">Fault Tolerance</span></td>
+            <td><code>@CircuitBreaker</code> sur REST clients</td>
+          </tr>
+          <tr>
+            <td><strong>R6</strong></td>
+            <td>Retry : 3 tentatives + 1s de délai</td>
+            <td><span class="cds--tag cds--tag--warm">Fault Tolerance</span></td>
+            <td><code>@Retry(maxRetries=3, delay=1000)</code></td>
+          </tr>
+          <tr>
+            <td><strong>R7</strong></td>
+            <td>Timeout : 2s (Client Svc) / 3–5s (API Gateway)</td>
+            <td><span class="cds--tag cds--tag--warm">Fault Tolerance</span></td>
+            <td><code>@Timeout</code> sur méthodes REST clients</td>
+          </tr>
+          <tr>
+            <td><strong>R8</strong></td>
+            <td>Fallback : toutes méthodes REST ont une valeur de secours</td>
+            <td><span class="cds--tag cds--tag--green">Fault Tolerance</span></td>
+            <td><code>@Fallback</code> annotations</td>
+          </tr>
+          <tr>
+            <td><strong>R9</strong></td>
+            <td>Bulkhead : max 10 appels concurrents (BankingAggregationService)</td>
+            <td><span class="cds--tag cds--tag--blue">Fault Tolerance</span></td>
+            <td><code>@Bulkhead(10)</code></td>
+          </tr>
+          <tr>
+            <td><strong>R10</strong></td>
+            <td>Database per Service — aucun accès SQL cross-service</td>
+            <td><span class="cds--tag cds--tag--teal">Architecture</span></td>
+            <td>Décision d'architecture, persistence.xml</td>
+          </tr>
+          <tr>
+            <td><strong>R11</strong></td>
+            <td>Versioning API : v1 (deprecated) + v2 (courant)</td>
+            <td><span class="cds--tag cds--tag--teal">Architecture</span></td>
+            <td><code>ClientResource</code> + <code>AccountResource</code></td>
+          </tr>
+          <tr>
+            <td><strong>R12</strong></td>
+            <td>Readiness vérifie DB locale + services amont (API Gateway)</td>
+            <td><span class="cds--tag cds--tag--teal">Architecture</span></td>
+            <td><code>ServicesHealthCheck @Readiness</code></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <hr class="cds--divider"/>
+  </main>
+</div>
+
+<footer class="cds--footer">
+  Banking Microservices Architecture — Lab 08 · Java 17 / Jakarta EE 10 / MicroProfile 6.0 / Open Liberty · © 2025 Olivier Planson
+</footer>
+</body>
+</html>

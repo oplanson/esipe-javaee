@@ -1,0 +1,258 @@
+<!-- © Copyright 2026 Olivier Planson. All rights reserved. Reproduction prohibited. Made with IBM Bob. -->
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Architecture Fonctionnelle — Banking JSF Application Lab 02B</title>
+  <link rel="stylesheet" href="assets/carbon.css"/>
+</head>
+<body>
+
+<header class="cds--header">
+  <a class="cds--header__name" href="index.html">Banking JSF Application<span>Documentation Technique — Lab 02B</span></a>
+</header>
+
+<div class="cds--shell">
+  <nav class="cds--side-nav">
+    <p class="cds--side-nav__section-title">Documentation</p>
+    <a class="cds--side-nav__link" href="index.html"><i class="icon">⊙</i> Vue d'ensemble</a>
+    <a class="cds--side-nav__link active" href="functional.html"><i class="icon">⊞</i> Architecture Fonctionnelle</a>
+    <a class="cds--side-nav__link" href="technical.html"><i class="icon">⊟</i> Architecture Technique</a>
+    <a class="cds--side-nav__link" href="sequences.html"><i class="icon">⇄</i> Diagrammes de Séquences</a>
+    <a class="cds--side-nav__link" href="rules.html"><i class="icon">≡</i> Règles de Gestion</a>
+  </nav>
+
+  <main class="cds--content">
+
+    <nav class="cds--breadcrumb">
+      <a href="index.html">Vue d'ensemble</a>
+      <span class="sep">/</span>
+      <span class="current">Architecture Fonctionnelle</span>
+    </nav>
+
+    <h1>Architecture Fonctionnelle</h1>
+    <p class="page-lead">
+      Décomposition en domaines fonctionnels de l'application Banking JSF.
+      Chaque domaine regroupe ses beans CDI, ses modèles et ses vues Facelets associées.
+    </p>
+
+    <!-- ── Diagramme global ── -->
+    <h2>Diagramme de composants</h2>
+    <div class="arch-box">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 860 340" font-family="IBM Plex Sans,Arial,sans-serif" font-size="12">
+
+        <!-- Browser -->
+        <rect x="10" y="130" width="110" height="50" rx="4" fill="#d0e2ff" stroke="#0043ce" stroke-width="1.5"/>
+        <text x="65" y="151" text-anchor="middle" font-weight="600" fill="#0043ce">Browser</text>
+        <text x="65" y="169" text-anchor="middle" fill="#0043ce" font-size="10">HTTP/HTTPS</text>
+
+        <!-- Arrow Browser -> FacesServlet -->
+        <line x1="120" y1="155" x2="185" y2="155" stroke="#525252" stroke-width="1.5" marker-end="url(#arr)"/>
+        <text x="152" y="149" text-anchor="middle" fill="#525252" font-size="10">JSF req.</text>
+
+        <!-- FacesServlet -->
+        <rect x="185" y="115" width="130" height="80" rx="4" fill="#e8daff" stroke="#491d8b" stroke-width="1.5"/>
+        <text x="250" y="140" text-anchor="middle" font-weight="600" fill="#491d8b">FacesServlet</text>
+        <text x="250" y="158" text-anchor="middle" fill="#491d8b" font-size="10">+ Facelets</text>
+        <text x="250" y="173" text-anchor="middle" fill="#491d8b" font-size="10">Jakarta Faces 4.0</text>
+        <text x="250" y="188" text-anchor="middle" fill="#491d8b" font-size="10">*.xhtml mapping</text>
+
+        <!-- Arrow FacesServlet -> ClientBean -->
+        <line x1="315" y1="155" x2="385" y2="155" stroke="#525252" stroke-width="1.5" marker-end="url(#arr)"/>
+        <text x="350" y="149" text-anchor="middle" fill="#525252" font-size="10">EL eval.</text>
+
+        <!-- ClientBean -->
+        <rect x="385" y="105" width="150" height="100" rx="4" fill="#defbe6" stroke="#0e6027" stroke-width="1.5"/>
+        <text x="460" y="130" text-anchor="middle" font-weight="600" fill="#0e6027">ClientBean</text>
+        <text x="460" y="148" text-anchor="middle" fill="#0e6027" font-size="10">@Named</text>
+        <text x="460" y="163" text-anchor="middle" fill="#0e6027" font-size="10">@SessionScoped</text>
+        <text x="460" y="178" text-anchor="middle" fill="#0e6027" font-size="10">loadClients()</text>
+        <text x="460" y="193" text-anchor="middle" fill="#0e6027" font-size="10">save() / search()</text>
+
+        <!-- Arrow ClientBean -> ClientService -->
+        <line x1="535" y1="155" x2="610" y2="155" stroke="#525252" stroke-width="1.5" marker-end="url(#arr)"/>
+        <text x="572" y="149" text-anchor="middle" fill="#525252" font-size="10">@Inject</text>
+
+        <!-- ClientService -->
+        <rect x="610" y="105" width="150" height="100" rx="4" fill="#fdf6dd" stroke="#8c4f00" stroke-width="1.5"/>
+        <text x="685" y="130" text-anchor="middle" font-weight="600" fill="#8c4f00">ClientService</text>
+        <text x="685" y="148" text-anchor="middle" fill="#8c4f00" font-size="10">@ApplicationScoped</text>
+        <text x="685" y="163" text-anchor="middle" fill="#8c4f00" font-size="10">getAllClients()</text>
+        <text x="685" y="178" text-anchor="middle" fill="#8c4f00" font-size="10">save(client)</text>
+        <text x="685" y="193" text-anchor="middle" fill="#8c4f00" font-size="10">searchClients(term)</text>
+
+        <!-- Arrow ClientService -> In-Memory -->
+        <line x1="760" y1="155" x2="820" y2="155" stroke="#525252" stroke-width="1.5" marker-end="url(#arr)"/>
+
+        <!-- In-Memory -->
+        <rect x="820" y="130" width="30" height="50" rx="2" fill="#c6c6c6" stroke="#8d8d8d" stroke-width="1"/>
+        <text x="835" y="149" text-anchor="middle" fill="#161616" font-size="9">List</text>
+        <text x="835" y="163" text-anchor="middle" fill="#161616" font-size="9">[]</text>
+
+        <!-- Address value object -->
+        <rect x="385" y="245" width="150" height="55" rx="4" fill="#f4f4f4" stroke="#c6c6c6" stroke-width="1.5"/>
+        <text x="460" y="266" text-anchor="middle" font-weight="600" fill="#525252">Address</text>
+        <text x="460" y="282" text-anchor="middle" fill="#525252" font-size="10">Value Object</text>
+        <text x="460" y="297" text-anchor="middle" fill="#525252" font-size="10">rue / ville / cp / pays</text>
+        <line x1="460" y1="205" x2="460" y2="245" stroke="#8d8d8d" stroke-width="1" stroke-dasharray="4,3"/>
+
+        <!-- EmailValidator -->
+        <rect x="185" y="245" width="150" height="55" rx="4" fill="#fff1f1" stroke="#da1e28" stroke-width="1.5"/>
+        <text x="260" y="266" text-anchor="middle" font-weight="600" fill="#da1e28">EmailValidator</text>
+        <text x="260" y="282" text-anchor="middle" fill="#da1e28" font-size="10">@FacesValidator</text>
+        <text x="260" y="297" text-anchor="middle" fill="#da1e28" font-size="10">regex validation</text>
+        <line x1="250" y1="195" x2="250" y2="245" stroke="#da1e28" stroke-width="1" stroke-dasharray="4,3"/>
+
+        <!-- Health checks -->
+        <rect x="610" y="245" width="150" height="55" rx="4" fill="#edf5ff" stroke="#0043ce" stroke-width="1.5"/>
+        <text x="685" y="263" text-anchor="middle" font-weight="600" fill="#0043ce">Health Checks</text>
+        <text x="685" y="279" text-anchor="middle" fill="#0043ce" font-size="10">DatabaseHealthCheck</text>
+        <text x="685" y="295" text-anchor="middle" fill="#0043ce" font-size="10">WebAppReadinessCheck</text>
+        <line x1="685" y1="205" x2="685" y2="245" stroke="#0043ce" stroke-width="1" stroke-dasharray="4,3"/>
+
+        <!-- Labels -->
+        <text x="65" y="200" text-anchor="middle" fill="#525252" font-size="10">Navigateur</text>
+        <text x="835" y="195" text-anchor="middle" fill="#525252" font-size="9">In-Mem</text>
+
+        <!-- Arrow marker -->
+        <defs>
+          <marker id="arr" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+            <path d="M0,0 L0,6 L8,3 z" fill="#525252"/>
+          </marker>
+        </defs>
+      </svg>
+    </div>
+
+    <!-- ── Domaine 1 : Gestion des Clients ── -->
+    <h2>Domaine 1 — Gestion des Clients</h2>
+    <p>Ce domaine couvre le cycle de vie complet d'un client bancaire : création, listage, détail et recherche.</p>
+
+    <h3>Beans CDI</h3>
+    <div class="cds--data-table-container">
+      <table class="cds--data-table">
+        <thead>
+          <tr><th>Bean</th><th>Portée CDI</th><th>Responsabilité</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>ClientBean</code></td>
+            <td><span class="cds--tag cds--tag--green">@Named @SessionScoped</span></td>
+            <td>Contrôleur JSF — maintient l'état de la session (client sélectionné, résultats de recherche). Relaie les actions UI vers <code>ClientService</code>.</td>
+          </tr>
+          <tr>
+            <td><code>ClientService</code></td>
+            <td><span class="cds--tag cds--tag--warm">@ApplicationScoped</span></td>
+            <td>Service métier singleton — stockage en mémoire (<code>ArrayList</code>), CRUD complet, recherche insensible à la casse.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3>Modèles</h3>
+    <div class="tile-grid">
+      <div class="cds--tile">
+        <h3>Client</h3>
+        <p>Entité principale — identifiant auto-incrémenté, nom, prénom, email, objet <code>Address</code> imbriqué.</p>
+      </div>
+      <div class="cds--tile">
+        <h3>Account</h3>
+        <p>Compte bancaire associé à un client — numéro de compte, solde, type (courant / épargne).</p>
+      </div>
+      <div class="cds--tile">
+        <h3>Address</h3>
+        <p>Value object — rue, ville, code postal, pays. Validé dans le formulaire via <code>f:validateLength</code>.</p>
+      </div>
+    </div>
+
+    <h3>Vues Facelets (WEB-INF/views/)</h3>
+    <div class="cds--data-table-container">
+      <table class="cds--data-table">
+        <thead>
+          <tr><th>Fichier</th><th>Rôle</th><th>Fonctionnalités clés</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>client-list.xhtml</code></td>
+            <td>Liste des clients</td>
+            <td>Tableau de données (<code>h:dataTable</code>), barre de recherche AJAX (<code>f:ajax</code>), bouton suppression avec confirmation.</td>
+          </tr>
+          <tr>
+            <td><code>client-form.xhtml</code></td>
+            <td>Formulaire de création/édition</td>
+            <td>Champs texte, <code>f:validateLength</code>, validateur email personnalisé, messages d'erreur <code>h:message</code>.</td>
+          </tr>
+          <tr>
+            <td><code>client-details.xhtml</code></td>
+            <td>Détail d'un client</td>
+            <td>Affichage complet : informations personnelles, adresse, liste des comptes associés.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- ── Domaine 2 : Validation ── -->
+    <h2>Domaine 2 — Validation</h2>
+    <div class="cds--data-table-container">
+      <table class="cds--data-table">
+        <thead>
+          <tr><th>Validateur</th><th>Type</th><th>Règle vérifiée</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>EmailValidator</code></td>
+            <td><span class="cds--tag cds--tag--red">@FacesValidator</span></td>
+            <td>Regex <code>^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$</code> — rejet des adresses malformées avec message localisé.</td>
+          </tr>
+          <tr>
+            <td><code>f:validateLength</code></td>
+            <td><span class="cds--tag cds--tag--blue">Built-in JSF</span></td>
+            <td>Longueur min/max sur le nom (2–100), code postal (4–10). Intégré directement dans les vues Facelets.</td>
+          </tr>
+          <tr>
+            <td><code>required="true"</code></td>
+            <td><span class="cds--tag cds--tag--blue">Built-in JSF</span></td>
+            <td>Champs obligatoires : nom, email, rue, ville, code postal, pays.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- ── Domaine 3 : Supervision ── -->
+    <h2>Domaine 3 — Supervision (MicroProfile)</h2>
+    <div class="cds--data-table-container">
+      <table class="cds--data-table">
+        <thead>
+          <tr><th>Classe</th><th>Annotation</th><th>Endpoint</th><th>Rôle</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>DatabaseHealthCheck</code></td>
+            <td><span class="cds--tag cds--tag--green">@Liveness</span></td>
+            <td><code>GET /health/live</code></td>
+            <td>Vérifie que le stockage en mémoire est accessible et que l'application est vivante.</td>
+          </tr>
+          <tr>
+            <td><code>WebAppReadinessCheck</code></td>
+            <td><span class="cds--tag cds--tag--teal">@Readiness</span></td>
+            <td><code>GET /health/ready</code></td>
+            <td>Vérifie que le contexte CDI est initialisé et que l'application est prête à traiter des requêtes.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="cds--inline-notification">
+      <span>ℹ</span>
+      <div>
+        <strong>MicroProfile Health 4.0</strong> — Les sondes sont automatiquement découvertes par Open Liberty
+        et exposées sur <code>http://localhost:9080/health</code>. Aucune configuration XML supplémentaire n'est requise.
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<footer class="cds--footer">Made with IBM Bob — Banking JSF Application Lab 02B · Jakarta EE 10 · Open Liberty 23</footer>
+</body>
+</html>

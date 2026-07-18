@@ -1,0 +1,346 @@
+<!-- © Copyright 2026 Olivier Planson. All rights reserved. Reproduction prohibited. Made with IBM Bob. -->
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Bank Security — Lab 09 | Architecture Technique</title>
+  <link rel="stylesheet" href="assets/carbon.css"/>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;600&family=IBM+Plex+Mono&display=swap" rel="stylesheet"/>
+</head>
+<body>
+
+<!-- ═══ HEADER ═══ -->
+<header class="cds--header">
+  <a class="cds--header__name" href="index.html">
+    🔐 Bank Security Application
+    <span>— Lab 09</span>
+  </a>
+  <span class="cds--header__divider">|</span>
+  <span style="font-size:.75rem;color:#8d8d8d;">Jakarta EE 10 · MicroProfile 6.1 · Open Liberty 24.0.0.1</span>
+</header>
+
+<div class="cds--shell">
+  <nav class="cds--side-nav" aria-label="Navigation principale">
+    <p class="cds--side-nav__section-title">Documentation</p>
+    <a class="cds--side-nav__link" href="index.html"><i class="icon">🏠</i> Vue d'ensemble</a>
+    <a class="cds--side-nav__link" href="functional.html"><i class="icon">⚙️</i> Architecture Fonctionnelle</a>
+    <a class="cds--side-nav__link active" href="technical.html"><i class="icon">🏗️</i> Architecture Technique</a>
+    <a class="cds--side-nav__link" href="sequences.html"><i class="icon">🔄</i> Diagrammes de Séquence</a>
+    <a class="cds--side-nav__link" href="rules.html"><i class="icon">📋</i> Règles de Sécurité</a>
+  </nav>
+
+  <main class="cds--content">
+    <nav class="cds--breadcrumb">
+      <a href="index.html">Vue d'ensemble</a>
+      <span class="sep">/</span>
+      <span class="current">Architecture Technique</span>
+    </nav>
+
+    <h1>Architecture Technique</h1>
+    <p class="page-lead">
+      Description des couches techniques de sécurité, du cycle de vie JWT,
+      du schéma de base de données PostgreSQL, de la configuration Open Liberty
+      et du catalogue complet des endpoints REST.
+    </p>
+
+    <!-- ── Couches de sécurité SVG ── -->
+    <h2>Couches de sécurité</h2>
+    <div class="arch-box">
+      <svg viewBox="0 0 700 340" xmlns="http://www.w3.org/2000/svg" font-family="IBM Plex Sans,Arial,sans-serif" font-size="12" width="100%">
+        <!-- Layer backgrounds -->
+        <rect x="10"  y="10"  width="680" height="46"  rx="4" fill="#ffd7d9" stroke="#da1e28" stroke-width="1.5"/>
+        <rect x="10"  y="70"  width="680" height="46"  rx="4" fill="#e8daff" stroke="#491d8b" stroke-width="1.5"/>
+        <rect x="10"  y="130" width="680" height="46"  rx="4" fill="#d0e2ff" stroke="#0043ce" stroke-width="1.5"/>
+        <rect x="10"  y="190" width="680" height="46"  rx="4" fill="#defbe6" stroke="#0e6027" stroke-width="1.5"/>
+        <rect x="10"  y="250" width="680" height="46"  rx="4" fill="#d9fbfb" stroke="#004144" stroke-width="1.5"/>
+        <rect x="10"  y="294" width="680" height="40"  rx="4" fill="#f4f4f4"  stroke="#8d8d8d" stroke-width="1.5"/>
+        <!-- Layer labels left -->
+        <text x="24" y="29" fill="#750e13" font-weight="700" font-size="10" text-transform="uppercase" letter-spacing=".06em">COUCHE 1</text>
+        <text x="24" y="49" fill="#750e13" font-size="12" font-weight="600">Internet → SecurityHeadersFilter + CorsFilter</text>
+        <text x="24" y="89" fill="#491d8b" font-weight="700" font-size="10">COUCHE 2</text>
+        <text x="24" y="109" fill="#491d8b" font-size="12" font-weight="600">JwtAuthenticationMechanism  →  DatabaseIdentityStore</text>
+        <text x="24" y="149" fill="#0043ce" font-weight="700" font-size="10">COUCHE 3</text>
+        <text x="24" y="169" fill="#0043ce" font-size="12" font-weight="600">JAX-RS Resource  →  @RolesAllowed (déclaratif)</text>
+        <text x="24" y="209" fill="#0e6027" font-weight="700" font-size="10">COUCHE 4</text>
+        <text x="24" y="229" fill="#0e6027" font-size="12" font-weight="600">Programmatic SecurityContext  →  isUserInRole()</text>
+        <text x="24" y="269" fill="#004144" font-weight="700" font-size="10">COUCHE 5</text>
+        <text x="24" y="289" fill="#004144" font-size="12" font-weight="600">Services métier  →  JPA / PostgreSQL</text>
+        <text x="24" y="316" fill="#525252" font-size="12" font-weight="600">SecurityAuditService  →  Persistance des événements de sécurité</text>
+        <!-- Arrow down -->
+        <line x1="650" y1="56" x2="650" y2="68" stroke="#525252" stroke-width="2" marker-end="url(#arrd)"/>
+        <line x1="650" y1="116" x2="650" y2="128" stroke="#525252" stroke-width="2" marker-end="url(#arrd)"/>
+        <line x1="650" y1="176" x2="650" y2="188" stroke="#525252" stroke-width="2" marker-end="url(#arrd)"/>
+        <line x1="650" y1="236" x2="650" y2="248" stroke="#525252" stroke-width="2" marker-end="url(#arrd)"/>
+        <line x1="650" y1="296" x2="650" y2="292" stroke="#525252" stroke-width="2"/>
+        <defs>
+          <marker id="arrd" markerWidth="7" markerHeight="7" refX="3.5" refY="3.5" orient="auto">
+            <path d="M0,0 L7,3.5 L0,7 Z" fill="#525252"/>
+          </marker>
+        </defs>
+      </svg>
+    </div>
+
+    <!-- ── Cycle de vie JWT ── -->
+    <h2>Cycle de vie du token JWT</h2>
+    <div class="arch-box">
+      <svg viewBox="0 0 820 200" xmlns="http://www.w3.org/2000/svg" font-family="IBM Plex Mono,Courier New,monospace" font-size="10.5" width="100%">
+        <!-- Phase 1 : Login -->
+        <rect x="4"   y="10" width="118" height="50" rx="3" fill="#d0e2ff" stroke="#0043ce" stroke-width="1.2"/>
+        <text x="63"  y="31" text-anchor="middle" fill="#0043ce" font-weight="700">POST /login</text>
+        <text x="63"  y="47" text-anchor="middle" fill="#0043ce">{user, pwd}</text>
+        <!-- Phase 2 : IdentityStore -->
+        <rect x="140" y="10" width="130" height="50" rx="3" fill="#e8daff" stroke="#491d8b" stroke-width="1.2"/>
+        <text x="205" y="31" text-anchor="middle" fill="#491d8b" font-weight="700">DatabaseIdentity</text>
+        <text x="205" y="44" text-anchor="middle" fill="#491d8b">Store.validate()</text>
+        <text x="205" y="57" text-anchor="middle" fill="#491d8b">PBKDF2 verify</text>
+        <!-- Phase 3 : JwtService -->
+        <rect x="288" y="10" width="128" height="50" rx="3" fill="#e8daff" stroke="#491d8b" stroke-width="1.2"/>
+        <text x="352" y="31" text-anchor="middle" fill="#491d8b" font-weight="700">JwtService</text>
+        <text x="352" y="44" text-anchor="middle" fill="#491d8b">.generateToken()</text>
+        <text x="352" y="57" text-anchor="middle" fill="#491d8b">HS256 · 24h</text>
+        <!-- Phase 4 : AuthResponse -->
+        <rect x="432" y="10" width="118" height="50" rx="3" fill="#defbe6" stroke="#0e6027" stroke-width="1.2"/>
+        <text x="491" y="31" text-anchor="middle" fill="#0e6027" font-weight="700">AuthResponse</text>
+        <text x="491" y="47" text-anchor="middle" fill="#0e6027">{token, roles}</text>
+        <!-- Arrows phase 1 -->
+        <line x1="122" y1="35" x2="138" y2="35" stroke="#525252" stroke-width="1.5" marker-end="url(#arrh)"/>
+        <line x1="270" y1="35" x2="286" y2="35" stroke="#525252" stroke-width="1.5" marker-end="url(#arrh)"/>
+        <line x1="416" y1="35" x2="430" y2="35" stroke="#525252" stroke-width="1.5" marker-end="url(#arrh)"/>
+        <!-- Phase 2 : Client stores token → subsequent request -->
+        <rect x="4"   y="130" width="118" height="50" rx="3" fill="#f5e0c3" stroke="#5d3b1e" stroke-width="1.2"/>
+        <text x="63"  y="151" text-anchor="middle" fill="#5d3b1e" font-weight="700">Client stocke</text>
+        <text x="63"  y="167" text-anchor="middle" fill="#5d3b1e">le token</text>
+        <rect x="140" y="130" width="136" height="50" rx="3" fill="#d0e2ff" stroke="#0043ce" stroke-width="1.2"/>
+        <text x="208" y="148" text-anchor="middle" fill="#0043ce" font-weight="700">Requête suivante</text>
+        <text x="208" y="161" text-anchor="middle" fill="#0043ce">Authorization:</text>
+        <text x="208" y="174" text-anchor="middle" fill="#0043ce">Bearer &lt;token&gt;</text>
+        <rect x="292" y="130" width="134" height="50" rx="3" fill="#e8daff" stroke="#491d8b" stroke-width="1.2"/>
+        <text x="359" y="148" text-anchor="middle" fill="#491d8b" font-weight="700">JwtAuthentication</text>
+        <text x="359" y="161" text-anchor="middle" fill="#491d8b">Mechanism</text>
+        <text x="359" y="174" text-anchor="middle" fill="#491d8b">.validateRequest()</text>
+        <rect x="442" y="130" width="134" height="50" rx="3" fill="#defbe6" stroke="#0e6027" stroke-width="1.2"/>
+        <text x="509" y="148" text-anchor="middle" fill="#0e6027" font-weight="700">JwtService</text>
+        <text x="509" y="161" text-anchor="middle" fill="#0e6027">.parseToken()</text>
+        <text x="509" y="174" text-anchor="middle" fill="#0e6027">→ principal+roles</text>
+        <rect x="592" y="130" width="130" height="50" rx="3" fill="#defbe6" stroke="#0e6027" stroke-width="1.2"/>
+        <text x="657" y="148" text-anchor="middle" fill="#0e6027" font-weight="700">Security</text>
+        <text x="657" y="161" text-anchor="middle" fill="#0e6027">Context peuplé</text>
+        <text x="657" y="174" text-anchor="middle" fill="#0e6027">→ @RolesAllowed</text>
+        <!-- Arrows phase 2 -->
+        <line x1="122" y1="155" x2="138" y2="155" stroke="#525252" stroke-width="1.5" marker-end="url(#arrh)"/>
+        <line x1="276" y1="155" x2="290" y2="155" stroke="#525252" stroke-width="1.5" marker-end="url(#arrh)"/>
+        <line x1="426" y1="155" x2="440" y2="155" stroke="#525252" stroke-width="1.5" marker-end="url(#arrh)"/>
+        <line x1="576" y1="155" x2="590" y2="155" stroke="#525252" stroke-width="1.5" marker-end="url(#arrh)"/>
+        <!-- Down arrow linking phase 1 response to phase 2 client -->
+        <line x1="491" y1="60" x2="491" y2="90" stroke="#0e6027" stroke-width="1.5" stroke-dasharray="4,3"/>
+        <line x1="491" y1="90" x2="63"  y2="90" stroke="#0e6027" stroke-width="1.5" stroke-dasharray="4,3"/>
+        <line x1="63"  y1="90" x2="63"  y2="128" stroke="#0e6027" stroke-width="1.5" stroke-dasharray="4,3" marker-end="url(#arrg)"/>
+        <defs>
+          <marker id="arrh" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto">
+            <path d="M0,0 L6,3 L0,6 Z" fill="#525252"/>
+          </marker>
+          <marker id="arrg" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto">
+            <path d="M0,0 L6,3 L0,6 Z" fill="#0e6027"/>
+          </marker>
+        </defs>
+      </svg>
+    </div>
+
+    <!-- ── Schéma BDD ── -->
+    <h2>Schéma de base de données PostgreSQL</h2>
+    <div class="tile-grid">
+      <div class="cds--tile">
+        <h3>Table <code>users</code></h3>
+        <ul>
+          <li><code>id</code> — BIGSERIAL PK</li>
+          <li><code>username</code> — VARCHAR UNIQUE NOT NULL</li>
+          <li><code>email</code> — VARCHAR UNIQUE NOT NULL</li>
+          <li><code>password</code> — TEXT (hash PBKDF2)</li>
+          <li><code>enabled</code> — BOOLEAN DEFAULT true</li>
+          <li><code>account_locked</code> — BOOLEAN DEFAULT false</li>
+          <li><code>failed_login_attempts</code> — INT DEFAULT 0</li>
+          <li><code>last_login</code> — TIMESTAMP</li>
+          <li><code>created_at</code> — TIMESTAMP DEFAULT NOW()</li>
+        </ul>
+      </div>
+      <div class="cds--tile">
+        <h3>Table <code>user_roles</code></h3>
+        <ul>
+          <li><code>user_id</code> — BIGINT FK → users.id</li>
+          <li><code>role</code> — VARCHAR (ADMIN|MANAGER|TELLER|CUSTOMER)</li>
+        </ul>
+        <h3>Table <code>accounts</code></h3>
+        <ul>
+          <li><code>id</code> — BIGSERIAL PK</li>
+          <li><code>account_number</code> — VARCHAR UNIQUE</li>
+          <li><code>owner_username</code> — VARCHAR NOT NULL</li>
+          <li><code>balance</code> — DECIMAL(15,2)</li>
+          <li><code>account_type</code> — VARCHAR</li>
+          <li><code>created_at</code> — TIMESTAMP</li>
+        </ul>
+      </div>
+      <div class="cds--tile">
+        <h3>Table <code>security_audit_logs</code></h3>
+        <ul>
+          <li><code>id</code> — BIGSERIAL PK</li>
+          <li><code>timestamp</code> — TIMESTAMP NOT NULL</li>
+          <li><code>username</code> — VARCHAR</li>
+          <li><code>action</code> — VARCHAR (LOGIN/LOGOUT/ACCESS…)</li>
+          <li><code>resource</code> — VARCHAR</li>
+          <li><code>result</code> — VARCHAR (SUCCESS/FAILURE/DENIED)</li>
+          <li><code>ip_address</code> — VARCHAR</li>
+          <li><code>user_agent</code> — TEXT</li>
+          <li><code>details</code> — TEXT</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- ── Liberty features ── -->
+    <h2>Configuration Open Liberty</h2>
+    <div class="tile-grid">
+      <div class="cds--tile">
+        <h3>Features Liberty</h3>
+        <ul>
+          <li><code>webProfile-10.0</code></li>
+          <li><code>microProfile-6.1</code></li>
+          <li><code>applicationSecurity-5.0</code> / <code>6.0</code></li>
+          <li><code>jdbc-4.2</code></li>
+        </ul>
+      </div>
+      <div class="cds--tile">
+        <h3>Paramètres de sécurité</h3>
+        <ul>
+          <li><code>jwt.secret</code> — minimum 256 bits (HS256)</li>
+          <li><code>jwt.expiration.hours</code> = 24</li>
+          <li><code>security.max.failed.attempts</code> = 5</li>
+          <li><code>security.account.lockout.duration.minutes</code> = 30</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- ── Endpoints ── -->
+    <h2>Catalogue des endpoints REST</h2>
+
+    <h3>AuthResource — Authentification (<code>/api/auth</code>)</h3>
+    <div class="cds--data-table-container">
+      <table class="cds--data-table">
+        <thead>
+          <tr><th>Méthode</th><th>Chemin</th><th>Accès</th><th>Description</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><span class="cds--tag cds--tag--blue">POST</span></td>
+            <td><code>/api/auth/login</code></td>
+            <td><span class="cds--tag cds--tag--green">Public</span></td>
+            <td>Authentification par identifiants, retourne un token JWT</td>
+          </tr>
+          <tr>
+            <td><span class="cds--tag cds--tag--blue">POST</span></td>
+            <td><code>/api/auth/register</code></td>
+            <td><span class="cds--tag cds--tag--green">Public</span></td>
+            <td>Inscription — rôle CUSTOMER assigné automatiquement</td>
+          </tr>
+          <tr>
+            <td><span class="cds--tag cds--tag--blue">POST</span></td>
+            <td><code>/api/auth/logout</code></td>
+            <td><span class="cds--tag cds--tag--teal">@PermitAll</span></td>
+            <td>Déconnexion (tout utilisateur authentifié)</td>
+          </tr>
+          <tr>
+            <td><span class="cds--tag cds--tag--teal">GET</span></td>
+            <td><code>/api/auth/me</code></td>
+            <td><span class="cds--tag cds--tag--teal">@PermitAll</span></td>
+            <td>Profil de l'utilisateur courant</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3>AccountResource — Comptes (<code>/api/accounts</code>)</h3>
+    <div class="cds--data-table-container">
+      <table class="cds--data-table">
+        <thead>
+          <tr><th>Méthode</th><th>Chemin</th><th>Rôles</th><th>Description</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><span class="cds--tag cds--tag--teal">GET</span></td>
+            <td><code>/api/accounts</code></td>
+            <td><span class="cds--tag cds--tag--red">ADMIN</span> <span class="cds--tag cds--tag--purple">MANAGER</span></td>
+            <td>Liste tous les comptes</td>
+          </tr>
+          <tr>
+            <td><span class="cds--tag cds--tag--teal">GET</span></td>
+            <td><code>/api/accounts/my</code></td>
+            <td>Tous les rôles</td>
+            <td>Comptes de l'utilisateur connecté</td>
+          </tr>
+          <tr>
+            <td><span class="cds--tag cds--tag--teal">GET</span></td>
+            <td><code>/api/accounts/{id}</code></td>
+            <td>Tous les rôles + ownership CUSTOMER</td>
+            <td>Détail d'un compte</td>
+          </tr>
+          <tr>
+            <td><span class="cds--tag cds--tag--blue">POST</span></td>
+            <td><code>/api/accounts</code></td>
+            <td><span class="cds--tag cds--tag--red">ADMIN</span> <span class="cds--tag cds--tag--purple">MANAGER</span> <span class="cds--tag cds--tag--blue">TELLER</span></td>
+            <td>Crée un nouveau compte</td>
+          </tr>
+          <tr>
+            <td><span class="cds--tag cds--tag--blue">POST</span></td>
+            <td><code>/api/accounts/{id}/deposit</code></td>
+            <td><span class="cds--tag cds--tag--red">ADMIN</span> <span class="cds--tag cds--tag--purple">MANAGER</span> <span class="cds--tag cds--tag--blue">TELLER</span></td>
+            <td>Dépôt sur un compte</td>
+          </tr>
+          <tr>
+            <td><span class="cds--tag cds--tag--blue">POST</span></td>
+            <td><code>/api/accounts/{id}/withdraw</code></td>
+            <td><span class="cds--tag cds--tag--red">ADMIN</span> <span class="cds--tag cds--tag--purple">MANAGER</span> <span class="cds--tag cds--tag--blue">TELLER</span></td>
+            <td>Retrait depuis un compte</td>
+          </tr>
+          <tr>
+            <td><span class="cds--tag cds--tag--blue">POST</span></td>
+            <td><code>/api/accounts/transfer</code></td>
+            <td><span class="cds--tag cds--tag--red">ADMIN</span> <span class="cds--tag cds--tag--purple">MANAGER</span></td>
+            <td>Virement entre comptes</td>
+          </tr>
+          <tr>
+            <td><span class="cds--tag cds--tag--red">DELETE</span></td>
+            <td><code>/api/accounts/{id}</code></td>
+            <td><span class="cds--tag cds--tag--red">ADMIN</span></td>
+            <td>Suppression d'un compte</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3>Endpoints publics / MicroProfile</h3>
+    <div class="cds--data-table-container">
+      <table class="cds--data-table">
+        <thead>
+          <tr><th>Chemin</th><th>Accès</th><th>Description</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><code>/health</code></td><td><span class="cds--tag cds--tag--green">Public</span></td><td>MicroProfile Health — liveness + readiness</td></tr>
+          <tr><td><code>/metrics</code></td><td><span class="cds--tag cds--tag--green">Public</span></td><td>MicroProfile Metrics</td></tr>
+          <tr><td><code>/openapi</code></td><td><span class="cds--tag cds--tag--green">Public</span></td><td>MicroProfile OpenAPI</td></tr>
+          <tr><td>Ressources statiques</td><td><span class="cds--tag cds--tag--green">Public</span></td><td>HTML, CSS, JS, images</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <hr class="cds--divider"/>
+    <p style="font-size:.75rem;color:#a8a8a8;">
+      Groupe : <code>com.bank</code> · Artefact : <code>bank-security</code> · Java 17 · Jakarta EE 10 · Open Liberty 24.0.0.1
+    </p>
+  </main>
+</div>
+
+<footer class="cds--footer">
+  Bank Security Application — Lab 09 · Jakarta EE 10 Security · © 2025 Olivier Planson
+</footer>
+</body>
+</html>

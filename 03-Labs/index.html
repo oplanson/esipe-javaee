@@ -1,0 +1,582 @@
+<!-- © Copyright 2026 Olivier Planson. All rights reserved. Reproduction prohibited. Made with IBM Bob. -->
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>ESIPE — Jakarta EE &amp; Microservices — Labs Documentation</title>
+  <style>
+    /* ── Design tokens (Carbon-inspired) ── */
+    :root {
+      --bg:           #ffffff;
+      --layer:        #f4f4f4;
+      --border:       #e0e0e0;
+      --text:         #161616;
+      --muted:        #525252;
+      --placeholder:  #a8a8a8;
+      --interactive:  #0f62fe;
+      --interactive-h:#0353e9;
+      --header-bg:    #161616;
+      --header-txt:   #f4f4f4;
+      --success:      #198038;
+      --success-bg:   #defbe6;
+      --tag-blue-bg:  #d0e2ff; --tag-blue-txt:  #0043ce;
+      --tag-green-bg: #defbe6; --tag-green-txt: #0e6027;
+      --tag-purple-bg:#e8daff; --tag-purple-txt:#491d8b;
+      --tag-teal-bg:  #d9fbfb; --tag-teal-txt:  #004144;
+      --tag-red-bg:   #ffd7d9; --tag-red-txt:   #750e13;
+      --tag-warm-bg:  #f5e0c3; --tag-warm-txt:  #5d3b1e;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { font-size: 16px; }
+    body {
+      font-family: 'IBM Plex Sans','Helvetica Neue',Arial,sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* ── Header ── */
+    header {
+      background: var(--header-bg);
+      color: var(--header-txt);
+      padding: 0 2rem;
+      height: 3rem;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      border-bottom: 1px solid #393939;
+    }
+    header .brand { font-size: .875rem; font-weight: 600; color: var(--header-txt); text-decoration: none; }
+    header .brand span { color: #c6c6c6; font-weight: 400; margin-left: .5rem; }
+
+    /* ── Hero ── */
+    .hero {
+      background: var(--layer);
+      border-bottom: 1px solid var(--border);
+      padding: 3rem 2rem 2.5rem;
+      text-align: center;
+    }
+    .hero h1 {
+      font-size: clamp(1.5rem, 3vw, 2.25rem);
+      font-weight: 300;
+      color: var(--text);
+      margin-bottom: .75rem;
+    }
+    .hero p {
+      font-size: .9375rem;
+      color: var(--muted);
+      max-width: 640px;
+      margin: 0 auto 1.5rem;
+    }
+    .hero .badge-row {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: .5rem;
+    }
+    .badge {
+      display: inline-block;
+      padding: .2rem .65rem;
+      border-radius: 1rem;
+      font-size: .75rem;
+      font-weight: 600;
+      line-height: 1.4;
+    }
+    .badge-blue   { background: var(--tag-blue-bg);   color: var(--tag-blue-txt); }
+    .badge-green  { background: var(--tag-green-bg);  color: var(--tag-green-txt); }
+    .badge-purple { background: var(--tag-purple-bg); color: var(--tag-purple-txt); }
+    .badge-teal   { background: var(--tag-teal-bg);   color: var(--tag-teal-txt); }
+    .badge-red    { background: var(--tag-red-bg);    color: var(--tag-red-txt); }
+    .badge-warm   { background: var(--tag-warm-bg);   color: var(--tag-warm-txt); }
+
+    /* ── Main layout ── */
+    main {
+      flex: 1;
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 2.5rem 2rem 3rem;
+      width: 100%;
+    }
+
+    /* ── Section title ── */
+    .section-title {
+      font-size: .75rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: .08em;
+      color: var(--placeholder);
+      margin: 2.5rem 0 1rem;
+      padding-bottom: .35rem;
+      border-bottom: 1px solid var(--border);
+    }
+    .section-title:first-child { margin-top: 0; }
+
+    /* ── Lab grid ── */
+    .lab-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(290px, 1fr));
+      gap: 1rem;
+      margin-bottom: .5rem;
+    }
+
+    /* ── Lab card ── */
+    .lab-card {
+      background: var(--layer);
+      border: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      text-decoration: none;
+      color: inherit;
+      transition: border-color .15s, box-shadow .15s;
+      position: relative;
+    }
+    .lab-card:hover {
+      border-color: var(--interactive);
+      box-shadow: inset 0 0 0 1px var(--interactive);
+      text-decoration: none;
+    }
+    .lab-card:hover .card-arrow { color: var(--interactive); }
+
+    .card-header {
+      padding: 1rem 1.25rem .75rem;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: flex-start;
+      gap: .75rem;
+    }
+    .lab-number {
+      font-size: .6875rem;
+      font-weight: 700;
+      background: var(--header-bg);
+      color: var(--header-txt);
+      padding: .15rem .45rem;
+      border-radius: 2px;
+      white-space: nowrap;
+      flex-shrink: 0;
+      letter-spacing: .04em;
+      margin-top: .15rem;
+    }
+    .card-title {
+      font-size: .9375rem;
+      font-weight: 600;
+      color: var(--text);
+      line-height: 1.3;
+    }
+    .card-subtitle {
+      font-size: .75rem;
+      color: var(--muted);
+      margin-top: .2rem;
+    }
+
+    .card-body {
+      padding: .75rem 1.25rem 1rem;
+      flex: 1;
+    }
+    .card-desc {
+      font-size: .8125rem;
+      color: var(--muted);
+      margin-bottom: .75rem;
+      line-height: 1.5;
+    }
+    .card-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: .35rem;
+    }
+
+    .card-footer {
+      padding: .6rem 1.25rem;
+      border-top: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: .75rem;
+      color: var(--interactive);
+      font-weight: 600;
+    }
+    .card-arrow {
+      font-size: 1rem;
+      color: var(--muted);
+      transition: color .15s;
+    }
+    .card-pages {
+      color: var(--muted);
+      font-weight: 400;
+    }
+
+    /* ── Footer ── */
+    footer {
+      background: var(--layer);
+      border-top: 1px solid var(--border);
+      padding: .875rem 2rem;
+      font-size: .75rem;
+      color: var(--placeholder);
+      text-align: center;
+    }
+
+    /* ── Responsive ── */
+    @media (max-width: 640px) {
+      .hero { padding: 2rem 1.25rem 1.75rem; }
+      main { padding: 1.5rem 1.25rem 2rem; }
+      .lab-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <a class="brand" href="#">ESIPE<span>Jakarta EE &amp; Microservices — Documentation des Labs</span></a>
+</header>
+
+<div class="hero">
+  <h1>Documentation des Labs</h1>
+  <p>Navigation centrale vers la documentation technique générée pour chaque lab du cours Jakarta EE &amp; Microservices.</p>
+  <div class="badge-row">
+    <span class="badge badge-blue">Jakarta EE 10</span>
+    <span class="badge badge-green">MicroProfile 6</span>
+    <span class="badge badge-teal">Open Liberty 23</span>
+    <span class="badge badge-purple">Java 17</span>
+    <span class="badge badge-warm">IBM Carbon Design</span>
+  </div>
+</div>
+
+<main>
+
+  <!-- ── Bloc 1 — Fondamentaux Web ── -->
+  <p class="section-title">Fondamentaux Web Jakarta EE</p>
+  <div class="lab-grid">
+
+    <a class="lab-card" href="Lab01-FirstServlet/solution/docs/index.html">
+      <div class="card-header">
+        <span class="lab-number">LAB 01</span>
+        <div>
+          <div class="card-title">First Servlet</div>
+          <div class="card-subtitle">banking-app — Premier Servlet Jakarta EE</div>
+        </div>
+      </div>
+      <div class="card-body">
+        <p class="card-desc">Introduction aux Servlets Jakarta EE 10 avec HttpServlet, doGet/doPost, déploiement sur Open Liberty.</p>
+        <div class="card-tags">
+          <span class="badge badge-blue">@WebServlet</span>
+          <span class="badge badge-teal">HttpServlet</span>
+          <span class="badge badge-green">Open Liberty</span>
+        </div>
+      </div>
+      <div class="card-footer">
+        <span>Voir la documentation</span>
+        <span class="card-pages">5 pages</span>
+        <span class="card-arrow">→</span>
+      </div>
+    </a>
+
+    <a class="lab-card" href="Lab02-ServletsJSP/solution/docs/index.html">
+      <div class="card-header">
+        <span class="lab-number">LAB 02</span>
+        <div>
+          <div class="card-title">Servlets &amp; JSP</div>
+          <div class="card-subtitle">banking-web-app — MVC Servlet + JSP + JSTL</div>
+        </div>
+      </div>
+      <div class="card-body">
+        <p class="card-desc">Architecture MVC avec Servlet Front Controller, JSP/JSTL, 4 filtres transversaux (auth, logging, CORS, compression) et MicroProfile Health.</p>
+        <div class="card-tags">
+          <span class="badge badge-blue">@WebServlet</span>
+          <span class="badge badge-purple">@WebFilter</span>
+          <span class="badge badge-teal">JSTL 3.0</span>
+          <span class="badge badge-warm">PRG Pattern</span>
+        </div>
+      </div>
+      <div class="card-footer">
+        <span>Voir la documentation</span>
+        <span class="card-pages">5 pages</span>
+        <span class="card-arrow">→</span>
+      </div>
+    </a>
+
+    <a class="lab-card" href="Lab02B-JSF/solution/docs/index.html">
+      <div class="card-header">
+        <span class="lab-number">LAB 02B</span>
+        <div>
+          <div class="card-title">Jakarta Faces (JSF)</div>
+          <div class="card-subtitle">lab02b-jsf — Facelets + CDI + Validation</div>
+        </div>
+      </div>
+      <div class="card-body">
+        <p class="card-desc">Interface web avec Jakarta Faces 4.0, Facelets templating, backing beans CDI @SessionScoped, validateur personnalisé et AJAX search.</p>
+        <div class="card-tags">
+          <span class="badge badge-blue">Faces 4.0</span>
+          <span class="badge badge-purple">@Named @SessionScoped</span>
+          <span class="badge badge-teal">@FacesValidator</span>
+          <span class="badge badge-green">f:ajax</span>
+        </div>
+      </div>
+      <div class="card-footer">
+        <span>Voir la documentation</span>
+        <span class="card-pages">5 pages</span>
+        <span class="card-arrow">→</span>
+      </div>
+    </a>
+
+  </div>
+
+  <!-- ── Bloc 2 — Persistance ── -->
+  <p class="section-title">Persistance &amp; Base de données</p>
+  <div class="lab-grid">
+
+    <a class="lab-card" href="Lab03-JPA/solution/docs/index.html">
+      <div class="card-header">
+        <span class="lab-number">LAB 03</span>
+        <div>
+          <div class="card-title">JPA &amp; EclipseLink</div>
+          <div class="card-subtitle">banking-jpa-app — PostgreSQL + Flyway</div>
+        </div>
+      </div>
+      <div class="card-body">
+        <p class="card-desc">Persistance avec JPA 3.1, EclipseLink, PostgreSQL, migrations Flyway et transactions RESOURCE_LOCAL manuelles. JNDI config.</p>
+        <div class="card-tags">
+          <span class="badge badge-blue">@Entity @Table</span>
+          <span class="badge badge-teal">JPA 3.1</span>
+          <span class="badge badge-green">Flyway</span>
+          <span class="badge badge-warm">PostgreSQL</span>
+        </div>
+      </div>
+      <div class="card-footer">
+        <span>Voir la documentation</span>
+        <span class="card-pages">5 pages</span>
+        <span class="card-arrow">→</span>
+      </div>
+    </a>
+
+  </div>
+
+  <!-- ── Bloc 3 — CDI & EJB ── -->
+  <p class="section-title">Injection de dépendances &amp; Enterprise Beans</p>
+  <div class="lab-grid">
+
+    <a class="lab-card" href="Lab04-CDI/solution/docs/index.html">
+      <div class="card-header">
+        <span class="lab-number">LAB 04</span>
+        <div>
+          <div class="card-title">CDI 4.0</div>
+          <div class="card-subtitle">banking-cdi-app — Injection, Events, Interceptors</div>
+        </div>
+      </div>
+      <div class="card-body">
+        <p class="card-desc">CDI avancé : scopes, producteurs, qualifieurs @Premium/@Standard, intercepteur @Logged, événements CDI, transactions CMT/BMT.</p>
+        <div class="card-tags">
+          <span class="badge badge-purple">@ApplicationScoped</span>
+          <span class="badge badge-blue">@Produces @Qualifier</span>
+          <span class="badge badge-teal">@Interceptor</span>
+          <span class="badge badge-green">@Observes Events</span>
+        </div>
+      </div>
+      <div class="card-footer">
+        <span>Voir la documentation</span>
+        <span class="card-pages">5 pages</span>
+        <span class="card-arrow">→</span>
+      </div>
+    </a>
+
+    <a class="lab-card" href="Lab04B-EJB/solution/docs/index.html">
+      <div class="card-header">
+        <span class="lab-number">LAB 04B</span>
+        <div>
+          <div class="card-title">Enterprise JavaBeans (EJB)</div>
+          <div class="card-subtitle">banking-ejb-app — EJB 4.0 + Timer + MDB</div>
+        </div>
+      </div>
+      <div class="card-body">
+        <p class="card-desc">EJBs @Stateless / @Stateful / @Singleton, Timer Service @Schedule, MDB JMS, sécurité @RolesAllowed et transactions CMT déclaratives.</p>
+        <div class="card-tags">
+          <span class="badge badge-blue">@Stateless @Stateful</span>
+          <span class="badge badge-purple">@Singleton @Startup</span>
+          <span class="badge badge-red">@RolesAllowed</span>
+          <span class="badge badge-warm">@Schedule Timer</span>
+        </div>
+      </div>
+      <div class="card-footer">
+        <span>Voir la documentation</span>
+        <span class="card-pages">5 pages</span>
+        <span class="card-arrow">→</span>
+      </div>
+    </a>
+
+  </div>
+
+  <!-- ── Bloc 4 — API REST & Messagerie ── -->
+  <p class="section-title">Services REST &amp; Messagerie</p>
+  <div class="lab-grid">
+
+    <a class="lab-card" href="Lab05-REST/solution/docs/index.html">
+      <div class="card-header">
+        <span class="lab-number">LAB 05</span>
+        <div>
+          <div class="card-title">API REST JAX-RS</div>
+          <div class="card-subtitle">banking-rest-app — JAX-RS 3.1 + OpenAPI</div>
+        </div>
+      </div>
+      <div class="card-body">
+        <p class="card-desc">API REST complète : 4 ressources JAX-RS, BeanValidation, 5 ExceptionMappers, audit des transactions, MicroProfile REST Client.</p>
+        <div class="card-tags">
+          <span class="badge badge-blue">JAX-RS @Path</span>
+          <span class="badge badge-teal">@GET @POST @PUT @DELETE</span>
+          <span class="badge badge-green">OpenAPI</span>
+          <span class="badge badge-purple">@RegisterRestClient</span>
+        </div>
+      </div>
+      <div class="card-footer">
+        <span>Voir la documentation</span>
+        <span class="card-pages">5 pages</span>
+        <span class="card-arrow">→</span>
+      </div>
+    </a>
+
+    <a class="lab-card" href="Lab05B-JMS/solution/docs/index.html">
+      <div class="card-header">
+        <span class="lab-number">LAB 05B</span>
+        <div>
+          <div class="card-title">JMS &amp; Message-Driven Beans</div>
+          <div class="card-subtitle">banking-jms-app — JMS 3.1 + Topics + DLQ</div>
+        </div>
+      </div>
+      <div class="card-body">
+        <p class="card-desc">Messagerie asynchrone : 4 MDBs (Queue P2P, Topic pub/sub durable, Dead Letter Queue), priorité des messages, sécurité désérialisation JSON.</p>
+        <div class="card-tags">
+          <span class="badge badge-blue">@MessageDriven</span>
+          <span class="badge badge-teal">Queue Topic DLQ</span>
+          <span class="badge badge-warm">JMSContext</span>
+          <span class="badge badge-red">Secure JSON</span>
+        </div>
+      </div>
+      <div class="card-footer">
+        <span>Voir la documentation</span>
+        <span class="card-pages">5 pages</span>
+        <span class="card-arrow">→</span>
+      </div>
+    </a>
+
+  </div>
+
+  <!-- ── Bloc 5 — Architecture avancée ── -->
+  <p class="section-title">Architecture avancée</p>
+  <div class="lab-grid">
+
+    <a class="lab-card" href="Lab06-DDD/solution/docs/index.html">
+      <div class="card-header">
+        <span class="lab-number">LAB 06</span>
+        <div>
+          <div class="card-title">Domain-Driven Design</div>
+          <div class="card-subtitle">banking-ddd-app — DDD + Bounded Contexts</div>
+        </div>
+      </div>
+      <div class="card-body">
+        <p class="card-desc">Domain-Driven Design : agrégats, entités, objets-valeurs, Bounded Contexts, langage ubiquitaire appliqués à l'application bancaire.</p>
+        <div class="card-tags">
+          <span class="badge badge-purple">Aggregates</span>
+          <span class="badge badge-blue">Bounded Contexts</span>
+          <span class="badge badge-teal">Value Objects</span>
+          <span class="badge badge-green">Domain Events</span>
+        </div>
+      </div>
+      <div class="card-footer">
+        <span>Voir la documentation</span>
+        <span class="card-pages">5+ pages</span>
+        <span class="card-arrow">→</span>
+      </div>
+    </a>
+
+    <a class="lab-card" href="Lab07-Hexagonal/solution/docs/index.html">
+      <div class="card-header">
+        <span class="lab-number">LAB 07</span>
+        <div>
+          <div class="card-title">Architecture Hexagonale</div>
+          <div class="card-subtitle">banking-hexagonal-app — Ports &amp; Adapters + DDD</div>
+        </div>
+      </div>
+      <div class="card-body">
+        <p class="card-desc">Architecture Hexagonale complète : domain pur, ports primaires/secondaires, adaptateurs REST v1/v2, JPA, versioning API et value objects.</p>
+        <div class="card-tags">
+          <span class="badge badge-purple">Ports &amp; Adapters</span>
+          <span class="badge badge-blue">Domain Layer</span>
+          <span class="badge badge-teal">Value Objects</span>
+          <span class="badge badge-green">API Versioning</span>
+        </div>
+      </div>
+      <div class="card-footer">
+        <span>Voir la documentation</span>
+        <span class="card-pages">7 pages</span>
+        <span class="card-arrow">→</span>
+      </div>
+    </a>
+
+    <a class="lab-card" href="Lab08-Microservices/solution/docs/index.html">
+      <div class="card-header">
+        <span class="lab-number">LAB 08</span>
+        <div>
+          <div class="card-title">Microservices</div>
+          <div class="card-subtitle">3 services indépendants — BFF/API Gateway</div>
+        </div>
+      </div>
+      <div class="card-body">
+        <p class="card-desc">Architecture microservices : Client Service (9081), Account Service (9082), API Gateway BFF (9080), Fault Tolerance (@Retry @CircuitBreaker @Bulkhead).</p>
+        <div class="card-tags">
+          <span class="badge badge-blue">@RegisterRestClient</span>
+          <span class="badge badge-teal">@CircuitBreaker</span>
+          <span class="badge badge-green">@Retry @Fallback</span>
+          <span class="badge badge-warm">BFF Pattern</span>
+        </div>
+      </div>
+      <div class="card-footer">
+        <span>Voir la documentation</span>
+        <span class="card-pages">5 pages</span>
+        <span class="card-arrow">→</span>
+      </div>
+    </a>
+
+  </div>
+
+  <!-- ── Bloc 6 — Sécurité ── -->
+  <p class="section-title">Sécurité</p>
+  <div class="lab-grid">
+
+    <a class="lab-card" href="Lab09-Security/solution/docs/index.html">
+      <div class="card-header">
+        <span class="lab-number">LAB 09</span>
+        <div>
+          <div class="card-title">Sécurité Jakarta EE</div>
+          <div class="card-subtitle">bank-security — JWT + PBKDF2 + RBAC</div>
+        </div>
+      </div>
+      <div class="card-body">
+        <p class="card-desc">Sécurité complète : JWT HS256 personnalisé, PBKDF2-SHA512 (310 000 itérations), RBAC @RolesAllowed, piste d'audit, headers de sécurité HTTP.</p>
+        <div class="card-tags">
+          <span class="badge badge-red">JWT HS256</span>
+          <span class="badge badge-blue">@RolesAllowed RBAC</span>
+          <span class="badge badge-purple">PBKDF2-SHA512</span>
+          <span class="badge badge-teal">Audit Trail</span>
+        </div>
+      </div>
+      <div class="card-footer">
+        <span>Voir la documentation</span>
+        <span class="card-pages">5 pages</span>
+        <span class="card-arrow">→</span>
+      </div>
+    </a>
+
+  </div>
+
+</main>
+
+<footer>
+  <p>Made with IBM Bob &nbsp;|&nbsp; ESIPE — Cours Jakarta EE &amp; Microservices &nbsp;|&nbsp; Java 17 · Jakarta EE 10 · MicroProfile 6 · Open Liberty</p>
+</footer>
+
+</body>
+</html>

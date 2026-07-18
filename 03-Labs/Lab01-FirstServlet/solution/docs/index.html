@@ -1,0 +1,119 @@
+<!-- © Copyright 2026 Olivier Planson. All rights reserved. Reproduction prohibited. Made with IBM Bob. -->
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>Vue d'ensemble — Banking Application Documentation</title>
+  <link rel="stylesheet" href="assets/carbon.css"/>
+</head>
+<body>
+<header class="cds--header">
+  <a class="cds--header__name" href="index.html">Banking Application<span>Documentation Technique</span></a>
+  <a href="../../../index.html" style="margin-left:auto;font-size:.75rem;color:#c6c6c6;text-decoration:none;border:1px solid #393939;padding:.2rem .75rem;border-radius:2px;white-space:nowrap;">← Tous les Labs</a>
+</header>
+<div class="cds--shell">
+  <nav class="cds--side-nav">
+    <p class="cds--side-nav__section-title">Documentation</p>
+    <a class="cds--side-nav__link active" href="index.html">&#x2299; Vue d'ensemble</a>
+    <a class="cds--side-nav__link" href="functional.html">&#x229E; Architecture Fonctionnelle</a>
+    <a class="cds--side-nav__link" href="technical.html">&#x229F; Architecture Technique</a>
+    <a class="cds--side-nav__link" href="sequences.html">&#x21C4; Diagrammes de Séquences</a>
+    <a class="cds--side-nav__link" href="rules.html">&#x2261; Règles de Gestion</a>
+  </nav>
+  <main class="cds--content">
+    <div class="breadcrumb"><a href="index.html">Accueil</a></div>
+
+    <h1>Banking Application</h1>
+    <p class="page-lead">Application web Jakarta EE de gestion de clients bancaires — premier servlet Jakarta EE déployé sur Open Liberty, exposant une interface CRUD en mémoire via des Servlets HTTP.</p>
+
+    <div class="tag-stack">
+      <span class="cds--tag cds--tag--blue">Java 17</span>
+      <span class="cds--tag cds--tag--blue">Jakarta EE 10</span>
+      <span class="cds--tag cds--tag--green">Open Liberty</span>
+      <span class="cds--tag cds--tag--green">Servlet 6.0</span>
+      <span class="cds--tag cds--tag--purple">Maven 3</span>
+      <span class="cds--tag cds--tag--teal">MicroProfile 6.0</span>
+      <span class="cds--tag cds--tag--warm">Podman / Docker</span>
+    </div>
+
+    <div class="tile-grid">
+      <div class="cds--tile">
+        <h3>Objectif</h3>
+        <p>Illustrer les concepts de base des Servlets Jakarta EE : cycle de vie, gestion des requêtes GET/POST, réponses HTML dynamiques et pattern PRG (Post-Redirect-Get).</p>
+      </div>
+      <div class="cds--tile">
+        <h3>Auteur / Version</h3>
+        <p><strong>Auteur :</strong> Olivier Planson</p>
+        <p><strong>Version :</strong> 1.0-SNAPSHOT</p>
+        <p><strong>Contexte :</strong> ESIPE – Lab 01 – Jakarta EE &amp; Microservices</p>
+        <p><strong>Année :</strong> 2025</p>
+      </div>
+      <div class="cds--tile">
+        <h3>Points d'accès</h3>
+        <p><strong>HTTP :</strong> <code>http://localhost:9080/</code></p>
+        <p><strong>HTTPS :</strong> <code>https://localhost:9443/</code></p>
+        <p><strong>Health :</strong> <code>/health</code></p>
+        <p><strong>Metrics :</strong> <code>/metrics</code></p>
+        <p><strong>OpenAPI :</strong> <code>/openapi</code></p>
+      </div>
+    </div>
+
+    <h2>Endpoints de l'application</h2>
+    <div class="cds--data-table-container">
+      <table class="cds--data-table">
+        <thead><tr>
+          <th>URL</th><th>Méthode HTTP</th><th>Handler</th><th>Description</th>
+        </tr></thead>
+        <tbody>
+          <tr><td><code>/</code></td><td><span class="cds--tag cds--tag--teal">GET</span></td><td><code>index.html</code> (fichier statique)</td><td>Page d'accueil — liens de navigation vers les fonctionnalités</td></tr>
+          <tr><td><code>/welcome</code></td><td><span class="cds--tag cds--tag--teal">GET</span></td><td><code>WelcomeServlet.doGet()</code></td><td>Page de bienvenue — affiche la date/heure courante et des liens de navigation</td></tr>
+          <tr><td><code>/clients</code></td><td><span class="cds--tag cds--tag--teal">GET</span></td><td><code>ClientListServlet.doGet()</code></td><td>Liste tous les clients — lit le paramètre <code>?message=success</code> pour la bannière</td></tr>
+          <tr><td><code>/clients</code></td><td><span class="cds--tag cds--tag--blue">POST</span></td><td><code>ClientListServlet.doPost()</code></td><td>Création d'un client — valide les champs, ajoute en mémoire, redirige (PRG)</td></tr>
+          <tr><td><code>/add-client.html</code></td><td><span class="cds--tag cds--tag--teal">GET</span></td><td>Fichier HTML statique</td><td>Formulaire d'ajout de client avec validation côté client (JavaScript)</td></tr>
+          <tr><td><code>/error-404.html</code></td><td>—</td><td>Erreur déclarée dans <code>web.xml</code></td><td>Page d'erreur 404 personnalisée</td></tr>
+          <tr><td><code>/error-500.html</code></td><td>—</td><td>Erreur déclarée dans <code>web.xml</code></td><td>Page d'erreur 500 personnalisée</td></tr>
+          <tr><td><code>/health</code></td><td><span class="cds--tag cds--tag--teal">GET</span></td><td>MicroProfile Health</td><td>Endpoint de santé du serveur Open Liberty</td></tr>
+          <tr><td><code>/metrics</code></td><td><span class="cds--tag cds--tag--teal">GET</span></td><td>MicroProfile Metrics</td><td>Métriques de l'application et du JVM</td></tr>
+          <tr><td><code>/openapi</code></td><td><span class="cds--tag cds--tag--teal">GET</span></td><td>MicroProfile OpenAPI</td><td>Spécification OpenAPI de l'API</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="cds--inline-notification info">
+      <span class="notif-icon">ℹ</span>
+      <p><strong>Stockage en mémoire :</strong> Les clients sont stockés dans une liste <code>CopyOnWriteArrayList</code> du servlet <code>ClientListServlet</code>. Toutes les données sont perdues au redémarrage du serveur. Ce design est volontaire pour ce Lab 01 d'introduction.</p>
+    </div>
+
+    <h2>Explorer la documentation</h2>
+    <div class="tile-grid">
+      <a class="tile-link" href="functional.html">
+        <div class="cds--tile">
+          <h3>&#x229E; Architecture Fonctionnelle</h3>
+          <p>Parcours utilisateur, modèle de données, acteurs et fonctionnalités métier.</p>
+        </div>
+      </a>
+      <a class="tile-link" href="technical.html">
+        <div class="cds--tile">
+          <h3>&#x229F; Architecture Technique</h3>
+          <p>Stack technique, structure des sources, configuration Open Liberty et conteneurisation.</p>
+        </div>
+      </a>
+      <a class="tile-link" href="sequences.html">
+        <div class="cds--tile">
+          <h3>&#x21C4; Diagrammes de Séquences</h3>
+          <p>5 diagrammes SVG couvrant les flux HTTP principaux et le démarrage de l'application.</p>
+        </div>
+      </a>
+      <a class="tile-link" href="rules.html">
+        <div class="cds--tile">
+          <h3>&#x2261; Règles de Gestion</h3>
+          <p>20 règles numérotées R1–R20 : validation, stockage, navigation, sécurité et observabilité.</p>
+        </div>
+      </a>
+    </div>
+  </main>
+</div>
+<footer class="cds--footer">Banking Application &middot; Documentation Technique v1.0 &middot; &copy; 2025 Olivier Planson &middot; Made with IBM Bob</footer>
+</body>
+</html>

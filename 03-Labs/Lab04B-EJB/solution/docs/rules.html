@@ -1,0 +1,316 @@
+<!-- © Copyright 2026 Olivier Planson. All rights reserved. Reproduction prohibited. Made with IBM Bob. -->
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Banking EJB App — Règles Métier</title>
+  <link rel="stylesheet" href="assets/carbon.css"/>
+</head>
+<body>
+
+<header class="cds--header">
+  <a class="cds--header__name" href="index.html">☕ Jakarta EE 10 <span>/ Banking EJB Application — Lab 04B</span></a>
+</header>
+
+<div class="cds--shell">
+  <nav class="cds--side-nav">
+    <p class="cds--side-nav__section-title">Navigation</p>
+    <a class="cds--side-nav__link" href="index.html"><i class="icon">⌂</i> Vue d'ensemble</a>
+    <a class="cds--side-nav__link" href="functional.html"><i class="icon">⬡</i> Architecture Fonctionnelle</a>
+    <a class="cds--side-nav__link" href="technical.html"><i class="icon">⚙</i> Architecture Technique</a>
+    <a class="cds--side-nav__link" href="sequences.html"><i class="icon">⇄</i> Diagrammes de séquence</a>
+    <a class="cds--side-nav__link active" href="rules.html"><i class="icon">⚑</i> Règles métier</a>
+    <p class="cds--side-nav__section-title" style="margin-top:1.5rem">Règles</p>
+    <a class="cds--side-nav__link" href="#transactions">Transactions</a>
+    <a class="cds--side-nav__link" href="#security">Sécurité &amp; Rôles</a>
+    <a class="cds--side-nav__link" href="#limits">Plafonds</a>
+    <a class="cds--side-nav__link" href="#config">Configuration</a>
+    <a class="cds--side-nav__link" href="#accounts">Comptes</a>
+    <a class="cds--side-nav__link" href="#infra">Infrastructure</a>
+  </nav>
+
+  <main class="cds--content">
+
+    <div class="cds--breadcrumb">
+      <a href="index.html">Vue d'ensemble</a>
+      <span class="sep">/</span>
+      <span class="current">Règles métier</span>
+    </div>
+
+    <h1>Règles métier</h1>
+    <p class="page-lead">
+      12 règles structurant le comportement de l'application bancaire EJB.
+      Les règles critiques garantissent l'intégrité des données et la sécurité.
+      Les règles d'avertissement signalent des contraintes importantes.
+    </p>
+
+    <!-- Legend -->
+    <div class="tag-stack">
+      <span class="cds--tag cds--tag--red">● Critique</span>
+      <span class="cds--tag cds--tag--warm">● Avertissement</span>
+      <span class="cds--tag cds--tag--blue">● Standard</span>
+    </div>
+
+    <!-- ─── Transactions ─── -->
+    <h2 id="transactions">Transactions &amp; Intégrité</h2>
+
+    <div class="rule-card critical">
+      <div class="rule-id">
+        <span class="cds--tag cds--tag--red">CRITIQUE</span>
+        R1
+      </div>
+      <div class="rule-title">Transfert atomique — débit et crédit dans la même transaction CMT</div>
+      <div class="rule-desc">
+        Les opérations de débit (compte source) et de crédit (compte destinataire) doivent s'exécuter
+        dans la <strong>même transaction CMT avec attribut REQUIRED</strong>. Toute exception (solde insuffisant,
+        compte suspendu, erreur JPA) provoque un rollback automatique des deux opérations, garantissant
+        qu'aucun fonds n'est perdu ni créé de toutes pièces.
+      </div>
+      <p style="margin-top:.75rem;margin-bottom:0;font-size:.75rem;color:#a8a8a8;">
+        Source : <code>AccountServiceBean.transfer(fromId, toId, amount)</code> —
+        <code>@TransactionAttribute(REQUIRED)</code>
+      </p>
+    </div>
+
+    <div class="rule-card critical">
+      <div class="rule-id">
+        <span class="cds--tag cds--tag--red">CRITIQUE</span>
+        R2
+      </div>
+      <div class="rule-title">Verrouillage optimiste (@Version) — prévention des modifications concurrentes</div>
+      <div class="rule-desc">
+        L'entité <code>Account</code> possède un champ <code>@Version int version</code> géré automatiquement
+        par EclipseLink. Toute modification concurrente du même compte déclenche une
+        <code>OptimisticLockException</code>, qui provoque le rollback de la transaction perdante.
+        Ce mécanisme protège contre les race conditions dans le pool de beans <code>@Stateless</code>.
+      </div>
+      <p style="margin-top:.75rem;margin-bottom:0;font-size:.75rem;color:#a8a8a8;">
+        Source : entité <code>Account</code> — champ <code>@Version</code>
+      </p>
+    </div>
+
+    <div class="rule-card">
+      <div class="rule-id">R6</div>
+      <div class="rule-title">Lots @Stateful — chaque transfert dans sa propre transaction REQUIRES_NEW</div>
+      <div class="rule-desc">
+        Lors du traitement en lot via <code>TransactionBatchBean.commitBatch()</code>, chaque transfert
+        est délégué à <code>AccountServiceBean.transfer()</code> avec l'attribut
+        <code>@TransactionAttribute(REQUIRES_NEW)</code>. Chaque transfert est ainsi indépendant :
+        l'échec d'un transfert n'annule pas les précédents déjà commis.
+      </div>
+      <p style="margin-top:.75rem;margin-bottom:0;font-size:.75rem;color:#a8a8a8;">
+        Source : <code>TransactionBatchBean.commitBatch()</code>
+      </p>
+    </div>
+
+    <!-- ─── Security ─── -->
+    <h2 id="security">Sécurité &amp; Contrôle d'accès</h2>
+
+    <div class="rule-card critical">
+      <div class="rule-id">
+        <span class="cds--tag cds--tag--red">CRITIQUE</span>
+        R3
+      </div>
+      <div class="rule-title">Rôles d'accès — admin+teller pour les opérations, admin seul pour suppression et clôture</div>
+      <div class="rule-desc">
+        <ul style="margin-top:.5rem">
+          <li><strong>admin + teller :</strong> dépôt, retrait, transfert, création/modification client, liste clients</li>
+          <li><strong>admin uniquement :</strong> suppression de client, clôture de compte (<code>closeAccount</code>), suspension de compte (<code>suspendAccount</code>), mise à jour des limites (<code>ConfigServiceBean</code>)</li>
+          <li><strong>@PermitAll :</strong> lectures (<code>getAccount</code>, <code>findClientByName</code>) accessibles à tous les utilisateurs authentifiés</li>
+          <li><strong>@DeclareRoles</strong> déclaré sur <code>BankingServlet</code>, BASIC auth sur <code>/banking/*</code></li>
+        </ul>
+      </div>
+      <p style="margin-top:.75rem;margin-bottom:0;font-size:.75rem;color:#a8a8a8;">
+        Source : annotations <code>@RolesAllowed</code> sur <code>AccountServiceBean</code> et <code>ClientServiceBean</code>
+      </p>
+    </div>
+
+    <!-- ─── Solde ─── -->
+    <h2 id="limits">Validation du solde &amp; Plafonds</h2>
+
+    <div class="rule-card critical">
+      <div class="rule-id">
+        <span class="cds--tag cds--tag--red">CRITIQUE</span>
+        R4
+      </div>
+      <div class="rule-title">Solde suffisant obligatoire pour tout retrait ou transfert</div>
+      <div class="rule-desc">
+        Avant tout débit, la méthode <code>Account.withdraw(amount)</code> vérifie que
+        <code>balance &gt;= amount</code>. Si la condition n'est pas satisfaite,
+        une <code>InsufficientFundsException</code> (RuntimeException) est levée,
+        entraînant le rollback automatique de la transaction CMT englobante.
+      </div>
+      <p style="margin-top:.75rem;margin-bottom:0;font-size:.75rem;color:#a8a8a8;">
+        Source : <code>Account.withdraw(BigDecimal amount)</code>
+      </p>
+    </div>
+
+    <div class="rule-card warning">
+      <div class="rule-id">
+        <span class="cds--tag cds--tag--warm">AVERTISSEMENT</span>
+        R5
+      </div>
+      <div class="rule-title">Plafonds par défaut configurables via ConfigServiceBean</div>
+      <div class="rule-desc">
+        Les plafonds suivants sont définis par défaut et chargés au démarrage par
+        <code>ConfigServiceBean @Startup</code>. Ils peuvent être mis à jour dynamiquement
+        par un administrateur sans redémarrage.
+        <ul style="margin-top:.5rem">
+          <li><strong>Retrait journalier :</strong> 5 000 € par compte</li>
+          <li><strong>Montant par transfert :</strong> 10 000 €</li>
+          <li><strong>Montant par transaction :</strong> 10 000 €</li>
+        </ul>
+      </div>
+      <p style="margin-top:.75rem;margin-bottom:0;font-size:.75rem;color:#a8a8a8;">
+        Source : <code>ConfigServiceBean</code> — méthode <code>updateLimits(limits)</code>
+        protégée par <code>@Lock(WRITE)</code>
+      </p>
+    </div>
+
+    <!-- ─── Config ─── -->
+    <h2 id="config">Configuration &amp; Feature Flags</h2>
+
+    <div class="rule-card">
+      <div class="rule-id">R7</div>
+      <div class="rule-title">ConfigServiceBean @Lock(READ) pour lectures concurrentes, @Lock(WRITE) pour mises à jour</div>
+      <div class="rule-desc">
+        Étant un <code>@Singleton</code>, <code>ConfigServiceBean</code> est accessible depuis plusieurs
+        threads simultanément (pool de beans <code>@Stateless</code>). Les méthodes de lecture portent
+        <code>@Lock(LockType.READ)</code> (accès concurrent autorisé), tandis que les méthodes de mise
+        à jour portent <code>@Lock(LockType.WRITE)</code> (accès exclusif).
+      </div>
+      <p style="margin-top:.75rem;margin-bottom:0;font-size:.75rem;color:#a8a8a8;">
+        Source : <code>ConfigServiceBean</code>
+      </p>
+    </div>
+
+    <div class="rule-card">
+      <div class="rule-id">R8</div>
+      <div class="rule-title">Feature flags dynamiques — transferts, lots, notifications activables/désactivables</div>
+      <div class="rule-desc">
+        Trois feature flags contrôlent l'activation dynamique des fonctionnalités sans redémarrage :
+        <ul style="margin-top:.5rem">
+          <li><code>transfersEnabled</code> — active/désactive tous les virements</li>
+          <li><code>batchEnabled</code> — active/désactive le traitement en lot (Stateful)</li>
+          <li><code>notificationsEnabled</code> — active/désactive l'envoi de messages JMS vers NotificationMDB</li>
+        </ul>
+        Un flag à <code>false</code> lève immédiatement une <code>FeatureDisabledException</code>.
+      </div>
+      <p style="margin-top:.75rem;margin-bottom:0;font-size:.75rem;color:#a8a8a8;">
+        Source : <code>ConfigServiceBean</code> — flags contrôlés via <code>@Lock(WRITE)</code>
+      </p>
+    </div>
+
+    <!-- ─── Infrastructure ─── -->
+    <h2 id="infra">Infrastructure — Timer &amp; MDB</h2>
+
+    <div class="rule-card">
+      <div class="rule-id">R9</div>
+      <div class="rule-title">Rapports planifiés non-persistants — ne survivent pas au redémarrage</div>
+      <div class="rule-desc">
+        Les timers déclarés avec <code>@Schedule</code> dans <code>ReportGeneratorBean</code> sont
+        créés comme timers <strong>non-persistants</strong> (attribut <code>persistent=false</code>).
+        Après un redémarrage du serveur Open Liberty, les timers ne sont pas restaurés et doivent
+        attendre la prochaine exécution planifiée pour se déclencher. Ce comportement est intentionnel
+        pour éviter des rapports parasites lors d'un démarrage en maintenance.
+      </div>
+      <p style="margin-top:.75rem;margin-bottom:0;font-size:.75rem;color:#a8a8a8;">
+        Source : <code>ReportGeneratorBean</code> — annotations <code>@Schedule(persistent=false)</code>
+      </p>
+    </div>
+
+    <div class="rule-card">
+      <div class="rule-id">R10</div>
+      <div class="rule-title">NotificationMDB — types supportés et format pipe-delimited</div>
+      <div class="rule-desc">
+        Le <code>NotificationMDB</code> accepte les 4 types de notifications suivants via la queue
+        <code>jms/notificationQueue</code>. Le format du message texte JMS est :
+        <br/><code style="display:block;margin:.5rem 0;">TYPE|DESTINATAIRE|SUJET|CORPS</code>
+        <ul>
+          <li><code>EMAIL</code> — envoi d'e-mail (confirmations, relevés)</li>
+          <li><code>SMS</code> — message court (OTP, alertes urgentes)</li>
+          <li><code>PUSH</code> — notification push mobile</li>
+          <li><code>ALERT</code> — alerte interne sécurité, routée vers le groupe admin</li>
+        </ul>
+        Tout type inconnu est logué comme erreur et le message est acquitté (pas de requeue).
+      </div>
+      <p style="margin-top:.75rem;margin-bottom:0;font-size:.75rem;color:#a8a8a8;">
+        Source : <code>NotificationMDB.onMessage(Message msg)</code>
+      </p>
+    </div>
+
+    <!-- ─── Comptes ─── -->
+    <h2 id="accounts">Cycle de vie des comptes</h2>
+
+    <div class="rule-card critical">
+      <div class="rule-id">
+        <span class="cds--tag cds--tag--red">CRITIQUE</span>
+        R11
+      </div>
+      <div class="rule-title">Clôture de compte — solde zéro et statut ACTIVE obligatoires</div>
+      <div class="rule-desc">
+        Un compte ne peut être clôturé que si les deux conditions suivantes sont simultanément vérifiées :
+        <ul style="margin-top:.5rem">
+          <li>Solde exactement égal à zéro (<code>balance.compareTo(BigDecimal.ZERO) == 0</code>)</li>
+          <li>Statut du compte égal à <code>AccountStatus.ACTIVE</code></li>
+        </ul>
+        Si l'une de ces conditions n'est pas remplie, une <code>AccountCloseException</code> est levée
+        et la transaction est rollbackée. Un compte SUSPENDED doit d'abord être réactivé avant clôture.
+      </div>
+      <p style="margin-top:.75rem;margin-bottom:0;font-size:.75rem;color:#a8a8a8;">
+        Source : <code>AccountServiceBean.closeAccount(accountId)</code>
+      </p>
+    </div>
+
+    <div class="rule-card critical">
+      <div class="rule-id">
+        <span class="cds--tag cds--tag--red">CRITIQUE</span>
+        R12
+      </div>
+      <div class="rule-title">Compte SUSPENDED — aucune opération financière permise</div>
+      <div class="rule-desc">
+        Un compte avec le statut <code>AccountStatus.SUSPENDED</code> ne peut faire l'objet d'aucune
+        opération financière : dépôt, retrait ou transfert (ni source ni destinataire). Toute tentative
+        lève une <code>AccountSuspendedException</code>, provoquant le rollback de la transaction CMT.
+        Seul un administrateur (<code>@RolesAllowed("admin")</code>) peut réactiver un compte suspendu.
+      </div>
+      <p style="margin-top:.75rem;margin-bottom:0;font-size:.75rem;color:#a8a8a8;">
+        Source : logique métier <code>Account.checkActive()</code> appelée avant toute opération
+      </p>
+    </div>
+
+    <hr class="cds--divider"/>
+
+    <!-- Summary table -->
+    <h2>Récapitulatif</h2>
+    <div class="cds--data-table-container">
+      <table class="cds--data-table">
+        <thead>
+          <tr><th>#</th><th>Titre</th><th>Sévérité</th><th>Source</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>R1</td><td>Transfert atomique CMT REQUIRED</td><td><span class="cds--tag cds--tag--red">Critique</span></td><td><code>AccountServiceBean.transfer()</code></td></tr>
+          <tr><td>R2</td><td>Verrouillage optimiste @Version</td><td><span class="cds--tag cds--tag--red">Critique</span></td><td>Entité <code>Account</code></td></tr>
+          <tr><td>R3</td><td>RBAC @RolesAllowed par rôle</td><td><span class="cds--tag cds--tag--red">Critique</span></td><td><code>AccountServiceBean</code>, <code>ClientServiceBean</code></td></tr>
+          <tr><td>R4</td><td>Solde suffisant obligatoire</td><td><span class="cds--tag cds--tag--red">Critique</span></td><td><code>Account.withdraw()</code></td></tr>
+          <tr><td>R5</td><td>Plafonds retrait/transfert par défaut</td><td><span class="cds--tag cds--tag--warm">Avertissement</span></td><td><code>ConfigServiceBean</code></td></tr>
+          <tr><td>R6</td><td>Lots @Stateful → REQUIRES_NEW</td><td><span class="cds--tag cds--tag--blue">Standard</span></td><td><code>TransactionBatchBean.commitBatch()</code></td></tr>
+          <tr><td>R7</td><td>@Lock READ/WRITE sur ConfigServiceBean</td><td><span class="cds--tag cds--tag--blue">Standard</span></td><td><code>ConfigServiceBean</code></td></tr>
+          <tr><td>R8</td><td>Feature flags dynamiques</td><td><span class="cds--tag cds--tag--blue">Standard</span></td><td><code>ConfigServiceBean</code></td></tr>
+          <tr><td>R9</td><td>Timers @Schedule non-persistants</td><td><span class="cds--tag cds--tag--blue">Standard</span></td><td><code>ReportGeneratorBean</code></td></tr>
+          <tr><td>R10</td><td>NotificationMDB formats pipe-delimited</td><td><span class="cds--tag cds--tag--blue">Standard</span></td><td><code>NotificationMDB.onMessage()</code></td></tr>
+          <tr><td>R11</td><td>Clôture : solde=0 &amp; statut ACTIVE</td><td><span class="cds--tag cds--tag--red">Critique</span></td><td><code>AccountServiceBean.closeAccount()</code></td></tr>
+          <tr><td>R12</td><td>Compte SUSPENDED — blocage total</td><td><span class="cds--tag cds--tag--red">Critique</span></td><td><code>Account.checkActive()</code></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <p style="font-size:.75rem;color:#a8a8a8;">Jakarta EE 10 · EJB 4.0 · Open Liberty 23 · Lab 04B — ESIPE</p>
+
+  </main>
+</div>
+
+<footer class="cds--footer">Banking EJB Application — Lab 04B · Jakarta EE 10 · Open Liberty 23 · © 2025 Olivier Planson</footer>
+</body>
+</html>

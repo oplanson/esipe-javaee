@@ -1,0 +1,169 @@
+<!-- © Copyright 2026 Olivier Planson. All rights reserved. Reproduction prohibited. Made with IBM Bob. -->
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Banking EJB App — Lab 04B</title>
+  <link rel="stylesheet" href="assets/carbon.css"/>
+</head>
+<body>
+<header class="cds--header">
+  <a class="cds--header__name" href="index.html">☕ Jakarta EE 10 <span>/ Banking EJB Application — Lab 04B</span></a>
+  <a href="../../../index.html" style="margin-left:auto;font-size:.75rem;color:#c6c6c6;text-decoration:none;border:1px solid #393939;padding:.2rem .75rem;border-radius:2px;white-space:nowrap;">← Tous les Labs</a>
+</header>
+<div class="cds--shell">
+  <nav class="cds--side-nav">
+    <p class="cds--side-nav__section-title">Navigation</p>
+    <a class="cds--side-nav__link active" href="index.html"><i class="icon">⌂</i> Vue d'ensemble</a>
+    <a class="cds--side-nav__link" href="functional.html"><i class="icon">⬡</i> Architecture Fonctionnelle</a>
+    <a class="cds--side-nav__link" href="technical.html"><i class="icon">⚙</i> Architecture Technique</a>
+    <a class="cds--side-nav__link" href="sequences.html"><i class="icon">⇄</i> Diagrammes de séquence</a>
+    <a class="cds--side-nav__link" href="rules.html"><i class="icon">⚑</i> Règles métier</a>
+    <p class="cds--side-nav__section-title" style="margin-top:1.5rem">EJB Types</p>
+    <a class="cds--side-nav__link" href="functional.html#stateless"><i class="icon">◈</i> @Stateless</a>
+    <a class="cds--side-nav__link" href="functional.html#stateful"><i class="icon">◉</i> @Stateful</a>
+    <a class="cds--side-nav__link" href="functional.html#singleton"><i class="icon">◆</i> @Singleton</a>
+    <a class="cds--side-nav__link" href="functional.html#mdb"><i class="icon">✉</i> @MessageDriven</a>
+    <a class="cds--side-nav__link" href="functional.html#timer"><i class="icon">⏱</i> Timer Service</a>
+  </nav>
+  <main class="cds--content">
+    <div class="cds--breadcrumb">
+      <span class="current">Vue d'ensemble</span>
+    </div>
+
+    <h1>Banking EJB Application</h1>
+    <p class="page-lead">Lab 04B — Démontre les Enterprise JavaBeans 4.0 : beans sans état, avec état, singleton, Message-Driven Beans, timer service et sécurité déclarative.</p>
+
+    <div class="cds--inline-notification">
+      <span>ℹ️</span>
+      <div><strong>Lab 04B</strong> — Démontre les Enterprise JavaBeans 4.0 : beans sans état, avec état, singleton, MDB, timer service et sécurité déclarative.</div>
+    </div>
+
+    <!-- Project card -->
+    <h2>Projet</h2>
+    <div class="cds--tile">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;">
+        <div>
+          <p style="margin-bottom:.25rem;font-size:.75rem;color:#a8a8a8;text-transform:uppercase;letter-spacing:.06em">Nom</p>
+          <p style="color:#161616;font-weight:600;margin-bottom:1rem">Banking EJB Application</p>
+          <p style="margin-bottom:.25rem;font-size:.75rem;color:#a8a8a8;text-transform:uppercase;letter-spacing:.06em">ArtifactId</p>
+          <p style="color:#161616;margin-bottom:1rem"><code>banking-ejb-app</code></p>
+          <p style="margin-bottom:.25rem;font-size:.75rem;color:#a8a8a8;text-transform:uppercase;letter-spacing:.06em">Serveur</p>
+          <p style="color:#161616;margin-bottom:0">Open Liberty 23</p>
+        </div>
+        <div>
+          <p style="margin-bottom:.25rem;font-size:.75rem;color:#a8a8a8;text-transform:uppercase;letter-spacing:.06em">Java</p>
+          <p style="color:#161616;font-weight:600;margin-bottom:1rem">Java 17</p>
+          <p style="margin-bottom:.25rem;font-size:.75rem;color:#a8a8a8;text-transform:uppercase;letter-spacing:.06em">Spécifications</p>
+          <p style="color:#161616;margin-bottom:1rem">Jakarta EE 10 / MicroProfile 6.0</p>
+          <p style="margin-bottom:.25rem;font-size:.75rem;color:#a8a8a8;text-transform:uppercase;letter-spacing:.06em">Patterns</p>
+          <p style="color:#161616;margin-bottom:0">EJB Container / CMT / BMT / RBAC</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tech stack table -->
+    <h2>Stack technologique</h2>
+    <div class="cds--data-table-container">
+      <table class="cds--data-table">
+        <thead><tr><th>Couche</th><th>Technologie</th><th>Version</th><th>Rôle</th></tr></thead>
+        <tbody>
+          <tr><td>Runtime</td><td>Open Liberty</td><td>23.x</td><td>Serveur d'application Jakarta EE</td></tr>
+          <tr><td>Spécification</td><td>Jakarta EE</td><td>10.0</td><td>Plateforme enterprise Java</td></tr>
+          <tr><td>Microservices</td><td>MicroProfile</td><td>6.0</td><td>Health, Config, Metrics, OpenAPI</td></tr>
+          <tr><td>EJB</td><td>Jakarta Enterprise Beans</td><td>4.0</td><td>Beans Stateless, Stateful, Singleton, MDB</td></tr>
+          <tr><td>Persistance</td><td>Jakarta Persistence (JPA)</td><td>3.1</td><td>ORM avec EclipseLink</td></tr>
+          <tr><td>ORM</td><td>EclipseLink</td><td>4.x</td><td>Implémentation JPA, cache partagé</td></tr>
+          <tr><td>Base de données</td><td>PostgreSQL</td><td>15+</td><td>SGBDR relationnel</td></tr>
+          <tr><td>Migrations</td><td>Flyway</td><td>10.4.1</td><td>Versioning du schéma SQL</td></tr>
+          <tr><td>Messagerie</td><td>Jakarta Messaging (JMS)</td><td>3.1</td><td>Queue asynchrone pour MDB</td></tr>
+          <tr><td>Sécurité</td><td>@RolesAllowed / BASIC auth</td><td>—</td><td>RBAC déclaratif par annotation</td></tr>
+          <tr><td>Transactions</td><td>CMT / BMT / UserTransaction</td><td>JTA</td><td>Gestion transactionnelle container/bean</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Tag cloud -->
+    <h2>Annotations & concepts clés</h2>
+    <div class="tag-stack">
+      <span class="cds--tag cds--tag--blue">@Stateless</span>
+      <span class="cds--tag cds--tag--green">@Stateful</span>
+      <span class="cds--tag cds--tag--purple">@Singleton</span>
+      <span class="cds--tag cds--tag--teal">@Startup</span>
+      <span class="cds--tag cds--tag--red">@MessageDriven</span>
+      <span class="cds--tag cds--tag--warm">@Schedule</span>
+      <span class="cds--tag cds--tag--blue">@RolesAllowed</span>
+      <span class="cds--tag cds--tag--green">@TransactionAttribute</span>
+      <span class="cds--tag cds--tag--purple">@EJB</span>
+      <span class="cds--tag cds--tag--teal">CMT</span>
+      <span class="cds--tag cds--tag--red">BMT</span>
+      <span class="cds--tag cds--tag--warm">Timer</span>
+      <span class="cds--tag cds--tag--blue">MDB</span>
+      <span class="cds--tag cds--tag--green">@Remove</span>
+      <span class="cds--tag cds--tag--purple">@Lock</span>
+      <span class="cds--tag cds--tag--teal">@Version</span>
+      <span class="cds--tag cds--tag--red">@Timeout</span>
+      <span class="cds--tag cds--tag--warm">@DeclareRoles</span>
+      <span class="cds--tag cds--tag--blue">@PermitAll</span>
+      <span class="cds--tag cds--tag--green">@PostConstruct</span>
+    </div>
+
+    <!-- Nav tiles -->
+    <h2>Documentation</h2>
+    <div class="tile-grid">
+      <a class="cds--tile" href="functional.html" style="text-decoration:none;display:block;cursor:pointer">
+        <h3>⬡ Architecture Fonctionnelle</h3>
+        <p>Les 5 domaines métier : beans Stateless, Stateful, Singleton, MDB et sécurité déclarative. Diagramme SVG des composants.</p>
+        <span class="cds--tag cds--tag--blue" style="margin-top:.5rem">5 domaines</span>
+        <span class="cds--tag cds--tag--green" style="margin-top:.5rem">SVG inline</span>
+      </a>
+      <a class="cds--tile" href="technical.html" style="text-decoration:none;display:block;cursor:pointer">
+        <h3>⚙ Architecture Technique</h3>
+        <p>Couches applicatives, types EJB, gestion des transactions CMT/BMT, timer service, features Liberty et datasources JPA.</p>
+        <span class="cds--tag cds--tag--purple" style="margin-top:.5rem">EJB Container</span>
+        <span class="cds--tag cds--tag--teal" style="margin-top:.5rem">JPA / JMS</span>
+      </a>
+      <a class="cds--tile" href="sequences.html" style="text-decoration:none;display:block;cursor:pointer">
+        <h3>⇄ Diagrammes de séquence</h3>
+        <p>3 scénarios clés : transfert atomique CMT, lot @Stateful avec REQUIRES_NEW, et rapport planifié par @Schedule.</p>
+        <span class="cds--tag cds--tag--red" style="margin-top:.5rem">3 séquences SVG</span>
+      </a>
+      <a class="cds--tile" href="rules.html" style="text-decoration:none;display:block;cursor:pointer">
+        <h3>⚑ Règles métier</h3>
+        <p>12 règles critiques et importantes : atomicité, verrouillage optimiste, RBAC, plafonds, feature flags, timer, MDB.</p>
+        <span class="cds--tag cds--tag--red" style="margin-top:.5rem">4 critiques</span>
+        <span class="cds--tag cds--tag--warm" style="margin-top:.5rem">1 avertissement</span>
+        <span class="cds--tag cds--tag--green" style="margin-top:.5rem">7 standard</span>
+      </a>
+    </div>
+
+    <hr class="cds--divider"/>
+    <h2>EJB Types démontrés</h2>
+    <div class="tile-grid">
+      <div class="cds--tile">
+        <h3>@Stateless</h3>
+        <p>Pool d'instances géré par le container. Aucun état conversationnel entre les appels. CMT par défaut.</p>
+        <p><code>AccountServiceBean</code>, <code>ClientServiceBean</code></p>
+      </div>
+      <div class="cds--tile">
+        <h3>@Stateful</h3>
+        <p>Instance dédiée par client. Maintient un état entre les appels jusqu'à <code>@Remove</code>. Timeout 30 min.</p>
+        <p><code>TransactionBatchBean</code></p>
+      </div>
+      <div class="cds--tile">
+        <h3>@Singleton + @Startup</h3>
+        <p>Instance unique dans la JVM. Initialisé au démarrage. <code>@Lock(READ/WRITE)</code> pour la concurrence.</p>
+        <p><code>ConfigServiceBean</code>, <code>DatabaseMigrationStartup</code>, <code>ReportGeneratorBean</code></p>
+      </div>
+      <div class="cds--tile">
+        <h3>@MessageDriven</h3>
+        <p>Consommateur JMS asynchrone. Écoute la queue <code>jms/notificationQueue</code>. Supporte EMAIL/SMS/PUSH/ALERT.</p>
+        <p><code>NotificationMDB</code></p>
+      </div>
+    </div>
+  </main>
+</div>
+<footer class="cds--footer">Banking EJB Application — Lab 04B · Jakarta EE 10 · Open Liberty 23 · © 2025 Olivier Planson</footer>
+</body>
+</html>

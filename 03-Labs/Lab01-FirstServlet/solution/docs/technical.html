@@ -1,0 +1,258 @@
+<!-- © Copyright 2026 Olivier Planson. All rights reserved. Reproduction prohibited. Made with IBM Bob. -->
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>Architecture Technique — Banking Application Documentation</title>
+  <link rel="stylesheet" href="assets/carbon.css"/>
+</head>
+<body>
+<header class="cds--header">
+  <a class="cds--header__name" href="index.html">Banking Application<span>Documentation Technique</span></a>
+</header>
+<div class="cds--shell">
+  <nav class="cds--side-nav">
+    <p class="cds--side-nav__section-title">Documentation</p>
+    <a class="cds--side-nav__link" href="index.html">&#x2299; Vue d'ensemble</a>
+    <a class="cds--side-nav__link" href="functional.html">&#x229E; Architecture Fonctionnelle</a>
+    <a class="cds--side-nav__link active" href="technical.html">&#x229F; Architecture Technique</a>
+    <a class="cds--side-nav__link" href="sequences.html">&#x21C4; Diagrammes de Séquences</a>
+    <a class="cds--side-nav__link" href="rules.html">&#x2261; Règles de Gestion</a>
+  </nav>
+  <main class="cds--content">
+    <div class="breadcrumb"><a href="index.html">Accueil</a> <span>/</span> Architecture Technique</div>
+
+    <h1>Architecture Technique</h1>
+    <p class="page-lead">Vue en couches de la stack technique, structure des sources, configuration Open Liberty, sécurité de session et conteneurisation avec Podman/Docker.</p>
+
+    <!-- ─ Layer Diagram ─ -->
+    <h2>Diagramme en couches</h2>
+    <div class="arch-box">
+      <table style="width:100%;border-collapse:collapse;font-size:0.8rem;text-align:center;">
+        <tr>
+          <td colspan="3" style="background:#d0e2ff;color:#0043ce;font-weight:700;padding:0.75rem;border:1px solid #a6c8ff;">
+            COUCHE CLIENT — Navigateur Web (HTML5, CSS3, JavaScript ES6)
+          </td>
+        </tr>
+        <tr>
+          <td colspan="3" style="background:#e0e0e0;color:#525252;font-size:0.7rem;padding:0.25rem;border:1px solid #c6c6c6;">
+            HTTP/HTTPS &darr;&uarr;
+          </td>
+        </tr>
+        <tr>
+          <td colspan="3" style="background:#defbe6;color:#0e6027;font-weight:700;padding:0.75rem;border:1px solid #a7f0ba;">
+            COUCHE WEB / ROUTING — Jakarta Servlet 6.0 (@WebServlet)
+          </td>
+        </tr>
+        <tr>
+          <td style="background:#defbe6;color:#0e6027;padding:0.5rem;border:1px solid #a7f0ba;width:33%">
+            <code>WelcomeServlet</code><br/><small>GET /welcome</small>
+          </td>
+          <td style="background:#defbe6;color:#0e6027;padding:0.5rem;border:1px solid #a7f0ba;width:33%">
+            <code>ClientListServlet (GET)</code><br/><small>GET /clients</small>
+          </td>
+          <td style="background:#defbe6;color:#0e6027;padding:0.5rem;border:1px solid #a7f0ba;width:34%">
+            <code>ClientListServlet (POST)</code><br/><small>POST /clients</small>
+          </td>
+        </tr>
+        <tr>
+          <td colspan="3" style="background:#e0e0e0;color:#525252;font-size:0.7rem;padding:0.25rem;border:1px solid #c6c6c6;">
+            Appels méthodes Java &darr;&uarr;
+          </td>
+        </tr>
+        <tr>
+          <td colspan="3" style="background:#e8daff;color:#491d8b;font-weight:700;padding:0.75rem;border:1px solid #d4bbff;">
+            COUCHE MODÈLE — com.bank.model
+          </td>
+        </tr>
+        <tr>
+          <td colspan="3" style="background:#e8daff;color:#491d8b;padding:0.5rem;border:1px solid #d4bbff;">
+            <code>Client.java</code> — POJO Serializable (id, name, email, phone)
+          </td>
+        </tr>
+        <tr>
+          <td colspan="3" style="background:#e0e0e0;color:#525252;font-size:0.7rem;padding:0.25rem;border:1px solid #c6c6c6;">
+            Stockage dans l'instance Servlet &darr;&uarr;
+          </td>
+        </tr>
+        <tr>
+          <td colspan="3" style="background:#f4f4f4;color:#525252;font-weight:700;padding:0.75rem;border:1px solid #c6c6c6;">
+            COUCHE DONNÉES — CopyOnWriteArrayList (mémoire JVM)
+          </td>
+        </tr>
+        <tr>
+          <td colspan="3" style="background:#e0e0e0;color:#525252;font-size:0.7rem;padding:0.25rem;border:1px solid #c6c6c6;">
+            Hébergé dans &darr;
+          </td>
+        </tr>
+        <tr>
+          <td colspan="3" style="background:#393939;color:#f4f4f4;font-weight:700;padding:0.75rem;border:1px solid #161616;">
+            COUCHE SERVEUR — Open Liberty (WLP) · Servlet 6.0 · CDI 4.0 · MicroProfile 6.0
+          </td>
+        </tr>
+        <tr>
+          <td colspan="3" style="background:#161616;color:#c6c6c6;font-weight:700;padding:0.75rem;border:1px solid #000;">
+            COUCHE INFRASTRUCTURE — OCI Container · icr.io/appcafe/open-liberty:full-java17-openj9-ubi · Podman / Docker
+          </td>
+        </tr>
+      </table>
+    </div>
+
+    <!-- ─ Tech Stack ─ -->
+    <h2>Stack technique</h2>
+    <div class="cds--data-table-container">
+      <table class="cds--data-table">
+        <thead><tr><th>Couche</th><th>Technologie</th><th>Version</th><th>Rôle</th></tr></thead>
+        <tbody>
+          <tr><td><span class="cds--tag cds--tag--blue">Client</span></td><td>HTML5 + CSS3</td><td>—</td><td>Interface utilisateur statique et dynamique</td></tr>
+          <tr><td><span class="cds--tag cds--tag--blue">Client</span></td><td>JavaScript</td><td>ES6</td><td>Validation côté client dans <code>add-client.html</code></td></tr>
+          <tr><td><span class="cds--tag cds--tag--green">Web</span></td><td>Jakarta Servlet</td><td>6.0</td><td>Traitement des requêtes HTTP GET et POST</td></tr>
+          <tr><td><span class="cds--tag cds--tag--green">Web</span></td><td>Jakarta EE API</td><td>10.0.0</td><td>Ensemble des API Jakarta EE (scope <code>provided</code>)</td></tr>
+          <tr><td><span class="cds--tag cds--tag--purple">Modèle</span></td><td>Java POJO</td><td>Java 17</td><td>Entité <code>Client</code> sérialisable</td></tr>
+          <tr><td><span class="cds--tag cds--tag--teal">Données</span></td><td>CopyOnWriteArrayList</td><td>JDK 17</td><td>Stockage thread-safe en mémoire JVM</td></tr>
+          <tr><td><span class="cds--tag cds--tag--warm">Serveur</span></td><td>Open Liberty</td><td>WLP (full-java17-openj9-ubi)</td><td>Serveur d'applications Jakarta EE / MicroProfile</td></tr>
+          <tr><td><span class="cds--tag cds--tag--warm">Serveur</span></td><td>CDI</td><td>4.0</td><td>Injection de dépendances (feature activée)</td></tr>
+          <tr><td><span class="cds--tag cds--tag--warm">Serveur</span></td><td>JSON-B / JSON-P</td><td>3.0 / 2.1</td><td>Traitement JSON (features activées)</td></tr>
+          <tr><td><span class="cds--tag cds--tag--warm">Serveur</span></td><td>MicroProfile Config</td><td>3.0</td><td>Configuration externalisée via <code>microprofile-config.properties</code></td></tr>
+          <tr><td><span class="cds--tag cds--tag--warm">Serveur</span></td><td>MicroProfile Health</td><td>4.0</td><td>Endpoint <code>/health</code></td></tr>
+          <tr><td><span class="cds--tag cds--tag--warm">Serveur</span></td><td>MicroProfile Metrics</td><td>5.0</td><td>Endpoint <code>/metrics</code></td></tr>
+          <tr><td><span class="cds--tag cds--tag--warm">Serveur</span></td><td>MicroProfile OpenAPI</td><td>3.1</td><td>Endpoint <code>/openapi</code></td></tr>
+          <tr><td><span class="cds--tag cds--tag--red">Build</span></td><td>Maven</td><td>3 + compiler 3.11.0</td><td>Compilation, packaging WAR, déploiement WildFly plugin</td></tr>
+          <tr><td><span class="cds--tag cds--tag--red">Build</span></td><td>JUnit Jupiter</td><td>5.10.1</td><td>Tests unitaires (scope <code>test</code>)</td></tr>
+          <tr><td><span class="cds--tag cds--tag--red">Infra</span></td><td>OCI Container (Podman/Docker)</td><td>—</td><td>Conteneurisation via <code>Containerfile</code></td></tr>
+          <tr><td><span class="cds--tag cds--tag--red">Infra</span></td><td>Red Hat UBI (OpenJ9)</td><td>java17-openj9-ubi</td><td>Image de base du conteneur Open Liberty</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- ─ Source Structure ─ -->
+    <h2>Structure des sources</h2>
+    <div class="cds--data-table-container">
+      <table class="cds--data-table">
+        <thead><tr><th>Chemin</th><th>Type</th><th>Description</th></tr></thead>
+        <tbody>
+          <tr><td><code>pom.xml</code></td><td><span class="cds--tag cds--tag--red">Config</span></td><td>Descripteur Maven — groupe <code>com.bank</code>, artifact <code>banking-app</code>, packaging WAR, Java 17, Jakarta EE 10</td></tr>
+          <tr><td><code>Containerfile</code></td><td><span class="cds--tag cds--tag--red">Infra</span></td><td>Image OCI basée sur <code>icr.io/appcafe/open-liberty:full-java17-openj9-ubi</code> — copie WAR, server.xml, bootstrap.properties et microprofile-config.properties</td></tr>
+          <tr><td><code>CONTAINERFILE.md</code></td><td><span class="cds--tag cds--tag--teal">Doc</span></td><td>Documentation du Containerfile — commandes build, run, troubleshooting</td></tr>
+          <tr><td><code>src/main/java/com/bank/model/Client.java</code></td><td><span class="cds--tag cds--tag--purple">Modèle</span></td><td>POJO entité client — id, name, email, phone — Serializable, equals/hashCode sur <code>id</code></td></tr>
+          <tr><td><code>src/main/java/com/bank/web/WelcomeServlet.java</code></td><td><span class="cds--tag cds--tag--green">Servlet</span></td><td>Servlet GET <code>/welcome</code> — génère HTML avec date/heure courante et liens de navigation</td></tr>
+          <tr><td><code>src/main/java/com/bank/web/ClientListServlet.java</code></td><td><span class="cds--tag cds--tag--green">Servlet</span></td><td>Servlet GET+POST <code>/clients</code> — liste, ajout, validation serveur, PRG, escaping XSS, log</td></tr>
+          <tr><td><code>src/main/webapp/index.html</code></td><td><span class="cds--tag cds--tag--blue">HTML statique</span></td><td>Page d'accueil — welcome file déclaré dans web.xml</td></tr>
+          <tr><td><code>src/main/webapp/add-client.html</code></td><td><span class="cds--tag cds--tag--blue">HTML statique</span></td><td>Formulaire d'ajout avec validation JavaScript intégrée</td></tr>
+          <tr><td><code>src/main/webapp/css/style.css</code></td><td><span class="cds--tag cds--tag--blue">CSS</span></td><td>Feuille de style de l'application (gradient violet/bleu, cards, tables, forms)</td></tr>
+          <tr><td><code>src/main/webapp/WEB-INF/web.xml</code></td><td><span class="cds--tag cds--tag--red">Config</span></td><td>Descripteur Web Jakarta EE 6.0 — welcome-file, session-config (timeout 30 min, HttpOnly), error-pages 404/500</td></tr>
+          <tr><td><code>src/main/liberty/config/server.xml</code></td><td><span class="cds--tag cds--tag--red">Config</span></td><td>Configuration Open Liberty — features servlet-6.0, cdi-4.0, mpConfig-3.0, mpHealth-4.0, mpMetrics-5.0, mpOpenAPI-3.1, httpEndpoint, webApplication, logging, quickStartSecurity</td></tr>
+          <tr><td><code>src/main/liberty/config/bootstrap.properties</code></td><td><span class="cds--tag cds--tag--red">Config</span></td><td>Variables Liberty — <code>default.http.port=9080</code>, <code>default.https.port=9443</code>, <code>app.context.root=/</code></td></tr>
+          <tr><td><code>src/main/resources/META-INF/microprofile-config.properties</code></td><td><span class="cds--tag cds--tag--teal">Config</span></td><td>Configuration MicroProfile — app.name, health, metrics, openapi</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- ─ Components ─ -->
+    <h2>Composants principaux</h2>
+    <div class="tile-grid">
+      <div class="cds--tile">
+        <span class="cds--tag cds--tag--green">Servlet</span>
+        <h3>WelcomeServlet</h3>
+        <p>Classe : <code>com.bank.web.WelcomeServlet</code><br/>
+        Annotation : <code>@WebServlet(name="WelcomeServlet", urlPatterns={"/welcome"})</code><br/>
+        Méthodes : <code>doGet()</code>, <code>getServletInfo()</code><br/>
+        Logique : récupère <code>LocalDateTime.now()</code>, formate avec pattern <code>"EEEE, MMMM dd, yyyy 'at' HH:mm:ss"</code>, écrit le HTML via <code>PrintWriter</code>.</p>
+      </div>
+      <div class="cds--tile">
+        <span class="cds--tag cds--tag--green">Servlet</span>
+        <h3>ClientListServlet</h3>
+        <p>Classe : <code>com.bank.web.ClientListServlet</code><br/>
+        Annotation : <code>@WebServlet(name="ClientListServlet", urlPatterns={"/clients"})</code><br/>
+        Champ : <code>private final List&lt;Client&gt; clients = new CopyOnWriteArrayList&lt;&gt;()</code><br/>
+        Méthodes : <code>init()</code>, <code>doGet()</code>, <code>doPost()</code>, <code>escapeHtml()</code>, <code>getServletInfo()</code></p>
+      </div>
+      <div class="cds--tile">
+        <span class="cds--tag cds--tag--purple">Modèle</span>
+        <h3>Client</h3>
+        <p>Classe : <code>com.bank.model.Client</code><br/>
+        Implements : <code>Serializable</code> (serialVersionUID = 1L)<br/>
+        Champs : <code>Long id</code>, <code>String name</code>, <code>String email</code>, <code>String phone</code><br/>
+        Méthodes : constructeurs, getters/setters, <code>equals()</code>, <code>hashCode()</code>, <code>toString()</code></p>
+      </div>
+    </div>
+
+    <!-- ─ Session/Security ─ -->
+    <h2>Configuration Session &amp; Sécurité</h2>
+    <div class="cds--tile">
+      <h3>web.xml — Session &amp; Erreurs</h3>
+      <div class="cds--data-table-container">
+        <table class="cds--data-table">
+          <thead><tr><th>Paramètre</th><th>Valeur</th><th>Source</th></tr></thead>
+          <tbody>
+            <tr><td>Session timeout</td><td>30 minutes</td><td><code>&lt;session-timeout&gt;30&lt;/session-timeout&gt;</code></td></tr>
+            <tr><td>Cookie HttpOnly</td><td>true</td><td><code>&lt;http-only&gt;true&lt;/http-only&gt;</code></td></tr>
+            <tr><td>Welcome file</td><td><code>index.html</code></td><td><code>&lt;welcome-file&gt;index.html&lt;/welcome-file&gt;</code></td></tr>
+            <tr><td>Erreur 404</td><td><code>/error-404.html</code></td><td><code>&lt;error-page&gt;&lt;error-code&gt;404&lt;/error-code&gt;</code></td></tr>
+            <tr><td>Erreur 500</td><td><code>/error-500.html</code></td><td><code>&lt;error-page&gt;&lt;error-code&gt;500&lt;/error-code&gt;</code></td></tr>
+          </tbody>
+        </table>
+      </div>
+      <h3 style="margin-top:1rem">server.xml — Logging &amp; Sécurité</h3>
+      <div class="cds--data-table-container">
+        <table class="cds--data-table">
+          <thead><tr><th>Paramètre</th><th>Valeur</th></tr></thead>
+          <tbody>
+            <tr><td>Trace spec</td><td><code>*=info</code></td></tr>
+            <tr><td>Max file size</td><td>20 MB</td></tr>
+            <tr><td>Max files</td><td>10</td></tr>
+            <tr><td>Quick start security</td><td>user <code>admin</code> / <code>adminpwd</code></td></tr>
+            <tr><td>Metrics auth</td><td>false (accès non authentifié à <code>/metrics</code>)</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ─ Containerfile Steps ─ -->
+    <h2>Étapes du Containerfile</h2>
+    <div class="cds--data-table-container">
+      <table class="cds--data-table">
+        <thead><tr><th>Étape</th><th>Instruction</th><th>Description</th></tr></thead>
+        <tbody>
+          <tr><td>1</td><td><code>FROM icr.io/appcafe/open-liberty:full-java17-openj9-ubi</code></td><td>Image de base IBM Container Registry — Java 17, OpenJ9, Red Hat UBI</td></tr>
+          <tr><td>2</td><td><code>COPY --chown=1001:0 target/banking-app.war /config/apps/</code></td><td>Copie du WAR compilé dans le répertoire d'applications explicites (pas dropins)</td></tr>
+          <tr><td>3</td><td><code>COPY --chown=1001:0 src/main/liberty/config/server.xml /config/</code></td><td>Configuration du serveur Open Liberty (features, endpoints, webApplication)</td></tr>
+          <tr><td>4</td><td><code>COPY --chown=1001:0 src/main/liberty/config/bootstrap.properties /config/</code></td><td>Variables de démarrage (ports HTTP/HTTPS, context root)</td></tr>
+          <tr><td>5</td><td><code>COPY --chown=1001:0 src/main/resources/META-INF/microprofile-config.properties /config/</code></td><td>Configuration MicroProfile (health, metrics, openapi)</td></tr>
+          <tr><td>6</td><td><code>RUN configure.sh</code></td><td>Script Liberty — installe les features déclarées dans server.xml, optimise l'image</td></tr>
+          <tr><td>7</td><td><code>EXPOSE 9080 9443</code></td><td>Expose les ports HTTP (9080) et HTTPS (9443)</td></tr>
+          <tr><td>8</td><td><code>CMD ["/opt/ol/wlp/bin/server", "run", "defaultServer"]</code></td><td>Démarrage d'Open Liberty en foreground dans le conteneur</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- ─ Commands ─ -->
+    <h2>Commandes d'exploitation</h2>
+    <div class="tile-grid">
+      <div class="cds--tile">
+        <h3>Build Maven</h3>
+        <pre>mvn clean package</pre>
+        <p>Compile les sources Java, exécute les tests, package le WAR dans <code>target/banking-app.war</code>.</p>
+      </div>
+      <div class="cds--tile">
+        <h3>Build de l'image</h3>
+        <pre>podman build -t banking-app:lab01 \
+  -f Containerfile .</pre>
+        <p>Construit l'image OCI. Nécessite que le WAR soit présent dans <code>target/</code>.</p>
+      </div>
+      <div class="cds--tile">
+        <h3>Exécution du conteneur</h3>
+        <pre>podman run -d \
+  --name banking-app-lab01 \
+  -p 9080:9080 \
+  -p 9443:9443 \
+  banking-app:lab01</pre>
+        <p>Lance le conteneur en mode détaché. Application accessible sur <code>http://localhost:9080/</code>.</p>
+      </div>
+    </div>
+  </main>
+</div>
+<footer class="cds--footer">Banking Application &middot; Documentation Technique v1.0 &middot; &copy; 2025 Olivier Planson &middot; Made with IBM Bob</footer>
+</body>
+</html>

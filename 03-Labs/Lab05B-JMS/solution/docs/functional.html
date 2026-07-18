@@ -1,0 +1,223 @@
+<!-- © Copyright 2026 Olivier Planson. All rights reserved. Reproduction prohibited. Made with IBM Bob. -->
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>Architecture Fonctionnelle — Banking JMS App</title>
+  <link rel="stylesheet" href="assets/carbon.css"/>
+</head>
+<body>
+<header class="cds--header">
+  <a class="cds--header__name" href="index.html">Banking JMS Application<span>Documentation Technique — Lab 05B</span></a>
+</header>
+<div class="cds--shell">
+  <nav class="cds--side-nav" aria-label="Navigation principale">
+    <p class="cds--side-nav__section-title">Documentation</p>
+    <a class="cds--side-nav__link" href="index.html"><i class="icon">⊙</i> Vue d'ensemble</a>
+    <a class="cds--side-nav__link active" href="functional.html"><i class="icon">⊞</i> Architecture Fonctionnelle</a>
+    <a class="cds--side-nav__link" href="technical.html"><i class="icon">⊟</i> Architecture Technique</a>
+    <a class="cds--side-nav__link" href="sequences.html"><i class="icon">⇄</i> Diagrammes de Séquences</a>
+    <a class="cds--side-nav__link" href="rules.html"><i class="icon">≡</i> Règles de Gestion</a>
+  </nav>
+  <main class="cds--content">
+    <nav class="cds--breadcrumb"><a href="index.html">Accueil</a><span class="sep">/</span><span class="current">Architecture Fonctionnelle</span></nav>
+    <h1>Architecture Fonctionnelle</h1>
+    <p class="page-lead">L'application est organisée en quatre domaines fonctionnels : production de messages, consommateurs MDB, persistance d'audit et interface de test HTTP. Le diagramme ci-dessous représente le flux complet des messages JMS.</p>
+
+    <h2>Diagramme de flux JMS</h2>
+    <div class="arch-box">
+      <svg viewBox="0 0 860 420" xmlns="http://www.w3.org/2000/svg" font-family="IBM Plex Sans,Arial,sans-serif" font-size="11">
+        <defs>
+          <marker id="arr" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+            <path d="M0,0 L0,6 L8,3 z" fill="#0f62fe"/>
+          </marker>
+          <marker id="arr-async" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+            <path d="M0,0 L0,6 L8,3 z" fill="#198038"/>
+          </marker>
+          <marker id="arr-err" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+            <path d="M0,0 L0,6 L8,3 z" fill="#da1e28"/>
+          </marker>
+        </defs>
+
+        <!-- HTTP Servlet -->
+        <rect x="10" y="180" width="130" height="46" rx="4" fill="#d0e2ff" stroke="#0043ce"/>
+        <text x="75" y="199" text-anchor="middle" font-weight="700" fill="#0043ce">MessagingTest</text>
+        <text x="75" y="214" text-anchor="middle" fill="#0043ce">Servlet</text>
+        <text x="75" y="227" text-anchor="middle" font-size="9" fill="#525252">@WebServlet /test-messaging</text>
+
+        <!-- Arrow: Servlet → Producer -->
+        <line x1="140" y1="203" x2="188" y2="203" stroke="#0f62fe" stroke-width="2" marker-end="url(#arr)"/>
+
+        <!-- Producer -->
+        <rect x="188" y="170" width="145" height="66" rx="4" fill="#e8daff" stroke="#491d8b"/>
+        <text x="261" y="191" text-anchor="middle" font-weight="700" fill="#491d8b">TransactionEvent</text>
+        <text x="261" y="206" text-anchor="middle" font-weight="700" fill="#491d8b">Producer</text>
+        <text x="261" y="220" text-anchor="middle" font-size="9" fill="#525252">@ApplicationScoped</text>
+        <text x="261" y="233" text-anchor="middle" font-size="9" fill="#525252">@JMSConnectionFactory</text>
+
+        <!-- Arrow: Producer → transactionQueue -->
+        <line x1="333" y1="190" x2="388" y2="140" stroke="#0f62fe" stroke-width="2" marker-end="url(#arr)"/>
+        <!-- Arrow: Producer → emailQueue -->
+        <line x1="333" y1="203" x2="388" y2="215" stroke="#0f62fe" stroke-width="2" marker-end="url(#arr)"/>
+        <!-- Arrow: Producer → auditTopic -->
+        <line x1="333" y1="218" x2="388" y2="300" stroke="#0f62fe" stroke-width="2" marker-end="url(#arr)"/>
+
+        <!-- transactionQueue -->
+        <rect x="388" y="108" width="140" height="46" rx="4" fill="#defbe6" stroke="#198038"/>
+        <text x="458" y="127" text-anchor="middle" font-weight="700" fill="#0e6027">transactionQueue</text>
+        <text x="458" y="142" text-anchor="middle" font-size="9" fill="#525252">PERSISTENT · concurrency=10</text>
+        <!-- Arrow: transactionQueue → TransactionEventMDB -->
+        <line x1="528" y1="131" x2="578" y2="131" stroke="#198038" stroke-width="2" stroke-dasharray="5,3" marker-end="url(#arr-async)"/>
+
+        <!-- TransactionEventMDB -->
+        <rect x="578" y="108" width="145" height="46" rx="4" fill="#defbe6" stroke="#198038"/>
+        <text x="651" y="127" text-anchor="middle" font-weight="700" fill="#0e6027">TransactionEvent</text>
+        <text x="651" y="141" text-anchor="middle" font-weight="700" fill="#0e6027">MDB</text>
+        <text x="651" y="154" text-anchor="middle" font-size="9" fill="#525252">DEPOSIT / WITHDRAWAL / TRANSFER</text>
+
+        <!-- emailQueue -->
+        <rect x="388" y="193" width="140" height="46" rx="4" fill="#fdf6dd" stroke="#c47900"/>
+        <text x="458" y="212" text-anchor="middle" font-weight="700" fill="#8c4f00">emailQueue</text>
+        <text x="458" y="226" text-anchor="middle" font-size="9" fill="#525252">selector: notificationType='EMAIL'</text>
+        <!-- Arrow: emailQueue → EmailNotificationMDB -->
+        <line x1="528" y1="216" x2="578" y2="216" stroke="#198038" stroke-width="2" stroke-dasharray="5,3" marker-end="url(#arr-async)"/>
+
+        <!-- EmailNotificationMDB -->
+        <rect x="578" y="193" width="145" height="46" rx="4" fill="#fdf6dd" stroke="#c47900"/>
+        <text x="651" y="212" text-anchor="middle" font-weight="700" fill="#8c4f00">EmailNotification</text>
+        <text x="651" y="226" text-anchor="middle" font-weight="700" fill="#8c4f00">MDB</text>
+        <!-- Arrow: EmailNotificationMDB → EmailService -->
+        <line x1="723" y1="216" x2="773" y2="216" stroke="#525252" stroke-width="1.5" marker-end="url(#arr)"/>
+        <rect x="773" y="205" width="75" height="24" rx="3" fill="#e0e0e0" stroke="#8d8d8d"/>
+        <text x="811" y="221" text-anchor="middle" fill="#161616">EmailService</text>
+
+        <!-- auditTopic -->
+        <rect x="388" y="278" width="140" height="46" rx="4" fill="#d9fbfb" stroke="#004144"/>
+        <text x="458" y="297" text-anchor="middle" font-weight="700" fill="#004144">auditTopic</text>
+        <text x="458" y="311" text-anchor="middle" font-size="9" fill="#525252">durable · clientId=AuditClient</text>
+        <!-- Arrow: auditTopic → AuditLoggingMDB -->
+        <line x1="528" y1="301" x2="578" y2="301" stroke="#198038" stroke-width="2" stroke-dasharray="5,3" marker-end="url(#arr-async)"/>
+
+        <!-- AuditLoggingMDB -->
+        <rect x="578" y="278" width="145" height="46" rx="4" fill="#d9fbfb" stroke="#004144"/>
+        <text x="651" y="297" text-anchor="middle" font-weight="700" fill="#004144">AuditLogging</text>
+        <text x="651" y="311" text-anchor="middle" font-weight="700" fill="#004144">MDB</text>
+        <!-- Arrow: AuditLoggingMDB → DB -->
+        <line x1="723" y1="301" x2="773" y2="301" stroke="#525252" stroke-width="1.5" marker-end="url(#arr)"/>
+        <rect x="773" y="290" width="75" height="24" rx="3" fill="#e0e0e0" stroke="#8d8d8d"/>
+        <text x="811" y="306" text-anchor="middle" fill="#161616">AuditLog DB</text>
+
+        <!-- deadLetterQueue -->
+        <rect x="388" y="358" width="140" height="46" rx="4" fill="#ffd7d9" stroke="#750e13"/>
+        <text x="458" y="377" text-anchor="middle" font-weight="700" fill="#750e13">deadLetterQueue</text>
+        <text x="458" y="391" text-anchor="middle" font-size="9" fill="#525252">failed messages · concurrency=2</text>
+        <!-- Arrow: error → deadLetterQueue -->
+        <line x1="651" y1="154" x2="651" y2="170" stroke="#da1e28" stroke-width="1.5" stroke-dasharray="4,2"/>
+        <line x1="651" y1="170" x2="458" y2="358" stroke="#da1e28" stroke-width="1.5" stroke-dasharray="4,2" marker-end="url(#arr-err)"/>
+        <!-- Arrow: deadLetterQueue → DeadLetterQueueMDB -->
+        <line x1="528" y1="381" x2="578" y2="381" stroke="#198038" stroke-width="2" stroke-dasharray="5,3" marker-end="url(#arr-async)"/>
+
+        <!-- DeadLetterQueueMDB -->
+        <rect x="578" y="358" width="145" height="46" rx="4" fill="#ffd7d9" stroke="#750e13"/>
+        <text x="651" y="377" text-anchor="middle" font-weight="700" fill="#750e13">DeadLetterQueue</text>
+        <text x="651" y="391" text-anchor="middle" font-weight="700" fill="#750e13">MDB</text>
+        <!-- Arrow: DeadLetterQueueMDB → DB -->
+        <line x1="723" y1="381" x2="773" y2="381" stroke="#525252" stroke-width="1.5" marker-end="url(#arr)"/>
+        <rect x="773" y="370" width="75" height="24" rx="3" fill="#e0e0e0" stroke="#8d8d8d"/>
+        <text x="811" y="386" text-anchor="middle" fill="#161616">FailedMsg DB</text>
+
+        <!-- Legend -->
+        <rect x="10" y="10" width="200" height="80" rx="3" fill="#f4f4f4" stroke="#e0e0e0"/>
+        <text x="20" y="28" font-weight="700" fill="#161616" font-size="10">Légende</text>
+        <line x1="20" y1="42" x2="60" y2="42" stroke="#0f62fe" stroke-width="2" marker-end="url(#arr)"/>
+        <text x="68" y="46" fill="#525252" font-size="10">Envoi synchrone (Producer)</text>
+        <line x1="20" y1="58" x2="60" y2="58" stroke="#198038" stroke-width="2" stroke-dasharray="5,3" marker-end="url(#arr-async)"/>
+        <text x="68" y="62" fill="#525252" font-size="10">Consommation async (MDB)</text>
+        <line x1="20" y1="74" x2="60" y2="74" stroke="#da1e28" stroke-width="1.5" stroke-dasharray="4,2" marker-end="url(#arr-err)"/>
+        <text x="68" y="78" fill="#525252" font-size="10">Erreur → Dead Letter</text>
+      </svg>
+    </div>
+
+    <h2>Domaine 1 — Production de messages</h2>
+    <div class="cds--data-table-container">
+      <table class="cds--data-table">
+        <thead><tr><th>Composant</th><th>Type</th><th>Responsabilité</th></tr></thead>
+        <tbody>
+          <tr>
+            <td><code>TransactionEventProducer</code></td>
+            <td><span class="cds--tag cds--tag--purple">@ApplicationScoped</span></td>
+            <td>Produit des <code>TextMessage</code> JSON vers <code>transactionQueue</code> avec priorité différenciée (TRANSFER=7, WITHDRAWAL=6, DEPOSIT=5). Publie les événements d'audit sur <code>auditTopic</code>. Envoie les notifications e-mail vers <code>emailQueue</code> avec la propriété <code>notificationType='EMAIL'</code>. Injecte un <code>JMSContext</code> via <code>@JMSConnectionFactory("jms/connectionFactory")</code>.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h2>Domaine 2 — Consommateurs MDB</h2>
+    <div class="cds--data-table-container">
+      <table class="cds--data-table">
+        <thead><tr><th>Composant</th><th>Destination</th><th>Responsabilité</th></tr></thead>
+        <tbody>
+          <tr>
+            <td><code>TransactionEventMDB</code></td>
+            <td><span class="cds--tag cds--tag--green">transactionQueue</span></td>
+            <td>Consomme les événements de transaction (DEPOSIT, WITHDRAWAL, TRANSFER). Valide la propriété <code>messageFormat='JSON'</code>, désérialise le payload JSON, simule un traitement de 100 ms puis journalise le résultat. Concurrence : 10 instances.</td>
+          </tr>
+          <tr>
+            <td><code>EmailNotificationMDB</code></td>
+            <td><span class="cds--tag cds--tag--warm">emailQueue</span></td>
+            <td>Consomme uniquement les messages dont le sélecteur <code>notificationType='EMAIL'</code> est vrai. Délègue l'envoi à <code>EmailService</code>. Concurrence : 5 instances.</td>
+          </tr>
+          <tr>
+            <td><code>AuditLoggingMDB</code></td>
+            <td><span class="cds--tag cds--tag--teal">auditTopic (durable)</span></td>
+            <td>Abonné durable au topic d'audit (<code>clientId=AuditClient</code>, <code>subscriptionName=AuditSubscription</code>). Crée et persiste une entité <code>AuditLog</code> via JPA à chaque message reçu. Concurrence : 3 instances.</td>
+          </tr>
+          <tr>
+            <td><code>DeadLetterQueueMDB</code></td>
+            <td><span class="cds--tag cds--tag--red">deadLetterQueue</span></td>
+            <td>Capture les messages non traitables après épuisement des tentatives. Rejette explicitement les <code>ObjectMessage</code> (protection CVE-2015-7501). Persiste une entité <code>FailedMessage</code> en base de données. Concurrence : 2 instances.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h2>Domaine 3 — Persistance d'audit</h2>
+    <div class="cds--data-table-container">
+      <table class="cds--data-table">
+        <thead><tr><th>Entité JPA</th><th>Table</th><th>Responsabilité</th></tr></thead>
+        <tbody>
+          <tr>
+            <td><code>AuditLog</code></td>
+            <td><code>audit_logs</code></td>
+            <td>Enregistre chaque événement d'audit : type de transaction, identifiant de compte, statut, horodatage. Champ <code>createdAt</code> immutable, défini une seule fois par <code>@PrePersist</code>. Persisté par <code>AuditLoggingMDB</code> via <code>EntityManager</code> (EclipseLink).</td>
+          </tr>
+          <tr>
+            <td><code>FailedMessage</code></td>
+            <td><code>failed_messages</code></td>
+            <td>Capture les messages en erreur : payload original, type de message, cause de l'échec, nombre de tentatives, horodatage. Persisté par <code>DeadLetterQueueMDB</code>.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h2>Domaine 4 — Interface de test HTTP</h2>
+    <div class="cds--data-table-container">
+      <table class="cds--data-table">
+        <thead><tr><th>Endpoint</th><th>Méthode</th><th>Action déclenchée</th></tr></thead>
+        <tbody>
+          <tr><td><code>/test-messaging/deposit</code></td><td>GET</td><td>Envoie un événement DEPOSIT sur <code>transactionQueue</code> (priorité 5)</td></tr>
+          <tr><td><code>/test-messaging/withdrawal</code></td><td>GET</td><td>Envoie un événement WITHDRAWAL sur <code>transactionQueue</code> (priorité 6)</td></tr>
+          <tr><td><code>/test-messaging/transfer</code></td><td>GET</td><td>Envoie un événement TRANSFER sur <code>transactionQueue</code> (priorité 7)</td></tr>
+          <tr><td><code>/test-messaging/email</code></td><td>GET</td><td>Envoie une notification e-mail vers <code>emailQueue</code> avec <code>notificationType='EMAIL'</code></td></tr>
+          <tr><td><code>/test-messaging/audit</code></td><td>GET</td><td>Publie un événement d'audit sur <code>auditTopic</code></td></tr>
+          <tr><td><code>/test-messaging/all</code></td><td>GET</td><td>Déclenche les 5 types de messages en une seule requête</td></tr>
+          <tr><td><code>/test-messaging/batch</code></td><td>GET</td><td>Envoie 10 messages en séquence pour tests de charge</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </main>
+</div>
+<footer class="cds--footer">Made with IBM Bob &nbsp;|&nbsp; Banking JMS Application — Lab 05B &nbsp;|&nbsp; Jakarta EE 10 &amp; JMS 3.1</footer>
+</body>
+</html>

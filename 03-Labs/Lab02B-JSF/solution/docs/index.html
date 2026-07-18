@@ -1,0 +1,110 @@
+<!-- © Copyright 2026 Olivier Planson. All rights reserved. Reproduction prohibited. Made with IBM Bob. -->
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Vue d'ensemble — Banking JSF Application Lab 02B</title>
+  <link rel="stylesheet" href="assets/carbon.css"/>
+</head>
+<body>
+<header class="cds--header">
+  <a class="cds--header__name" href="index.html">Banking JSF Application<span>Documentation Technique — Lab 02B</span></a>
+  <a href="../../../index.html" style="margin-left:auto;font-size:.75rem;color:#c6c6c6;text-decoration:none;border:1px solid #393939;padding:.2rem .75rem;border-radius:2px;white-space:nowrap;">← Tous les Labs</a>
+</header>
+<div class="cds--shell">
+  <nav class="cds--side-nav">
+    <p class="cds--side-nav__section-title">Documentation</p>
+    <a class="cds--side-nav__link active" href="index.html"><i class="icon">⊙</i> Vue d'ensemble</a>
+    <a class="cds--side-nav__link" href="functional.html"><i class="icon">⊞</i> Architecture Fonctionnelle</a>
+    <a class="cds--side-nav__link" href="technical.html"><i class="icon">⊟</i> Architecture Technique</a>
+    <a class="cds--side-nav__link" href="sequences.html"><i class="icon">⇄</i> Diagrammes de Séquences</a>
+    <a class="cds--side-nav__link" href="rules.html"><i class="icon">≡</i> Règles de Gestion</a>
+  </nav>
+  <main class="cds--content">
+
+    <nav class="cds--breadcrumb">
+      <span class="current">Vue d'ensemble</span>
+    </nav>
+
+    <h1>Vue d'ensemble</h1>
+    <p class="page-lead">Banking JSF Application — Lab 02B démontre l'architecture MVC avec Jakarta Faces 4.0, le templating Facelets et la validation côté serveur sur Open Liberty 23.</p>
+
+    <div class="tag-stack">
+      <span class="cds--tag cds--tag--blue">Jakarta EE 10</span>
+      <span class="cds--tag cds--tag--blue">Jakarta Faces 4.0</span>
+      <span class="cds--tag cds--tag--green">Open Liberty 23</span>
+      <span class="cds--tag cds--tag--purple">MicroProfile 6.0</span>
+      <span class="cds--tag cds--tag--teal">Java 17</span>
+      <span class="cds--tag cds--tag--warm">WAR</span>
+    </div>
+
+    <h2>Carte d'identité du projet</h2>
+    <div class="cds--data-table-container">
+      <table class="cds--data-table">
+        <thead><tr><th>Propriété</th><th>Valeur</th></tr></thead>
+        <tbody>
+          <tr><td>Nom</td><td>Banking JSF Application — Lab 02B</td></tr>
+          <tr><td>ArtifactId</td><td><code>lab02b-jsf</code></td></tr>
+          <tr><td>GroupId</td><td><code>com.bank</code></td></tr>
+          <tr><td>Packaging</td><td>WAR</td></tr>
+          <tr><td>Version Java</td><td>17</td></tr>
+          <tr><td>Jakarta EE</td><td>10</td></tr>
+          <tr><td>MicroProfile</td><td>6.0</td></tr>
+          <tr><td>Serveur</td><td>Open Liberty 23</td></tr>
+          <tr><td>Port HTTP</td><td>9080</td></tr>
+          <tr><td>Port HTTPS</td><td>9443</td></tr>
+          <tr><td>DDD</td><td>Non</td></tr>
+          <tr><td>Architecture Hexagonale</td><td>Non</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h2>Stack technologique</h2>
+    <div class="cds--data-table-container">
+      <table class="cds--data-table">
+        <thead><tr><th>Dépendance</th><th>Version</th><th>Rôle</th></tr></thead>
+        <tbody>
+          <tr><td><code>jakarta.faces</code></td><td>4.0</td><td>Framework MVC côté serveur, Facelets templating, composants UI</td></tr>
+          <tr><td><code>jakarta.enterprise.cdi</code></td><td>4.0</td><td>Injection de dépendances, gestion des scopes (@SessionScoped, @ApplicationScoped)</td></tr>
+          <tr><td><code>jakarta.servlet</code></td><td>6.0</td><td>Servlet container, FacesServlet dispatcher</td></tr>
+          <tr><td><code>jakarta.faces.jstl</code> (JSTL)</td><td>3.0</td><td>Balises de rendu conditionnel et itératif dans les vues Facelets</td></tr>
+          <tr><td><code>microprofile-health</code></td><td>4.0</td><td>Sondes liveness/readiness exposées sur <code>/health</code></td></tr>
+          <tr><td><code>microprofile-config</code></td><td>3.0</td><td>Configuration externalisée via <code>microprofile-config.properties</code></td></tr>
+          <tr><td><code>microprofile-metrics</code></td><td>5.0</td><td>Métriques applicatives exposées sur <code>/metrics</code></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h2>Navigation</h2>
+    <div class="tile-grid">
+      <a class="cds--tile" href="functional.html" style="text-decoration:none;display:block;">
+        <h3>⊞ Architecture Fonctionnelle</h3>
+        <p>Domaines métier, beans CDI, modèles, vues Facelets et supervision MicroProfile.</p>
+      </a>
+      <a class="cds--tile" href="technical.html" style="text-decoration:none;display:block;">
+        <h3>⊟ Architecture Technique</h3>
+        <p>Couches applicatives, configuration JSF, structure WAR et APIs Jakarta EE.</p>
+      </a>
+      <a class="cds--tile" href="sequences.html" style="text-decoration:none;display:block;">
+        <h3>⇄ Diagrammes de Séquences</h3>
+        <p>Flux liste clients, création (POST + validation) et recherche AJAX.</p>
+      </a>
+      <a class="cds--tile" href="rules.html" style="text-decoration:none;display:block;">
+        <h3>≡ Règles de Gestion</h3>
+        <p>10 règles numérotées R1–R10 : validation, scopes CDI, session et UX.</p>
+      </a>
+    </div>
+
+    <hr class="cds--divider"/>
+
+    <div class="cds--inline-notification success">
+      <span>✔</span>
+      <div><strong>Lab 02B</strong> — Démontre l'architecture MVC avec Jakarta Faces 4.0, Facelets templating et validation côté serveur.</div>
+    </div>
+
+  </main>
+</div>
+<footer class="cds--footer">Made with IBM Bob — Banking JSF Application Lab 02B © 2025</footer>
+</body>
+</html>

@@ -1,0 +1,357 @@
+<!-- © Copyright 2026 Olivier Planson. All rights reserved. Reproduction prohibited. Made with IBM Bob. -->
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Règles Métier — Banking JPA App</title>
+  <link rel="stylesheet" href="assets/carbon.css"/>
+</head>
+<body>
+
+<header class="cds--header">
+  <a class="cds--header__name" href="index.html">
+    ☁ IBM Carbon <span>/ Banking JPA Application — Lab 03</span>
+  </a>
+</header>
+
+<div class="cds--shell">
+  <nav class="cds--side-nav" aria-label="Navigation principale">
+    <p class="cds--side-nav__section-title">Documentation</p>
+    <a class="cds--side-nav__link" href="index.html"><i class="icon">⊞</i> Vue d'ensemble</a>
+    <a class="cds--side-nav__link" href="functional.html"><i class="icon">⬡</i> Architecture Fonctionnelle</a>
+    <a class="cds--side-nav__link" href="technical.html"><i class="icon">⚙</i> Architecture Technique</a>
+    <a class="cds--side-nav__link" href="sequences.html"><i class="icon">↔</i> Diagrammes de Séquence</a>
+    <a class="cds--side-nav__link active" href="rules.html"><i class="icon">✔</i> Règles Métier</a>
+  </nav>
+
+  <main class="cds--content">
+    <nav class="cds--breadcrumb">
+      <a href="index.html">Lab 03</a>
+      <span class="sep">/</span>
+      <span class="current">Règles Métier</span>
+    </nav>
+
+    <h1>Règles Métier</h1>
+    <p class="page-lead">
+      Catalogue des 12 règles applicatives définissant les contraintes de validation, de transaction,
+      de persistance et de gestion des comptes dans Banking JPA Application — Lab 03.
+    </p>
+
+    <!-- Légende -->
+    <div class="cds--inline-notification" role="note">
+      <span>ℹ</span>
+      <div>
+        <strong>Convention de priorité :</strong> &nbsp;
+        <span style="color:var(--cds-support-error);font-weight:600;">● CRITIQUE</span> — bloquant, lève une erreur immédiate &nbsp;|&nbsp;
+        <span style="color:#8c4f00;font-weight:600;">● AVERTISSEMENT</span> — comportement défensif &nbsp;|&nbsp;
+        <span style="color:var(--cds-support-success);font-weight:600;">● INFO</span> — règle de conception
+      </div>
+    </div>
+
+    <hr class="cds--divider"/>
+
+    <!-- ── R1 ── -->
+    <div class="rule-card critical">
+      <div class="rule-id">
+        <span>R1</span>
+        <span class="cds--tag cds--tag--red">CRITIQUE</span>
+      </div>
+      <div class="rule-title">Nom du client obligatoire</div>
+      <div class="rule-desc">
+        Le champ <code>name</code> ne peut pas être nul ni vide lors de la création ou de la mise à jour
+        d'un client. La validation est effectuée côté serveur avant toute persistance.
+        En cas d'échec, la requête retourne HTTP&nbsp;400 Bad Request.
+      </div>
+      <p style="margin-top:.5rem;margin-bottom:0;font-size:var(--cds-label-01);color:var(--cds-text-placeholder);">
+        Source : <code>ClientController.createClient()</code>
+      </p>
+    </div>
+
+    <!-- ── R2 ── -->
+    <div class="rule-card critical">
+      <div class="rule-id">
+        <span>R2</span>
+        <span class="cds--tag cds--tag--red">CRITIQUE</span>
+      </div>
+      <div class="rule-title">Email du client obligatoire</div>
+      <div class="rule-desc">
+        Le champ <code>email</code> ne peut pas être nul ni vide lors de la création ou de la mise à jour
+        d'un client. La présence d'un email valide est une précondition à la persistance de l'entité.
+        En cas d'échec, retourne HTTP&nbsp;400 Bad Request.
+      </div>
+      <p style="margin-top:.5rem;margin-bottom:0;font-size:var(--cds-label-01);color:var(--cds-text-placeholder);">
+        Source : <code>ClientController.validateUpdateInput()</code>
+      </p>
+    </div>
+
+    <!-- ── R3 ── -->
+    <div class="rule-card">
+      <div class="rule-id">
+        <span>R3</span>
+        <span class="cds--tag cds--tag--blue">INFO</span>
+      </div>
+      <div class="rule-title">Identifiant numérique requis pour l'accès individuel</div>
+      <div class="rule-desc">
+        Pour tout accès à un client individuel (consultation, modification, suppression), le paramètre
+        <code>id</code> doit être un entier valide. Un identifiant non numérique retourne HTTP&nbsp;400.
+        Un identifiant introuvable en base retourne HTTP&nbsp;404 Not Found.
+      </div>
+      <p style="margin-top:.5rem;margin-bottom:0;font-size:var(--cds-label-01);color:var(--cds-text-placeholder);">
+        Source : <code>ClientController</code> — parsing du paramètre <code>id</code>
+      </p>
+    </div>
+
+    <!-- ── R4 ── -->
+    <div class="rule-card">
+      <div class="rule-id">
+        <span>R4</span>
+        <span class="cds--tag cds--tag--blue">INFO</span>
+      </div>
+      <div class="rule-title">Suppression en cascade Client → Comptes</div>
+      <div class="rule-desc">
+        La suppression d'un client entraîne automatiquement la suppression de tous ses comptes bancaires.
+        Ce comportement est déclaré via <code>orphanRemoval=true</code> sur la relation <code>@OneToMany</code>
+        côté JPA, et renforcé par la contrainte SQL <code>ON DELETE CASCADE</code> définie en V2 de Flyway.
+      </div>
+      <p style="margin-top:.5rem;margin-bottom:0;font-size:var(--cds-label-01);color:var(--cds-text-placeholder);">
+        Source : <code>Client @OneToMany(cascade=CascadeType.ALL, orphanRemoval=true)</code>
+      </p>
+    </div>
+
+    <!-- ── R5 ── -->
+    <div class="rule-card warning">
+      <div class="rule-id">
+        <span>R5</span>
+        <span class="cds--tag cds--tag--warm">AVERTISSEMENT</span>
+      </div>
+      <div class="rule-title">Montant de transaction limité à 10 000 € (configurable)</div>
+      <div class="rule-desc">
+        Tout montant de transaction soumis à <code>/validate-transaction</code> est comparé au seuil
+        défini par l'entrée JNDI <code>app/maxTransactionAmount</code> (valeur par défaut : <strong>10 000</strong>).
+        Ce seuil est externalisé et modifiable sans recompilation.
+      </div>
+      <p style="margin-top:.5rem;margin-bottom:0;font-size:var(--cds-label-01);color:var(--cds-text-placeholder);">
+        Source : <code>JndiConfigService</code>, <code>TransactionValidatorServlet</code>
+      </p>
+    </div>
+
+    <!-- ── R6 ── -->
+    <div class="rule-card critical">
+      <div class="rule-id">
+        <span>R6</span>
+        <span class="cds--tag cds--tag--red">CRITIQUE</span>
+      </div>
+      <div class="rule-title">Dépôt strictement positif</div>
+      <div class="rule-desc">
+        La méthode <code>Account.deposit(amount)</code> exige un montant <em>strictement supérieur à zéro</em>.
+        Un montant nul ou négatif lève une <code>IllegalArgumentException</code> et n'est pas persisté.
+      </div>
+      <p style="margin-top:.5rem;margin-bottom:0;font-size:var(--cds-label-01);color:var(--cds-text-placeholder);">
+        Source : <code>Account.deposit(double amount)</code>
+      </p>
+    </div>
+
+    <!-- ── R7 ── -->
+    <div class="rule-card warning">
+      <div class="rule-id">
+        <span>R7</span>
+        <span class="cds--tag cds--tag--warm">AVERTISSEMENT</span>
+      </div>
+      <div class="rule-title">Retrait conditionné au solde suffisant</div>
+      <div class="rule-desc">
+        La méthode <code>Account.withdraw(amount)</code> vérifie que le solde courant est supérieur ou égal
+        au montant demandé avant d'effectuer le débit. Si le solde est insuffisant, l'opération est refusée.
+      </div>
+      <p style="margin-top:.5rem;margin-bottom:0;font-size:var(--cds-label-01);color:var(--cds-text-placeholder);">
+        Source : <code>Account.withdraw(double amount)</code>
+      </p>
+    </div>
+
+    <!-- ── R8 ── -->
+    <div class="rule-card success">
+      <div class="rule-id">
+        <span>R8</span>
+        <span class="cds--tag cds--tag--green">INFO</span>
+      </div>
+      <div class="rule-title">Pattern PRG — Post/Redirect/Get</div>
+      <div class="rule-desc">
+        Toutes les opérations POST (création, modification, suppression) se terminent par une redirection
+        HTTP&nbsp;302 vers une ressource GET. Ce pattern évite la soumission multiple de formulaires lors
+        du rechargement de la page par l'utilisateur.
+      </div>
+      <p style="margin-top:.5rem;margin-bottom:0;font-size:var(--cds-label-01);color:var(--cds-text-placeholder);">
+        Source : <code>ClientController</code> — <code>response.sendRedirect("/clients")</code>
+      </p>
+    </div>
+
+    <!-- ── R9 ── -->
+    <div class="rule-card">
+      <div class="rule-id">
+        <span>R9</span>
+        <span class="cds--tag cds--tag--purple">INFO</span>
+      </div>
+      <div class="rule-title">Gestion manuelle des transactions RESOURCE_LOCAL</div>
+      <div class="rule-desc">
+        L'unité de persistance <code>bankingPU</code> est configurée en mode <code>RESOURCE_LOCAL</code>.
+        Toutes les opérations d'écriture doivent explicitement appeler
+        <code>em.getTransaction().begin()</code>, <code>commit()</code> et, en cas d'erreur,
+        <code>rollback()</code>. Il n'y a pas de transaction container-managed (CMT).
+      </div>
+      <p style="margin-top:.5rem;margin-bottom:0;font-size:var(--cds-label-01);color:var(--cds-text-placeholder);">
+        Source : <code>ClientService</code> — gestion begin/commit/rollback
+      </p>
+    </div>
+
+    <!-- ── R10 ── -->
+    <div class="rule-card success">
+      <div class="rule-id">
+        <span>R10</span>
+        <span class="cds--tag cds--tag--green">INFO</span>
+      </div>
+      <div class="rule-title">Migrations Flyway automatiques au démarrage</div>
+      <div class="rule-desc">
+        Le listener <code>DatabaseMigrationStartup</code> exécute automatiquement les migrations Flyway
+        lors de l'initialisation du <code>ServletContext</code>. L'option <code>baselineOnMigrate=true</code>
+        autorise la migration sur une base de données existante sans historique Flyway.
+      </div>
+      <p style="margin-top:.5rem;margin-bottom:0;font-size:var(--cds-label-01);color:var(--cds-text-placeholder);">
+        Source : <code>DatabaseMigrationStartup</code> (<code>@WebListener ServletContextListener</code>)
+      </p>
+    </div>
+
+    <!-- ── R11 ── -->
+    <div class="rule-card success">
+      <div class="rule-id">
+        <span>R11</span>
+        <span class="cds--tag cds--tag--green">INFO</span>
+      </div>
+      <div class="rule-title">Suppression SQL en cascade (ON DELETE CASCADE)</div>
+      <div class="rule-desc">
+        La contrainte SQL <code>ON DELETE CASCADE</code> est définie sur la clé étrangère
+        <code>accounts.client_id</code> dans le script Flyway <code>V2__create_accounts.sql</code>.
+        Garantit l'intégrité référentielle au niveau base de données, indépendamment du comportement JPA.
+      </div>
+      <p style="margin-top:.5rem;margin-bottom:0;font-size:var(--cds-label-01);color:var(--cds-text-placeholder);">
+        Source : migration <code>V2__create_accounts.sql</code>
+      </p>
+    </div>
+
+    <!-- ── R12 ── -->
+    <div class="rule-card">
+      <div class="rule-id">
+        <span>R12</span>
+        <span class="cds--tag cds--tag--teal">INFO</span>
+      </div>
+      <div class="rule-title">Négociation de contenu HTML / JSON</div>
+      <div class="rule-desc">
+        <code>TransactionValidatorServlet</code> inspecte l'en-tête <code>Accept</code> de la requête
+        pour déterminer le format de la réponse. Si <code>Accept: application/json</code>, la réponse
+        est sérialisée en JSON (<code>{"valid": true/false, "amount": X, "max": Y}</code>).
+        Sinon, une page HTML est retournée.
+      </div>
+      <p style="margin-top:.5rem;margin-bottom:0;font-size:var(--cds-label-01);color:var(--cds-text-placeholder);">
+        Source : <code>TransactionValidatorServlet</code> — lecture de <code>request.getHeader("Accept")</code>
+      </p>
+    </div>
+
+    <hr class="cds--divider"/>
+
+    <!-- Tableau récapitulatif -->
+    <h2>Récapitulatif</h2>
+    <div class="cds--data-table-container">
+      <table class="cds--data-table">
+        <thead>
+          <tr>
+            <th>Règle</th>
+            <th>Libellé court</th>
+            <th>Priorité</th>
+            <th>Source principale</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>R1</td>
+            <td>Nom client obligatoire</td>
+            <td><span class="cds--tag cds--tag--red">Critique</span></td>
+            <td><code>ClientController.createClient()</code></td>
+          </tr>
+          <tr>
+            <td>R2</td>
+            <td>Email client obligatoire</td>
+            <td><span class="cds--tag cds--tag--red">Critique</span></td>
+            <td><code>ClientController.validateUpdateInput()</code></td>
+          </tr>
+          <tr>
+            <td>R3</td>
+            <td>ID numérique requis — 400/404</td>
+            <td><span class="cds--tag cds--tag--blue">Info</span></td>
+            <td><code>ClientController</code></td>
+          </tr>
+          <tr>
+            <td>R4</td>
+            <td>Cascade delete Client → Comptes</td>
+            <td><span class="cds--tag cds--tag--blue">Info</span></td>
+            <td><code>Client @OneToMany orphanRemoval</code></td>
+          </tr>
+          <tr>
+            <td>R5</td>
+            <td>Montant ≤ 10 000 € (JNDI)</td>
+            <td><span class="cds--tag cds--tag--warm">Avertissement</span></td>
+            <td><code>JndiConfigService</code>, <code>TransactionValidatorServlet</code></td>
+          </tr>
+          <tr>
+            <td>R6</td>
+            <td>Dépôt strictement positif</td>
+            <td><span class="cds--tag cds--tag--red">Critique</span></td>
+            <td><code>Account.deposit()</code></td>
+          </tr>
+          <tr>
+            <td>R7</td>
+            <td>Retrait si solde suffisant</td>
+            <td><span class="cds--tag cds--tag--warm">Avertissement</span></td>
+            <td><code>Account.withdraw()</code></td>
+          </tr>
+          <tr>
+            <td>R8</td>
+            <td>Pattern PRG sur les POST</td>
+            <td><span class="cds--tag cds--tag--green">Info</span></td>
+            <td><code>ClientController.sendRedirect()</code></td>
+          </tr>
+          <tr>
+            <td>R9</td>
+            <td>Transactions RESOURCE_LOCAL explicites</td>
+            <td><span class="cds--tag cds--tag--purple">Info</span></td>
+            <td><code>ClientService</code> begin/commit/rollback</td>
+          </tr>
+          <tr>
+            <td>R10</td>
+            <td>Migrations Flyway au démarrage</td>
+            <td><span class="cds--tag cds--tag--green">Info</span></td>
+            <td><code>DatabaseMigrationStartup @WebListener</code></td>
+          </tr>
+          <tr>
+            <td>R11</td>
+            <td>ON DELETE CASCADE en SQL</td>
+            <td><span class="cds--tag cds--tag--green">Info</span></td>
+            <td><code>V2__create_accounts.sql</code></td>
+          </tr>
+          <tr>
+            <td>R12</td>
+            <td>Négociation de contenu HTML / JSON</td>
+            <td><span class="cds--tag cds--tag--teal">Info</span></td>
+            <td><code>TransactionValidatorServlet</code></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <hr class="cds--divider"/>
+  </main>
+</div>
+
+<footer class="cds--footer">
+  Banking JPA Application — Lab 03 &nbsp;·&nbsp; Jakarta EE 10 / Open Liberty 23 &nbsp;·&nbsp; © 2025 Olivier Planson
+</footer>
+</body>
+</html>

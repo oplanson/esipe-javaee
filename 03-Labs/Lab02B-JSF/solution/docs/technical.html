@@ -1,0 +1,236 @@
+<!-- © Copyright 2026 Olivier Planson. All rights reserved. Reproduction prohibited. Made with IBM Bob. -->
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Architecture Technique — Banking JSF Application Lab 02B</title>
+  <link rel="stylesheet" href="assets/carbon.css"/>
+</head>
+<body>
+
+<header class="cds--header">
+  <a class="cds--header__name" href="index.html">Banking JSF Application<span>Documentation Technique — Lab 02B</span></a>
+</header>
+
+<div class="cds--shell">
+  <nav class="cds--side-nav">
+    <p class="cds--side-nav__section-title">Documentation</p>
+    <a class="cds--side-nav__link" href="index.html"><i class="icon">⊙</i> Vue d'ensemble</a>
+    <a class="cds--side-nav__link" href="functional.html"><i class="icon">⊞</i> Architecture Fonctionnelle</a>
+    <a class="cds--side-nav__link active" href="technical.html"><i class="icon">⊟</i> Architecture Technique</a>
+    <a class="cds--side-nav__link" href="sequences.html"><i class="icon">⇄</i> Diagrammes de Séquences</a>
+    <a class="cds--side-nav__link" href="rules.html"><i class="icon">≡</i> Règles de Gestion</a>
+  </nav>
+
+  <main class="cds--content">
+
+    <nav class="cds--breadcrumb">
+      <a href="index.html">Vue d'ensemble</a>
+      <span class="sep">/</span>
+      <span class="current">Architecture Technique</span>
+    </nav>
+
+    <h1>Architecture Technique</h1>
+    <p class="page-lead">
+      Vue technique de l'application : couches logicielles, APIs Jakarta EE utilisées,
+      configuration spécifique JSF et structure du déployable WAR.
+    </p>
+
+    <!-- ── Diagramme couches ── -->
+    <h2>Diagramme des couches logicielles</h2>
+    <div class="arch-box">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 220" font-family="IBM Plex Sans,Arial,sans-serif" font-size="12">
+        <defs>
+          <marker id="arr2" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+            <path d="M0,0 L0,6 L8,3 z" fill="#525252"/>
+          </marker>
+        </defs>
+
+        <!-- Layer 1: Browser -->
+        <rect x="10" y="80" width="110" height="60" rx="4" fill="#d0e2ff" stroke="#0043ce" stroke-width="1.5"/>
+        <text x="65" y="105" text-anchor="middle" font-weight="600" fill="#0043ce">Browser</text>
+        <text x="65" y="123" text-anchor="middle" fill="#0043ce" font-size="10">HTTP/HTTPS</text>
+
+        <!-- Arrow 1 -->
+        <line x1="120" y1="110" x2="165" y2="110" stroke="#525252" stroke-width="1.5" marker-end="url(#arr2)"/>
+
+        <!-- Layer 2: FacesServlet + Facelets -->
+        <rect x="165" y="60" width="150" height="100" rx="4" fill="#e8daff" stroke="#491d8b" stroke-width="1.5"/>
+        <text x="240" y="87" text-anchor="middle" font-weight="600" fill="#491d8b">FacesServlet</text>
+        <text x="240" y="105" text-anchor="middle" fill="#491d8b" font-size="10">+ Facelets</text>
+        <text x="240" y="120" text-anchor="middle" fill="#491d8b" font-size="10">JSF 4.0 — Lifecycle</text>
+        <text x="240" y="135" text-anchor="middle" fill="#491d8b" font-size="10">Restore → Render</text>
+        <text x="240" y="150" text-anchor="middle" fill="#491d8b" font-size="10">EL Expression Language</text>
+
+        <!-- Arrow 2 -->
+        <line x1="315" y1="110" x2="365" y2="110" stroke="#525252" stroke-width="1.5" marker-end="url(#arr2)"/>
+
+        <!-- Layer 3: CDI Named Bean -->
+        <rect x="365" y="60" width="155" height="100" rx="4" fill="#defbe6" stroke="#0e6027" stroke-width="1.5"/>
+        <text x="442" y="87" text-anchor="middle" font-weight="600" fill="#0e6027">@Named Bean</text>
+        <text x="442" y="105" text-anchor="middle" fill="#0e6027" font-size="10">CDI 4.0</text>
+        <text x="442" y="120" text-anchor="middle" fill="#0e6027" font-size="10">@SessionScoped</text>
+        <text x="442" y="135" text-anchor="middle" fill="#0e6027" font-size="10">ClientBean</text>
+        <text x="442" y="150" text-anchor="middle" fill="#0e6027" font-size="10">Gestion d'état session</text>
+
+        <!-- Arrow 3 -->
+        <line x1="520" y1="110" x2="570" y2="110" stroke="#525252" stroke-width="1.5" marker-end="url(#arr2)"/>
+
+        <!-- Layer 4: ApplicationScoped Service -->
+        <rect x="570" y="60" width="155" height="100" rx="4" fill="#fdf6dd" stroke="#8c4f00" stroke-width="1.5"/>
+        <text x="647" y="87" text-anchor="middle" font-weight="600" fill="#8c4f00">Service CDI</text>
+        <text x="647" y="105" text-anchor="middle" fill="#8c4f00" font-size="10">@ApplicationScoped</text>
+        <text x="647" y="120" text-anchor="middle" fill="#8c4f00" font-size="10">ClientService</text>
+        <text x="647" y="135" text-anchor="middle" fill="#8c4f00" font-size="10">Singleton applicatif</text>
+        <text x="647" y="150" text-anchor="middle" fill="#8c4f00" font-size="10">→ ArrayList (In-Mem)</text>
+
+        <!-- Layer labels -->
+        <text x="65" y="175" text-anchor="middle" fill="#8d8d8d" font-size="10">Couche 0</text>
+        <text x="240" y="175" text-anchor="middle" fill="#8d8d8d" font-size="10">Couche 1 — Vue</text>
+        <text x="442" y="175" text-anchor="middle" fill="#8d8d8d" font-size="10">Couche 2 — Contrôleur</text>
+        <text x="647" y="175" text-anchor="middle" fill="#8d8d8d" font-size="10">Couche 3 — Service</text>
+      </svg>
+    </div>
+
+    <!-- ── APIs ── -->
+    <h2>APIs Jakarta EE &amp; MicroProfile</h2>
+    <div class="cds--data-table-container">
+      <table class="cds--data-table">
+        <thead>
+          <tr><th>API</th><th>Version</th><th>Usage dans l'application</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>jakarta.faces</code></td><td>4.0</td>
+            <td>Moteur MVC principal — FacesServlet, Facelets, composants UI standard (<code>h:</code>, <code>f:</code>), Expression Language, cycle de vie en 6 phases.</td>
+          </tr>
+          <tr>
+            <td><code>jakarta.servlet</code></td><td>6.0</td>
+            <td>Transport HTTP — FacesServlet délégue à Servlet 6.0. Configuration via <code>web.xml</code>. Gestion des sessions HTTP.</td>
+          </tr>
+          <tr>
+            <td><code>jakarta.enterprise.cdi</code></td><td>4.0</td>
+            <td>Injection de dépendances — <code>@Named</code>, <code>@SessionScoped</code>, <code>@ApplicationScoped</code>, <code>@Inject</code>. Découverte automatique via <code>beans.xml</code>.</td>
+          </tr>
+          <tr>
+            <td><code>jakarta.servlet.jsp.jstl</code></td><td>3.0</td>
+            <td>JSTL — tags <code>c:forEach</code>, <code>c:if</code>, <code>c:choose</code> utilisés en complément des composants JSF dans les vues Facelets.</td>
+          </tr>
+          <tr>
+            <td><code>microprofile-health</code></td><td>4.0</td>
+            <td>Sondes <code>@Liveness</code> et <code>@Readiness</code> — découverte automatique par Open Liberty, exposées sur <code>/health</code>.</td>
+          </tr>
+          <tr>
+            <td><code>microprofile-config</code></td><td>3.0</td>
+            <td>Injection de configuration via <code>@ConfigProperty</code>. Sources : <code>microprofile-config.properties</code>, variables d'environnement, propriétés système.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- ── Configuration JSF ── -->
+    <h2>Configuration JSF — <code>web.xml</code></h2>
+    <div class="cds--data-table-container">
+      <table class="cds--data-table">
+        <thead>
+          <tr><th>Paramètre / Mapping</th><th>Valeur</th><th>Rôle</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Servlet mapping <code>*.xhtml</code></td>
+            <td><code>FacesServlet</code></td>
+            <td>Toute requête vers un fichier <code>.xhtml</code> est traitée par JSF.</td>
+          </tr>
+          <tr>
+            <td>Servlet mapping <code>/faces/*</code></td>
+            <td><code>FacesServlet</code></td>
+            <td>Mapping alternatif JSF (compatibilité).</td>
+          </tr>
+          <tr>
+            <td>Welcome file</td>
+            <td><code>index.xhtml</code></td>
+            <td>Page d'accueil par défaut de l'application.</td>
+          </tr>
+          <tr>
+            <td><code>javax.faces.PROJECT_STAGE</code></td>
+            <td><code>Development</code></td>
+            <td>Active les messages d'erreur détaillés JSF et les avertissements de développement.</td>
+          </tr>
+          <tr>
+            <td>Session timeout</td>
+            <td><code>30</code> minutes</td>
+            <td>Expiration automatique de la session HTTP — libère le <code>@SessionScoped ClientBean</code>.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- ── faces-config.xml ── -->
+    <h2>Configuration JSF — <code>faces-config.xml</code></h2>
+    <div class="tile-grid">
+      <div class="cds--tile">
+        <h3>Règles de navigation</h3>
+        <p>Navigation déclarative entre vues — outcome <code>success</code>, <code>failure</code>, <code>cancel</code> mappés vers les fichiers <code>.xhtml</code> cibles.</p>
+      </div>
+      <div class="cds--tile">
+        <h3>Localisation</h3>
+        <p>Locale par défaut : <code>en</code>. Locale supportée : <code>fr</code>. Sélection automatique selon la langue du navigateur.</p>
+      </div>
+      <div class="cds--tile">
+        <h3>Resource Bundle</h3>
+        <p>Bundle <code>messages</code> chargé depuis <code>com/bank/messages.properties</code> — accessible via EL <code>#{msg.key}</code> dans les vues.</p>
+      </div>
+    </div>
+
+    <!-- ── Structure WAR ── -->
+    <h2>Structure du déployable WAR</h2>
+    <div class="arch-box">
+      <pre style="background:transparent;border:none;padding:0;font-size:.8125rem;line-height:1.7;">
+lab02b-jsf.war
+├── index.xhtml                            ← Page d'accueil (welcome file)
+├── WEB-INF/
+│   ├── web.xml                            ← FacesServlet + session timeout + PROJECT_STAGE
+│   ├── faces-config.xml                   ← Navigation, locale, resource bundle
+│   ├── beans.xml                          ← Activation CDI (bean-discovery-mode="all")
+│   ├── templates/
+│   │   └── main.xhtml                     ← Template Facelets principal (header/nav/footer)
+│   ├── views/
+│   │   ├── client-list.xhtml              ← Liste des clients + recherche AJAX
+│   │   ├── client-form.xhtml              ← Formulaire création/édition + validation
+│   │   └── client-details.xhtml           ← Détail client + comptes
+│   └── classes/
+│       └── com/bank/
+│           ├── beans/
+│           │   └── ClientBean.java        ← @Named @SessionScoped
+│           ├── service/
+│           │   └── ClientService.java     ← @ApplicationScoped
+│           ├── model/
+│           │   ├── Client.java
+│           │   ├── Account.java
+│           │   └── Address.java
+│           ├── validator/
+│           │   └── EmailValidator.java    ← @FacesValidator
+│           └── health/
+│               ├── DatabaseHealthCheck.java   ← @Liveness
+│               └── WebAppReadinessCheck.java  ← @Readiness
+└── META-INF/
+    └── MANIFEST.MF
+      </pre>
+    </div>
+
+    <div class="cds--inline-notification">
+      <span>ℹ</span>
+      <div>
+        <strong>beans.xml</strong> — Obligatoire pour activer la découverte CDI 4.0 dans le WAR.
+        Le mode <code>bean-discovery-mode="all"</code> permet l'injection sur toutes les classes
+        sans annotation <code>@Dependent</code> explicite.
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<footer class="cds--footer">Made with IBM Bob — Banking JSF Application Lab 02B · Jakarta EE 10 · Open Liberty 23</footer>
+</body>
+</html>

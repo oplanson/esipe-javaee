@@ -1,0 +1,312 @@
+<!-- © Copyright 2026 Olivier Planson. All rights reserved. Reproduction prohibited. Made with IBM Bob. -->
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Architecture Technique — Lab 08</title>
+  <link rel="stylesheet" href="assets/carbon.css"/>
+</head>
+<body>
+
+<!-- ── Header ── -->
+<header class="cds--header">
+  <a href="index.html" class="cds--header__name">🏦 Banking Microservices<span>Lab 08</span></a>
+  <span class="cds--header__divider">|</span>
+  <span style="font-size:.8125rem;color:#c6c6c6;">Architecture Technique</span>
+</header>
+
+<div class="cds--shell">
+  <nav class="cds--side-nav">
+    <p class="cds--side-nav__section-title">Navigation</p>
+    <a href="index.html" class="cds--side-nav__link"><i class="icon">🏠</i> Vue d'ensemble</a>
+    <a href="functional.html" class="cds--side-nav__link"><i class="icon">⚙️</i> Architecture fonctionnelle</a>
+    <a href="technical.html" class="cds--side-nav__link active"><i class="icon">🔧</i> Architecture technique</a>
+    <a href="sequences.html" class="cds--side-nav__link"><i class="icon">↔️</i> Diagrammes de séquence</a>
+    <a href="rules.html" class="cds--side-nav__link"><i class="icon">📋</i> Règles métier</a>
+    <p class="cds--side-nav__section-title" style="margin-top:1.5rem;">Sections</p>
+    <a href="#multi-service-diagram" class="cds--side-nav__link"><i class="icon">📐</i> Vue multi-service</a>
+    <a href="#fault-tolerance" class="cds--side-nav__link"><i class="icon">🛡️</i> Fault Tolerance</a>
+    <a href="#hexagonal" class="cds--side-nav__link"><i class="icon">⬡</i> Pattern hexagonal</a>
+    <a href="#communication" class="cds--side-nav__link"><i class="icon">🔗</i> URLs communication</a>
+    <a href="#liberty-features" class="cds--side-nav__link"><i class="icon">🚀</i> Features Liberty</a>
+  </nav>
+
+  <main class="cds--content">
+    <nav class="cds--breadcrumb">
+      <a href="index.html">Vue d'ensemble</a>
+      <span class="sep">/</span>
+      <span class="current">Architecture Technique</span>
+    </nav>
+
+    <h1>Architecture Technique</h1>
+    <p class="page-lead">Vue détaillée des patterns d'implémentation : architecture hexagonale par service, MicroProfile Fault Tolerance, configuration Open Liberty et URLs de communication inter-services.</p>
+
+    <!-- ══════════════════════════════════════════════════
+         DIAGRAMME MULTI-SERVICE
+    ══════════════════════════════════════════════════ -->
+    <h2 id="multi-service-diagram">Vue Multi-Service</h2>
+
+    <div class="arch-box">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 920 380" font-family="IBM Plex Sans, Arial, sans-serif" font-size="12">
+        <defs>
+          <marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+            <path d="M 0 0 L 10 5 L 0 10 z" fill="#525252"/>
+          </marker>
+          <marker id="arrBlue" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+            <path d="M 0 0 L 10 5 L 0 10 z" fill="#0f62fe"/>
+          </marker>
+          <marker id="arrPurple" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+            <path d="M 0 0 L 10 5 L 0 10 z" fill="#8a3ffc"/>
+          </marker>
+        </defs>
+
+        <!-- CLIENT SERVICE -->
+        <rect x="20" y="20" width="220" height="290" fill="#defbe6" stroke="#198038" stroke-width="2" rx="4"/>
+        <text x="130" y="45" text-anchor="middle" font-weight="700" font-size="13" fill="#0e6027">Client Service</text>
+        <text x="130" y="62" text-anchor="middle" font-size="11" fill="#0e6027">Port 9081</text>
+        <!-- Stack boxes -->
+        <rect x="35" y="72" width="190" height="26" fill="#fff" stroke="#c6c6c6" rx="2"/>
+        <text x="130" y="89" text-anchor="middle" font-size="11" fill="#161616">ClientResource (REST)</text>
+        <line x1="130" y1="98" x2="130" y2="108" stroke="#525252" stroke-width="1" marker-end="url(#arr)"/>
+        <rect x="35" y="108" width="190" height="26" fill="#fff" stroke="#c6c6c6" rx="2"/>
+        <text x="130" y="125" text-anchor="middle" font-size="11" fill="#161616">ClientService @AppScoped @Tx</text>
+        <line x1="130" y1="134" x2="130" y2="144" stroke="#525252" stroke-width="1" marker-end="url(#arr)"/>
+        <rect x="35" y="144" width="190" height="26" fill="#fff" stroke="#c6c6c6" rx="2"/>
+        <text x="130" y="161" text-anchor="middle" font-size="11" fill="#161616">ClientRepository (port)</text>
+        <line x1="130" y1="170" x2="130" y2="180" stroke="#525252" stroke-width="1" marker-end="url(#arr)"/>
+        <rect x="35" y="180" width="190" height="26" fill="#fff" stroke="#c6c6c6" rx="2"/>
+        <text x="130" y="197" text-anchor="middle" font-size="11" fill="#161616">ClientRepositoryAdapter (JPA)</text>
+        <line x1="130" y1="206" x2="130" y2="216" stroke="#525252" stroke-width="1" marker-end="url(#arr)"/>
+        <!-- DB -->
+        <ellipse cx="130" cy="244" rx="60" ry="14" fill="#a7f0ba" stroke="#198038" stroke-width="1.5"/>
+        <rect x="70" y="244" width="120" height="26" fill="#a7f0ba" stroke="#198038" stroke-width="1.5"/>
+        <ellipse cx="130" cy="270" rx="60" ry="14" fill="#a7f0ba" stroke="#198038" stroke-width="1.5"/>
+        <text x="130" y="262" text-anchor="middle" font-size="11" font-weight="600" fill="#0e6027">bank_client_db</text>
+        <text x="130" y="296" text-anchor="middle" font-size="10" fill="#0e6027">PostgreSQL :5433</text>
+
+        <!-- ACCOUNT SERVICE -->
+        <rect x="350" y="20" width="220" height="310" fill="#ffd7d9" stroke="#da1e28" stroke-width="2" rx="4"/>
+        <text x="460" y="45" text-anchor="middle" font-weight="700" font-size="13" fill="#750e13">Account Service</text>
+        <text x="460" y="62" text-anchor="middle" font-size="11" fill="#750e13">Port 9082</text>
+        <rect x="365" y="72" width="190" height="26" fill="#fff" stroke="#c6c6c6" rx="2"/>
+        <text x="460" y="89" text-anchor="middle" font-size="11" fill="#161616">AccountResource (REST)</text>
+        <line x1="460" y1="98" x2="460" y2="108" stroke="#525252" stroke-width="1" marker-end="url(#arr)"/>
+        <rect x="365" y="108" width="190" height="26" fill="#fff" stroke="#c6c6c6" rx="2"/>
+        <text x="460" y="125" text-anchor="middle" font-size="11" fill="#161616">AccountService @AppScoped @Tx</text>
+        <line x1="460" y1="134" x2="460" y2="144" stroke="#525252" stroke-width="1" marker-end="url(#arr)"/>
+        <rect x="365" y="144" width="190" height="26" fill="#e8daff" stroke="#8a3ffc" rx="2"/>
+        <text x="460" y="155" text-anchor="middle" font-size="10" fill="#491d8b">ClientServiceClient</text>
+        <text x="460" y="167" text-anchor="middle" font-size="10" fill="#491d8b">@RegisterRestClient @CircuitBreaker</text>
+        <line x1="365" y1="157" x2="245" y2="130" stroke="#8a3ffc" stroke-width="1.5" stroke-dasharray="5,3" marker-end="url(#arrPurple)"/>
+        <text x="295" y="138" text-anchor="middle" font-size="10" fill="#491d8b">→ Client Svc</text>
+        <line x1="460" y1="170" x2="460" y2="180" stroke="#525252" stroke-width="1" marker-end="url(#arr)"/>
+        <rect x="365" y="180" width="190" height="26" fill="#fff" stroke="#c6c6c6" rx="2"/>
+        <text x="460" y="197" text-anchor="middle" font-size="11" fill="#161616">AccountRepository (port)</text>
+        <line x1="460" y1="206" x2="460" y2="216" stroke="#525252" stroke-width="1" marker-end="url(#arr)"/>
+        <rect x="365" y="216" width="190" height="26" fill="#fff" stroke="#c6c6c6" rx="2"/>
+        <text x="460" y="233" text-anchor="middle" font-size="11" fill="#161616">AccountRepositoryAdapter (JPA)</text>
+        <line x1="460" y1="242" x2="460" y2="252" stroke="#525252" stroke-width="1" marker-end="url(#arr)"/>
+        <ellipse cx="460" cy="272" rx="60" ry="14" fill="#ffb3b8" stroke="#da1e28" stroke-width="1.5"/>
+        <rect x="400" y="272" width="120" height="26" fill="#ffb3b8" stroke="#da1e28" stroke-width="1.5"/>
+        <ellipse cx="460" cy="298" rx="60" ry="14" fill="#ffb3b8" stroke="#da1e28" stroke-width="1.5"/>
+        <text x="460" y="290" text-anchor="middle" font-size="11" font-weight="600" fill="#750e13">banking_account_db</text>
+        <text x="460" y="322" text-anchor="middle" font-size="10" fill="#750e13">PostgreSQL :5434</text>
+
+        <!-- API GATEWAY -->
+        <rect x="680" y="20" width="220" height="310" fill="#e8daff" stroke="#491d8b" stroke-width="2" rx="4"/>
+        <text x="790" y="45" text-anchor="middle" font-weight="700" font-size="13" fill="#491d8b">API Gateway / BFF</text>
+        <text x="790" y="62" text-anchor="middle" font-size="11" fill="#491d8b">Port 9080</text>
+        <rect x="695" y="72" width="190" height="26" fill="#fff" stroke="#c6c6c6" rx="2"/>
+        <text x="790" y="89" text-anchor="middle" font-size="11" fill="#161616">BankingResource @Path /banking</text>
+        <rect x="695" y="104" width="190" height="26" fill="#fff" stroke="#c6c6c6" rx="2"/>
+        <text x="790" y="121" text-anchor="middle" font-size="11" fill="#161616">AccountProxyResource</text>
+        <rect x="695" y="136" width="190" height="26" fill="#fff" stroke="#c6c6c6" rx="2"/>
+        <text x="790" y="153" text-anchor="middle" font-size="11" fill="#161616">ClientProxyResource</text>
+        <rect x="695" y="168" width="190" height="26" fill="#fff" stroke="#c6c6c6" rx="2"/>
+        <text x="790" y="179" text-anchor="middle" font-size="10" fill="#161616">BankingAggregationService</text>
+        <text x="790" y="191" text-anchor="middle" font-size="10" fill="#491d8b">@Retry @CB @Bulkhead(10) @Fallback</text>
+        <rect x="695" y="200" width="190" height="26" fill="#fff" stroke="#c6c6c6" rx="2"/>
+        <text x="790" y="211" text-anchor="middle" font-size="10" fill="#161616">AccountServiceClient</text>
+        <text x="790" y="223" text-anchor="middle" font-size="10" fill="#491d8b">@RegisterRestClient @Retry @Timeout @CB @Fallback</text>
+        <rect x="695" y="232" width="190" height="26" fill="#fff" stroke="#c6c6c6" rx="2"/>
+        <text x="790" y="243" text-anchor="middle" font-size="10" fill="#161616">ClientServiceClient</text>
+        <text x="790" y="255" text-anchor="middle" font-size="10" fill="#491d8b">@RegisterRestClient @Retry @Timeout @CB @Fallback</text>
+        <rect x="695" y="264" width="190" height="26" fill="#fff" stroke="#c6c6c6" rx="2"/>
+        <text x="790" y="281" text-anchor="middle" font-size="11" fill="#161616">ServicesHealthCheck @Readiness</text>
+        <rect x="695" y="296" width="190" height="26" fill="#fff" stroke="#c6c6c6" rx="2"/>
+        <text x="790" y="313" text-anchor="middle" font-size="11" fill="#161616">GatewayLivenessCheck @Liveness</text>
+
+        <!-- Arrows Gateway → Account -->
+        <line x1="680" y1="195" x2="573" y2="160" stroke="#0f62fe" stroke-width="1.5" marker-end="url(#arrBlue)"/>
+        <!-- Arrows Gateway → Client -->
+        <line x1="680" y1="215" x2="245" y2="110" stroke="#0f62fe" stroke-width="1.5" stroke-dasharray="6,3" marker-end="url(#arrBlue)"/>
+      </svg>
+    </div>
+
+    <!-- ══════════════════════════════════════════════════
+         MICROPROFILE FAULT TOLERANCE
+    ══════════════════════════════════════════════════ -->
+    <h2 id="fault-tolerance">🛡️ MicroProfile Fault Tolerance</h2>
+
+    <div class="cds--data-table-container">
+      <table class="cds--data-table">
+        <thead>
+          <tr><th>Annotation</th><th>Configuration</th><th>Où appliquée</th><th>Comportement</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>@RegisterRestClient</code></td>
+            <td>baseUri via MicroProfile Config</td>
+            <td>Toutes les interfaces client REST</td>
+            <td>Client HTTP typé auto-implémenté par MicroProfile</td>
+          </tr>
+          <tr>
+            <td><code>@Retry</code></td>
+            <td><code>maxRetries=3, delay=1000ms</code></td>
+            <td>Toutes les méthodes des REST clients</td>
+            <td>3 nouvelles tentatives avec 1 seconde d'attente entre chaque</td>
+          </tr>
+          <tr>
+            <td><code>@Timeout</code></td>
+            <td><code>value=2000ms</code> (Client Svc) / <code>3000–5000ms</code> (Gateway)</td>
+            <td>Toutes les méthodes des REST clients</td>
+            <td>Exception levée si la réponse n'arrive pas dans le délai imparti</td>
+          </tr>
+          <tr>
+            <td><code>@CircuitBreaker</code></td>
+            <td><code>requestVolumeThreshold=4, failureRatio=0.5, delay=5000ms, successThreshold=2</code></td>
+            <td>Toutes les méthodes des REST clients</td>
+            <td>Coupe le circuit après 50% d'échecs sur 4+ requêtes ; attend 5s ; referme après 2 succès</td>
+          </tr>
+          <tr>
+            <td><code>@Fallback</code></td>
+            <td>Méthode fallback dédiée par méthode</td>
+            <td>Toutes les méthodes des REST clients</td>
+            <td>Retourne une valeur par défaut sûre (liste vide, objet null-safe) — dégradation gracieuse</td>
+          </tr>
+          <tr>
+            <td><code>@Bulkhead</code></td>
+            <td><code>value=10</code></td>
+            <td><code>BankingAggregationService</code> uniquement</td>
+            <td>Limite à 10 appels concurrents maximum vers le service d'agrégation</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- ══════════════════════════════════════════════════
+         PATTERN HEXAGONAL
+    ══════════════════════════════════════════════════ -->
+    <h2 id="hexagonal">⬡ Pattern Hexagonal — par service</h2>
+
+    <div class="tile-grid">
+      <div class="cds--tile">
+        <h3>Modèle de domaine</h3>
+        <p>POJO pur, sans annotation technique. Contient uniquement la logique métier. Indépendant du framework.</p>
+        <p>Ex: <code>Client</code>, <code>Account</code> avec méthodes <code>deposit()</code>, <code>close()</code>…</p>
+      </div>
+      <div class="cds--tile">
+        <h3>Service applicatif</h3>
+        <p><code>@ApplicationScoped @Transactional</code> — orchestre le domaine, délègue à un port.</p>
+        <p>Ex: <code>ClientService</code>, <code>AccountService</code></p>
+      </div>
+      <div class="cds--tile">
+        <h3>Port (interface)</h3>
+        <p>Interface Java pure. Ne contient aucune dépendance sur JPA ou une technologie spécifique.</p>
+        <p>Ex: <code>ClientRepository</code>, <code>AccountRepository</code></p>
+      </div>
+      <div class="cds--tile">
+        <h3>Adaptateur JPA</h3>
+        <p>Implémente le port. Utilise <code>EntityManager</code> Jakarta Persistence. Annoté <code>@ApplicationScoped</code>.</p>
+        <p>Ex: <code>ClientRepositoryAdapter</code>, <code>AccountRepositoryAdapter</code></p>
+      </div>
+    </div>
+
+    <div class="cds--inline-notification">
+      <span>ℹ️</span>
+      <div><strong>Database per Service —</strong> Chaque service possède sa propre base de données. Aucun accès SQL croisé n'est autorisé. Les données partagées transitent uniquement par API REST.</div>
+    </div>
+
+    <!-- ══════════════════════════════════════════════════
+         URLS DE COMMUNICATION
+    ══════════════════════════════════════════════════ -->
+    <h2 id="communication">🔗 URLs de Communication Inter-Services</h2>
+
+    <h3>Account Service → Client Service</h3>
+    <div class="cds--data-table-container">
+      <table class="cds--data-table">
+        <thead><tr><th>Environnement</th><th>URL baseUri</th><th>Configuration</th></tr></thead>
+        <tbody>
+          <tr>
+            <td>Docker Compose</td>
+            <td><code>http://banking-client-service-lab08:9080/api</code></td>
+            <td>Résolution DNS interne Docker</td>
+          </tr>
+          <tr>
+            <td>Local (développement)</td>
+            <td><code>http://localhost:9081/api</code></td>
+            <td>Services lancés en local</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3>API Gateway → Client Service &amp; Account Service</h3>
+    <div class="cds--data-table-container">
+      <table class="cds--data-table">
+        <thead><tr><th>Client REST</th><th>URL baseUri</th><th>Timeout</th></tr></thead>
+        <tbody>
+          <tr>
+            <td><code>ClientServiceClient</code></td>
+            <td><code>http://localhost:9081/api</code></td>
+            <td>3000–5000ms</td>
+          </tr>
+          <tr>
+            <td><code>AccountServiceClient</code></td>
+            <td><code>http://localhost:9082/api</code></td>
+            <td>3000–5000ms</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- ══════════════════════════════════════════════════
+         LIBERTY FEATURES
+    ══════════════════════════════════════════════════ -->
+    <h2 id="liberty-features">🚀 Features Open Liberty par Service</h2>
+
+    <div class="cds--data-table-container">
+      <table class="cds--data-table">
+        <thead>
+          <tr><th>Feature</th><th>Version</th><th>Rôle</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><code>webProfile-10.0</code></td><td>Jakarta EE 10</td><td>Profil web complet (JAX-RS, JPA, CDI, Bean Validation…)</td></tr>
+          <tr><td><code>restfulWS-3.1</code></td><td>Jakarta EE 10</td><td>JAX-RS 3.1 — endpoints REST</td></tr>
+          <tr><td><code>jsonb-3.0</code></td><td>Jakarta EE 10</td><td>JSON Binding — sérialisation/désérialisation JSON</td></tr>
+          <tr><td><code>beanValidation-3.0</code></td><td>Jakarta EE 10</td><td>Validation des DTOs (@NotBlank, @Email, @DecimalMin…)</td></tr>
+          <tr><td><code>mpConfig-3.0</code></td><td>MicroProfile 6.0</td><td>Configuration externe (baseUri, ports…)</td></tr>
+          <tr><td><code>mpHealth-4.0</code></td><td>MicroProfile 6.0</td><td>Endpoints /health/ready et /health/live</td></tr>
+          <tr><td><code>mpMetrics-5.0</code></td><td>MicroProfile 6.0</td><td>Métriques applicatives et JVM exposées via /metrics</td></tr>
+          <tr><td><code>mpOpenAPI-3.1</code></td><td>MicroProfile 6.0</td><td>Documentation OpenAPI auto-générée via /openapi/ui</td></tr>
+          <tr><td><code>mpRestClient-3.0</code></td><td>MicroProfile 6.0</td><td>@RegisterRestClient — clients HTTP typés inter-services</td></tr>
+          <tr><td><code>mpFaultTolerance-4.0</code></td><td>MicroProfile 6.0</td><td>@Retry @Timeout @CircuitBreaker @Fallback @Bulkhead</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="cds--inline-notification success">
+      <span>✅</span>
+      <div><strong>Note —</strong> Les features <code>webProfile-10.0</code> et <code>mpRestClient-3.0</code> + <code>mpFaultTolerance-4.0</code> ne sont activées que pour les services qui en ont besoin (Account Service, API Gateway). Le Client Service n'active pas de fault tolerance sortante.</div>
+    </div>
+
+    <hr class="cds--divider"/>
+  </main>
+</div>
+
+<footer class="cds--footer">
+  Lab 08 — Banking Microservices Architecture · Java 17 / Jakarta EE 10 / MicroProfile 6.0 / Open Liberty · © 2025 Olivier Planson
+</footer>
+</body>
+</html>

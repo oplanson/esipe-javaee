@@ -1,0 +1,144 @@
+<!-- © Copyright 2026 Olivier Planson. All rights reserved. Reproduction prohibited. Made with IBM Bob. -->
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>Architecture Fonctionnelle — Banking Web App</title>
+  <link rel="stylesheet" href="assets/carbon.css"/>
+</head>
+<body>
+<header class="cds--header">
+  <a class="cds--header__name" href="index.html">Banking Web Application<span>Documentation Technique — Lab 02</span></a>
+</header>
+<div class="cds--shell">
+  <nav class="cds--side-nav" aria-label="Navigation principale">
+    <p class="cds--side-nav__section-title">Documentation</p>
+    <a class="cds--side-nav__link" href="index.html"><i class="icon">⊙</i> Vue d'ensemble</a>
+    <a class="cds--side-nav__link active" href="functional.html"><i class="icon">⊞</i> Architecture Fonctionnelle</a>
+    <a class="cds--side-nav__link" href="technical.html"><i class="icon">⊟</i> Architecture Technique</a>
+    <a class="cds--side-nav__link" href="sequences.html"><i class="icon">⇄</i> Diagrammes de Séquences</a>
+    <a class="cds--side-nav__link" href="rules.html"><i class="icon">≡</i> Règles de Gestion</a>
+  </nav>
+  <main class="cds--content">
+    <nav class="cds--breadcrumb"><a href="index.html">Accueil</a><span class="sep">/</span><span class="current">Architecture Fonctionnelle</span></nav>
+    <h1>Architecture Fonctionnelle</h1>
+    <p class="page-lead">L'application est organisée en quatre domaines fonctionnels : gestion des clients, gestion des comptes, infrastructure transversale (filtres) et supervision (health checks MicroProfile).</p>
+
+    <h2>Diagramme des domaines</h2>
+    <div class="arch-box">
+      <svg viewBox="0 0 760 340" xmlns="http://www.w3.org/2000/svg" font-family="IBM Plex Sans,Arial,sans-serif" font-size="12">
+        <!-- Browser -->
+        <rect x="10" y="130" width="100" height="50" rx="4" fill="#e0e0e0" stroke="#8d8d8d"/>
+        <text x="60" y="150" text-anchor="middle" font-weight="600" fill="#161616">Navigateur</text>
+        <text x="60" y="166" text-anchor="middle" fill="#525252">/ Client HTTP</text>
+        <!-- Arrow to Filter chain -->
+        <line x1="110" y1="155" x2="160" y2="155" stroke="#0f62fe" stroke-width="2" marker-end="url(#arr)"/>
+        <!-- Filter chain box -->
+        <rect x="160" y="80" width="140" height="150" rx="4" fill="#edf5ff" stroke="#0f62fe" stroke-dasharray="5,3"/>
+        <text x="230" y="100" text-anchor="middle" font-weight="600" fill="#0043ce">Filtres Jakarta</text>
+        <rect x="172" y="108" width="116" height="22" rx="2" fill="#d0e2ff" stroke="#0043ce"/>
+        <text x="230" y="123" text-anchor="middle" fill="#0043ce">AuthenticationFilter</text>
+        <rect x="172" y="134" width="116" height="22" rx="2" fill="#d0e2ff" stroke="#0043ce"/>
+        <text x="230" y="149" text-anchor="middle" fill="#0043ce">LoggingFilter</text>
+        <rect x="172" y="160" width="116" height="22" rx="2" fill="#d0e2ff" stroke="#0043ce"/>
+        <text x="230" y="175" text-anchor="middle" fill="#0043ce">CompressionFilter</text>
+        <rect x="172" y="186" width="116" height="22" rx="2" fill="#d0e2ff" stroke="#0043ce"/>
+        <text x="230" y="201" text-anchor="middle" fill="#0043ce">CorsFilter (/api/*)</text>
+        <!-- Arrow to Servlet -->
+        <line x1="300" y1="155" x2="360" y2="155" stroke="#0f62fe" stroke-width="2" marker-end="url(#arr)"/>
+        <!-- Presentation domain -->
+        <rect x="360" y="90" width="140" height="130" rx="4" fill="#defbe6" stroke="#198038"/>
+        <text x="430" y="108" text-anchor="middle" font-weight="600" fill="#0e6027">Présentation</text>
+        <rect x="372" y="116" width="116" height="22" rx="2" fill="#a7f0ba" stroke="#0e6027"/>
+        <text x="430" y="131" text-anchor="middle" fill="#0e6027">ClientController</text>
+        <text x="430" y="144" text-anchor="middle" font-size="10" fill="#525252">@WebServlet /clients /client</text>
+        <rect x="372" y="152" width="116" height="22" rx="2" fill="#a7f0ba" stroke="#0e6027"/>
+        <text x="430" y="167" text-anchor="middle" fill="#0e6027">client-list.jsp</text>
+        <rect x="372" y="178" width="116" height="22" rx="2" fill="#a7f0ba" stroke="#0e6027"/>
+        <text x="430" y="193" text-anchor="middle" fill="#0e6027">client-form.jsp</text>
+        <!-- Arrow to Service -->
+        <line x1="500" y1="145" x2="550" y2="145" stroke="#0f62fe" stroke-width="2" marker-end="url(#arr)"/>
+        <!-- Business domain -->
+        <rect x="550" y="90" width="130" height="110" rx="4" fill="#e8daff" stroke="#491d8b"/>
+        <text x="615" y="108" text-anchor="middle" font-weight="600" fill="#491d8b">Métier</text>
+        <rect x="562" y="116" width="106" height="22" rx="2" fill="#d4bbff" stroke="#491d8b"/>
+        <text x="615" y="131" text-anchor="middle" fill="#491d8b">ClientService</text>
+        <rect x="562" y="142" width="106" height="22" rx="2" fill="#d4bbff" stroke="#491d8b"/>
+        <text x="615" y="157" text-anchor="middle" fill="#491d8b">Client (modèle)</text>
+        <rect x="562" y="168" width="106" height="22" rx="2" fill="#d4bbff" stroke="#491d8b"/>
+        <text x="615" y="183" text-anchor="middle" fill="#491d8b">Account (modèle)</text>
+        <!-- Health box -->
+        <rect x="360" y="260" width="200" height="60" rx="4" fill="#fdf6dd" stroke="#f1c21b"/>
+        <text x="460" y="278" text-anchor="middle" font-weight="600" fill="#8c4f00">Supervision (MicroProfile Health)</text>
+        <text x="460" y="294" text-anchor="middle" fill="#525252">DatabaseHealthCheck</text>
+        <text x="460" y="308" text-anchor="middle" fill="#525252">WebAppReadinessCheck</text>
+        <!-- Listeners box -->
+        <rect x="30" y="260" width="190" height="60" rx="4" fill="#f5e0c3" stroke="#c47900"/>
+        <text x="125" y="278" text-anchor="middle" font-weight="600" fill="#5d3b1e">Listeners</text>
+        <text x="125" y="294" text-anchor="middle" fill="#525252">ApplicationLifecycleListener</text>
+        <text x="125" y="308" text-anchor="middle" fill="#525252">SessionCounterListener</text>
+        <!-- Arrow marker -->
+        <defs>
+          <marker id="arr" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+            <path d="M0,0 L0,6 L8,3 z" fill="#0f62fe"/>
+          </marker>
+        </defs>
+      </svg>
+    </div>
+
+    <h2>Domaine — Gestion des Clients</h2>
+    <div class="cds--data-table-container">
+      <table class="cds--data-table">
+        <thead><tr><th>Composant</th><th>Type</th><th>Package</th><th>Responsabilité</th></tr></thead>
+        <tbody>
+          <tr><td><code>ClientController</code></td><td><span class="cds--tag cds--tag--green">Servlet</span></td><td><code>com.bank.web</code></td><td>Point d'entrée HTTP, routing GET/POST par paramètre <code>action</code>, dispatche vers les JSP (pattern MVC Front Controller)</td></tr>
+          <tr><td><code>ClientService</code></td><td><span class="cds--tag cds--tag--purple">Service</span></td><td><code>com.bank.service</code></td><td>Logique métier CRUD, stockage en mémoire via <code>ConcurrentHashMap</code>, recherche par nom/email, gestion des comptes rattachés</td></tr>
+          <tr><td><code>Client</code></td><td><span class="cds--tag cds--tag--teal">Modèle</span></td><td><code>com.bank.model</code></td><td>JavaBean représentant un client bancaire : id, nom, email, liste de comptes</td></tr>
+          <tr><td><code>Account</code></td><td><span class="cds--tag cds--tag--teal">Modèle</span></td><td><code>com.bank.model</code></td><td>JavaBean représentant un compte bancaire : numéro IBAN, solde, type (CHECKING/SAVINGS), clientId</td></tr>
+          <tr><td><code>client-list.jsp</code></td><td><span class="cds--tag cds--tag--blue">Vue JSP</span></td><td><code>WEB-INF/views</code></td><td>Affiche la liste des clients avec recherche, messages flash et actions (CRUD)</td></tr>
+          <tr><td><code>client-form.jsp</code></td><td><span class="cds--tag cds--tag--blue">Vue JSP</span></td><td><code>WEB-INF/views</code></td><td>Formulaire de création / modification d'un client avec validation d'erreurs</td></tr>
+          <tr><td><code>client-details.jsp</code></td><td><span class="cds--tag cds--tag--blue">Vue JSP</span></td><td><code>WEB-INF/views</code></td><td>Détail d'un client avec liste de ses comptes bancaires et total du solde</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h2>Domaine — Infrastructure Transversale (Filtres)</h2>
+    <div class="cds--data-table-container">
+      <table class="cds--data-table">
+        <thead><tr><th>Composant</th><th>URL Pattern</th><th>Responsabilité</th></tr></thead>
+        <tbody>
+          <tr><td><code>AuthenticationFilter</code></td><td><code>/*</code></td><td>Vérifie la présence d'un attribut <code>user</code> en session pour les URLs protégées (<code>/clients/*</code>, <code>/admin/*</code>). Redirige vers <code>/login</code> si non authentifié.</td></tr>
+          <tr><td><code>LoggingFilter</code></td><td><code>/*</code></td><td>Journalise toutes les requêtes (méthode, URI, paramètres, session) et réponses (statut, durée). Alerte si durée &gt; 1s.</td></tr>
+          <tr><td><code>CompressionFilter</code></td><td><code>/*</code></td><td>Compresse les réponses textuelles (&gt; 1 Ko) via GZIP si le client le supporte (<code>Accept-Encoding: gzip</code>).</td></tr>
+          <tr><td><code>CorsFilter</code></td><td><code>/api/*</code></td><td>Ajoute les headers CORS pour les origines autorisées (localhost:3000, 4200, 8080). Gère les requêtes preflight OPTIONS.</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h2>Domaine — Cycle de vie &amp; Sessions (Listeners)</h2>
+    <div class="cds--data-table-container">
+      <table class="cds--data-table">
+        <thead><tr><th>Composant</th><th>Interface</th><th>Responsabilité</th></tr></thead>
+        <tbody>
+          <tr><td><code>ApplicationLifecycleListener</code></td><td><code>ServletContextListener</code></td><td>Initialise et nettoie les ressources applicatives au démarrage / arrêt du contexte web.</td></tr>
+          <tr><td><code>SessionCounterListener</code></td><td><code>HttpSessionListener</code></td><td>Comptabilise les sessions HTTP actives en temps réel.</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h2>Domaine — Supervision (MicroProfile Health)</h2>
+    <div class="cds--data-table-container">
+      <table class="cds--data-table">
+        <thead><tr><th>Composant</th><th>Type de sonde</th><th>Endpoint</th><th>Responsabilité</th></tr></thead>
+        <tbody>
+          <tr><td><code>DatabaseHealthCheck</code></td><td><span class="cds--tag cds--tag--green">Liveness</span></td><td><code>GET /health/live</code></td><td>Vérifie la disponibilité de la source de données.</td></tr>
+          <tr><td><code>WebAppReadinessCheck</code></td><td><span class="cds--tag cds--tag--blue">Readiness</span></td><td><code>GET /health/ready</code></td><td>Vérifie que l'application est prête à recevoir du trafic (services initialisés).</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </main>
+</div>
+<footer class="cds--footer">Made with IBM Bob</footer>
+</body>
+</html>

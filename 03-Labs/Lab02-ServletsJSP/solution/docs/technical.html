@@ -1,0 +1,154 @@
+<!-- © Copyright 2026 Olivier Planson. All rights reserved. Reproduction prohibited. Made with IBM Bob. -->
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>Architecture Technique — Banking Web App</title>
+  <link rel="stylesheet" href="assets/carbon.css"/>
+</head>
+<body>
+<header class="cds--header">
+  <a class="cds--header__name" href="index.html">Banking Web Application<span>Documentation Technique — Lab 02</span></a>
+</header>
+<div class="cds--shell">
+  <nav class="cds--side-nav" aria-label="Navigation principale">
+    <p class="cds--side-nav__section-title">Documentation</p>
+    <a class="cds--side-nav__link" href="index.html"><i class="icon">⊙</i> Vue d'ensemble</a>
+    <a class="cds--side-nav__link" href="functional.html"><i class="icon">⊞</i> Architecture Fonctionnelle</a>
+    <a class="cds--side-nav__link active" href="technical.html"><i class="icon">⊟</i> Architecture Technique</a>
+    <a class="cds--side-nav__link" href="sequences.html"><i class="icon">⇄</i> Diagrammes de Séquences</a>
+    <a class="cds--side-nav__link" href="rules.html"><i class="icon">≡</i> Règles de Gestion</a>
+  </nav>
+  <main class="cds--content">
+    <nav class="cds--breadcrumb"><a href="index.html">Accueil</a><span class="sep">/</span><span class="current">Architecture Technique</span></nav>
+    <h1>Architecture Technique</h1>
+    <p class="page-lead">Architecture en couches Jakarta EE déployée dans un WAR sur Open Liberty. Pas de persistance externe dans ce lab — le stockage est en mémoire (<code>ConcurrentHashMap</code>). MicroProfile Config, Health et Metrics sont activés via la feature Liberty.</p>
+
+    <h2>Diagramme en couches</h2>
+    <div class="arch-box">
+      <svg viewBox="0 0 700 400" xmlns="http://www.w3.org/2000/svg" font-family="IBM Plex Sans,Arial,sans-serif" font-size="12">
+        <defs>
+          <marker id="arr2" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+            <path d="M0,0 L0,6 L8,3 z" fill="#525252"/>
+          </marker>
+        </defs>
+        <!-- Layer 0: Client -->
+        <rect x="20" y="10" width="660" height="50" rx="4" fill="#e0e0e0" stroke="#8d8d8d"/>
+        <text x="350" y="30" text-anchor="middle" font-weight="700" fill="#161616" font-size="13">CLIENT HTTP (Navigateur / API Consumer)</text>
+        <text x="350" y="48" text-anchor="middle" fill="#525252">Requêtes HTTP/HTTPS sur port 9080/9443</text>
+        <!-- Arrow down -->
+        <line x1="350" y1="60" x2="350" y2="80" stroke="#525252" stroke-width="2" marker-end="url(#arr2)"/>
+        <!-- Layer 1: Filter Chain -->
+        <rect x="20" y="80" width="660" height="70" rx="4" fill="#edf5ff" stroke="#0f62fe"/>
+        <text x="120" y="100" text-anchor="middle" font-weight="700" fill="#0043ce" font-size="13">COUCHE FILTRE</text>
+        <text x="120" y="116" text-anchor="middle" fill="#525252">jakarta.servlet.Filter</text>
+        <rect x="200" y="88" width="110" height="24" rx="2" fill="#d0e2ff" stroke="#0043ce"/>
+        <text x="255" y="104" text-anchor="middle" fill="#0043ce">AuthenticationFilter</text>
+        <rect x="320" y="88" width="100" height="24" rx="2" fill="#d0e2ff" stroke="#0043ce"/>
+        <text x="370" y="104" text-anchor="middle" fill="#0043ce">LoggingFilter</text>
+        <rect x="430" y="88" width="110" height="24" rx="2" fill="#d0e2ff" stroke="#0043ce"/>
+        <text x="485" y="104" text-anchor="middle" fill="#0043ce">CompressionFilter</text>
+        <rect x="550" y="88" width="80" height="24" rx="2" fill="#d0e2ff" stroke="#0043ce"/>
+        <text x="590" y="104" text-anchor="middle" fill="#0043ce">CorsFilter</text>
+        <text x="350" y="140" text-anchor="middle" fill="#525252" font-size="11">@WebFilter — exécution dans la FilterChain avant chaque Servlet</text>
+        <!-- Arrow down -->
+        <line x1="350" y1="150" x2="350" y2="170" stroke="#525252" stroke-width="2" marker-end="url(#arr2)"/>
+        <!-- Layer 2: Presentation -->
+        <rect x="20" y="170" width="660" height="70" rx="4" fill="#defbe6" stroke="#198038"/>
+        <text x="120" y="190" text-anchor="middle" font-weight="700" fill="#0e6027" font-size="13">COUCHE PRÉSENTATION</text>
+        <text x="120" y="206" text-anchor="middle" fill="#525252">jakarta.servlet.http.HttpServlet + JSP/JSTL</text>
+        <rect x="210" y="178" width="150" height="24" rx="2" fill="#a7f0ba" stroke="#0e6027"/>
+        <text x="285" y="194" text-anchor="middle" fill="#0e6027">ClientController (@WebServlet)</text>
+        <rect x="380" y="178" width="280" height="24" rx="2" fill="#a7f0ba" stroke="#0e6027"/>
+        <text x="520" y="194" text-anchor="middle" fill="#0e6027">client-list.jsp / client-form.jsp / client-details.jsp</text>
+        <text x="350" y="228" text-anchor="middle" fill="#525252" font-size="11">Pattern MVC Front Controller — forward vers WEB-INF/views/*.jsp via RequestDispatcher</text>
+        <!-- Arrow down -->
+        <line x1="350" y1="240" x2="350" y2="260" stroke="#525252" stroke-width="2" marker-end="url(#arr2)"/>
+        <!-- Layer 3: Business -->
+        <rect x="20" y="260" width="660" height="60" rx="4" fill="#e8daff" stroke="#491d8b"/>
+        <text x="120" y="282" text-anchor="middle" font-weight="700" fill="#491d8b" font-size="13">COUCHE MÉTIER</text>
+        <text x="120" y="298" text-anchor="middle" fill="#525252">JavaBean (POJO)</text>
+        <rect x="220" y="268" width="130" height="24" rx="2" fill="#d4bbff" stroke="#491d8b"/>
+        <text x="285" y="284" text-anchor="middle" fill="#491d8b">ClientService</text>
+        <rect x="380" y="268" width="100" height="24" rx="2" fill="#d4bbff" stroke="#491d8b"/>
+        <text x="430" y="284" text-anchor="middle" fill="#491d8b">Client</text>
+        <rect x="500" y="268" width="100" height="24" rx="2" fill="#d4bbff" stroke="#491d8b"/>
+        <text x="550" y="284" text-anchor="middle" fill="#491d8b">Account</text>
+        <!-- Arrow down -->
+        <line x1="350" y1="320" x2="350" y2="340" stroke="#525252" stroke-width="2" marker-end="url(#arr2)"/>
+        <!-- Layer 4: Storage -->
+        <rect x="20" y="340" width="660" height="48" rx="4" fill="#f5e0c3" stroke="#c47900"/>
+        <text x="350" y="360" text-anchor="middle" font-weight="700" fill="#5d3b1e" font-size="13">STOCKAGE EN MÉMOIRE</text>
+        <text x="350" y="378" text-anchor="middle" fill="#525252">ConcurrentHashMap&lt;Long, Client&gt; — AtomicLong (auto-increment ID)</text>
+      </svg>
+    </div>
+
+    <h2>APIs Jakarta EE utilisées</h2>
+    <div class="cds--data-table-container">
+      <table class="cds--data-table">
+        <thead><tr><th>API Jakarta EE</th><th>Version</th><th>Usage dans l'application</th></tr></thead>
+        <tbody>
+          <tr><td><code>jakarta.servlet</code></td><td>6.0</td><td><code>HttpServlet</code>, <code>Filter</code>, <code>@WebServlet</code>, <code>@WebFilter</code>, <code>RequestDispatcher</code></td></tr>
+          <tr><td><code>jakarta.servlet.jsp</code></td><td>3.1</td><td>Vues JSP dans <code>WEB-INF/views/</code>, EL expressions <code>${}</code></td></tr>
+          <tr><td><code>jakarta.servlet.jsp.jstl</code></td><td>3.0</td><td>Tags <code>&lt;c:forEach&gt;</code>, <code>&lt;c:if&gt;</code>, <code>&lt;c:out&gt;</code>, <code>&lt;fmt:formatNumber&gt;</code></td></tr>
+          <tr><td><code>jakarta.servlet.http</code></td><td>6.0</td><td><code>HttpSession</code>, <code>HttpServletRequest/Response</code>, <code>HttpServletResponseWrapper</code></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h2>APIs MicroProfile utilisées</h2>
+    <div class="cds--data-table-container">
+      <table class="cds--data-table">
+        <thead><tr><th>API MicroProfile</th><th>Version</th><th>Usage</th></tr></thead>
+        <tbody>
+          <tr><td><code>MicroProfile Config</code></td><td>3.0</td><td>Configuration externalisée via <code>microprofile-config.properties</code>, injectée dans Liberty via <code>web.xml</code> context-params</td></tr>
+          <tr><td><code>MicroProfile Health</code></td><td>4.0</td><td><code>DatabaseHealthCheck</code> (liveness) et <code>WebAppReadinessCheck</code> (readiness) — exposées sur <code>/health</code></td></tr>
+          <tr><td><code>MicroProfile Metrics</code></td><td>5.0</td><td>Métriques JVM et applicatives exposées sur <code>/metrics</code></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h2>Infrastructure de déploiement</h2>
+    <div class="cds--data-table-container">
+      <table class="cds--data-table">
+        <thead><tr><th>Élément</th><th>Valeur</th></tr></thead>
+        <tbody>
+          <tr><td>Serveur d'application</td><td>Open Liberty 23.0.0.12</td></tr>
+          <tr><td>Nom du serveur Liberty</td><td><code>bankingServer</code></td></tr>
+          <tr><td>Fichier de config</td><td><code>src/main/liberty/config/server.xml</code></td></tr>
+          <tr><td>Port HTTP</td><td>9080</td></tr>
+          <tr><td>Port HTTPS</td><td>9443</td></tr>
+          <tr><td>Artifact déployé</td><td><code>banking-web-app.war</code></td></tr>
+          <tr><td>Base de données</td><td>Aucune (stockage en mémoire — sera remplacée en Lab 03 JPA)</td></tr>
+          <tr><td>Conteneur (CI)</td><td><code>Containerfile</code> fourni pour build OCI</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h2>Structure du WAR</h2>
+    <pre>banking-web-app.war
+├── index.html                          ← page d'accueil statique
+├── css/style.css
+├── WEB-INF/
+│   ├── web.xml                         ← context-params de config
+│   ├── classes/
+│   │   └── com/bank/
+│   │       ├── web/ClientController.class
+│   │       ├── service/ClientService.class
+│   │       ├── model/Client.class
+│   │       ├── model/Account.class
+│   │       ├── filter/*.class          ← 4 filtres
+│   │       ├── listener/*.class        ← 2 listeners
+│   │       └── health/*.class          ← 2 health checks
+│   └── views/
+│       ├── client-list.jsp
+│       ├── client-form.jsp
+│       └── client-details.jsp
+└── META-INF/
+    └── microprofile-config.properties</pre>
+  </main>
+</div>
+<footer class="cds--footer">Made with IBM Bob</footer>
+</body>
+</html>

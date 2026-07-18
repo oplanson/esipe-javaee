@@ -1,0 +1,258 @@
+<!-- © Copyright 2026 Olivier Planson. All rights reserved. Reproduction prohibited. Made with IBM Bob. -->
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Architecture Fonctionnelle — Banking JPA App</title>
+  <link rel="stylesheet" href="assets/carbon.css"/>
+</head>
+<body>
+
+<header class="cds--header">
+  <a class="cds--header__name" href="index.html">
+    ☁ IBM Carbon <span>/ Banking JPA Application — Lab 03</span>
+  </a>
+</header>
+
+<div class="cds--shell">
+  <nav class="cds--side-nav" aria-label="Navigation principale">
+    <p class="cds--side-nav__section-title">Documentation</p>
+    <a class="cds--side-nav__link" href="index.html"><i class="icon">⊞</i> Vue d'ensemble</a>
+    <a class="cds--side-nav__link active" href="functional.html"><i class="icon">⬡</i> Architecture Fonctionnelle</a>
+    <a class="cds--side-nav__link" href="technical.html"><i class="icon">⚙</i> Architecture Technique</a>
+    <a class="cds--side-nav__link" href="sequences.html"><i class="icon">↔</i> Diagrammes de Séquence</a>
+    <a class="cds--side-nav__link" href="rules.html"><i class="icon">✔</i> Règles Métier</a>
+  </nav>
+
+  <main class="cds--content">
+    <nav class="cds--breadcrumb">
+      <a href="index.html">Lab 03</a>
+      <span class="sep">/</span>
+      <span class="current">Architecture Fonctionnelle</span>
+    </nav>
+
+    <h1>Architecture Fonctionnelle</h1>
+    <p class="page-lead">
+      Vue d'ensemble des domaines métier, composants Jakarta EE, entités JPA
+      et interactions applicatives de Banking JPA Application — Lab 03.
+    </p>
+
+    <!-- ── Flux global ── -->
+    <h2>Flux applicatif global</h2>
+    <div class="arch-box" role="img" aria-label="Flux fonctionnel">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 860 220" width="100%"
+           style="max-width:860px;font-family:'IBM Plex Sans',Arial,sans-serif;font-size:12px;">
+        <defs>
+          <marker id="fa" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L0,6 L8,3 z" fill="#0f62fe"/></marker>
+          <marker id="fy" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L0,6 L8,3 z" fill="#f1c21b"/></marker>
+          <marker id="fr" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L0,6 L8,3 z" fill="#da1e28"/></marker>
+        </defs>
+        <rect x="10" y="80" width="110" height="60" rx="3" fill="#e0e0e0" stroke="#8d8d8d"/>
+        <text x="65" y="106" text-anchor="middle" font-weight="600" fill="#161616">Browser</text>
+        <text x="65" y="122" text-anchor="middle" fill="#525252">HTTP Request</text>
+        <line x1="120" y1="110" x2="162" y2="110" stroke="#0f62fe" stroke-width="2" marker-end="url(#fa)"/>
+        <rect x="163" y="70" width="135" height="80" rx="3" fill="#d0e2ff" stroke="#0043ce"/>
+        <text x="230" y="96" text-anchor="middle" font-weight="600" fill="#0043ce">ClientController</text>
+        <text x="230" y="112" text-anchor="middle" fill="#525252">@WebServlet</text>
+        <text x="230" y="126" text-anchor="middle" fill="#525252">/clients · /client</text>
+        <text x="230" y="140" text-anchor="middle" fill="#525252">loadOnStartup=1</text>
+        <line x1="298" y1="110" x2="342" y2="110" stroke="#0f62fe" stroke-width="2" marker-end="url(#fa)"/>
+        <rect x="343" y="70" width="135" height="80" rx="3" fill="#defbe6" stroke="#0e6027"/>
+        <text x="410" y="96" text-anchor="middle" font-weight="600" fill="#0e6027">ClientService</text>
+        <text x="410" y="112" text-anchor="middle" fill="#525252">Singleton</text>
+        <text x="410" y="126" text-anchor="middle" fill="#525252">EntityManager mgmt</text>
+        <text x="410" y="140" text-anchor="middle" fill="#525252">RESOURCE_LOCAL</text>
+        <line x1="478" y1="110" x2="522" y2="110" stroke="#0f62fe" stroke-width="2" marker-end="url(#fa)"/>
+        <rect x="523" y="70" width="130" height="80" rx="3" fill="#e8daff" stroke="#491d8b"/>
+        <text x="588" y="96" text-anchor="middle" font-weight="600" fill="#491d8b">EntityManager</text>
+        <text x="588" y="112" text-anchor="middle" fill="#525252">bankingPU</text>
+        <text x="588" y="126" text-anchor="middle" fill="#525252">EclipseLink</text>
+        <line x1="653" y1="110" x2="697" y2="110" stroke="#0f62fe" stroke-width="2" marker-end="url(#fa)"/>
+        <rect x="698" y="70" width="140" height="80" rx="3" fill="#f4f4f4" stroke="#8d8d8d"/>
+        <text x="768" y="96" text-anchor="middle" font-weight="600" fill="#161616">PostgreSQL</text>
+        <text x="768" y="112" text-anchor="middle" fill="#525252">jdbc/bankingDS</text>
+        <text x="768" y="126" text-anchor="middle" fill="#525252">clients / accounts</text>
+        <!-- JndiConfigService -->
+        <rect x="343" y="175" width="135" height="40" rx="3" fill="#fdf6dd" stroke="#f1c21b"/>
+        <text x="410" y="191" text-anchor="middle" font-weight="600" fill="#8c4f00">JndiConfigService</text>
+        <text x="410" y="207" text-anchor="middle" fill="#525252">@ApplicationScoped</text>
+        <line x1="410" y1="150" x2="410" y2="175" stroke="#f1c21b" stroke-width="1.5" stroke-dasharray="4,3" marker-end="url(#fy)"/>
+        <!-- Flyway -->
+        <rect x="343" y="10" width="135" height="40" rx="3" fill="#fff1f1" stroke="#da1e28"/>
+        <text x="410" y="26" text-anchor="middle" font-weight="600" fill="#da1e28">Flyway</text>
+        <text x="410" y="42" text-anchor="middle" fill="#525252">@WebListener startup</text>
+        <line x1="410" y1="50" x2="410" y2="70" stroke="#da1e28" stroke-width="1.5" stroke-dasharray="4,3" marker-end="url(#fr)"/>
+      </svg>
+    </div>
+
+    <!-- ── Domaine 1 ── -->
+    <h2>1 · Gestion des Clients</h2>
+
+    <h3>ClientController</h3>
+    <div class="cds--tile">
+      <div class="tag-stack" style="margin-top:0;">
+        <span class="cds--tag cds--tag--blue">@WebServlet</span>
+        <span class="cds--tag cds--tag--green">loadOnStartup=1</span>
+      </div>
+      <p>Servlet principale de gestion CRUD des clients. Mappée sur deux URL :</p>
+      <ul>
+        <li><code>/clients</code> — liste paginée (GET) et formulaire de création (POST)</li>
+        <li><code>/client</code> — consultation, modification et suppression d'un client individuel</li>
+      </ul>
+      <p style="margin-bottom:0;">Le paramètre <code>loadOnStartup=1</code> garantit l'initialisation avant toute requête.</p>
+    </div>
+
+    <h3>ClientService</h3>
+    <div class="cds--tile">
+      <div class="tag-stack" style="margin-top:0;">
+        <span class="cds--tag cds--tag--green">Singleton</span>
+        <span class="cds--tag cds--tag--purple">EntityManager</span>
+        <span class="cds--tag cds--tag--red">RESOURCE_LOCAL</span>
+      </div>
+      <p>
+        Service métier implémenté comme un Singleton Java (<code>Singleton.getInstance()</code>).
+        Il gère directement le cycle de vie de l'<code>EntityManager</code> : création de l'<code>EntityManagerFactory</code>
+        depuis l'unité <code>bankingPU</code>, ouverture/fermeture des transactions en mode
+        <code>RESOURCE_LOCAL</code> (begin / commit / rollback explicites).
+      </p>
+    </div>
+
+    <h3>Entité Client</h3>
+    <div class="cds--tile">
+      <div class="tag-stack" style="margin-top:0;">
+        <span class="cds--tag cds--tag--purple">@Entity</span>
+        <span class="cds--tag cds--tag--teal">@Table(clients)</span>
+        <span class="cds--tag cds--tag--blue">@OneToMany</span>
+      </div>
+      <div class="cds--data-table-container">
+        <table class="cds--data-table">
+          <thead><tr><th>Élément</th><th>Détail</th></tr></thead>
+          <tbody>
+            <tr><td><code>@Entity @Table("clients")</code></td><td>Mappée sur la table SQL <code>clients</code></td></tr>
+            <tr><td><code>@OneToMany(accounts)</code></td><td>Relation comptes (<code>orphanRemoval=true</code>)</td></tr>
+            <tr><td><code>@NamedQueries x4</code></td><td><code>Client.findAll</code>, <code>findById</code>, <code>findByEmail</code>, <code>countAll</code></td></tr>
+            <tr><td><code>@PrePersist</code></td><td>Initialise la date de création</td></tr>
+            <tr><td><code>@PreUpdate</code></td><td>Met à jour la date de modification</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <h3>Entité Account</h3>
+    <div class="cds--tile">
+      <div class="tag-stack" style="margin-top:0;">
+        <span class="cds--tag cds--tag--purple">@Entity</span>
+        <span class="cds--tag cds--tag--teal">@Table(accounts)</span>
+        <span class="cds--tag cds--tag--blue">@ManyToOne</span>
+      </div>
+      <div class="cds--data-table-container">
+        <table class="cds--data-table">
+          <thead><tr><th>Élément</th><th>Détail</th></tr></thead>
+          <tbody>
+            <tr><td><code>@Entity @Table("accounts")</code></td><td>Mappée sur la table SQL <code>accounts</code></td></tr>
+            <tr><td><code>@ManyToOne(client)</code></td><td>Référence vers le client propriétaire</td></tr>
+            <tr><td><code>@NamedQueries x4</code></td><td><code>Account.findAll</code>, <code>findById</code>, <code>findByClient</code>, <code>findByStatus</code></td></tr>
+            <tr><td><code>deposit(amount)</code></td><td>Crédite le solde ; montant strictement positif</td></tr>
+            <tr><td><code>withdraw(amount)</code></td><td>Débite le solde ; vérifie la suffisance du solde</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <hr class="cds--divider"/>
+
+    <!-- ── Domaine 2 ── -->
+    <h2>2 · Validation des Transactions</h2>
+
+    <h3>TransactionValidatorServlet</h3>
+    <div class="cds--tile">
+      <div class="tag-stack" style="margin-top:0;">
+        <span class="cds--tag cds--tag--blue">@WebServlet(/validate-transaction)</span>
+        <span class="cds--tag cds--tag--teal">Content Negotiation</span>
+      </div>
+      <p>
+        Valide les montants de transaction. Lit le paramètre <code>amount</code>,
+        le compare au seuil JNDI (<code>app/maxTransactionAmount</code>, défaut 10 000 €)
+        et retourne une réponse HTML ou JSON selon l'en-tête <code>Accept</code>.
+      </p>
+    </div>
+
+    <h3>JndiConfigService</h3>
+    <div class="cds--tile">
+      <div class="tag-stack" style="margin-top:0;">
+        <span class="cds--tag cds--tag--green">@ApplicationScoped</span>
+        <span class="cds--tag cds--tag--warm">JNDI</span>
+      </div>
+      <p>Bean CDI de portée application réalisant les lookups JNDI :</p>
+      <ul>
+        <li><code>app/maxTransactionAmount</code> → <strong>10 000</strong></li>
+        <li><code>app/maxLoginAttempts</code> → <strong>3</strong></li>
+        <li><code>app/supportEmail</code> → adresse support configurable</li>
+      </ul>
+    </div>
+
+    <hr class="cds--divider"/>
+
+    <!-- ── Domaine 3 ── -->
+    <h2>3 · Migration &amp; Configuration</h2>
+
+    <h3>DatabaseMigrationStartup</h3>
+    <div class="cds--tile">
+      <div class="tag-stack" style="margin-top:0;">
+        <span class="cds--tag cds--tag--red">@WebListener</span>
+        <span class="cds--tag cds--tag--warm">ServletContextListener</span>
+        <span class="cds--tag cds--tag--teal">Flyway 10.4.1</span>
+      </div>
+      <p>
+        Listener déclenché au démarrage. Exécute les migrations SQL versionées via Flyway.
+        <code>baselineOnMigrate=true</code> autorise la migration sur une base existante.
+      </p>
+      <div class="cds--data-table-container">
+        <table class="cds--data-table">
+          <thead><tr><th>Script</th><th>Contenu</th></tr></thead>
+          <tbody>
+            <tr><td><code>V1__create_clients.sql</code></td><td>Création de la table <code>clients</code></td></tr>
+            <tr><td><code>V2__create_accounts.sql</code></td><td>Création de la table <code>accounts</code> avec <code>ON DELETE CASCADE</code></td></tr>
+            <tr><td><code>V3__add_status.sql</code></td><td>Colonne <code>status</code> sur <code>accounts</code></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <hr class="cds--divider"/>
+
+    <!-- ── Domaine 4 ── -->
+    <h2>4 · Supervision MicroProfile</h2>
+    <div class="tile-grid">
+      <div class="cds--tile">
+        <h3>DatabaseHealthCheck</h3>
+        <div class="tag-stack" style="margin-top:0;">
+          <span class="cds--tag cds--tag--green">@Liveness</span>
+        </div>
+        <p>
+          Sonde de vivacité. Exécute <code>SELECT 1</code> sur la datasource pour vérifier
+          la disponibilité de la base. Exposée sur <code>/health/live</code>.
+        </p>
+      </div>
+      <div class="cds--tile">
+        <h3>WebAppReadinessCheck</h3>
+        <div class="tag-stack" style="margin-top:0;">
+          <span class="cds--tag cds--tag--blue">@Readiness</span>
+        </div>
+        <p>
+          Sonde de disponibilité. Vérifie que les migrations sont appliquées et
+          le contexte initialisé. Exposée sur <code>/health/ready</code>.
+        </p>
+      </div>
+    </div>
+
+    <hr class="cds--divider"/>
+  </main>
+</div>
+
+<footer class="cds--footer">
+  Banking JPA Application — Lab 03 &nbsp;·&nbsp; Jakarta EE 10 / Open Liberty 23 &nbsp;·&nbsp; © 2025 Olivier Planson
+</footer>
+</body>
+</html>

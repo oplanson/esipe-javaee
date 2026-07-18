@@ -1,0 +1,141 @@
+<!-- © Copyright 2026 Olivier Planson. All rights reserved. Reproduction prohibited. Made with IBM Bob. -->
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Vue d'ensemble — Banking Hexagonal App</title>
+  <link rel="stylesheet" href="assets/carbon.css"/>
+</head>
+<body>
+<header class="cds--header">
+  <a class="cds--header__name" href="index.html">🏦 Banking App<span>Lab 07 — Hexagonal</span></a>
+  <a href="../../../index.html" style="margin-left:auto;font-size:.75rem;color:#c6c6c6;text-decoration:none;border:1px solid #393939;padding:.2rem .75rem;border-radius:2px;white-space:nowrap;">← Tous les Labs</a>
+</header>
+<div class="cds--shell">
+  <nav class="cds--side-nav">
+    <p class="cds--side-nav__section-title">Navigation</p>
+    <a class="cds--side-nav__link active" href="index.html"><i class="icon">⊞</i> Vue d'ensemble</a>
+    <a class="cds--side-nav__link" href="functional.html"><i class="icon">⚙</i> Architecture Fonctionnelle</a>
+    <a class="cds--side-nav__link" href="technical.html"><i class="icon">🔧</i> Architecture Technique</a>
+    <a class="cds--side-nav__link" href="hexagonal.html"><i class="icon">⬡</i> Architecture Hexagonale</a>
+    <a class="cds--side-nav__link" href="ddd.html"><i class="icon">◈</i> Bounded Contexts DDD</a>
+    <a class="cds--side-nav__link" href="sequences.html"><i class="icon">↔</i> Diagrammes de Séquence</a>
+    <a class="cds--side-nav__link" href="rules.html"><i class="icon">📋</i> Règles Métier</a>
+  </nav>
+  <main class="cds--content">
+    <div class="cds--breadcrumb">
+      <span class="current">Vue d'ensemble</span>
+    </div>
+    <h1>Banking Hexagonal Architecture Application</h1>
+    <p class="page-lead">Lab 07 — Implémentation complète de l'Architecture Hexagonale (Ports &amp; Adapters) avec Domain-Driven Design : agrégats, objets-valeurs, events de domaine et séparation stricte infrastructure/domaine.</p>
+
+    <div class="cds--inline-notification">
+      <span>ℹ️</span>
+      <div><strong>Lab 07</strong> — Implémentation complète de l'Architecture Hexagonale (Ports &amp; Adapters) avec Domain-Driven Design : agrégats, objets-valeurs, events de domaine et séparation stricte infrastructure/domaine.</div>
+    </div>
+
+    <h2>Projet</h2>
+    <div class="cds--tile">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;">
+        <div>
+          <p style="margin-bottom:.25rem;font-size:.75rem;color:#6f6f6f;text-transform:uppercase;letter-spacing:.06em;">ArtifactId</p>
+          <p style="color:#161616;font-weight:600;margin-bottom:.75rem;"><code>banking-hexagonal-app</code></p>
+          <p style="margin-bottom:.25rem;font-size:.75rem;color:#6f6f6f;text-transform:uppercase;letter-spacing:.06em;">Runtime</p>
+          <p style="color:#161616;margin-bottom:.75rem;">Open Liberty 23 · Jakarta EE 10 · MicroProfile 6.0</p>
+          <p style="margin-bottom:.25rem;font-size:.75rem;color:#6f6f6f;text-transform:uppercase;letter-spacing:.06em;">Java</p>
+          <p style="color:#161616;margin-bottom:0;">Java 17</p>
+        </div>
+        <div>
+          <p style="margin-bottom:.25rem;font-size:.75rem;color:#6f6f6f;text-transform:uppercase;letter-spacing:.06em;">Base de données</p>
+          <p style="color:#161616;margin-bottom:.75rem;">PostgreSQL · EclipseLink (JPA) · Flyway</p>
+          <p style="margin-bottom:.25rem;font-size:.75rem;color:#6f6f6f;text-transform:uppercase;letter-spacing:.06em;">Architecture</p>
+          <p style="color:#161616;margin-bottom:.75rem;">Hexagonale (Ports &amp; Adapters)</p>
+          <p style="margin-bottom:.25rem;font-size:.75rem;color:#6f6f6f;text-transform:uppercase;letter-spacing:.06em;">Paradigme domaine</p>
+          <p style="color:#161616;margin-bottom:0;">DDD — Aggregates, Value Objects, Domain Events</p>
+        </div>
+      </div>
+    </div>
+
+    <h2>Stack Technique</h2>
+    <div class="tile-grid">
+      <div class="cds--tile">
+        <h3>🏗️ Couche Domaine</h3>
+        <p>Agrégats <code>Account</code> et <code>Client</code>, objets-valeurs <code>Money</code>, <code>AccountNumber</code>, <code>Email</code>, <code>AccountType</code>. Zéro dépendance externe.</p>
+        <div class="tag-stack"><span class="cds--tag cds--tag--purple">DDD</span><span class="cds--tag cds--tag--purple">Aggregate</span><span class="cds--tag cds--tag--purple">ValueObject</span></div>
+      </div>
+      <div class="cds--tile">
+        <h3>⚙️ Couche Application</h3>
+        <p>Ports entrants (Use Cases), ports sortants (Repositories, EventPublisher), services applicatifs, commands.</p>
+        <div class="tag-stack"><span class="cds--tag cds--tag--blue">UseCase</span><span class="cds--tag cds--tag--blue">Port</span><span class="cds--tag cds--tag--blue">Command</span></div>
+      </div>
+      <div class="cds--tile">
+        <h3>🔌 Adaptateurs Primaires</h3>
+        <p>REST V2 (courant), REST V1 (<code>@Deprecated</code>), Servlets Web. Tous injectent les ports entrants.</p>
+        <div class="tag-stack"><span class="cds--tag cds--tag--teal">JAX-RS</span><span class="cds--tag cds--tag--teal">Servlet</span><span class="cds--tag cds--tag--teal">V1/V2</span></div>
+      </div>
+      <div class="cds--tile">
+        <h3>🗄️ Adaptateurs Secondaires</h3>
+        <p>JPA (EclipseLink + PostgreSQL), CDI Event Publisher. Implémentent les ports sortants par inversion de dépendance.</p>
+        <div class="tag-stack"><span class="cds--tag cds--tag--green">JPA</span><span class="cds--tag cds--tag--green">CDI</span><span class="cds--tag cds--tag--green">Flyway</span></div>
+      </div>
+    </div>
+
+    <h2>Navigation</h2>
+    <div class="tile-grid">
+      <a href="functional.html" class="cds--tile" style="text-decoration:none;cursor:pointer;transition:box-shadow .15s;" onmouseover="this.style.boxShadow='0 2px 8px rgba(0,0,0,.12)'" onmouseout="this.style.boxShadow=''">
+        <h3>⚙️ Architecture Fonctionnelle</h3>
+        <p>Cas d'utilisation, domaine pur, adaptateurs primaires &amp; secondaires, events de domaine.</p>
+      </a>
+      <a href="technical.html" class="cds--tile" style="text-decoration:none;cursor:pointer;transition:box-shadow .15s;" onmouseover="this.style.boxShadow='0 2px 8px rgba(0,0,0,.12)'" onmouseout="this.style.boxShadow=''">
+        <h3>🔧 Architecture Technique</h3>
+        <p>Couches, direction des dépendances, objets-valeurs, commandes, versioning API, Liberty features.</p>
+      </a>
+      <a href="hexagonal.html" class="cds--tile" style="text-decoration:none;cursor:pointer;transition:box-shadow .15s;" onmouseover="this.style.boxShadow='0 2px 8px rgba(0,0,0,.12)'" onmouseout="this.style.boxShadow=''">
+        <h3>⬡ Architecture Hexagonale</h3>
+        <p>Diagramme hexagonal complet, ports primaires &amp; secondaires, adaptateurs, inversion de dépendance.</p>
+      </a>
+      <a href="ddd.html" class="cds--tile" style="text-decoration:none;cursor:pointer;transition:box-shadow .15s;" onmouseover="this.style.boxShadow='0 2px 8px rgba(0,0,0,.12)'" onmouseout="this.style.boxShadow=''">
+        <h3>◈ Bounded Contexts DDD</h3>
+        <p>Agrégats, objets-valeurs, services de domaine, événements, langage ubiquitaire.</p>
+      </a>
+      <a href="sequences.html" class="cds--tile" style="text-decoration:none;cursor:pointer;transition:box-shadow .15s;" onmouseover="this.style.boxShadow='0 2px 8px rgba(0,0,0,.12)'" onmouseout="this.style.boxShadow=''">
+        <h3>↔ Diagrammes de Séquence</h3>
+        <p>Dépôt, transfert avec frais, création client et montée en premium.</p>
+      </a>
+      <a href="rules.html" class="cds--tile" style="text-decoration:none;cursor:pointer;transition:box-shadow .15s;" onmouseover="this.style.boxShadow='0 2px 8px rgba(0,0,0,.12)'" onmouseout="this.style.boxShadow=''">
+        <h3>📋 Règles Métier</h3>
+        <p>12 règles : compte inactif, solde, devise, frais de transfert, format IBAN, email unique…</p>
+      </a>
+    </div>
+
+    <h2>Nuage de concepts</h2>
+    <div class="tag-stack">
+      <span class="cds--tag cds--tag--purple">Hexagonal</span>
+      <span class="cds--tag cds--tag--purple">Ports&amp;Adapters</span>
+      <span class="cds--tag cds--tag--purple">DDD</span>
+      <span class="cds--tag cds--tag--purple">Aggregate</span>
+      <span class="cds--tag cds--tag--purple">ValueObject</span>
+      <span class="cds--tag cds--tag--purple">DomainEvent</span>
+      <span class="cds--tag cds--tag--blue">PrimaryAdapter</span>
+      <span class="cds--tag cds--tag--blue">SecondaryAdapter</span>
+      <span class="cds--tag cds--tag--blue">Port</span>
+      <span class="cds--tag cds--tag--blue">UseCase</span>
+      <span class="cds--tag cds--tag--blue">Repository</span>
+      <span class="cds--tag cds--tag--teal">CommandPattern</span>
+      <span class="cds--tag cds--tag--teal">CQRS</span>
+      <span class="cds--tag cds--tag--teal">APIVersioning</span>
+      <span class="cds--tag cds--tag--green">Jakarta EE 10</span>
+      <span class="cds--tag cds--tag--green">MicroProfile 6</span>
+      <span class="cds--tag cds--tag--green">Open Liberty 23</span>
+      <span class="cds--tag cds--tag--warm">PostgreSQL</span>
+      <span class="cds--tag cds--tag--warm">EclipseLink</span>
+      <span class="cds--tag cds--tag--warm">Flyway</span>
+    </div>
+
+    <hr class="cds--divider"/>
+  </main>
+</div>
+<footer class="cds--footer">Banking Hexagonal Architecture Application — Lab 07 · Jakarta EE 10 · Java 17 · © 2025 Olivier Planson</footer>
+</body>
+</html>

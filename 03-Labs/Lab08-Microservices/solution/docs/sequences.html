@@ -1,0 +1,416 @@
+<!-- © Copyright 2026 Olivier Planson. All rights reserved. Reproduction prohibited. Made with IBM Bob. -->
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Diagrammes de Séquence — Lab 08</title>
+  <link rel="stylesheet" href="assets/carbon.css"/>
+  <style>
+    .seq-box {
+      background: var(--cds-layer-01);
+      border: 1px solid var(--cds-border-subtle-00);
+      padding: var(--cds-spacing-06);
+      margin: var(--cds-spacing-05) 0 var(--cds-spacing-07);
+      overflow-x: auto;
+    }
+    .seq-box h3 {
+      font-size: var(--cds-label-01);
+      text-transform: uppercase;
+      letter-spacing: .06em;
+      color: var(--cds-text-placeholder);
+      margin-bottom: var(--cds-spacing-05);
+    }
+  </style>
+</head>
+<body>
+
+<header class="cds--header">
+  <a class="cds--header__name" href="index.html">🏦 Banking Microservices<span>Lab 08</span></a>
+  <span class="cds--header__divider">|</span>
+  <span style="font-size:.8125rem;color:#c6c6c6;">Diagrammes de Séquence</span>
+</header>
+
+<div class="cds--shell">
+  <nav class="cds--side-nav">
+    <p class="cds--side-nav__section-title">Navigation</p>
+    <a class="cds--side-nav__link" href="index.html"><i class="icon">🏠</i>Vue d'ensemble</a>
+    <a class="cds--side-nav__link" href="functional.html"><i class="icon">⚙️</i>Architecture Fonctionnelle</a>
+    <a class="cds--side-nav__link" href="technical.html"><i class="icon">🔧</i>Architecture Technique</a>
+    <a class="cds--side-nav__link active" href="sequences.html"><i class="icon">🔄</i>Diagrammes de séquence</a>
+    <a class="cds--side-nav__link" href="rules.html"><i class="icon">📋</i>Règles métier</a>
+    <p class="cds--side-nav__section-title" style="margin-top:1.5rem;">Scénarios</p>
+    <a class="cds--side-nav__link" href="#sd1"><i class="icon">✅</i>SD1 — Flux nominal</a>
+    <a class="cds--side-nav__link" href="#sd2"><i class="icon">⚡</i>SD2 — Circuit Breaker ouvert</a>
+    <a class="cds--side-nav__link" href="#sd3"><i class="icon">🆕</i>SD3 — Création compte</a>
+  </nav>
+
+  <main class="cds--content">
+    <nav class="cds--breadcrumb">
+      <a href="index.html">Vue d'ensemble</a>
+      <span class="sep">/</span>
+      <span class="current">Diagrammes de Séquence</span>
+    </nav>
+
+    <h1>Diagrammes de Séquence</h1>
+    <p class="page-lead">Trois scénarios couvrant les flux principaux de l'architecture microservices : flux nominal d'agrégation, comportement lors d'une panne du Account Service, et création d'un compte avec validation inter-service.</p>
+
+    <!-- ═══════════════════════════════════════════════
+         SD1 — Flux nominal (agrégation client + comptes)
+    ═══════════════════════════════════════════════ -->
+    <h2 id="sd1">✅ SD1 — Flux nominal : agrégation client avec comptes</h2>
+
+    <div class="cds--inline-notification success">
+      <span>✅</span>
+      <div><strong>Scénario nominal —</strong> Les deux services sont disponibles. L'API Gateway agrège les données client et les comptes depuis les deux microservices et retourne un <code>ClientWithAccountsDTO</code> enrichi.</div>
+    </div>
+
+    <div class="seq-box" id="sd1-svg">
+      <h3>Séquence SD1 — Agrégation normale</h3>
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 860 560" font-family="IBM Plex Sans, Arial, sans-serif" font-size="12">
+        <defs>
+          <marker id="a1" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+            <path d="M0 0 L10 5 L0 10z" fill="#525252"/>
+          </marker>
+          <marker id="a1r" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+            <path d="M0 0 L10 5 L0 10z" fill="#198038"/>
+          </marker>
+        </defs>
+
+        <!-- Lifeline headers -->
+        <rect x="20" y="10" width="120" height="34" fill="#d0e2ff" stroke="#0043ce" rx="3"/>
+        <text x="80" y="32" text-anchor="middle" font-weight="600" fill="#0043ce" font-size="11">Client Browser</text>
+
+        <rect x="200" y="10" width="130" height="34" fill="#e8daff" stroke="#491d8b" rx="3"/>
+        <text x="265" y="24" text-anchor="middle" font-weight="600" fill="#491d8b" font-size="11">API Gateway</text>
+        <text x="265" y="38" text-anchor="middle" fill="#491d8b" font-size="10">BFF :9080</text>
+
+        <rect x="400" y="10" width="130" height="34" fill="#defbe6" stroke="#198038" rx="3"/>
+        <text x="465" y="24" text-anchor="middle" font-weight="600" fill="#0e6027" font-size="11">Client Service</text>
+        <text x="465" y="38" text-anchor="middle" fill="#0e6027" font-size="10">:9081</text>
+
+        <rect x="610" y="10" width="130" height="34" fill="#ffd7d9" stroke="#da1e28" rx="3"/>
+        <text x="675" y="24" text-anchor="middle" font-weight="600" fill="#750e13" font-size="11">Account Service</text>
+        <text x="675" y="38" text-anchor="middle" fill="#750e13" font-size="10">:9082</text>
+
+        <!-- Vertical lifelines -->
+        <line x1="80" y1="44" x2="80" y2="540" stroke="#c6c6c6" stroke-width="1" stroke-dasharray="4,3"/>
+        <line x1="265" y1="44" x2="265" y2="540" stroke="#c6c6c6" stroke-width="1" stroke-dasharray="4,3"/>
+        <line x1="465" y1="44" x2="465" y2="540" stroke="#c6c6c6" stroke-width="1" stroke-dasharray="4,3"/>
+        <line x1="675" y1="44" x2="675" y2="540" stroke="#c6c6c6" stroke-width="1" stroke-dasharray="4,3"/>
+
+        <!-- Step 1 -->
+        <line x1="80" y1="80" x2="257" y2="80" stroke="#525252" stroke-width="1.5" marker-end="url(#a1)"/>
+        <text x="168" y="74" text-anchor="middle" font-size="11" fill="#161616">GET /api/banking/clients-with-accounts/1</text>
+
+        <!-- Step 2: Gateway activates BankingAggregationService -->
+        <rect x="255" y="87" width="20" height="340" fill="#e8daff" stroke="#491d8b" stroke-width="0.5" rx="2"/>
+        <text x="350" y="108" text-anchor="middle" font-size="10" fill="#491d8b">BankingAggregationService</text>
+        <text x="350" y="120" text-anchor="middle" font-size="10" fill="#491d8b">.getClientWithAccounts(1)</text>
+        <text x="350" y="132" text-anchor="middle" font-size="10" fill="#491d8b">@Retry(2) @CircuitBreaker @Bulkhead(10)</text>
+
+        <!-- Step 3: Call Client Service -->
+        <line x1="275" y1="155" x2="457" y2="155" stroke="#525252" stroke-width="1.5" marker-end="url(#a1)"/>
+        <text x="366" y="149" text-anchor="middle" font-size="11" fill="#161616">ClientServiceClient.getClient(1)</text>
+        <text x="366" y="162" text-anchor="middle" font-size="10" fill="#491d8b">@Retry @Timeout @CircuitBreaker</text>
+
+        <!-- Client Service activates -->
+        <rect x="455" y="170" width="20" height="60" fill="#defbe6" stroke="#198038" stroke-width="0.5" rx="2"/>
+
+        <!-- Client Service call to DB -->
+        <line x1="475" y1="185" x2="560" y2="185" stroke="#198038" stroke-width="1" stroke-dasharray="3,2"/>
+        <text x="520" y="179" text-anchor="middle" font-size="10" fill="#198038">SELECT * FROM clients</text>
+        <line x1="560" y1="200" x2="475" y2="200" stroke="#198038" stroke-width="1" stroke-dasharray="3,2" marker-end="url(#a1r)"/>
+        <text x="520" y="212" text-anchor="middle" font-size="10" fill="#198038">ClientEntity</text>
+
+        <!-- Client Service returns 200 -->
+        <line x1="455" y1="228" x2="275" y2="228" stroke="#198038" stroke-width="1.5" stroke-dasharray="5,3" marker-end="url(#a1r)"/>
+        <text x="366" y="222" text-anchor="middle" font-size="11" fill="#198038">200 ClientDTO {id:1, name:"Dupont"}</text>
+
+        <!-- Step 4: Call Account Service -->
+        <line x1="275" y1="265" x2="667" y2="265" stroke="#525252" stroke-width="1.5" marker-end="url(#a1)"/>
+        <text x="471" y="259" text-anchor="middle" font-size="11" fill="#161616">AccountServiceClient.getAccountsByClient(1)</text>
+        <text x="471" y="272" text-anchor="middle" font-size="10" fill="#491d8b">@Retry @Timeout(3000ms) @CircuitBreaker</text>
+
+        <!-- Account Service activates -->
+        <rect x="665" y="282" width="20" height="60" fill="#ffd7d9" stroke="#da1e28" stroke-width="0.5" rx="2"/>
+
+        <line x1="685" y1="297" x2="770" y2="297" stroke="#da1e28" stroke-width="1" stroke-dasharray="3,2"/>
+        <text x="730" y="291" text-anchor="middle" font-size="10" fill="#da1e28">SELECT * FROM accounts</text>
+        <line x1="770" y1="312" x2="685" y2="312" stroke="#da1e28" stroke-width="1" stroke-dasharray="3,2" marker-end="url(#a1r)"/>
+        <text x="730" y="325" text-anchor="middle" font-size="10" fill="#da1e28">List&lt;AccountEntity&gt;</text>
+
+        <!-- Account Service returns 200 -->
+        <line x1="665" y1="340" x2="275" y2="340" stroke="#198038" stroke-width="1.5" stroke-dasharray="5,3" marker-end="url(#a1r)"/>
+        <text x="470" y="334" text-anchor="middle" font-size="11" fill="#198038">200 List&lt;AccountDTO&gt; [3 comptes]</text>
+
+        <!-- Step 5: compute aggregation -->
+        <rect x="240" y="355" width="50" height="50" fill="#e8daff" stroke="#491d8b" rx="2"/>
+        <text x="265" y="374" text-anchor="middle" font-size="10" fill="#491d8b">compute</text>
+        <text x="265" y="386" text-anchor="middle" font-size="10" fill="#491d8b">totalBalance</text>
+        <text x="265" y="398" text-anchor="middle" font-size="10" fill="#491d8b">=5000</text>
+
+        <!-- Step 6: return to browser -->
+        <line x1="255" y1="427" x2="88" y2="427" stroke="#198038" stroke-width="1.5" stroke-dasharray="5,3" marker-end="url(#a1r)"/>
+        <text x="171" y="421" text-anchor="middle" font-size="11" fill="#198038">200 ClientWithAccountsDTO</text>
+        <text x="171" y="436" text-anchor="middle" font-size="10" fill="#198038">{client, accounts[3], totalBalance:5000, accountCount:3}</text>
+
+        <!-- Note -->
+        <rect x="20" y="465" width="820" height="55" fill="#defbe6" stroke="#198038" rx="3"/>
+        <text x="430" y="483" text-anchor="middle" font-size="11" font-weight="600" fill="#0e6027">✅ Résultat : 200 OK — Données complètes agrégées depuis les 2 services</text>
+        <text x="430" y="500" text-anchor="middle" font-size="10" fill="#0e6027">BankingAggregationService calcule totalBalance=5000 et accountCount=3 à partir des AccountDTOs reçus</text>
+        <text x="430" y="514" text-anchor="middle" font-size="10" fill="#0e6027">Aucune interruption : les deux services ont répondu avant le timeout @Timeout(3000–5000ms)</text>
+      </svg>
+    </div>
+
+    <!-- ═══════════════════════════════════════════════
+         SD2 — Circuit Breaker ouvert (Account Service down)
+    ═══════════════════════════════════════════════ -->
+    <h2 id="sd2">⚡ SD2 — Circuit Breaker ouvert (Account Service indisponible)</h2>
+
+    <div class="cds--inline-notification warning">
+      <span>⚠️</span>
+      <div><strong>Dégradation gracieuse —</strong> L'Account Service est en panne. Après 3 tentatives et un timeout, le Circuit Breaker s'ouvre et le @Fallback retourne une liste vide. La réponse est toujours 200 (données partielles, pas d'erreur 500).</div>
+    </div>
+
+    <div class="seq-box" id="sd2-svg">
+      <h3>Séquence SD2 — Circuit Breaker ouvert</h3>
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 860 600" font-family="IBM Plex Sans, Arial, sans-serif" font-size="12">
+        <defs>
+          <marker id="a2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+            <path d="M0 0 L10 5 L0 10z" fill="#525252"/>
+          </marker>
+          <marker id="a2r" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+            <path d="M0 0 L10 5 L0 10z" fill="#198038"/>
+          </marker>
+          <marker id="a2e" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+            <path d="M0 0 L10 5 L0 10z" fill="#da1e28"/>
+          </marker>
+          <marker id="a2w" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+            <path d="M0 0 L10 5 L0 10z" fill="#f1c21b"/>
+          </marker>
+        </defs>
+
+        <!-- Headers -->
+        <rect x="20" y="10" width="110" height="34" fill="#d0e2ff" stroke="#0043ce" rx="3"/>
+        <text x="75" y="32" text-anchor="middle" font-weight="600" fill="#0043ce" font-size="11">Client Browser</text>
+
+        <rect x="190" y="10" width="130" height="34" fill="#e8daff" stroke="#491d8b" rx="3"/>
+        <text x="255" y="24" text-anchor="middle" font-weight="600" fill="#491d8b" font-size="11">API Gateway BFF</text>
+        <text x="255" y="38" text-anchor="middle" fill="#491d8b" font-size="10">:9080</text>
+
+        <rect x="390" y="10" width="130" height="34" fill="#defbe6" stroke="#198038" rx="3"/>
+        <text x="455" y="24" text-anchor="middle" font-weight="600" fill="#0e6027" font-size="11">Client Service</text>
+        <text x="455" y="38" text-anchor="middle" fill="#0e6027" font-size="10">:9081 ✅</text>
+
+        <rect x="600" y="10" width="130" height="34" fill="#fff1f1" stroke="#da1e28" rx="3"/>
+        <text x="665" y="24" text-anchor="middle" font-weight="600" fill="#da1e28" font-size="11">Account Service</text>
+        <text x="665" y="38" text-anchor="middle" fill="#da1e28" font-size="10">:9082 ❌ DOWN</text>
+
+        <!-- Lifelines -->
+        <line x1="75" y1="44" x2="75" y2="580" stroke="#c6c6c6" stroke-width="1" stroke-dasharray="4,3"/>
+        <line x1="255" y1="44" x2="255" y2="580" stroke="#c6c6c6" stroke-width="1" stroke-dasharray="4,3"/>
+        <line x1="455" y1="44" x2="455" y2="580" stroke="#c6c6c6" stroke-width="1" stroke-dasharray="4,3"/>
+        <line x1="665" y1="44" x2="665" y2="580" stroke="#da1e28" stroke-width="1" stroke-dasharray="4,3" opacity="0.4"/>
+
+        <!-- Request -->
+        <line x1="75" y1="78" x2="247" y2="78" stroke="#525252" stroke-width="1.5" marker-end="url(#a2)"/>
+        <text x="161" y="72" text-anchor="middle" font-size="11" fill="#161616">GET /api/banking/clients-with-accounts/1</text>
+
+        <!-- Gateway activates -->
+        <rect x="245" y="85" width="20" height="430" fill="#e8daff" stroke="#491d8b" stroke-width="0.5" rx="2"/>
+
+        <!-- Client Service call — OK -->
+        <line x1="265" y1="115" x2="447" y2="115" stroke="#525252" stroke-width="1.5" marker-end="url(#a2)"/>
+        <text x="356" y="109" text-anchor="middle" font-size="11" fill="#161616">ClientServiceClient.getClient(1)</text>
+        <rect x="447" y="122" width="16" height="40" fill="#defbe6" stroke="#198038" stroke-width="0.5" rx="1"/>
+        <line x1="447" y1="160" x2="265" y2="160" stroke="#198038" stroke-width="1.5" stroke-dasharray="5,3" marker-end="url(#a2r)"/>
+        <text x="356" y="155" text-anchor="middle" font-size="11" fill="#198038">200 ClientDTO ✅</text>
+
+        <!-- Account Service — attempt 1 with timeout -->
+        <line x1="265" y1="195" x2="657" y2="195" stroke="#525252" stroke-width="1.5" marker-end="url(#a2)"/>
+        <text x="461" y="189" text-anchor="middle" font-size="11" fill="#161616">AccountServiceClient.getAccountsByClient(1)</text>
+        <text x="461" y="204" text-anchor="middle" font-size="10" fill="#da1e28">Tentative 1 — @Timeout(3000ms)</text>
+        <!-- Timeout zone -->
+        <rect x="600" y="210" width="120" height="30" fill="#fff1f1" stroke="#da1e28" stroke-width="0.5" rx="2"/>
+        <text x="660" y="229" text-anchor="middle" font-size="10" fill="#da1e28">⏱ Timeout 3000ms</text>
+        <line x1="600" y1="240" x2="265" y2="240" stroke="#da1e28" stroke-width="1.5" stroke-dasharray="4,2" marker-end="url(#a2e)"/>
+        <text x="432" y="254" text-anchor="middle" font-size="10" fill="#da1e28">TimeoutException — @Retry déclenche tentative 2</text>
+
+        <!-- Attempt 2 -->
+        <line x1="265" y1="270" x2="657" y2="270" stroke="#f1c21b" stroke-width="1.5" marker-end="url(#a2w)"/>
+        <text x="461" y="264" text-anchor="middle" font-size="10" fill="#8c4f00">Tentative 2 (retry +1s)</text>
+        <rect x="600" y="278" width="120" height="30" fill="#fff1f1" stroke="#da1e28" stroke-width="0.5" rx="2"/>
+        <text x="660" y="297" text-anchor="middle" font-size="10" fill="#da1e28">⏱ Timeout 3000ms</text>
+        <line x1="600" y1="308" x2="265" y2="308" stroke="#da1e28" stroke-width="1.5" stroke-dasharray="4,2" marker-end="url(#a2e)"/>
+        <text x="432" y="320" text-anchor="middle" font-size="10" fill="#da1e28">TimeoutException — @Retry déclenche tentative 3</text>
+
+        <!-- Attempt 3 -->
+        <line x1="265" y1="338" x2="657" y2="338" stroke="#f1c21b" stroke-width="1.5" marker-end="url(#a2w)"/>
+        <text x="461" y="332" text-anchor="middle" font-size="10" fill="#8c4f00">Tentative 3 (retry +1s)</text>
+        <rect x="600" y="346" width="120" height="30" fill="#fff1f1" stroke="#da1e28" stroke-width="0.5" rx="2"/>
+        <text x="660" y="365" text-anchor="middle" font-size="10" fill="#da1e28">⏱ Timeout 3000ms</text>
+        <line x1="600" y1="376" x2="265" y2="376" stroke="#da1e28" stroke-width="1.5" stroke-dasharray="4,2" marker-end="url(#a2e)"/>
+        <text x="432" y="390" text-anchor="middle" font-size="10" fill="#da1e28">3 échecs — @CircuitBreaker ouvre le circuit</text>
+
+        <!-- CircuitBreaker open marker -->
+        <rect x="220" y="395" width="70" height="28" fill="#fdf6dd" stroke="#f1c21b" stroke-width="1.5" rx="4"/>
+        <text x="255" y="409" text-anchor="middle" font-size="10" font-weight="700" fill="#8c4f00">⚡ CB OPEN</text>
+        <text x="255" y="420" text-anchor="middle" font-size="9" fill="#8c4f00">wait 5s</text>
+
+        <!-- Fallback fires -->
+        <rect x="245" y="430" width="50" height="36" fill="#e8daff" stroke="#8a3ffc" rx="2"/>
+        <text x="270" y="445" text-anchor="middle" font-size="10" fill="#491d8b">@Fallback</text>
+        <text x="270" y="458" text-anchor="middle" font-size="10" fill="#491d8b">→ []</text>
+
+        <!-- Return with degraded data -->
+        <line x1="245" y1="480" x2="83" y2="480" stroke="#198038" stroke-width="1.5" stroke-dasharray="5,3" marker-end="url(#a2r)"/>
+        <text x="164" y="474" text-anchor="middle" font-size="11" fill="#198038">200 ClientWithAccountsDTO</text>
+        <text x="164" y="487" text-anchor="middle" font-size="10" fill="#525252">{client:"Dupont", accounts:[], totalBalance:0, accountCount:0}</text>
+
+        <!-- Note -->
+        <rect x="20" y="508" width="820" height="56" fill="#fdf6dd" stroke="#f1c21b" rx="3"/>
+        <text x="430" y="525" text-anchor="middle" font-size="11" font-weight="600" fill="#8c4f00">⚡ Dégradation gracieuse — 200 OK avec données partielles (pas de 500)</text>
+        <text x="430" y="540" text-anchor="middle" font-size="10" fill="#8c4f00">Le @Fallback retourne une liste vide plutôt qu'une erreur. L'application reste disponible.</text>
+        <text x="430" y="554" text-anchor="middle" font-size="10" fill="#8c4f00">Circuit Breaker attend 5s avant de laisser passer de nouvelles requêtes (half-open, 2 succès requis pour rouvrir).</text>
+      </svg>
+    </div>
+
+    <!-- ═══════════════════════════════════════════════
+         SD3 — Création d'un compte avec validation client
+    ═══════════════════════════════════════════════ -->
+    <h2 id="sd3">🆕 SD3 — Création d'un compte avec validation inter-service</h2>
+
+    <div class="cds--inline-notification">
+      <span>ℹ️</span>
+      <div><strong>Validation inter-service —</strong> Lors de la création d'un compte, Account Service appelle Client Service pour vérifier que le client existe. Si Client Service est indisponible, le @Fallback permet la création avec un client "Unknown" (dégradation gracieuse).</div>
+    </div>
+
+    <div class="seq-box" id="sd3-svg">
+      <h3>Séquence SD3 — Création de compte (avec et sans Client Service)</h3>
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 860 580" font-family="IBM Plex Sans, Arial, sans-serif" font-size="12">
+        <defs>
+          <marker id="a3" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+            <path d="M0 0 L10 5 L0 10z" fill="#525252"/>
+          </marker>
+          <marker id="a3r" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+            <path d="M0 0 L10 5 L0 10z" fill="#198038"/>
+          </marker>
+          <marker id="a3e" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+            <path d="M0 0 L10 5 L0 10z" fill="#da1e28"/>
+          </marker>
+        </defs>
+
+        <!-- Headers -->
+        <rect x="20" y="10" width="100" height="34" fill="#d0e2ff" stroke="#0043ce" rx="3"/>
+        <text x="70" y="32" text-anchor="middle" font-weight="600" fill="#0043ce" font-size="11">Client App</text>
+
+        <rect x="180" y="10" width="130" height="34" fill="#e8daff" stroke="#491d8b" rx="3"/>
+        <text x="245" y="24" text-anchor="middle" font-weight="600" fill="#491d8b" font-size="11">API Gateway BFF</text>
+        <text x="245" y="38" text-anchor="middle" fill="#491d8b" font-size="10">:9080</text>
+
+        <rect x="380" y="10" width="130" height="34" fill="#ffd7d9" stroke="#da1e28" rx="3"/>
+        <text x="445" y="24" text-anchor="middle" font-weight="600" fill="#750e13" font-size="11">Account Service</text>
+        <text x="445" y="38" text-anchor="middle" fill="#750e13" font-size="10">:9082</text>
+
+        <rect x="590" y="10" width="130" height="34" fill="#defbe6" stroke="#198038" rx="3"/>
+        <text x="655" y="24" text-anchor="middle" font-weight="600" fill="#0e6027" font-size="11">Client Service</text>
+        <text x="655" y="38" text-anchor="middle" fill="#0e6027" font-size="10">:9081</text>
+
+        <!-- Lifelines -->
+        <line x1="70" y1="44" x2="70" y2="560" stroke="#c6c6c6" stroke-width="1" stroke-dasharray="4,3"/>
+        <line x1="245" y1="44" x2="245" y2="560" stroke="#c6c6c6" stroke-width="1" stroke-dasharray="4,3"/>
+        <line x1="445" y1="44" x2="445" y2="560" stroke="#c6c6c6" stroke-width="1" stroke-dasharray="4,3"/>
+        <line x1="655" y1="44" x2="655" y2="560" stroke="#c6c6c6" stroke-width="1" stroke-dasharray="4,3"/>
+
+        <!-- POST /api/accounts -->
+        <line x1="70" y1="80" x2="237" y2="80" stroke="#525252" stroke-width="1.5" marker-end="url(#a3)"/>
+        <text x="153" y="74" text-anchor="middle" font-size="11" fill="#161616">POST /api/accounts</text>
+        <text x="153" y="88" text-anchor="middle" font-size="10" fill="#525252">AccountDTO {clientId:1, type:CHECKING}</text>
+
+        <!-- Gateway forwards -->
+        <rect x="235" y="95" width="20" height="36" fill="#e8daff" stroke="#491d8b" stroke-width="0.5" rx="1"/>
+        <line x1="255" y1="113" x2="437" y2="113" stroke="#525252" stroke-width="1.5" marker-end="url(#a3)"/>
+        <text x="346" y="107" text-anchor="middle" font-size="11" fill="#161616">AccountProxyResource.forward()</text>
+
+        <!-- Account Service activation -->
+        <rect x="435" y="120" width="20" height="310" fill="#ffd7d9" stroke="#da1e28" stroke-width="0.5" rx="1"/>
+
+        <!-- AccountService.createAccount() -->
+        <text x="445" y="145" text-anchor="middle" font-size="10" fill="#750e13" text-anchor="start" x="458">AccountService.createAccount()</text>
+
+        <!-- Validate: call ClientServiceClient -->
+        <line x1="455" y1="165" x2="647" y2="165" stroke="#525252" stroke-width="1.5" marker-end="url(#a3)"/>
+        <text x="551" y="158" text-anchor="middle" font-size="11" fill="#161616">ClientServiceClient.getClientById(1)</text>
+        <text x="551" y="174" text-anchor="middle" font-size="10" fill="#491d8b">@Retry @Timeout(2000ms) @CircuitBreaker @Fallback</text>
+
+        <!-- === BRANCH A: Client Service UP === -->
+        <rect x="590" y="185" width="200" height="18" fill="#defbe6" stroke="#198038" rx="2"/>
+        <text x="690" y="198" text-anchor="middle" font-size="10" font-weight="600" fill="#0e6027">BRANCHE A — Client Service disponible</text>
+
+        <!-- Client Service responds -->
+        <rect x="645" y="206" width="20" height="40" fill="#defbe6" stroke="#198038" stroke-width="0.5" rx="1"/>
+        <line x1="645" y1="220" x2="735" y2="220" stroke="#198038" stroke-width="1" stroke-dasharray="3,2"/>
+        <text x="692" y="215" text-anchor="middle" font-size="10" fill="#198038">SELECT clients</text>
+        <line x1="735" y1="235" x2="645" y2="235" stroke="#198038" stroke-width="1" stroke-dasharray="3,2" marker-end="url(#a3r)"/>
+
+        <line x1="645" y1="244" x2="455" y2="244" stroke="#198038" stroke-width="1.5" stroke-dasharray="5,3" marker-end="url(#a3r)"/>
+        <text x="550" y="238" text-anchor="middle" font-size="11" fill="#198038">200 ClientDTO{id:1, name:"Dupont"} ✅</text>
+
+        <!-- Validate OK, persist -->
+        <text x="458" y="268" font-size="10" fill="#750e13">validate + createAccountEntity()</text>
+        <line x1="455" y1="280" x2="540" y2="280" stroke="#da1e28" stroke-width="1" stroke-dasharray="3,2"/>
+        <text x="500" y="274" text-anchor="middle" font-size="10" fill="#da1e28">INSERT accounts</text>
+        <line x1="540" y1="293" x2="455" y2="293" stroke="#da1e28" stroke-width="1" stroke-dasharray="3,2" marker-end="url(#a3e)"/>
+
+        <!-- Return 201 -->
+        <line x1="435" y1="320" x2="245" y2="320" stroke="#198038" stroke-width="1.5" stroke-dasharray="5,3" marker-end="url(#a3r)"/>
+        <line x1="245" y1="330" x2="78" y2="330" stroke="#198038" stroke-width="1.5" stroke-dasharray="5,3" marker-end="url(#a3r)"/>
+        <text x="240" y="344" text-anchor="middle" font-size="11" fill="#198038">201 Created — AccountDTO {id:10, type:CHECKING, status:ACTIVE}</text>
+
+        <!-- === BRANCH B: Client Service DOWN === -->
+        <rect x="20" y="365" width="820" height="18" fill="#fdf6dd" stroke="#f1c21b" rx="2"/>
+        <text x="430" y="378" text-anchor="middle" font-size="10" font-weight="600" fill="#8c4f00">BRANCHE B — Client Service indisponible (@Fallback)</text>
+
+        <line x1="455" y1="395" x2="647" y2="395" stroke="#525252" stroke-width="1.5" marker-end="url(#a3)"/>
+        <text x="551" y="389" text-anchor="middle" font-size="10" fill="#161616">ClientServiceClient.getClientById(1)</text>
+        <!-- Timeout/fail -->
+        <rect x="600" y="403" width="120" height="24" fill="#fff1f1" stroke="#da1e28" rx="2"/>
+        <text x="660" y="419" text-anchor="middle" font-size="10" fill="#da1e28">⏱ Timeout / Error</text>
+        <line x1="600" y1="427" x2="455" y2="427" stroke="#da1e28" stroke-width="1.5" stroke-dasharray="4,2" marker-end="url(#a3e)"/>
+
+        <!-- Fallback fires -->
+        <rect x="360" y="433" width="80" height="28" fill="#e8daff" stroke="#8a3ffc" rx="2"/>
+        <text x="400" y="447" text-anchor="middle" font-size="10" fill="#491d8b">@Fallback →</text>
+        <text x="400" y="458" text-anchor="middle" font-size="10" fill="#491d8b">ClientDTO{name:"Unknown"}</text>
+
+        <!-- Still persist -->
+        <text x="458" y="478" font-size="10" fill="#750e13">createAccountEntity() — avec clientId=1 (fallback)</text>
+        <line x1="455" y1="488" x2="540" y2="488" stroke="#da1e28" stroke-width="1" stroke-dasharray="3,2"/>
+        <text x="500" y="483" text-anchor="middle" font-size="10" fill="#da1e28">INSERT accounts</text>
+        <line x1="540" y1="500" x2="455" y2="500" stroke="#da1e28" stroke-width="1" stroke-dasharray="3,2" marker-end="url(#a3e)"/>
+
+        <line x1="435" y1="515" x2="245" y2="515" stroke="#198038" stroke-width="1.5" stroke-dasharray="5,3" marker-end="url(#a3r)"/>
+        <line x1="245" y1="525" x2="78" y2="525" stroke="#198038" stroke-width="1.5" stroke-dasharray="5,3" marker-end="url(#a3r)"/>
+        <text x="240" y="540" text-anchor="middle" font-size="11" fill="#198038">201 Created — compte créé malgré la panne du Client Service</text>
+      </svg>
+    </div>
+
+    <div class="cds--inline-notification success">
+      <span>✅</span>
+      <div><strong>Résumé des 3 scénarios :</strong><br/>
+        <strong>SD1</strong> — Flux 100% nominal : deux services UP, agrégation complète retournée en 200.<br/>
+        <strong>SD2</strong> — Account Service DOWN : 3 tentatives, CB s'ouvre, fallback retourne [], 200 avec données partielles.<br/>
+        <strong>SD3</strong> — Création compte : Client Service UP → validation OK → 201. Client Service DOWN → fallback "Unknown" → 201 quand même.
+      </div>
+    </div>
+
+    <hr class="cds--divider"/>
+  </main>
+</div>
+
+<footer class="cds--footer">
+  Banking Microservices Architecture — Lab 08 · Java 17 / Jakarta EE 10 / MicroProfile 6.0 / Open Liberty · © 2025 Olivier Planson
+</footer>
+</body>
+</html>

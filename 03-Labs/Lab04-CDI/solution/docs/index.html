@@ -1,0 +1,148 @@
+<!-- © Copyright 2026 Olivier Planson. All rights reserved. Reproduction prohibited. Made with IBM Bob. -->
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Banking CDI Application — Lab 04 | Vue d'ensemble</title>
+  <link rel="stylesheet" href="assets/carbon.css"/>
+</head>
+<body>
+
+<header class="cds--header">
+  <a class="cds--header__name" href="index.html">⬡ IBM Carbon <span>/ Banking CDI Application — Lab 04</span></a>
+  <a href="../../../index.html" style="margin-left:auto;font-size:.75rem;color:#c6c6c6;text-decoration:none;border:1px solid #393939;padding:.2rem .75rem;border-radius:2px;white-space:nowrap;">← Tous les Labs</a>
+</header>
+
+<div class="cds--shell">
+  <nav class="cds--side-nav">
+    <p class="cds--side-nav__section-title">Documentation</p>
+    <a class="cds--side-nav__link active" href="index.html"><i class="icon">⊞</i> Vue d'ensemble</a>
+    <a class="cds--side-nav__link" href="functional.html"><i class="icon">◈</i> Architecture Fonctionnelle</a>
+    <a class="cds--side-nav__link" href="technical.html"><i class="icon">⚙</i> Architecture Technique</a>
+    <a class="cds--side-nav__link" href="sequences.html"><i class="icon">↔</i> Diagrammes de Séquence</a>
+    <a class="cds--side-nav__link" href="rules.html"><i class="icon">✓</i> Règles Métier</a>
+    <p class="cds--side-nav__section-title" style="margin-top:1.5rem">Projet</p>
+    <a class="cds--side-nav__link" href="#stack"><i class="icon">◻</i> Stack Technique</a>
+    <a class="cds--side-nav__link" href="#cdi-features"><i class="icon">◻</i> Fonctionnalités CDI</a>
+  </nav>
+
+  <main class="cds--content">
+    <nav class="cds--breadcrumb">
+      <a href="index.html">Lab 04</a>
+      <span class="sep">/</span>
+      <span class="current">Vue d'ensemble</span>
+    </nav>
+
+    <h1>Banking CDI Application — Lab 04</h1>
+    <p class="page-lead">
+      Démonstration complète de CDI 4.0 dans un contexte bancaire Jakarta EE 10 sur Open Liberty 23.
+      Ce laboratoire illustre l'injection de dépendances, les producteurs, les qualifieurs, les intercepteurs,
+      les événements CDI et la gestion des transactions CMT/BMT.
+    </p>
+
+    <div class="cds--inline-notification">
+      <span style="font-size:1.1rem">ℹ</span>
+      <div><strong>Lab 04</strong> — Démontre les fonctionnalités avancées de CDI 4.0 : injection, producteurs, qualifieurs, intercepteurs, événements et gestion des transactions.</div>
+    </div>
+
+    <!-- Project card -->
+    <h2>Carte du Projet</h2>
+    <div class="cds--tile" style="display:grid;grid-template-columns:1fr 1fr;gap:1.5rem">
+      <div>
+        <p style="margin-bottom:.4rem"><strong style="color:var(--cds-text-primary)">Nom</strong></p>
+        <p style="margin-top:0">Banking CDI Application — Lab 04</p>
+        <p style="margin-bottom:.4rem"><strong style="color:var(--cds-text-primary)">ArtifactId</strong></p>
+        <p style="margin-top:0"><code>banking-cdi-app</code></p>
+        <p style="margin-bottom:.4rem"><strong style="color:var(--cds-text-primary)">Java</strong></p>
+        <p style="margin-top:0">Java 17 (LTS)</p>
+        <p style="margin-bottom:.4rem"><strong style="color:var(--cds-text-primary)">Jakarta EE</strong></p>
+        <p style="margin-top:0">Jakarta EE 10</p>
+      </div>
+      <div>
+        <p style="margin-bottom:.4rem"><strong style="color:var(--cds-text-primary)">Serveur d'application</strong></p>
+        <p style="margin-top:0">Open Liberty 23</p>
+        <p style="margin-bottom:.4rem"><strong style="color:var(--cds-text-primary)">MicroProfile</strong></p>
+        <p style="margin-top:0">MicroProfile 6.0</p>
+        <p style="margin-bottom:.4rem"><strong style="color:var(--cds-text-primary)">Architecture DDD</strong></p>
+        <p style="margin-top:0">Partielle (agrégats + entités)</p>
+        <p style="margin-bottom:.4rem"><strong style="color:var(--cds-text-primary)">Hexagonale</strong></p>
+        <p style="margin-top:0">Non</p>
+      </div>
+    </div>
+
+    <!-- Tech stack table -->
+    <h2 id="stack">Stack Technique</h2>
+    <div class="cds--data-table-container">
+      <table class="cds--data-table">
+        <thead><tr><th>Dépendance</th><th>Version</th><th>Rôle</th></tr></thead>
+        <tbody>
+          <tr><td><code>jakarta.jakartaee-api</code></td><td>10.0.0</td><td>API Jakarta EE complète (CDI, JPA, Servlet, Transactions…)</td></tr>
+          <tr><td><code>microprofile</code></td><td>6.0</td><td>Config, Health, Metrics, OpenAPI</td></tr>
+          <tr><td><code>postgresql</code></td><td>42.x</td><td>Driver JDBC PostgreSQL</td></tr>
+          <tr><td><code>flyway-core</code></td><td>10.4.1</td><td>Migrations de schéma SQL versionnées</td></tr>
+          <tr><td><code>junit</code></td><td>5.x</td><td>Tests unitaires et d'intégration</td></tr>
+          <tr><td><code>eclipselink</code></td><td>4.x</td><td>Implémentation JPA / ORM</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- CDI tag cloud -->
+    <h2 id="cdi-features">Fonctionnalités CDI démontrées</h2>
+    <p>Ce laboratoire couvre l'ensemble des mécanismes avancés de CDI 4.0 :</p>
+    <div class="tag-stack">
+      <span class="cds--tag cds--tag--blue">@ApplicationScoped</span>
+      <span class="cds--tag cds--tag--blue">@RequestScoped</span>
+      <span class="cds--tag cds--tag--green">@Inject</span>
+      <span class="cds--tag cds--tag--green">@Produces</span>
+      <span class="cds--tag cds--tag--purple">@Qualifier</span>
+      <span class="cds--tag cds--tag--purple">@Premium</span>
+      <span class="cds--tag cds--tag--purple">@Standard</span>
+      <span class="cds--tag cds--tag--teal">@Interceptor</span>
+      <span class="cds--tag cds--tag--teal">@InterceptorBinding</span>
+      <span class="cds--tag cds--tag--teal">@Logged</span>
+      <span class="cds--tag cds--tag--warm">@Observes</span>
+      <span class="cds--tag cds--tag--warm">CDI Events</span>
+      <span class="cds--tag cds--tag--red">@Transactional</span>
+      <span class="cds--tag cds--tag--red">UserTransaction</span>
+    </div>
+
+    <!-- Nav tiles -->
+    <h2>Pages de documentation</h2>
+    <div class="tile-grid">
+      <a href="functional.html" style="text-decoration:none">
+        <div class="cds--tile" style="cursor:pointer;transition:background .15s" onmouseover="this.style.background='#e8e8e8'" onmouseout="this.style.background=''">
+          <h3>◈ Architecture Fonctionnelle</h3>
+          <p>5 domaines : clients, comptes, notifications (Strategy), événements CDI, cross-cutting. Flux d'événements CDI avec SVG inline.</p>
+        </div>
+      </a>
+      <a href="technical.html" style="text-decoration:none">
+        <div class="cds--tile" style="cursor:pointer;transition:background .15s" onmouseover="this.style.background='#e8e8e8'" onmouseout="this.style.background=''">
+          <h3>⚙ Architecture Technique</h3>
+          <p>Couches applicatives, tableau des fonctionnalités CDI, configuration de la persistence JTA / EclipseLink.</p>
+        </div>
+      </a>
+      <a href="sequences.html" style="text-decoration:none">
+        <div class="cds--tile" style="cursor:pointer;transition:background .15s" onmouseover="this.style.background='#e8e8e8'" onmouseout="this.style.background=''">
+          <h3>↔ Diagrammes de Séquence</h3>
+          <p>3 scénarios : création client + événement CDI, transaction avec alerte montant, virement batch BMT.</p>
+        </div>
+      </a>
+      <a href="rules.html" style="text-decoration:none">
+        <div class="cds--tile" style="cursor:pointer;transition:background .15s" onmouseover="this.style.background='#e8e8e8'" onmouseout="this.style.background=''">
+          <h3>✓ Règles Métier</h3>
+          <p>10 règles documentées : validations métier, contraintes transactionnelles, stratégies de notification et cycle de vie CDI.</p>
+        </div>
+      </a>
+    </div>
+
+    <hr class="cds--divider"/>
+    <p style="font-size:.75rem;color:var(--cds-text-placeholder)">Banking CDI Application — Lab 04 · Jakarta EE 10 · CDI 4.0 · Open Liberty 23</p>
+  </main>
+</div>
+
+<footer class="cds--footer">
+  Banking CDI Application — Lab 04 · Jakarta EE 10 · CDI 4.0 · © 2025 Olivier Planson
+</footer>
+</body>
+</html>
