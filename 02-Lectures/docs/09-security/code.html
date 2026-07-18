@@ -1,0 +1,459 @@
+<!-- © Copyright 2026 Olivier Planson. All rights reserved. Reproduction prohibited. Made with IBM Bob. -->
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>Cours 09 — Exemples de code</title>
+  <link rel="stylesheet" href="../assets/carbon.css"/>
+</head>
+<body>
+<header class="cds--header">
+  <a class="cds--header__name" href="index.html">Jakarta EE Security<span>Cours Jakarta EE</span></a>
+  <a class="cds--header__back" href="../index.html">← Tous les Cours</a>
+</header>
+<div class="cds--shell">
+  <nav class="cds--side-nav">
+    <p class="cds--side-nav__section-title">Cours 09</p>
+    <a class="cds--side-nav__link" href="index.html">⊙ Vue d'ensemble</a>
+    <a class="cds--side-nav__link" href="slides.html">☰ Contenu du cours</a>
+    <a class="cds--side-nav__link" href="concepts.html">◈ Concepts clés</a>
+    <a class="cds--side-nav__link active" href="code.html">⟨/⟩ Exemples de code</a>
+  </nav>
+  <main class="cds--content">
+    <div class="breadcrumb"><a href="../index.html">Cours</a> › <a href="index.html">Cours 09</a> › Code</div>
+    <h1>Exemples de code</h1>
+    <p class="page-lead">Extraits de code Java et XML du cours 09 — Jakarta Security, MicroProfile JWT, TLS, CORS et CSRF.</p>
+
+    <h2>Authentication Mechanism personnalisée</h2>
+    <div class="code-block-wrap">
+      <span class="code-lang">java</span>
+      <pre><code>@ApplicationScoped
+@AutoApplySession
+@RememberMe(cookieMaxAgeSeconds = 86400)
+public class JwtAuthenticationMechanism implements HttpAuthenticationMechanism {
+
+    @Inject
+    private JwtUtil jwtUtil;
+
+    @Override
+    public AuthenticationStatus validateRequest(
+            HttpServletRequest request,
+            HttpServletResponse response,
+            HttpMessageContext context) throws AuthenticationException {
+
+        String authHeader = request.getHeader("Authorization");
+
+        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+            return context.responseUnauthorized();
+        }
+
+        String token = authHeader.substring(7);
+
+        try {
+            Claims claims = jwtUtil.validateToken(token);
+            String username = claims.getSubject();
+            Set&lt;String&gt; groups = new HashSet&lt;&gt;(
+                claims.get("groups", List.class));
+
+            CallerPrincipalCallback callerCallback =
+                new CallerPrincipalCallback(
+                    context.getClientSubject(), username);
+
+            GroupPrincipalCallback groupCallback =
+                new GroupPrincipalCallback(
+                    context.getClientSubject(),
+                    groups.toArray(new String[0]));
+
+            context.getHandler().handle(
+                new Callback[]{callerCallback, groupCallback});
+
+            return context.notifyContainerAboutLogin(
+                callerCallback.getPrincipal(), groups);
+
+        } catch (JwtException e) {
+            return context.responseUnauthorized();
+        }
+    }
+}</code></pre>
+    </div>
+
+    <h2>IdentityStore avec base de données</h2>
+    <div class="code-block-wrap">
+      <span class="code-lang">java</span>
+      <pre><code>@ApplicationScoped
+public class DatabaseIdentityStore implements IdentityStore {
+
+    @Inject
+    private EntityManager em;
+
+    @Inject
+    private PasswordHashService passwordHashService;
+
+    @Override
+    public CredentialValidationResult validate(Credential credential) {
+        if (!(credential instanceof UsernamePasswordCredential)) {
+            return CredentialValidationResult.NOT_VALIDATED_RESULT;
+        }
+        UsernamePasswordCredential upc =
+            (UsernamePasswordCredential) credential;
+
+        try {
+            AppUser user = em.createQuery(
+                "SELECT u FROM AppUser u WHERE u.username = :username",
+                AppUser.class)
+                .setParameter("username", upc.getCaller())
+                .getSingleResult();
+
+            if (passwordHashService.verify(
+                    upc.getPasswordAsString(), user.getPasswordHash())) {
+                Set&lt;String&gt; groups = getCallerGroups(
+                    new CredentialValidationResult(user.getUsername()));
+                return new CredentialValidationResult(
+                    user.getUsername(), groups);
+            }
+        } catch (NoResultException e) {
+            // Utilisateur inexistant — même délai pour éviter timing attack
+            passwordHashService.dummyVerify();
+        }
+        return CredentialValidationResult.INVALID_RESULT;
+    }
+
+    @Override
+    public Set&lt;String&gt; getCallerGroups(CredentialValidationResult result) {
+        return em.createQuery(
+            "SELECT r.name FROM AppUser u JOIN u.roles r " +
+            "WHERE u.username = :username", String.class)
+            .setParameter("username", result.getCallerPrincipal().getName())
+            .getResultStream()
+            .collect(Collectors.toSet());
+    }
+}</code></pre>
+    </div>
+
+    <h2>Jakarta Security API — SecurityContext</h2>
+    <div class="code-block-wrap">
+      <span class="code-lang">java</span>
+      <pre><code>@Path("/accounts")
+@Produces(MediaType.APPLICATION_JSON)
+@RolesAllowed({"USER", "ADMIN"})
+public class AccountResource {
+
+    @Inject
+    private SecurityContext securityContext;
+
+    @Inject
+    private AccountService accountService;
+
+    @GET
+    public Response getAccounts() {
+        // Récupérer l'identité de l'utilisateur connecté
+        Principal caller = securityContext.getCallerPrincipal();
+        String username = caller.getName();
+
+        // Vérification programmatique du rôle
+        if (securityContext.isCallerInRole("ADMIN")) {
+            // ADMIN voit tous les comptes
+            return Response.ok(accountService.findAll()).build();
+        } else {
+            // USER ne voit que ses propres comptes
+            return Response.ok(
+                accountService.findByOwner(username)).build();
+        }
+    }
+
+    @DELETE
+    @Path("/{id}")
+    public Response deleteAccount(@PathParam("id") Long id) {
+        // Vérification d'accès à la ressource web (programmatique)
+        if (!securityContext.hasAccessToWebResource("/admin", "GET")) {
+            return Response.status(Response.Status.FORBIDDEN)
+                .entity("Seuls les administrateurs peuvent supprimer des comptes")
+                .build();
+        }
+        accountService.delete(id);
+        return Response.noContent().build();
+    }
+}</code></pre>
+    </div>
+
+    <h2>MicroProfile JWT — Configuration et Claims</h2>
+    <div class="code-block-wrap">
+      <span class="code-lang">java</span>
+      <pre><code>// Activer MP-JWT sur l'application
+@LoginConfig(authMethod = "MP-JWT", realmName = "banking-realm")
+@ApplicationPath("/api")
+public class SecureApp extends Application { }
+
+// -------------------------------------------------------
+
+@Path("/accounts")
+@RequestScoped
+@RolesAllowed("USER")
+public class AccountResource {
+
+    // Injection directe des claims JWT via CDI
+    @Inject
+    @Claim("sub")
+    private String subject;           // Identifiant de l'utilisateur
+
+    @Inject
+    @Claim("groups")
+    private Set&lt;String&gt; groups;       // Rôles/groupes de l'utilisateur
+
+    @Inject
+    @Claim("upn")
+    private String userPrincipalName; // Email ou identifiant principal
+
+    @Inject
+    @Claim("exp")
+    private Long expiration;          // Timestamp d'expiration du token
+
+    @GET
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getMyAccounts() {
+        return Response.ok(Map.of(
+            "owner", subject,
+            "groups", groups,
+            "upn", userPrincipalName
+        )).build();
+    }
+}</code></pre>
+    </div>
+
+    <div class="code-block-wrap">
+      <span class="code-lang">properties</span>
+      <pre><code># microprofile-config.properties
+mp.jwt.verify.publickey.location=/META-INF/public-key.pem
+mp.jwt.verify.issuer=https://auth.banking.esipe.fr
+mp.jwt.token.header=Authorization
+mp.jwt.token.cookie=Bearer</code></pre>
+    </div>
+
+    <h2>Configuration TLS dans Liberty server.xml</h2>
+    <div class="code-block-wrap">
+      <span class="code-lang">xml</span>
+      <pre><code>&lt;server description="Banking Secure Server"&gt;
+    &lt;featureManager&gt;
+        &lt;feature&gt;transportSecurity-1.0&lt;/feature&gt;
+        &lt;feature&gt;mpJwt-2.1&lt;/feature&gt;
+        &lt;feature&gt;jaxrs-3.1&lt;/feature&gt;
+        &lt;feature&gt;cdi-4.0&lt;/feature&gt;
+    &lt;/featureManager&gt;
+
+    &lt;!-- Keystore contenant la clé privée et le certificat serveur --&gt;
+    &lt;keyStore id="defaultKeyStore"
+              location="${server.config.dir}/resources/security/key.p12"
+              type="PKCS12"
+              password="${env.KEYSTORE_PASSWORD}"/&gt;
+
+    &lt;!-- Truststore contenant les certificats CA de confiance --&gt;
+    &lt;keyStore id="defaultTrustStore"
+              location="${server.config.dir}/resources/security/trust.p12"
+              type="PKCS12"
+              password="${env.TRUSTSTORE_PASSWORD}"/&gt;
+
+    &lt;!-- Configuration SSL/TLS --&gt;
+    &lt;ssl id="defaultSSLConfig"
+         keyStoreRef="defaultKeyStore"
+         trustStoreRef="defaultTrustStore"
+         sslProtocol="TLSv1.3"
+         clientAuthentication="false"/&gt;
+
+    &lt;!-- SSL options : désactiver TLS &lt; 1.2 --&gt;
+    &lt;sslOptions sslRef="defaultSSLConfig"
+                sslProtocols="TLSv1.3,TLSv1.2"/&gt;
+
+    &lt;!-- Point d'accès HTTP et HTTPS --&gt;
+    &lt;httpEndpoint id="defaultHttpEndpoint"
+                  host="*"
+                  httpPort="-1"
+                  httpsPort="9443"/&gt;
+
+    &lt;webApplication location="banking-app.war" contextRoot="/"/&gt;
+&lt;/server&gt;</code></pre>
+    </div>
+
+    <h2>Génération et Validation JWT</h2>
+    <div class="code-block-wrap">
+      <span class="code-lang">java</span>
+      <pre><code>@ApplicationScoped
+public class JwtUtil {
+
+    @Inject
+    @ConfigProperty(name = "jwt.issuer", 
+                    defaultValue = "https://auth.banking.esipe.fr")
+    private String issuer;
+
+    private PrivateKey privateKey;
+    private PublicKey publicKey;
+
+    @PostConstruct
+    public void init() throws Exception {
+        // Charger les clés depuis les ressources ou le keystore
+        this.privateKey = loadPrivateKey();
+        this.publicKey  = loadPublicKey();
+    }
+
+    /**
+     * Génère un token JWT signé avec RS256
+     */
+    public String generateToken(String username, Set&lt;String&gt; roles) {
+        Date now        = new Date();
+        Date expiration = new Date(now.getTime() + 3600_000L); // 1h
+
+        return Jwts.builder()
+            .subject(username)
+            .issuer(issuer)
+            .audience().add("banking-api").and()
+            .issuedAt(now)
+            .expiration(expiration)
+            .claim("groups", new ArrayList&lt;&gt;(roles))
+            .claim("upn", username)
+            .signWith(privateKey, Jwts.SIG.RS256)
+            .compact();
+    }
+
+    /**
+     * Valide un token JWT et retourne les claims
+     */
+    public Claims validateToken(String token) {
+        return Jwts.parser()
+            .verifyWith(publicKey)
+            .requireIssuer(issuer)
+            .build()
+            .parseSignedClaims(token)
+            .getPayload();
+    }
+}</code></pre>
+    </div>
+
+    <h2>Filtre CORS pour JAX-RS</h2>
+    <div class="code-block-wrap">
+      <span class="code-lang">java</span>
+      <pre><code>@Provider
+@PreMatching
+public class CorsFilter implements ContainerRequestFilter,
+                                   ContainerResponseFilter {
+
+    private static final Set&lt;String&gt; ALLOWED_ORIGINS = Set.of(
+        "https://banking.esipe.fr",
+        "https://app.banking.esipe.fr"
+    );
+
+    // Intercepte AVANT le routing — gère le préflight OPTIONS
+    @Override
+    public void filter(ContainerRequestContext request) throws IOException {
+        String method = request.getMethod();
+        String origin = request.getHeaderString("Origin");
+
+        if ("OPTIONS".equalsIgnoreCase(method) && origin != null) {
+            Response.ResponseBuilder rb = Response.ok();
+            buildCorsHeaders(rb, origin);
+            request.abortWith(rb.build());
+        }
+    }
+
+    // Ajoute les en-têtes CORS à toutes les réponses
+    @Override
+    public void filter(ContainerRequestContext request,
+                       ContainerResponseContext response) throws IOException {
+        String origin = request.getHeaderString("Origin");
+        if (origin != null) {
+            MultivaluedMap&lt;String, Object&gt; headers = response.getHeaders();
+            if (ALLOWED_ORIGINS.contains(origin)) {
+                headers.add("Access-Control-Allow-Origin", origin);
+                headers.add("Vary", "Origin");
+            }
+            headers.add("Access-Control-Allow-Methods",
+                "GET, POST, PUT, DELETE, OPTIONS, PATCH");
+            headers.add("Access-Control-Allow-Headers",
+                "Content-Type, Authorization, X-CSRF-Token");
+            headers.add("Access-Control-Allow-Credentials", "true");
+            headers.add("Access-Control-Max-Age", "3600");
+        }
+    }
+
+    private void buildCorsHeaders(Response.ResponseBuilder rb, String origin) {
+        if (ALLOWED_ORIGINS.contains(origin)) {
+            rb.header("Access-Control-Allow-Origin", origin)
+              .header("Vary", "Origin");
+        }
+        rb.header("Access-Control-Allow-Methods",
+                  "GET, POST, PUT, DELETE, OPTIONS, PATCH")
+          .header("Access-Control-Allow-Headers",
+                  "Content-Type, Authorization, X-CSRF-Token")
+          .header("Access-Control-Allow-Credentials", "true")
+          .header("Access-Control-Max-Age", "3600");
+    }
+}</code></pre>
+    </div>
+
+    <h2>Protection CSRF dans les Servlets</h2>
+    <div class="code-block-wrap">
+      <span class="code-lang">java</span>
+      <pre><code>@WebFilter("/*")
+public class CsrfFilter implements Filter {
+
+    private static final String CSRF_TOKEN_ATTR = "CSRF_TOKEN";
+    private static final String CSRF_HEADER     = "X-CSRF-Token";
+
+    @Override
+    public void doFilter(ServletRequest req, ServletResponse res,
+                         FilterChain chain)
+            throws IOException, ServletException {
+
+        HttpServletRequest  request  = (HttpServletRequest) req;
+        HttpServletResponse response = (HttpServletResponse) res;
+        HttpSession session = request.getSession(true);
+
+        String method = request.getMethod().toUpperCase();
+
+        if ("GET".equals(method) || "HEAD".equals(method)) {
+            // Générer le token CSRF à la première visite (GET)
+            if (session.getAttribute(CSRF_TOKEN_ATTR) == null) {
+                String token = generateSecureToken();
+                session.setAttribute(CSRF_TOKEN_ATTR, token);
+                // Exposer le token dans un en-tête de réponse pour les SPAs
+                response.setHeader(CSRF_HEADER, token);
+            }
+            chain.doFilter(request, response);
+
+        } else {
+            // Valider le token CSRF sur les requêtes mutantes (POST, PUT, DELETE)
+            String sessionToken = (String) session.getAttribute(CSRF_TOKEN_ATTR);
+            String requestToken = request.getHeader(CSRF_HEADER);
+
+            if (sessionToken == null || requestToken == null
+                    || !isTokenValid(sessionToken, requestToken)) {
+                response.sendError(HttpServletResponse.SC_FORBIDDEN,
+                    "CSRF token validation failed");
+                return;
+            }
+            chain.doFilter(request, response);
+        }
+    }
+
+    private String generateSecureToken() {
+        byte[] bytes = new byte[32];
+        new SecureRandom().nextBytes(bytes);
+        return Base64.getUrlEncoder().withoutPadding().encodeToString(bytes);
+    }
+
+    /**
+     * Comparaison en temps constant pour prévenir les timing attacks.
+     * MessageDigest.isEqual() garantit un temps d'exécution uniforme.
+     */
+    private boolean isTokenValid(String expected, String actual) {
+        byte[] expectedBytes = expected.getBytes(StandardCharsets.UTF_8);
+        byte[] actualBytes   = actual.getBytes(StandardCharsets.UTF_8);
+        return MessageDigest.isEqual(expectedBytes, actualBytes);
+    }
+}</code></pre>
+    </div>
+
+  </main>
+</div>
+<footer class="cds--footer">Made with IBM Bob &nbsp;·&nbsp; © 2026 Olivier Planson &nbsp;·&nbsp; ESIPE — Jakarta EE &amp; Microservices</footer>
+</body>
+</html>

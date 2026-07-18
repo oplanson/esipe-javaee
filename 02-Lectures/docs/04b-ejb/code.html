@@ -1,0 +1,384 @@
+<!-- © Copyright 2026 Olivier Planson. All rights reserved. Reproduction prohibited. Made with IBM Bob. -->
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>Cours 04b — Exemples de code</title>
+  <link rel="stylesheet" href="../assets/carbon.css"/>
+</head>
+<body>
+<header class="cds--header">
+  <a class="cds--header__name" href="index.html">EJB — Enterprise Java Beans<span>Cours Jakarta EE</span></a>
+  <a class="cds--header__back" href="../index.html">← Tous les Cours</a>
+</header>
+<div class="cds--shell">
+  <nav class="cds--side-nav">
+    <p class="cds--side-nav__section-title">Cours 04b</p>
+    <a class="cds--side-nav__link" href="index.html">⊙ Vue d'ensemble</a>
+    <a class="cds--side-nav__link" href="slides.html">☰ Contenu du cours</a>
+    <a class="cds--side-nav__link" href="concepts.html">◈ Concepts clés</a>
+    <a class="cds--side-nav__link active" href="code.html">⟨/⟩ Exemples de code</a>
+  </nav>
+  <main class="cds--content">
+    <div class="breadcrumb"><a href="../index.html">Cours</a> › <a href="index.html">Cours 04b</a> › Code</div>
+    <h1>Exemples de code</h1>
+    <p class="page-lead">Extraits de code Java du cours 04b — EJB, Session Beans, MDB, sécurité déclarative et Timer Service.</p>
+
+    <h2>Stateless Session Bean — Service bancaire</h2>
+    <div class="code-block-wrap">
+      <span class="code-lang">java</span>
+      <pre><code>import jakarta.ejb.Stateless;
+import jakarta.ejb.TransactionAttribute;
+import jakarta.ejb.TransactionAttributeType;
+import jakarta.inject.Inject;
+import jakarta.persistence.EntityManager;
+import java.math.BigDecimal;
+
+@Stateless
+public class BankingServiceBean {
+
+    @Inject
+    private EntityManager em;
+
+    // REQUIRED : participe à la transaction active ou en crée une nouvelle
+    @TransactionAttribute(TransactionAttributeType.REQUIRED)
+    public void transferFunds(String fromAccountId, String toAccountId,
+                              BigDecimal amount) {
+        Account source = em.find(Account.class, fromAccountId);
+        Account target = em.find(Account.class, toAccountId);
+
+        if (source == null || target == null) {
+            throw new IllegalArgumentException("Account not found");
+        }
+
+        validateTransfer(source, amount);
+
+        source.debit(amount);
+        target.credit(amount);
+
+        em.merge(source);
+        em.merge(target);
+    }
+
+    // MANDATORY : doit être appelée dans le contexte d'une transaction existante
+    @TransactionAttribute(TransactionAttributeType.MANDATORY)
+    private void validateTransfer(Account source, BigDecimal amount) {
+        if (amount.compareTo(BigDecimal.ZERO) &lt;= 0) {
+            throw new IllegalArgumentException("Amount must be positive");
+        }
+        if (source.getBalance().compareTo(amount) &lt; 0) {
+            throw new InsufficientFundsException(
+                "Insufficient funds: available=" + source.getBalance()
+                + ", requested=" + amount);
+        }
+    }
+}</code></pre>
+    </div>
+
+    <h2>Stateful Session Bean — Panier</h2>
+    <div class="code-block-wrap">
+      <span class="code-lang">java</span>
+      <pre><code>import jakarta.ejb.Remove;
+import jakarta.ejb.Stateful;
+import jakarta.enterprise.context.SessionScoped;
+import jakarta.annotation.PreDestroy;
+import java.io.Serializable;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.logging.Logger;
+
+@Stateful
+@SessionScoped
+public class ShoppingCartBean implements Serializable {
+
+    private static final Logger logger =
+        Logger.getLogger(ShoppingCartBean.class.getName());
+
+    // État conservé entre les appels du même client
+    private final List&lt;Item&gt; items = new ArrayList&lt;&gt;();
+
+    public void addItem(Item item) {
+        items.add(item);
+        logger.info("Item added: " + item.getName()
+            + " — cart size: " + items.size());
+    }
+
+    public boolean removeItem(String itemId) {
+        return items.removeIf(i -&gt; i.getId().equals(itemId));
+    }
+
+    public List&lt;Item&gt; getItems() {
+        return List.copyOf(items);
+    }
+
+    public BigDecimal getTotal() {
+        return items.stream()
+            .map(Item::getPrice)
+            .reduce(BigDecimal.ZERO, BigDecimal::add);
+    }
+
+    public Order checkout(String customerId) {
+        if (items.isEmpty()) {
+            throw new EmptyCartException("Cart is empty for customer: " + customerId);
+        }
+        Order order = new Order(customerId, List.copyOf(items), getTotal());
+        items.clear();
+        logger.info("Order created: " + order.getId() + " for customer: " + customerId);
+        return order;
+    }
+
+    // @Remove : libère l'instance Stateful après l'appel — fin de la conversation
+    @Remove
+    public void clearCart() {
+        items.clear();
+        logger.info("Cart cleared and Stateful bean released");
+    }
+
+    @PreDestroy
+    public void onDestroy() {
+        logger.info("ShoppingCartBean destroyed — items remaining: " + items.size());
+    }
+}</code></pre>
+    </div>
+
+    <h2>Singleton — Configuration applicative</h2>
+    <div class="code-block-wrap">
+      <span class="code-lang">java</span>
+      <pre><code>import jakarta.annotation.PostConstruct;
+import jakarta.ejb.ConcurrencyManagement;
+import jakarta.ejb.ConcurrencyManagementType;
+import jakarta.ejb.Lock;
+import jakarta.ejb.LockType;
+import jakarta.ejb.Singleton;
+import jakarta.ejb.Startup;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.logging.Logger;
+
+@Singleton
+@Startup  // initialisé au démarrage du serveur, avant tout appel client
+@ConcurrencyManagement(ConcurrencyManagementType.CONTAINER)
+public class AppConfigBean {
+
+    private static final Logger logger =
+        Logger.getLogger(AppConfigBean.class.getName());
+
+    // ConcurrentHashMap protégée par @Lock du conteneur
+    private final ConcurrentHashMap&lt;String, String&gt; config =
+        new ConcurrentHashMap&lt;&gt;();
+
+    @PostConstruct
+    public void loadConfig() {
+        // Chargement initial de la configuration au démarrage
+        config.put("app.name", "BankingApp");
+        config.put("app.version", "3.2.1");
+        config.put("max.transfer.amount", "100000");
+        config.put("session.timeout.minutes", "30");
+        logger.info("AppConfigBean initialized with " + config.size() + " properties");
+    }
+
+    // @Lock(WRITE) : accès exclusif — un seul thread à la fois peut écrire
+    @Lock(LockType.WRITE)
+    public void updateConfig(String key, String value) {
+        String old = config.put(key, value);
+        logger.info("Config updated: " + key + " = " + value
+            + " (was: " + old + ")");
+    }
+
+    // @Lock(READ) : accès concurrent en lecture — plusieurs threads simultanés autorisés
+    @Lock(LockType.READ)
+    public String getConfig(String key) {
+        return config.getOrDefault(key, "");
+    }
+
+    @Lock(LockType.READ)
+    public String getConfig(String key, String defaultValue) {
+        return config.getOrDefault(key, defaultValue);
+    }
+}</code></pre>
+    </div>
+
+    <h2>Message-Driven Bean</h2>
+    <div class="code-block-wrap">
+      <span class="code-lang">java</span>
+      <pre><code>import jakarta.ejb.ActivationConfigProperty;
+import jakarta.ejb.MessageDriven;
+import jakarta.inject.Inject;
+import jakarta.jms.JMSException;
+import jakarta.jms.Message;
+import jakarta.jms.MessageListener;
+import jakarta.jms.TextMessage;
+import java.math.BigDecimal;
+import java.util.logging.Logger;
+
+@MessageDriven(activationConfig = {
+    @ActivationConfigProperty(
+        propertyName  = "destinationType",
+        propertyValue = "jakarta.jms.Queue"),
+    @ActivationConfigProperty(
+        propertyName  = "destinationLookup",
+        propertyValue = "jms/TransferRequestQueue"),
+    @ActivationConfigProperty(
+        propertyName  = "acknowledgeMode",
+        propertyValue = "Auto-acknowledge")
+})
+public class TransferRequestMDB implements MessageListener {
+
+    private static final Logger logger =
+        Logger.getLogger(TransferRequestMDB.class.getName());
+
+    @Inject
+    private BankingServiceBean bankingService;
+
+    @Override
+    public void onMessage(Message message) {
+        try {
+            if (message instanceof TextMessage textMsg) {
+                String payload = textMsg.getText();
+                logger.info("Received transfer request: " + payload);
+
+                // Parsing simplifié du payload JSON
+                TransferRequest request = TransferRequest.fromJson(payload);
+
+                // Traitement du virement via le service bancaire
+                bankingService.transferFunds(
+                    request.getFromAccountId(),
+                    request.getToAccountId(),
+                    new BigDecimal(request.getAmount())
+                );
+
+                logger.info("Transfer processed successfully: "
+                    + request.getFromAccountId() + " → " + request.getToAccountId()
+                    + " : " + request.getAmount());
+            } else {
+                logger.warning("Unexpected message type: "
+                    + message.getClass().getName());
+            }
+        } catch (JMSException e) {
+            logger.severe("JMS error processing transfer request: " + e.getMessage());
+            throw new RuntimeException("Failed to process transfer message", e);
+        }
+    }
+}</code></pre>
+    </div>
+
+    <h2>Sécurité Déclarative</h2>
+    <div class="code-block-wrap">
+      <span class="code-lang">java</span>
+      <pre><code>import jakarta.annotation.Resource;
+import jakarta.annotation.security.DenyAll;
+import jakarta.annotation.security.PermitAll;
+import jakarta.annotation.security.RolesAllowed;
+import jakarta.ejb.EJBContext;
+import jakarta.ejb.Stateless;
+
+// @RolesAllowed au niveau classe : s'applique à toutes les méthodes par défaut
+@Stateless
+@RolesAllowed("EMPLOYEE")
+public class SecureBankingService {
+
+    @Resource
+    private EJBContext ctx;
+
+    // Surcharge : seuls les ADMIN peuvent supprimer un compte
+    @RolesAllowed("ADMIN")
+    public void deleteAccount(String accountId) {
+        // Sécurité programmatique supplémentaire : audit de l'action admin
+        String caller = ctx.getCallerPrincipal().getName();
+        auditService.log("DELETE_ACCOUNT", caller, accountId);
+        accountRepository.delete(accountId);
+    }
+
+    // Surcharge : accessible à tous (authentifiés ou non) — consultation publique
+    @PermitAll
+    public AccountInfo getAccountInfo(String accountId) {
+        return accountRepository.findPublicInfo(accountId);
+    }
+
+    // Surcharge : inaccessible en production — méthode de maintenance désactivée
+    @DenyAll
+    public void deleteAllData() {
+        // Cette méthode ne peut jamais être invoquée via le conteneur
+        throw new UnsupportedOperationException("Not accessible");
+    }
+
+    // Héritage du @RolesAllowed("EMPLOYEE") de la classe
+    public void updateAccountBalance(String accountId, java.math.BigDecimal amount) {
+        // Vérification programmatique complémentaire selon le rôle
+        if (ctx.isCallerInRole("ADMIN")) {
+            // Les admins peuvent effectuer des ajustements illimités
+            accountRepository.forceUpdateBalance(accountId, amount);
+        } else {
+            // Les employés sont soumis aux limites de transfert standard
+            bankingService.transferFunds("INTERNAL", accountId, amount);
+        }
+    }
+}</code></pre>
+    </div>
+
+    <h2>Timer Service</h2>
+    <div class="code-block-wrap">
+      <span class="code-lang">java</span>
+      <pre><code>import jakarta.annotation.Resource;
+import jakarta.ejb.Schedule;
+import jakarta.ejb.Stateless;
+import jakarta.ejb.Timeout;
+import jakarta.ejb.Timer;
+import jakarta.ejb.TimerConfig;
+import jakarta.ejb.TimerService;
+import java.util.logging.Logger;
+
+@Stateless
+public class ReportSchedulerBean {
+
+    private static final Logger logger =
+        Logger.getLogger(ReportSchedulerBean.class.getName());
+
+    @Resource
+    private TimerService timerService;
+
+    // Timer automatique : exécuté chaque jour à minuit — persistant (survit aux redémarrages)
+    @Schedule(hour = "0", minute = "0", second = "0",
+              persistent = true, info = "DailyReportTimer")
+    public void generateDailyReport(Timer timer) {
+        logger.info("Daily report generation started — timer: " + timer.getInfo());
+        try {
+            reportService.generateDailyReport();
+            logger.info("Daily report generated successfully");
+        } catch (Exception e) {
+            logger.severe("Daily report generation failed: " + e.getMessage());
+        }
+    }
+
+    // Timer automatique : exécuté chaque lundi à 8h pour le rapport hebdomadaire
+    @Schedule(hour = "8", minute = "0", second = "0",
+              dayOfWeek = "Mon", persistent = true, info = "WeeklyReportTimer")
+    public void generateWeeklyReport(Timer timer) {
+        logger.info("Weekly report generation started");
+        reportService.generateWeeklyReport();
+    }
+
+    // Création programmatique d'un timer pour un rapport différé
+    public void scheduleDelayedReport(String reportId, long delayMs) {
+        TimerConfig config = new TimerConfig(reportId, true);
+        timerService.createSingleActionTimer(delayMs, config);
+        logger.info("Delayed report timer created — reportId=" + reportId
+            + ", delay=" + delayMs + "ms");
+    }
+
+    // Callback @Timeout : appelé à l'expiration des timers programmatiques
+    @Timeout
+    public void processTimer(Timer timer) {
+        String reportId = (String) timer.getInfo();
+        logger.info("Processing timer callback — reportId: " + reportId);
+        reportService.generateReport(reportId);
+    }
+}</code></pre>
+    </div>
+
+  </main>
+</div>
+<footer class="cds--footer">Made with IBM Bob &nbsp;·&nbsp; © 2026 Olivier Planson &nbsp;·&nbsp; ESIPE — Jakarta EE &amp; Microservices</footer>
+</body>
+</html>

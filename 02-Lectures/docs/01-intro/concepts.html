@@ -1,0 +1,128 @@
+<!-- © Copyright 2026 Olivier Planson. All rights reserved. Reproduction prohibited. Made with IBM Bob. -->
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>Cours 01 — Concepts clés</title>
+  <link rel="stylesheet" href="../assets/carbon.css"/>
+</head>
+<body>
+<header class="cds--header">
+  <a class="cds--header__name" href="index.html">Introduction Jakarta EE<span>Cours Jakarta EE</span></a>
+  <a class="cds--header__back" href="../index.html">← Tous les Cours</a>
+</header>
+<div class="cds--shell">
+  <nav class="cds--side-nav">
+    <p class="cds--side-nav__section-title">Cours 01</p>
+    <a class="cds--side-nav__link" href="index.html">⊙ Vue d'ensemble</a>
+    <a class="cds--side-nav__link" href="slides.html">☰ Contenu du cours</a>
+    <a class="cds--side-nav__link active" href="concepts.html">◈ Concepts clés</a>
+    <a class="cds--side-nav__link" href="code.html">⟨/⟩ Exemples de code</a>
+  </nav>
+  <main class="cds--content">
+    <div class="breadcrumb"><a href="../index.html">Cours</a> › <a href="index.html">Cours 01</a> › Concepts clés</div>
+    <h1>Concepts clés</h1>
+    <p class="page-lead">Définitions, comparatifs et spécifications essentielles de Jakarta EE et MicroProfile.</p>
+
+    <h2>Jakarta EE vs MicroProfile</h2>
+    <div class="cds--data-table-container">
+      <table class="cds--data-table">
+        <thead><tr><th>Aspect</th><th>Jakarta EE</th><th>MicroProfile</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Focus</strong></td><td>Applications enterprise (monolithes)</td><td>Microservices cloud-native</td></tr>
+          <tr><td><strong>Scope</strong></td><td>Plateforme complète (30+ spécifications)</td><td>Spécifications ciblées (12)</td></tr>
+          <tr><td><strong>Cycle de release</strong></td><td>Lent, stable (tous les 2-3 ans)</td><td>Rapide et innovant (6-12 mois)</td></tr>
+          <tr><td><strong>Taille</strong></td><td>Full-featured, lourd</td><td>Léger et modulaire</td></tr>
+          <tr><td><strong>Cas d'usage</strong></td><td>Monolithes, services enterprise</td><td>Applications cloud-native</td></tr>
+          <tr><td><strong>Gouvernance</strong></td><td>Eclipse Foundation</td><td>Eclipse Foundation</td></tr>
+          <tr><td><strong>Usage recommandé</strong></td><td>Logique métier core</td><td>Fonctionnalités cloud-native</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h2>Spécifications Jakarta EE Core</h2>
+    <div class="cds--data-table-container">
+      <table class="cds--data-table">
+        <thead><tr><th>Catégorie</th><th>Spécification</th><th>Rôle</th></tr></thead>
+        <tbody>
+          <tr><td>Web</td><td>Jakarta Servlet 6.0</td><td>Gestion des requêtes/réponses HTTP</td></tr>
+          <tr><td>Web</td><td>Jakarta Server Pages (JSP)</td><td>Pages web dynamiques</td></tr>
+          <tr><td>Web</td><td>Jakarta Server Faces (JSF)</td><td>Framework UI orienté composants</td></tr>
+          <tr><td>Web</td><td>Jakarta RESTful Web Services (JAX-RS)</td><td>APIs REST avec annotations</td></tr>
+          <tr><td>Métier</td><td>Jakarta CDI 4.0</td><td>Injection de dépendances et scopes</td></tr>
+          <tr><td>Métier</td><td>Jakarta EJB</td><td>Composants métier avec transactions</td></tr>
+          <tr><td>Persistence</td><td>Jakarta JPA 3.1</td><td>Mapping objet-relationnel</td></tr>
+          <tr><td>Persistence</td><td>Jakarta JTA</td><td>Gestion des transactions distribuées</td></tr>
+          <tr><td>Messagerie</td><td>Jakarta JMS</td><td>Messagerie asynchrone</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h2>Spécifications MicroProfile Core</h2>
+    <div class="cds--data-table-container">
+      <table class="cds--data-table">
+        <thead><tr><th>Spécification</th><th>Rôle</th><th>Endpoint</th></tr></thead>
+        <tbody>
+          <tr><td>MP Config 3.0</td><td>Configuration externalisée et dynamique</td><td>Propriétés, env vars, system props</td></tr>
+          <tr><td>MP Health 4.0</td><td>Endpoints de santé (liveness, readiness)</td><td><code>/health</code></td></tr>
+          <tr><td>MP Metrics 5.0</td><td>Métriques JVM et applicatives</td><td><code>/metrics</code></td></tr>
+          <tr><td>MP OpenAPI 3.1</td><td>Documentation d'API REST</td><td><code>/openapi</code></td></tr>
+          <tr><td>MP Fault Tolerance</td><td>Circuit breakers, retry, timeout, bulkhead</td><td>Annotations déclaratives</td></tr>
+          <tr><td>MP Rest Client</td><td>Clients REST type-safe</td><td>Interfaces Java annotées</td></tr>
+          <tr><td>MP JWT</td><td>Authentification par JWT</td><td>Header Authorization Bearer</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h2>Comparaison des Runtimes Jakarta EE</h2>
+    <div class="cds--data-table-container">
+      <table class="cds--data-table">
+        <thead><tr><th>Runtime</th><th>Démarrage</th><th>Mémoire</th><th>MicroProfile</th><th>Container</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Open Liberty</strong></td><td>⚡ Très rapide</td><td>💚 Faible</td><td>✅ Complet</td><td>✅ Excellent</td></tr>
+          <tr><td>WildFly</td><td>Rapide</td><td>Moyen</td><td>⚠️ Partiel</td><td>Bon</td></tr>
+          <tr><td>Payara</td><td>Moyen</td><td>Moyen</td><td>✅ Complet</td><td>Bon</td></tr>
+          <tr><td>GlassFish</td><td>Lent</td><td>Élevé</td><td>❌ Minimal</td><td>Moyen</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h2>Podman vs Docker</h2>
+    <div class="cds--data-table-container">
+      <table class="cds--data-table">
+        <thead><tr><th>Fonctionnalité</th><th>Podman</th><th>Docker</th></tr></thead>
+        <tbody>
+          <tr><td>Daemon background</td><td>❌ Non (daemonless)</td><td>✅ Oui</td></tr>
+          <tr><td>Root requis</td><td>❌ Non (rootless)</td><td>⚠️ Souvent</td></tr>
+          <tr><td>Compatibilité CLI</td><td>✅ Compatible Docker</td><td>N/A</td></tr>
+          <tr><td>Intégration Systemd</td><td>✅ Natif</td><td>⚠️ Limité</td></tr>
+          <tr><td>Modèle de sécurité</td><td>✅ Meilleur</td><td>Bon</td></tr>
+          <tr><td>Licence</td><td>Open-source (Apache 2.0)</td><td>Propriétaire (noyau open)</td></tr>
+          <tr><td>OCI compliant</td><td>✅ Oui</td><td>✅ Oui</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h2>Glossaire</h2>
+    <div class="cds--data-table-container">
+      <table class="cds--data-table">
+        <thead><tr><th>Terme</th><th>Définition</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Jakarta EE</strong></td><td>Anciennement Java EE — plateforme de spécifications pour applications enterprise Java, gérée par l'Eclipse Foundation depuis 2017</td></tr>
+          <tr><td><strong>MicroProfile</strong></td><td>Ensemble de spécifications complémentaires à Jakarta EE, ciblant les architectures microservices et cloud-native</td></tr>
+          <tr><td><strong>Open Liberty</strong></td><td>Serveur d'applications open-source d'IBM, implémentant Jakarta EE 10 et MicroProfile 6, optimisé pour les conteneurs</td></tr>
+          <tr><td><strong>Podman</strong></td><td>Outil de gestion de conteneurs OCI sans daemon, compatible avec la CLI Docker, permettant l'exécution rootless</td></tr>
+          <tr><td><strong>WAR</strong></td><td>Web Application Archive — format de packaging Java pour les applications web déployées sur un serveur d'applications</td></tr>
+          <tr><td><strong>CDI</strong></td><td>Contexts and Dependency Injection — mécanisme d'injection de dépendances standardisé de Jakarta EE</td></tr>
+          <tr><td><strong>JPA</strong></td><td>Jakarta Persistence API — spécification pour le mapping objet-relationnel (ORM) en Java</td></tr>
+          <tr><td><strong>JAX-RS</strong></td><td>Jakarta RESTful Web Services — API pour la création de services REST avec des annotations Java</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+  </main>
+</div>
+<footer class="cds--footer">Made with IBM Bob &nbsp;·&nbsp; © 2026 Olivier Planson &nbsp;·&nbsp; ESIPE — Jakarta EE &amp; Microservices</footer>
+</body>
+</html>

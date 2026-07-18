@@ -1,0 +1,227 @@
+<!-- © Copyright 2026 Olivier Planson. All rights reserved. Reproduction prohibited. Made with IBM Bob. -->
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>Cours 02b — Contenu du cours</title>
+  <link rel="stylesheet" href="../assets/carbon.css"/>
+</head>
+<body>
+<header class="cds--header">
+  <a class="cds--header__name" href="index.html">JSF — JavaServer Faces<span>Cours Jakarta EE</span></a>
+  <a class="cds--header__back" href="../index.html">← Tous les Cours</a>
+</header>
+<div class="cds--shell">
+  <nav class="cds--side-nav">
+    <p class="cds--side-nav__section-title">Cours 02b</p>
+    <a class="cds--side-nav__link" href="index.html">⊙ Vue d'ensemble</a>
+    <a class="cds--side-nav__link active" href="slides.html">☰ Contenu du cours</a>
+    <a class="cds--side-nav__link" href="concepts.html">◈ Concepts clés</a>
+    <a class="cds--side-nav__link" href="code.html">⟨/⟩ Exemples de code</a>
+  </nav>
+  <main class="cds--content">
+    <div class="breadcrumb"><a href="../index.html">Cours</a> › <a href="index.html">Cours 02b</a> › Contenu</div>
+    <h1>Contenu du cours</h1>
+    <p class="page-lead">Toutes les sections — cliquez sur un titre pour développer.</p>
+
+    <details open>
+      <summary>🏗️ Architecture JSF et Cycle de vie</summary>
+      <div class="slide-content">
+        <p>JSF (<strong>JavaServer Faces</strong>) est un framework MVC orienté composants pour la construction d'interfaces utilisateur web en Java EE/Jakarta EE.</p>
+        <img src="../../images/02b-jsf-javaserver-faces-diagram-1.png" alt="JSF Lifecycle Diagram"/>
+        <h3>Les 6 phases du cycle de vie JSF :</h3>
+        <ol>
+          <li><strong>Restore View</strong> — reconstruit ou crée l'arbre de composants (UIViewRoot) pour la requête courante</li>
+          <li><strong>Apply Request Values</strong> — chaque composant extrait et stocke sa valeur depuis les paramètres de la requête</li>
+          <li><strong>Process Validations</strong> — les validateurs et convertisseurs sont exécutés sur les valeurs soumises ; les erreurs sont enregistrées</li>
+          <li><strong>Update Model Values</strong> — les valeurs validées sont propagées vers les propriétés des Managed Beans via les ValueExpressions</li>
+          <li><strong>Invoke Application</strong> — les action listeners et les méthodes d'action (ex : commandButton) sont invoqués</li>
+          <li><strong>Render Response</strong> — la vue est rendue (HTML généré) et envoyée au navigateur</li>
+        </ol>
+        <p><strong>Court-circuit :</strong> si des erreurs de validation surviennent en phase 3, le cycle saute directement à la phase 6 (Render Response) pour afficher les messages d'erreur.</p>
+      </div>
+    </details>
+
+    <details>
+      <summary>🫘 Managed Beans avec CDI</summary>
+      <div class="slide-content">
+        <p>Dans JSF moderne (Jakarta EE 9+), les <strong>Managed Beans</strong> sont des beans CDI annotés avec <code>@Named</code> pour les rendre accessibles depuis l'Expression Language.</p>
+        <h3>Scopes des beans CDI :</h3>
+        <ul>
+          <li><strong>@RequestScoped</strong> — bean créé pour chaque requête HTTP, détruit à la fin de la requête. Idéal pour les actions ponctuelles.</li>
+          <li><strong>@ViewScoped</strong> (<code>jakarta.faces.view.ViewScoped</code>) — bean vivant tant que l'utilisateur reste sur la même vue JSF. Parfait pour les formulaires avec AJAX.</li>
+          <li><strong>@SessionScoped</strong> — bean lié à la session HTTP de l'utilisateur. Pour les données persistant entre les pages (ex : panier, utilisateur connecté).</li>
+          <li><strong>@ApplicationScoped</strong> — une seule instance partagée par toute l'application. Pour les caches et données globales.</li>
+          <li><strong>@Dependent</strong> (défaut CDI) — le bean a le même scope que le bean qui l'injecte.</li>
+        </ul>
+        <h3>Annotation @Named :</h3>
+        <p><code>@Named("clientBean")</code> expose le bean sous le nom <code>clientBean</code> dans l'EL. Sans valeur, le nom dérivé de la classe est utilisé (ex : <code>ClientBean</code> → <code>clientBean</code>).</p>
+        <div class="code-block-wrap">
+          <span class="code-lang">java</span>
+          <pre><code>@Named
+@RequestScoped
+public class ClientBean {
+    @Inject
+    private ClientService clientService;
+    // accessible via #{clientBean.name}
+}</code></pre>
+        </div>
+      </div>
+    </details>
+
+    <details>
+      <summary>📄 Facelets et Templates</summary>
+      <div class="slide-content">
+        <p><strong>Facelets</strong> est le moteur de templating officiel de JSF depuis JSF 2.0, remplaçant définitivement JSP. Les fichiers Facelets ont l'extension <code>.xhtml</code>.</p>
+        <h3>Avantages de Facelets sur JSP :</h3>
+        <ul>
+          <li>Syntaxe XML stricte — les pages sont du HTML5 valide consultable directement dans un navigateur</li>
+          <li>Héritage de templates via <code>ui:composition</code>, <code>ui:define</code>, <code>ui:insert</code></li>
+          <li>Meilleure intégration avec l'Expression Language (EL)</li>
+          <li>Pas de compilation séparée nécessaire</li>
+        </ul>
+        <h3>Tags principaux pour le templating :</h3>
+        <ul>
+          <li><strong><code>ui:composition template="..."</code></strong> — déclare qu'une page utilise un template et délimite le contenu à inclure</li>
+          <li><strong><code>ui:define name="..."</code></strong> — dans une page cliente, définit le contenu d'une zone du template</li>
+          <li><strong><code>ui:insert name="..."</code></strong> — dans le template, marque l'emplacement où le contenu d'une page sera inséré</li>
+          <li><strong><code>ui:include src="..."</code></strong> — inclut un fragment Facelets réutilisable</li>
+          <li><strong><code>ui:repeat</code></strong> — itère sur une collection (alternative à <code>h:dataTable</code>)</li>
+        </ul>
+      </div>
+    </details>
+
+    <details>
+      <summary>🧩 Composants JSF Core</summary>
+      <div class="slide-content">
+        <p>JSF fournit une riche bibliothèque de composants d'interface répartis dans deux espaces de noms principaux : <code>h:</code> (HTML) et <code>f:</code> (Core).</p>
+        <h3>Composants de saisie et affichage :</h3>
+        <ul>
+          <li><strong><code>h:inputText</code></strong> — champ de saisie texte, lié à une propriété via <code>value="#{bean.prop}"</code></li>
+          <li><strong><code>h:inputSecret</code></strong> — champ mot de passe</li>
+          <li><strong><code>h:inputTextarea</code></strong> — zone de texte multiligne</li>
+          <li><strong><code>h:outputLabel</code></strong> — étiquette liée à un composant via <code>for="componentId"</code></li>
+          <li><strong><code>h:outputText</code></strong> — affichage d'une valeur avec encodage HTML automatique</li>
+          <li><strong><code>h:message</code></strong> — affiche les messages d'erreur pour un composant identifié par <code>for</code></li>
+          <li><strong><code>h:messages</code></strong> — affiche tous les messages JSF de la page</li>
+        </ul>
+        <h3>Composants d'action et navigation :</h3>
+        <ul>
+          <li><strong><code>h:commandButton</code></strong> — bouton de soumission de formulaire, déclenche une action ou un action listener</li>
+          <li><strong><code>h:commandLink</code></strong> — lien hypertexte déclenchant une action</li>
+          <li><strong><code>h:form</code></strong> — formulaire HTML, obligatoire pour tout composant interactif JSF</li>
+        </ul>
+        <h3>Composants de liste :</h3>
+        <ul>
+          <li><strong><code>h:dataTable</code></strong> — tableau HTML généré dynamiquement depuis une collection</li>
+          <li><strong><code>h:selectOneMenu</code></strong> — liste déroulante à sélection unique</li>
+          <li><strong><code>h:selectManyCheckbox</code></strong> — cases à cocher à sélection multiple</li>
+        </ul>
+      </div>
+    </details>
+
+    <details>
+      <summary>✅ Validation et Converters</summary>
+      <div class="slide-content">
+        <p>JSF intègre un mécanisme de validation et de conversion qui s'exécute en phase 3 du cycle de vie. En cas d'erreur, le cycle court-circuite vers la phase 6.</p>
+        <h3>Validateurs intégrés :</h3>
+        <ul>
+          <li><strong><code>f:validateRequired</code></strong> — vérifie que le champ n'est pas vide</li>
+          <li><strong><code>f:validateLength</code></strong> — contrôle la longueur minimale et/ou maximale d'une chaîne</li>
+          <li><strong><code>f:validateLongRange</code></strong> — valide qu'un nombre entier est dans un intervalle donné</li>
+          <li><strong><code>f:validateDoubleRange</code></strong> — valide un nombre décimal dans un intervalle</li>
+          <li><strong><code>f:validateRegex</code></strong> — valide une chaîne par rapport à une expression régulière</li>
+        </ul>
+        <h3>Validateurs personnalisés :</h3>
+        <p>Créer une classe annotée <code>@FacesValidator("id")</code> implémentant <code>jakarta.faces.validator.Validator</code> et sa méthode <code>validate()</code>. Lancer une <code>ValidatorException</code> avec un <code>FacesMessage</code> en cas d'erreur.</p>
+        <h3>Converters :</h3>
+        <ul>
+          <li><strong><code>f:convertNumber</code></strong> — conversion de nombres avec format, locale et type (number, currency, percent)</li>
+          <li><strong><code>f:convertDateTime</code></strong> — conversion de dates et heures avec pattern et timezone</li>
+          <li>Converters personnalisés via <code>@FacesConverter</code> implémentant <code>Converter&lt;T&gt;</code></li>
+        </ul>
+        <div class="code-block-wrap">
+          <span class="code-lang">xhtml</span>
+          <pre><code>&lt;h:inputText id="email" value="#{clientBean.email}"&gt;
+    &lt;f:validateRequired/&gt;
+    &lt;f:validateRegex pattern="^[A-Za-z0-9+_.-]+@(.+)$"/&gt;
+&lt;/h:inputText&gt;
+&lt;h:message for="email" styleClass="error-msg"/&gt;</code></pre>
+        </div>
+      </div>
+    </details>
+
+    <details>
+      <summary>⚡ AJAX avec JSF</summary>
+      <div class="slide-content">
+        <p>JSF intègre nativement le support AJAX via le composant <code>f:ajax</code>, sans nécessiter de bibliothèque JavaScript externe. Les requêtes partielles mettent à jour uniquement une portion de la page.</p>
+        <img src="../../images/02b-jsf-javaserver-faces-diagram-2.png" alt="JSF AJAX Diagram"/>
+        <h3>Attributs clés de f:ajax :</h3>
+        <ul>
+          <li><strong><code>execute</code></strong> — liste des IDs de composants dont les valeurs sont soumises lors de la requête AJAX. <code>@form</code> soumet tout le formulaire, <code>@this</code> seulement le composant courant.</li>
+          <li><strong><code>render</code></strong> — liste des IDs de composants à re-rendre dans la réponse AJAX. <code>@all</code> re-rend toute la page.</li>
+          <li><strong><code>event</code></strong> — événement DOM déclencheur (ex : <code>click</code>, <code>change</code>, <code>keyup</code>, <code>blur</code>). Par défaut : <code>action</code> pour les boutons, <code>valueChange</code> pour les inputs.</li>
+          <li><strong><code>listener</code></strong> — méthode bean à invoquer en plus de l'action normale (signature : <code>void method(AjaxBehaviorEvent)</code>)</li>
+          <li><strong><code>onevent</code></strong> — callback JavaScript exécuté à chaque étape de la requête AJAX</li>
+        </ul>
+        <div class="code-block-wrap">
+          <span class="code-lang">xhtml</span>
+          <pre><code>&lt;h:commandButton value="Rechercher" action="#{clientBean.search}"&gt;
+    &lt;f:ajax execute="@form" render="resultPanel" event="click"/&gt;
+&lt;/h:commandButton&gt;
+
+&lt;h:panelGroup id="resultPanel"&gt;
+    &lt;!-- contenu mis à jour par AJAX --&gt;
+&lt;/h:panelGroup&gt;</code></pre>
+        </div>
+      </div>
+    </details>
+
+    <details>
+      <summary>🧭 Navigation Rules</summary>
+      <div class="slide-content">
+        <p>JSF gère la navigation entre vues en résolvant la valeur retournée par une méthode d'action (<strong>outcome</strong>).</p>
+        <h3>Navigation implicite (JSF 2.0+) :</h3>
+        <p>Par défaut, si une méthode retourne la chaîne <code>"clients"</code>, JSF cherche la vue <code>/clients.xhtml</code>. C'est la méthode recommandée — simple et sans configuration XML.</p>
+        <ul>
+          <li>Retourner <code>null</code> ou <code>void</code> — reste sur la vue courante</li>
+          <li>Retourner <code>"clients?faces-redirect=true"</code> — redirige (pattern PRG)</li>
+          <li>Retourner <code>"clients"</code> — forward interne vers <code>/clients.xhtml</code></li>
+        </ul>
+        <h3>Navigation explicite (faces-config.xml) :</h3>
+        <p>Définie dans <code>/WEB-INF/faces-config.xml</code> — utile pour des règles complexes ou conditionnelles qui ne sont pas facilement exprimables en navigation implicite.</p>
+        <h3>Redirect vs Forward :</h3>
+        <ul>
+          <li><strong>Forward (défaut)</strong> — le serveur transmet la requête en interne, l'URL navigateur ne change pas</li>
+          <li><strong>Redirect</strong> — une réponse 302 est envoyée, le navigateur effectue une nouvelle requête GET — l'URL change</li>
+        </ul>
+      </div>
+    </details>
+
+    <details>
+      <summary>💡 Bonnes pratiques JSF</summary>
+      <div class="slide-content">
+        <h3>Architecture et conception :</h3>
+        <ul>
+          <li><strong>Éviter la logique métier dans les beans</strong> — les Managed Beans sont des contrôleurs MVC ; déléguer la logique aux services CDI injectés</li>
+          <li><strong>Utiliser les scopes CDI correctement</strong> — préférer <code>@RequestScoped</code> ou <code>@ViewScoped</code> par défaut ; éviter <code>@SessionScoped</code> pour les données non liées à la session utilisateur</li>
+          <li><strong>Préférer la navigation implicite</strong> — éviter les règles <code>faces-config.xml</code> sauf nécessité absolue</li>
+          <li><strong>Éviter le scope session profond</strong> — stocker en session uniquement ce qui est strictement nécessaire ; préférer les paramètres de vue (<code>@ViewScoped</code>)</li>
+        </ul>
+        <h3>Performance et maintenabilité :</h3>
+        <ul>
+          <li>Utiliser <code>f:ajax</code> pour les mises à jour partielles plutôt que de recharger la page entière</li>
+          <li>Organiser les vues avec des templates Facelets (header, footer, layout commun)</li>
+          <li>Utiliser <code>h:outputText</code> plutôt que <code>#{...}</code> direct pour l'encodage HTML automatique (prévention XSS)</li>
+          <li>Activer le mode développement JSF (<code>ProjectStage.Development</code>) pendant le développement pour des messages d'erreur détaillés</li>
+          <li>Désactiver le ViewState côté client en production si non nécessaire, ou utiliser le ViewState côté serveur</li>
+        </ul>
+      </div>
+    </details>
+
+  </main>
+</div>
+<footer class="cds--footer">Made with IBM Bob &nbsp;·&nbsp; © 2026 Olivier Planson &nbsp;·&nbsp; ESIPE — Jakarta EE &amp; Microservices</footer>
+</body>
+</html>

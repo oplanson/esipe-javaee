@@ -1,0 +1,142 @@
+<!-- © Copyright 2026 Olivier Planson. All rights reserved. Reproduction prohibited. Made with IBM Bob. -->
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>Cours 06 — Concepts clés</title>
+  <link rel="stylesheet" href="../assets/carbon.css"/>
+</head>
+<body>
+<header class="cds--header">
+  <a class="cds--header__name" href="index.html">Domain-Driven Design<span>Cours Jakarta EE</span></a>
+  <a class="cds--header__back" href="../index.html">← Tous les Cours</a>
+</header>
+<div class="cds--shell">
+  <nav class="cds--side-nav">
+    <p class="cds--side-nav__section-title">Cours 06</p>
+    <a class="cds--side-nav__link" href="index.html">⊙ Vue d'ensemble</a>
+    <a class="cds--side-nav__link" href="slides.html">☰ Contenu du cours</a>
+    <a class="cds--side-nav__link active" href="concepts.html">◈ Concepts clés</a>
+    <a class="cds--side-nav__link" href="code.html">⟨/⟩ Exemples de code</a>
+  </nav>
+  <main class="cds--content">
+    <div class="breadcrumb"><a href="../index.html">Cours</a> › <a href="index.html">Cours 06</a> › Concepts clés</div>
+    <h1>Concepts clés</h1>
+    <p class="page-lead">Comparatifs, tableaux de référence et glossaire pour Domain-Driven Design.</p>
+
+    <h2>DDD Stratégique vs Tactique</h2>
+    <div class="cds--data-table-container">
+      <table class="cds--data-table">
+        <thead><tr><th>Aspect</th><th>DDD Stratégique</th><th>DDD Tactique</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Scope</strong></td><td>Vision globale du système, découpage en sous-domaines</td><td>Implémentation interne d'un Bounded Context</td></tr>
+          <tr><td><strong>Patterns</strong></td><td>Bounded Context, Context Map, Ubiquitous Language, Sous-domaines</td><td>Entité, Value Object, Aggregate, Repository, Domain Service, Domain Event</td></tr>
+          <tr><td><strong>Objectif</strong></td><td>Identifier les frontières, éviter la corruption de modèle, aligner équipes et domaines</td><td>Construire un modèle de domaine riche, cohérent et expressif</td></tr>
+          <tr><td><strong>Outils</strong></td><td>Event Storming, Domain Storytelling, Context Mapping, Core Domain Chart</td><td>UML de domaine, code Java, tests unitaires de domaine</td></tr>
+          <tr><td><strong>Public</strong></td><td>Architectes, Product Owners, Domain Experts, équipes</td><td>Développeurs, Tech Leads</td></tr>
+          <tr><td><strong>Quand appliquer</strong></td><td>Dès la phase de conception, avant de coder</td><td>Durant l'implémentation de chaque contexte</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h2>Entité vs Value Object</h2>
+    <div class="cds--data-table-container">
+      <table class="cds--data-table">
+        <thead><tr><th>Caractéristique</th><th>Entité</th><th>Value Object</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Identité</strong></td><td>Identifiant unique et explicite (<code>AccountId</code>, UUID)</td><td>Aucune identité — définie par ses valeurs</td></tr>
+          <tr><td><strong>Mutabilité</strong></td><td>Mutable — l'état évolue dans le temps</td><td>Immuable — <code>final</code> fields, pas de setters</td></tr>
+          <tr><td><strong>Égalité</strong></td><td>Par identifiant uniquement</td><td>Par valeur de tous les attributs</td></tr>
+          <tr><td><strong>Exemple métier</strong></td><td><code>Account</code>, <code>Client</code>, <code>Order</code></td><td><code>Money</code>, <code>Address</code>, <code>AccountNumber</code></td></tr>
+          <tr><td><strong>Implémentation Java</strong></td><td>Classe avec <code>id</code>, <code>equals</code>/<code>hashCode</code> sur id, méthodes métier</td><td>Classe <code>final</code> ou <code>record</code>, <code>equals</code>/<code>hashCode</code> sur tous les champs</td></tr>
+          <tr><td><strong>Durée de vie</strong></td><td>Persiste dans le temps, suivi d'historique</td><td>Remplacé, pas modifié — crée un nouveau VO</td></tr>
+          <tr><td><strong>Cycle de vie DB</strong></td><td>Table dédiée, clé primaire, historisation possible</td><td>Colonne(s) dans la table de l'entité (<code>@Embedded</code>)</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h2>Règles de Conception des Aggregates</h2>
+    <div class="cds--data-table-container">
+      <table class="cds--data-table">
+        <thead><tr><th>Règle</th><th>Description</th><th>Exemple</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Protéger les invariants</strong></td><td>L'aggregate valide ses propres règles à chaque modification</td><td><code>Account</code> refuse un débit si solde insuffisant</td></tr>
+          <tr><td><strong>Accès uniquement par la racine</strong></td><td>Les objets internes ne sont pas accessibles directement depuis l'extérieur</td><td>Pas de <code>account.getTransactions().add(tx)</code> — utiliser <code>account.addTransaction(tx)</code></td></tr>
+          <tr><td><strong>Référence par identifiant</strong></td><td>Un aggregate ne contient pas de référence directe à un autre aggregate root</td><td><code>ClientId clientId</code> dans <code>Account</code>, pas <code>Client client</code></td></tr>
+          <tr><td><strong>Taille réduite</strong></td><td>Un aggregate doit rester petit — éviter les dépendances excessives</td><td><code>Account</code> contient des <code>Transaction</code> récentes seulement</td></tr>
+          <tr><td><strong>Une transaction par aggregate</strong></td><td>Une transaction DB ne modifie qu'un seul aggregate à la fois</td><td>Transfert entre comptes via Domain Events, pas en une seule transaction</td></tr>
+          <tr><td><strong>Cohérence éventuelle</strong></td><td>La cohérence entre aggregates est assurée de manière asynchrone via événements</td><td><code>TransferCompletedEvent</code> déclenche la mise à jour du compte destinataire</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h2>Couches de l'Architecture DDD</h2>
+    <div class="cds--data-table-container">
+      <table class="cds--data-table">
+        <thead><tr><th>Couche</th><th>Responsabilité</th><th>Exemples de classes</th><th>Dépendances autorisées</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Domain</strong></td><td>Logique métier pure — invariants, règles, comportements</td><td><code>Account</code>, <code>Money</code>, <code>AccountRepository</code> (interface), <code>MoneyTransferService</code></td><td>Aucune (pur Java)</td></tr>
+          <tr><td><strong>Application</strong></td><td>Orchestration des cas d'usage — pas de logique métier</td><td><code>TransferUseCase</code>, <code>OpenAccountCommand</code>, <code>AccountDTO</code></td><td>Domain uniquement</td></tr>
+          <tr><td><strong>Infrastructure</strong></td><td>Implémentations techniques concrètes</td><td><code>JpaAccountRepository</code>, <code>CdiEventPublisher</code>, <code>RestClientAdapter</code></td><td>Domain + Application + Frameworks</td></tr>
+          <tr><td><strong>Presentation</strong></td><td>Points d'entrée de l'application</td><td><code>AccountResource</code> (JAX-RS), <code>AccountController</code> (JSF)</td><td>Application uniquement</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h2>Relations entre Bounded Contexts</h2>
+    <div class="cds--data-table-container">
+      <table class="cds--data-table">
+        <thead><tr><th>Pattern</th><th>Description</th><th>Cas d'usage</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Anti-Corruption Layer (ACL)</strong></td><td>Couche de traduction protégeant le modèle local des concepts étrangers</td><td>Intégration avec un système legacy, API tierce ou contexte aux conventions différentes</td></tr>
+          <tr><td><strong>Shared Kernel</strong></td><td>Sous-ensemble de modèle partagé entre deux équipes avec coordination forte</td><td>Deux équipes proches partageant quelques Value Objects communs (<code>Money</code>, <code>Currency</code>)</td></tr>
+          <tr><td><strong>Partnership</strong></td><td>Deux équipes évoluent en synchronisant leur planning mutuellement</td><td>Contexts fortement couplés, co-déployés, développés par des équipes très proches</td></tr>
+          <tr><td><strong>Customer/Supplier</strong></td><td>Une équipe fournit une interface, l'autre la consomme</td><td>Relation amont/aval avec un contrat établi et des tests d'acceptation</td></tr>
+          <tr><td><strong>Conformist</strong></td><td>L'équipe aval adopte le modèle de l'équipe amont sans adapter</td><td>Intégration avec un système dominant dont on ne peut pas influencer le modèle</td></tr>
+          <tr><td><strong>Published Language</strong></td><td>Langage d'échange formalisé et documenté (OpenAPI, JSON Schema, Protobuf)</td><td>Communication entre microservices via des contrats publics versionnés</td></tr>
+          <tr><td><strong>Open Host Service</strong></td><td>Service accessible via un protocole bien défini et documenté</td><td>API publique REST consommée par de nombreux contextes différents</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h2>Modèle Anémique vs Modèle Riche</h2>
+    <div class="cds--data-table-container">
+      <table class="cds--data-table">
+        <thead><tr><th>Aspect</th><th>Modèle Anémique (anti-pattern)</th><th>Modèle Riche (DDD)</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Structure</strong></td><td>Objets = données uniquement (getters/setters)</td><td>Objets = données + comportements métier</td></tr>
+          <tr><td><strong>Logique métier</strong></td><td>Éparpillée dans des services transaction-script</td><td>Encapsulée dans les entités et aggregates</td></tr>
+          <tr><td><strong>Invariants</strong></td><td>Vérifiés dans le service — peuvent être oubliés</td><td>Garantis par l'aggregate — impossible de créer un état invalide</td></tr>
+          <tr><td><strong>Testabilité</strong></td><td>Tests d'intégration lourds — logique liée aux services</td><td>Tests unitaires légers — logique dans les entités POJO</td></tr>
+          <tr><td><strong>Lisibilité</strong></td><td><code>account.setBalance(account.getBalance().subtract(amount))</code></td><td><code>account.debitAccount(amount)</code></td></tr>
+          <tr><td><strong>Exemple d'accès</strong></td><td><code>account.getTransactions().add(new Transaction(...))</code></td><td><code>account.addTransaction(amount, description)</code></td></tr>
+          <tr><td><strong>Risque</strong></td><td>Règles métier violées facilement par inadvertance</td><td>Règles garanties par le code — encapsulation forte</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h2>Glossaire</h2>
+    <div class="cds--data-table-container">
+      <table class="cds--data-table">
+        <thead><tr><th>Terme</th><th>Définition</th></tr></thead>
+        <tbody>
+          <tr><td><strong>DDD</strong></td><td>Domain-Driven Design — approche de conception logicielle plaçant le domaine métier au centre, avec collaboration dev/expert et langage partagé (Eric Evans, 2003)</td></tr>
+          <tr><td><strong>Bounded Context</strong></td><td>Frontière explicite à l'intérieur de laquelle un modèle de domaine cohérent s'applique, avec son propre langage ubiquitaire</td></tr>
+          <tr><td><strong>Aggregate</strong></td><td>Cluster d'objets de domaine traité comme une unité, avec une racine (Aggregate Root) qui garantit les invariants et contrôle l'accès</td></tr>
+          <tr><td><strong>Entity</strong></td><td>Objet de domaine avec une identité unique persistant dans le temps, dont l'égalité est basée sur l'identifiant</td></tr>
+          <tr><td><strong>Value Object</strong></td><td>Objet de domaine immuable sans identité propre, dont l'égalité est basée sur la valeur de tous ses attributs</td></tr>
+          <tr><td><strong>Repository</strong></td><td>Abstraction simulant une collection d'aggregates, avec interface dans le domaine et implémentation dans l'infrastructure</td></tr>
+          <tr><td><strong>Domain Service</strong></td><td>Service stateless encapsulant une logique métier qui n'appartient naturellement à aucune Entité ou Value Object</td></tr>
+          <tr><td><strong>Ubiquitous Language</strong></td><td>Vocabulaire commun partagé par tous les membres de l'équipe (dev + experts métier), utilisé dans les conversations et dans le code</td></tr>
+          <tr><td><strong>Domain Event</strong></td><td>Fait métier immuable passé, nommé au passé (<code>AccountDebited</code>), utilisé pour découpler les aggregates et assurer la cohérence éventuelle</td></tr>
+          <tr><td><strong>Anti-Corruption Layer</strong></td><td>Couche de traduction entre deux Bounded Contexts, protégeant le modèle local de la contamination par les concepts d'un système externe</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+  </main>
+</div>
+<footer class="cds--footer">Made with IBM Bob &nbsp;·&nbsp; © 2026 Olivier Planson &nbsp;·&nbsp; ESIPE — Jakarta EE &amp; Microservices</footer>
+</body>
+</html>

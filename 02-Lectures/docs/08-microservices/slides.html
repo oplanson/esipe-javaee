@@ -1,0 +1,379 @@
+<!-- © Copyright 2026 Olivier Planson. All rights reserved. Reproduction prohibited. Made with IBM Bob. -->
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>Cours 08 — Contenu du cours</title>
+  <link rel="stylesheet" href="../assets/carbon.css"/>
+</head>
+<body>
+<header class="cds--header">
+  <a class="cds--header__name" href="index.html">Microservices<span>Cours Jakarta EE</span></a>
+  <a class="cds--header__back" href="../index.html">← Tous les Cours</a>
+</header>
+<div class="cds--shell">
+  <nav class="cds--side-nav">
+    <p class="cds--side-nav__section-title">Cours 08</p>
+    <a class="cds--side-nav__link" href="index.html">⊙ Vue d'ensemble</a>
+    <a class="cds--side-nav__link active" href="slides.html">☰ Contenu du cours</a>
+    <a class="cds--side-nav__link" href="concepts.html">◈ Concepts clés</a>
+    <a class="cds--side-nav__link" href="code.html">⟨/⟩ Exemples de code</a>
+    <a class="cds--side-nav__link" href="patterns.html">⧫ Patterns Microservices</a>
+  </nav>
+  <main class="cds--content">
+    <div class="breadcrumb"><a href="../index.html">Cours</a> › <a href="index.html">Cours 08</a> › Contenu</div>
+    <h1>Contenu du cours</h1>
+    <p class="page-lead">Toutes les sections — cliquez sur un titre pour développer.</p>
+
+    <details open>
+      <summary>🏗️ Qu'est-ce que les Microservices ?</summary>
+      <div class="slide-content">
+        <h3>Définition</h3>
+        <p><strong>Les microservices</strong> sont un style architectural dans lequel une application est découpée en services petits, indépendants, possédant chacun une responsabilité unique et clairement délimitée. Chaque service est déployable indépendamment, communique via des interfaces légères (HTTP/REST ou messagerie asynchrone) et peut être développé, mis à jour et scalé de façon autonome.</p>
+        <h3>Caractéristiques fondamentales</h3>
+        <ul>
+          <li><strong>Responsabilité unique</strong> — chaque service se concentre sur un domaine métier précis (Single Responsibility Principle étendu à l'architecture)</li>
+          <li><strong>Déploiement indépendant</strong> — un service peut être mis en production sans toucher aux autres</li>
+          <li><strong>Base de données par service</strong> — chaque service est seul propriétaire de ses données (Database per Service pattern)</li>
+          <li><strong>Communication via interfaces définies</strong> — les services ne partagent pas de code interne, uniquement des contrats API</li>
+          <li><strong>Technologie hétérogène possible</strong> — chaque service peut utiliser le langage et le framework les mieux adaptés à son besoin</li>
+        </ul>
+        <h3>Monolithe vs Microservices</h3>
+        <ul>
+          <li><strong>Monolithe</strong> — toute la logique métier, la couche de données et la présentation sont compilées et déployées dans un seul artefact (WAR/EAR)</li>
+          <li><strong>Microservices</strong> — l'application est divisée en N services autonomes, chacun avec son propre cycle de vie</li>
+          <li>Le monolithe est plus simple à développer au départ, mais devient difficile à maintenir et à scaler à grande échelle</li>
+          <li>Les microservices introduisent une complexité opérationnelle (réseau, observabilité) mais offrent une plus grande agilité à long terme</li>
+        </ul>
+        <h3>Loi de Conway</h3>
+        <p>« Les organisations qui conçoivent des systèmes sont contraintes de produire des designs qui copient la structure de communication de ces organisations. » — Melvin Conway, 1967. En pratique, les équipes qui travaillent sur des microservices doivent être organisées autour de domaines métier autonomes (<em>team topology</em>), et non par couche technique.</p>
+        <img src="../../images/08-microservices-architecture-diagram-1.png" alt="Monolithe vs Architecture Microservices"/>
+      </div>
+    </details>
+
+    <details>
+      <summary>⚖️ Bénéfices et Défis</summary>
+      <div class="slide-content">
+        <h3>Bénéfices des microservices</h3>
+        <ul>
+          <li><strong>Scalabilité indépendante</strong> — seul le service sous charge est répliqué, économie de ressources par rapport au scaling horizontal d'un monolithe entier</li>
+          <li><strong>Déploiement indépendant</strong> — livraison continue plus rapide, réduction du risque de chaque déploiement</li>
+          <li><strong>Diversité technologique</strong> — chaque service choisit le stack le mieux adapté à son besoin (JVM, Node, Go, Python…)</li>
+          <li><strong>Résilience</strong> — la panne d'un service n'entraîne pas l'arrêt total de l'application si les patterns de résilience sont appliqués</li>
+          <li><strong>Équipes autonomes</strong> — chaque équipe est propriétaire de son service de bout en bout (code, déploiement, supervision)</li>
+          <li><strong>Meilleure testabilité</strong> — chaque service est plus petit, les tests d'intégration ont un périmètre réduit</li>
+        </ul>
+        <h3>Défis et complexités</h3>
+        <ul>
+          <li><strong>Complexité réseau</strong> — les appels inter-services introduisent latence, timeouts, pannes réseau et nécessitent des patterns de résilience</li>
+          <li><strong>Cohérence des données</strong> — pas de transaction ACID distribuée — il faut accepter l'eventual consistency et implémenter des patterns comme Saga</li>
+          <li><strong>Tests distribués</strong> — les tests d'intégration et de bout en bout sont significativement plus complexes</li>
+          <li><strong>Observabilité</strong> — une requête traverse N services — il faut une infrastructure de tracing distribué, logging centralisé et métriques</li>
+          <li><strong>Surcharge opérationnelle</strong> — N services à déployer, surveiller, mettre à jour, versionner</li>
+          <li><strong>Duplication de code possible</strong> — les utilitaires partagés doivent être extraits en librairies ou en services communs</li>
+        </ul>
+        <img src="../../images/08-microservices-architecture-diagram-2.png" alt="Bénéfices et défis des microservices"/>
+      </div>
+    </details>
+
+    <details>
+      <summary>✂️ Décomposition — Stratégies</summary>
+      <div class="slide-content">
+        <h3>Décomposition par capacité métier (Business Capability)</h3>
+        <p>Chaque service correspond à une capacité métier stable dans l'organisation. Les capacités métier sont identifiées à travers un atelier d'<em>Event Storming</em> ou de modélisation DDD.</p>
+        <ul>
+          <li>Exemple bancaire : Gestion des clients, Gestion des comptes, Virements, Notifications, Reporting</li>
+          <li>Avantage : les services restent stables même si les technologies ou les processus changent</li>
+          <li>Les frontières (<em>bounded contexts</em> DDD) délimitent la responsabilité de chaque service</li>
+        </ul>
+        <h3>Décomposition par sous-domaine (Subdomain)</h3>
+        <ul>
+          <li><strong>Core domain</strong> — domaine principal, source de valeur différenciante — investissement maximal</li>
+          <li><strong>Supporting subdomain</strong> — nécessaire mais pas différenciant — peut être développé en interne ou externalisé</li>
+          <li><strong>Generic subdomain</strong> — fonctionnalité générique (authentification, facturation) — utiliser un produit existant ou SaaS</li>
+        </ul>
+        <h3>Pattern Database per Service</h3>
+        <ul>
+          <li>Chaque service possède sa propre base de données — inaccessible directement par les autres services</li>
+          <li>Les services ne peuvent accéder aux données des autres que via leurs APIs exposées</li>
+          <li>Permet le choix de la technologie de stockage la plus adaptée : PostgreSQL, MongoDB, Redis, Cassandra…</li>
+          <li>Implique de gérer l'eventual consistency pour les lectures croisées</li>
+        </ul>
+        <h3>Application bancaire — Découpage en microservices</h3>
+        <ul>
+          <li><strong>client-service</strong> — gestion du profil client (CRUD, KYC)</li>
+          <li><strong>account-service</strong> — gestion des comptes bancaires et des soldes</li>
+          <li><strong>transfer-service</strong> — orchestration des virements inter-comptes</li>
+          <li><strong>notification-service</strong> — envoi de notifications (email, SMS, push)</li>
+        </ul>
+        <img src="../../images/08-microservices-architecture-diagram-3.png" alt="Décomposition par bounded contexts DDD"/>
+        <img src="../../images/08-microservices-architecture-diagram-4.png" alt="Database per Service pattern"/>
+      </div>
+    </details>
+
+    <details>
+      <summary>🔗 Communication Inter-Services</summary>
+      <div class="slide-content">
+        <h3>Communication synchrone — REST avec MicroProfile Rest Client</h3>
+        <p>La communication synchrone est adaptée aux requêtes qui nécessitent une réponse immédiate. Elle utilise HTTP/REST avec le MicroProfile Rest Client pour un client type-safe.</p>
+        <ul>
+          <li><code>@RegisterRestClient(configKey="account-service")</code> — enregistre l'interface comme client REST</li>
+          <li>URL configurée via MicroProfile Config : <code>account-service/mp-rest/url=http://account-service:8080</code></li>
+          <li><code>@Inject @RestClient AccountServiceClient accountClient</code> — injection CDI du client</li>
+        </ul>
+        <h3>Communication asynchrone — JMS / Kafka</h3>
+        <ul>
+          <li>Adaptée aux traitements qui ne nécessitent pas de réponse immédiate (notifications, événements métier)</li>
+          <li><strong>JMS</strong> (Jakarta Messaging) — broker de messagerie intégré au serveur Jakarta EE (ActiveMQ, IBM MQ)</li>
+          <li><strong>Kafka</strong> — plateforme de streaming événementiel — MicroProfile Reactive Messaging pour l'intégration</li>
+          <li>Avantages : découplage temporel, buffer en cas de surcharge, replay des événements</li>
+        </ul>
+        <h3>MicroProfile Fault Tolerance</h3>
+        <ul>
+          <li><code>@Retry(maxRetries=3, delay=500)</code> — réessaie l'appel en cas d'échec avec délai entre tentatives</li>
+          <li><code>@CircuitBreaker(requestVolumeThreshold=4, failureRatio=0.75, delay=1000)</code> — ouvre le circuit si trop d'échecs</li>
+          <li><code>@Timeout(value=2000)</code> — lève une exception si l'appel dure plus de 2 secondes</li>
+          <li><code>@Fallback(fallbackMethod="getFallback")</code> — méthode de secours en cas d'échec ou circuit ouvert</li>
+          <li><code>@Bulkhead(value=10)</code> — limite le nombre d'appels concurrents pour éviter la saturation</li>
+        </ul>
+        <h3>Circuit Breaker — États</h3>
+        <ul>
+          <li><strong>CLOSED</strong> — état normal, les requêtes passent — comptabilisation des échecs</li>
+          <li><strong>OPEN</strong> — seuil d'échec dépassé, les requêtes échouent immédiatement sans appel réseau — délai d'attente avant passage en HALF-OPEN</li>
+          <li><strong>HALF-OPEN</strong> — quelques requêtes tests sont autorisées — si succès : retour à CLOSED, si échec : retour à OPEN</li>
+        </ul>
+        <img src="../../images/08-microservices-architecture-diagram-5.png" alt="Communication inter-services synchrone et asynchrone"/>
+        <img src="../../images/08-microservices-architecture-diagram-6.png" alt="Circuit Breaker — états CLOSED/OPEN/HALF-OPEN"/>
+      </div>
+    </details>
+
+    <details>
+      <summary>🚪 API Gateway</summary>
+      <div class="slide-content">
+        <h3>Définition et rôle</h3>
+        <p>L'<strong>API Gateway</strong> est le point d'entrée unique (single entry point) de l'architecture microservices. Les clients externes n'ont pas connaissance des services internes — ils dialoguent exclusivement avec la Gateway.</p>
+        <h3>Responsabilités de la Gateway</h3>
+        <ul>
+          <li><strong>Routing</strong> — aiguille chaque requête vers le service interne approprié selon le chemin ou le domaine</li>
+          <li><strong>Authentification &amp; autorisation</strong> — valide les tokens JWT/OAuth2 avant de transmettre la requête</li>
+          <li><strong>Rate limiting</strong> — protège les services internes contre les abus et les pics de charge</li>
+          <li><strong>Agrégation de réponses</strong> — peut appeler plusieurs services et fusionner les réponses en un seul payload (BFF — Backend for Frontend)</li>
+          <li><strong>SSL termination</strong> — gère le HTTPS vers les clients, les appels internes peuvent rester en HTTP</li>
+          <li><strong>Logging &amp; monitoring</strong> — point centralisé pour les métriques et les traces des appels entrants</li>
+        </ul>
+        <h3>Routing des requêtes</h3>
+        <ul>
+          <li><code>GET /api/accounts/{id}</code> → <code>account-service:8080/accounts/{id}</code></li>
+          <li><code>POST /api/transfers</code> → <code>transfer-service:8080/transfers</code></li>
+          <li><code>GET /api/clients/{id}</code> → <code>client-service:8080/clients/{id}</code></li>
+        </ul>
+        <h3>Agrégation de réponses</h3>
+        <ul>
+          <li>La Gateway peut appeler en parallèle account-service et client-service pour construire un dashboard complet</li>
+          <li>Utilisation de <code>CompletableFuture</code> ou de MicroProfile Reactive pour les appels parallèles</li>
+          <li>Réduit le nombre d'aller-retours réseau pour les clients mobiles (chattiness)</li>
+        </ul>
+        <img src="../../images/08-microservices-architecture-diagram-7.png" alt="API Gateway — point d'entrée unique"/>
+        <img src="../../images/08-microservices-architecture-diagram-8.png" alt="API Gateway — routing et agrégation"/>
+      </div>
+    </details>
+
+    <details>
+      <summary>🔍 Découverte de Services et Configuration</summary>
+      <div class="slide-content">
+        <h3>Service Discovery — Problème</h3>
+        <p>Dans un environnement dynamique (cloud, containers), les adresses IP des services changent. Le Service Discovery permet à un service de trouver l'adresse d'un autre service sans la coder en dur.</p>
+        <h3>Client-side Service Discovery</h3>
+        <ul>
+          <li>Le client interroge le registre de services (ex. Consul, Eureka) pour obtenir l'adresse du service cible</li>
+          <li>Le client choisit lui-même l'instance (load balancing côté client)</li>
+          <li>Avantage : flexibilité dans les stratégies de load balancing</li>
+          <li>Inconvénient : logique de discovery dans chaque client</li>
+        </ul>
+        <h3>Server-side Service Discovery</h3>
+        <ul>
+          <li>Le client envoie la requête à un load balancer ou à la Gateway</li>
+          <li>C'est le load balancer qui interroge le registre et route vers une instance disponible</li>
+          <li>Avantage : simplicité côté client</li>
+          <li>Exemple : DNS interne de Docker Compose, Kubernetes Service</li>
+        </ul>
+        <h3>DNS Docker Compose</h3>
+        <ul>
+          <li>Dans Docker Compose, chaque service est accessible par son nom de service via DNS interne</li>
+          <li><code>account-service</code> est joignable à <code>http://account-service:8080</code> depuis n'importe quel container du même réseau</li>
+          <li>Configuration MicroProfile : <code>account-service/mp-rest/url=http://account-service:8080</code></li>
+        </ul>
+        <h3>MicroProfile Config — Configuration multi-environnement</h3>
+        <ul>
+          <li>Injection des propriétés via <code>@ConfigProperty(name="account.service.url")</code></li>
+          <li>Priorité des sources : Variables d'environnement &gt; System properties &gt; <code>microprofile-config.properties</code></li>
+          <li>Overrides sans recompilation — idéal pour les déploiements Docker/Kubernetes</li>
+          <li><code>defaultValue</code> sur <code>@ConfigProperty</code> pour les valeurs de développement local</li>
+        </ul>
+        <img src="../../images/08-microservices-architecture-diagram-9.png" alt="Service Discovery — client-side vs server-side"/>
+        <img src="../../images/08-microservices-architecture-diagram-10.png" alt="MicroProfile Config — sources et priorités"/>
+      </div>
+    </details>
+
+    <details>
+      <summary>📊 Observabilité — Les 3 Piliers</summary>
+      <div class="slide-content">
+        <h3>Métriques — MicroProfile Metrics + Prometheus</h3>
+        <p>Les métriques permettent de mesurer quantitativement le comportement du système dans le temps.</p>
+        <ul>
+          <li><code>@Counted</code> — comptage du nombre d'appels d'une méthode</li>
+          <li><code>@Timed</code> — mesure de la durée d'exécution</li>
+          <li><code>@Gauge</code> — valeur instantanée (taille d'une file, solde de connexions)</li>
+          <li>Endpoint <code>/metrics</code> exposé automatiquement au format Prometheus</li>
+          <li>Prometheus scrape les métriques, Grafana les visualise</li>
+        </ul>
+        <h3>Logging structuré — ELK Stack</h3>
+        <ul>
+          <li>Les logs doivent être structurés (JSON) pour être indexables par Elasticsearch</li>
+          <li>Chaque log doit inclure le <strong>correlation ID</strong> pour relier les logs de différents services pour une même requête</li>
+          <li>Logstash collecte et transforme les logs, Elasticsearch les indexe, Kibana les visualise</li>
+          <li>MDC (Mapped Diagnostic Context) avec SLF4J : <code>MDC.put("correlationId", id)</code></li>
+        </ul>
+        <h3>Tracing distribué — MicroProfile OpenTracing + Jaeger</h3>
+        <ul>
+          <li>Le tracing distribué permet de suivre une requête à travers tous les services qu'elle traverse</li>
+          <li><strong>Span</strong> — unité de travail dans un service (appel DB, appel REST) avec durée et métadonnées</li>
+          <li><strong>Trace</strong> — arbre de spans représentant le parcours complet d'une requête</li>
+          <li><strong>Correlation ID</strong> — identifiant unique propagé via les headers HTTP (<code>X-Correlation-ID</code>, <code>traceparent</code>)</li>
+          <li>Jaeger ou Zipkin collectent et visualisent les traces</li>
+          <li>MicroProfile OpenTracing instrumente automatiquement les appels JAX-RS et Rest Client</li>
+        </ul>
+        <img src="../../images/08-microservices-architecture-diagram-11.png" alt="Observabilité — métriques, logging, tracing"/>
+        <img src="../../images/08-microservices-architecture-diagram-12.png" alt="Tracing distribué avec Jaeger"/>
+      </div>
+    </details>
+
+    <details>
+      <summary>🔄 Cohérence des Données</summary>
+      <div class="slide-content">
+        <h3>Théorème CAP</h3>
+        <p>Le théorème CAP (Brewer, 2000) stipule qu'un système distribué ne peut garantir simultanément que 2 des 3 propriétés suivantes :</p>
+        <ul>
+          <li><strong>Consistency (C)</strong> — tous les nœuds voient les mêmes données au même moment</li>
+          <li><strong>Availability (A)</strong> — chaque requête reçoit une réponse (sans garantie d'être la plus récente)</li>
+          <li><strong>Partition Tolerance (P)</strong> — le système continue à fonctionner malgré des partitions réseau</li>
+        </ul>
+        <p>En pratique, dans un réseau distribué, P est toujours présent — le choix est donc entre C et A (CP ou AP).</p>
+        <h3>Eventual Consistency</h3>
+        <ul>
+          <li>Le système finit par converger vers un état cohérent, sans garantie de cohérence immédiate</li>
+          <li>Pattern courant dans les architectures microservices — les services propagent les changements via des événements</li>
+          <li>Les lectures peuvent retourner des données légèrement obsolètes pendant la période de propagation</li>
+        </ul>
+        <h3>Pattern Saga</h3>
+        <ul>
+          <li>Remplace les transactions ACID distribuées par une séquence de transactions locales compensables</li>
+          <li><strong>Choreography</strong> — chaque service publie des événements et réagit aux événements des autres (pas de coordinateur central)</li>
+          <li><strong>Orchestration</strong> — un orchestrateur central (saga orchestrator) coordonne les étapes et gère les compensations</li>
+          <li>Chaque étape doit avoir une <strong>transaction compensatoire</strong> en cas d'échec (ex. annuler un débit si le crédit échoue)</li>
+        </ul>
+        <h3>Event Sourcing</h3>
+        <ul>
+          <li>L'état d'une entité est dérivé de la liste de tous les événements qui l'ont modifiée</li>
+          <li>L'<em>Event Store</em> est la source de vérité — les événements sont immuables</li>
+          <li>Avantage : audit trail complet, possibilité de rejouer les événements, reconstruction de l'état à tout instant</li>
+        </ul>
+        <h3>CQRS — Command Query Responsibility Segregation</h3>
+        <ul>
+          <li>Séparation du modèle d'écriture (Commands) et du modèle de lecture (Queries)</li>
+          <li>Le modèle d'écriture garantit la cohérence, le modèle de lecture est optimisé pour les performances</li>
+          <li>Les projections (read models) sont mises à jour de façon asynchrone depuis les événements</li>
+        </ul>
+        <img src="../../images/08-microservices-architecture-diagram-13.png" alt="Théorème CAP"/>
+        <img src="../../images/08-microservices-architecture-diagram-14.png" alt="Pattern Saga — choreography vs orchestration"/>
+        <img src="../../images/08-microservices-architecture-diagram-15.png" alt="CQRS et Event Sourcing"/>
+      </div>
+    </details>
+
+    <details>
+      <summary>🐳 Déploiement avec Docker Compose</summary>
+      <div class="slide-content">
+        <h3>Structure d'un fichier Docker Compose</h3>
+        <ul>
+          <li><code>version</code> — version du format Docker Compose (3.8 recommandé)</li>
+          <li><code>services</code> — définition de chaque container : image, ports, variables d'environnement, réseaux, volumes</li>
+          <li><code>networks</code> — réseaux internes isolant les services (bridge par défaut)</li>
+          <li><code>volumes</code> — stockage persistant partagé entre containers ou entre container et hôte</li>
+        </ul>
+        <h3>Définition des services</h3>
+        <ul>
+          <li><code>image</code> — image Docker à utiliser (depuis Docker Hub ou registry privé)</li>
+          <li><code>build</code> — chemin vers un Dockerfile pour construire l'image localement</li>
+          <li><code>ports</code> — mapping hôte:container (ex. <code>"8080:8080"</code>)</li>
+          <li><code>environment</code> — variables d'environnement overridant MicroProfile Config</li>
+          <li><code>depends_on</code> — ordre de démarrage (ne garantit pas la readiness)</li>
+          <li><code>healthcheck</code> — vérification périodique que le service est opérationnel</li>
+          <li><code>networks</code> — liste des réseaux auxquels le service appartient</li>
+        </ul>
+        <h3>Exécution locale de tous les microservices</h3>
+        <ul>
+          <li><code>docker compose up -d</code> — démarre tous les services en arrière-plan</li>
+          <li><code>docker compose logs -f account-service</code> — suit les logs d'un service</li>
+          <li><code>docker compose ps</code> — statut de tous les containers</li>
+          <li><code>docker compose down</code> — arrête et supprime les containers</li>
+          <li><code>docker compose down -v</code> — supprime aussi les volumes</li>
+        </ul>
+        <img src="../../images/08-microservices-architecture-diagram-16.png" alt="Docker Compose — architecture de déploiement local"/>
+        <img src="../../images/08-microservices-architecture-diagram-17.png" alt="Docker Compose — réseau interne et communication"/>
+      </div>
+    </details>
+
+    <details>
+      <summary>🚀 Stratégies de Déploiement</summary>
+      <div class="slide-content">
+        <h3>Blue-Green Deployment</h3>
+        <ul>
+          <li>Deux environnements de production identiques : <strong>Blue</strong> (version courante) et <strong>Green</strong> (nouvelle version)</li>
+          <li>Le trafic est basculé instantanément du Blue vers le Green via le load balancer</li>
+          <li>Rollback immédiat en cas de problème — rebasculer vers Blue</li>
+          <li>Inconvénient : double infrastructure (coût doublé pendant la transition)</li>
+        </ul>
+        <h3>Canary Deployment</h3>
+        <ul>
+          <li>La nouvelle version est déployée et reçoit un pourcentage faible du trafic (ex. 5%)</li>
+          <li>Surveillance des métriques d'erreur et de latence sur le Canary</li>
+          <li>Si tout va bien : augmentation progressive du pourcentage de trafic jusqu'à 100%</li>
+          <li>Permet de détecter les régressions sur un échantillon réel avant un déploiement complet</li>
+        </ul>
+        <h3>Rolling Update</h3>
+        <ul>
+          <li>Les instances sont mises à jour une par une (ou par lot) sans interruption de service</li>
+          <li>Stratégie par défaut dans Kubernetes (<code>maxUnavailable</code>, <code>maxSurge</code>)</li>
+          <li>Pendant la mise à jour, les deux versions coexistent — les APIs doivent être rétrocompatibles</li>
+        </ul>
+        <h3>CI/CD Pipeline pour microservices</h3>
+        <ul>
+          <li><strong>Build</strong> — compilation, tests unitaires, analyse statique (Sonar)</li>
+          <li><strong>Test</strong> — tests d'intégration, contract tests (Pact), tests de composants</li>
+          <li><strong>Package</strong> — construction de l'image Docker, push vers le registry</li>
+          <li><strong>Deploy</strong> — déploiement automatique en staging, promotion manuelle ou automatique en production</li>
+        </ul>
+        <h3>Kubernetes — introduction</h3>
+        <ul>
+          <li>Orchestrateur de containers — gestion automatique du scheduling, scaling, self-healing</li>
+          <li><strong>Pod</strong> — unité de déploiement (1 ou plusieurs containers)</li>
+          <li><strong>Service</strong> — abstraction réseau stable devant un ensemble de pods</li>
+          <li><strong>Deployment</strong> — déclare l'état désiré (N replicas de telle image)</li>
+          <li><strong>ConfigMap / Secret</strong> — configuration externalisée compatible MicroProfile Config</li>
+        </ul>
+        <h3>Health Checks</h3>
+        <ul>
+          <li><strong>Liveness probe</strong> — est-ce que le service est vivant ? (sinon redémarrage)</li>
+          <li><strong>Readiness probe</strong> — est-ce que le service est prêt à recevoir du trafic ? (sinon retiré du load balancer)</li>
+          <li>MicroProfile Health expose <code>/health/live</code> et <code>/health/ready</code> — consommables directement par Kubernetes</li>
+        </ul>
+        <img src="../../images/08-microservices-architecture-diagram-18.png" alt="Stratégies de déploiement — Blue-Green, Canary, Rolling Update"/>
+      </div>
+    </details>
+
+  </main>
+</div>
+<footer class="cds--footer">Made with IBM Bob &nbsp;·&nbsp; © 2026 Olivier Planson &nbsp;·&nbsp; ESIPE — Jakarta EE &amp; Microservices</footer>
+</body>
+</html>

@@ -1,0 +1,205 @@
+<!-- © Copyright 2026 Olivier Planson. All rights reserved. Reproduction prohibited. Made with IBM Bob. -->
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>ESIPE — Jakarta EE &amp; Microservices — Cours</title>
+  <link rel="stylesheet" href="assets/carbon.css"/>
+</head>
+<body>
+<header class="cds--header">
+  <a class="cds--header__name" href="index.html">ESIPE<span>Jakarta EE &amp; Microservices — Cours</span></a>
+</header>
+
+<div class="hero">
+  <div class="hero-content">
+    <h1>Cours Jakarta EE &amp; Microservices</h1>
+    <p>Support de cours complet pour l'enseignement Jakarta EE, MicroProfile et architectures microservices à l'ESIPE. Chaque cours comprend le contenu théorique, les concepts clés et les exemples de code.</p>
+    <div class="tag-stack">
+      <span class="cds--tag cds--tag--blue">Jakarta EE 10</span>
+      <span class="cds--tag cds--tag--blue">MicroProfile 6</span>
+      <span class="cds--tag cds--tag--green">Open Liberty</span>
+      <span class="cds--tag cds--tag--teal">Java 17</span>
+      <span class="cds--tag cds--tag--purple">DDD</span>
+      <span class="cds--tag cds--tag--purple">Hexagonal</span>
+      <span class="cds--tag cds--tag--warm">Microservices</span>
+      <span class="cds--tag cds--tag--red">Sécurité</span>
+    </div>
+  </div>
+</div>
+
+<main style="max-width:960px;margin:0 auto;padding:2rem 2.5rem;flex:1;">
+
+  <!-- ── Groupe 1 : Fondations ── -->
+  <div class="course-group">
+    <h2>🚀 Fondations Jakarta EE</h2>
+    <div class="course-cards">
+      <a class="course-card" href="01-intro/index.html">
+        <div class="num">Cours 01</div>
+        <h3>Introduction Jakarta EE &amp; MicroProfile</h3>
+        <p>Écosystèmes Jakarta EE et MicroProfile, Open Liberty, environnement de développement et première application conteneurisée.</p>
+        <div class="tag-stack">
+          <span class="cds--tag cds--tag--blue">Jakarta EE</span>
+          <span class="cds--tag cds--tag--blue">MicroProfile</span>
+          <span class="cds--tag cds--tag--green">Open Liberty</span>
+          <span class="cds--tag cds--tag--teal">Podman</span>
+        </div>
+      </a>
+      <a class="course-card" href="02-servlets/index.html">
+        <div class="num">Cours 02</div>
+        <h3>Servlets, JSP &amp; MicroProfile</h3>
+        <p>Cycle de vie des Servlets, JavaServer Pages (JSP), JSTL, Filtres, Listeners et intégration MicroProfile Config/Health.</p>
+        <div class="tag-stack">
+          <span class="cds--tag cds--tag--blue">Servlet 6.0</span>
+          <span class="cds--tag cds--tag--blue">JSP</span>
+          <span class="cds--tag cds--tag--teal">JSTL</span>
+          <span class="cds--tag cds--tag--green">Filters</span>
+        </div>
+      </a>
+      <a class="course-card" href="02b-jsf/index.html">
+        <div class="num">Cours 02b</div>
+        <h3>JSF — JavaServer Faces</h3>
+        <p>Framework UI orienté composants, beans managés CDI, Facelets, lifecycle JSF et navigation entre vues.</p>
+        <div class="tag-stack">
+          <span class="cds--tag cds--tag--blue">JSF</span>
+          <span class="cds--tag cds--tag--blue">Facelets</span>
+          <span class="cds--tag cds--tag--purple">CDI</span>
+          <span class="cds--tag cds--tag--teal">EL</span>
+        </div>
+      </a>
+    </div>
+  </div>
+
+  <!-- ── Groupe 2 : Data & Business ── -->
+  <div class="course-group">
+    <h2>💾 Data &amp; Business Layer</h2>
+    <div class="course-cards">
+      <a class="course-card" href="03-jpa/index.html">
+        <div class="num">Cours 03</div>
+        <h3>JPA &amp; Intégration Base de données</h3>
+        <p>Jakarta Persistence API, mapping objet-relationnel, JPQL, relations entre entités, EntityManager et transactions JTA.</p>
+        <div class="tag-stack">
+          <span class="cds--tag cds--tag--blue">JPA</span>
+          <span class="cds--tag cds--tag--teal">JPQL</span>
+          <span class="cds--tag cds--tag--green">PostgreSQL</span>
+          <span class="cds--tag cds--tag--purple">JTA</span>
+        </div>
+      </a>
+      <a class="course-card" href="04-cdi/index.html">
+        <div class="num">Cours 04</div>
+        <h3>CDI — Injection de Dépendances</h3>
+        <p>Contexts and Dependency Injection, scopes, qualificateurs, intercepteurs, décorateurs et événements CDI.</p>
+        <div class="tag-stack">
+          <span class="cds--tag cds--tag--purple">CDI</span>
+          <span class="cds--tag cds--tag--blue">@Inject</span>
+          <span class="cds--tag cds--tag--teal">Scopes</span>
+          <span class="cds--tag cds--tag--green">Interceptors</span>
+        </div>
+      </a>
+      <a class="course-card" href="04b-ejb/index.html">
+        <div class="num">Cours 04b</div>
+        <h3>EJB — Enterprise Java Beans</h3>
+        <p>Beans Stateless, Stateful et Singleton, gestion des transactions, sécurité déclarative et EJBs distants.</p>
+        <div class="tag-stack">
+          <span class="cds--tag cds--tag--blue">EJB</span>
+          <span class="cds--tag cds--tag--purple">@Stateless</span>
+          <span class="cds--tag cds--tag--teal">@Stateful</span>
+          <span class="cds--tag cds--tag--green">JTA</span>
+        </div>
+      </a>
+    </div>
+  </div>
+
+  <!-- ── Groupe 3 : Services & Messagerie ── -->
+  <div class="course-group">
+    <h2>🌐 Services &amp; Messagerie</h2>
+    <div class="course-cards">
+      <a class="course-card" href="05-rest/index.html">
+        <div class="num">Cours 05</div>
+        <h3>JAX-RS — Services RESTful</h3>
+        <p>Construction d'APIs REST avec Jakarta RESTful Web Services, JSON-B, OpenAPI, MicroProfile Rest Client et Fault Tolerance.</p>
+        <div class="tag-stack">
+          <span class="cds--tag cds--tag--blue">JAX-RS</span>
+          <span class="cds--tag cds--tag--teal">JSON-B</span>
+          <span class="cds--tag cds--tag--green">OpenAPI</span>
+          <span class="cds--tag cds--tag--purple">Fault Tolerance</span>
+        </div>
+      </a>
+      <a class="course-card" href="05b-jms/index.html">
+        <div class="num">Cours 05b</div>
+        <h3>JMS — Messagerie Enterprise</h3>
+        <p>Jakarta Messaging Service, queues et topics, Message-Driven Beans, patterns publish/subscribe et communication asynchrone.</p>
+        <div class="tag-stack">
+          <span class="cds--tag cds--tag--blue">JMS</span>
+          <span class="cds--tag cds--tag--purple">MDB</span>
+          <span class="cds--tag cds--tag--teal">Queue</span>
+          <span class="cds--tag cds--tag--green">Topic</span>
+        </div>
+      </a>
+    </div>
+  </div>
+
+  <!-- ── Groupe 4 : Architectures Avancées ── -->
+  <div class="course-group">
+    <h2>🏛️ Architectures Avancées</h2>
+    <div class="course-cards">
+      <a class="course-card" href="06-ddd/index.html">
+        <div class="num">Cours 06</div>
+        <h3>Domain-Driven Design</h3>
+        <p>Bounded Contexts, Aggregats, Entités, Value Objects, Domain Services, Domain Events et Ubiquitous Language.</p>
+        <div class="tag-stack">
+          <span class="cds--tag cds--tag--purple">DDD</span>
+          <span class="cds--tag cds--tag--blue">Aggregates</span>
+          <span class="cds--tag cds--tag--teal">Events</span>
+          <span class="cds--tag cds--tag--green">Bounded Context</span>
+        </div>
+      </a>
+      <a class="course-card" href="07-hexagonal/index.html" style="border-top-color:#8a3ffc;">
+        <div class="num">Cours 07 ⭐</div>
+        <h3>Architecture Hexagonale</h3>
+        <p>Ports &amp; Adapters, séparation domaine/infrastructure, adapters primaires et secondaires, tests unitaires et Clean Architecture.</p>
+        <div class="tag-stack">
+          <span class="cds--tag cds--tag--purple">Hexagonal</span>
+          <span class="cds--tag cds--tag--blue">Ports</span>
+          <span class="cds--tag cds--tag--teal">Adapters</span>
+          <span class="cds--tag cds--tag--green">Clean Arch</span>
+        </div>
+      </a>
+      <a class="course-card" href="08-microservices/index.html" style="border-top-color:#da1e28;">
+        <div class="num">Cours 08 ⭐</div>
+        <h3>Architecture Microservices</h3>
+        <p>Décomposition monolithe, communication inter-services, API Gateway, Circuit Breaker, Saga, déploiement conteneurisé.</p>
+        <div class="tag-stack">
+          <span class="cds--tag cds--tag--red">Microservices</span>
+          <span class="cds--tag cds--tag--blue">API Gateway</span>
+          <span class="cds--tag cds--tag--teal">Circuit Breaker</span>
+          <span class="cds--tag cds--tag--warm">Docker</span>
+        </div>
+      </a>
+    </div>
+  </div>
+
+  <!-- ── Groupe 5 : Sécurité ── -->
+  <div class="course-group">
+    <h2>🔐 Sécurité</h2>
+    <div class="course-cards">
+      <a class="course-card" href="09-security/index.html" style="border-top-color:#da1e28;">
+        <div class="num">Cours 09</div>
+        <h3>Jakarta EE Security</h3>
+        <p>Authentication, authorization, Jakarta Security API, JWT avec MicroProfile JWT, HTTPS/TLS et bonnes pratiques de sécurité.</p>
+        <div class="tag-stack">
+          <span class="cds--tag cds--tag--red">Security</span>
+          <span class="cds--tag cds--tag--blue">JWT</span>
+          <span class="cds--tag cds--tag--teal">OAuth2</span>
+          <span class="cds--tag cds--tag--green">HTTPS</span>
+        </div>
+      </a>
+    </div>
+  </div>
+
+</main>
+
+<footer class="cds--footer">Made with IBM Bob &nbsp;·&nbsp; © 2026 Olivier Planson &nbsp;·&nbsp; ESIPE — Jakarta EE &amp; Microservices</footer>
+</body>
+</html>

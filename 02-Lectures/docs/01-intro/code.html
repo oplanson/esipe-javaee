@@ -1,0 +1,261 @@
+<!-- © Copyright 2026 Olivier Planson. All rights reserved. Reproduction prohibited. Made with IBM Bob. -->
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>Cours 01 — Exemples de code</title>
+  <link rel="stylesheet" href="../assets/carbon.css"/>
+</head>
+<body>
+<header class="cds--header">
+  <a class="cds--header__name" href="index.html">Introduction Jakarta EE<span>Cours Jakarta EE</span></a>
+  <a class="cds--header__back" href="../index.html">← Tous les Cours</a>
+</header>
+<div class="cds--shell">
+  <nav class="cds--side-nav">
+    <p class="cds--side-nav__section-title">Cours 01</p>
+    <a class="cds--side-nav__link" href="index.html">⊙ Vue d'ensemble</a>
+    <a class="cds--side-nav__link" href="slides.html">☰ Contenu du cours</a>
+    <a class="cds--side-nav__link" href="concepts.html">◈ Concepts clés</a>
+    <a class="cds--side-nav__link active" href="code.html">⟨/⟩ Exemples de code</a>
+  </nav>
+  <main class="cds--content">
+    <div class="breadcrumb"><a href="../index.html">Cours</a> › <a href="index.html">Cours 01</a> › Code</div>
+    <h1>Exemples de code</h1>
+    <p class="page-lead">Extraits de code Java, XML et Bash du cours 01 — Jakarta EE, MicroProfile et Open Liberty.</p>
+
+    <h2>JAX-RS — Ressource REST</h2>
+    <div class="code-block-wrap">
+      <span class="code-lang">java</span>
+      <pre><code>@Path("/clients")
+public class ClientResource {
+    
+    @GET
+    @Produces(MediaType.APPLICATION_JSON)
+    public List&lt;Client&gt; getAllClients() {
+        return clientService.findAll();
+    }
+    
+    @POST
+    @Consumes(MediaType.APPLICATION_JSON)
+    public Response createClient(Client client) {
+        clientService.save(client);
+        return Response.status(201).build();
+    }
+}</code></pre>
+    </div>
+
+    <h2>MicroProfile Config</h2>
+    <div class="code-block-wrap">
+      <span class="code-lang">java</span>
+      <pre><code>@ApplicationScoped
+public class BankingService {
+    
+    @Inject
+    @ConfigProperty(name = "bank.api.url")
+    private String apiUrl;
+    
+    @Inject
+    @ConfigProperty(name = "bank.max.transfer", defaultValue = "10000")
+    private BigDecimal maxTransfer;
+    
+    public void processTransfer(BigDecimal amount) {
+        if (amount.compareTo(maxTransfer) &gt; 0) {
+            throw new IllegalArgumentException("Exceeds maximum");
+        }
+        // Process transfer
+    }
+}</code></pre>
+    </div>
+
+    <div class="code-block-wrap">
+      <span class="code-lang">properties</span>
+      <pre><code>bank.api.url=https://api.bank.com
+bank.max.transfer=50000</code></pre>
+    </div>
+
+    <h2>MicroProfile Health Check</h2>
+    <div class="code-block-wrap">
+      <span class="code-lang">java</span>
+      <pre><code>@Health
+@ApplicationScoped
+public class DatabaseHealthCheck implements HealthCheck {
+    
+    @Inject
+    private DataSource dataSource;
+    
+    @Override
+    public HealthCheckResponse call() {
+        try (Connection conn = dataSource.getConnection()) {
+            boolean isHealthy = conn.isValid(5);
+            return HealthCheckResponse
+                .named("database-check")
+                .status(isHealthy)
+                .build();
+        }
+        catch (SQLException e) {
+            return HealthCheckResponse
+                .named("database-check")
+                .down()
+                .withData("error", e.getMessage())
+                .build();
+        }
+    }
+}</code></pre>
+    </div>
+
+    <h2>MicroProfile Metrics</h2>
+    <div class="code-block-wrap">
+      <span class="code-lang">java</span>
+      <pre><code>@ApplicationScoped
+public class TransferService {
+    
+    @Inject
+    @Metric(name = "transfers_total", absolute = true)
+    private Counter transferCounter;
+    
+    @Timed(name = "transfer_duration", 
+           description = "Time to complete transfer")
+    public void transfer(Account from, Account to, BigDecimal amount) {
+        // Perform transfer
+        transferCounter.inc();
+    }
+}</code></pre>
+    </div>
+
+    <h2>Premier Servlet Jakarta EE</h2>
+    <div class="code-block-wrap">
+      <span class="code-lang">java</span>
+      <pre><code>@WebServlet("/hello")
+public class HelloServlet extends HttpServlet {
+    
+    @Override
+    protected void doGet(HttpServletRequest request,
+                        HttpServletResponse response)
+            throws ServletException, IOException {
+        response.setContentType("text/html");
+        response.getWriter().println("""
+            &lt;html&gt;&lt;body&gt;
+            &lt;h1&gt;Welcome to Jakarta EE + MicroProfile!&lt;/h1&gt;
+            &lt;p&gt;Running on Open Liberty&lt;/p&gt;
+            &lt;ul&gt;
+                &lt;li&gt;&lt;a href="/health"&gt;Health Check&lt;/a&gt;&lt;/li&gt;
+                &lt;li&gt;&lt;a href="/metrics"&gt;Metrics&lt;/a&gt;&lt;/li&gt;
+            &lt;/ul&gt;
+            &lt;/body&gt;&lt;/html&gt;
+            """);
+    }
+}</code></pre>
+    </div>
+
+    <h2>Configuration server.xml Open Liberty</h2>
+    <div class="code-block-wrap">
+      <span class="code-lang">xml</span>
+      <pre><code>&lt;server description="Banking Application Server"&gt;
+    &lt;featureManager&gt;
+        &lt;!-- Jakarta EE Features --&gt;
+        &lt;feature&gt;servlet-6.0&lt;/feature&gt;
+        &lt;feature&gt;cdi-4.0&lt;/feature&gt;
+        &lt;feature&gt;jaxrs-3.1&lt;/feature&gt;
+        &lt;feature&gt;jsonb-3.0&lt;/feature&gt;
+        &lt;feature&gt;persistence-3.1&lt;/feature&gt;
+        
+        &lt;!-- MicroProfile Features --&gt;
+        &lt;feature&gt;mpConfig-3.0&lt;/feature&gt;
+        &lt;feature&gt;mpHealth-4.0&lt;/feature&gt;
+        &lt;feature&gt;mpMetrics-5.0&lt;/feature&gt;
+        &lt;feature&gt;mpOpenAPI-3.1&lt;/feature&gt;
+    &lt;/featureManager&gt;
+
+    &lt;httpEndpoint id="defaultHttpEndpoint"
+                  host="*"
+                  httpPort="9080"
+                  httpsPort="9443" /&gt;
+
+    &lt;webApplication location="banking-app.war" 
+                    contextRoot="/" /&gt;
+&lt;/server&gt;</code></pre>
+    </div>
+
+    <h2>Configuration Maven pom.xml</h2>
+    <div class="code-block-wrap">
+      <span class="code-lang">xml</span>
+      <pre><code>&lt;dependencies&gt;
+    &lt;!-- Jakarta EE API --&gt;
+    &lt;dependency&gt;
+        &lt;groupId&gt;jakarta.platform&lt;/groupId&gt;
+        &lt;artifactId&gt;jakarta.jakartaee-api&lt;/artifactId&gt;
+        &lt;version&gt;10.0.0&lt;/version&gt;
+        &lt;scope&gt;provided&lt;/scope&gt;
+    &lt;/dependency&gt;
+    
+    &lt;!-- MicroProfile API --&gt;
+    &lt;dependency&gt;
+        &lt;groupId&gt;org.eclipse.microprofile&lt;/groupId&gt;
+        &lt;artifactId&gt;microprofile&lt;/artifactId&gt;
+        &lt;version&gt;6.0&lt;/version&gt;
+        &lt;type&gt;pom&lt;/type&gt;
+        &lt;scope&gt;provided&lt;/scope&gt;
+    &lt;/dependency&gt;
+&lt;/dependencies&gt;</code></pre>
+    </div>
+
+    <h2>Containerfile Podman</h2>
+    <div class="code-block-wrap">
+      <span class="code-lang">dockerfile</span>
+      <pre><code>FROM icr.io/appcafe/open-liberty:full-java17-openj9-ubi
+
+# Copy application
+COPY --chown=1001:0 target/banking-app.war /config/dropins/
+
+# Copy Liberty configuration
+COPY --chown=1001:0 src/main/liberty/config/server.xml /config/
+
+# Expose ports
+EXPOSE 9080 9443
+
+# Run Liberty
+CMD ["/opt/ol/wlp/bin/server", "run", "defaultServer"]</code></pre>
+    </div>
+
+    <h2>Commandes Podman / Maven</h2>
+    <div class="code-block-wrap">
+      <span class="code-lang">bash</span>
+      <pre><code># Dev mode avec hot reload
+mvn liberty:dev
+
+# Packaging
+mvn liberty:package
+
+# Build image Podman
+podman build -t banking-app:latest .
+
+# Lancer le conteneur
+podman run -d -p 9080:9080 -p 9443:9443 banking-app:latest
+
+# Voir les logs
+podman logs -f &lt;container-id&gt;</code></pre>
+    </div>
+
+    <h2>Annotations de référence</h2>
+    <div class="code-block-wrap">
+      <span class="code-lang">java</span>
+      <pre><code>// Jakarta EE
+@WebServlet("/path")           // Mapping de servlet
+@Path("/resource")             // Ressource JAX-RS
+@Entity                        // Entité JPA
+@Inject                        // Injection CDI
+
+// MicroProfile
+@ConfigProperty(name="key")    // MP Config
+@Health                        // MP Health check
+@Timed                         // MP Metrics
+@Retry                         // MP Fault Tolerance</code></pre>
+    </div>
+
+  </main>
+</div>
+<footer class="cds--footer">Made with IBM Bob &nbsp;·&nbsp; © 2026 Olivier Planson &nbsp;·&nbsp; ESIPE — Jakarta EE &amp; Microservices</footer>
+</body>
+</html>

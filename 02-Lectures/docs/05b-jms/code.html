@@ -1,0 +1,439 @@
+<!-- © Copyright 2026 Olivier Planson. All rights reserved. Reproduction prohibited. Made with IBM Bob. -->
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>Cours 05b — Exemples de code</title>
+  <link rel="stylesheet" href="../assets/carbon.css"/>
+</head>
+<body>
+<header class="cds--header">
+  <a class="cds--header__name" href="index.html">JMS — Messagerie Enterprise<span>Cours Jakarta EE</span></a>
+  <a class="cds--header__back" href="../index.html">← Tous les Cours</a>
+</header>
+<div class="cds--shell">
+  <nav class="cds--side-nav">
+    <p class="cds--side-nav__section-title">Cours 05b</p>
+    <a class="cds--side-nav__link" href="index.html">⊙ Vue d'ensemble</a>
+    <a class="cds--side-nav__link" href="slides.html">☰ Contenu du cours</a>
+    <a class="cds--side-nav__link" href="concepts.html">◈ Concepts clés</a>
+    <a class="cds--side-nav__link active" href="code.html">⟨/⟩ Exemples de code</a>
+  </nav>
+  <main class="cds--content">
+    <div class="breadcrumb"><a href="../index.html">Cours</a> › <a href="index.html">Cours 05b</a> › Code</div>
+    <h1>Exemples de code</h1>
+    <p class="page-lead">Extraits de code du cours 05b — Producteur JMSContext, MDB Queue/Topic, Dead Letter Queue, sélecteurs et configuration Liberty.</p>
+
+    <h2>Producteur JMS avec JMSContext</h2>
+    <div class="code-block-wrap">
+      <span class="code-lang">java</span>
+      <pre><code>import jakarta.annotation.Resource;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
+import jakarta.jms.ConnectionFactory;
+import jakarta.jms.JMSConnectionFactory;
+import jakarta.jms.JMSContext;
+import jakarta.jms.Queue;
+import jakarta.jms.TextMessage;
+import java.math.BigDecimal;
+
+@ApplicationScoped
+public class TransferEventProducer {
+
+    // Injection du JMSContext géré par le conteneur
+    @Inject
+    @JMSConnectionFactory("jms/transferCF")
+    private JMSContext jmsContext;
+
+    // Injection de la Queue via JNDI
+    @Resource(lookup = "jms/transferQueue")
+    private Queue transferQueue;
+
+    public void sendTransferRequest(String fromAccountId,
+                                    String toAccountId,
+                                    BigDecimal amount,
+                                    String transferType) {
+        // Construire le corps JSON du message
+        String body = String.format(
+            "{\"fromAccountId\":\"%s\",\"toAccountId\":\"%s\","
+            + "\"amount\":%s,\"transferType\":\"%s\","
+            + "\"timestamp\":%d}",
+            fromAccountId, toAccountId,
+            amount.toPlainString(), transferType,
+            System.currentTimeMillis()
+        );
+
+        // Créer et envoyer le TextMessage
+        TextMessage message = jmsContext.createTextMessage(body);
+        message.setStringProperty("transferType", transferType);
+        message.setDoubleProperty("amount", amount.doubleValue());
+
+        jmsContext.createProducer()
+                  .setProperty("correlationId", fromAccountId + "-" + System.nanoTime())
+                  .send(transferQueue, message);
+
+        System.out.println("Transfer request sent: " + transferType
+            + " — " + amount + " from " + fromAccountId);
+    }
+}</code></pre>
+    </div>
+
+    <h2>Consommateur Asynchrone (MessageListener)</h2>
+    <div class="code-block-wrap">
+      <span class="code-lang">java</span>
+      <pre><code>import jakarta.annotation.Resource;
+import jakarta.jms.ConnectionFactory;
+import jakarta.jms.JMSException;
+import jakarta.jms.Message;
+import jakarta.jms.MessageConsumer;
+import jakarta.jms.MessageListener;
+import jakarta.jms.Queue;
+import jakarta.jms.Session;
+import jakarta.jms.TextMessage;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.HttpServlet;
+
+@WebServlet(urlPatterns = "/transfer-listener", loadOnStartup = 1)
+public class TransferListenerServlet extends HttpServlet {
+
+    @Resource(lookup = "jms/transferCF")
+    private ConnectionFactory connectionFactory;
+
+    @Resource(lookup = "jms/transferQueue")
+    private Queue transferQueue;
+
+    @Override
+    public void init() throws ServletException {
+        try {
+            var connection = connectionFactory.createConnection();
+            var session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
+            MessageConsumer consumer = session.createConsumer(transferQueue);
+
+            // Enregistrement du listener asynchrone
+            consumer.setMessageListener(new MessageListener() {
+                @Override
+                public void onMessage(Message msg) {
+                    if (msg instanceof TextMessage textMsg) {
+                        try {
+                            String body = textMsg.getText();
+                            String transferType = msg.getStringProperty("transferType");
+                            System.out.println("Received [" + transferType + "]: " + body);
+                            // Traitement applicatif ici...
+                        } catch (JMSException e) {
+                            throw new RuntimeException("Failed to read JMS message", e);
+                        }
+                    }
+                }
+            });
+
+            connection.start();
+        } catch (Exception e) {
+            throw new ServletException("JMS listener init failed", e);
+        }
+    }
+}</code></pre>
+    </div>
+
+    <h2>Message-Driven Bean — Queue</h2>
+    <div class="code-block-wrap">
+      <span class="code-lang">java</span>
+      <pre><code>import jakarta.ejb.ActivationConfigProperty;
+import jakarta.ejb.MessageDriven;
+import jakarta.inject.Inject;
+import jakarta.jms.JMSException;
+import jakarta.jms.Message;
+import jakarta.jms.MessageListener;
+import jakarta.jms.TextMessage;
+
+@MessageDriven(activationConfig = {
+    @ActivationConfigProperty(
+        propertyName  = "destinationType",
+        propertyValue = "jakarta.jms.Queue"
+    ),
+    @ActivationConfigProperty(
+        propertyName  = "destination",
+        propertyValue = "jms/transferQueue"
+    ),
+    @ActivationConfigProperty(
+        propertyName  = "acknowledgeMode",
+        propertyValue = "Auto-acknowledge"
+    )
+})
+public class TransferProcessorMDB implements MessageListener {
+
+    @Inject
+    private BankingService bankingService;
+
+    // onMessage() s'exécute dans une transaction CMT gérée par le conteneur.
+    // En cas d'exception RuntimeException, la transaction est rollbackée
+    // et le message est rélivré par le broker.
+    @Override
+    public void onMessage(Message message) {
+        if (!(message instanceof TextMessage textMsg)) {
+            return; // ignorer les types inconnus
+        }
+        try {
+            String body         = textMsg.getText();
+            String transferType = message.getStringProperty("transferType");
+
+            System.out.println("Processing transfer [" + transferType + "]: " + body);
+
+            // Déléguer au service métier — dans la même transaction CMT
+            bankingService.processTransfer(body);
+
+        } catch (JMSException e) {
+            // Propager comme RuntimeException pour déclencher le rollback CMT
+            throw new RuntimeException("Failed to read transfer message", e);
+        }
+    }
+}</code></pre>
+    </div>
+
+    <h2>MDB avec Topic (Pub/Sub)</h2>
+    <div class="code-block-wrap">
+      <span class="code-lang">java</span>
+      <pre><code>import jakarta.ejb.ActivationConfigProperty;
+import jakarta.ejb.MessageDriven;
+import jakarta.inject.Inject;
+import jakarta.jms.JMSException;
+import jakarta.jms.Message;
+import jakarta.jms.MessageListener;
+import jakarta.jms.TextMessage;
+
+@MessageDriven(activationConfig = {
+    @ActivationConfigProperty(
+        propertyName  = "destinationType",
+        propertyValue = "jakarta.jms.Topic"
+    ),
+    @ActivationConfigProperty(
+        propertyName  = "destination",
+        propertyValue = "jms/accountEventsTopic"
+    ),
+    // Abonnement durable — reçoit les messages même si le MDB était hors ligne
+    @ActivationConfigProperty(
+        propertyName  = "subscriptionDurability",
+        propertyValue = "Durable"
+    ),
+    @ActivationConfigProperty(
+        propertyName  = "durableSubscriptionName",
+        propertyValue = "notificationMDB-durable-sub"
+    ),
+    @ActivationConfigProperty(
+        propertyName  = "clientId",
+        propertyValue = "notificationMDBClient"
+    )
+})
+public class NotificationMDB implements MessageListener {
+
+    @Inject
+    private NotificationService notificationService;
+
+    @Override
+    public void onMessage(Message message) {
+        if (!(message instanceof TextMessage textMsg)) {
+            return;
+        }
+        try {
+            String body      = textMsg.getText();
+            String eventType = message.getStringProperty("eventType");
+
+            System.out.println("Topic event received [" + eventType + "]: " + body);
+
+            // Tous les abonnés actifs reçoivent ce message
+            notificationService.dispatch(eventType, body);
+
+        } catch (JMSException e) {
+            throw new RuntimeException("Failed to read topic message", e);
+        }
+    }
+}</code></pre>
+    </div>
+
+    <h2>Dead Letter Queue Handler</h2>
+    <div class="code-block-wrap">
+      <span class="code-lang">java</span>
+      <pre><code>import jakarta.ejb.ActivationConfigProperty;
+import jakarta.ejb.MessageDriven;
+import jakarta.inject.Inject;
+import jakarta.jms.JMSException;
+import jakarta.jms.Message;
+import jakarta.jms.MessageListener;
+import jakarta.jms.TextMessage;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
+@MessageDriven(activationConfig = {
+    @ActivationConfigProperty(
+        propertyName  = "destinationType",
+        propertyValue = "jakarta.jms.Queue"
+    ),
+    @ActivationConfigProperty(
+        propertyName  = "destination",
+        propertyValue = "jms/transferDLQ"
+    )
+})
+public class TransferDLQHandlerMDB implements MessageListener {
+
+    private static final Logger logger =
+        Logger.getLogger(TransferDLQHandlerMDB.class.getName());
+
+    @Inject
+    private AlertService alertService;
+
+    @Inject
+    private DeadLetterArchiveService archiveService;
+
+    @Override
+    public void onMessage(Message message) {
+        try {
+            String messageId      = message.getJMSMessageID();
+            int    deliveryCount  = message.getIntProperty("JMSXDeliveryCount");
+            String body           = message instanceof TextMessage t ? t.getText() : "N/A";
+
+            logger.log(Level.SEVERE,
+                "DEAD LETTER: messageId={0}, deliveryCount={1}, body={2}",
+                new Object[]{ messageId, deliveryCount, body });
+
+            // Alerter l'équipe opérationnelle
+            alertService.sendCriticalAlert(
+                "Transfer message in DLQ",
+                "messageId=" + messageId + " | deliveryCount=" + deliveryCount
+                + "\nbody=" + body
+            );
+
+            // Archiver pour analyse et rejoue manuelle éventuelle
+            archiveService.archive(messageId, body, deliveryCount);
+
+        } catch (JMSException e) {
+            logger.log(Level.SEVERE, "Failed to process DLQ message", e);
+            // Ne pas propager — éviter une boucle infinie sur la DLQ elle-même
+        }
+    }
+}</code></pre>
+    </div>
+
+    <h2>Sélecteur de Messages</h2>
+    <div class="code-block-wrap">
+      <span class="code-lang">java</span>
+      <pre><code>import jakarta.ejb.ActivationConfigProperty;
+import jakarta.ejb.MessageDriven;
+import jakarta.inject.Inject;
+import jakarta.jms.JMSException;
+import jakarta.jms.Message;
+import jakarta.jms.MessageListener;
+import jakarta.jms.TextMessage;
+
+// Ce MDB ne consomme QUE les messages dont la propriété
+// transferType vaut 'INTERNATIONAL' — filtrage côté broker
+@MessageDriven(activationConfig = {
+    @ActivationConfigProperty(
+        propertyName  = "destinationType",
+        propertyValue = "jakarta.jms.Queue"
+    ),
+    @ActivationConfigProperty(
+        propertyName  = "destination",
+        propertyValue = "jms/transferQueue"
+    ),
+    // Sélecteur JMS — syntaxe SQL WHERE sur les propriétés du message
+    @ActivationConfigProperty(
+        propertyName  = "messageSelector",
+        propertyValue = "transferType = 'INTERNATIONAL'"
+    )
+})
+public class InternationalTransferMDB implements MessageListener {
+
+    @Inject
+    private ComplianceService complianceService;
+
+    @Override
+    public void onMessage(Message message) {
+        if (!(message instanceof TextMessage textMsg)) {
+            return;
+        }
+        try {
+            String body = textMsg.getText();
+            System.out.println("International transfer received: " + body);
+
+            // Traitement spécifique aux virements internationaux :
+            // vérification SWIFT, contrôle OFAC, rapport réglementaire
+            complianceService.processInternationalTransfer(body);
+
+        } catch (JMSException e) {
+            throw new RuntimeException("Failed to read international transfer message", e);
+        }
+    }
+}</code></pre>
+    </div>
+
+    <h2>Configuration Liberty JMS</h2>
+    <div class="code-block-wrap">
+      <span class="code-lang">xml</span>
+      <pre><code>&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+&lt;server description="JMS Banking Application"&gt;
+
+  &lt;!-- Features JMS / MDB nécessaires --&gt;
+  &lt;featureManager&gt;
+    &lt;feature&gt;jakartaee-10.0&lt;/feature&gt;
+    &lt;feature&gt;messagingClient-3.0&lt;/feature&gt;
+    &lt;feature&gt;mdb-4.0&lt;/feature&gt;
+  &lt;/featureManager&gt;
+
+  &lt;!-- Connexion au broker JMS Liberty Messaging --&gt;
+  &lt;wasJmsEndpoint host="localhost" port="7276"
+                  wasJmsPort="7276"/&gt;
+
+  &lt;!-- ConnectionFactory injectée via @JMSConnectionFactory("jms/transferCF") --&gt;
+  &lt;jmsConnectionFactory id="transferCF" jndiName="jms/transferCF"&gt;
+    &lt;properties.wasJms/&gt;
+  &lt;/jmsConnectionFactory&gt;
+
+  &lt;!-- Queue pour les transferts — Point-à-Point --&gt;
+  &lt;jmsQueue id="transferQueue" jndiName="jms/transferQueue"&gt;
+    &lt;properties.wasJms queueName="TRANSFER.QUEUE"/&gt;
+  &lt;/jmsQueue&gt;
+
+  &lt;!-- Dead Letter Queue --&gt;
+  &lt;jmsQueue id="transferDLQ" jndiName="jms/transferDLQ"&gt;
+    &lt;properties.wasJms queueName="TRANSFER.DLQ"/&gt;
+  &lt;/jmsQueue&gt;
+
+  &lt;!-- Topic pour les événements de compte — Pub/Sub --&gt;
+  &lt;jmsTopic id="accountEventsTopic" jndiName="jms/accountEventsTopic"&gt;
+    &lt;properties.wasJms topicName="ACCOUNT.EVENTS"/&gt;
+  &lt;/jmsTopic&gt;
+
+  &lt;!-- ActivationSpec pour le MDB TransferProcessorMDB --&gt;
+  &lt;jmsActivationSpec id="BankingApp/TransferProcessorMDB"&gt;
+    &lt;properties.wasJms
+        destinationRef="transferQueue"
+        destinationType="jakarta.jms.Queue"
+        maxConcurrentEndpoints="10"/&gt;
+  &lt;/jmsActivationSpec&gt;
+
+  &lt;!-- ActivationSpec pour le DLQ Handler MDB --&gt;
+  &lt;jmsActivationSpec id="BankingApp/TransferDLQHandlerMDB"&gt;
+    &lt;properties.wasJms
+        destinationRef="transferDLQ"
+        destinationType="jakarta.jms.Queue"
+        maxConcurrentEndpoints="2"/&gt;
+  &lt;/jmsActivationSpec&gt;
+
+  &lt;!-- ActivationSpec pour le MDB Topic (abonnement durable) --&gt;
+  &lt;jmsActivationSpec id="BankingApp/NotificationMDB"&gt;
+    &lt;properties.wasJms
+        destinationRef="accountEventsTopic"
+        destinationType="jakarta.jms.Topic"
+        durableSubscriptionHome="notificationMDBClient"
+        subscriptionDurability="Durable"/&gt;
+  &lt;/jmsActivationSpec&gt;
+
+&lt;/server&gt;</code></pre>
+    </div>
+
+  </main>
+</div>
+<footer class="cds--footer">Made with IBM Bob &nbsp;·&nbsp; © 2026 Olivier Planson &nbsp;·&nbsp; ESIPE — Jakarta EE &amp; Microservices</footer>
+</body>
+</html>

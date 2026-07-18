@@ -1,0 +1,563 @@
+<!-- © Copyright 2026 Olivier Planson. All rights reserved. Reproduction prohibited. Made with IBM Bob. -->
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>Cours 08 — Exemples de code</title>
+  <link rel="stylesheet" href="../assets/carbon.css"/>
+</head>
+<body>
+<header class="cds--header">
+  <a class="cds--header__name" href="index.html">Microservices<span>Cours Jakarta EE</span></a>
+  <a class="cds--header__back" href="../index.html">← Tous les Cours</a>
+</header>
+<div class="cds--shell">
+  <nav class="cds--side-nav">
+    <p class="cds--side-nav__section-title">Cours 08</p>
+    <a class="cds--side-nav__link" href="index.html">⊙ Vue d'ensemble</a>
+    <a class="cds--side-nav__link" href="slides.html">☰ Contenu du cours</a>
+    <a class="cds--side-nav__link" href="concepts.html">◈ Concepts clés</a>
+    <a class="cds--side-nav__link active" href="code.html">⟨/⟩ Exemples de code</a>
+    <a class="cds--side-nav__link" href="patterns.html">⧫ Patterns Microservices</a>
+  </nav>
+  <main class="cds--content">
+    <div class="breadcrumb"><a href="../index.html">Cours</a> › <a href="index.html">Cours 08</a> › Code</div>
+    <h1>Exemples de code</h1>
+    <p class="page-lead">Extraits de code du cours 08 — Fault Tolerance, API Gateway, MicroProfile Config, Health Check, Saga, Docker Compose et corrélation ID.</p>
+
+    <h2>Client REST inter-services avec Fault Tolerance</h2>
+    <div class="code-block-wrap">
+      <span class="code-lang">java</span>
+      <pre><code>import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
+import jakarta.ws.rs.*;
+import jakarta.ws.rs.core.MediaType;
+import org.eclipse.microprofile.faulttolerance.*;
+import org.eclipse.microprofile.rest.client.inject.RegisterRestClient;
+import org.eclipse.microprofile.rest.client.inject.RestClient;
+
+// Interface cliente — @RegisterRestClient avec configKey pour l'URL dans MicroProfile Config
+@RegisterRestClient(configKey = "account-service")
+@Path("/accounts")
+@Produces(MediaType.APPLICATION_JSON)
+public interface AccountServiceClient {
+
+    @GET
+    @Path("/{id}")
+    Account getAccount(@PathParam("id") Long id);
+}
+
+// Modèle de réponse partagé
+public record Account(Long id, String iban, double balance, String ownerId) {}
+
+
+// Service applicatif avec Fault Tolerance
+@ApplicationScoped
+public class AccountQueryService {
+
+    @Inject
+    @RestClient
+    private AccountServiceClient accountClient;
+
+    // @Retry        — 3 tentatives supplémentaires, délai exponentiel
+    // @CircuitBreaker — ouvre si 75 % d'échecs parmi les 4 dernières requêtes
+    // @Timeout      — échoue si l'appel dure plus de 2 secondes
+    // @Fallback     — retourne un compte par défaut si toutes les tentatives échouent
+    @Retry(maxRetries = 3, delay = 200, jitter = 100)
+    @CircuitBreaker(requestVolumeThreshold = 4, failureRatio = 0.75, delay = 2000)
+    @Timeout(value = 2000)
+    @Fallback(fallbackMethod = "getAccountFallback")
+    public Account getAccount(Long id) {
+        return accountClient.getAccount(id);
+    }
+
+    // Méthode de fallback — même signature que la méthode principale
+    public Account getAccountFallback(Long id) {
+        // Retourne un compte temporaire depuis le cache ou une valeur par défaut
+        return new Account(id, "UNAVAILABLE", 0.0, "UNKNOWN");
+    }
+}
+
+// Configuration dans microprofile-config.properties :
+// account-service/mp-rest/url=http://account-service:8080
+// account-service/mp-rest/connectTimeout=1000
+// account-service/mp-rest/readTimeout=3000</code></pre>
+    </div>
+
+    <h2>API Gateway — Request Routing</h2>
+    <div class="code-block-wrap">
+      <span class="code-lang">java</span>
+      <pre><code>import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
+import jakarta.ws.rs.*;
+import jakarta.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.Response;
+import org.eclipse.microprofile.rest.client.inject.RestClient;
+
+@Path("/api")
+@ApplicationScoped
+@Produces(MediaType.APPLICATION_JSON)
+@Consumes(MediaType.APPLICATION_JSON)
+public class GatewayResource {
+
+    @Inject
+    @RestClient
+    private AccountServiceClient accountClient;
+
+    @Inject
+    @RestClient
+    private TransferServiceClient transferClient;
+
+    @Inject
+    @RestClient
+    private ClientServiceClient clientServiceClient;
+
+    // Routing GET /api/accounts/{id} → account-service
+    @GET
+    @Path("/accounts/{id}")
+    public Response getAccount(@PathParam("id") Long id) {
+        Account account = accountClient.getAccount(id);
+        return Response.ok(account).build();
+    }
+
+    // Routing POST /api/transfers → transfer-service
+    @POST
+    @Path("/transfers")
+    public Response createTransfer(TransferRequest request) {
+        TransferResponse result = transferClient.createTransfer(request);
+        return Response.status(Response.Status.CREATED).entity(result).build();
+    }
+
+    // Agrégation : dashboard client — appelle client-service + account-service
+    @GET
+    @Path("/clients/{id}/dashboard")
+    public Response getClientDashboard(@PathParam("id") String clientId) {
+        // Appels parallèles avec CompletableFuture pour réduire la latence
+        var clientFuture = java.util.concurrent.CompletableFuture
+            .supplyAsync(() -&gt; clientServiceClient.getClient(clientId));
+        var accountsFuture = java.util.concurrent.CompletableFuture
+            .supplyAsync(() -&gt; accountClient.getAccountsByOwner(clientId));
+
+        var dashboard = java.util.concurrent.CompletableFuture
+            .allOf(clientFuture, accountsFuture)
+            .thenApply(v -&gt; new ClientDashboard(
+                clientFuture.join(),
+                accountsFuture.join()
+            ));
+
+        return Response.ok(dashboard.join()).build();
+    }
+}</code></pre>
+    </div>
+
+    <h2>MicroProfile Config — Configuration multi-environnement</h2>
+    <div class="code-block-wrap">
+      <span class="code-lang">java</span>
+      <pre><code>import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
+import org.eclipse.microprofile.config.inject.ConfigProperty;
+
+@ApplicationScoped
+public class ServiceConfiguration {
+
+    // URL du service de comptes — surchargée via variable d'environnement en production
+    @Inject
+    @ConfigProperty(name = "account.service.url",
+                    defaultValue = "http://localhost:8081")
+    private String accountServiceUrl;
+
+    // URL du service de virements
+    @Inject
+    @ConfigProperty(name = "transfer.service.url",
+                    defaultValue = "http://localhost:8082")
+    private String transferServiceUrl;
+
+    // Feature flag — active/désactive le mode debug sans recompilation
+    @Inject
+    @ConfigProperty(name = "feature.debug.enabled", defaultValue = "false")
+    private boolean debugEnabled;
+
+    // Seuil de limite de virement quotidien en euros
+    @Inject
+    @ConfigProperty(name = "transfer.daily.limit.eur", defaultValue = "10000")
+    private int dailyTransferLimit;
+
+    public String getAccountServiceUrl()  { return accountServiceUrl; }
+    public String getTransferServiceUrl() { return transferServiceUrl; }
+    public boolean isDebugEnabled()       { return debugEnabled; }
+    public int getDailyTransferLimit()    { return dailyTransferLimit; }
+}
+
+// --- src/main/resources/META-INF/microprofile-config.properties (développement) ---
+// account.service.url=http://localhost:8081
+// transfer.service.url=http://localhost:8082
+// feature.debug.enabled=true
+// transfer.daily.limit.eur=10000
+
+// --- Variables d'environnement Docker Compose (production) ---
+// ACCOUNT_SERVICE_URL=http://account-service:8080
+// TRANSFER_SERVICE_URL=http://transfer-service:8080
+// FEATURE_DEBUG_ENABLED=false
+// TRANSFER_DAILY_LIMIT_EUR=50000
+//
+// Note : MicroProfile Config convertit automatiquement ACCOUNT_SERVICE_URL
+//        en account.service.url (majuscules → minuscules, _ → .)
+</code></pre>
+    </div>
+
+    <h2>Health Check composite</h2>
+    <div class="code-block-wrap">
+      <span class="code-lang">java</span>
+      <pre><code>import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
+import org.eclipse.microprofile.health.HealthCheck;
+import org.eclipse.microprofile.health.HealthCheckResponse;
+import org.eclipse.microprofile.health.Readiness;
+import org.eclipse.microprofile.rest.client.inject.RestClient;
+
+// @Readiness — Kubernetes retire ce pod du load balancer si ce check échoue
+@Readiness
+@ApplicationScoped
+public class CompositeHealthCheck implements HealthCheck {
+
+    @Inject
+    private DatabaseConnectionPool dbPool;
+
+    @Inject
+    @RestClient
+    private AccountServiceClient accountClient;
+
+    @Inject
+    private ServiceConfiguration config;
+
+    @Override
+    public HealthCheckResponse call() {
+        boolean dbUp     = checkDatabase();
+        boolean svcUp    = checkAccountService();
+        boolean cfgLoaded = checkConfiguration();
+
+        boolean allUp = dbUp && svcUp && cfgLoaded;
+
+        return HealthCheckResponse.named("transfer-service-readiness")
+            .status(allUp)
+            .withData("database-connection", dbUp ? "UP" : "DOWN")
+            .withData("account-service",     svcUp ? "UP" : "DOWN")
+            .withData("config-loaded",       cfgLoaded ? "OK" : "MISSING")
+            .withData("service-url",         config.getAccountServiceUrl())
+            .build();
+    }
+
+    private boolean checkDatabase() {
+        try {
+            return dbPool.isValid(2); // timeout 2 secondes
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+    private boolean checkAccountService() {
+        try {
+            accountClient.getAccount(0L); // appel ping — 404 attendu mais service disponible
+            return true;
+        } catch (jakarta.ws.rs.NotFoundException e) {
+            return true;  // 404 = service up mais entité absente — c'est OK
+        } catch (Exception e) {
+            return false; // timeout ou connexion refusée
+        }
+    }
+
+    private boolean checkConfiguration() {
+        return config.getAccountServiceUrl() != null
+            &amp;&amp; !config.getAccountServiceUrl().isBlank();
+    }
+}
+
+// Réponse JSON exposée sur GET /health/ready :
+// {
+//   "status": "UP",
+//   "checks": [{
+//     "name": "transfer-service-readiness",
+//     "status": "UP",
+//     "data": {
+//       "database-connection": "UP",
+//       "account-service": "UP",
+//       "config-loaded": "OK",
+//       "service-url": "http://account-service:8080"
+//     }
+//   }]
+// }</code></pre>
+    </div>
+
+    <h2>Saga — Choreography</h2>
+    <div class="code-block-wrap">
+      <span class="code-lang">java</span>
+      <pre><code>import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.enterprise.event.Event;
+import jakarta.enterprise.event.Observes;
+import jakarta.inject.Inject;
+
+// ---- Événements du Saga ----
+public record TransferInitiatedEvent(String transferId, String fromAccount,
+                                     String toAccount, double amount) {}
+public record AccountDebitedEvent(String transferId, String fromAccount, double amount) {}
+public record AccountCreditedEvent(String transferId, String toAccount, double amount) {}
+public record TransferCompletedEvent(String transferId) {}
+public record TransferFailedEvent(String transferId, String reason) {}
+public record DebitCompensatedEvent(String transferId) {}
+
+
+// ---- Coordinateur du Saga — Transfer Service ----
+@ApplicationScoped
+public class TransferSagaCoordinator {
+
+    @Inject
+    private Event&lt;AccountDebitedEvent&gt; debitEvent;
+
+    @Inject
+    private Event&lt;TransferFailedEvent&gt; failedEvent;
+
+    @Inject
+    private Event&lt;TransferCompletedEvent&gt; completedEvent;
+
+    @Inject
+    private TransferRepository transferRepository;
+
+    // Étape 1 : démarrage du Saga — déclenche le débit du compte source
+    public void initiateTransfer(String transferId, String from, String to, double amount) {
+        transferRepository.save(new Transfer(transferId, from, to, amount, "INITIATED"));
+        debitEvent.fire(new AccountDebitedEvent(transferId, from, amount));
+    }
+
+    // Étape 3 : crédit confirmé → Saga terminé avec succès
+    public void onAccountCredited(@Observes AccountCreditedEvent event) {
+        transferRepository.updateStatus(event.transferId(), "COMPLETED");
+        completedEvent.fire(new TransferCompletedEvent(event.transferId()));
+    }
+
+    // Étape compensatoire : débit annulé → Saga en échec
+    public void onDebitCompensated(@Observes DebitCompensatedEvent event) {
+        transferRepository.updateStatus(event.transferId(), "FAILED");
+        failedEvent.fire(new TransferFailedEvent(event.transferId(), "DEBIT_COMPENSATED"));
+    }
+}
+
+
+// ---- Account Service — répond aux événements ----
+@ApplicationScoped
+public class AccountSagaParticipant {
+
+    @Inject
+    private AccountRepository accountRepository;
+
+    @Inject
+    private Event&lt;AccountCreditedEvent&gt; creditedEvent;
+
+    @Inject
+    private Event&lt;DebitCompensatedEvent&gt; compensatedEvent;
+
+    // Étape 2a : débite le compte source
+    public void onAccountDebited(@Observes AccountDebitedEvent event) {
+        try {
+            accountRepository.debit(event.fromAccount(), event.amount());
+            // Débit réussi — fire l'événement de crédit (géré par un autre listener)
+            creditedEvent.fire(new AccountCreditedEvent(
+                event.transferId(), "toAccount", event.amount()));
+        } catch (InsufficientFundsException e) {
+            // Compensation — annuler l'opération
+            compensatedEvent.fire(new DebitCompensatedEvent(event.transferId()));
+        }
+    }
+}</code></pre>
+    </div>
+
+    <h2>Docker Compose</h2>
+    <div class="code-block-wrap">
+      <span class="code-lang">yaml</span>
+      <pre><code>version: "3.8"
+
+services:
+
+  # Service de gestion des clients
+  client-service:
+    image: banking/client-service:latest
+    ports:
+      - "8080:8080"
+    environment:
+      - ACCOUNT_SERVICE_URL=http://account-service:8080
+      - MP_CONFIG_PROFILE=prod
+      - QUARKUS_DATASOURCE_JDBC_URL=jdbc:postgresql://client-db:5432/clients
+    depends_on:
+      client-db:
+        condition: service_healthy
+    networks:
+      - banking-network
+
+  # Service de gestion des comptes bancaires
+  account-service:
+    image: banking/account-service:latest
+    ports:
+      - "8081:8080"
+    environment:
+      - TRANSFER_SERVICE_URL=http://transfer-service:8080
+      - QUARKUS_DATASOURCE_JDBC_URL=jdbc:postgresql://account-db:5432/accounts
+    depends_on:
+      account-db:
+        condition: service_healthy
+    networks:
+      - banking-network
+
+  # Service de virements — orchestre le Saga
+  transfer-service:
+    image: banking/transfer-service:latest
+    ports:
+      - "8082:8080"
+    environment:
+      - ACCOUNT_SERVICE_URL=http://account-service:8080
+      - NOTIFICATION_SERVICE_URL=http://notification-service:8080
+      - QUARKUS_DATASOURCE_JDBC_URL=jdbc:postgresql://transfer-db:5432/transfers
+    depends_on:
+      - account-service
+      - transfer-db
+    networks:
+      - banking-network
+
+  # Base de données PostgreSQL pour client-service
+  client-db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: clients
+      POSTGRES_USER: banking
+      POSTGRES_PASSWORD: secret
+    volumes:
+      - client-db-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U banking -d clients"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - banking-network
+
+  # Base de données PostgreSQL pour account-service
+  account-db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: accounts
+      POSTGRES_USER: banking
+      POSTGRES_PASSWORD: secret
+    volumes:
+      - account-db-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U banking -d accounts"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - banking-network
+
+  # Base de données PostgreSQL pour transfer-service
+  transfer-db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: transfers
+      POSTGRES_USER: banking
+      POSTGRES_PASSWORD: secret
+    volumes:
+      - transfer-db-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U banking -d transfers"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - banking-network
+
+networks:
+  banking-network:
+    driver: bridge
+
+volumes:
+  client-db-data:
+  account-db-data:
+  transfer-db-data:</code></pre>
+    </div>
+
+    <h2>Corrélation ID pour tracing</h2>
+    <div class="code-block-wrap">
+      <span class="code-lang">java</span>
+      <pre><code>import jakarta.annotation.Priority;
+import jakarta.ws.rs.Priorities;
+import jakarta.ws.rs.container.*;
+import jakarta.ws.rs.ext.Provider;
+import java.io.IOException;
+import java.util.UUID;
+import org.slf4j.MDC;
+
+// Filtre JAX-RS côté serveur — s'applique à toutes les requêtes entrantes
+@Provider
+@Priority(Priorities.HEADER_DECORATOR)
+public class CorrelationIdServerFilter implements ContainerRequestFilter,
+                                                  ContainerResponseFilter {
+
+    private static final String CORRELATION_HEADER = "X-Correlation-ID";
+    private static final String MDC_KEY = "correlationId";
+
+    // Requête entrante — extrait ou génère le correlation ID
+    @Override
+    public void filter(ContainerRequestContext requestContext) throws IOException {
+        String correlationId = requestContext.getHeaderString(CORRELATION_HEADER);
+
+        if (correlationId == null || correlationId.isBlank()) {
+            // Ce service est le premier de la chaîne — génère un nouvel ID
+            correlationId = UUID.randomUUID().toString();
+        }
+
+        // Mise dans le MDC SLF4J — tous les logs de cette requête incluront le correlation ID
+        MDC.put(MDC_KEY, correlationId);
+        // Stockage dans le contexte de la requête pour la réponse
+        requestContext.setProperty(CORRELATION_HEADER, correlationId);
+    }
+
+    // Réponse sortante — retransmet le correlation ID dans la réponse
+    @Override
+    public void filter(ContainerRequestContext requestContext,
+                       ContainerResponseContext responseContext) throws IOException {
+        String correlationId = (String) requestContext.getProperty(CORRELATION_HEADER);
+        if (correlationId != null) {
+            responseContext.getHeaders().add(CORRELATION_HEADER, correlationId);
+        }
+        // Nettoyage du MDC — évite les fuites de mémoire dans les pools de threads
+        MDC.remove(MDC_KEY);
+    }
+}
+
+
+// Filtre JAX-RS côté client (MicroProfile Rest Client) — propage le correlation ID
+@Provider
+public class CorrelationIdClientFilter implements jakarta.ws.rs.client.ClientRequestFilter {
+
+    @Override
+    public void filter(jakarta.ws.rs.client.ClientRequestContext requestContext)
+            throws IOException {
+        // Récupère le correlation ID du MDC et le propage dans les appels sortants
+        String correlationId = MDC.get("correlationId");
+        if (correlationId != null) {
+            requestContext.getHeaders().add("X-Correlation-ID", correlationId);
+        }
+    }
+}
+
+
+// Utilisation dans les logs (logback.xml ou quarkus logging) :
+// Format de log JSON avec le champ correlationId automatiquement inclus via MDC :
+// { "timestamp": "2026-01-15T10:30:00Z", "service": "transfer-service",
+//   "correlationId": "a1b2c3d4-...", "level": "INFO",
+//   "message": "Virement initié pour compte FR76..." }</code></pre>
+    </div>
+
+  </main>
+</div>
+<footer class="cds--footer">Made with IBM Bob &nbsp;·&nbsp; © 2026 Olivier Planson &nbsp;·&nbsp; ESIPE — Jakarta EE &amp; Microservices</footer>
+</body>
+</html>

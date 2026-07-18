@@ -1,0 +1,125 @@
+<!-- © Copyright 2026 Olivier Planson. All rights reserved. Reproduction prohibited. Made with IBM Bob. -->
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>Cours 05b — Concepts clés</title>
+  <link rel="stylesheet" href="../assets/carbon.css"/>
+</head>
+<body>
+<header class="cds--header">
+  <a class="cds--header__name" href="index.html">JMS — Messagerie Enterprise<span>Cours Jakarta EE</span></a>
+  <a class="cds--header__back" href="../index.html">← Tous les Cours</a>
+</header>
+<div class="cds--shell">
+  <nav class="cds--side-nav">
+    <p class="cds--side-nav__section-title">Cours 05b</p>
+    <a class="cds--side-nav__link" href="index.html">⊙ Vue d'ensemble</a>
+    <a class="cds--side-nav__link" href="slides.html">☰ Contenu du cours</a>
+    <a class="cds--side-nav__link active" href="concepts.html">◈ Concepts clés</a>
+    <a class="cds--side-nav__link" href="code.html">⟨/⟩ Exemples de code</a>
+  </nav>
+  <main class="cds--content">
+    <div class="breadcrumb"><a href="../index.html">Cours</a> › <a href="index.html">Cours 05b</a> › Concepts clés</div>
+    <h1>Concepts clés</h1>
+    <p class="page-lead">Comparatifs, tableaux de référence et glossaire pour JMS et la messagerie enterprise.</p>
+
+    <h2>Messagerie vs Appels Directs</h2>
+    <div class="cds--data-table-container">
+      <table class="cds--data-table">
+        <thead><tr><th>Aspect</th><th>Appels Directs (REST/EJB)</th><th>Messagerie JMS</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Couplage</strong></td><td>Fort — l'émetteur connaît le récepteur</td><td>Faible — via broker de messages</td></tr>
+          <tr><td><strong>Disponibilité</strong></td><td>Les deux services doivent être actifs</td><td>Découplage temporel — tolérance aux pannes</td></tr>
+          <tr><td><strong>Ordre</strong></td><td>Séquentiel garanti dans un appel</td><td>FIFO par Queue, non garanti sur Topic</td></tr>
+          <tr><td><strong>Scalabilité</strong></td><td>Limitée par le service le plus lent</td><td>Naturelle — plusieurs consommateurs sur une Queue</td></tr>
+          <tr><td><strong>Complexité</strong></td><td>Simple à implémenter</td><td>Infrastructure broker requise</td></tr>
+          <tr><td><strong>Use Case</strong></td><td>Requête/réponse synchrone, CRUD API</td><td>Traitement asynchrone, intégration, événements</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h2>Queue vs Topic</h2>
+    <div class="cds--data-table-container">
+      <table class="cds--data-table">
+        <thead><tr><th>Feature</th><th>Queue (Point-à-Point)</th><th>Topic (Pub/Sub)</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Modèle</strong></td><td>Point-à-Point</td><td>Publish/Subscribe</td></tr>
+          <tr><td><strong>Consommateurs</strong></td><td>Un seul consommateur par message</td><td>Tous les abonnés reçoivent le message</td></tr>
+          <tr><td><strong>Persistance</strong></td><td>Messages conservés jusqu'à consommation</td><td>Dépend du type d'abonnement</td></tr>
+          <tr><td><strong>Abonnement durable</strong></td><td>Non applicable</td><td>Oui — <code>subscriptionDurability="Durable"</code></td></tr>
+          <tr><td><strong>Load balancing</strong></td><td>✅ Naturel entre consommateurs</td><td>❌ Chaque abonné traite tous les messages</td></tr>
+          <tr><td><strong>Rejoue</strong></td><td>Non (message supprimé après ACK)</td><td>Possible avec durable subscription</td></tr>
+          <tr><td><strong>Use Case</strong></td><td>File de tâches, commandes, workflow</td><td>Notifications, broadcast, événements métier</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h2>Types de Messages JMS</h2>
+    <div class="cds--data-table-container">
+      <table class="cds--data-table">
+        <thead><tr><th>Type</th><th>Description</th><th>Use Case</th></tr></thead>
+        <tbody>
+          <tr><td><strong>TextMessage</strong></td><td>Corps de type <code>String</code></td><td>JSON, XML, texte — le plus utilisé</td></tr>
+          <tr><td><strong>ObjectMessage</strong></td><td>Objet Java <code>Serializable</code></td><td>Transfert interne Java-to-Java uniquement</td></tr>
+          <tr><td><strong>MapMessage</strong></td><td>Paires clé/valeur <code>String → primitif</code></td><td>Données structurées portables</td></tr>
+          <tr><td><strong>BytesMessage</strong></td><td>Tableau d'octets <code>byte[]</code></td><td>Données binaires, images, protocoles custom</td></tr>
+          <tr><td><strong>StreamMessage</strong></td><td>Flux de primitifs Java séquentiels</td><td>Protocoles séquentiels, données numériques</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h2>API JMS 2.0 vs 1.x</h2>
+    <div class="cds--data-table-container">
+      <table class="cds--data-table">
+        <thead><tr><th>Opération</th><th>JMS 1.x (ancienne API)</th><th>JMS 2.0 — JMSContext (simplifiée)</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Obtenir la connexion</strong></td><td><code>ConnectionFactory.createConnection()</code></td><td><code>@Inject JMSContext jmsContext</code></td></tr>
+          <tr><td><strong>Créer une session</strong></td><td><code>connection.createSession(false, AUTO_ACKNOWLEDGE)</code></td><td>Inclus dans <code>JMSContext</code></td></tr>
+          <tr><td><strong>Envoyer un message</strong></td><td><code>session.createProducer(dest).send(msg)</code></td><td><code>jmsContext.createProducer().send(dest, body)</code></td></tr>
+          <tr><td><strong>Recevoir un message</strong></td><td><code>session.createConsumer(dest).receive()</code></td><td><code>jmsContext.createConsumer(dest).receiveBody(String.class)</code></td></tr>
+          <tr><td><strong>Fermeture</strong></td><td>Manuelle — <code>producer.close(); session.close(); connection.close()</code></td><td>Automatique — gérée par le conteneur</td></tr>
+          <tr><td><strong>Injection CDI</strong></td><td>❌ Non supportée directement</td><td>✅ <code>@Inject</code> + <code>@JMSConnectionFactory</code></td></tr>
+          <tr><td><strong>Lignes de code (envoi)</strong></td><td>~10 lignes</td><td>1–2 lignes</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h2>Transactions JMS dans un MDB</h2>
+    <div class="cds--data-table-container">
+      <table class="cds--data-table">
+        <thead><tr><th>Aspect</th><th>CMT — Container-Managed Transactions</th><th>BMT — Bean-Managed Transactions</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Gestion</strong></td><td>Déléguée au conteneur — automatique</td><td>Manuelle via <code>UserTransaction</code></td></tr>
+          <tr><td><strong>Annotation</strong></td><td><code>@TransactionAttribute(REQUIRED)</code> (défaut MDB)</td><td><code>@TransactionManagement(BEAN)</code></td></tr>
+          <tr><td><strong>ACK JMS</strong></td><td>Inclus dans la transaction conteneur</td><td>Séparé — géré par <code>ut.begin()/commit()</code></td></tr>
+          <tr><td><strong>Rollback</strong></td><td>Automatique sur exception — message rélivré</td><td>Explicite — <code>ut.rollback()</code> dans le catch</td></tr>
+          <tr><td><strong>Poison message</strong></td><td>Géré par le broker après N tentatives → DLQ</td><td>À gérer manuellement dans le code</td></tr>
+          <tr><td><strong>Recommandé</strong></td><td>✅ Oui — grande majorité des cas</td><td>Cas avancés uniquement</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h2>Glossaire</h2>
+    <div class="cds--data-table-container">
+      <table class="cds--data-table">
+        <thead><tr><th>Terme</th><th>Définition</th></tr></thead>
+        <tbody>
+          <tr><td><strong>JMS</strong></td><td>Jakarta Messaging Service — spécification Jakarta EE définissant une API standard pour la communication asynchrone par messages entre applications</td></tr>
+          <tr><td><strong>Queue</strong></td><td>Destination JMS du modèle Point-à-Point — chaque message est consommé par un seul consommateur ; les messages sont persistés jusqu'à consommation</td></tr>
+          <tr><td><strong>Topic</strong></td><td>Destination JMS du modèle Publish/Subscribe — chaque message publié est distribué à tous les abonnés actifs (ou durables)</td></tr>
+          <tr><td><strong>MDB</strong></td><td>Message-Driven Bean — EJB déclenché automatiquement par l'arrivée d'un message JMS ; implémente <code>MessageListener</code></td></tr>
+          <tr><td><strong>@MessageDriven</strong></td><td>Annotation Jakarta EE déclarant un EJB comme MDB et configurant son abonnement JMS via <code>activationConfig</code></td></tr>
+          <tr><td><strong>Dead Letter Queue</strong></td><td>File de messages non-traitables — reçoit les messages qui ont échoué N fois consécutives ; permet l'analyse et la reprise sans perte</td></tr>
+          <tr><td><strong>JMSContext</strong></td><td>Interface JMS 2.0 combinant Connection et Session en un seul objet injectable — simplifie drastiquement le code producteur/consommateur</td></tr>
+          <tr><td><strong>MessageSelector</strong></td><td>Filtre SQL-like appliqué sur les propriétés des messages pour ne consommer que les messages correspondant à des critères précis</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+  </main>
+</div>
+<footer class="cds--footer">Made with IBM Bob &nbsp;·&nbsp; © 2026 Olivier Planson &nbsp;·&nbsp; ESIPE — Jakarta EE &amp; Microservices</footer>
+</body>
+</html>

@@ -1,0 +1,113 @@
+<!-- © Copyright 2026 Olivier Planson. All rights reserved. Reproduction prohibited. Made with IBM Bob. -->
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>Cours 02b — Concepts clés</title>
+  <link rel="stylesheet" href="../assets/carbon.css"/>
+</head>
+<body>
+<header class="cds--header">
+  <a class="cds--header__name" href="index.html">JSF — JavaServer Faces<span>Cours Jakarta EE</span></a>
+  <a class="cds--header__back" href="../index.html">← Tous les Cours</a>
+</header>
+<div class="cds--shell">
+  <nav class="cds--side-nav">
+    <p class="cds--side-nav__section-title">Cours 02b</p>
+    <a class="cds--side-nav__link" href="index.html">⊙ Vue d'ensemble</a>
+    <a class="cds--side-nav__link" href="slides.html">☰ Contenu du cours</a>
+    <a class="cds--side-nav__link active" href="concepts.html">◈ Concepts clés</a>
+    <a class="cds--side-nav__link" href="code.html">⟨/⟩ Exemples de code</a>
+  </nav>
+  <main class="cds--content">
+    <div class="breadcrumb"><a href="../index.html">Cours</a> › <a href="index.html">Cours 02b</a> › Concepts clés</div>
+    <h1>Concepts clés</h1>
+    <p class="page-lead">Comparatifs, scopes CDI, cycle de vie, composants et glossaire JSF.</p>
+
+    <h2>JSF vs Technologies Web Traditionnelles</h2>
+    <div class="cds--data-table-container">
+      <table class="cds--data-table">
+        <thead><tr><th>Aspect</th><th>JSF</th><th>Servlets / JSP</th><th>Spring MVC</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Paradigme</strong></td><td>Orienté composants</td><td>Orienté requête/réponse</td><td>Orienté action/requête</td></tr>
+          <tr><td><strong>Rendu</strong></td><td>Arbre de composants (UIComponent)</td><td>Scriptlets / JSTL</td><td>Templates (Thymeleaf, etc.)</td></tr>
+          <tr><td><strong>État</strong></td><td>Géré par le framework (ViewState)</td><td>Manuel (session, request)</td><td>Stateless par défaut</td></tr>
+          <tr><td><strong>Complexité initiale</strong></td><td>❌ Élevée</td><td>✅ Faible</td><td>⚠️ Modérée</td></tr>
+          <tr><td><strong>Courbe d'apprentissage</strong></td><td>❌ Importante</td><td>✅ Légère</td><td>⚠️ Modérée</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h2>Scopes des Beans CDI dans JSF</h2>
+    <div class="cds--data-table-container">
+      <table class="cds--data-table">
+        <thead><tr><th>Annotation</th><th>Durée de vie</th><th>Usage typique</th></tr></thead>
+        <tbody>
+          <tr><td><code>@RequestScoped</code></td><td>Durée d'une requête HTTP</td><td>Actions ponctuelles, formulaires simples</td></tr>
+          <tr><td><code>@ViewScoped</code></td><td>Durée d'une vue JSF</td><td>Formulaires avec AJAX, édition en place</td></tr>
+          <tr><td><code>@SessionScoped</code></td><td>Durée d'une session HTTP</td><td>Utilisateur connecté, panier, préférences</td></tr>
+          <tr><td><code>@ApplicationScoped</code></td><td>Durée de l'application</td><td>Caches globaux, données de référence</td></tr>
+          <tr><td><code>@Dependent</code></td><td>Dépend du bean parent</td><td>Beans utilitaires sans état propre</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h2>Phases du Cycle de Vie JSF</h2>
+    <div class="cds--data-table-container">
+      <table class="cds--data-table">
+        <thead><tr><th>#</th><th>Phase</th><th>Description</th><th>Ce qui se passe</th></tr></thead>
+        <tbody>
+          <tr><td>1</td><td><strong>Restore View</strong></td><td>Restauration ou création de la vue</td><td>Reconstruction de l'arbre UIComponent depuis le ViewState ou création d'un nouvel arbre</td></tr>
+          <tr><td>2</td><td><strong>Apply Request Values</strong></td><td>Application des valeurs de la requête</td><td>Chaque composant lit sa valeur depuis les paramètres HTTP et la stocke localement</td></tr>
+          <tr><td>3</td><td><strong>Process Validations</strong></td><td>Exécution des validations</td><td>Validateurs et convertisseurs s'exécutent ; les erreurs sont ajoutées au FacesContext</td></tr>
+          <tr><td>4</td><td><strong>Update Model Values</strong></td><td>Mise à jour du modèle</td><td>Les valeurs validées sont poussées vers les propriétés des beans via les ValueExpressions</td></tr>
+          <tr><td>5</td><td><strong>Invoke Application</strong></td><td>Invocation de l'application</td><td>Les méthodes d'action et action listeners sont exécutés ; l'outcome détermine la navigation</td></tr>
+          <tr><td>6</td><td><strong>Render Response</strong></td><td>Rendu de la réponse</td><td>L'arbre de composants est encodé en HTML et envoyé au client ; le ViewState est sauvegardé</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h2>Composants Clés JSF</h2>
+    <div class="cds--data-table-container">
+      <table class="cds--data-table">
+        <thead><tr><th>Tag</th><th>Namespace</th><th>Rôle</th><th>Exemple d'usage</th></tr></thead>
+        <tbody>
+          <tr><td><code>h:form</code></td><td><code>h:</code></td><td>Formulaire HTML JSF</td><td><code>&lt;h:form id="clientForm"&gt;</code></td></tr>
+          <tr><td><code>h:inputText</code></td><td><code>h:</code></td><td>Champ texte lié au modèle</td><td><code>&lt;h:inputText value="#{bean.name}"/&gt;</code></td></tr>
+          <tr><td><code>h:outputLabel</code></td><td><code>h:</code></td><td>Étiquette pour un champ</td><td><code>&lt;h:outputLabel for="name" value="Nom"/&gt;</code></td></tr>
+          <tr><td><code>h:commandButton</code></td><td><code>h:</code></td><td>Bouton déclenchant une action</td><td><code>&lt;h:commandButton action="#{bean.save}" value="Enregistrer"/&gt;</code></td></tr>
+          <tr><td><code>h:dataTable</code></td><td><code>h:</code></td><td>Tableau depuis une collection</td><td><code>&lt;h:dataTable value="#{bean.list}" var="item"&gt;</code></td></tr>
+          <tr><td><code>h:message</code></td><td><code>h:</code></td><td>Message d'erreur d'un composant</td><td><code>&lt;h:message for="name"/&gt;</code></td></tr>
+          <tr><td><code>f:validateRequired</code></td><td><code>f:</code></td><td>Validation champ obligatoire</td><td><code>&lt;f:validateRequired/&gt;</code></td></tr>
+          <tr><td><code>f:validateLength</code></td><td><code>f:</code></td><td>Validation longueur de chaîne</td><td><code>&lt;f:validateLength minimum="2" maximum="50"/&gt;</code></td></tr>
+          <tr><td><code>f:ajax</code></td><td><code>f:</code></td><td>Comportement AJAX partiel</td><td><code>&lt;f:ajax execute="@form" render="panel"/&gt;</code></td></tr>
+          <tr><td><code>ui:composition</code></td><td><code>ui:</code></td><td>Utilisation d'un template</td><td><code>&lt;ui:composition template="/WEB-INF/template.xhtml"&gt;</code></td></tr>
+          <tr><td><code>ui:define</code></td><td><code>ui:</code></td><td>Définit une zone du template</td><td><code>&lt;ui:define name="content"&gt;</code></td></tr>
+          <tr><td><code>ui:insert</code></td><td><code>ui:</code></td><td>Zone à remplir dans le template</td><td><code>&lt;ui:insert name="content"/&gt;</code></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h2>Glossaire</h2>
+    <div class="cds--data-table-container">
+      <table class="cds--data-table">
+        <thead><tr><th>Terme</th><th>Définition</th></tr></thead>
+        <tbody>
+          <tr><td><strong>JSF</strong></td><td>JavaServer Faces — framework MVC orienté composants pour la construction d'interfaces web Jakarta EE ; spécification Jakarta Faces depuis EE 9</td></tr>
+          <tr><td><strong>Facelets</strong></td><td>Moteur de templating officiel de JSF depuis JSF 2.0 remplaçant JSP ; les fichiers ont l'extension <code>.xhtml</code> et respectent la syntaxe XML</td></tr>
+          <tr><td><strong>Managed Bean</strong></td><td>Bean CDI annoté <code>@Named</code> servant de contrôleur dans JSF ; expose ses propriétés et méthodes à l'Expression Language des vues Facelets</td></tr>
+          <tr><td><strong>EL</strong></td><td>Expression Language — syntaxe <code>#{...}</code> permettant d'accéder aux beans et leurs propriétés depuis les vues JSF ; supporte navigation de propriétés et appels de méthodes</td></tr>
+          <tr><td><strong>faces-config.xml</strong></td><td>Fichier de configuration XML de JSF dans <code>/WEB-INF/</code> permettant de déclarer des règles de navigation explicites, des convertisseurs, validateurs et managed beans (déprécié pour ces derniers)</td></tr>
+          <tr><td><strong>UIComponent</strong></td><td>Classe de base de tous les composants JSF formant l'arbre de composants (Component Tree) — chaque balise JSF comme <code>h:inputText</code> crée une instance UIComponent</td></tr>
+          <tr><td><strong>ValueExpression</strong></td><td>Expression EL de type <code>#{bean.property}</code> permettant de lire et d'écrire (binding bidirectionnel) une valeur entre un composant JSF et un bean CDI</td></tr>
+          <tr><td><strong>ActionEvent</strong></td><td>Événement déclenché par un composant d'action (<code>h:commandButton</code>, <code>h:commandLink</code>) ; traité par les ActionListeners ou les méthodes d'action retournant un outcome de navigation</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+  </main>
+</div>
+<footer class="cds--footer">Made with IBM Bob &nbsp;·&nbsp; © 2026 Olivier Planson &nbsp;·&nbsp; ESIPE — Jakarta EE &amp; Microservices</footer>
+</body>
+</html>

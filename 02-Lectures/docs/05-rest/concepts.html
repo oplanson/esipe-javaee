@@ -1,0 +1,132 @@
+<!-- © Copyright 2026 Olivier Planson. All rights reserved. Reproduction prohibited. Made with IBM Bob. -->
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>Cours 05 — Concepts clés</title>
+  <link rel="stylesheet" href="../assets/carbon.css"/>
+</head>
+<body>
+<header class="cds--header">
+  <a class="cds--header__name" href="index.html">JAX-RS — Services RESTful<span>Cours Jakarta EE</span></a>
+  <a class="cds--header__back" href="../index.html">← Tous les Cours</a>
+</header>
+<div class="cds--shell">
+  <nav class="cds--side-nav">
+    <p class="cds--side-nav__section-title">Cours 05</p>
+    <a class="cds--side-nav__link" href="index.html">⊙ Vue d'ensemble</a>
+    <a class="cds--side-nav__link" href="slides.html">☰ Contenu du cours</a>
+    <a class="cds--side-nav__link active" href="concepts.html">◈ Concepts clés</a>
+    <a class="cds--side-nav__link" href="code.html">⟨/⟩ Exemples de code</a>
+  </nav>
+  <main class="cds--content">
+    <div class="breadcrumb"><a href="../index.html">Cours</a> › <a href="index.html">Cours 05</a> › Concepts clés</div>
+    <h1>Concepts clés</h1>
+    <p class="page-lead">Comparatifs, tableaux de référence et glossaire pour JAX-RS, REST et MicroProfile.</p>
+
+    <h2>REST vs SOAP</h2>
+    <div class="cds--data-table-container">
+      <table class="cds--data-table">
+        <thead><tr><th>Aspect</th><th>REST</th><th>SOAP</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Paradigme</strong></td><td>Style architectural basé sur les ressources</td><td>Protocole de messagerie basé sur les opérations</td></tr>
+          <tr><td><strong>Format</strong></td><td>JSON (majoritaire), XML, texte libre</td><td>XML obligatoire (enveloppe SOAP)</td></tr>
+          <tr><td><strong>Protocole</strong></td><td>HTTP — exploite pleinement les verbes et statuts</td><td>HTTP, SMTP, TCP — HTTP uniquement comme tunnel</td></tr>
+          <tr><td><strong>Verbosité</strong></td><td>✅ Faible — payloads compacts</td><td>⚠️ Élevée — enveloppe XML volumineuse</td></tr>
+          <tr><td><strong>Courbe d'apprentissage</strong></td><td>✅ Faible — conventions intuitives</td><td>⚠️ Élevée — WSDL, WS-Security, WS-*, schémas XSD</td></tr>
+          <tr><td><strong>Performance</strong></td><td>✅ Meilleure — format léger, cache HTTP natif</td><td>⚠️ Plus faible — sérialisation XML coûteuse</td></tr>
+          <tr><td><strong>Cas d'usage</strong></td><td>APIs web, microservices, applications mobiles</td><td>Services d'entreprise legacy, transactions distribuées, contrats formels</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h2>Modèle de Maturité Richardson</h2>
+    <div class="cds--data-table-container">
+      <table class="cds--data-table">
+        <thead><tr><th>Niveau</th><th>Nom</th><th>Caractéristiques</th><th>Exemple URL</th><th>Verbe HTTP</th></tr></thead>
+        <tbody>
+          <tr><td><strong>0</strong></td><td>POX / Plain Old XML</td><td>HTTP comme tunnel, un seul endpoint, RPC-style</td><td><code>POST /api</code></td><td>POST uniquement</td></tr>
+          <tr><td><strong>1</strong></td><td>Ressources</td><td>URIs distinctes par ressource, verbes non respectés</td><td><code>POST /clients/42</code></td><td>POST uniquement</td></tr>
+          <tr><td><strong>2</strong></td><td>Verbes HTTP</td><td>Verbes sémantiques, codes HTTP significatifs</td><td><code>GET /clients/42</code></td><td>GET, POST, PUT, DELETE</td></tr>
+          <tr><td><strong>3</strong></td><td>HATEOAS</td><td>Réponses avec hyperliens, découverte dynamique de l'API</td><td><code>GET /clients/42</code> → liens <code>self</code>, <code>orders</code>, <code>update</code></td><td>GET, POST, PUT, DELETE + links</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h2>Annotations JAX-RS Clés</h2>
+    <div class="cds--data-table-container">
+      <table class="cds--data-table">
+        <thead><tr><th>Annotation</th><th>Description</th><th>Exemple</th></tr></thead>
+        <tbody>
+          <tr><td><code>@Path</code></td><td>Chemin URI d'une ressource ou d'une méthode</td><td><code>@Path("/clients/{id}")</code></td></tr>
+          <tr><td><code>@GET</code></td><td>Méthode HTTP GET — lecture (idempotent)</td><td><code>@GET public List&lt;Client&gt; list()</code></td></tr>
+          <tr><td><code>@POST</code></td><td>Méthode HTTP POST — création</td><td><code>@POST public Response create(ClientDTO dto)</code></td></tr>
+          <tr><td><code>@PUT</code></td><td>Méthode HTTP PUT — remplacement complet (idempotent)</td><td><code>@PUT @Path("/{id}") public Response update(...)</code></td></tr>
+          <tr><td><code>@DELETE</code></td><td>Méthode HTTP DELETE — suppression (idempotent)</td><td><code>@DELETE @Path("/{id}") public Response delete(...)</code></td></tr>
+          <tr><td><code>@PATCH</code></td><td>Méthode HTTP PATCH — mise à jour partielle</td><td><code>@PATCH @Path("/{id}") public Response patch(...)</code></td></tr>
+          <tr><td><code>@PathParam</code></td><td>Extraction d'un segment de l'URI</td><td><code>@PathParam("id") Long id</code></td></tr>
+          <tr><td><code>@QueryParam</code></td><td>Paramètre de la query string</td><td><code>@QueryParam("page") int page</code></td></tr>
+          <tr><td><code>@Produces</code></td><td>Type MIME de la réponse produite</td><td><code>@Produces(MediaType.APPLICATION_JSON)</code></td></tr>
+          <tr><td><code>@Consumes</code></td><td>Type MIME attendu du corps de requête</td><td><code>@Consumes(MediaType.APPLICATION_JSON)</code></td></tr>
+          <tr><td><code>@ApplicationPath</code></td><td>Préfixe global de l'application JAX-RS</td><td><code>@ApplicationPath("/api")</code></td></tr>
+          <tr><td><code>@Provider</code></td><td>Composant d'infrastructure JAX-RS (mapper, filter…)</td><td><code>@Provider public class NotFoundMapper …</code></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h2>Codes de Statut HTTP pour APIs REST</h2>
+    <div class="cds--data-table-container">
+      <table class="cds--data-table">
+        <thead><tr><th>Code</th><th>Signification</th><th>Quand l'utiliser</th></tr></thead>
+        <tbody>
+          <tr><td><strong>200 OK</strong></td><td>Succès avec corps de réponse</td><td>GET, PUT, PATCH réussis avec données retournées</td></tr>
+          <tr><td><strong>201 Created</strong></td><td>Ressource créée avec succès</td><td>POST réussi — toujours inclure l'en-tête <code>Location</code></td></tr>
+          <tr><td><strong>204 No Content</strong></td><td>Succès sans corps de réponse</td><td>DELETE réussi, PUT sans retour de données</td></tr>
+          <tr><td><strong>400 Bad Request</strong></td><td>Requête invalide ou malformée</td><td>Validation Bean Validation échouée, JSON invalide, paramètres manquants</td></tr>
+          <tr><td><strong>401 Unauthorized</strong></td><td>Authentification requise</td><td>Token absent, expiré ou invalide — accompagné de l'en-tête <code>WWW-Authenticate</code></td></tr>
+          <tr><td><strong>403 Forbidden</strong></td><td>Autorisations insuffisantes</td><td>Utilisateur authentifié mais sans les droits sur la ressource</td></tr>
+          <tr><td><strong>404 Not Found</strong></td><td>Ressource introuvable</td><td>ID inexistant, chemin inconnu</td></tr>
+          <tr><td><strong>409 Conflict</strong></td><td>Conflit d'état</td><td>Doublon, optimistic lock conflict, état métier incompatible</td></tr>
+          <tr><td><strong>500 Internal Server Error</strong></td><td>Erreur serveur non gérée</td><td>Exception inattendue — retourner un message générique, pas de stack trace</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h2>REST Client — Comparaison</h2>
+    <div class="cds--data-table-container">
+      <table class="cds--data-table">
+        <thead><tr><th>Aspect</th><th>HttpURLConnection</th><th>JAX-RS Client API</th><th>MicroProfile Rest Client</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Verbosité</strong></td><td>⚠️ Très élevée — code bas niveau</td><td>Moyenne — API fluide mais encore manuelle</td><td>✅ Minimale — interface annotée uniquement</td></tr>
+          <tr><td><strong>Type Safety</strong></td><td>❌ Aucune — tout en String</td><td>Partielle — generics sur <code>Response</code></td><td>✅ Totale — types Java retournés directement</td></tr>
+          <tr><td><strong>Intégration CDI</strong></td><td>❌ Aucune</td><td>❌ Aucune — instanciation manuelle</td><td>✅ Native — <code>@Inject @RestClient</code></td></tr>
+          <tr><td><strong>Configuration</strong></td><td>Dans le code — difficile à externaliser</td><td>Dans le code ou partielle</td><td>✅ <code>microprofile-config.properties</code> — URL, timeout, scope</td></tr>
+          <tr><td><strong>Gestion des erreurs</strong></td><td>Codes HTTP manuels</td><td>Inspection de <code>Response.getStatus()</code></td><td>✅ <code>ResponseExceptionMapper</code> — exceptions Java</td></tr>
+          <tr><td><strong>Recommandé pour</strong></td><td>Code legacy, pas de Jakarta EE</td><td>Cas avancés, construction dynamique</td><td>✅ Microservices Jakarta EE / MicroProfile</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h2>Glossaire</h2>
+    <div class="cds--data-table-container">
+      <table class="cds--data-table">
+        <thead><tr><th>Terme</th><th>Définition</th></tr></thead>
+        <tbody>
+          <tr><td><strong>JAX-RS</strong></td><td>Jakarta RESTful Web Services — spécification Jakarta EE pour la création de services REST via des annotations sur des classes POJO</td></tr>
+          <tr><td><strong>JSON-B</strong></td><td>Jakarta JSON Binding — spécification de sérialisation/désérialisation bidirectionnelle entre objets Java et JSON, intégrée nativement dans Jakarta EE</td></tr>
+          <tr><td><strong>HATEOAS</strong></td><td>Hypermedia As The Engine Of Application State — contrainte REST de niveau 3 stipulant que les réponses contiennent des hyperliens vers les transitions d'état possibles</td></tr>
+          <tr><td><strong>ExceptionMapper</strong></td><td>Interface JAX-RS permettant de transformer une exception Java en réponse HTTP structurée — découple la logique métier du protocole HTTP</td></tr>
+          <tr><td><strong>@Provider</strong></td><td>Annotation JAX-RS marquant une classe comme composant d'infrastructure (ExceptionMapper, MessageBodyWriter, ContainerRequestFilter…) — enregistrement automatique par le runtime</td></tr>
+          <tr><td><strong>@RegisterRestClient</strong></td><td>Annotation MicroProfile Rest Client transformant une interface Java annotée JAX-RS en client HTTP type-safe injectable via CDI</td></tr>
+          <tr><td><strong>OpenAPI</strong></td><td>Spécification standard (anciennement Swagger) pour décrire des APIs REST — MicroProfile OpenAPI génère automatiquement le document depuis les annotations Java</td></tr>
+          <tr><td><strong>Richardson Maturity Model</strong></td><td>Modèle en 4 niveaux (0 à 3) proposé par Leonard Richardson pour mesurer la maturité d'une API REST — niveau 2 (verbes HTTP + codes statut) est le standard pratique</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+  </main>
+</div>
+<footer class="cds--footer">Made with IBM Bob &nbsp;·&nbsp; © 2026 Olivier Planson &nbsp;·&nbsp; ESIPE — Jakarta EE &amp; Microservices</footer>
+</body>
+</html>

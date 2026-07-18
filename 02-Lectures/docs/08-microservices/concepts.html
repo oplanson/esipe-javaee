@@ -1,0 +1,136 @@
+<!-- © Copyright 2026 Olivier Planson. All rights reserved. Reproduction prohibited. Made with IBM Bob. -->
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>Cours 08 — Concepts clés</title>
+  <link rel="stylesheet" href="../assets/carbon.css"/>
+</head>
+<body>
+<header class="cds--header">
+  <a class="cds--header__name" href="index.html">Microservices<span>Cours Jakarta EE</span></a>
+  <a class="cds--header__back" href="../index.html">← Tous les Cours</a>
+</header>
+<div class="cds--shell">
+  <nav class="cds--side-nav">
+    <p class="cds--side-nav__section-title">Cours 08</p>
+    <a class="cds--side-nav__link" href="index.html">⊙ Vue d'ensemble</a>
+    <a class="cds--side-nav__link" href="slides.html">☰ Contenu du cours</a>
+    <a class="cds--side-nav__link active" href="concepts.html">◈ Concepts clés</a>
+    <a class="cds--side-nav__link" href="code.html">⟨/⟩ Exemples de code</a>
+    <a class="cds--side-nav__link" href="patterns.html">⧫ Patterns Microservices</a>
+  </nav>
+  <main class="cds--content">
+    <div class="breadcrumb"><a href="../index.html">Cours</a> › <a href="index.html">Cours 08</a> › Concepts clés</div>
+    <h1>Concepts clés</h1>
+    <p class="page-lead">Comparatifs, patterns, piliers de l'observabilité, théorème CAP et glossaire pour l'architecture microservices.</p>
+
+    <h2>Monolithe vs Microservices</h2>
+    <div class="cds--data-table-container">
+      <table class="cds--data-table">
+        <thead><tr><th>Aspect</th><th>Monolithe</th><th>Microservices</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Déploiement</strong></td><td>Un seul artefact (WAR/EAR) — déploiement tout ou rien</td><td>N services déployés indépendamment — déploiement ciblé</td></tr>
+          <tr><td><strong>Scalabilité</strong></td><td>Horizontale uniquement sur le monolithe entier — coûteuse</td><td>Scalabilité indépendante par service selon la charge réelle</td></tr>
+          <tr><td><strong>Diversité technologique</strong></td><td>Un seul stack technologique contraint pour toute l'application</td><td>Chaque service choisit le stack le plus adapté à son besoin</td></tr>
+          <tr><td><strong>Gestion des données</strong></td><td>Base de données partagée — schéma commun, transactions ACID natives</td><td>Database per Service — eventual consistency, Saga pour les transactions</td></tr>
+          <tr><td><strong>Tests</strong></td><td>Tests d'intégration simples — tout est dans le même processus</td><td>Tests de composants et contract tests nécessaires — plus complexes</td></tr>
+          <tr><td><strong>Taille des équipes</strong></td><td>Toute l'équipe travaille sur le même code — coordination forte nécessaire</td><td>Équipes autonomes par service (2-pizza teams) — loi de Conway</td></tr>
+          <tr><td><strong>Recommandé quand</strong></td><td>Petite équipe, domaine peu complexe, démarrage rapide (MVP)</td><td>Application à forte croissance, multiples équipes, scalabilité différenciée</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h2>Stratégies de Communication</h2>
+    <div class="cds--data-table-container">
+      <table class="cds--data-table">
+        <thead><tr><th>Style</th><th>Protocole</th><th>Latence</th><th>Couplage</th><th>Cas d'usage</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Synchrone REST</strong></td><td>HTTP/1.1 + JSON</td><td>Faible à moyenne</td><td>Temporel fort</td><td>Requêtes nécessitant une réponse immédiate (lecture de données, validation)</td></tr>
+          <tr><td><strong>Synchrone gRPC</strong></td><td>HTTP/2 + Protobuf</td><td>Très faible</td><td>Temporel fort</td><td>Communications haute performance entre services internes</td></tr>
+          <tr><td><strong>Asynchrone JMS</strong></td><td>AMQP / propriétaire</td><td>Variable</td><td>Découplé</td><td>Notifications, traitements différés, workflows métier</td></tr>
+          <tr><td><strong>Asynchrone Kafka</strong></td><td>Binary TCP</td><td>Faible</td><td>Très découplé</td><td>Event streaming, audit log, intégration entre bounded contexts</td></tr>
+          <tr><td><strong>Événements CDI</strong></td><td>In-process</td><td>Négligeable</td><td>Découplé</td><td>Communication interne au service (dans la même JVM)</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h2>Patterns Microservices — Vue d'ensemble</h2>
+    <div class="cds--data-table-container">
+      <table class="cds--data-table">
+        <thead><tr><th>Pattern</th><th>Problème résolu</th><th>Solution</th><th>Quand l'utiliser</th></tr></thead>
+        <tbody>
+          <tr><td><strong>API Gateway</strong></td><td>Les clients doivent connaître l'adresse de chaque service</td><td>Point d'entrée unique qui route les requêtes vers les services internes</td><td>Toujours en production — protection et simplification des APIs exposées</td></tr>
+          <tr><td><strong>Circuit Breaker</strong></td><td>Un service lent ou en panne met en cascade tout le système</td><td>Détecte les pannes et court-circuite les appels vers le service défaillant</td><td>Tous les appels synchrones inter-services en production</td></tr>
+          <tr><td><strong>Saga</strong></td><td>Maintenir la cohérence des données à travers plusieurs services sans transaction distribuée ACID</td><td>Séquence de transactions locales avec transactions compensatoires en cas d'échec</td><td>Toute opération métier multi-services (ex. virement bancaire)</td></tr>
+          <tr><td><strong>Database per Service</strong></td><td>Une base partagée crée du couplage et des conflits de schema entre services</td><td>Chaque service est seul propriétaire de sa base de données</td><td>Toujours — c'est un prérequis de l'indépendance des microservices</td></tr>
+          <tr><td><strong>CQRS</strong></td><td>Le modèle de données optimal pour écrire est différent du modèle optimal pour lire</td><td>Modèles d'écriture (Commands) et de lecture (Queries) séparés</td><td>Services avec lectures fréquentes complexes et écritures transactionnelles</td></tr>
+          <tr><td><strong>Event Sourcing</strong></td><td>Perte de l'historique des changements d'état — impossible de reconstruire l'état passé</td><td>L'état est dérivé de la séquence immuable des événements passés</td><td>Domaines avec audit trail exigé ou besoins de replay des événements</td></tr>
+          <tr><td><strong>Service Discovery</strong></td><td>Les adresses des services changent dynamiquement dans les environnements cloud/containers</td><td>Registre de services permettant de localiser dynamiquement les instances disponibles</td><td>Environnements dynamiques avec scaling automatique (cloud, Kubernetes)</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h2>Piliers de l'Observabilité</h2>
+    <div class="cds--data-table-container">
+      <table class="cds--data-table">
+        <thead><tr><th>Pilier</th><th>Outil</th><th>Ce qu'il mesure</th><th>Endpoint</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Métriques</strong></td><td>MicroProfile Metrics + Prometheus + Grafana</td><td>Compteurs, jauges, histogrammes — latence, erreurs, saturation (RED method)</td><td><code>GET /metrics</code></td></tr>
+          <tr><td><strong>Logging structuré</strong></td><td>SLF4J + Logstash + Elasticsearch + Kibana (ELK)</td><td>Événements applicatifs contextualisés avec correlation ID, niveau, service, timestamp</td><td>Sortie standard collectée par Logstash ou Fluentd</td></tr>
+          <tr><td><strong>Tracing distribué</strong></td><td>MicroProfile OpenTracing + Jaeger ou Zipkin</td><td>Parcours des requêtes entre services — spans, durées, dépendances</td><td>Agent Jaeger UDP 6831 / HTTP 14268</td></tr>
+          <tr><td><strong>Health Checks</strong></td><td>MicroProfile Health</td><td>État liveness et readiness de chaque service — consommé par Kubernetes</td><td><code>GET /health</code>, <code>/health/live</code>, <code>/health/ready</code></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h2>CAP Theorem</h2>
+    <div class="cds--data-table-container">
+      <table class="cds--data-table">
+        <thead><tr><th>Propriété</th><th>Description</th><th>Systèmes CP (sacrifient A)</th><th>Systèmes AP (sacrifient C)</th></tr></thead>
+        <tbody>
+          <tr>
+            <td><strong>C — Consistency</strong></td>
+            <td>Tous les nœuds voient les mêmes données au même instant. Chaque lecture reçoit les données les plus récentes ou une erreur.</td>
+            <td>MongoDB (en mode strict), HBase, Zookeeper</td>
+            <td>—</td>
+          </tr>
+          <tr>
+            <td><strong>A — Availability</strong></td>
+            <td>Chaque requête reçoit une réponse (sans garantie d'être à jour). Le système reste disponible même si certains nœuds sont en panne.</td>
+            <td>—</td>
+            <td>Cassandra, CouchDB, DynamoDB</td>
+          </tr>
+          <tr>
+            <td><strong>P — Partition Tolerance</strong></td>
+            <td>Le système continue à fonctionner malgré des partitions réseau entre les nœuds. Toujours requis en production.</td>
+            <td>✅ Requis</td>
+            <td>✅ Requis</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h2>Glossaire</h2>
+    <div class="cds--data-table-container">
+      <table class="cds--data-table">
+        <thead><tr><th>Terme</th><th>Définition</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Microservice</strong></td><td>Service applicatif autonome avec responsabilité unique, déployable indépendamment, possédant sa propre base de données et communiquant via des interfaces légères</td></tr>
+          <tr><td><strong>API Gateway</strong></td><td>Point d'entrée unique de l'architecture microservices — gère le routing, l'authentification, le rate limiting et l'agrégation des réponses</td></tr>
+          <tr><td><strong>Circuit Breaker</strong></td><td>Pattern de résilience détectant les pannes d'un service et court-circuitant les appels pour éviter les effets de cascade — états : CLOSED, OPEN, HALF-OPEN</td></tr>
+          <tr><td><strong>Saga Pattern</strong></td><td>Gestion des transactions distribuées par une séquence de transactions locales avec compensation — variantes : choreography (événements) et orchestration (coordinateur)</td></tr>
+          <tr><td><strong>CQRS</strong></td><td>Command Query Responsibility Segregation — séparation des modèles de lecture et d'écriture pour optimiser indépendamment les performances et la cohérence</td></tr>
+          <tr><td><strong>Event Sourcing</strong></td><td>Persistence de l'état d'une entité sous forme de séquence immuable d'événements — l'état courant est recalculé en rejouant les événements depuis le début</td></tr>
+          <tr><td><strong>Service Mesh</strong></td><td>Infrastructure réseau dédiée à la communication inter-services — gère TLS mutuel, retries, circuit breaking, tracing au niveau proxy (ex. Istio, Linkerd)</td></tr>
+          <tr><td><strong>Eventual Consistency</strong></td><td>Propriété d'un système distribué garantissant que si aucune nouvelle mise à jour n'est effectuée, toutes les répliques convergeront finalement vers la même valeur</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+  </main>
+</div>
+<footer class="cds--footer">Made with IBM Bob &nbsp;·&nbsp; © 2026 Olivier Planson &nbsp;·&nbsp; ESIPE — Jakarta EE &amp; Microservices</footer>
+</body>
+</html>

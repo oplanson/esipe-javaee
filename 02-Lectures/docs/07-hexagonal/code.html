@@ -1,0 +1,499 @@
+<!-- © Copyright 2026 Olivier Planson. All rights reserved. Reproduction prohibited. Made with IBM Bob. -->
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>Cours 07 — Exemples de code</title>
+  <link rel="stylesheet" href="../assets/carbon.css"/>
+</head>
+<body>
+<header class="cds--header">
+  <a class="cds--header__name" href="index.html">Architecture Hexagonale<span>Cours Jakarta EE</span></a>
+  <a class="cds--header__back" href="../index.html">← Tous les Cours</a>
+</header>
+<div class="cds--shell">
+  <nav class="cds--side-nav">
+    <p class="cds--side-nav__section-title">Cours 07</p>
+    <a class="cds--side-nav__link" href="index.html">⊙ Vue d'ensemble</a>
+    <a class="cds--side-nav__link" href="slides.html">☰ Contenu du cours</a>
+    <a class="cds--side-nav__link" href="concepts.html">◈ Concepts clés</a>
+    <a class="cds--side-nav__link active" href="code.html">⟨/⟩ Exemples de code</a>
+    <a class="cds--side-nav__link" href="architecture.html">⬡ Architecture Hexagonale</a>
+  </nav>
+  <main class="cds--content">
+    <div class="breadcrumb"><a href="../index.html">Cours</a> › <a href="index.html">Cours 07</a> › Code</div>
+    <h1>Exemples de code</h1>
+    <p class="page-lead">Extraits de code Java illustrant les ports primaires et secondaires, les adapters REST et JPA, le service applicatif et les tests avec mock adapter.</p>
+
+    <h2>Port Primaire — Interface Use Case</h2>
+    <div class="code-block-wrap">
+      <span class="code-lang">java</span>
+      <pre><code>// Package : com.bank.domain.transfer
+// Port primaire — interface use case dans le DOMAINE (aucune annotation Jakarta EE)
+
+package com.bank.domain.transfer;
+
+import com.bank.domain.account.AccountId;
+import com.bank.domain.shared.Money;
+import java.util.UUID;
+
+/**
+ * Port primaire : expose le use case de virement monétaire.
+ * Implémenté par MoneyTransferService dans la couche application.
+ * Appelé par TransferRestAdapter dans la couche infrastructure.
+ */
+public interface MoneyTransferUseCase {
+
+    TransferResult transferMoney(TransferCommand command);
+
+}
+
+// Commande immuable — record Java 17
+record TransferCommand(
+    AccountId fromAccountId,
+    AccountId toAccountId,
+    Money amount,
+    UUID requestId
+) {
+    // Validation dans le constructeur compact
+    public TransferCommand {
+        if (amount == null || amount.isNegativeOrZero()) {
+            throw new IllegalArgumentException("Transfer amount must be positive");
+        }
+        if (fromAccountId.equals(toAccountId)) {
+            throw new IllegalArgumentException("Cannot transfer to the same account");
+        }
+    }
+}
+
+// Résultat immuable — record Java 17
+record TransferResult(
+    UUID transferId,
+    String status,
+    Money amountTransferred
+) {}
+</code></pre>
+    </div>
+
+    <h2>Port Secondaire — Interface Repository</h2>
+    <div class="code-block-wrap">
+      <span class="code-lang">java</span>
+      <pre><code>// Package : com.bank.domain.account
+// Port secondaire — interface repository dans le DOMAINE (aucune annotation JPA)
+
+package com.bank.domain.account;
+
+import com.bank.domain.client.ClientId;
+import java.util.List;
+import java.util.Optional;
+
+/**
+ * Port secondaire : contrat d'accès aux comptes.
+ * Défini dans le domaine — implémenté par JpaAccountAdapter dans l'infrastructure.
+ * Le domaine ne sait PAS si la persistance est JPA, MongoDB ou in-memory.
+ */
+public interface AccountPort {
+
+    /**
+     * Retrouve un compte par son identifiant.
+     */
+    Optional&lt;Account&gt; findById(AccountId accountId);
+
+    /**
+     * Retrouve tous les comptes d'un client.
+     */
+    List&lt;Account&gt; findByClientId(ClientId clientId);
+
+    /**
+     * Sauvegarde un compte (création ou mise à jour).
+     */
+    Account save(Account account);
+
+    /**
+     * Vérifie l'existence d'un compte.
+     */
+    boolean exists(AccountId accountId);
+
+}
+</code></pre>
+    </div>
+
+    <h2>Adapter Primaire — REST Resource</h2>
+    <div class="code-block-wrap">
+      <span class="code-lang">java</span>
+      <pre><code>// Package : com.bank.infrastructure.web
+// Adapter primaire — ressource JAX-RS dans l'INFRASTRUCTURE
+
+package com.bank.infrastructure.web;
+
+import com.bank.domain.account.AccountId;
+import com.bank.domain.shared.Money;
+import com.bank.domain.transfer.MoneyTransferUseCase;
+import com.bank.domain.transfer.TransferCommand;
+import com.bank.domain.transfer.TransferResult;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
+import jakarta.ws.rs.*;
+import jakarta.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.Response;
+import java.math.BigDecimal;
+import java.util.UUID;
+
+@Path("/transfers")
+@ApplicationScoped
+@Produces(MediaType.APPLICATION_JSON)
+@Consumes(MediaType.APPLICATION_JSON)
+public class TransferRestAdapter {
+
+    // Injection du PORT PRIMAIRE (interface domaine) — pas de l'implémentation concrète
+    @Inject
+    private MoneyTransferUseCase moneyTransferUseCase;
+
+    @POST
+    public Response transferMoney(TransferRequest dto) {
+        // Mapping DTO → Command domaine
+        TransferCommand command = toCommand(dto);
+
+        // Délégation au port primaire — l'adapter ne contient PAS de logique métier
+        TransferResult result = moneyTransferUseCase.transferMoney(command);
+
+        return Response.ok(result).build();
+    }
+
+    // Mapping DTO HTTP → Command domaine — responsabilité de l'adapter
+    private TransferCommand toCommand(TransferRequest dto) {
+        return new TransferCommand(
+            new AccountId(dto.fromAccountId()),
+            new AccountId(dto.toAccountId()),
+            Money.of(dto.amount(), dto.currency()),
+            UUID.randomUUID()
+        );
+    }
+
+}
+
+// DTO d'entrée REST — record Java 17
+record TransferRequest(
+    String fromAccountId,
+    String toAccountId,
+    BigDecimal amount,
+    String currency
+) {}
+</code></pre>
+    </div>
+
+    <h2>Adapter Secondaire — JPA Repository</h2>
+    <div class="code-block-wrap">
+      <span class="code-lang">java</span>
+      <pre><code>// Package : com.bank.infrastructure.persistence
+// Adapter secondaire — implémentation JPA du port AccountPort dans l'INFRASTRUCTURE
+
+package com.bank.infrastructure.persistence;
+
+import com.bank.domain.account.Account;
+import com.bank.domain.account.AccountId;
+import com.bank.domain.account.AccountPort;
+import com.bank.domain.client.ClientId;
+import com.bank.domain.shared.Money;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
+import jakarta.persistence.TypedQuery;
+import java.util.List;
+import java.util.Optional;
+
+@ApplicationScoped
+public class JpaAccountAdapter implements AccountPort {
+
+    // EntityManager JPA — uniquement dans l'infrastructure, jamais dans le domaine
+    @PersistenceContext
+    private EntityManager entityManager;
+
+    @Override
+    public Optional&lt;Account&gt; findById(AccountId accountId) {
+        AccountJpaEntity entity = entityManager.find(AccountJpaEntity.class, accountId.value());
+        return Optional.ofNullable(entity).map(this::toDomain);
+    }
+
+    @Override
+    public List&lt;Account&gt; findByClientId(ClientId clientId) {
+        TypedQuery&lt;AccountJpaEntity&gt; query = entityManager.createNamedQuery(
+            "Account.findByClientId", AccountJpaEntity.class
+        );
+        query.setParameter("clientId", clientId.value());
+        return query.getResultList().stream().map(this::toDomain).toList();
+    }
+
+    @Override
+    public Account save(Account account) {
+        AccountJpaEntity entity = toJpa(account);
+        AccountJpaEntity saved = entityManager.merge(entity);
+        return toDomain(saved);
+    }
+
+    @Override
+    public boolean exists(AccountId accountId) {
+        return entityManager.find(AccountJpaEntity.class, accountId.value()) != null;
+    }
+
+    // Mapping entité JPA → entité domaine
+    private Account toDomain(AccountJpaEntity e) {
+        return new Account(
+            new AccountId(e.getId()),
+            new ClientId(e.getClientId()),
+            Money.of(e.getBalance(), e.getCurrency()),
+            e.getStatus()
+        );
+    }
+
+    // Mapping entité domaine → entité JPA
+    private AccountJpaEntity toJpa(Account account) {
+        AccountJpaEntity e = new AccountJpaEntity();
+        e.setId(account.id().value());
+        e.setClientId(account.clientId().value());
+        e.setBalance(account.balance().amount());
+        e.setCurrency(account.balance().currency());
+        e.setStatus(account.status());
+        return e;
+    }
+
+}
+</code></pre>
+    </div>
+
+    <h2>Service Application — Use Case</h2>
+    <div class="code-block-wrap">
+      <span class="code-lang">java</span>
+      <pre><code>// Package : com.bank.application
+// Service applicatif — implémente le port primaire MoneyTransferUseCase
+// Orchestre le domaine et les ports secondaires
+
+package com.bank.application;
+
+import com.bank.domain.account.Account;
+import com.bank.domain.account.AccountId;
+import com.bank.domain.account.AccountPort;
+import com.bank.domain.transfer.MoneyTransferUseCase;
+import com.bank.domain.transfer.TransferCommand;
+import com.bank.domain.transfer.TransferResult;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
+import jakarta.transaction.Transactional;
+import java.util.UUID;
+
+@ApplicationScoped
+public class MoneyTransferService implements MoneyTransferUseCase {
+
+    // Injection du PORT SECONDAIRE (interface domaine AccountPort)
+    // CDI injecte JpaAccountAdapter à l'exécution — le service ne connaît pas JPA
+    @Inject
+    private AccountPort accountPort;
+
+    @Override
+    @Transactional
+    public TransferResult transferMoney(TransferCommand command) {
+        // 1. Charger les entités via le port secondaire
+        Account source = accountPort.findById(command.fromAccountId())
+            .orElseThrow(() -&gt; new AccountNotFoundException(command.fromAccountId()));
+
+        Account target = accountPort.findById(command.toAccountId())
+            .orElseThrow(() -&gt; new AccountNotFoundException(command.toAccountId()));
+
+        // 2. Appliquer la logique métier sur les entités domaine
+        //    Les règles métier (solde suffisant, compte actif) sont dans le domaine
+        source.debitAccount(command.amount());
+        target.creditAccount(command.amount());
+
+        // 3. Persister via le port secondaire
+        accountPort.save(source);
+        accountPort.save(target);
+
+        // 4. Retourner le résultat
+        return new TransferResult(
+            UUID.randomUUID(),
+            "COMPLETED",
+            command.amount()
+        );
+    }
+
+}
+</code></pre>
+    </div>
+
+    <h2>Tests avec Mock Adapter</h2>
+    <div class="code-block-wrap">
+      <span class="code-lang">java</span>
+      <pre><code>// Mock adapter in-memory — implémente AccountPort sans JPA, sans base de données
+package com.bank.application;
+
+import com.bank.domain.account.Account;
+import com.bank.domain.account.AccountId;
+import com.bank.domain.account.AccountPort;
+import com.bank.domain.client.ClientId;
+import java.util.*;
+
+/**
+ * Mock adapter in-memory pour les tests unitaires.
+ * Implémente AccountPort sans aucune dépendance technique.
+ */
+class AccountPortMock implements AccountPort {
+
+    private final Map&lt;AccountId, Account&gt; store = new HashMap&lt;&gt;();
+
+    // Méthode utilitaire pour pré-charger des données dans le mock
+    void givenAccount(Account account) {
+        store.put(account.id(), account);
+    }
+
+    @Override
+    public Optional&lt;Account&gt; findById(AccountId accountId) {
+        return Optional.ofNullable(store.get(accountId));
+    }
+
+    @Override
+    public List&lt;Account&gt; findByClientId(ClientId clientId) {
+        return store.values().stream()
+            .filter(a -&gt; a.clientId().equals(clientId))
+            .toList();
+    }
+
+    @Override
+    public Account save(Account account) {
+        store.put(account.id(), account);
+        return account;
+    }
+
+    @Override
+    public boolean exists(AccountId accountId) {
+        return store.containsKey(accountId);
+    }
+}
+</code></pre>
+    </div>
+    <div class="code-block-wrap">
+      <span class="code-lang">java</span>
+      <pre><code>// Test du use case — POJO pur, aucun Spring, aucun CDI, aucun serveur
+package com.bank.application;
+
+import com.bank.domain.account.Account;
+import com.bank.domain.account.AccountId;
+import com.bank.domain.client.ClientId;
+import com.bank.domain.shared.Money;
+import com.bank.domain.transfer.TransferCommand;
+import com.bank.domain.transfer.TransferResult;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import java.math.BigDecimal;
+import java.util.UUID;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+
+class MoneyTransferServiceTest {
+
+    private AccountPortMock accountPort;
+    private MoneyTransferService service;
+
+    @BeforeEach
+    void setUp() {
+        accountPort = new AccountPortMock();
+        service = new MoneyTransferService();
+        // Injection manuelle — pas besoin de CDI dans les tests unitaires
+        service.accountPort = accountPort;
+    }
+
+    @Test
+    void shouldTransferMoneyBetweenAccounts() {
+        // GIVEN
+        AccountId sourceId = new AccountId("ACC-001");
+        AccountId targetId = new AccountId("ACC-002");
+        Money initialBalance = Money.of(new BigDecimal("500.00"), "EUR");
+        Money transferAmount = Money.of(new BigDecimal("100.00"), "EUR");
+
+        accountPort.givenAccount(Account.open(sourceId, new ClientId("CLI-1"), initialBalance));
+        accountPort.givenAccount(Account.open(targetId, new ClientId("CLI-2"), initialBalance));
+
+        TransferCommand command = new TransferCommand(
+            sourceId, targetId, transferAmount, UUID.randomUUID()
+        );
+
+        // WHEN
+        TransferResult result = service.transferMoney(command);
+
+        // THEN
+        assertThat(result.status()).isEqualTo("COMPLETED");
+        assertThat(accountPort.findById(sourceId).get().balance())
+            .isEqualTo(Money.of(new BigDecimal("400.00"), "EUR"));
+        assertThat(accountPort.findById(targetId).get().balance())
+            .isEqualTo(Money.of(new BigDecimal("600.00"), "EUR"));
+    }
+
+    @Test
+    void shouldRejectTransferWhenInsufficientBalance() {
+        // GIVEN
+        AccountId sourceId = new AccountId("ACC-003");
+        AccountId targetId = new AccountId("ACC-004");
+        Money smallBalance = Money.of(new BigDecimal("10.00"), "EUR");
+        Money largeAmount  = Money.of(new BigDecimal("500.00"), "EUR");
+
+        accountPort.givenAccount(Account.open(sourceId, new ClientId("CLI-3"), smallBalance));
+        accountPort.givenAccount(Account.open(targetId, new ClientId("CLI-4"), smallBalance));
+
+        TransferCommand command = new TransferCommand(
+            sourceId, targetId, largeAmount, UUID.randomUUID()
+        );
+
+        // THEN — exception métier levée par le domaine
+        assertThatThrownBy(() -&gt; service.transferMoney(command))
+            .isInstanceOf(InsufficientBalanceException.class);
+    }
+
+}
+</code></pre>
+    </div>
+
+    <h2>Structure de Packages</h2>
+    <div class="code-block-wrap">
+      <span class="code-lang">text</span>
+      <pre><code>src/main/java/com/bank/
+│
+├── domain/                             ← DOMAINE — Java pur, aucune dépendance externe
+│   ├── account/
+│   │   ├── Account.java                  Entité aggregate root
+│   │   ├── AccountId.java                Value Object identifiant
+│   │   ├── AccountStatus.java            Enum statut
+│   │   └── AccountPort.java              Port secondaire (interface repository)
+│   ├── transfer/
+│   │   ├── MoneyTransferUseCase.java     Port primaire (interface use case)
+│   │   ├── TransferCommand.java          Record commande
+│   │   └── TransferResult.java           Record résultat
+│   ├── client/
+│   │   ├── ClientId.java                 Value Object
+│   │   └── Client.java                   Entité
+│   └── shared/
+│       └── Money.java                    Value Object montant + devise
+│
+├── application/                        ← APPLICATION — orchestration, use cases
+│   ├── MoneyTransferService.java         Implémente MoneyTransferUseCase (@ApplicationScoped)
+│   ├── AccountQueryService.java          Implémente AccountQueryUseCase
+│   └── AccountNotFoundException.java    Exception applicative
+│
+└── infrastructure/                     ← INFRASTRUCTURE — adapters techniques
+    ├── persistence/                      Adapters secondaires (driven)
+    │   ├── JpaAccountAdapter.java        Implements AccountPort (JPA)
+    │   ├── AccountJpaEntity.java         Entité JPA (@Entity — UNIQUEMENT ici)
+    │   └── AccountJpaMapper.java         Utilitaire de mapping domaine ↔ JPA
+    ├── web/                              Adapters primaires (driving)
+    │   ├── TransferRestAdapter.java      Ressource JAX-RS (@Path)
+    │   └── TransferRequest.java          DTO HTTP entrant
+    └── messaging/                        Adapters JMS
+        └── TransferEventPublisher.java   Producteur JMS (port secondaire)
+</code></pre>
+    </div>
+
+  </main>
+</div>
+<footer class="cds--footer">Made with IBM Bob &nbsp;·&nbsp; © 2026 Olivier Planson &nbsp;·&nbsp; ESIPE — Jakarta EE &amp; Microservices</footer>
+</body>
+</html>

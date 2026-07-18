@@ -1,0 +1,250 @@
+<!-- © Copyright 2026 Olivier Planson. All rights reserved. Reproduction prohibited. Made with IBM Bob. -->
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>Cours 04 — Contenu du cours</title>
+  <link rel="stylesheet" href="../assets/carbon.css"/>
+</head>
+<body>
+<header class="cds--header">
+  <a class="cds--header__name" href="index.html">CDI — Injection de Dépendances<span>Cours Jakarta EE</span></a>
+  <a class="cds--header__back" href="../index.html">← Tous les Cours</a>
+</header>
+<div class="cds--shell">
+  <nav class="cds--side-nav">
+    <p class="cds--side-nav__section-title">Cours 04</p>
+    <a class="cds--side-nav__link" href="index.html">⊙ Vue d'ensemble</a>
+    <a class="cds--side-nav__link active" href="slides.html">☰ Contenu du cours</a>
+    <a class="cds--side-nav__link" href="concepts.html">◈ Concepts clés</a>
+    <a class="cds--side-nav__link" href="code.html">⟨/⟩ Exemples de code</a>
+  </nav>
+  <main class="cds--content">
+    <div class="breadcrumb"><a href="../index.html">Cours</a> › <a href="index.html">Cours 04</a> › Contenu</div>
+    <h1>Contenu du cours</h1>
+    <p class="page-lead">Toutes les sections — cliquez sur un titre pour développer.</p>
+
+    <details open>
+      <summary>💉 Qu'est-ce que l'Injection de Dépendances ?</summary>
+      <div class="slide-content">
+        <h3>Le problème sans DI — l'opérateur <code>new</code></h3>
+        <p>Sans injection de dépendances, les classes créent elles-mêmes leurs dépendances avec <code>new</code>, engendrant un couplage fort difficile à tester et à maintenir.</p>
+        <ul>
+          <li><strong>Couplage fort</strong> — la classe connaît l'implémentation concrète de chaque dépendance</li>
+          <li><strong>Testabilité nulle</strong> — impossible de substituer une fausse implémentation (mock)</li>
+          <li><strong>Violation du SRP</strong> — la classe gère à la fois sa logique et la création de ses dépendances</li>
+          <li><strong>Rigidité</strong> — changer d'implémentation exige de modifier chaque classe consommatrice</li>
+        </ul>
+        <h3>La solution CDI</h3>
+        <p>CDI (Contexts and Dependency Injection) délègue la création et la gestion des objets au <strong>conteneur Jakarta EE</strong>. Les dépendances sont injectées automatiquement.</p>
+        <ul>
+          <li>Le conteneur instancie, configure et injecte chaque bean</li>
+          <li>Le cycle de vie est géré selon le <strong>scope</strong> déclaré</li>
+          <li>L'injection se fait par type — type-safe et vérifié à la compilation</li>
+        </ul>
+        <h3>Bénéfices</h3>
+        <ul>
+          <li>✅ <strong>Testabilité</strong> — injection de mocks dans les tests unitaires</li>
+          <li>✅ <strong>Couplage faible</strong> — les classes dépendent d'interfaces, pas d'implémentations</li>
+          <li>✅ <strong>Maintenabilité</strong> — changement d'implémentation sans modifier les consommateurs</li>
+          <li>✅ <strong>Réutilisabilité</strong> — beans partagés et réutilisés à travers l'application</li>
+        </ul>
+        <img src="../../images/04-cdi-dependency-injection-diagram-1.png" alt="CDI Dependency Injection Overview"/>
+      </div>
+    </details>
+
+    <details>
+      <summary>🔄 Scopes CDI</summary>
+      <div class="slide-content">
+        <p>Le <strong>scope</strong> détermine la durée de vie et la portée d'un bean CDI. Choisir le bon scope est essentiel pour la cohérence et les performances.</p>
+        <h3>@ApplicationScoped</h3>
+        <ul>
+          <li>Une <strong>seule instance</strong> partagée par toute l'application (équivalent singleton)</li>
+          <li>Créée au premier accès, détruite à l'arrêt de l'application</li>
+          <li>Idéal pour : services stateless, caches, configurations globales</li>
+        </ul>
+        <h3>@RequestScoped</h3>
+        <ul>
+          <li>Une nouvelle instance <strong>par requête HTTP</strong></li>
+          <li>Créée au début de la requête, détruite à la fin</li>
+          <li>Idéal pour : traitement de données de formulaire, opérations unitaires</li>
+        </ul>
+        <h3>@SessionScoped</h3>
+        <ul>
+          <li>Une instance <strong>par session utilisateur</strong> (doit implémenter <code>Serializable</code>)</li>
+          <li>Partagée pendant toute la durée de la session HTTP</li>
+          <li>Idéal pour : panier d'achat, préférences utilisateur, état de connexion</li>
+        </ul>
+        <h3>@Dependent</h3>
+        <ul>
+          <li>Instance liée au <strong>cycle de vie du bean injecteur</strong> (pseudo-scope)</li>
+          <li>Scope par défaut si aucun scope n'est déclaré</li>
+          <li>Idéal pour : value objects, helpers, beans légers</li>
+        </ul>
+        <h3>Callbacks de cycle de vie</h3>
+        <ul>
+          <li><code>@PostConstruct</code> — appelé après l'injection, avant la première utilisation</li>
+          <li><code>@PreDestroy</code> — appelé avant la destruction du bean, pour libérer les ressources</li>
+        </ul>
+      </div>
+    </details>
+
+    <details>
+      <summary>💡 Injection avec @Inject</summary>
+      <div class="slide-content">
+        <h3>Field Injection</h3>
+        <p>L'annotation <code>@Inject</code> est placée directement sur le champ. Simple mais déconseillé pour la testabilité.</p>
+        <h3>Constructor Injection (préféré)</h3>
+        <p>Les dépendances sont déclarées comme paramètres du constructeur. Méthode <strong>recommandée</strong> car :</p>
+        <ul>
+          <li>Rend les dépendances explicites et obligatoires</li>
+          <li>Facilite les tests unitaires sans conteneur</li>
+          <li>Permet les champs <code>final</code> (immutabilité)</li>
+          <li>Détecte les cycles de dépendances à la compilation</li>
+        </ul>
+        <h3>Method Injection</h3>
+        <p>L'injection se fait via une méthode setter annotée <code>@Inject</code>. Utile pour les dépendances optionnelles.</p>
+        <img src="../../images/04-cdi-dependency-injection-diagram-2.png" alt="CDI Injection Types"/>
+      </div>
+    </details>
+
+    <details>
+      <summary>🏷️ Qualificateurs CDI</summary>
+      <div class="slide-content">
+        <p>Lorsque plusieurs implémentations d'une interface coexistent, CDI ne sait pas laquelle injecter. Les <strong>qualificateurs</strong> résolvent cette ambiguïté.</p>
+        <h3>Annotation @Qualifier personnalisée</h3>
+        <ul>
+          <li>Créer une annotation méta-annotée <code>@Qualifier</code>, <code>@Retention(RUNTIME)</code>, <code>@Target({METHOD, FIELD, PARAMETER, TYPE})</code></li>
+          <li>Appliquer sur l'implémentation <em>et</em> sur le point d'injection</li>
+        </ul>
+        <h3>Résolution d'ambiguïté</h3>
+        <ul>
+          <li>CDI résout l'injection par <strong>type + qualificateurs</strong></li>
+          <li>Sans qualificateur, <code>@Default</code> est implicitement appliqué</li>
+          <li>Plusieurs qualificateurs peuvent être combinés sur un même point d'injection</li>
+        </ul>
+        <h3>@Alternative pour les implémentations switchables</h3>
+        <ul>
+          <li><code>@Alternative</code> marque une implémentation inactive par défaut</li>
+          <li>Activée dans <code>beans.xml</code> ou via <code>@Priority</code> globalement</li>
+          <li>Idéal pour les implémentations de test, de stub ou par environnement</li>
+        </ul>
+      </div>
+    </details>
+
+    <details>
+      <summary>🏭 Producer Methods</summary>
+      <div class="slide-content">
+        <p>Les <strong>Producer Methods</strong> permettent de créer des beans CDI dont la création nécessite une logique particulière — par exemple un <code>EntityManager</code> ou un objet configuré depuis un fichier externe.</p>
+        <h3>@Produces</h3>
+        <ul>
+          <li>Méthode annotée <code>@Produces</code> — le type de retour devient un bean CDI injectable</li>
+          <li>Peut porter un scope (<code>@ApplicationScoped</code>, <code>@RequestScoped</code>…)</li>
+          <li>Peut accepter des paramètres injectés par CDI</li>
+        </ul>
+        <h3>Producers avec configuration</h3>
+        <ul>
+          <li>Permet d'initialiser des ressources tierces (DataSource, Logger, configuration externe)</li>
+          <li>La logique de construction est centralisée dans une seule méthode</li>
+        </ul>
+        <h3>Producers avec qualificateurs</h3>
+        <ul>
+          <li>Un producer peut porter un qualificateur pour distinguer plusieurs instances du même type</li>
+        </ul>
+        <h3>@Disposer pour le cleanup</h3>
+        <ul>
+          <li>Méthode annotée <code>@Disposes</code> appelée automatiquement lors de la destruction du bean produit</li>
+          <li>Permet de fermer proprement les connexions, flux ou ressources</li>
+        </ul>
+      </div>
+    </details>
+
+    <details>
+      <summary>🔍 Intercepteurs</summary>
+      <div class="slide-content">
+        <p>Les <strong>intercepteurs CDI</strong> permettent d'ajouter un comportement transversal (cross-cutting concerns) sans modifier le code métier.</p>
+        <h3>@InterceptorBinding</h3>
+        <ul>
+          <li>Annotation personnalisée méta-annotée <code>@InterceptorBinding</code>, <code>@Retention(RUNTIME)</code>, <code>@Target({METHOD, TYPE})</code></li>
+          <li>Appliquée sur la méthode ou la classe à intercepter</li>
+        </ul>
+        <h3>Implémentation @Interceptor</h3>
+        <ul>
+          <li>Classe annotée <code>@Interceptor</code> + l'annotation de binding</li>
+          <li>Activé dans <code>beans.xml</code> ou via <code>@Priority</code></li>
+        </ul>
+        <h3>@AroundInvoke</h3>
+        <ul>
+          <li>Méthode d'interception appelée autour de l'invocation</li>
+          <li>Reçoit un <code>InvocationContext</code> — peut lire/modifier les paramètres, le résultat</li>
+          <li>Doit appeler <code>context.proceed()</code> pour continuer l'invocation</li>
+        </ul>
+        <h3>Exemples d'utilisation</h3>
+        <ul>
+          <li>✅ <strong>Logging</strong> — journaliser l'entrée/sortie de chaque méthode</li>
+          <li>✅ <strong>Performance</strong> — mesurer le temps d'exécution</li>
+          <li>✅ <strong>Sécurité</strong> — vérifier les autorisations avant l'exécution</li>
+          <li>✅ <strong>Cache</strong> — court-circuiter l'appel si le résultat est en cache</li>
+        </ul>
+      </div>
+    </details>
+
+    <details>
+      <summary>💳 Transactions @Transactional</summary>
+      <div class="slide-content">
+        <p><code>@Transactional</code> (CDI / Jakarta Transactions) permet une <strong>gestion déclarative des transactions</strong> sans code de gestion explicite.</p>
+        <h3>Types de propagation</h3>
+        <ul>
+          <li><strong>REQUIRED</strong> (défaut) — utilise la transaction existante ou en crée une nouvelle</li>
+          <li><strong>REQUIRES_NEW</strong> — suspend la transaction courante et crée une nouvelle transaction indépendante</li>
+          <li><strong>MANDATORY</strong> — exige qu'une transaction active existe (exception sinon)</li>
+          <li><strong>SUPPORTS</strong> — utilise la transaction courante si elle existe, sinon s'exécute sans</li>
+          <li><strong>NOT_SUPPORTED</strong> — suspend toute transaction active, s'exécute toujours sans transaction</li>
+          <li><strong>NEVER</strong> — lève une exception si une transaction est active</li>
+        </ul>
+        <h3>Stratégies de rollback</h3>
+        <ul>
+          <li>Rollback automatique sur <code>RuntimeException</code> et <code>Error</code></li>
+          <li><code>rollbackOn</code> — spécifier des exceptions supplémentaires déclenchant le rollback</li>
+          <li><code>dontRollbackOn</code> — exceptions à ne pas considérer pour le rollback</li>
+          <li>Rollback programmatique : <code>context.setRollbackOnly()</code></li>
+        </ul>
+        <img src="../../images/04-cdi-dependency-injection-diagram-3.png" alt="CDI Transactional Propagation"/>
+      </div>
+    </details>
+
+    <details>
+      <summary>📡 CDI Events</summary>
+      <div class="slide-content">
+        <p>Le système d'<strong>événements CDI</strong> implémente le pattern Observer de façon type-safe et sans couplage direct entre producteur et consommateur.</p>
+        <h3>@Observes</h3>
+        <ul>
+          <li>Méthode observatrice annotée <code>@Observes</code> sur le paramètre de l'événement</li>
+          <li>Appelée automatiquement par CDI lors du déclenchement de l'événement</li>
+          <li>Peut avoir une priorité avec <code>@Priority</code></li>
+        </ul>
+        <h3>@Inject Event&lt;T&gt;</h3>
+        <ul>
+          <li>Injecter <code>Event&lt;MonEvent&gt;</code> pour déclencher un événement</li>
+          <li><code>event.fire(payload)</code> — déclenchement synchrone</li>
+          <li><code>event.fireAsync(payload)</code> — déclenchement asynchrone (retourne un <code>CompletionStage</code>)</li>
+        </ul>
+        <h3>Événements synchrones et asynchrones</h3>
+        <ul>
+          <li><strong>Synchrone</strong> — tous les observateurs s'exécutent dans le même thread, avant le retour de <code>fire()</code></li>
+          <li><strong>Asynchrone</strong> — les observateurs s'exécutent dans un thread séparé, non bloquant</li>
+        </ul>
+        <h3>Qualificateurs d'événements</h3>
+        <ul>
+          <li>Les qualificateurs filtrent les observateurs — un observateur ne reçoit que les événements correspondant à ses qualificateurs</li>
+          <li><code>event.select(new AnnotationLiteral&lt;MonQualificateur&gt;(){}).fire(payload)</code></li>
+        </ul>
+      </div>
+    </details>
+
+  </main>
+</div>
+<footer class="cds--footer">Made with IBM Bob &nbsp;·&nbsp; © 2026 Olivier Planson &nbsp;·&nbsp; ESIPE — Jakarta EE &amp; Microservices</footer>
+</body>
+</html>

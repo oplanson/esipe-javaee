@@ -1,0 +1,116 @@
+<!-- © Copyright 2026 Olivier Planson. All rights reserved. Reproduction prohibited. Made with IBM Bob. -->
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>Cours 02 — Concepts clés</title>
+  <link rel="stylesheet" href="../assets/carbon.css"/>
+</head>
+<body>
+<header class="cds--header">
+  <a class="cds--header__name" href="index.html">Servlets &amp; JSP<span>Cours Jakarta EE</span></a>
+  <a class="cds--header__back" href="../index.html">← Tous les Cours</a>
+</header>
+<div class="cds--shell">
+  <nav class="cds--side-nav">
+    <p class="cds--side-nav__section-title">Cours 02</p>
+    <a class="cds--side-nav__link" href="index.html">⊙ Vue d'ensemble</a>
+    <a class="cds--side-nav__link" href="slides.html">☰ Contenu du cours</a>
+    <a class="cds--side-nav__link active" href="concepts.html">◈ Concepts clés</a>
+    <a class="cds--side-nav__link" href="code.html">⟨/⟩ Exemples de code</a>
+  </nav>
+  <main class="cds--content">
+    <div class="breadcrumb"><a href="../index.html">Cours</a> › <a href="index.html">Cours 02</a> › Concepts clés</div>
+    <h1>Concepts clés</h1>
+    <p class="page-lead">Comparatifs, définitions et bonnes pratiques pour Servlets, JSP et MVC.</p>
+
+    <h2>Servlet vs JSP</h2>
+    <div class="cds--data-table-container">
+      <table class="cds--data-table">
+        <thead><tr><th>Aspect</th><th>Servlet</th><th>JSP</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Focus</strong></td><td>Code Java</td><td>Balisage HTML</td></tr>
+          <tr><td><strong>Idéal pour</strong></td><td>Logique métier, contrôle</td><td>Présentation</td></tr>
+          <tr><td><strong>Syntaxe</strong></td><td>Java pur</td><td>HTML + Java</td></tr>
+          <tr><td><strong>Compilation</strong></td><td>Explicite</td><td>Automatique</td></tr>
+          <tr><td><strong>Rôle MVC</strong></td><td>Controller</td><td>View</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h2>JSTL vs Scriptlets JSP</h2>
+    <div class="cds--data-table-container">
+      <table class="cds--data-table">
+        <thead><tr><th>Critère</th><th>Scriptlets <code>&lt;% %&gt;</code></th><th>JSTL + EL</th></tr></thead>
+        <tbody>
+          <tr><td>Lisibilité</td><td>❌ Mauvaise</td><td>✅ Excellente</td></tr>
+          <tr><td>Séparation présentation/logique</td><td>❌ Mélangée</td><td>✅ Séparée</td></tr>
+          <tr><td>Testabilité</td><td>❌ Difficile</td><td>✅ Facile</td></tr>
+          <tr><td>Maintenance</td><td>❌ Complexe</td><td>✅ Simple</td></tr>
+          <tr><td>Recommandé</td><td>❌ Non</td><td>✅ Oui</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h2>Méthodes HTTP et opérations CRUD</h2>
+    <div class="cds--data-table-container">
+      <table class="cds--data-table">
+        <thead><tr><th>Méthode HTTP</th><th>Opération CRUD</th><th>Idempotent</th><th>Corps</th></tr></thead>
+        <tbody>
+          <tr><td><code>GET</code></td><td>Read (lecture)</td><td>✅ Oui</td><td>Non</td></tr>
+          <tr><td><code>POST</code></td><td>Create (création)</td><td>❌ Non</td><td>Oui</td></tr>
+          <tr><td><code>PUT</code></td><td>Update complet</td><td>✅ Oui</td><td>Oui</td></tr>
+          <tr><td><code>PATCH</code></td><td>Update partiel</td><td>❌ Non</td><td>Oui</td></tr>
+          <tr><td><code>DELETE</code></td><td>Delete (suppression)</td><td>✅ Oui</td><td>Non</td></tr>
+          <tr><td><code>HEAD</code></td><td>Metadata seulement</td><td>✅ Oui</td><td>Non</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h2>Types de Health Checks MicroProfile</h2>
+    <div class="cds--data-table-container">
+      <table class="cds--data-table">
+        <thead><tr><th>Type</th><th>Annotation</th><th>Endpoint</th><th>Question</th></tr></thead>
+        <tbody>
+          <tr><td>Liveness</td><td><code>@Liveness</code></td><td><code>/health/live</code></td><td>L'app est-elle vivante ?</td></tr>
+          <tr><td>Readiness</td><td><code>@Readiness</code></td><td><code>/health/ready</code></td><td>L'app est-elle prête ?</td></tr>
+          <tr><td>Startup</td><td><code>@Startup</code></td><td><code>/health/started</code></td><td>L'app a-t-elle démarré ?</td></tr>
+          <tr><td>Global</td><td>—</td><td><code>/health</code></td><td>Tous les checks</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h2>Ordonnancement des Filtres</h2>
+    <div class="cds--data-table-container">
+      <table class="cds--data-table">
+        <thead><tr><th>Méthode</th><th>Garantie d'ordre</th><th>Recommandé pour</th></tr></thead>
+        <tbody>
+          <tr><td>Annotation <code>@WebFilter</code></td><td>❌ Non garanti</td><td>Filtres simples</td></tr>
+          <tr><td>Déclaration <code>web.xml</code></td><td>✅ Ordre explicite</td><td>Configuration complexe</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h2>Glossaire</h2>
+    <div class="cds--data-table-container">
+      <table class="cds--data-table">
+        <thead><tr><th>Terme</th><th>Définition</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Servlet</strong></td><td>Classe Java qui gère des requêtes HTTP côté serveur, compilée et exécutée dans un conteneur web</td></tr>
+          <tr><td><strong>JSP</strong></td><td>JavaServer Pages — technologie permettant de créer des pages HTML dynamiques avec du Java embarqué, compilées en servlets</td></tr>
+          <tr><td><strong>EL</strong></td><td>Expression Language — syntaxe simplifiée <code>${expression}</code> pour accéder aux données dans JSP</td></tr>
+          <tr><td><strong>JSTL</strong></td><td>JSP Standard Tag Library — bibliothèque de tags pour l'itération, les conditions, le formatage (alternative aux scriptlets)</td></tr>
+          <tr><td><strong>MVC</strong></td><td>Model-View-Controller — pattern architectural séparant données (Model), présentation (View) et contrôle (Controller)</td></tr>
+          <tr><td><strong>PRG</strong></td><td>Post-Redirect-Get — pattern évitant les doubles soumissions de formulaire en redirigeant après un POST</td></tr>
+          <tr><td><strong>Filter Chain</strong></td><td>Chaîne de filtres traversée dans l'ordre avant/après le servlet — chaque filtre appelle <code>chain.doFilter()</code></td></tr>
+          <tr><td><strong>JSESSIONID</strong></td><td>Nom du cookie standard Jakarta EE stockant l'identifiant de session côté client</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+  </main>
+</div>
+<footer class="cds--footer">Made with IBM Bob &nbsp;·&nbsp; © 2026 Olivier Planson &nbsp;·&nbsp; ESIPE — Jakarta EE &amp; Microservices</footer>
+</body>
+</html>

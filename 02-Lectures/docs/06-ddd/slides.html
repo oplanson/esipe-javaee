@@ -1,0 +1,277 @@
+<!-- © Copyright 2026 Olivier Planson. All rights reserved. Reproduction prohibited. Made with IBM Bob. -->
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>Cours 06 — Contenu du cours</title>
+  <link rel="stylesheet" href="../assets/carbon.css"/>
+</head>
+<body>
+<header class="cds--header">
+  <a class="cds--header__name" href="index.html">Domain-Driven Design<span>Cours Jakarta EE</span></a>
+  <a class="cds--header__back" href="../index.html">← Tous les Cours</a>
+</header>
+<div class="cds--shell">
+  <nav class="cds--side-nav">
+    <p class="cds--side-nav__section-title">Cours 06</p>
+    <a class="cds--side-nav__link" href="index.html">⊙ Vue d'ensemble</a>
+    <a class="cds--side-nav__link active" href="slides.html">☰ Contenu du cours</a>
+    <a class="cds--side-nav__link" href="concepts.html">◈ Concepts clés</a>
+    <a class="cds--side-nav__link" href="code.html">⟨/⟩ Exemples de code</a>
+  </nav>
+  <main class="cds--content">
+    <div class="breadcrumb"><a href="../index.html">Cours</a> › <a href="index.html">Cours 06</a> › Contenu</div>
+    <h1>Contenu du cours</h1>
+    <p class="page-lead">Toutes les sections — cliquez sur un titre pour développer.</p>
+
+    <details open>
+      <summary>🧭 Qu'est-ce que le DDD ?</summary>
+      <div class="slide-content">
+        <h3>Philosophie — le code doit refléter le métier</h3>
+        <p>Le Domain-Driven Design (DDD), introduit par Eric Evans en 2003, place le <strong>domaine métier</strong> au cœur de la conception logicielle. Le code ne doit pas être une simple traduction technique de besoins — il doit <em>parler</em> le même langage que les experts métier.</p>
+        <ul>
+          <li><strong>Le modèle de domaine</strong> est la représentation vivante du métier dans le code</li>
+          <li><strong>La complexité accidentelle</strong> (infrastructure, frameworks) est séparée de la <strong>complexité essentielle</strong> (règles métier)</li>
+          <li>Le code exprime clairement les invariants, contraintes et comportements du domaine</li>
+          <li>Tout changement de règle métier se traduit directement par un changement dans le modèle</li>
+        </ul>
+        <h3>Collaboration dev/expert métier</h3>
+        <ul>
+          <li>DDD exige une collaboration continue entre développeurs et experts du domaine</li>
+          <li>Les experts métier apportent la connaissance des règles, des cas limites et des priorités</li>
+          <li>Les développeurs structurent cette connaissance dans un modèle logiciel cohérent</li>
+          <li>Des sessions de <strong>Event Storming</strong> ou de <strong>Domain Storytelling</strong> facilitent cette collaboration</li>
+        </ul>
+        <h3>Langage ubiquitaire partagé</h3>
+        <p>Le <strong>Ubiquitous Language</strong> (langage ubiquitaire) est un vocabulaire commun utilisé par tous les membres de l'équipe — développeurs ET experts métier — dans les conversations, la documentation ET le code.</p>
+        <ul>
+          <li>Les noms de classes, méthodes et variables reflètent les termes métier (ex. <code>Account</code>, <code>debitAccount()</code>)</li>
+          <li>Éliminer les termes ambigus et les doubles définitions</li>
+          <li>Évolue avec la compréhension du domaine</li>
+        </ul>
+        <h3>DDD stratégique vs tactique</h3>
+        <ul>
+          <li><strong>DDD Stratégique</strong> — décomposer le problème en sous-domaines et Bounded Contexts, cartographier leurs relations (Context Map)</li>
+          <li><strong>DDD Tactique</strong> — implémenter chaque Bounded Context avec les building blocks (Entités, Value Objects, Aggregats, Repositories, Domain Services, Domain Events)</li>
+        </ul>
+        <img src="../../images/06-domain-driven-design-diagram-1.png" alt="DDD Overview — philosophie et organisation"/>
+      </div>
+    </details>
+
+    <details>
+      <summary>🗺️ Pattern Stratégique — Bounded Context</summary>
+      <div class="slide-content">
+        <h3>Sous-domaine avec son propre modèle et langage</h3>
+        <p>Un <strong>Bounded Context</strong> est une frontière explicite à l'intérieur de laquelle un modèle de domaine particulier s'applique. Au sein de cette frontière, chaque terme du langage ubiquitaire a une définition précise et unique.</p>
+        <ul>
+          <li>Le même mot peut avoir des significations différentes dans deux Bounded Contexts (ex. <em>Client</em> dans le contexte Compte vs. Marketing)</li>
+          <li>Chaque Bounded Context a son propre modèle objet, sa propre base de données, ses propres équipes</li>
+          <li>Les frontières évitent la corruption du modèle par des concepts appartenant à d'autres contextes</li>
+        </ul>
+        <h3>Context Map — relations entre contexts</h3>
+        <p>La <strong>Context Map</strong> est un diagramme qui documente les relations entre les différents Bounded Contexts d'un système.</p>
+        <ul>
+          <li>Visualise les dépendances, les flux de données et les points d'intégration</li>
+          <li>Révèle les relations de pouvoir et de priorité entre équipes</li>
+          <li>Guide les décisions d'architecture sur la communication inter-contextes</li>
+        </ul>
+        <h3>Patterns d'intégration entre contextes</h3>
+        <ul>
+          <li><strong>ACL (Anti-Corruption Layer)</strong> — couche de traduction qui protège le modèle local des concepts étrangers, évite la contamination du modèle cible</li>
+          <li><strong>Shared Kernel</strong> — sous-ensemble de modèle partagé entre deux équipes, nécessite une coordination forte pour évoluer</li>
+          <li><strong>Partnership</strong> — deux équipes évoluent ensemble en synchronisant leur planning, pour des contexts fortement couplés</li>
+          <li><strong>Customer/Supplier</strong> — une équipe fournit un service, l'autre le consomme</li>
+          <li><strong>Conformist</strong> — l'équipe aval adopte le modèle de l'équipe amont sans adapter</li>
+          <li><strong>Published Language</strong> — langage d'échange formalisé (ex. JSON Schema, OpenAPI)</li>
+        </ul>
+        <img src="../../images/06-domain-driven-design-diagram-2.png" alt="Bounded Context et Context Map"/>
+      </div>
+    </details>
+
+    <details>
+      <summary>🧱 Patterns Tactiques — Entité et Value Object</summary>
+      <div class="slide-content">
+        <h3>Entity — identité unique, mutabilité</h3>
+        <p>Une <strong>Entité</strong> est un objet de domaine qui possède une <strong>identité unique</strong> persistant dans le temps, même si ses attributs changent.</p>
+        <ul>
+          <li>L'identité est représentée par un identifiant explicite (<code>AccountId</code>, <code>ClientId</code>)</li>
+          <li>Deux entités sont <strong>égales si et seulement si</strong> leurs identifiants sont égaux (equals/hashCode basé sur l'id)</li>
+          <li>Une entité peut être <strong>mutable</strong> — son état change au fil du temps (solde d'un compte, statut)</li>
+          <li>Elle encapsule ses invariants métier — les règles qui doivent toujours être respectées</li>
+          <li>Exemples : <code>Account</code>, <code>Client</code>, <code>Order</code>, <code>Employee</code></li>
+        </ul>
+        <h3>Value Object — pas d'identité, immuabilité, égalité par valeur</h3>
+        <p>Un <strong>Value Object</strong> est un objet de domaine qui représente un concept sans identité propre — sa valeur <em>est</em> son identité.</p>
+        <ul>
+          <li><strong>Pas d'identifiant</strong> — deux Value Objects avec les mêmes attributs sont équivalents</li>
+          <li><strong>Immuabilité</strong> — un Value Object ne change jamais après sa création (utiliser <code>final</code>)</li>
+          <li><strong>Égalité par valeur</strong> — equals/hashCode basés sur tous les attributs</li>
+          <li>Remplaçable — on ne modifie pas un VO, on en crée un nouveau</li>
+          <li>Exemples : <code>Money</code>, <code>AccountNumber</code>, <code>Address</code>, <code>DateRange</code>, <code>Email</code></li>
+        </ul>
+        <h3>Comparaison Entité vs Value Object</h3>
+        <ul>
+          <li><strong>Entité</strong> : <em>Qui</em> est-il ? — son identité compte</li>
+          <li><strong>Value Object</strong> : <em>Qu'est-ce que c'est</em> ? — sa valeur compte</li>
+          <li>Règle : si vous pouvez remplacer un objet par un autre ayant les mêmes attributs sans impact métier → c'est un Value Object</li>
+        </ul>
+        <img src="../../images/06-domain-driven-design-diagram-3.png" alt="Entity vs Value Object"/>
+      </div>
+    </details>
+
+    <details>
+      <summary>🔒 Pattern Tactique — Aggregate</summary>
+      <div class="slide-content">
+        <h3>Racine d'agrégat et invariants métier</h3>
+        <p>Un <strong>Aggregate</strong> est un cluster d'objets de domaine (Entités + Value Objects) traité comme une unité cohérente. L'<strong>Aggregate Root</strong> (racine) est l'unique point d'entrée pour toute modification.</p>
+        <ul>
+          <li>Les invariants métier sont garantis à l'intérieur des frontières de l'aggregate</li>
+          <li>Toute modification passe obligatoirement par la racine — jamais directement sur les objets internes</li>
+          <li>L'aggregate est chargé et sauvegardé comme une seule unité transactionnelle</li>
+        </ul>
+        <h3>Référence par ID à d'autres agrégats</h3>
+        <ul>
+          <li>Un aggregate ne doit <strong>jamais</strong> contenir de référence directe à un autre aggregate root</li>
+          <li>On référence un autre aggregate par son identifiant uniquement (<code>ClientId clientId</code>, pas <code>Client client</code>)</li>
+          <li>Cela maintient des frontières transactionnelles claires et évite les couplages implicites</li>
+        </ul>
+        <h3>Règles de conception des Aggregates</h3>
+        <ul>
+          <li>✅ <strong>Protéger les invariants métier</strong> — l'aggregate valide ses propres règles</li>
+          <li>✅ <strong>Taille réduite</strong> — un aggregate doit rester petit (éviter les god objects)</li>
+          <li>✅ <strong>Cohérence transactionnelle</strong> — une transaction = un aggregate modifié</li>
+          <li>✅ <strong>Modifier un seul aggregate par transaction</strong> — coordonner plusieurs aggregates via Domain Events</li>
+        </ul>
+        <h3>Aggregate bancaire Account/Transaction</h3>
+        <p>Dans l'application bancaire, <code>Account</code> est l'aggregate root qui contient une liste de <code>Transaction</code>. Toute opération de crédit ou débit passe par <code>Account</code>, qui vérifie les invariants (solde positif, limite de transaction, statut actif).</p>
+        <img src="../../images/06-domain-driven-design-diagram-4.png" alt="Aggregate Account avec Transactions"/>
+      </div>
+    </details>
+
+    <details>
+      <summary>🗄️ Repository Pattern</summary>
+      <div class="slide-content">
+        <h3>Abstraction d'accès aux données</h3>
+        <p>Le <strong>Repository</strong> est une abstraction qui simule une collection d'objets en mémoire pour les aggregates. Il sépare la logique métier des détails d'accès aux données.</p>
+        <ul>
+          <li>Le domaine ne connaît que l'interface du repository — jamais l'implémentation concrète</li>
+          <li>Le repository masque la complexité de la persistance (JPA, NoSQL, API externe)</li>
+          <li>Facilite les tests unitaires — on peut substituer une implémentation en mémoire</li>
+        </ul>
+        <h3>Interface dans le domaine</h3>
+        <ul>
+          <li>L'interface est définie dans la couche domaine (<code>domain.port</code> ou <code>domain.repository</code>)</li>
+          <li>Elle parle le langage du domaine : <code>findById(AccountId)</code>, <code>findByClient(ClientId)</code>, <code>save(Account)</code></li>
+          <li>Un repository existe par aggregate root — pas un repository générique pour toutes les entités</li>
+        </ul>
+        <h3>Implémentation dans l'infrastructure</h3>
+        <ul>
+          <li>L'implémentation concrète (<code>JpaAccountRepository</code>) vit dans la couche infrastructure</li>
+          <li>Elle utilise JPA, JDBC, MongoDB ou tout autre mécanisme de persistance</li>
+          <li>Injectée via CDI — le domaine ne voit jamais l'implémentation concrète</li>
+        </ul>
+        <h3>Patron de collection d'objets</h3>
+        <ul>
+          <li>Le repository se comporte comme un <code>Set</code> ou une <code>Collection</code> d'aggregates</li>
+          <li>Méthodes typiques : <code>findById</code>, <code>findAll</code>, <code>save</code> (add/update), <code>delete</code></li>
+          <li>Pas de méthodes de requête complexe dans l'interface — utiliser des Specifications ou des Query Objects si nécessaire</li>
+        </ul>
+      </div>
+    </details>
+
+    <details>
+      <summary>⚡ Domain Services et Domain Events</summary>
+      <div class="slide-content">
+        <h3>Service de domaine pour opérations sans entité naturelle</h3>
+        <p>Un <strong>Domain Service</strong> encapsule une logique métier qui n'appartient naturellement à aucune Entité ou Value Object — par exemple une opération impliquant plusieurs aggregates.</p>
+        <ul>
+          <li>Un service de domaine est stateless — il ne conserve pas d'état entre les appels</li>
+          <li>Exemple : un transfert d'argent implique deux comptes — ni <code>AccountA</code> ni <code>AccountB</code> n'est responsable de l'opération complète</li>
+          <li>Nommé selon le verbe métier : <code>MoneyTransferService</code>, <code>FraudDetectionService</code></li>
+          <li>À distinguer des Services Applicatifs (orchestration) et des Services Techniques (infrastructure)</li>
+        </ul>
+        <h3>Domain Event — fait métier passé</h3>
+        <p>Un <strong>Domain Event</strong> représente quelque chose d'important qui s'est produit dans le domaine — c'est un fait passé, immuable, nommé au passé : <code>TransferCompleted</code>, <code>AccountOpened</code>, <code>PaymentFailed</code>.</p>
+        <ul>
+          <li>Les Domain Events découplent les aggregates — un aggregate publie un événement, d'autres réagissent</li>
+          <li>Permettent la cohérence éventuelle entre aggregates sans transaction distribuée</li>
+          <li>Immuables — contiennent toutes les informations nécessaires à la réaction</li>
+        </ul>
+        <h3>Publication et observation avec CDI (@ApplicationScoped)</h3>
+        <ul>
+          <li>Jakarta CDI Events (<code>Event&lt;T&gt;</code>) sont le mécanisme naturel en Jakarta EE</li>
+          <li>Le publisher injecte <code>Event&lt;TransferCompletedEvent&gt;</code> et appelle <code>fire()</code></li>
+          <li>Les observateurs utilisent <code>@Observes</code> pour réagir de manière déclarée</li>
+          <li>Pattern adapté pour les événements synchrones intra-JVM</li>
+        </ul>
+      </div>
+    </details>
+
+    <details>
+      <summary>🏗️ Architecture en Couches DDD</summary>
+      <div class="slide-content">
+        <h3>Les 4 couches de l'architecture DDD</h3>
+        <ul>
+          <li><strong>Domain</strong> — le cœur : Entités, Value Objects, Aggregates, Domain Services, Interfaces de Repository, Domain Events. Aucune dépendance vers l'extérieur.</li>
+          <li><strong>Application</strong> — orchestre les cas d'usage : Application Services, Command Handlers, DTOs. Coordonne les aggregates et appelle les Domain Services.</li>
+          <li><strong>Infrastructure</strong> — implémentations concrètes : JPA Repositories, Message Brokers, clients HTTP, adaptateurs techniques.</li>
+          <li><strong>Presentation</strong> — points d'entrée : JAX-RS resources, JSF controllers, CLI. Traduit les requêtes en commandes applicatives.</li>
+        </ul>
+        <h3>Structure de packages recommandée</h3>
+        <ul>
+          <li><code>com.esipe.bank.domain</code> — entités, VOs, aggregates, interfaces</li>
+          <li><code>com.esipe.bank.domain.event</code> — domain events</li>
+          <li><code>com.esipe.bank.application</code> — application services, use cases</li>
+          <li><code>com.esipe.bank.infrastructure.jpa</code> — repositories JPA</li>
+          <li><code>com.esipe.bank.presentation.rest</code> — JAX-RS resources</li>
+        </ul>
+        <h3>Dépendances vers l'intérieur (Dependency Rule)</h3>
+        <ul>
+          <li>Le domaine ne dépend de rien — ni de Jakarta EE, ni de JPA, ni d'aucun framework</li>
+          <li>L'application dépend du domaine</li>
+          <li>L'infrastructure dépend du domaine et de l'application (implémente les interfaces)</li>
+          <li>La présentation dépend de l'application</li>
+          <li>L'inversion de dépendances (DIP) permet à l'infrastructure d'implémenter les interfaces du domaine</li>
+        </ul>
+      </div>
+    </details>
+
+    <details>
+      <summary>🔄 Refactorisation vers DDD — Application Bancaire</summary>
+      <div class="slide-content">
+        <h3>Modèle anémique vs modèle riche</h3>
+        <p>Le <strong>Modèle Anémique</strong> (anti-pattern) est un objet qui ne contient que des getters/setters sans logique métier — la logique est éparpillée dans des services. Le <strong>Modèle Riche</strong> encapsule la logique dans les entités elles-mêmes.</p>
+        <ul>
+          <li><strong>Anémique</strong> : <code>account.setBalance(newBalance)</code> — aucune règle vérifiée</li>
+          <li><strong>Riche</strong> : <code>account.debitAccount(amount)</code> — vérifie solde, statut, invariants</li>
+        </ul>
+        <h3>Avant refactoring — code procédural</h3>
+        <ul>
+          <li>Classe <code>Account</code> avec uniquement des champs et des getters/setters</li>
+          <li>Service <code>BankingService</code> contenant toute la logique de débit, crédit, validation</li>
+          <li>Duplication de règles métier à travers plusieurs services</li>
+          <li>Règles métier invisibles — pas de méthode exprimant l'intention</li>
+        </ul>
+        <h3>Après refactoring — modèle riche DDD</h3>
+        <ul>
+          <li><code>AccountId</code> — Value Object pour l'identité</li>
+          <li><code>Money</code> — Value Object immuable avec opérations arithmétiques</li>
+          <li><code>AccountNumber</code> — Value Object avec validation et génération</li>
+          <li><code>Account</code> — Entity/Aggregate Root avec méthodes métier (<code>debitAccount</code>, <code>creditAccount</code>)</li>
+          <li>Règles métier centralisées dans l'aggregate — impossibilité de créer un état invalide</li>
+        </ul>
+        <h3>Value Objects Money et AccountNumber refactorisés</h3>
+        <ul>
+          <li><code>Money</code> remplace <code>BigDecimal</code> nu — ajoute la devise, les opérations typées et les validations</li>
+          <li><code>AccountNumber</code> remplace <code>String</code> nu — format validé, génération centralisée</li>
+          <li>Impossible de confondre un montant avec un numéro de compte dans le code — type safety maximale</li>
+        </ul>
+      </div>
+    </details>
+
+  </main>
+</div>
+<footer class="cds--footer">Made with IBM Bob &nbsp;·&nbsp; © 2026 Olivier Planson &nbsp;·&nbsp; ESIPE — Jakarta EE &amp; Microservices</footer>
+</body>
+</html>
