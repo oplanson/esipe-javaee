@@ -161,6 +161,9 @@ By the end of this lecture, you will be able to:
 
 > **⭐ This course targets Jakarta EE 10** — newer versions exist but are not yet widely adopted in production.
 
+<details>
+<summary>📝 Original Mermaid Code (click to expand)</summary>
+
 ```mermaid
 timeline
     title Jakarta EE — Evolution from J2EE to Jakarta EE 11
@@ -196,6 +199,11 @@ timeline
              : Data API, Concurrency 3.1
 ```
 
+</details>
+
+![width:70%](images/01-intro-jakartaee-microprofile-diagram-1.png)
+
+
 
 ---
 
@@ -212,6 +220,9 @@ timeline
 ### Timeline:
 
 > **⭐ This course targets MicroProfile 6.0** — the latest stable release aligned with Jakarta EE 10 Core Profile.
+
+<details>
+<summary>📝 Original Mermaid Code (click to expand)</summary>
 
 ```mermaid
 timeline
@@ -247,6 +258,11 @@ timeline
              : Telemetry 2.1, OpenAPI 4.1
 ```
 
+</details>
+
+![width:70%](images/01-intro-jakartaee-microprofile-diagram-2.png)
+
+
 
 ---
 
@@ -267,6 +283,9 @@ timeline
 
 ## 🤝 Jakarta EE + MicroProfile Together
 
+<details>
+<summary>📝 Original Mermaid Code (click to expand)</summary>
+
 ```mermaid
 graph TB
     A[Your Application] --> B[MicroProfile APIs]
@@ -285,6 +304,11 @@ graph TB
     style F fill:#43e97b,color:#0e6027
     style G fill:#defbe6,color:#0e6027
 ```
+
+</details>
+
+![width:70%](images/01-intro-jakartaee-microprofile-diagram-3.png)
+
 
 **Best Practice:** Use Jakarta EE for core enterprise features + MicroProfile for cloud-native capabilities
 
