@@ -424,14 +424,22 @@ header.site-header {
   flex-direction: column;
 }
 .mermaid-graph__node {
-  padding: .4rem .9rem;
+  padding: .45rem 1rem;
   border: 1.5px solid #e0e0e0;
   border-radius: 6px;
-  font-size: .78rem;
+  font-size: .82rem;
   font-weight: 600;
   text-align: center;
-  min-width: 7rem;
+  min-width: 8rem;
   line-height: 1.3;
+}
+.mermaid-graph__node--dotted {
+  border: 1.5px dashed currentColor;
+  opacity: .9;
+  font-size: .78rem;
+}
+.mermaid-graph__row--overlay {
+  margin-bottom: .1rem;
 }
 .mermaid-graph__arrows {
   font-size: 1.1rem;
@@ -440,6 +448,17 @@ header.site-header {
   line-height: 1;
   padding: .1rem 0;
   width: 100%;
+}
+.mermaid-graph__arrows--dotted {
+  font-size: .7rem;
+  letter-spacing: .15em;
+  color: #a8a8a8;
+  padding: 0;
+}
+/* Wider graph container when it's the main content */
+.slide .mermaid-graph {
+  width: 100%;
+  max-width: 100%;
 }
 
 /* ── Navigation buttons ── */

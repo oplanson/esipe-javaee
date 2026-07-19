@@ -332,18 +332,16 @@ function renderMermaidGraph(src) {
   const dirMatch = lines[0].match(/^graph\s+(TB|LR|TD|RL|BT)/i);
   const horizontal = dirMatch && /^(LR|RL)$/i.test(dirMatch[1]);
 
-  const nodes  = new Map();   // id → { label, style }
-  const edges  = [];          // [{from, to}]
-  const styles = new Map();   // id → {bg, color}
+  const nodes   = new Map();   // id → { label, style, dotted }
+  const edges   = [];          // [{from, to, dotted}]
+  const styles  = new Map();   // id → css props
 
   const nodeRe  = /^([A-Za-z_]\w*)\[["']?(.+?)["']?\]$/;
-  const nodeRe2 = /^([A-Za-z_]\w*)\(["']?(.+?)["']?\)$/;   // rounded
-  const edgeRe  = /^([A-Za-z_]\w*)\s*--[->]+\s*([A-Za-z_]\w*)$/;
-  const edgeRe2 = /^([A-Za-z_]\w*)\s*--[->]+\|[^|]*\|\s*([A-Za-z_]\w*)$/; // labelled edge
+  const nodeRe2 = /^([A-Za-z_]\w*)\(["']?(.+?)["']?\)$/;
   const styleRe = /^style\s+([A-Za-z_]\w*)\s+(.+)$/;
 
   function ensureNode(id) {
-    if (!nodes.has(id)) nodes.set(id, { label: id, style: {} });
+    if (!nodes.has(id)) nodes.set(id, { label: id, style: {}, dotted: false });
   }
 
   for (const line of lines.slice(1)) {
@@ -361,19 +359,30 @@ function renderMermaidGraph(src) {
       continue;
     }
 
-    // Universal edge parser — handles all forms:
-    //   A --> B
-    //   A[Label] --> B[Label]
-    //   A --> B[Label]
-    const universalEdge = line.match(
-      /^([A-Za-z_]\w*)(?:\[([^\]]+)\])?\s*--[->]+\s*([A-Za-z_]\w*)(?:\[([^\]]+)\])?$/
+    // Dotted edge: A -.-> B  (MicroProfile "overlay" links)
+    const dottedEdge = line.match(
+      /^([A-Za-z_]\w*)(?:\[([^\]]+)\])?\s*-\.->?\s*([A-Za-z_]\w*)(?:\[([^\]]+)\])?$/
     );
-    if (universalEdge) {
-      const [, fromId, fromLbl, toId, toLbl] = universalEdge;
+    if (dottedEdge) {
+      const [, fromId, fromLbl, toId, toLbl] = dottedEdge;
       ensureNode(fromId); ensureNode(toId);
       if (fromLbl) nodes.get(fromId).label = fromLbl;
       if (toLbl)   nodes.get(toId).label   = toLbl;
-      edges.push({ from: fromId, to: toId });
+      nodes.get(fromId).dotted = true;  // mark as dotted-origin node
+      edges.push({ from: fromId, to: toId, dotted: true });
+      continue;
+    }
+
+    // Solid edge: A --> B  (all forms)
+    const solidEdge = line.match(
+      /^([A-Za-z_]\w*)(?:\[([^\]]+)\])?\s*--[->]+\s*([A-Za-z_]\w*)(?:\[([^\]]+)\])?$/
+    );
+    if (solidEdge) {
+      const [, fromId, fromLbl, toId, toLbl] = solidEdge;
+      ensureNode(fromId); ensureNode(toId);
+      if (fromLbl) nodes.get(fromId).label = fromLbl;
+      if (toLbl)   nodes.get(toId).label   = toLbl;
+      edges.push({ from: fromId, to: toId, dotted: false });
       continue;
     }
 
@@ -390,16 +399,20 @@ function renderMermaidGraph(src) {
     if (nodes.has(id)) nodes.get(id).style = props;
   }
 
-  // ── Topological layer assignment ───────────────────────────────────────────
-  const inDegree = new Map([...nodes.keys()].map(k => [k, 0]));
-  const children = new Map([...nodes.keys()].map(k => [k, []]));
-  for (const { from, to } of edges) {
-    inDegree.set(to, (inDegree.get(to) || 0) + 1);
-    children.get(from).push(to);
+  // ── Topological layer assignment (solid edges only, skip dotted-origin nodes) ─
+  const mainNodes = [...nodes.keys()].filter(id => !nodes.get(id).dotted);
+  const dottedNodes = [...nodes.keys()].filter(id => nodes.get(id).dotted);
+  const solidEdges = edges.filter(e => !e.dotted);
+
+  const inDegree = new Map(mainNodes.map(k => [k, 0]));
+  const children = new Map(mainNodes.map(k => [k, []]));
+  for (const { from, to } of solidEdges) {
+    if (inDegree.has(to)) inDegree.set(to, (inDegree.get(to) || 0) + 1);
+    if (children.has(from)) children.get(from).push(to);
   }
 
   const layer = new Map();
-  const queue = [...nodes.keys()].filter(id => inDegree.get(id) === 0);
+  const queue = mainNodes.filter(id => inDegree.get(id) === 0);
   queue.forEach(id => layer.set(id, 0));
 
   while (queue.length) {
@@ -423,6 +436,21 @@ function renderMermaidGraph(src) {
   const dir = horizontal ? 'mermaid-graph--lr' : 'mermaid-graph--tb';
   let html = `<div class="mermaid-graph ${dir}">\n`;
 
+  // Dotted/overlay nodes row (MicroProfile annotations etc.) — rendered first as a badge bar
+  if (dottedNodes.length > 0) {
+    html += `<div class="mermaid-graph__row mermaid-graph__row--overlay">\n`;
+    for (const id of dottedNodes) {
+      const node = nodes.get(id);
+      const s    = node.style || {};
+      const bg   = s.fill   || '#fffde7';
+      const fg   = s.color  || '#5d4a00';
+      html += `  <div class="mermaid-graph__node mermaid-graph__node--dotted" style="background:${bg};color:${fg}">${esc(node.label)}</div>\n`;
+    }
+    html += `</div>\n`;
+    html += `<div class="mermaid-graph__arrows mermaid-graph__arrows--dotted">· · ·</div>\n`;
+  }
+
+  // Main solid-edge layers
   for (const layerNodes of layers) {
     html += `<div class="mermaid-graph__row">\n`;
     for (const id of layerNodes) {
@@ -434,7 +462,6 @@ function renderMermaidGraph(src) {
       html += `  <div class="mermaid-graph__node" style="background:${bg};color:${fg};border-color:${bdr}">${esc(node.label)}</div>\n`;
     }
     html += `</div>\n`;
-    // Arrow row between layers (TB only)
     if (!horizontal) {
       html += `<div class="mermaid-graph__arrows">↓</div>\n`;
     }

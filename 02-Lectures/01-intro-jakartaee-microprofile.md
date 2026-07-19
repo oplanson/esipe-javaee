@@ -841,34 +841,27 @@ OpenAPI:      http://localhost:9080/openapi
 
 ### Layered Architecture with MicroProfile:
 
-<details>
-<summary>📝 Original Mermaid Code (click to expand)</summary>
-
 ```mermaid
 graph TB
     A[Client Browser/API] --> B[JAX-RS Resources]
     B --> C[CDI Services]
     C --> D[JPA Repositories]
     D --> E[PostgreSQL Database]
-    
+
     F[MP Config] -.-> C
     G[MP Health] -.-> C
     H[MP Metrics] -.-> B
     H -.-> C
-    
-    style A fill:#e1f5ff
-    style B fill:#fff3e0
-    style C fill:#f3e5f5
-    style D fill:#e8f5e9
-    style E fill:#fce4ec
-    style F fill:#fff9c4
-    style G fill:#c8e6c9
-    style H fill:#b3e5fc
+
+    style A fill:#e1f5ff,color:#0043ce
+    style B fill:#fff3e0,color:#5d3b1e
+    style C fill:#f3e5f5,color:#491d8b
+    style D fill:#e8f5e9,color:#0e6027
+    style E fill:#fce4ec,color:#750e13
+    style F fill:#fff9c4,color:#5d4a00
+    style G fill:#c8e6c9,color:#0e6027
+    style H fill:#b3e5fc,color:#0043ce
 ```
-
-</details>
-
-![width:70%](images/01-intro-jakartaee-microprofile-diagram-2.png)
 
 
 ---
