@@ -841,6 +841,9 @@ OpenAPI:      http://localhost:9080/openapi
 
 ### Layered Architecture with MicroProfile:
 
+<details>
+<summary>📝 Original Mermaid Code (click to expand)</summary>
+
 ```mermaid
 graph TB
     A[Client Browser/API] --> B[JAX-RS Resources]
@@ -862,6 +865,11 @@ graph TB
     style G fill:#c8e6c9,color:#0e6027
     style H fill:#b3e5fc,color:#0043ce
 ```
+
+</details>
+
+![width:70%](images/01-intro-jakartaee-microprofile-diagram-4.png)
+
 
 
 ---
