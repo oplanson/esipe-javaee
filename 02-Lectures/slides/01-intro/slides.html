@@ -1,0 +1,1149 @@
+<!-- © Copyright 2026 Olivier Planson. All rights reserved. Reproduction prohibited. Made with IBM Bob. -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>ESIPE — Introduction to Jakarta EE and MicroProfile — Slides</title>
+  <link rel="stylesheet" href="../assets/slide.css"/>
+  <style>
+/* suppress static .current when a slide is targeted */
+body:has(.slide:target) .progress-bar a.current { background: var(--bg); color: var(--muted); border-color: var(--border); }
+body:has(#slide-1:target) .progress-bar a[href="#slide-1"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-2:target) .progress-bar a[href="#slide-2"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-3:target) .progress-bar a[href="#slide-3"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-4:target) .progress-bar a[href="#slide-4"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-5:target) .progress-bar a[href="#slide-5"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-6:target) .progress-bar a[href="#slide-6"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-7:target) .progress-bar a[href="#slide-7"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-8:target) .progress-bar a[href="#slide-8"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-9:target) .progress-bar a[href="#slide-9"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-10:target) .progress-bar a[href="#slide-10"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-11:target) .progress-bar a[href="#slide-11"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-12:target) .progress-bar a[href="#slide-12"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-13:target) .progress-bar a[href="#slide-13"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-14:target) .progress-bar a[href="#slide-14"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-15:target) .progress-bar a[href="#slide-15"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-16:target) .progress-bar a[href="#slide-16"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-17:target) .progress-bar a[href="#slide-17"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-18:target) .progress-bar a[href="#slide-18"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-19:target) .progress-bar a[href="#slide-19"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-20:target) .progress-bar a[href="#slide-20"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-21:target) .progress-bar a[href="#slide-21"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-22:target) .progress-bar a[href="#slide-22"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-23:target) .progress-bar a[href="#slide-23"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-24:target) .progress-bar a[href="#slide-24"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-25:target) .progress-bar a[href="#slide-25"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-26:target) .progress-bar a[href="#slide-26"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-27:target) .progress-bar a[href="#slide-27"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-28:target) .progress-bar a[href="#slide-28"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-29:target) .progress-bar a[href="#slide-29"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-30:target) .progress-bar a[href="#slide-30"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-31:target) .progress-bar a[href="#slide-31"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-32:target) .progress-bar a[href="#slide-32"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-33:target) .progress-bar a[href="#slide-33"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-34:target) .progress-bar a[href="#slide-34"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-35:target) .progress-bar a[href="#slide-35"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+  </style>
+</head>
+<body>
+<header class="site-header">
+  <a class="brand" href="../index.html">ESIPE<span>Jakarta EE &amp; Microservices</span></a>
+  <!-- EN/FR language toggle -->
+  <div class="lang-toggle" id="lang-toggle">
+    <button id="btn-en" class="active">EN</button>
+    <span class="sep">|</span>
+    <button id="btn-fr">FR</button>
+  </div>
+  <a class="back-link" href="../index.html">&#8592; All Courses</a>
+</header>
+<!-- Thin trigger strip at top: hover to reveal progress bar -->
+<div class="progress-bar-trigger" id="pb-trigger"></div>
+<!-- Progress bar — hidden by default, revealed on hover -->
+<div class="progress-bar-wrap" id="pb-wrap">
+  <div class="progress-bar">
+    <a href="#slide-1" class="current">1</a>
+      <a href="#slide-2">2</a>
+      <a href="#slide-3">3</a>
+      <a href="#slide-4">4</a>
+      <a href="#slide-5">5</a>
+      <a href="#slide-6">6</a>
+      <a href="#slide-7">7</a>
+      <a href="#slide-8">8</a>
+      <a href="#slide-9">9</a>
+      <a href="#slide-10">10</a>
+      <a href="#slide-11">11</a>
+      <a href="#slide-12">12</a>
+      <a href="#slide-13">13</a>
+      <a href="#slide-14">14</a>
+      <a href="#slide-15">15</a>
+      <a href="#slide-16">16</a>
+      <a href="#slide-17">17</a>
+      <a href="#slide-18">18</a>
+      <a href="#slide-19">19</a>
+      <a href="#slide-20">20</a>
+      <a href="#slide-21">21</a>
+      <a href="#slide-22">22</a>
+      <a href="#slide-23">23</a>
+      <a href="#slide-24">24</a>
+      <a href="#slide-25">25</a>
+      <a href="#slide-26">26</a>
+      <a href="#slide-27">27</a>
+      <a href="#slide-28">28</a>
+      <a href="#slide-29">29</a>
+      <a href="#slide-30">30</a>
+      <a href="#slide-31">31</a>
+      <a href="#slide-32">32</a>
+      <a href="#slide-33">33</a>
+      <a href="#slide-34">34</a>
+      <a href="#slide-35">35</a>
+  </div>
+</div>
+<!-- Thin trigger strip at left: hover to reveal sidenav -->
+<div class="sidenav-trigger" id="sidenav-trigger"></div>
+<div class="shell">
+  <nav class="sidenav" id="sidenav">
+    <div class="sidenav-section">Course outline</div>
+    <a href="#slide-5" class="active">🔄 Jakarta EE vs MicroProfile</a>
+    <a href="#slide-6">🤝 Jakarta EE + MicroProfile Together</a>
+    <a href="#slide-7">📦 Jakarta EE Core Specifications</a>
+    <a href="#slide-9">⚡ MicroProfile Core Specifications</a>
+    <a href="#slide-18">📝 First Servlet with Health Check</a>
+    <a href="#slide-19">⚙️ Open Liberty Configuration (server.xml)</a>
+    <a href="#slide-21">🐳 Containerfile for Podman</a>
+    <a href="#slide-23">🏦 Banking Application Architecture</a>
+    <a href="#slide-29">🔍 Lab 1 Preview</a>
+    <a href="#slide-31">🙋 Questions &amp; Discussion</a>
+    <hr>
+    <div class="sidenav-section">Navigation</div>
+    <a href="index.html">&#9675; Overview</a>
+  </nav>
+  <main class="content">
+    <div class="slide-wrapper">
+<section id="slide-1" class="slide slide--title">
+<h1 data-en="Introduction to Jakarta EE and MicroProfile" data-fr="Introduction à Jakarta EE and MicroProfile">Introduction to Jakarta EE and MicroProfile</h1>
+<h2 data-en="Enterprise Java Development with Open Liberty" data-fr="Enterprise Java Développement with Open Liberty">Enterprise Java Development with Open Liberty</h2>
+<div class="slide-meta"><span><strong>Duration:</strong> 2 hours</span><span><strong>Instructor:</strong> Olivier Planson</span><span><strong>Date:</strong> 2025-12</span><span><strong>Course:</strong> Jakarta EE, MicroProfile and Microservices</span></div>
+<span class="slide-counter">1 / 35</span>
+<div class="slide-nav">
+  <a class="disabled">&#8592; Previous</a>
+  <span class="slide-info">Slide 1 / 35 &nbsp;&middot;&nbsp; Introduction to Jakarta EE and MicroProfile</span>
+  <a href="#slide-2">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-2" class="slide">
+<h2 data-en="📋 Learning Objectives" data-fr="📋 Objectifs pédagogiques">📋 Learning Objectives</h2>
+<p data-en="By the end of this lecture, you will be able to:" data-fr="À la fin de cette leçon, vous serez en mesure de:">By the end of this lecture, you will be able to:</p>
+<table class="slide-table"><thead><tr><th></th><th></th></tr></thead><tbody>
+<tr><td>✅</td><td>Understand Jakarta EE and MicroProfile ecosystems</td></tr>
+<tr><td>✅</td><td>Differentiate between Jakarta EE and MicroProfile</td></tr>
+<tr><td>✅</td><td>Identify core specifications and APIs</td></tr>
+<tr><td>✅</td><td>Set up Open Liberty development environment</td></tr>
+<tr><td>✅</td><td>Create and deploy your first application with Podman</td></tr>
+<tr><td>✅</td><td>Understand the role of application servers</td></tr>
+</tbody></table>
+
+<span class="slide-counter">2 / 35</span>
+<div class="slide-nav">
+  <a href="#slide-1">&#8592; Previous</a>
+  <span class="slide-info">Slide 2 / 35 &nbsp;&middot;&nbsp; Introduction to Jakarta EE and MicroProfile</span>
+  <a href="#slide-3">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-3" class="slide">
+<h2 data-en="🎯 What is Jakarta EE?" data-fr="🎯 Qu'est-ce que Jakarta EE?">🎯 What is Jakarta EE?</h2>
+<p data-en="<strong>Jakarta EE</strong> (formerly Java EE) is a set of specifications for building enterprise applications in Java." data-fr="Jakarta EE (formerly Java EE) is a set of specifications for Construction enterprise applications in Java."><strong>Jakarta EE</strong> (formerly Java EE) is a set of specifications for building enterprise applications in Java.</p>
+<h3 data-en="Key Characteristics:" data-fr="Caractéristiques clés:">Key Characteristics:</h3>
+<ul>
+<li><strong>Standard-based:</strong> Industry-wide specifications</li>
+<li><strong>Vendor-neutral:</strong> Multiple implementations available</li>
+<li data-en="<strong>Enterprise-ready:</strong> Built for scalability and reliability" data-fr="Enterprise-ready: Built for Scalabilité and reliability"><strong>Enterprise-ready:</strong> Built for scalability and reliability</li>
+<li data-en="<strong>Open-source:</strong> Community-driven development under Eclipse Foundation" data-fr="Open-source: Community-driven Développement under Eclipse Foundation"><strong>Open-source:</strong> Community-driven development under Eclipse Foundation</li>
+</ul>
+<h3>Evolution Timeline:</h3>
+<p><img src="../../images/01-intro-jakartaee-microprofile-diagram-1.png" alt="width:70%"></p>
+
+<span class="slide-counter">3 / 35</span>
+<div class="slide-nav">
+  <a href="#slide-2">&#8592; Previous</a>
+  <span class="slide-info">Slide 3 / 35 &nbsp;&middot;&nbsp; Introduction to Jakarta EE and MicroProfile</span>
+  <a href="#slide-4">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-4" class="slide">
+<h2 data-en="🚀 What is MicroProfile?" data-fr="🚀 Qu'est-ce que MicroProfile?">🚀 What is MicroProfile?</h2>
+<p data-en="<strong>Eclipse MicroProfile</strong> is a set of specifications optimized for microservices architecture." data-fr="Eclipse MicroProfile is a set of specifications optimized for Architecture microservices."><strong>Eclipse MicroProfile</strong> is a set of specifications optimized for microservices architecture.</p>
+<h3 data-en="Key Characteristics:" data-fr="Caractéristiques clés:">Key Characteristics:</h3>
+<ul>
+<li data-en="<strong>Cloud-native:</strong> Designed for cloud and containers" data-fr="Cloud-natif: Designed for cloud and containers"><strong>Cloud-native:</strong> Designed for cloud and containers</li>
+<li><strong>Microservices-focused:</strong> Lightweight and modular</li>
+<li><strong>Complementary to Jakarta EE:</strong> Extends Jakarta EE capabilities</li>
+<li><strong>Rapid innovation:</strong> Faster release cycles than Jakarta EE</li>
+</ul>
+<h3>Timeline:</h3>
+<p><img src="../../images/01-intro-jakartaee-microprofile-diagram-2.png" alt="width:70%"></p>
+
+<span class="slide-counter">4 / 35</span>
+<div class="slide-nav">
+  <a href="#slide-3">&#8592; Previous</a>
+  <span class="slide-info">Slide 4 / 35 &nbsp;&middot;&nbsp; Introduction to Jakarta EE and MicroProfile</span>
+  <a href="#slide-5">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-5" class="slide">
+<h2>🔄 Jakarta EE vs MicroProfile</h2>
+<h3 data-en="Comparison Table" data-fr="Comparaison Table">Comparison Table</h3>
+<table class="slide-table"><thead><tr><th>Aspect</th><th>Jakarta EE</th><th>MicroProfile</th></tr></thead><tbody>
+<tr><td><strong>Focus</strong></td><td>Enterprise applications</td><td>Microservices</td></tr>
+<tr><td><strong>Scope</strong></td><td>Comprehensive platform</td><td>Targeted specifications</td></tr>
+<tr><td><strong>Release Cycle</strong></td><td>Slower, stable</td><td>Faster, innovative</td></tr>
+<tr><td><strong>Size</strong></td><td>Full-featured</td><td>Lightweight</td></tr>
+<tr><td><strong>Use Case</strong></td><td>Monoliths &amp; Services</td><td>Cloud-native apps</td></tr>
+<tr><td><strong>Governance</strong></td><td>Eclipse Foundation</td><td>Eclipse Foundation</td></tr>
+</tbody></table>
+
+<span class="slide-counter">5 / 35</span>
+<div class="slide-nav">
+  <a href="#slide-4">&#8592; Previous</a>
+  <span class="slide-info">Slide 5 / 35 &nbsp;&middot;&nbsp; Introduction to Jakarta EE and MicroProfile</span>
+  <a href="#slide-6">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-6" class="slide">
+<h2>🤝 Jakarta EE + MicroProfile Together</h2>
+<p><img src="../../images/01-intro-jakartaee-microprofile-diagram-1.png" alt="width:70%"></p>
+<p data-en="<strong>Best Practice:</strong> Use Jakarta EE for core enterprise features + MicroProfile for cloud-native capabilities" data-fr="Bonnes pratiques: Use Jakarta EE for core enterprise features + MicroProfile for Cloud-natif capabilities"><strong>Best Practice:</strong> Use Jakarta EE for core enterprise features + MicroProfile for cloud-native capabilities</p>
+
+<span class="slide-counter">6 / 35</span>
+<div class="slide-nav">
+  <a href="#slide-5">&#8592; Previous</a>
+  <span class="slide-info">Slide 6 / 35 &nbsp;&middot;&nbsp; Introduction to Jakarta EE and MicroProfile</span>
+  <a href="#slide-7">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-7" class="slide">
+<h2>📦 Jakarta EE Core Specifications</h2>
+<h3>Web Technologies</h3>
+<ul>
+<li><strong>Jakarta Servlet</strong> - HTTP request/response handling</li>
+<li><strong>Jakarta Server Pages (JSP)</strong> - Dynamic web pages</li>
+<li><strong>Jakarta Server Faces (JSF)</strong> - Component-based UI framework</li>
+</ul>
+<h3>Business Logic</h3>
+<ul>
+<li data-en="<strong>Jakarta Contexts and Dependency Injection (CDI)</strong> - Dependency injection" data-fr="Jakarta Contexts and Injection de dépendances (CDI) - Injection de dépendances"><strong>Jakarta Contexts and Dependency Injection (CDI)</strong> - Dependency injection</li>
+<li><strong>Jakarta Enterprise Beans (EJB)</strong> - Business components</li>
+</ul>
+<h3>Data Persistence</h3>
+<ul>
+<li><strong>Jakarta Persistence (JPA)</strong> - Object-relational mapping</li>
+<li data-en="<strong>Jakarta Transactions (JTA)</strong> - Transaction management" data-fr="Jakarta Transactions (JTA) - Gestion des transactions"><strong>Jakarta Transactions (JTA)</strong> - Transaction management</li>
+</ul>
+
+<span class="slide-counter">7 / 35</span>
+<div class="slide-nav">
+  <a href="#slide-6">&#8592; Previous</a>
+  <span class="slide-info">Slide 7 / 35 &nbsp;&middot;&nbsp; Introduction to Jakarta EE and MicroProfile</span>
+  <a href="#slide-8">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-8" class="slide">
+<h2 data-en="🌐 Jakarta RESTful Web Services" data-fr="🌐 Jakarta Services RESTful">🌐 Jakarta RESTful Web Services</h2>
+<h3 data-en="Jakarta RESTful Web Services (JAX-RS)" data-fr="Jakarta Services RESTful (JAX-RS)">Jakarta RESTful Web Services (JAX-RS)</h3>
+<ul>
+<li data-en="Build REST APIs with annotations" data-fr="Build REST APIs with Annotation">Build REST APIs with annotations</li>
+<li>JSON/XML data binding</li>
+<li>HTTP method mapping</li>
+</ul>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>@Path(&quot;/clients&quot;)
+public class ClientResource {
+    
+    @GET
+    @Produces(MediaType.APPLICATION_JSON)
+    public List&lt;Client&gt; getAllClients() {
+        return clientService.findAll();
+    }
+    
+    @POST
+    @Consumes(MediaType.APPLICATION_JSON)
+    public Response createClient(Client client) {
+        clientService.save(client);
+        return Response.status(201).build();
+    }
+}</code></pre>
+
+<span class="slide-counter">8 / 35</span>
+<div class="slide-nav">
+  <a href="#slide-7">&#8592; Previous</a>
+  <span class="slide-info">Slide 8 / 35 &nbsp;&middot;&nbsp; Introduction to Jakarta EE and MicroProfile</span>
+  <a href="#slide-9">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-9" class="slide">
+<h2>⚡ MicroProfile Core Specifications</h2>
+<h3>Configuration</h3>
+<ul>
+<li data-en="<strong>MP Config</strong> - Externalized configuration" data-fr="MP Config - Externalized Configuration"><strong>MP Config</strong> - Externalized configuration</li>
+<li>Environment-specific settings</li>
+<li data-en="Dynamic configuration updates" data-fr="Dynamic Configuration updates">Dynamic configuration updates</li>
+</ul>
+<h3>Observability</h3>
+<ul>
+<li><strong>MP Health</strong> - Health check endpoints</li>
+<li><strong>MP Metrics</strong> - Application metrics</li>
+<li><strong>MP OpenTracing</strong> - Distributed tracing</li>
+</ul>
+<h3>Resilience</h3>
+<ul>
+<li><strong>MP Fault Tolerance</strong> - Circuit breakers, retries, timeouts</li>
+<li><strong>MP Rest Client</strong> - Type-safe REST clients</li>
+</ul>
+
+<span class="slide-counter">9 / 35</span>
+<div class="slide-nav">
+  <a href="#slide-8">&#8592; Previous</a>
+  <span class="slide-info">Slide 9 / 35 &nbsp;&middot;&nbsp; Introduction to Jakarta EE and MicroProfile</span>
+  <a href="#slide-10">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-10" class="slide">
+<h2 data-en="🔧 MicroProfile Config Example" data-fr="🔧 MicroProfile Config Exemple">🔧 MicroProfile Config Example</h2>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>@ApplicationScoped
+public class BankingService {
+    
+    @Inject
+    @ConfigProperty(name = &quot;bank.api.url&quot;)
+    private String apiUrl;
+    
+    @Inject
+    @ConfigProperty(name = &quot;bank.max.transfer&quot;, defaultValue = &quot;10000&quot;)
+    private BigDecimal maxTransfer;
+    
+    public void processTransfer(BigDecimal amount) {
+        if (amount.compareTo(maxTransfer) &gt; 0) {
+            throw new IllegalArgumentException(&quot;Exceeds maximum&quot;);
+        }
+        // Process transfer
+    }
+}</code></pre>
+<p><strong>Configuration file (microprofile-config.properties):</strong></p>
+<pre class="dark"><span class="lang-badge">properties</span>
+<code>bank.api.url=https://api.bank.com
+bank.max.transfer=50000</code></pre>
+
+<span class="slide-counter">10 / 35</span>
+<div class="slide-nav">
+  <a href="#slide-9">&#8592; Previous</a>
+  <span class="slide-info">Slide 10 / 35 &nbsp;&middot;&nbsp; Introduction to Jakarta EE and MicroProfile</span>
+  <a href="#slide-11">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-11" class="slide">
+<h2 data-en="💊 MicroProfile Health Example" data-fr="💊 MicroProfile Health Exemple">💊 MicroProfile Health Example</h2>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>@Health
+@ApplicationScoped
+public class DatabaseHealthCheck implements HealthCheck {
+    
+    @Inject
+    private DataSource dataSource;
+    
+    @Override
+    public HealthCheckResponse call() {
+        try (Connection conn = dataSource.getConnection()) {
+            boolean isHealthy = conn.isValid(5);
+            return HealthCheckResponse
+                .named(&quot;database-check&quot;)
+                .status(isHealthy)
+                .build();
+        }
+        catch (SQLException e) {
+            return HealthCheckResponse
+                .named(&quot;database-check&quot;)
+                .down()
+                .withData(&quot;error&quot;, e.getMessage())
+                .build();
+        }
+    }
+}</code></pre>
+<p><strong>Access:</strong> <code>http://localhost:9080/health</code></p>
+
+<span class="slide-counter">11 / 35</span>
+<div class="slide-nav">
+  <a href="#slide-10">&#8592; Previous</a>
+  <span class="slide-info">Slide 11 / 35 &nbsp;&middot;&nbsp; Introduction to Jakarta EE and MicroProfile</span>
+  <a href="#slide-12">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-12" class="slide">
+<h2 data-en="📊 MicroProfile Metrics Example" data-fr="📊 MicroProfile Metrics Exemple">📊 MicroProfile Metrics Example</h2>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>@ApplicationScoped
+public class TransferService {
+    
+    @Inject
+    @Metric(name = &quot;transfers_total&quot;, absolute = true)
+    private Counter transferCounter;
+    
+    @Timed(name = &quot;transfer_duration&quot;, 
+           description = &quot;Time to complete transfer&quot;)
+    public void transfer(Account from, Account to, BigDecimal amount) {
+        // Perform transfer
+        transferCounter.inc();
+    }
+}</code></pre>
+<p><strong>Access metrics:</strong> <code>http://localhost:9080/metrics</code></p>
+
+<span class="slide-counter">12 / 35</span>
+<div class="slide-nav">
+  <a href="#slide-11">&#8592; Previous</a>
+  <span class="slide-info">Slide 12 / 35 &nbsp;&middot;&nbsp; Introduction to Jakarta EE and MicroProfile</span>
+  <a href="#slide-13">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-13" class="slide">
+<h2 data-en="🦅 Open Liberty: The Runtime" data-fr="🦅 Open Liberty: The Environnement d'exécution">🦅 Open Liberty: The Runtime</h2>
+<p data-en="<strong>Open Liberty</strong> is IBM's open-source Jakarta EE and MicroProfile runtime." data-fr="Open Liberty est le runtime open source d'IBM Jakarta EE and MicroProfile Environnement d'exécution."><strong>Open Liberty</strong> is IBM's open-source Jakarta EE and MicroProfile runtime.</p>
+<div class="slide-columns">
+<div class="slide-col">
+<h3 data-en="Why Open Liberty?" data-fr="Pourquoi Open Liberty?">Why Open Liberty?</h3>
+<table class="slide-table"><thead><tr><th></th><th></th></tr></thead><tbody>
+<tr><td>✅</td><td><strong>Lightweight:</strong> Fast startup, small footprint</td></tr>
+<tr><td>✅</td><td><strong>Modular:</strong> Load only what you need</td></tr>
+<tr><td>✅</td><td><strong>Cloud-native:</strong> Perfect for containers</td></tr>
+<tr><td>✅</td><td><strong>Full compliance:</strong> Jakarta EE 10 + MicroProfile 6</td></tr>
+<tr><td>✅</td><td><strong>Developer-friendly:</strong> Hot reload, dev mode</td></tr>
+<tr><td>✅</td><td><strong>Production-ready:</strong> Used by IBM, Red Hat, and others</td></tr>
+</tbody></table>
+
+</div>
+<div class="slide-col">
+<h3 data-en="Comparison with Other Runtimes" data-fr="Comparaison with Other Runtimes">Comparison with Other Runtimes</h3>
+<table class="slide-table"><thead><tr><th>Feature</th><th>Open Liberty</th><th>WildFly</th><th>Payara</th></tr></thead><tbody>
+<tr><td><strong>Startup Time</strong></td><td>⚡ Very Fast</td><td>Fast</td><td>Medium</td></tr>
+<tr><td><strong>Memory</strong></td><td>💚 Low</td><td>Medium</td><td>Medium</td></tr>
+<tr><td><strong>MicroProfile</strong></td><td>✅ Full</td><td>Partial</td><td>Full</td></tr>
+<tr><td><strong>Container-ready</strong></td><td>✅ Excellent</td><td>Good</td><td>Good</td></tr>
+</tbody></table>
+
+</div>
+</div>
+
+<span class="slide-counter">13 / 35</span>
+<div class="slide-nav">
+  <a href="#slide-12">&#8592; Previous</a>
+  <span class="slide-info">Slide 13 / 35 &nbsp;&middot;&nbsp; Introduction to Jakarta EE and MicroProfile</span>
+  <a href="#slide-14">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-14" class="slide">
+<h2 data-en="🏗️ Jakarta EE + MicroProfile Project Structure" data-fr="🏗️ Jakarta EE + MicroProfile Structure du projet">🏗️ Jakarta EE + MicroProfile Project Structure</h2>
+<pre class="dark"><code>banking-app/
+├── pom.xml                          # Maven configuration
+├── src/
+│   ├── main/
+│   │   ├── java/
+│   │   │   └── com/bank/
+│   │   │       ├── entity/          # JPA entities
+│   │   │       ├── service/         # Business logic
+│   │   │       ├── rest/            # JAX-RS endpoints
+│   │   │       ├── health/          # MP Health checks
+│   │   │       └── config/          # MP Config
+│   │   ├── resources/
+│   │   │   ├── META-INF/
+│   │   │   │   ├── persistence.xml      # JPA config
+│   │   │   │   └── microprofile-config.properties
+│   │   │   └── application.properties
+│   │   ├── liberty/
+│   │   │   └── config/
+│   │   │       └── server.xml       # Liberty config
+│   │   └── webapp/
+│   │       └── WEB-INF/
+│   │           └── beans.xml        # CDI config
+│   └── test/
+└── Containerfile                    # Podman/Docker image</code></pre>
+
+<span class="slide-counter">14 / 35</span>
+<div class="slide-nav">
+  <a href="#slide-13">&#8592; Previous</a>
+  <span class="slide-info">Slide 14 / 35 &nbsp;&middot;&nbsp; Introduction to Jakarta EE and MicroProfile</span>
+  <a href="#slide-15">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-15" class="slide">
+<h2 data-en="💻 Development Environment Setup" data-fr="💻 Développement Environment Setup">💻 Development Environment Setup</h2>
+<h3>Required Software:</h3>
+<ol>
+<li><strong>JDK 17+</strong></li>
+</ol>
+<p>```bash</p>
+<p>java -version</p>
+<p># Should show: openjdk version "17.0.x" or higher</p>
+<p>```</p>
+<ol>
+<li><strong>Maven 3.8+</strong></li>
+</ol>
+<p>```bash</p>
+<p>mvn -version</p>
+<p>```</p>
+<ol>
+<li><strong>Open Liberty 23.0.0.12+</strong></li>
+</ol>
+<ul>
+<li>Download from: https://openliberty.io/downloads/</li>
+<li>Or use Maven/Gradle plugin</li>
+</ul>
+<ol>
+<li><strong>Podman</strong> (instead of Docker)</li>
+</ol>
+<p>```bash</p>
+<p>podman --version</p>
+<p>```</p>
+
+<span class="slide-counter">15 / 35</span>
+<div class="slide-nav">
+  <a href="#slide-14">&#8592; Previous</a>
+  <span class="slide-info">Slide 15 / 35 &nbsp;&middot;&nbsp; Introduction to Jakarta EE and MicroProfile</span>
+  <a href="#slide-16">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-16" class="slide">
+<h2 data-en="🐳 Why Podman Instead of Docker?" data-fr="🐳 Pourquoi Podman Instead of Docker?">🐳 Why Podman Instead of Docker?</h2>
+<div class="slide-columns">
+<div class="slide-col">
+<h3>Podman Advantages:</h3>
+<table class="slide-table"><thead><tr><th></th><th></th></tr></thead><tbody>
+<tr><td>✅</td><td><strong>Daemonless:</strong> No background daemon required</td></tr>
+<tr><td>✅</td><td><strong>Rootless:</strong> Run containers without root privileges</td></tr>
+<tr><td>✅</td><td><strong>Docker-compatible:</strong> Same CLI commands</td></tr>
+<tr><td>✅</td><td><strong>Systemd integration:</strong> Native systemd support</td></tr>
+<tr><td>✅</td><td><strong>Security:</strong> Better security model</td></tr>
+<tr><td>✅</td><td><strong>Open-source:</strong> Truly open-source (OCI compliant)</td></tr>
+</tbody></table>
+
+</div>
+<div class="slide-col">
+<h3>Podman vs Docker</h3>
+<table class="slide-table"><thead><tr><th>Feature</th><th>Podman</th><th>Docker</th></tr></thead><tbody>
+<tr><td><strong>Daemon</strong></td><td>❌ No</td><td>✅ Yes</td></tr>
+<tr><td><strong>Root Required</strong></td><td>❌ No</td><td>⚠️ Often</td></tr>
+<tr><td><strong>CLI Compatibility</strong></td><td>✅ Docker-compatible</td><td>N/A</td></tr>
+<tr><td><strong>Systemd</strong></td><td>✅ Native</td><td>⚠️ Limited</td></tr>
+<tr><td><strong>Security</strong></td><td>✅ Better</td><td>Good</td></tr>
+</tbody></table>
+
+</div>
+</div>
+<p><strong>Note:</strong> <code>alias docker=podman</code> makes transition seamless!</p>
+
+<span class="slide-counter">16 / 35</span>
+<div class="slide-nav">
+  <a href="#slide-15">&#8592; Previous</a>
+  <span class="slide-info">Slide 16 / 35 &nbsp;&middot;&nbsp; Introduction to Jakarta EE and MicroProfile</span>
+  <a href="#slide-17">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-17" class="slide">
+<h2 data-en="🚀 Creating Your First Jakarta EE + MicroProfile Project" data-fr="🚀 Créer votre premier Jakarta EE + MicroProfile Project">🚀 Creating Your First Jakarta EE + MicroProfile Project</h2>
+<h3>Step 1: Maven Project Setup</h3>
+<pre class="dark"><span class="lang-badge">xml</span>
+<code>&lt;project xmlns=&quot;http://maven.apache.org/POM/4.0.0&quot;&gt;
+    &lt;modelVersion&gt;4.0.0&lt;/modelVersion&gt;
+    
+    &lt;groupId&gt;com.bank&lt;/groupId&gt;
+    &lt;artifactId&gt;banking-app&lt;/artifactId&gt;
+    &lt;version&gt;1.0-SNAPSHOT&lt;/version&gt;
+    &lt;packaging&gt;war&lt;/packaging&gt;
+    
+    &lt;properties&gt;
+        &lt;maven.compiler.source&gt;17&lt;/maven.compiler.source&gt;
+        &lt;maven.compiler.target&gt;17&lt;/maven.compiler.target&gt;
+        &lt;jakartaee.version&gt;10.0.0&lt;/jakartaee.version&gt;
+        &lt;microprofile.version&gt;6.0&lt;/microprofile.version&gt;
+    &lt;/properties&gt;
+    
+    &lt;dependencies&gt;
+        
+        &lt;dependency&gt;
+            &lt;groupId&gt;jakarta.platform&lt;/groupId&gt;
+            &lt;artifactId&gt;jakarta.jakartaee-api&lt;/artifactId&gt;
+            &lt;version&gt;${jakartaee.version}&lt;/version&gt;
+            &lt;scope&gt;provided&lt;/scope&gt;
+        &lt;/dependency&gt;
+        
+        
+        &lt;dependency&gt;
+            &lt;groupId&gt;org.eclipse.microprofile&lt;/groupId&gt;
+            &lt;artifactId&gt;microprofile&lt;/artifactId&gt;
+            &lt;version&gt;${microprofile.version}&lt;/version&gt;
+            &lt;type&gt;pom&lt;/type&gt;
+            &lt;scope&gt;provided&lt;/scope&gt;
+        &lt;/dependency&gt;
+    &lt;/dependencies&gt;
+&lt;/project&gt;</code></pre>
+
+<span class="slide-counter">17 / 35</span>
+<div class="slide-nav">
+  <a href="#slide-16">&#8592; Previous</a>
+  <span class="slide-info">Slide 17 / 35 &nbsp;&middot;&nbsp; Introduction to Jakarta EE and MicroProfile</span>
+  <a href="#slide-18">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-18" class="slide">
+<h2>📝 First Servlet with Health Check</h2>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>package com.bank.web;
+
+import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import java.io.IOException;
+
+@WebServlet(&quot;/hello&quot;)
+public class HelloServlet extends HttpServlet {
+    
+    @Override
+    protected void doGet(HttpServletRequest request,
+                        HttpServletResponse response)
+            throws ServletException, IOException {
+        response.setContentType(&quot;text/html&quot;);
+        response.getWriter().println(&quot;&quot;&quot;
+            &lt;html&gt;&lt;body&gt;
+            &lt;h1&gt;Welcome to Jakarta EE + MicroProfile!&lt;/h1&gt;
+            &lt;p&gt;Running on Open Liberty&lt;/p&gt;
+            &lt;ul&gt;
+                &lt;li&gt;&lt;a href=&quot;/health&quot;&gt;Health Check&lt;/a&gt;&lt;/li&gt;
+                &lt;li&gt;&lt;a href=&quot;/metrics&quot;&gt;Metrics&lt;/a&gt;&lt;/li&gt;
+            &lt;/ul&gt;
+            &lt;/body&gt;&lt;/html&gt;
+            &quot;&quot;&quot;);
+    }
+}</code></pre>
+
+<span class="slide-counter">18 / 35</span>
+<div class="slide-nav">
+  <a href="#slide-17">&#8592; Previous</a>
+  <span class="slide-info">Slide 18 / 35 &nbsp;&middot;&nbsp; Introduction to Jakarta EE and MicroProfile</span>
+  <a href="#slide-19">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-19" class="slide">
+<h2>⚙️ Open Liberty Configuration (server.xml)</h2>
+<pre class="dark"><span class="lang-badge">xml</span>
+<code>&lt;server description=&quot;Banking Application Server&quot;&gt;
+    &lt;featureManager&gt;
+        
+        &lt;feature&gt;servlet-6.0&lt;/feature&gt;
+        &lt;feature&gt;cdi-4.0&lt;/feature&gt;
+        &lt;feature&gt;jaxrs-3.1&lt;/feature&gt;
+        &lt;feature&gt;jsonb-3.0&lt;/feature&gt;
+        &lt;feature&gt;persistence-3.1&lt;/feature&gt;
+        
+        
+        &lt;feature&gt;mpConfig-3.0&lt;/feature&gt;
+        &lt;feature&gt;mpHealth-4.0&lt;/feature&gt;
+        &lt;feature&gt;mpMetrics-5.0&lt;/feature&gt;
+        &lt;feature&gt;mpOpenAPI-3.1&lt;/feature&gt;
+    &lt;/featureManager&gt;
+
+    &lt;httpEndpoint id=&quot;defaultHttpEndpoint&quot;
+                  host=&quot;*&quot;
+                  httpPort=&quot;9080&quot;
+                  httpsPort=&quot;9443&quot; /&gt;
+
+    &lt;webApplication location=&quot;banking-app.war&quot; 
+                    contextRoot=&quot;/&quot; /&gt;
+&lt;/server&gt;</code></pre>
+
+<span class="slide-counter">19 / 35</span>
+<div class="slide-nav">
+  <a href="#slide-18">&#8592; Previous</a>
+  <span class="slide-info">Slide 19 / 35 &nbsp;&middot;&nbsp; Introduction to Jakarta EE and MicroProfile</span>
+  <a href="#slide-20">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-20" class="slide">
+<h2 data-en="🔨 Building with Liberty Maven Plugin" data-fr="🔨 Construction with Liberty Maven Plugin">🔨 Building with Liberty Maven Plugin</h2>
+<p>Add to <code>pom.xml</code>:</p>
+<pre class="dark"><span class="lang-badge">xml</span>
+<code>&lt;build&gt;
+    &lt;plugins&gt;
+        &lt;plugin&gt;
+            &lt;groupId&gt;io.openliberty.tools&lt;/groupId&gt;
+            &lt;artifactId&gt;liberty-maven-plugin&lt;/artifactId&gt;
+            &lt;version&gt;3.9&lt;/version&gt;
+            &lt;configuration&gt;
+                &lt;serverName&gt;bankingServer&lt;/serverName&gt;
+            &lt;/configuration&gt;
+        &lt;/plugin&gt;
+    &lt;/plugins&gt;
+&lt;/build&gt;</code></pre>
+<p><strong>Commands:</strong></p>
+<pre class="dark"><span class="lang-badge">bash</span>
+<code># Start Liberty in dev mode (hot reload)
+mvn liberty:dev
+
+# Package application
+mvn liberty:package
+
+# Run tests
+mvn liberty:test-start liberty:test-stop</code></pre>
+
+<span class="slide-counter">20 / 35</span>
+<div class="slide-nav">
+  <a href="#slide-19">&#8592; Previous</a>
+  <span class="slide-info">Slide 20 / 35 &nbsp;&middot;&nbsp; Introduction to Jakarta EE and MicroProfile</span>
+  <a href="#slide-21">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-21" class="slide">
+<h2>🐳 Containerfile for Podman</h2>
+<pre class="dark"><span class="lang-badge">dockerfile</span>
+<code>FROM icr.io/appcafe/open-liberty:full-java17-openj9-ubi
+
+# Copy application
+COPY --chown=1001:0 target/banking-app.war /config/dropins/
+
+# Copy Liberty configuration
+COPY --chown=1001:0 src/main/liberty/config/server.xml /config/
+
+# Expose ports
+EXPOSE 9080 9443
+
+# Run Liberty
+CMD [&quot;/opt/ol/wlp/bin/server&quot;, &quot;run&quot;, &quot;defaultServer&quot;]</code></pre>
+<p><strong>Build and run with Podman:</strong></p>
+<pre class="dark"><span class="lang-badge">bash</span>
+<code># Build image
+podman build -t banking-app:latest .
+
+# Run container
+podman run -d -p 9080:9080 -p 9443:9443 banking-app:latest
+
+# View logs
+podman logs -f &lt;container-id&gt;</code></pre>
+
+<span class="slide-counter">21 / 35</span>
+<div class="slide-nav">
+  <a href="#slide-20">&#8592; Previous</a>
+  <span class="slide-info">Slide 21 / 35 &nbsp;&middot;&nbsp; Introduction to Jakarta EE and MicroProfile</span>
+  <a href="#slide-22">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-22" class="slide">
+<h2 data-en="🌍 Testing Your Application" data-fr="🌍 Tests Your Application">🌍 Testing Your Application</h2>
+<h3>Start Liberty in Dev Mode:</h3>
+<pre class="dark"><span class="lang-badge">bash</span>
+<code>mvn liberty:dev</code></pre>
+<h3>Access Endpoints:</h3>
+<pre class="dark"><code>Application:  http://localhost:9080/
+Health:       http://localhost:9080/health
+Metrics:      http://localhost:9080/metrics
+OpenAPI:      http://localhost:9080/openapi</code></pre>
+<h3>Expected Health Response:</h3>
+<pre class="dark"><span class="lang-badge">json</span>
+<code>{
+  &quot;status&quot;: &quot;UP&quot;,
+  &quot;checks&quot;: [
+    {
+      &quot;name&quot;: &quot;database-check&quot;,
+      &quot;status&quot;: &quot;UP&quot;
+    }
+  ]
+}</code></pre>
+
+<span class="slide-counter">22 / 35</span>
+<div class="slide-nav">
+  <a href="#slide-21">&#8592; Previous</a>
+  <span class="slide-info">Slide 22 / 35 &nbsp;&middot;&nbsp; Introduction to Jakarta EE and MicroProfile</span>
+  <a href="#slide-23">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-23" class="slide">
+<h2>🏦 Banking Application Architecture</h2>
+<h3>Layered Architecture with MicroProfile:</h3>
+<p><img src="../../images/01-intro-jakartaee-microprofile-diagram-2.png" alt="width:70%"></p>
+
+<span class="slide-counter">23 / 35</span>
+<div class="slide-nav">
+  <a href="#slide-22">&#8592; Previous</a>
+  <span class="slide-info">Slide 23 / 35 &nbsp;&middot;&nbsp; Introduction to Jakarta EE and MicroProfile</span>
+  <a href="#slide-24">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-24" class="slide">
+<h2 data-en="📊 Course Roadmap" data-fr="📊 Programme du cours">📊 Course Roadmap</h2>
+<h3>Week 1: Foundations</h3>
+<ol>
+<li><strong>Today:</strong> Jakarta EE, MicroProfile &amp; Open Liberty ✅</li>
+<li><strong>Next:</strong> Servlets and JSP (3h)</li>
+<li data-en="<strong>Then:</strong> JPA and Database Integration (4h)" data-fr="Then: JPA and Intégration base de données (4h)"><strong>Then:</strong> JPA and Database Integration (4h)</li>
+<li><strong>Finally:</strong> CDI and Service Layer (3h)</li>
+</ol>
+<h3 data-en="Week 2: Cloud-Native &amp; Microservices" data-fr="Week 2: Cloud-natif & Microservices">Week 2: Cloud-Native &amp; Microservices</h3>
+<ol>
+<li>JAX-RS and REST APIs + MP Rest Client (3h)</li>
+<li data-en="Domain-Driven Design (3h)" data-fr="Conception pilotée par le domaine (3h)">Domain-Driven Design (3h)</li>
+<li data-en="Hexagonal Architecture + MP Config (2h)" data-fr="Architecture hexagonale + MP Config (2h)">Hexagonal Architecture + MP Config (2h)</li>
+<li>Microservices with MP Health, Metrics, Fault Tolerance (4h)</li>
+</ol>
+
+<span class="slide-counter">24 / 35</span>
+<div class="slide-nav">
+  <a href="#slide-23">&#8592; Previous</a>
+  <span class="slide-info">Slide 24 / 35 &nbsp;&middot;&nbsp; Introduction to Jakarta EE and MicroProfile</span>
+  <a href="#slide-25">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-25" class="slide">
+<h2 data-en="🎓 Key Takeaways" data-fr="🎓 Points clés">🎓 Key Takeaways</h2>
+<div class="slide-columns">
+<div class="slide-col">
+<h3>What We Learned Today:</h3>
+<table class="slide-table"><thead><tr><th></th><th></th></tr></thead><tbody>
+<tr><td>✅</td><td>Jakarta EE provides enterprise Java standards</td></tr>
+<tr><td>✅</td><td>MicroProfile adds cloud-native capabilities</td></tr>
+<tr><td>✅</td><td>Open Liberty is lightweight and modular</td></tr>
+<tr><td>✅</td><td>Podman offers better security than Docker</td></tr>
+<tr><td>✅</td><td>Combine Jakarta EE + MicroProfile for modern apps</td></tr>
+</tbody></table>
+
+</div>
+<div class="slide-col">
+<h3>Jakarta EE vs MicroProfile:</h3>
+<ul>
+<li><strong>Jakarta EE:</strong> Comprehensive enterprise platform</li>
+<li data-en="<strong>MicroProfile:</strong> Cloud-native microservices extensions" data-fr="MicroProfile: Cloud-natif microservices extensions"><strong>MicroProfile:</strong> Cloud-native microservices extensions</li>
+<li><strong>Together:</strong> Best of both worlds!</li>
+</ul>
+
+</div>
+</div>
+<h3 data-en="Next Steps:" data-fr="Prochaines étapes:">Next Steps:</h3>
+<ul>
+<li>Complete Lab 1: First Application with Open Liberty</li>
+<li>Set up Podman environment</li>
+<li>Explore MicroProfile specifications</li>
+</ul>
+
+<span class="slide-counter">25 / 35</span>
+<div class="slide-nav">
+  <a href="#slide-24">&#8592; Previous</a>
+  <span class="slide-info">Slide 25 / 35 &nbsp;&middot;&nbsp; Introduction to Jakarta EE and MicroProfile</span>
+  <a href="#slide-26">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-26" class="slide">
+<h2 data-en="📚 Additional Resources" data-fr="📚 Ressources supplémentaires">📚 Additional Resources</h2>
+<h3>Official Documentation:</h3>
+<ul>
+<li><strong>Jakarta EE:</strong> https://jakarta.ee/specifications/</li>
+<li><strong>MicroProfile:</strong> https://microprofile.io/</li>
+<li><strong>Open Liberty:</strong> https://openliberty.io/docs/</li>
+<li><strong>Podman:</strong> https://podman.io/getting-started/</li>
+</ul>
+<h3>Recommended Reading:</h3>
+<ul>
+<li>"Jakarta EE Cookbook" by Elder Moraes</li>
+<li data-en="&quot;Practical Cloud-Native Java Development with MicroProfile&quot; by Emily Jiang" data-fr="&quot;Practical Cloud-natif Java Développement with MicroProfile&quot; by Emily Jiang">"Practical Cloud-Native Java Development with MicroProfile" by Emily Jiang</li>
+<li>"Open Liberty Guide" - https://openliberty.io/guides/</li>
+</ul>
+<h3>Community:</h3>
+<ul>
+<li>Jakarta EE GitHub: https://github.com/eclipse-ee4j</li>
+<li>MicroProfile GitHub: https://github.com/eclipse/microprofile</li>
+<li>Open Liberty GitHub: https://github.com/OpenLiberty</li>
+</ul>
+
+<span class="slide-counter">26 / 35</span>
+<div class="slide-nav">
+  <a href="#slide-25">&#8592; Previous</a>
+  <span class="slide-info">Slide 26 / 35 &nbsp;&middot;&nbsp; Introduction to Jakarta EE and MicroProfile</span>
+  <a href="#slide-27">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-27" class="slide">
+<h2 data-en="💡 Best Practices" data-fr="💡 Bonnes pratiques">💡 Best Practices</h2>
+<h3 data-en="Development Guidelines:" data-fr="Développement Guidelines:">Development Guidelines:</h3>
+<ol>
+<li data-en="<strong>Use MicroProfile Config</strong> for all configuration" data-fr="Use MicroProfile Config for all Configuration"><strong>Use MicroProfile Config</strong> for all configuration</li>
+<li><strong>Add Health Checks</strong> for all critical dependencies</li>
+<li><strong>Instrument with Metrics</strong> for observability</li>
+<li data-en="<strong>Leverage Liberty Dev Mode</strong> for rapid development" data-fr="Leverage Liberty Dev Mode for rapid Développement"><strong>Leverage Liberty Dev Mode</strong> for rapid development</li>
+<li><strong>Containerize with Podman</strong> for consistency</li>
+</ol>
+<h3>Architecture Decisions:</h3>
+<ul>
+<li>Use <strong>Jakarta EE</strong> for core business logic</li>
+<li data-en="Use <strong>MicroProfile</strong> for cloud-native features" data-fr="Use MicroProfile for Cloud-natif features">Use <strong>MicroProfile</strong> for cloud-native features</li>
+<li data-en="Deploy on <strong>Open Liberty</strong> for performance" data-fr="Deploy on Open Liberty for Performance">Deploy on <strong>Open Liberty</strong> for performance</li>
+<li>Run in <strong>Podman</strong> containers for portability</li>
+</ul>
+
+<span class="slide-counter">27 / 35</span>
+<div class="slide-nav">
+  <a href="#slide-26">&#8592; Previous</a>
+  <span class="slide-info">Slide 27 / 35 &nbsp;&middot;&nbsp; Introduction to Jakarta EE and MicroProfile</span>
+  <a href="#slide-28">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-28" class="slide">
+<h2 data-en="❓ Common Questions" data-fr="❓ Questions fréquentes">❓ Common Questions</h2>
+<p><strong>Q: Should I use Jakarta EE or MicroProfile?</strong></p>
+<p data-en="A: Use both! Jakarta EE for enterprise features, MicroProfile for cloud-native capabilities." data-fr="A: Use both! Jakarta EE for enterprise features, MicroProfile for Cloud-natif capabilities.">A: Use both! Jakarta EE for enterprise features, MicroProfile for cloud-native capabilities.</p>
+<p data-en="<strong>Q: Why Open Liberty over WildFly?</strong>" data-fr="Q: Pourquoi Open Liberty over WildFly?"><strong>Q: Why Open Liberty over WildFly?</strong></p>
+<p>A: Liberty is lighter, faster, and has better MicroProfile support. Perfect for containers and microservices.</p>
+<p><strong>Q: Is Podman really better than Docker?</strong></p>
+<p data-en="A: Yes for security and rootless operation. CLI is compatible, so transition is easy." data-fr="A: Yes for Sécurité and rootless operation. CLI is compatible, so transition is easy.">A: Yes for security and rootless operation. CLI is compatible, so transition is easy.</p>
+<p><strong>Q: Can I use MicroProfile without Jakarta EE?</strong></p>
+<p>A: Yes, but they work best together. MicroProfile builds on Jakarta EE foundations.</p>
+
+<span class="slide-counter">28 / 35</span>
+<div class="slide-nav">
+  <a href="#slide-27">&#8592; Previous</a>
+  <span class="slide-info">Slide 28 / 35 &nbsp;&middot;&nbsp; Introduction to Jakarta EE and MicroProfile</span>
+  <a href="#slide-29">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-29" class="slide">
+<h2>🔍 Lab 1 Preview</h2>
+<h3 data-en="Objectives:" data-fr="Objectifs:">Objectives:</h3>
+<ul>
+<li>Create Maven project with Jakarta EE + MicroProfile</li>
+<li>Implement servlets with health checks</li>
+<li>Configure Open Liberty server</li>
+<li>Build and run with Podman</li>
+<li>Test health and metrics endpoints</li>
+</ul>
+<h3>What You'll Build:</h3>
+<p>A banking application with:</p>
+<ul>
+<li>Client management servlets</li>
+<li>MicroProfile health checks</li>
+<li>Configuration with MP Config</li>
+<li>Containerized with Podman</li>
+</ul>
+<p><strong>Time:</strong> 2 hours</p>
+<p><strong>Difficulty:</strong> Beginner</p>
+
+<span class="slide-counter">29 / 35</span>
+<div class="slide-nav">
+  <a href="#slide-28">&#8592; Previous</a>
+  <span class="slide-info">Slide 29 / 35 &nbsp;&middot;&nbsp; Introduction to Jakarta EE and MicroProfile</span>
+  <a href="#slide-30">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-30" class="slide">
+<h2 data-en="📝 Homework" data-fr="📝 Devoirs">📝 Homework</h2>
+<h3 data-en="Before Next Lecture:" data-fr="Before Prochaine leçon:">Before Next Lecture:</h3>
+<table class="slide-table"><thead><tr><th></th><th></th></tr></thead><tbody>
+<tr><td>✅</td><td>Complete Lab 1: First Application</td></tr>
+<tr><td>✅</td><td>Install Podman and test basic commands</td></tr>
+<tr><td>✅</td><td>Read MicroProfile Config specification</td></tr>
+<tr><td>✅</td><td>Explore Open Liberty guides</td></tr>
+</tbody></table>
+<h3>Optional:</h3>
+<ul>
+<li>Set up PostgreSQL in Podman container</li>
+<li>Try Liberty dev mode features</li>
+<li>Read about MicroProfile Health patterns</li>
+</ul>
+
+<span class="slide-counter">30 / 35</span>
+<div class="slide-nav">
+  <a href="#slide-29">&#8592; Previous</a>
+  <span class="slide-info">Slide 30 / 35 &nbsp;&middot;&nbsp; Introduction to Jakarta EE and MicroProfile</span>
+  <a href="#slide-31">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-31" class="slide">
+<h2>🙋 Questions &amp; Discussion</h2>
+<h3>Discussion Topics:</h3>
+<ul>
+<li>When would you choose Jakarta EE over Spring Boot?</li>
+<li>How does MicroProfile help with microservices?</li>
+<li>What are the benefits of Podman in enterprise environments?</li>
+</ul>
+<h3>Office Hours:</h3>
+<ul>
+<li><strong>When:</strong> [Your schedule]</li>
+<li><strong>Where:</strong> [Your location/online]</li>
+<li><strong>Contact:</strong> [Your email]</li>
+</ul>
+
+<span class="slide-counter">31 / 35</span>
+<div class="slide-nav">
+  <a href="#slide-30">&#8592; Previous</a>
+  <span class="slide-info">Slide 31 / 35 &nbsp;&middot;&nbsp; Introduction to Jakarta EE and MicroProfile</span>
+  <a href="#slide-32">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-32" class="slide">
+<h2 data-en="📅 Next Lecture" data-fr="📅 Prochaine leçon">📅 Next Lecture</h2>
+<h3>Servlets and JSP with MicroProfile</h3>
+<p><strong>Date:</strong> [Next session date]</p>
+<p><strong>Duration:</strong> 3 hours</p>
+<p><strong>Topics:</strong></p>
+<ul>
+<li data-en="Servlet lifecycle in detail" data-fr="Servlet Cycle de vie in detail">Servlet lifecycle in detail</li>
+<li>JSP and JSTL</li>
+<li>MVC pattern</li>
+<li>MP Config in web applications</li>
+<li>Health checks for web tier</li>
+</ul>
+<p><strong>Preparation:</strong> Complete Lab 1 and review HTTP methods</p>
+
+<span class="slide-counter">32 / 35</span>
+<div class="slide-nav">
+  <a href="#slide-31">&#8592; Previous</a>
+  <span class="slide-info">Slide 32 / 35 &nbsp;&middot;&nbsp; Introduction to Jakarta EE and MicroProfile</span>
+  <a href="#slide-33">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-33" class="slide">
+<h1 data-en="Thank You!" data-fr="Merci !!">Thank You!</h1>
+<h2 data-en="Ready to Build Cloud-Native Enterprise Applications? 🚀" data-fr="Prêt à Build Cloud-natif Enterprise Applications? 🚀">Ready to Build Cloud-Native Enterprise Applications? 🚀</h2>
+<p><strong>Remember:</strong></p>
+<ul>
+<li>Jakarta EE + MicroProfile = Modern Enterprise Java</li>
+<li>Open Liberty = Fast, lightweight, cloud-ready</li>
+<li>Podman = Secure, rootless containers</li>
+<li>Complete Lab 1 before next session</li>
+</ul>
+<p data-en="<strong>See you in the next lecture!</strong>" data-fr="À bientôt dans the Prochaine leçon!"><strong>See you in the next lecture!</strong></p>
+
+<span class="slide-counter">33 / 35</span>
+<div class="slide-nav">
+  <a href="#slide-32">&#8592; Previous</a>
+  <span class="slide-info">Slide 33 / 35 &nbsp;&middot;&nbsp; Introduction to Jakarta EE and MicroProfile</span>
+  <a href="#slide-34">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-34" class="slide">
+<h2 data-en="Appendix: Quick Reference" data-fr="Annexe: Quick Reference">Appendix: Quick Reference</h2>
+<h3 data-en="Important Annotations:" data-fr="Important Annotation:">Important Annotations:</h3>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>// Jakarta EE
+@WebServlet(&quot;/path&quot;)           // Servlet mapping
+@Path(&quot;/resource&quot;)             // JAX-RS resource
+@Entity                        // JPA entity
+@Inject                        // CDI injection
+
+// MicroProfile
+@ConfigProperty(name=&quot;key&quot;)    // MP Config
+@Health                        // MP Health check
+@Timed                         // MP Metrics
+@Retry                         // MP Fault Tolerance</code></pre>
+
+<span class="slide-counter">34 / 35</span>
+<div class="slide-nav">
+  <a href="#slide-33">&#8592; Previous</a>
+  <span class="slide-info">Slide 34 / 35 &nbsp;&middot;&nbsp; Introduction to Jakarta EE and MicroProfile</span>
+  <a href="#slide-35">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-35" class="slide">
+<h2 data-en="Appendix: Commands Reference" data-fr="Annexe: Commands Reference">Appendix: Commands Reference</h2>
+<h3>Maven Commands:</h3>
+<pre class="dark"><span class="lang-badge">bash</span>
+<code>mvn liberty:dev               # Dev mode with hot reload
+mvn liberty:run               # Run Liberty server
+mvn liberty:stop              # Stop Liberty server
+mvn package                   # Build WAR file</code></pre>
+<h3>Podman Commands:</h3>
+
+<span class="slide-counter">35 / 35</span>
+<div class="slide-nav">
+  <a href="#slide-34">&#8592; Previous</a>
+  <span class="slide-info">Slide 35 / 35 &nbsp;&middot;&nbsp; Introduction to Jakarta EE and MicroProfile</span>
+  <a class="disabled">Next &#8594;</a>
+</div>
+</section>
+    </div>
+  </main>
+</div>
+<footer class="site-footer">Made with IBM Bob &nbsp;&middot;&nbsp; &copy; 2026 Olivier Planson</footer>
+<script>
+/* ── EN/FR language toggle — global scope so buttons can call it ── */
+var _lang = localStorage.getItem('slide-lang') || 'en';
+function setLang(lang) {
+  _lang = lang;
+  localStorage.setItem('slide-lang', lang);
+  document.getElementById('btn-en').classList.toggle('active', lang === 'en');
+  document.getElementById('btn-fr').classList.toggle('active', lang === 'fr');
+  document.querySelectorAll('[data-en][data-fr]').forEach(function(el) {
+    el.innerHTML = lang === 'fr' ? el.getAttribute('data-fr') : el.getAttribute('data-en');
+  });
+}
+
+(function() {
+  /* ── Sidenav hover ── */
+  var nav     = document.getElementById('sidenav');
+  var navTrig = document.getElementById('sidenav-trigger');
+  var navTimer = null;
+  function navShow() { clearTimeout(navTimer); nav.classList.add('sidenav--open'); }
+  function navHide() { navTimer = setTimeout(function(){ nav.classList.remove('sidenav--open'); }, 300); }
+  navTrig.addEventListener('mouseenter', navShow);
+  navTrig.addEventListener('mouseleave', navHide);
+  nav.addEventListener('mouseenter', navShow);
+  nav.addEventListener('mouseleave', navHide);
+
+  /* ── Progress bar hover ── */
+  var pbWrap  = document.getElementById('pb-wrap');
+  var pbTrig  = document.getElementById('pb-trigger');
+  var pbTimer = null;
+  function pbShow() { clearTimeout(pbTimer); pbWrap.classList.add('pb-open'); }
+  function pbHide() { pbTimer = setTimeout(function(){ pbWrap.classList.remove('pb-open'); }, 400); }
+  pbTrig.addEventListener('mouseenter', pbShow);
+  pbTrig.addEventListener('mouseleave', pbHide);
+  pbWrap.addEventListener('mouseenter', pbShow);
+  pbWrap.addEventListener('mouseleave', pbHide);
+
+  /* ── Wire EN/FR buttons via addEventListener (no inline onclick) ── */
+  document.getElementById('btn-en').addEventListener('click', function() { setLang('en'); });
+  document.getElementById('btn-fr').addEventListener('click', function() { setLang('fr'); });
+
+  /* Apply stored preference on page load */
+  if (_lang === 'fr') setLang('fr');
+})();
+</script>
+</body>
+</html>

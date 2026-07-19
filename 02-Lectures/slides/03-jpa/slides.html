@@ -1,0 +1,2860 @@
+<!-- © Copyright 2026 Olivier Planson. All rights reserved. Reproduction prohibited. Made with IBM Bob. -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>ESIPE — 🗄️ Lecture 3: JPA and Database Integration — Slides</title>
+  <link rel="stylesheet" href="../assets/slide.css"/>
+  <style>
+/* suppress static .current when a slide is targeted */
+body:has(.slide:target) .progress-bar a.current { background: var(--bg); color: var(--muted); border-color: var(--border); }
+body:has(#slide-1:target) .progress-bar a[href="#slide-1"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-2:target) .progress-bar a[href="#slide-2"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-3:target) .progress-bar a[href="#slide-3"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-4:target) .progress-bar a[href="#slide-4"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-5:target) .progress-bar a[href="#slide-5"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-6:target) .progress-bar a[href="#slide-6"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-7:target) .progress-bar a[href="#slide-7"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-8:target) .progress-bar a[href="#slide-8"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-9:target) .progress-bar a[href="#slide-9"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-10:target) .progress-bar a[href="#slide-10"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-11:target) .progress-bar a[href="#slide-11"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-12:target) .progress-bar a[href="#slide-12"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-13:target) .progress-bar a[href="#slide-13"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-14:target) .progress-bar a[href="#slide-14"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-15:target) .progress-bar a[href="#slide-15"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-16:target) .progress-bar a[href="#slide-16"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-17:target) .progress-bar a[href="#slide-17"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-18:target) .progress-bar a[href="#slide-18"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-19:target) .progress-bar a[href="#slide-19"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-20:target) .progress-bar a[href="#slide-20"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-21:target) .progress-bar a[href="#slide-21"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-22:target) .progress-bar a[href="#slide-22"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-23:target) .progress-bar a[href="#slide-23"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-24:target) .progress-bar a[href="#slide-24"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-25:target) .progress-bar a[href="#slide-25"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-26:target) .progress-bar a[href="#slide-26"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-27:target) .progress-bar a[href="#slide-27"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-28:target) .progress-bar a[href="#slide-28"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-29:target) .progress-bar a[href="#slide-29"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-30:target) .progress-bar a[href="#slide-30"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-31:target) .progress-bar a[href="#slide-31"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-32:target) .progress-bar a[href="#slide-32"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-33:target) .progress-bar a[href="#slide-33"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-34:target) .progress-bar a[href="#slide-34"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-35:target) .progress-bar a[href="#slide-35"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-36:target) .progress-bar a[href="#slide-36"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-37:target) .progress-bar a[href="#slide-37"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-38:target) .progress-bar a[href="#slide-38"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-39:target) .progress-bar a[href="#slide-39"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-40:target) .progress-bar a[href="#slide-40"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-41:target) .progress-bar a[href="#slide-41"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-42:target) .progress-bar a[href="#slide-42"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-43:target) .progress-bar a[href="#slide-43"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-44:target) .progress-bar a[href="#slide-44"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-45:target) .progress-bar a[href="#slide-45"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-46:target) .progress-bar a[href="#slide-46"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-47:target) .progress-bar a[href="#slide-47"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-48:target) .progress-bar a[href="#slide-48"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-49:target) .progress-bar a[href="#slide-49"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-50:target) .progress-bar a[href="#slide-50"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-51:target) .progress-bar a[href="#slide-51"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-52:target) .progress-bar a[href="#slide-52"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-53:target) .progress-bar a[href="#slide-53"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-54:target) .progress-bar a[href="#slide-54"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-55:target) .progress-bar a[href="#slide-55"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-56:target) .progress-bar a[href="#slide-56"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-57:target) .progress-bar a[href="#slide-57"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-58:target) .progress-bar a[href="#slide-58"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-59:target) .progress-bar a[href="#slide-59"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-60:target) .progress-bar a[href="#slide-60"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-61:target) .progress-bar a[href="#slide-61"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-62:target) .progress-bar a[href="#slide-62"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-63:target) .progress-bar a[href="#slide-63"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-64:target) .progress-bar a[href="#slide-64"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-65:target) .progress-bar a[href="#slide-65"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-66:target) .progress-bar a[href="#slide-66"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-67:target) .progress-bar a[href="#slide-67"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-68:target) .progress-bar a[href="#slide-68"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-69:target) .progress-bar a[href="#slide-69"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-70:target) .progress-bar a[href="#slide-70"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-71:target) .progress-bar a[href="#slide-71"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-72:target) .progress-bar a[href="#slide-72"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-73:target) .progress-bar a[href="#slide-73"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-74:target) .progress-bar a[href="#slide-74"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-75:target) .progress-bar a[href="#slide-75"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-76:target) .progress-bar a[href="#slide-76"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-77:target) .progress-bar a[href="#slide-77"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-78:target) .progress-bar a[href="#slide-78"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-79:target) .progress-bar a[href="#slide-79"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+  </style>
+</head>
+<body>
+<header class="site-header">
+  <a class="brand" href="../index.html">ESIPE<span>Jakarta EE &amp; Microservices</span></a>
+  <!-- EN/FR language toggle -->
+  <div class="lang-toggle" id="lang-toggle">
+    <button id="btn-en" class="active">EN</button>
+    <span class="sep">|</span>
+    <button id="btn-fr">FR</button>
+  </div>
+  <a class="back-link" href="../index.html">&#8592; All Courses</a>
+</header>
+<!-- Thin trigger strip at top: hover to reveal progress bar -->
+<div class="progress-bar-trigger" id="pb-trigger"></div>
+<!-- Progress bar — hidden by default, revealed on hover -->
+<div class="progress-bar-wrap" id="pb-wrap">
+  <div class="progress-bar">
+    <a href="#slide-1" class="current">1</a>
+      <a href="#slide-2">2</a>
+      <a href="#slide-3">3</a>
+      <a href="#slide-4">4</a>
+      <a href="#slide-5">5</a>
+      <a href="#slide-6">6</a>
+      <a href="#slide-7">7</a>
+      <a href="#slide-8">8</a>
+      <a href="#slide-9">9</a>
+      <a href="#slide-10">10</a>
+      <a href="#slide-11">11</a>
+      <a href="#slide-12">12</a>
+      <a href="#slide-13">13</a>
+      <a href="#slide-14">14</a>
+      <a href="#slide-15">15</a>
+      <a href="#slide-16">16</a>
+      <a href="#slide-17">17</a>
+      <a href="#slide-18">18</a>
+      <a href="#slide-19">19</a>
+      <a href="#slide-20">20</a>
+      <a href="#slide-21">21</a>
+      <a href="#slide-22">22</a>
+      <a href="#slide-23">23</a>
+      <a href="#slide-24">24</a>
+      <a href="#slide-25">25</a>
+      <a href="#slide-26">26</a>
+      <a href="#slide-27">27</a>
+      <a href="#slide-28">28</a>
+      <a href="#slide-29">29</a>
+      <a href="#slide-30">30</a>
+      <a href="#slide-31">31</a>
+      <a href="#slide-32">32</a>
+      <a href="#slide-33">33</a>
+      <a href="#slide-34">34</a>
+      <a href="#slide-35">35</a>
+      <a href="#slide-36">36</a>
+      <a href="#slide-37">37</a>
+      <a href="#slide-38">38</a>
+      <a href="#slide-39">39</a>
+      <a href="#slide-40">40</a>
+      <a href="#slide-41">41</a>
+      <a href="#slide-42">42</a>
+      <a href="#slide-43">43</a>
+      <a href="#slide-44">44</a>
+      <a href="#slide-45">45</a>
+      <a href="#slide-46">46</a>
+      <a href="#slide-47">47</a>
+      <a href="#slide-48">48</a>
+      <a href="#slide-49">49</a>
+      <a href="#slide-50">50</a>
+      <a href="#slide-51">51</a>
+      <a href="#slide-52">52</a>
+      <a href="#slide-53">53</a>
+      <a href="#slide-54">54</a>
+      <a href="#slide-55">55</a>
+      <a href="#slide-56">56</a>
+      <a href="#slide-57">57</a>
+      <a href="#slide-58">58</a>
+      <a href="#slide-59">59</a>
+      <a href="#slide-60">60</a>
+      <a href="#slide-61">61</a>
+      <a href="#slide-62">62</a>
+      <a href="#slide-63">63</a>
+      <a href="#slide-64">64</a>
+      <a href="#slide-65">65</a>
+      <a href="#slide-66">66</a>
+      <a href="#slide-67">67</a>
+      <a href="#slide-68">68</a>
+      <a href="#slide-69">69</a>
+      <a href="#slide-70">70</a>
+      <a href="#slide-71">71</a>
+      <a href="#slide-72">72</a>
+      <a href="#slide-73">73</a>
+      <a href="#slide-74">74</a>
+      <a href="#slide-75">75</a>
+      <a href="#slide-76">76</a>
+      <a href="#slide-77">77</a>
+      <a href="#slide-78">78</a>
+      <a href="#slide-79">79</a>
+  </div>
+</div>
+<!-- Thin trigger strip at left: hover to reveal sidenav -->
+<div class="sidenav-trigger" id="sidenav-trigger"></div>
+<div class="shell">
+  <nav class="sidenav" id="sidenav">
+    <div class="sidenav-section">Course outline</div>
+    <a href="#slide-3" class="active">📚 Topics Covered</a>
+    <a href="#slide-7">JPA Architecture</a>
+    <a href="#slide-8">Key JPA Concepts</a>
+    <a href="#slide-10">Creating a Basic Entity</a>
+    <a href="#slide-12">ID Generation Strategies</a>
+    <a href="#slide-16">One-to-Many Relationship</a>
+    <a href="#slide-17">Many-to-One Relationship</a>
+    <a href="#slide-18">Cascade Types</a>
+    <a href="#slide-19">Fetch Types</a>
+    <a href="#slide-20">Many-to-Many Relationship</a>
+    <a href="#slide-24">Basic JPQL Queries</a>
+    <a href="#slide-25">JPQL with Joins</a>
+    <a href="#slide-26">JPQL Aggregate Functions</a>
+    <a href="#slide-27">Named Queries</a>
+    <a href="#slide-28">JPQL Update and Delete</a>
+    <a href="#slide-31">Basic Criteria Query</a>
+    <a href="#slide-32">Criteria Query with Conditions</a>
+    <a href="#slide-34">Criteria Query with Joins</a>
+    <a href="#slide-35">Criteria Query Aggregate Functions</a>
+    <a href="#slide-39">Transaction Patterns</a>
+    <a href="#slide-40">Rollback Strategies</a>
+    <a href="#slide-41">EntityManager Operations</a>
+    <a href="#slide-42">Entity States</a>
+    <a href="#slide-45">Migration Tools</a>
+    <a href="#slide-46">Flyway Setup</a>
+    <a href="#slide-47">Migration File Structure</a>
+    <a href="#slide-49">Running Migrations</a>
+    <a href="#slide-51">Rollback Strategies</a>
+    <a href="#slide-52">JPA Configuration</a>
+    <a href="#slide-55">JNDI Architecture</a>
+    <a href="#slide-56">JNDI Naming Contexts</a>
+    <a href="#slide-57">Looking Up DataSources</a>
+    <a href="#slide-58">Configuring DataSource in web.xml</a>
+    <a href="#slide-59">Looking Up EJB References</a>
+    <a href="#slide-60">Environment Entries</a>
+    <a href="#slide-61">JNDI Lookup Patterns</a>
+    <a href="#slide-62">JNDI vs Resource Injection</a>
+    <a href="#slide-63">Looking Up JMS Resources</a>
+    <a href="#slide-64">JNDI Naming Conventions</a>
+    <a href="#slide-66">JNDI Configuration in Liberty</a>
+    <a href="#slide-68">Common JNDI Errors</a>
+    <a href="#slide-69">JNDI Troubleshooting</a>
+    <a href="#slide-72">🎯 Lab 3 Preview</a>
+    <a href="#slide-75">🙋 Questions &amp; Discussion</a>
+    <a href="#slide-77">❓ Questions?</a>
+    <hr>
+    <div class="sidenav-section">Navigation</div>
+    <a href="index.html">&#9675; Overview</a>
+  </nav>
+  <main class="content">
+    <div class="slide-wrapper">
+<section id="slide-1" class="slide slide--title">
+<h1 data-en="🗄️ Lecture 3: JPA and Database Integration" data-fr="🗄️ Lecture 3: JPA and Intégration base de données">🗄️ Lecture 3: JPA and Database Integration</h1>
+<p><strong>Jakarta Persistence API (JPA)</strong></p>
+
+<span class="slide-counter">1 / 79</span>
+<div class="slide-nav">
+  <a class="disabled">&#8592; Previous</a>
+  <span class="slide-info">Slide 1 / 79 &nbsp;&middot;&nbsp; 🗄️ Lecture 3: JPA and Database Integration</span>
+  <a href="#slide-2">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-2" class="slide">
+<h2 data-en="📋 Lecture Objectives" data-fr="📋 Lecture Objectifs">📋 Lecture Objectives</h2>
+<p data-en="By the end of this lecture, you will be able to:" data-fr="À la fin de cette leçon, vous serez en mesure de:">By the end of this lecture, you will be able to:</p>
+<ul>
+<li>Understand Object-Relational Mapping (ORM) concepts</li>
+<li data-en="Create and configure JPA entities with annotations" data-fr="Create and configure JPA entities with Annotation">Create and configure JPA entities with annotations</li>
+<li>Define entity relationships (One-to-One, One-to-Many, Many-to-Many)</li>
+<li data-en="Write queries using JPQL and Criteria API" data-fr="Write queries Utilisation de JPQL and Criteria API">Write queries using JPQL and Criteria API</li>
+<li>Manage transactions effectively</li>
+<li>Handle database migrations and schema evolution</li>
+<li>Use JNDI to lookup resources (DataSources, EJBs, JMS)</li>
+<li>Configure and access environment entries</li>
+</ul>
+
+<span class="slide-counter">2 / 79</span>
+<div class="slide-nav">
+  <a href="#slide-1">&#8592; Previous</a>
+  <span class="slide-info">Slide 2 / 79 &nbsp;&middot;&nbsp; 🗄️ Lecture 3: JPA and Database Integration</span>
+  <a href="#slide-3">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-3" class="slide">
+<h2>📚 Topics Covered</h2>
+<ol>
+<li data-en="<strong>Introduction to JPA and ORM</strong>" data-fr="Introduction à JPA and ORM"><strong>Introduction to JPA and ORM</strong></li>
+<li data-en="<strong>JPA Entities and Annotations</strong>" data-fr="JPA Entities and Annotation"><strong>JPA Entities and Annotations</strong></li>
+<li><strong>Entity Relationships</strong></li>
+<li><strong>JPQL (Java Persistence Query Language)</strong></li>
+<li><strong>Criteria API</strong></li>
+<li data-en="<strong>Transaction Management</strong>" data-fr="Gestion des transactions"><strong>Transaction Management</strong></li>
+<li><strong>Database Migrations</strong></li>
+<li><strong>JNDI (Java Naming and Directory Interface)</strong></li>
+</ol>
+
+<span class="slide-counter">3 / 79</span>
+<div class="slide-nav">
+  <a href="#slide-2">&#8592; Previous</a>
+  <span class="slide-info">Slide 3 / 79 &nbsp;&middot;&nbsp; 🗄️ Lecture 3: JPA and Database Integration</span>
+  <a href="#slide-4">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-4" class="slide slide--section">
+<h1 data-en="Part 1: Introduction to JPA and ORM" data-fr="Part 1: Introduction à JPA and ORM">Part 1: Introduction to JPA and ORM</h1>
+
+<span class="slide-counter">4 / 79</span>
+<div class="slide-nav">
+  <a href="#slide-3">&#8592; Previous</a>
+  <span class="slide-info">Slide 4 / 79 &nbsp;&middot;&nbsp; 🗄️ Lecture 3: JPA and Database Integration</span>
+  <a href="#slide-5">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-5" class="slide">
+<h2 data-en="What is ORM?" data-fr="Qu'est-ce que ORM?">What is ORM?</h2>
+<p><strong>Object-Relational Mapping (ORM)</strong> bridges the gap between object-oriented programming and relational databases.</p>
+<div class="slide-columns">
+<div class="slide-col">
+<p><strong>Without ORM:</strong></p>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>// Manual JDBC code
+String sql = &quot;SELECT * FROM client WHERE id = ?&quot;;
+PreparedStatement ps = conn.prepareStatement(sql);
+ps.setLong(1, clientId);
+ResultSet rs = ps.executeQuery();
+if (rs.next()) {
+    Client client = new Client();
+    client.setId(rs.getLong(&quot;id&quot;));
+    client.setName(rs.getString(&quot;name&quot;));
+    client.setEmail(rs.getString(&quot;email&quot;));
+}</code></pre>
+</div>
+<div class="slide-col">
+<p><strong>With ORM (JPA):</strong></p>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>// Simple JPA code
+Client client = entityManager.find(
+    Client.class, 
+    clientId
+);</code></pre>
+</div>
+</div>
+
+<span class="slide-counter">5 / 79</span>
+<div class="slide-nav">
+  <a href="#slide-4">&#8592; Previous</a>
+  <span class="slide-info">Slide 5 / 79 &nbsp;&middot;&nbsp; 🗄️ Lecture 3: JPA and Database Integration</span>
+  <a href="#slide-6">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-6" class="slide">
+<h2 data-en="Why Use JPA?" data-fr="Pourquoi JPA?">Why Use JPA?</h2>
+<p><strong>Benefits:</strong></p>
+<ul>
+<li>✅ <strong>Productivity:</strong> Less boilerplate code</li>
+<li>✅ <strong>Maintainability:</strong> Object-oriented approach</li>
+<li>✅ <strong>Database Independence:</strong> Switch databases easily</li>
+<li>✅ <strong>Caching:</strong> Built-in first and second-level caching</li>
+<li>✅ <strong>Lazy Loading:</strong> Load data only when needed</li>
+<li data-en="✅ <strong>Transaction Management:</strong> Automatic transaction handling" data-fr="✅ Gestion des transactions: Automatic transaction handling">✅ <strong>Transaction Management:</strong> Automatic transaction handling</li>
+</ul>
+<p><strong>Challenges:</strong></p>
+<ul>
+<li>⚠️ Learning curve for complex mappings</li>
+<li>⚠️ Performance tuning required for large datasets</li>
+<li>⚠️ N+1 query problem if not careful</li>
+</ul>
+
+<span class="slide-counter">6 / 79</span>
+<div class="slide-nav">
+  <a href="#slide-5">&#8592; Previous</a>
+  <span class="slide-info">Slide 6 / 79 &nbsp;&middot;&nbsp; 🗄️ Lecture 3: JPA and Database Integration</span>
+  <a href="#slide-7">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-7" class="slide">
+<h2>JPA Architecture</h2>
+<p><img src="../../images/03-jpa-database-integration-diagram-1.png" alt="width:70%"></p>
+
+<span class="slide-counter">7 / 79</span>
+<div class="slide-nav">
+  <a href="#slide-6">&#8592; Previous</a>
+  <span class="slide-info">Slide 7 / 79 &nbsp;&middot;&nbsp; 🗄️ Lecture 3: JPA and Database Integration</span>
+  <a href="#slide-8">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-8" class="slide">
+<h2>Key JPA Concepts</h2>
+<table class="slide-table"><thead><tr><th>Concept</th><th>Description</th></tr></thead><tbody>
+<tr><td><strong>Entity</strong></td><td>Java class mapped to database table</td></tr>
+<tr><td><strong>EntityManager</strong></td><td>Interface to interact with persistence context</td></tr>
+<tr><td><strong>Persistence Context</strong></td><td>Set of managed entity instances</td></tr>
+<tr><td><strong>Persistence Unit</strong></td><td>Configuration defining database connection</td></tr>
+<tr><td><strong>Transaction</strong></td><td>Unit of work that must be atomic</td></tr>
+<tr><td><strong>JPQL</strong></td><td>Object-oriented query language</td></tr>
+</tbody></table>
+
+<span class="slide-counter">8 / 79</span>
+<div class="slide-nav">
+  <a href="#slide-7">&#8592; Previous</a>
+  <span class="slide-info">Slide 8 / 79 &nbsp;&middot;&nbsp; 🗄️ Lecture 3: JPA and Database Integration</span>
+  <a href="#slide-9">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-9" class="slide slide--section">
+<h1 data-en="Part 2: JPA Entities and Annotations" data-fr="Part 2: JPA Entities and Annotation">Part 2: JPA Entities and Annotations</h1>
+
+<span class="slide-counter">9 / 79</span>
+<div class="slide-nav">
+  <a href="#slide-8">&#8592; Previous</a>
+  <span class="slide-info">Slide 9 / 79 &nbsp;&middot;&nbsp; 🗄️ Lecture 3: JPA and Database Integration</span>
+  <a href="#slide-10">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-10" class="slide">
+<h2>Creating a Basic Entity</h2>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>package com.bank.model;
+
+import jakarta.persistence.*;
+
+@Entity
+@Table(name = &quot;clients&quot;)
+public class Client {
+    
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+    
+    @Column(name = &quot;name&quot;, nullable = false, length = 100)
+    private String name;
+    
+    @Column(name = &quot;email&quot;, nullable = false, unique = true, length = 150)
+    private String email;
+    
+    // Constructors, getters, setters
+}</code></pre>
+
+<span class="slide-counter">10 / 79</span>
+<div class="slide-nav">
+  <a href="#slide-9">&#8592; Previous</a>
+  <span class="slide-info">Slide 10 / 79 &nbsp;&middot;&nbsp; 🗄️ Lecture 3: JPA and Database Integration</span>
+  <a href="#slide-11">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-11" class="slide">
+<h2 data-en="Essential JPA Annotations" data-fr="Essential JPA Annotation">Essential JPA Annotations</h2>
+<div class="slide-columns">
+<div class="slide-col">
+<p><strong>Class-Level:</strong></p>
+<ul>
+<li><code>@Entity</code> - Marks class as JPA entity</li>
+<li><code>@Table</code> - Specifies table details</li>
+<li><code>@NamedQuery</code> - Defines named queries</li>
+</ul>
+<p><strong>Field-Level:</strong></p>
+<ul>
+<li><code>@Id</code> - Primary key</li>
+<li><code>@GeneratedValue</code> - Auto-generation strategy</li>
+<li><code>@Column</code> - Column mapping</li>
+<li><code>@Temporal</code> - Date/time mapping</li>
+<li><code>@Enumerated</code> - Enum mapping</li>
+</ul>
+</div>
+<div class="slide-col">
+<p><strong>Relationship:</strong></p>
+<ul>
+<li><code>@OneToOne</code> - One-to-one relationship</li>
+<li><code>@OneToMany</code> - One-to-many relationship</li>
+<li><code>@ManyToOne</code> - Many-to-one relationship</li>
+<li><code>@ManyToMany</code> - Many-to-many relationship</li>
+<li><code>@JoinColumn</code> - Foreign key column</li>
+<li><code>@JoinTable</code> - Join table for M:N</li>
+</ul>
+</div>
+</div>
+
+<span class="slide-counter">11 / 79</span>
+<div class="slide-nav">
+  <a href="#slide-10">&#8592; Previous</a>
+  <span class="slide-info">Slide 11 / 79 &nbsp;&middot;&nbsp; 🗄️ Lecture 3: JPA and Database Integration</span>
+  <a href="#slide-12">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-12" class="slide">
+<h2>ID Generation Strategies</h2>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>// IDENTITY - Database auto-increment
+@Id
+@GeneratedValue(strategy = GenerationType.IDENTITY)
+private Long id;
+
+// SEQUENCE - Database sequence
+@Id
+@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = &quot;client_seq&quot;)
+@SequenceGenerator(name = &quot;client_seq&quot;, sequenceName = &quot;client_sequence&quot;, 
+                   allocationSize = 1)
+private Long id;
+
+// TABLE - Separate table for ID generation
+@Id
+@GeneratedValue(strategy = GenerationType.TABLE, generator = &quot;client_gen&quot;)
+@TableGenerator(name = &quot;client_gen&quot;, table = &quot;id_generator&quot;, 
+                pkColumnName = &quot;gen_name&quot;, valueColumnName = &quot;gen_value&quot;)
+private Long id;
+
+// UUID - Universally Unique Identifier
+@Id
+@GeneratedValue(strategy = GenerationType.UUID)
+private UUID id;</code></pre>
+
+<span class="slide-counter">12 / 79</span>
+<div class="slide-nav">
+  <a href="#slide-11">&#8592; Previous</a>
+  <span class="slide-info">Slide 12 / 79 &nbsp;&middot;&nbsp; 🗄️ Lecture 3: JPA and Database Integration</span>
+  <a href="#slide-13">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-13" class="slide">
+<h2 data-en="Complete Entity Example" data-fr="Complete Entity Exemple">Complete Entity Example</h2>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>@Entity
+@Table(name = &quot;clients&quot;, 
+       indexes = {@Index(name = &quot;idx_email&quot;, columnList = &quot;email&quot;)})
+@NamedQuery(name = &quot;Client.findAll&quot;, query = &quot;SELECT c FROM Client c&quot;)
+@NamedQuery(name = &quot;Client.findByEmail&quot;, 
+            query = &quot;SELECT c FROM Client c WHERE c.email = :email&quot;)
+public class Client {
+    
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+    
+    @Column(nullable = false, length = 100)
+    private String name;
+    
+    @Column(nullable = false, unique = true, length = 150)
+    private String email;
+    
+    @Column(name = &quot;created_at&quot;, nullable = false, updatable = false)
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date createdAt;
+    
+    @PrePersist
+    protected void onCreate() {
+        createdAt = new Date();
+    }
+}</code></pre>
+
+<span class="slide-counter">13 / 79</span>
+<div class="slide-nav">
+  <a href="#slide-12">&#8592; Previous</a>
+  <span class="slide-info">Slide 13 / 79 &nbsp;&middot;&nbsp; 🗄️ Lecture 3: JPA and Database Integration</span>
+  <a href="#slide-14">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-14" class="slide">
+<h2 data-en="Entity Lifecycle Callbacks" data-fr="Entity Cycle de vie Callbacks">Entity Lifecycle Callbacks</h2>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>@Entity
+public class Client {
+    
+    @PrePersist
+    protected void onCreate() {
+        // Called before entity is persisted
+        this.createdAt = new Date();
+    }
+    
+    @PostPersist
+    protected void afterCreate() {
+        // Called after entity is persisted
+        System.out.println(&quot;Client created: &quot; + this.id);
+    }
+    
+    @PreUpdate
+    protected void onUpdate() {
+        // Called before entity is updated
+        this.updatedAt = new Date();
+    }
+    
+    @PostUpdate
+    protected void afterUpdate() {
+        // Called after entity is updated
+    }
+    
+    @PreRemove
+    protected void onDelete() {
+        // Called before entity is removed
+    }
+    
+    @PostLoad
+    protected void afterLoad() {
+        // Called after entity is loaded from database
+    }
+}</code></pre>
+
+<span class="slide-counter">14 / 79</span>
+<div class="slide-nav">
+  <a href="#slide-13">&#8592; Previous</a>
+  <span class="slide-info">Slide 14 / 79 &nbsp;&middot;&nbsp; 🗄️ Lecture 3: JPA and Database Integration</span>
+  <a href="#slide-15">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-15" class="slide slide--section">
+<h1>Part 3: Entity Relationships</h1>
+
+<span class="slide-counter">15 / 79</span>
+<div class="slide-nav">
+  <a href="#slide-14">&#8592; Previous</a>
+  <span class="slide-info">Slide 15 / 79 &nbsp;&middot;&nbsp; 🗄️ Lecture 3: JPA and Database Integration</span>
+  <a href="#slide-16">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-16" class="slide">
+<h2>One-to-Many Relationship</h2>
+<p><strong>Client has many Accounts</strong></p>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>@Entity
+@Table(name = &quot;clients&quot;)
+public class Client {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+    
+    private String name;
+    private String email;
+    
+    @OneToMany(mappedBy = &quot;client&quot;, cascade = CascadeType.ALL, 
+               orphanRemoval = true, fetch = FetchType.LAZY)
+    private List&lt;Account&gt; accounts = new ArrayList&lt;&gt;();
+    
+    // Helper methods
+    public void addAccount(Account account) {
+        accounts.add(account);
+        account.setClient(this);
+    }
+    
+    public void removeAccount(Account account) {
+        accounts.remove(account);
+        account.setClient(null);
+    }
+}</code></pre>
+
+<span class="slide-counter">16 / 79</span>
+<div class="slide-nav">
+  <a href="#slide-15">&#8592; Previous</a>
+  <span class="slide-info">Slide 16 / 79 &nbsp;&middot;&nbsp; 🗄️ Lecture 3: JPA and Database Integration</span>
+  <a href="#slide-17">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-17" class="slide">
+<h2>Many-to-One Relationship</h2>
+<p><strong>Account belongs to one Client</strong></p>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>@Entity
+@Table(name = &quot;accounts&quot;)
+public class Account {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+    
+    @Column(nullable = false, unique = true, length = 34)
+    private String number;
+    
+    @Column(nullable = false)
+    private double balance;
+    
+    @Column(nullable = false, length = 20)
+    private String type; // CHECKING or SAVINGS
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = &quot;client_id&quot;, nullable = false)
+    private Client client;
+    
+    // Getters and setters
+}</code></pre>
+
+<span class="slide-counter">17 / 79</span>
+<div class="slide-nav">
+  <a href="#slide-16">&#8592; Previous</a>
+  <span class="slide-info">Slide 17 / 79 &nbsp;&middot;&nbsp; 🗄️ Lecture 3: JPA and Database Integration</span>
+  <a href="#slide-18">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-18" class="slide">
+<h2>Cascade Types</h2>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>public enum CascadeType {
+    ALL,        // All operations cascade
+    PERSIST,    // Persist operations cascade
+    MERGE,      // Merge operations cascade
+    REMOVE,     // Remove operations cascade
+    REFRESH,    // Refresh operations cascade
+    DETACH      // Detach operations cascade
+}</code></pre>
+<p data-en="<strong>Example:</strong>" data-fr="Exemple:"><strong>Example:</strong></p>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>@OneToMany(mappedBy = &quot;client&quot;, cascade = CascadeType.ALL)
+private List&lt;Account&gt; accounts;
+
+// When you persist a client, all accounts are also persisted
+Client client = new Client(&quot;John Doe&quot;, &quot;john@example.com&quot;);
+client.addAccount(new Account(&quot;ACC001&quot;, 1000.0, &quot;CHECKING&quot;));
+entityManager.persist(client); // Account is also persisted</code></pre>
+
+<span class="slide-counter">18 / 79</span>
+<div class="slide-nav">
+  <a href="#slide-17">&#8592; Previous</a>
+  <span class="slide-info">Slide 18 / 79 &nbsp;&middot;&nbsp; 🗄️ Lecture 3: JPA and Database Integration</span>
+  <a href="#slide-19">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-19" class="slide">
+<h2>Fetch Types</h2>
+<div class="slide-columns">
+<div class="slide-col">
+<p><strong>LAZY (Default for collections):</strong></p>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>@OneToMany(fetch = FetchType.LAZY)
+private List&lt;Account&gt; accounts;
+
+// Accounts loaded only when accessed
+Client client = em.find(Client.class, 1L);
+// No query for accounts yet
+
+List&lt;Account&gt; accounts = client.getAccounts();
+// NOW accounts are loaded</code></pre>
+</div>
+<div class="slide-col">
+<p><strong>EAGER (Default for single entities):</strong></p>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>@ManyToOne(fetch = FetchType.EAGER)
+private Client client;
+
+// Client loaded immediately
+Account account = em.find(Account.class, 1L);
+// Client is already loaded
+String name = account.getClient().getName();
+// No additional query</code></pre>
+</div>
+</div>
+<p data-en="<strong>Best Practice:</strong> Use LAZY by default, EAGER only when necessary" data-fr="Bonnes pratiques: Use LAZY by default, EAGER only when necessary"><strong>Best Practice:</strong> Use LAZY by default, EAGER only when necessary</p>
+
+<span class="slide-counter">19 / 79</span>
+<div class="slide-nav">
+  <a href="#slide-18">&#8592; Previous</a>
+  <span class="slide-info">Slide 19 / 79 &nbsp;&middot;&nbsp; 🗄️ Lecture 3: JPA and Database Integration</span>
+  <a href="#slide-20">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-20" class="slide">
+<h2>Many-to-Many Relationship</h2>
+<p data-en="<strong>Example: Client and Advisor relationship</strong>" data-fr="Exemple: Client and Advisor relationship"><strong>Example: Client and Advisor relationship</strong></p>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>@Entity
+public class Client {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+    
+    @ManyToMany
+    @JoinTable(
+        name = &quot;client_advisor&quot;,
+        joinColumns = @JoinColumn(name = &quot;client_id&quot;),
+        inverseJoinColumns = @JoinColumn(name = &quot;advisor_id&quot;)
+    )
+    private Set&lt;Advisor&gt; advisors = new HashSet&lt;&gt;();
+}
+
+@Entity
+public class Advisor {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+    
+    @ManyToMany(mappedBy = &quot;advisors&quot;)
+    private Set&lt;Client&gt; clients = new HashSet&lt;&gt;();
+}</code></pre>
+
+<span class="slide-counter">20 / 79</span>
+<div class="slide-nav">
+  <a href="#slide-19">&#8592; Previous</a>
+  <span class="slide-info">Slide 20 / 79 &nbsp;&middot;&nbsp; 🗄️ Lecture 3: JPA and Database Integration</span>
+  <a href="#slide-21">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-21" class="slide">
+<h2 data-en="Bidirectional Relationship Best Practices" data-fr="Bidirectional Relationship Bonnes pratiques">Bidirectional Relationship Best Practices</h2>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>@Entity
+public class Client {
+    @OneToMany(mappedBy = &quot;client&quot;, cascade = CascadeType.ALL, 
+               orphanRemoval = true)
+    private List&lt;Account&gt; accounts = new ArrayList&lt;&gt;();
+    
+    // Synchronization methods
+    public void addAccount(Account account) {
+        accounts.add(account);
+        account.setClient(this);  // Maintain both sides
+    }
+    
+    public void removeAccount(Account account) {
+        accounts.remove(account);
+        account.setClient(null);  // Maintain both sides
+    }
+}
+
+@Entity
+public class Account {
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = &quot;client_id&quot;)
+    private Client client;
+    
+    // Don't provide setClient() publicly
+    void setClient(Client client) {
+        this.client = client;
+    }
+}</code></pre>
+
+<span class="slide-counter">21 / 79</span>
+<div class="slide-nav">
+  <a href="#slide-20">&#8592; Previous</a>
+  <span class="slide-info">Slide 21 / 79 &nbsp;&middot;&nbsp; 🗄️ Lecture 3: JPA and Database Integration</span>
+  <a href="#slide-22">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-22" class="slide slide--section">
+<h1>Part 4: JPQL (Java Persistence Query Language)</h1>
+
+<span class="slide-counter">22 / 79</span>
+<div class="slide-nav">
+  <a href="#slide-21">&#8592; Previous</a>
+  <span class="slide-info">Slide 22 / 79 &nbsp;&middot;&nbsp; 🗄️ Lecture 3: JPA and Database Integration</span>
+  <a href="#slide-23">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-23" class="slide">
+<h2 data-en="What is JPQL?" data-fr="Qu'est-ce que JPQL?">What is JPQL?</h2>
+<p><strong>JPQL</strong> is an object-oriented query language similar to SQL but operates on entities rather than tables.</p>
+<div class="slide-columns">
+<div class="slide-col">
+<p><strong>SQL (Table-based):</strong></p>
+<pre class="dark"><span class="lang-badge">sql</span>
+<code>SELECT c.id, c.name, c.email
+FROM clients c
+WHERE c.email LIKE '%@example.com'
+ORDER BY c.name</code></pre>
+</div>
+<div class="slide-col">
+<p><strong>JPQL (Entity-based):</strong></p>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>SELECT c FROM Client c
+WHERE c.email LIKE '%@example.com'
+ORDER BY c.name</code></pre>
+</div>
+</div>
+<p><strong>Key Differences:</strong></p>
+<ul>
+<li>JPQL uses entity names, not table names</li>
+<li>JPQL uses entity properties, not column names</li>
+<li>JPQL is database-independent</li>
+</ul>
+
+<span class="slide-counter">23 / 79</span>
+<div class="slide-nav">
+  <a href="#slide-22">&#8592; Previous</a>
+  <span class="slide-info">Slide 23 / 79 &nbsp;&middot;&nbsp; 🗄️ Lecture 3: JPA and Database Integration</span>
+  <a href="#slide-24">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-24" class="slide">
+<h2>Basic JPQL Queries</h2>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>// Find all clients
+String jpql = &quot;SELECT c FROM Client c&quot;;
+List&lt;Client&gt; clients = entityManager
+    .createQuery(jpql, Client.class)
+    .getResultList();
+
+// Find client by ID
+String jpql = &quot;SELECT c FROM Client c WHERE c.id = :id&quot;;
+Client client = entityManager
+    .createQuery(jpql, Client.class)
+    .setParameter(&quot;id&quot;, 1L)
+    .getSingleResult();
+
+// Find clients by email pattern
+String jpql = &quot;SELECT c FROM Client c WHERE c.email LIKE :pattern&quot;;
+List&lt;Client&gt; clients = entityManager
+    .createQuery(jpql, Client.class)
+    .setParameter(&quot;pattern&quot;, &quot;%@example.com&quot;)
+    .getResultList();
+
+// Count clients
+String jpql = &quot;SELECT COUNT(c) FROM Client c&quot;;
+Long count = entityManager
+    .createQuery(jpql, Long.class)
+    .getSingleResult();</code></pre>
+
+<span class="slide-counter">24 / 79</span>
+<div class="slide-nav">
+  <a href="#slide-23">&#8592; Previous</a>
+  <span class="slide-info">Slide 24 / 79 &nbsp;&middot;&nbsp; 🗄️ Lecture 3: JPA and Database Integration</span>
+  <a href="#slide-25">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-25" class="slide">
+<h2>JPQL with Joins</h2>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>// Fetch clients with their accounts (JOIN FETCH to avoid N+1)
+String jpql = &quot;SELECT c FROM Client c LEFT JOIN FETCH c.accounts WHERE c.id = :id&quot;;
+Client client = entityManager
+    .createQuery(jpql, Client.class)
+    .setParameter(&quot;id&quot;, 1L)
+    .getSingleResult();
+
+// Find clients with accounts having balance &gt; 1000
+String jpql = &quot;&quot;&quot;
+    SELECT DISTINCT c FROM Client c
+    JOIN c.accounts a
+    WHERE a.balance &gt; :minBalance
+    &quot;&quot;&quot;;
+List&lt;Client&gt; clients = entityManager
+    .createQuery(jpql, Client.class)
+    .setParameter(&quot;minBalance&quot;, 1000.0)
+    .getResultList();
+
+// Find accounts with client information
+String jpql = &quot;SELECT a FROM Account a JOIN FETCH a.client WHERE a.type = :type&quot;;
+List&lt;Account&gt; accounts = entityManager
+    .createQuery(jpql, Account.class)
+    .setParameter(&quot;type&quot;, &quot;CHECKING&quot;)
+    .getResultList();</code></pre>
+
+<span class="slide-counter">25 / 79</span>
+<div class="slide-nav">
+  <a href="#slide-24">&#8592; Previous</a>
+  <span class="slide-info">Slide 25 / 79 &nbsp;&middot;&nbsp; 🗄️ Lecture 3: JPA and Database Integration</span>
+  <a href="#slide-26">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-26" class="slide">
+<h2>JPQL Aggregate Functions</h2>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>// Total balance across all accounts
+String jpql = &quot;SELECT SUM(a.balance) FROM Account a&quot;;
+Double totalBalance = entityManager
+    .createQuery(jpql, Double.class)
+    .getSingleResult();
+
+// Average balance by account type
+String jpql = &quot;&quot;&quot;
+    SELECT a.type, AVG(a.balance), COUNT(a)
+    FROM Account a
+    GROUP BY a.type
+    &quot;&quot;&quot;;
+List&lt;Object[]&gt; results = entityManager
+    .createQuery(jpql, Object[].class)
+    .getResultList();
+
+for (Object[] row : results) {
+    String type = (String) row[0];
+    Double avgBalance = (Double) row[1];
+    Long count = (Long) row[2];
+    System.out.println(type + &quot;: &quot; + avgBalance + &quot; (&quot; + count + &quot; accounts)&quot;);
+}
+
+// Find clients with more than 2 accounts
+String jpql = &quot;&quot;&quot;
+    SELECT c FROM Client c
+    WHERE SIZE(c.accounts) &gt; :minAccounts
+    &quot;&quot;&quot;;</code></pre>
+
+<span class="slide-counter">26 / 79</span>
+<div class="slide-nav">
+  <a href="#slide-25">&#8592; Previous</a>
+  <span class="slide-info">Slide 26 / 79 &nbsp;&middot;&nbsp; 🗄️ Lecture 3: JPA and Database Integration</span>
+  <a href="#slide-27">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-27" class="slide">
+<h2>Named Queries</h2>
+<p><strong>Define at entity level:</strong></p>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>@Entity
+@NamedQuery(
+    name = &quot;Client.findAll&quot;,
+    query = &quot;SELECT c FROM Client c ORDER BY c.name&quot;
+)
+@NamedQuery(
+    name = &quot;Client.findByEmail&quot;,
+    query = &quot;SELECT c FROM Client c WHERE c.email = :email&quot;
+)
+@NamedQuery(
+    name = &quot;Client.findWithAccounts&quot;,
+    query = &quot;SELECT DISTINCT c FROM Client c LEFT JOIN FETCH c.accounts&quot;
+)
+public class Client {
+    // Entity fields
+}</code></pre>
+<p><strong>Use in code:</strong></p>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>// Using named query
+List&lt;Client&gt; clients = entityManager
+    .createNamedQuery(&quot;Client.findAll&quot;, Client.class)
+    .getResultList();
+
+Client client = entityManager
+    .createNamedQuery(&quot;Client.findByEmail&quot;, Client.class)
+    .setParameter(&quot;email&quot;, &quot;john@example.com&quot;)
+    .getSingleResult();</code></pre>
+
+<span class="slide-counter">27 / 79</span>
+<div class="slide-nav">
+  <a href="#slide-26">&#8592; Previous</a>
+  <span class="slide-info">Slide 27 / 79 &nbsp;&middot;&nbsp; 🗄️ Lecture 3: JPA and Database Integration</span>
+  <a href="#slide-28">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-28" class="slide">
+<h2>JPQL Update and Delete</h2>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>// Update query
+String jpql = &quot;UPDATE Account a SET a.balance = a.balance * 1.05 WHERE a.type = :type&quot;;
+int updatedCount = entityManager
+    .createQuery(jpql)
+    .setParameter(&quot;type&quot;, &quot;SAVINGS&quot;)
+    .executeUpdate();
+
+// Delete query
+String jpql = &quot;DELETE FROM Account a WHERE a.balance = 0&quot;;
+int deletedCount = entityManager
+    .createQuery(jpql)
+    .executeUpdate();
+
+// Bulk operations require transaction
+entityManager.getTransaction().begin();
+try {
+    int count = entityManager.createQuery(jpql).executeUpdate();
+    entityManager.getTransaction().commit();
+    System.out.println(&quot;Updated &quot; + count + &quot; records&quot;);
+} catch (Exception e) {
+    entityManager.getTransaction().rollback();
+    throw e;
+}</code></pre>
+
+<span class="slide-counter">28 / 79</span>
+<div class="slide-nav">
+  <a href="#slide-27">&#8592; Previous</a>
+  <span class="slide-info">Slide 28 / 79 &nbsp;&middot;&nbsp; 🗄️ Lecture 3: JPA and Database Integration</span>
+  <a href="#slide-29">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-29" class="slide slide--section">
+<h1>Part 5: Criteria API</h1>
+
+<span class="slide-counter">29 / 79</span>
+<div class="slide-nav">
+  <a href="#slide-28">&#8592; Previous</a>
+  <span class="slide-info">Slide 29 / 79 &nbsp;&middot;&nbsp; 🗄️ Lecture 3: JPA and Database Integration</span>
+  <a href="#slide-30">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-30" class="slide">
+<h2 data-en="What is Criteria API?" data-fr="Qu'est-ce que Criteria API?">What is Criteria API?</h2>
+<p><strong>Criteria API</strong> provides a type-safe, programmatic way to build queries.</p>
+<p><strong>Benefits:</strong></p>
+<ul>
+<li>✅ Type-safe (compile-time checking)</li>
+<li data-en="✅ Dynamic query building" data-fr="✅ Dynamic query Construction">✅ Dynamic query building</li>
+<li>✅ IDE auto-completion support</li>
+<li>✅ Refactoring-friendly</li>
+</ul>
+<p><strong>When to use:</strong></p>
+<ul>
+<li>Dynamic search forms</li>
+<li>Complex conditional queries</li>
+<li>When type safety is critical</li>
+</ul>
+
+<span class="slide-counter">30 / 79</span>
+<div class="slide-nav">
+  <a href="#slide-29">&#8592; Previous</a>
+  <span class="slide-info">Slide 30 / 79 &nbsp;&middot;&nbsp; 🗄️ Lecture 3: JPA and Database Integration</span>
+  <a href="#slide-31">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-31" class="slide">
+<h2>Basic Criteria Query</h2>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>// Get CriteriaBuilder
+CriteriaBuilder cb = entityManager.getCriteriaBuilder();
+
+// Create query
+CriteriaQuery&lt;Client&gt; cq = cb.createQuery(Client.class);
+
+// Define root (FROM clause)
+Root&lt;Client&gt; client = cq.from(Client.class);
+
+// Build query (SELECT clause)
+cq.select(client);
+
+// Execute query
+List&lt;Client&gt; clients = entityManager
+    .createQuery(cq)
+    .getResultList();</code></pre>
+<p><strong>Equivalent JPQL:</strong> <code>SELECT c FROM Client c</code></p>
+
+<span class="slide-counter">31 / 79</span>
+<div class="slide-nav">
+  <a href="#slide-30">&#8592; Previous</a>
+  <span class="slide-info">Slide 31 / 79 &nbsp;&middot;&nbsp; 🗄️ Lecture 3: JPA and Database Integration</span>
+  <a href="#slide-32">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-32" class="slide">
+<h2>Criteria Query with Conditions</h2>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>CriteriaBuilder cb = entityManager.getCriteriaBuilder();
+CriteriaQuery&lt;Client&gt; cq = cb.createQuery(Client.class);
+Root&lt;Client&gt; client = cq.from(Client.class);
+
+// WHERE clause
+Predicate emailCondition = cb.like(client.get(&quot;email&quot;), &quot;%@example.com&quot;);
+cq.select(client).where(emailCondition);
+
+// ORDER BY clause
+cq.orderBy(cb.asc(client.get(&quot;name&quot;)));
+
+List&lt;Client&gt; clients = entityManager
+    .createQuery(cq)
+    .getResultList();</code></pre>
+<p><strong>Equivalent JPQL:</strong></p>
+<pre class="dark"><span class="lang-badge">sql</span>
+<code>SELECT c FROM Client c 
+WHERE c.email LIKE '%@example.com' 
+ORDER BY c.name ASC</code></pre>
+
+<span class="slide-counter">32 / 79</span>
+<div class="slide-nav">
+  <a href="#slide-31">&#8592; Previous</a>
+  <span class="slide-info">Slide 32 / 79 &nbsp;&middot;&nbsp; 🗄️ Lecture 3: JPA and Database Integration</span>
+  <a href="#slide-33">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-33" class="slide">
+<h2 data-en="Dynamic Query Building" data-fr="Dynamic Query Construction">Dynamic Query Building</h2>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>public List&lt;Client&gt; searchClients(String name, String email, Integer minAccounts) {
+    CriteriaBuilder cb = entityManager.getCriteriaBuilder();
+    CriteriaQuery&lt;Client&gt; cq = cb.createQuery(Client.class);
+    Root&lt;Client&gt; client = cq.from(Client.class);
+    
+    List&lt;Predicate&gt; predicates = new ArrayList&lt;&gt;();
+    
+    // Add conditions dynamically
+    if (name != null &amp;&amp; !name.isEmpty()) {
+        predicates.add(cb.like(cb.lower(client.get(&quot;name&quot;)), 
+                               &quot;%&quot; + name.toLowerCase() + &quot;%&quot;));
+    }
+    
+    if (email != null &amp;&amp; !email.isEmpty()) {
+        predicates.add(cb.equal(client.get(&quot;email&quot;), email));
+    }
+    
+    if (minAccounts != null) {
+        predicates.add(cb.greaterThanOrEqualTo(
+            cb.size(client.get(&quot;accounts&quot;)), minAccounts));
+    }
+    
+    // Combine predicates with AND
+    cq.select(client).where(cb.and(predicates.toArray(new Predicate[0])));
+    
+    return entityManager.createQuery(cq).getResultList();
+}</code></pre>
+
+<span class="slide-counter">33 / 79</span>
+<div class="slide-nav">
+  <a href="#slide-32">&#8592; Previous</a>
+  <span class="slide-info">Slide 33 / 79 &nbsp;&middot;&nbsp; 🗄️ Lecture 3: JPA and Database Integration</span>
+  <a href="#slide-34">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-34" class="slide">
+<h2>Criteria Query with Joins</h2>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>CriteriaBuilder cb = entityManager.getCriteriaBuilder();
+CriteriaQuery&lt;Client&gt; cq = cb.createQuery(Client.class);
+Root&lt;Client&gt; client = cq.from(Client.class);
+
+// Join with accounts
+Join&lt;Client, Account&gt; accounts = client.join(&quot;accounts&quot;, JoinType.LEFT);
+
+// Fetch to avoid N+1
+client.fetch(&quot;accounts&quot;, JoinType.LEFT);
+
+// WHERE clause on joined entity
+Predicate balanceCondition = cb.greaterThan(accounts.get(&quot;balance&quot;), 1000.0);
+
+cq.select(client)
+  .distinct(true)
+  .where(balanceCondition);
+
+List&lt;Client&gt; clients = entityManager.createQuery(cq).getResultList();</code></pre>
+<p><strong>Equivalent JPQL:</strong></p>
+<pre class="dark"><span class="lang-badge">sql</span>
+<code>SELECT DISTINCT c FROM Client c 
+LEFT JOIN FETCH c.accounts a 
+WHERE a.balance &gt; 1000.0</code></pre>
+
+<span class="slide-counter">34 / 79</span>
+<div class="slide-nav">
+  <a href="#slide-33">&#8592; Previous</a>
+  <span class="slide-info">Slide 34 / 79 &nbsp;&middot;&nbsp; 🗄️ Lecture 3: JPA and Database Integration</span>
+  <a href="#slide-35">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-35" class="slide">
+<h2>Criteria Query Aggregate Functions</h2>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>// Count clients
+CriteriaBuilder cb = entityManager.getCriteriaBuilder();
+CriteriaQuery&lt;Long&gt; cq = cb.createQuery(Long.class);
+Root&lt;Client&gt; client = cq.from(Client.class);
+
+cq.select(cb.count(client));
+
+Long count = entityManager.createQuery(cq).getSingleResult();
+
+// Sum of all account balances
+CriteriaQuery&lt;Double&gt; cq2 = cb.createQuery(Double.class);
+Root&lt;Account&gt; account = cq2.from(Account.class);
+
+cq2.select(cb.sum(account.get(&quot;balance&quot;)));
+
+Double totalBalance = entityManager.createQuery(cq2).getSingleResult();
+
+// Group by with aggregate
+CriteriaQuery&lt;Object[]&gt; cq3 = cb.createQuery(Object[].class);
+Root&lt;Account&gt; acc = cq3.from(Account.class);
+
+cq3.multiselect(
+    acc.get(&quot;type&quot;),
+    cb.avg(acc.get(&quot;balance&quot;)),
+    cb.count(acc)
+).groupBy(acc.get(&quot;type&quot;));
+
+List&lt;Object[]&gt; results = entityManager.createQuery(cq3).getResultList();</code></pre>
+
+<span class="slide-counter">35 / 79</span>
+<div class="slide-nav">
+  <a href="#slide-34">&#8592; Previous</a>
+  <span class="slide-info">Slide 35 / 79 &nbsp;&middot;&nbsp; 🗄️ Lecture 3: JPA and Database Integration</span>
+  <a href="#slide-36">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-36" class="slide slide--section">
+<h1 data-en="Part 6: Transaction Management" data-fr="Part 6: Gestion des transactions">Part 6: Transaction Management</h1>
+
+<span class="slide-counter">36 / 79</span>
+<div class="slide-nav">
+  <a href="#slide-35">&#8592; Previous</a>
+  <span class="slide-info">Slide 36 / 79 &nbsp;&middot;&nbsp; 🗄️ Lecture 3: JPA and Database Integration</span>
+  <a href="#slide-37">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-37" class="slide">
+<h2 data-en="What is a Transaction?" data-fr="Qu'est-ce que a Transaction?">What is a Transaction?</h2>
+<p><strong>Transaction</strong> is a unit of work that must be:</p>
+<ul>
+<li><strong>Atomic:</strong> All or nothing</li>
+<li><strong>Consistent:</strong> Database remains in valid state</li>
+<li><strong>Isolated:</strong> Concurrent transactions don't interfere</li>
+<li><strong>Durable:</strong> Committed changes persist</li>
+</ul>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>// Without transaction - WRONG!
+Client client = new Client(&quot;John&quot;, &quot;john@example.com&quot;);
+entityManager.persist(client);  // May not be saved!
+
+// With transaction - CORRECT!
+entityManager.getTransaction().begin();
+try {
+    Client client = new Client(&quot;John&quot;, &quot;john@example.com&quot;);
+    entityManager.persist(client);
+    entityManager.getTransaction().commit();
+} catch (Exception e) {
+    entityManager.getTransaction().rollback();
+    throw e;
+}</code></pre>
+
+<span class="slide-counter">37 / 79</span>
+<div class="slide-nav">
+  <a href="#slide-36">&#8592; Previous</a>
+  <span class="slide-info">Slide 37 / 79 &nbsp;&middot;&nbsp; 🗄️ Lecture 3: JPA and Database Integration</span>
+  <a href="#slide-38">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-38" class="slide">
+<h2 data-en="Manual Transaction Management" data-fr="Manual Gestion des transactions">Manual Transaction Management</h2>
+<p data-en="<strong>In this course, we use manual transaction management with EntityManager:</strong>" data-fr="In this course, we use manual Gestion des transactions with EntityManager:"><strong>In this course, we use manual transaction management with EntityManager:</strong></p>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>import jakarta.persistence.EntityManager;
+import jakarta.persistence.EntityManagerFactory;
+import jakarta.persistence.EntityTransaction;
+import jakarta.persistence.Persistence;
+
+public class ClientService {
+    
+    private static ClientService instance;
+    private EntityManagerFactory emf;
+    
+    private ClientService() {
+        emf = Persistence.createEntityManagerFactory(&quot;bankingPU&quot;);
+    }
+    
+    public static synchronized ClientService getInstance() {
+        if (instance == null) {
+            instance = new ClientService();
+        }
+        return instance;
+    }
+    
+    private EntityManager createEntityManager() {
+        return emf.createEntityManager();
+    }
+    
+    public Client createClient(String name, String email) {
+        EntityManager em = createEntityManager();
+        EntityTransaction tx = em.getTransaction();
+        try {
+            tx.begin();
+            Client client = new Client(name, email);
+            em.persist(client);
+            tx.commit();  // Explicit commit
+            return client;
+        } catch (Exception e) {
+            if (tx.isActive()) {
+                tx.rollback();  // Explicit rollback on error
+            }
+            throw e;
+        } finally {
+            em.close();  // Always close EntityManager
+        }
+    }
+    
+    public void updateClient(Long id, String name) {
+        EntityManager em = createEntityManager();
+        EntityTransaction tx = em.getTransaction();
+        try {
+            tx.begin();
+            Client client = em.find(Client.class, id);
+            if (client != null) {
+                client.setName(name);
+            }
+            tx.commit();
+        } catch (Exception e) {
+            if (tx.isActive()) {
+                tx.rollback();
+            }
+            throw e;
+        } finally {
+            em.close();
+        }
+    }
+}</code></pre>
+<p><strong>Note:</strong> CDI and <code>@Transactional</code> will be covered in Course 4.</p>
+
+<span class="slide-counter">38 / 79</span>
+<div class="slide-nav">
+  <a href="#slide-37">&#8592; Previous</a>
+  <span class="slide-info">Slide 38 / 79 &nbsp;&middot;&nbsp; 🗄️ Lecture 3: JPA and Database Integration</span>
+  <a href="#slide-39">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-39" class="slide">
+<h2>Transaction Patterns</h2>
+<p data-en="<strong>With manual transaction management, you control transaction boundaries explicitly:</strong>" data-fr="With manual Gestion des transactions, you control transaction boundaries explicitly:"><strong>With manual transaction management, you control transaction boundaries explicitly:</strong></p>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>import jakarta.persistence.EntityManager;
+import jakarta.persistence.EntityTransaction;
+
+public class BankingService {
+    
+    private static BankingService instance;
+    private EntityManagerFactory emf;
+    
+    private BankingService() {
+        emf = Persistence.createEntityManagerFactory(&quot;bankingPU&quot;);
+    }
+    
+    public static synchronized BankingService getInstance() {
+        if (instance == null) {
+            instance = new BankingService();
+        }
+        return instance;
+    }
+    
+    // Standard transaction pattern
+    public void transfer(Long fromId, Long toId, Double amount) {
+        EntityManager em = emf.createEntityManager();
+        EntityTransaction tx = em.getTransaction();
+        try {
+            tx.begin();
+            // Business logic here
+            tx.commit();
+        } catch (Exception e) {
+            if (tx.isActive()) {
+                tx.rollback();
+            }
+            throw e;
+        } finally {
+            em.close();
+        }
+    }
+    
+    // Read-only operation (no transaction needed)
+    public Client findClient(Long id) {
+        EntityManager em = emf.createEntityManager();
+        try {
+            return em.find(Client.class, id);
+        } finally {
+            em.close();
+        }
+    }
+    
+    // Non-transactional operation
+    public void sendEmail(String to, String message) {
+        // No database access, no transaction needed
+        // Email sending logic here
+    }
+}</code></pre>
+<p><strong>Note:</strong> Transaction propagation with <code>@Transactional</code> will be covered in Course 4 with CDI.</p>
+
+<span class="slide-counter">39 / 79</span>
+<div class="slide-nav">
+  <a href="#slide-38">&#8592; Previous</a>
+  <span class="slide-info">Slide 39 / 79 &nbsp;&middot;&nbsp; 🗄️ Lecture 3: JPA and Database Integration</span>
+  <a href="#slide-40">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-40" class="slide">
+<h2>Rollback Strategies</h2>
+<p data-en="<strong>With manual transaction management, you explicitly control rollback:</strong>" data-fr="With manual Gestion des transactions, you explicitly control rollback:"><strong>With manual transaction management, you explicitly control rollback:</strong></p>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>public void transferMoney(Long fromId, Long toId, Double amount)
+        throws InsufficientFundsException {
+    
+    EntityManager em = emf.createEntityManager();
+    EntityTransaction tx = em.getTransaction();
+    
+    try {
+        tx.begin();
+        
+        Account from = em.find(Account.class, fromId);
+        Account to = em.find(Account.class, toId);
+        
+        if (from.getBalance() &lt; amount) {
+            // Throw exception - will trigger rollback in catch block
+            throw new InsufficientFundsException(&quot;Insufficient funds&quot;);
+        }
+        
+        from.withdraw(amount);
+        to.deposit(amount);
+        
+        tx.commit();  // Explicit commit if no exception
+        
+    } catch (InsufficientFundsException e) {
+        // Rollback on business exception
+        if (tx.isActive()) {
+            tx.rollback();
+        }
+        throw e;  // Re-throw to caller
+    } catch (Exception e) {
+        // Rollback on any other exception
+        if (tx.isActive()) {
+            tx.rollback();
+        }
+        throw new RuntimeException(&quot;Transfer failed&quot;, e);
+    } finally {
+        em.close();
+    }
+}
+
+// Selective rollback handling
+public void processWithValidation(Client client) throws ValidationException {
+    EntityManager em = emf.createEntityManager();
+    EntityTransaction tx = em.getTransaction();
+    
+    try {
+        tx.begin();
+        
+        // Validation logic
+        if (!isValid(client)) {
+            throw new ValidationException(&quot;Invalid client&quot;);
+        }
+        
+        em.persist(client);
+        tx.commit();  // Commit even if validation fails later
+        
+    } catch (ValidationException e) {
+        // Don't rollback for validation errors
+        if (tx.isActive()) {
+            tx.commit();  // Still commit
+        }
+        throw e;
+    } catch (Exception e) {
+        // Rollback for other errors
+        if (tx.isActive()) {
+            tx.rollback();
+        }
+        throw e;
+    } finally {
+        em.close();
+    }
+}</code></pre>
+<p><strong>Note:</strong> Declarative rollback control with <code>@Transactional</code> will be covered in Course 4.</p>
+
+<span class="slide-counter">40 / 79</span>
+<div class="slide-nav">
+  <a href="#slide-39">&#8592; Previous</a>
+  <span class="slide-info">Slide 40 / 79 &nbsp;&middot;&nbsp; 🗄️ Lecture 3: JPA and Database Integration</span>
+  <a href="#slide-41">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-41" class="slide">
+<h2>EntityManager Operations</h2>
+<p data-en="<strong>With manual transaction management:</strong>" data-fr="With manual Gestion des transactions:"><strong>With manual transaction management:</strong></p>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>public class ClientService {
+    
+    private static ClientService instance;
+    private EntityManagerFactory emf;
+    
+    private ClientService() {
+        emf = Persistence.createEntityManagerFactory(&quot;bankingPU&quot;);
+    }
+    
+    public static synchronized ClientService getInstance() {
+        if (instance == null) {
+            instance = new ClientService();
+        }
+        return instance;
+    }
+    
+    public Client create(Client client) {
+        EntityManager em = emf.createEntityManager();
+        EntityTransaction tx = em.getTransaction();
+        try {
+            tx.begin();
+            em.persist(client);  // Make transient entity persistent
+            tx.commit();
+            return client;       // Entity now has ID
+        } catch (Exception e) {
+            if (tx.isActive()) tx.rollback();
+            throw e;
+        } finally {
+            em.close();
+        }
+    }
+    
+    public Client findById(Long id) {
+        EntityManager em = emf.createEntityManager();
+        try {
+            return em.find(Client.class, id);  // Find by primary key
+        } finally {
+            em.close();
+        }
+    }
+    
+    public Client update(Client client) {
+        EntityManager em = emf.createEntityManager();
+        EntityTransaction tx = em.getTransaction();
+        try {
+            tx.begin();
+            Client updated = em.merge(client);  // Merge detached entity
+            tx.commit();
+            return updated;
+        } catch (Exception e) {
+            if (tx.isActive()) tx.rollback();
+            throw e;
+        } finally {
+            em.close();
+        }
+    }
+    
+    public void delete(Long id) {
+        EntityManager em = emf.createEntityManager();
+        EntityTransaction tx = em.getTransaction();
+        try {
+            tx.begin();
+            Client client = em.find(Client.class, id);
+            if (client != null) {
+                em.remove(client);  // Remove managed entity
+            }
+            tx.commit();
+        } catch (Exception e) {
+            if (tx.isActive()) tx.rollback();
+            throw e;
+        } finally {
+            em.close();
+        }
+    }
+    
+    public void refresh(Client client) {
+        EntityManager em = emf.createEntityManager();
+        EntityTransaction tx = em.getTransaction();
+        try {
+            tx.begin();
+            em.refresh(client);  // Reload from database
+            tx.commit();
+        } catch (Exception e) {
+            if (tx.isActive()) tx.rollback();
+            throw e;
+        } finally {
+            em.close();
+        }
+    }
+}</code></pre>
+
+<span class="slide-counter">41 / 79</span>
+<div class="slide-nav">
+  <a href="#slide-40">&#8592; Previous</a>
+  <span class="slide-info">Slide 41 / 79 &nbsp;&middot;&nbsp; 🗄️ Lecture 3: JPA and Database Integration</span>
+  <a href="#slide-42">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-42" class="slide">
+<h2>Entity States</h2>
+<p><img src="../../images/03-jpa-database-integration-diagram-2.png" alt="width:70%"></p>
+
+<span class="slide-counter">42 / 79</span>
+<div class="slide-nav">
+  <a href="#slide-41">&#8592; Previous</a>
+  <span class="slide-info">Slide 42 / 79 &nbsp;&middot;&nbsp; 🗄️ Lecture 3: JPA and Database Integration</span>
+  <a href="#slide-43">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-43" class="slide slide--section">
+<h1>Part 7: Database Migrations</h1>
+
+<span class="slide-counter">43 / 79</span>
+<div class="slide-nav">
+  <a href="#slide-42">&#8592; Previous</a>
+  <span class="slide-info">Slide 43 / 79 &nbsp;&middot;&nbsp; 🗄️ Lecture 3: JPA and Database Integration</span>
+  <a href="#slide-44">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-44" class="slide">
+<h2 data-en="Why Database Migrations?" data-fr="Pourquoi Database Migrations?">Why Database Migrations?</h2>
+<p><strong>Challenges without migrations:</strong></p>
+<ul>
+<li>❌ Manual SQL scripts error-prone</li>
+<li>❌ Difficult to track schema changes</li>
+<li>❌ Hard to rollback changes</li>
+<li>❌ Inconsistent across environments</li>
+</ul>
+<p><strong>Benefits with migrations:</strong></p>
+<ul>
+<li>✅ Version-controlled schema changes</li>
+<li data-en="✅ Automated deployment" data-fr="✅ Automated Déploiement">✅ Automated deployment</li>
+<li>✅ Rollback capability</li>
+<li>✅ Consistent across environments</li>
+<li>✅ Team collaboration</li>
+</ul>
+
+<span class="slide-counter">44 / 79</span>
+<div class="slide-nav">
+  <a href="#slide-43">&#8592; Previous</a>
+  <span class="slide-info">Slide 44 / 79 &nbsp;&middot;&nbsp; 🗄️ Lecture 3: JPA and Database Integration</span>
+  <a href="#slide-45">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-45" class="slide">
+<h2>Migration Tools</h2>
+<table class="slide-table"><thead><tr><th>Tool</th><th>Description</th><th>Best For</th></tr></thead><tbody>
+<tr><td><strong>Flyway</strong></td><td>Simple, SQL-based migrations</td><td>Teams preferring SQL</td></tr>
+<tr><td><strong>Liquibase</strong></td><td>XML/YAML/JSON/SQL formats</td><td>Complex scenarios</td></tr>
+<tr><td><strong>JPA Schema Generation</strong></td><td>Auto-generate from entities</td><td>Development only</td></tr>
+</tbody></table>
+<p><strong>We'll focus on Flyway</strong> (most popular in Jakarta EE)</p>
+
+<span class="slide-counter">45 / 79</span>
+<div class="slide-nav">
+  <a href="#slide-44">&#8592; Previous</a>
+  <span class="slide-info">Slide 45 / 79 &nbsp;&middot;&nbsp; 🗄️ Lecture 3: JPA and Database Integration</span>
+  <a href="#slide-46">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-46" class="slide">
+<h2>Flyway Setup</h2>
+<p><strong>Add dependency to <code>pom.xml</code>:</strong></p>
+<pre class="dark"><span class="lang-badge">xml</span>
+<code>&lt;dependency&gt;
+    &lt;groupId&gt;org.flywaydb&lt;/groupId&gt;
+    &lt;artifactId&gt;flyway-core&lt;/artifactId&gt;
+    &lt;version&gt;9.22.0&lt;/version&gt;
+&lt;/dependency&gt;
+
+&lt;dependency&gt;
+    &lt;groupId&gt;org.flywaydb&lt;/groupId&gt;
+    &lt;artifactId&gt;flyway-database-postgresql&lt;/artifactId&gt;
+    &lt;version&gt;9.22.0&lt;/version&gt;
+&lt;/dependency&gt;</code></pre>
+<p><strong>Configure in <code>microprofile-config.properties</code>:</strong></p>
+<pre class="dark"><span class="lang-badge">properties</span>
+<code># Database configuration
+jakarta.persistence.jdbc.url=jdbc:postgresql://localhost:5432/bankdb
+jakarta.persistence.jdbc.user=bankuser
+jakarta.persistence.jdbc.password=bankpass
+
+# Flyway configuration
+flyway.url=${jakarta.persistence.jdbc.url}
+flyway.user=${jakarta.persistence.jdbc.user}
+flyway.password=${jakarta.persistence.jdbc.password}
+flyway.locations=classpath:db/migration</code></pre>
+
+<span class="slide-counter">46 / 79</span>
+<div class="slide-nav">
+  <a href="#slide-45">&#8592; Previous</a>
+  <span class="slide-info">Slide 46 / 79 &nbsp;&middot;&nbsp; 🗄️ Lecture 3: JPA and Database Integration</span>
+  <a href="#slide-47">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-47" class="slide">
+<h2>Migration File Structure</h2>
+<pre class="dark"><code>src/main/resources/
+└── db/
+    └── migration/
+        ├── V1__create_clients_table.sql
+        ├── V2__create_accounts_table.sql
+        ├── V3__add_client_email_index.sql
+        └── V4__add_account_type_column.sql</code></pre>
+<p><strong>Naming Convention:</strong></p>
+<ul>
+<li><code>V</code> = Versioned migration</li>
+<li><code>1</code> = Version number (sequential)</li>
+<li><code>__</code> = Double underscore separator</li>
+<li><code>create_clients_table</code> = Description (underscores)</li>
+<li><code>.sql</code> = File extension</li>
+</ul>
+
+<span class="slide-counter">47 / 79</span>
+<div class="slide-nav">
+  <a href="#slide-46">&#8592; Previous</a>
+  <span class="slide-info">Slide 47 / 79 &nbsp;&middot;&nbsp; 🗄️ Lecture 3: JPA and Database Integration</span>
+  <a href="#slide-48">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-48" class="slide">
+<h2 data-en="Example Migration Files" data-fr="Exemple Migration Files">Example Migration Files</h2>
+<p><strong>V1__create_clients_table.sql:</strong></p>
+<pre class="dark"><span class="lang-badge">sql</span>
+<code>CREATE TABLE clients (
+    id BIGSERIAL PRIMARY KEY,
+    name VARCHAR(100) NOT NULL,
+    email VARCHAR(150) NOT NULL UNIQUE,
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP
+);
+
+CREATE INDEX idx_clients_email ON clients(email);
+
+COMMENT ON TABLE clients IS 'Bank clients table';
+COMMENT ON COLUMN clients.email IS 'Unique email address';</code></pre>
+<p><strong>V2__create_accounts_table.sql:</strong></p>
+<pre class="dark"><span class="lang-badge">sql</span>
+<code>CREATE TABLE accounts (
+    id BIGSERIAL PRIMARY KEY,
+    number VARCHAR(20) NOT NULL UNIQUE,
+    balance DECIMAL(15, 2) NOT NULL DEFAULT 0.00,
+    type VARCHAR(20) NOT NULL CHECK (type IN ('CHECKING', 'SAVINGS')),
+    client_id BIGINT NOT NULL,
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT fk_accounts_client FOREIGN KEY (client_id) 
+        REFERENCES clients(id) ON DELETE CASCADE
+);
+
+CREATE INDEX idx_accounts_client_id ON accounts(client_id);
+CREATE INDEX idx_accounts_number ON accounts(number);</code></pre>
+
+<span class="slide-counter">48 / 79</span>
+<div class="slide-nav">
+  <a href="#slide-47">&#8592; Previous</a>
+  <span class="slide-info">Slide 48 / 79 &nbsp;&middot;&nbsp; 🗄️ Lecture 3: JPA and Database Integration</span>
+  <a href="#slide-49">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-49" class="slide">
+<h2>Running Migrations</h2>
+<p><strong>Programmatic approach with ServletContextListener:</strong></p>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>import org.flywaydb.core.Flyway;
+import jakarta.servlet.ServletContextEvent;
+import jakarta.servlet.ServletContextListener;
+import jakarta.servlet.annotation.WebListener;
+import javax.naming.InitialContext;
+import javax.sql.DataSource;
+
+@WebListener
+public class DatabaseMigrationStartup implements ServletContextListener {
+    
+    @Override
+    public void contextInitialized(ServletContextEvent sce) {
+        try {
+            // Get DataSource from JNDI
+            InitialContext ctx = new InitialContext();
+            DataSource dataSource = (DataSource) ctx.lookup(&quot;jdbc/flywayDS&quot;);
+            
+            // Configure and run Flyway
+            Flyway flyway = Flyway.configure()
+                .dataSource(dataSource)
+                .locations(&quot;classpath:db/migration&quot;)
+                .load();
+            
+            flyway.migrate();
+            
+            System.out.println(&quot;Database migration completed successfully&quot;);
+        } catch (Exception e) {
+            throw new RuntimeException(&quot;Failed to run database migrations&quot;, e);
+        }
+    }
+    
+    @Override
+    public void contextDestroyed(ServletContextEvent sce) {
+        // Cleanup if needed
+    }
+}</code></pre>
+<p><strong>Note:</strong> CDI-based initialization with <code>@PostConstruct</code> will be covered in Course 4.</p>
+
+<span class="slide-counter">49 / 79</span>
+<div class="slide-nav">
+  <a href="#slide-48">&#8592; Previous</a>
+  <span class="slide-info">Slide 49 / 79 &nbsp;&middot;&nbsp; 🗄️ Lecture 3: JPA and Database Integration</span>
+  <a href="#slide-50">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-50" class="slide">
+<h2 data-en="Migration Best Practices" data-fr="Migration Bonnes pratiques">Migration Best Practices</h2>
+<p><strong>DO:</strong></p>
+<ul>
+<li>✅ Never modify existing migrations</li>
+<li>✅ Use sequential version numbers</li>
+<li>✅ Test migrations on copy of production data</li>
+<li>✅ Keep migrations small and focused</li>
+<li>✅ Add comments to complex SQL</li>
+<li>✅ Use transactions (default in Flyway)</li>
+<li>✅ Version control migration files</li>
+</ul>
+<p><strong>DON'T:</strong></p>
+<ul>
+<li>❌ Don't delete old migrations</li>
+<li>❌ Don't change migration checksums</li>
+<li>❌ Don't use database-specific features without reason</li>
+<li>❌ Don't mix DDL and DML in same migration</li>
+<li>❌ Don't forget to test rollback scenarios</li>
+</ul>
+
+<span class="slide-counter">50 / 79</span>
+<div class="slide-nav">
+  <a href="#slide-49">&#8592; Previous</a>
+  <span class="slide-info">Slide 50 / 79 &nbsp;&middot;&nbsp; 🗄️ Lecture 3: JPA and Database Integration</span>
+  <a href="#slide-51">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-51" class="slide">
+<h2>Rollback Strategies</h2>
+<p><strong>Flyway doesn't support automatic rollback, but you can:</strong></p>
+<ol>
+<li><strong>Create undo migrations:</strong></li>
+</ol>
+<pre class="dark"><code>V5__add_column.sql
+U5__remove_column.sql  (manual rollback)</code></pre>
+<ol>
+<li><strong>Use database backups:</strong></li>
+</ol>
+<pre class="dark"><span class="lang-badge">bash</span>
+<code># Before migration
+pg_dump bankdb &gt; backup_before_v5.sql
+
+# If needed, restore
+psql bankdb &lt; backup_before_v5.sql</code></pre>
+<ol>
+<li><strong>Write reversible migrations:</strong></li>
+</ol>
+<pre class="dark"><span class="lang-badge">sql</span>
+<code>-- V5__add_status_column.sql
+ALTER TABLE clients ADD COLUMN status VARCHAR(20) DEFAULT 'ACTIVE';
+
+-- To rollback manually:
+-- ALTER TABLE clients DROP COLUMN status;</code></pre>
+
+<span class="slide-counter">51 / 79</span>
+<div class="slide-nav">
+  <a href="#slide-50">&#8592; Previous</a>
+  <span class="slide-info">Slide 51 / 79 &nbsp;&middot;&nbsp; 🗄️ Lecture 3: JPA and Database Integration</span>
+  <a href="#slide-52">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-52" class="slide">
+<h2>JPA Configuration</h2>
+<p><strong>persistence.xml:</strong></p>
+<pre class="dark"><span class="lang-badge">xml</span>
+<code>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
+&lt;persistence xmlns=&quot;https://jakarta.ee/xml/ns/persistence&quot;
+             xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot;
+             xsi:schemaLocation=&quot;https://jakarta.ee/xml/ns/persistence
+             https://jakarta.ee/xml/ns/persistence/persistence_3_0.xsd&quot;
+             version=&quot;3.0&quot;&gt;
+    
+    &lt;persistence-unit name=&quot;bankingPU&quot; transaction-type=&quot;RESOURCE_LOCAL&quot;&gt;
+        &lt;provider&gt;org.eclipse.persistence.jpa.PersistenceProvider&lt;/provider&gt;
+        &lt;non-jta-data-source&gt;jdbc/bankingDS&lt;/non-jta-data-source&gt;
+        
+        &lt;class&gt;com.bank.model.Client&lt;/class&gt;
+        &lt;class&gt;com.bank.model.Account&lt;/class&gt;
+        
+        &lt;properties&gt;
+            
+            &lt;property name=&quot;eclipselink.target-database&quot; value=&quot;PostgreSQL&quot;/&gt;
+            &lt;property name=&quot;eclipselink.logging.level&quot; value=&quot;FINE&quot;/&gt;
+            &lt;property name=&quot;eclipselink.logging.parameters&quot; value=&quot;true&quot;/&gt;
+            
+            
+            &lt;property name=&quot;eclipselink.ddl-generation&quot; value=&quot;none&quot;/&gt;
+            
+            
+            &lt;property name=&quot;eclipselink.weaving&quot; value=&quot;static&quot;/&gt;
+        &lt;/properties&gt;
+    &lt;/persistence-unit&gt;
+&lt;/persistence&gt;</code></pre>
+
+<span class="slide-counter">52 / 79</span>
+<div class="slide-nav">
+  <a href="#slide-51">&#8592; Previous</a>
+  <span class="slide-info">Slide 52 / 79 &nbsp;&middot;&nbsp; 🗄️ Lecture 3: JPA and Database Integration</span>
+  <a href="#slide-53">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-53" class="slide slide--section">
+<h1>Part 8: JNDI (Java Naming and Directory Interface)</h1>
+
+<span class="slide-counter">53 / 79</span>
+<div class="slide-nav">
+  <a href="#slide-52">&#8592; Previous</a>
+  <span class="slide-info">Slide 53 / 79 &nbsp;&middot;&nbsp; 🗄️ Lecture 3: JPA and Database Integration</span>
+  <a href="#slide-54">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-54" class="slide">
+<h2 data-en="What is JNDI?" data-fr="Qu'est-ce que JNDI?">What is JNDI?</h2>
+<p><strong>JNDI</strong> provides a unified interface to access naming and directory services in Java applications.</p>
+<p><strong>Key Concepts:</strong></p>
+<ul>
+<li>🔍 <strong>Naming Service:</strong> Maps names to objects (like a phone book)</li>
+<li>📁 <strong>Directory Service:</strong> Naming service with additional attributes</li>
+<li>🌐 <strong>Unified API:</strong> Access different naming systems (LDAP, DNS, RMI, etc.)</li>
+</ul>
+<p><strong>In Jakarta EE:</strong></p>
+<ul>
+<li>Access DataSources, EJBs, JMS resources</li>
+<li data-en="Environment entries and configuration" data-fr="Environment entries and Configuration">Environment entries and configuration</li>
+<li>Decouples resource location from code</li>
+</ul>
+
+<span class="slide-counter">54 / 79</span>
+<div class="slide-nav">
+  <a href="#slide-53">&#8592; Previous</a>
+  <span class="slide-info">Slide 54 / 79 &nbsp;&middot;&nbsp; 🗄️ Lecture 3: JPA and Database Integration</span>
+  <a href="#slide-55">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-55" class="slide">
+<h2>JNDI Architecture</h2>
+<p><img src="../../images/03-jpa-database-integration-diagram-3.png" alt="width:70%"></p>
+
+<span class="slide-counter">55 / 79</span>
+<div class="slide-nav">
+  <a href="#slide-54">&#8592; Previous</a>
+  <span class="slide-info">Slide 55 / 79 &nbsp;&middot;&nbsp; 🗄️ Lecture 3: JPA and Database Integration</span>
+  <a href="#slide-56">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-56" class="slide">
+<h2>JNDI Naming Contexts</h2>
+<p><strong>Jakarta EE defines standard naming contexts:</strong></p>
+<table class="slide-table"><thead><tr><th>Context</th><th>Description</th><th>Example</th></tr></thead><tbody>
+<tr><td><code>java:comp/env</code></td><td>Component environment</td><td><code>java:comp/env/jdbc/myDS</code></td></tr>
+<tr><td><code>java:module</code></td><td>Module scope</td><td><code>java:module/MyBean</code></td></tr>
+<tr><td><code>java:app</code></td><td>Application scope</td><td><code>java:app/SharedResource</code></td></tr>
+<tr><td><code>java:global</code></td><td>Global scope</td><td><code>java:global/myapp/MyEJB</code></td></tr>
+</tbody></table>
+<p><strong>Portable Names:</strong></p>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>// Portable across servers
+java:comp/env/jdbc/bankDS
+
+// Server-specific (avoid in portable code)
+jdbc/bankDS  // WildFly
+java:jboss/datasources/BankDS  // JBoss</code></pre>
+
+<span class="slide-counter">56 / 79</span>
+<div class="slide-nav">
+  <a href="#slide-55">&#8592; Previous</a>
+  <span class="slide-info">Slide 56 / 79 &nbsp;&middot;&nbsp; 🗄️ Lecture 3: JPA and Database Integration</span>
+  <a href="#slide-57">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-57" class="slide">
+<h2>Looking Up DataSources</h2>
+<div class="slide-columns">
+<div class="slide-col">
+<p data-en="<strong>Using JNDI Lookup:</strong>" data-fr="Utilisation de JNDI Lookup:"><strong>Using JNDI Lookup:</strong></p>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>import javax.naming.InitialContext;
+import javax.naming.NamingException;
+import javax.sql.DataSource;
+import java.sql.Connection;
+
+public class DataSourceLookup {
+    
+    public Connection getConnection() 
+            throws NamingException, SQLException {
+        // Create initial context
+        InitialContext ctx = new InitialContext();
+        
+        // Lookup DataSource
+        DataSource ds = (DataSource) ctx.lookup(
+            &quot;java:comp/env/jdbc/bankDS&quot;
+        );
+        
+        // Get connection
+        return ds.getConnection();
+    }
+}</code></pre>
+</div>
+<div class="slide-col">
+<p data-en="<strong>Using Resource Injection:</strong>" data-fr="Utilisation de Resource Injection:"><strong>Using Resource Injection:</strong></p>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>import jakarta.annotation.Resource;
+import javax.sql.DataSource;
+import java.sql.Connection;
+
+public class DataSourceInjection {
+    
+    @Resource(lookup = &quot;java:comp/env/jdbc/bankDS&quot;)
+    private DataSource dataSource;
+    
+    public Connection getConnection() 
+            throws SQLException {
+        return dataSource.getConnection();
+    }
+}</code></pre>
+<p><strong>Injection is preferred</strong> (less code, container-managed)</p>
+</div>
+</div>
+
+<span class="slide-counter">57 / 79</span>
+<div class="slide-nav">
+  <a href="#slide-56">&#8592; Previous</a>
+  <span class="slide-info">Slide 57 / 79 &nbsp;&middot;&nbsp; 🗄️ Lecture 3: JPA and Database Integration</span>
+  <a href="#slide-58">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-58" class="slide">
+<h2>Configuring DataSource in web.xml</h2>
+<p><strong>Define resource reference:</strong></p>
+<pre class="dark"><span class="lang-badge">xml</span>
+<code>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
+&lt;web-app xmlns=&quot;https://jakarta.ee/xml/ns/jakartaee&quot;
+         version=&quot;6.0&quot;&gt;
+    
+    
+    &lt;resource-ref&gt;
+        &lt;description&gt;Banking Database&lt;/description&gt;
+        &lt;res-ref-name&gt;jdbc/bankDS&lt;/res-ref-name&gt;
+        &lt;res-type&gt;javax.sql.DataSource&lt;/res-type&gt;
+        &lt;res-auth&gt;Container&lt;/res-auth&gt;
+        &lt;res-sharing-scope&gt;Shareable&lt;/res-sharing-scope&gt;
+    &lt;/resource-ref&gt;
+    
+    
+    &lt;env-entry&gt;
+        &lt;env-entry-name&gt;app/maxTransactionAmount&lt;/env-entry-name&gt;
+        &lt;env-entry-type&gt;java.lang.Double&lt;/env-entry-type&gt;
+        &lt;env-entry-value&gt;10000.00&lt;/env-entry-value&gt;
+    &lt;/env-entry&gt;
+    
+&lt;/web-app&gt;</code></pre>
+
+<span class="slide-counter">58 / 79</span>
+<div class="slide-nav">
+  <a href="#slide-57">&#8592; Previous</a>
+  <span class="slide-info">Slide 58 / 79 &nbsp;&middot;&nbsp; 🗄️ Lecture 3: JPA and Database Integration</span>
+  <a href="#slide-59">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-59" class="slide">
+<h2>Looking Up EJB References</h2>
+<p data-en="<strong>EJB Lookup Example:</strong>" data-fr="EJB Lookup Exemple:"><strong>EJB Lookup Example:</strong></p>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>import javax.naming.InitialContext;
+import javax.naming.NamingException;
+
+public class EJBLookupExample {
+    
+    public void lookupEJB() throws NamingException {
+        InitialContext ctx = new InitialContext();
+        
+        // Lookup local EJB
+        AccountService accountService = (AccountService) ctx.lookup(
+            &quot;java:module/AccountServiceBean&quot;
+        );
+        
+        // Lookup remote EJB
+        AccountService remoteService = (AccountService) ctx.lookup(
+            &quot;java:global/banking-app/AccountServiceBean!com.bank.ejb.AccountService&quot;
+        );
+        
+        // Use the EJB
+        accountService.createAccount(new Account());
+    }
+}</code></pre>
+<p><strong>Prefer @EJB injection:</strong></p>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>@EJB
+private AccountService accountService;</code></pre>
+
+<span class="slide-counter">59 / 79</span>
+<div class="slide-nav">
+  <a href="#slide-58">&#8592; Previous</a>
+  <span class="slide-info">Slide 59 / 79 &nbsp;&middot;&nbsp; 🗄️ Lecture 3: JPA and Database Integration</span>
+  <a href="#slide-60">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-60" class="slide">
+<h2>Environment Entries</h2>
+<p><strong>Define in web.xml:</strong></p>
+<pre class="dark"><span class="lang-badge">xml</span>
+<code>&lt;env-entry&gt;
+    &lt;env-entry-name&gt;app/maxLoginAttempts&lt;/env-entry-name&gt;
+    &lt;env-entry-type&gt;java.lang.Integer&lt;/env-entry-type&gt;
+    &lt;env-entry-value&gt;3&lt;/env-entry-value&gt;
+&lt;/env-entry&gt;
+
+&lt;env-entry&gt;
+    &lt;env-entry-name&gt;app/supportEmail&lt;/env-entry-name&gt;
+    &lt;env-entry-type&gt;java.lang.String&lt;/env-entry-type&gt;
+    &lt;env-entry-value&gt;support@bank.com&lt;/env-entry-value&gt;
+&lt;/env-entry&gt;</code></pre>
+<p><strong>Lookup in code:</strong></p>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>import javax.naming.InitialContext;
+
+public class ConfigService {
+    
+    public int getMaxLoginAttempts() throws NamingException {
+        InitialContext ctx = new InitialContext();
+        return (Integer) ctx.lookup(&quot;java:comp/env/app/maxLoginAttempts&quot;);
+    }
+    
+    public String getSupportEmail() throws NamingException {
+        InitialContext ctx = new InitialContext();
+        return (String) ctx.lookup(&quot;java:comp/env/app/supportEmail&quot;);
+    }
+}</code></pre>
+
+<span class="slide-counter">60 / 79</span>
+<div class="slide-nav">
+  <a href="#slide-59">&#8592; Previous</a>
+  <span class="slide-info">Slide 60 / 79 &nbsp;&middot;&nbsp; 🗄️ Lecture 3: JPA and Database Integration</span>
+  <a href="#slide-61">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-61" class="slide">
+<h2>JNDI Lookup Patterns</h2>
+<p><strong>Pattern 1: Try-with-resources (Java 7+)</strong></p>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>public DataSource getDataSource() throws NamingException {
+    try (InitialContext ctx = new InitialContext()) {
+        return (DataSource) ctx.lookup(&quot;java:comp/env/jdbc/bankDS&quot;);
+    }
+}</code></pre>
+<p><strong>Pattern 2: Singleton with caching</strong></p>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>public class JNDICache {
+    private static final Map&lt;String, Object&gt; cache = new ConcurrentHashMap&lt;&gt;();
+    
+    @SuppressWarnings(&quot;unchecked&quot;)
+    public static &lt;T&gt; T lookup(String jndiName) throws NamingException {
+        return (T) cache.computeIfAbsent(jndiName, name -&gt; {
+            try {
+                InitialContext ctx = new InitialContext();
+                return ctx.lookup(name);
+            } catch (NamingException e) {
+                throw new RuntimeException(&quot;JNDI lookup failed: &quot; + name, e);
+            }
+        });
+    }
+}</code></pre>
+
+<span class="slide-counter">61 / 79</span>
+<div class="slide-nav">
+  <a href="#slide-60">&#8592; Previous</a>
+  <span class="slide-info">Slide 61 / 79 &nbsp;&middot;&nbsp; 🗄️ Lecture 3: JPA and Database Integration</span>
+  <a href="#slide-62">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-62" class="slide">
+<h2>JNDI vs Resource Injection</h2>
+<div class="slide-columns">
+<div class="slide-col">
+<p><strong>JNDI Lookup:</strong></p>
+<p><strong>Pros:</strong></p>
+<ul>
+<li>✅ Dynamic resource lookup</li>
+<li data-en="✅ Runtime flexibility" data-fr="✅ Environnement d'exécution flexibility">✅ Runtime flexibility</li>
+<li>✅ Works in any Java class</li>
+<li>✅ Conditional resource access</li>
+</ul>
+<p><strong>Cons:</strong></p>
+<ul>
+<li>❌ More boilerplate code</li>
+<li data-en="❌ Exception handling required" data-fr="❌ Gestion des exceptions required">❌ Exception handling required</li>
+<li>❌ Type casting needed</li>
+<li>❌ Not container-managed</li>
+</ul>
+<p><strong>Use when:</strong></p>
+<ul>
+<li>Dynamic resource selection</li>
+<li>Non-managed classes</li>
+<li>Conditional lookups</li>
+</ul>
+</div>
+<div class="slide-col">
+<p><strong>Resource Injection:</strong></p>
+<p><strong>Pros:</strong></p>
+<ul>
+<li>✅ Less code</li>
+<li>✅ Type-safe</li>
+<li>✅ Container-managed</li>
+<li data-en="✅ No exception handling" data-fr="✅ No Gestion des exceptions">✅ No exception handling</li>
+<li>✅ Cleaner code</li>
+</ul>
+<p><strong>Cons:</strong></p>
+<ul>
+<li>❌ Static binding</li>
+<li>❌ Only in managed beans</li>
+<li>❌ Less flexible</li>
+</ul>
+<p><strong>Use when:</strong></p>
+<ul>
+<li>Fixed resource references</li>
+<li>Managed beans (Servlets, EJBs, CDI)</li>
+<li>Standard use cases</li>
+</ul>
+</div>
+</div>
+
+<span class="slide-counter">62 / 79</span>
+<div class="slide-nav">
+  <a href="#slide-61">&#8592; Previous</a>
+  <span class="slide-info">Slide 62 / 79 &nbsp;&middot;&nbsp; 🗄️ Lecture 3: JPA and Database Integration</span>
+  <a href="#slide-63">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-63" class="slide">
+<h2>Looking Up JMS Resources</h2>
+<p><strong>Queue Connection Factory:</strong></p>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>import javax.naming.InitialContext;
+import jakarta.jms.ConnectionFactory;
+import jakarta.jms.Queue;
+
+public class JMSLookup {
+    
+    public void sendMessage(String message) throws Exception {
+        InitialContext ctx = new InitialContext();
+        
+        // Lookup connection factory
+        ConnectionFactory cf = (ConnectionFactory) ctx.lookup(
+            &quot;java:comp/env/jms/ConnectionFactory&quot;
+        );
+        
+        // Lookup queue
+        Queue queue = (Queue) ctx.lookup(
+            &quot;java:comp/env/jms/NotificationQueue&quot;
+        );
+        
+        // Use JMS resources
+        try (var connection = cf.createConnection();
+             var session = connection.createSession()) {
+            var producer = session.createProducer(queue);
+            producer.send(session.createTextMessage(message));
+        }
+    }
+}</code></pre>
+
+<span class="slide-counter">63 / 79</span>
+<div class="slide-nav">
+  <a href="#slide-62">&#8592; Previous</a>
+  <span class="slide-info">Slide 63 / 79 &nbsp;&middot;&nbsp; 🗄️ Lecture 3: JPA and Database Integration</span>
+  <a href="#slide-64">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-64" class="slide">
+<h2>JNDI Naming Conventions</h2>
+<p data-en="<strong>Best Practices:</strong>" data-fr="Bonnes pratiques:"><strong>Best Practices:</strong></p>
+<table class="slide-table"><thead><tr><th>Resource Type</th><th>Naming Pattern</th><th>Example</th></tr></thead><tbody>
+<tr><td>DataSource</td><td><code>jdbc/<name>DS</code></td><td><code>jdbc/bankDS</code></td></tr>
+<tr><td>JMS Queue</td><td><code>jms/<name>Queue</code></td><td><code>jms/notificationQueue</code></td></tr>
+<tr><td>JMS Topic</td><td><code>jms/<name>Topic</code></td><td><code>jms/eventTopic</code></td></tr>
+<tr><td>EJB</td><td><code>ejb/<name></code></td><td><code>ejb/AccountService</code></td></tr>
+<tr><td>Environment</td><td><code>app/<name></code></td><td><code>app/maxRetries</code></td></tr>
+</tbody></table>
+<p><strong>Portable JNDI Names:</strong></p>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>// Always use java:comp/env for portability
+String portableName = &quot;java:comp/env/jdbc/bankDS&quot;;
+
+// Avoid server-specific names
+String nonPortable = &quot;jdbc/bankDS&quot;;  // May not work on all servers</code></pre>
+
+<span class="slide-counter">64 / 79</span>
+<div class="slide-nav">
+  <a href="#slide-63">&#8592; Previous</a>
+  <span class="slide-info">Slide 64 / 79 &nbsp;&middot;&nbsp; 🗄️ Lecture 3: JPA and Database Integration</span>
+  <a href="#slide-65">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-65" class="slide">
+<h2 data-en="Complete JNDI Example" data-fr="Complete JNDI Exemple">Complete JNDI Example</h2>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>package com.bank.service;
+
+import javax.naming.InitialContext;
+import javax.naming.NamingException;
+import javax.sql.DataSource;
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.util.logging.Logger;
+
+public class DatabaseService {
+    private static final Logger logger = Logger.getLogger(DatabaseService.class.getName());
+    private static DataSource dataSource;
+    
+    // Initialize DataSource once
+    static {
+        try {
+            InitialContext ctx = new InitialContext();
+            dataSource = (DataSource) ctx.lookup(&quot;java:comp/env/jdbc/bankDS&quot;);
+            logger.info(&quot;DataSource initialized successfully&quot;);
+        } catch (NamingException e) {
+            logger.severe(&quot;Failed to lookup DataSource: &quot; + e.getMessage());
+            throw new RuntimeException(&quot;DataSource initialization failed&quot;, e);
+        }
+    }
+    
+    public Connection getConnection() throws SQLException {
+        if (dataSource == null) {
+            throw new IllegalStateException(&quot;DataSource not initialized&quot;);
+        }
+        return dataSource.getConnection();
+    }
+    
+    public void executeQuery(String sql) {
+        try (Connection conn = getConnection();
+             var stmt = conn.createStatement();
+             var rs = stmt.executeQuery(sql)) {
+            
+            while (rs.next()) {
+                // Process results
+            }
+        } catch (SQLException e) {
+            logger.severe(&quot;Query execution failed: &quot; + e.getMessage());
+            throw new RuntimeException(&quot;Database error&quot;, e);
+        }
+    }
+}</code></pre>
+
+<span class="slide-counter">65 / 79</span>
+<div class="slide-nav">
+  <a href="#slide-64">&#8592; Previous</a>
+  <span class="slide-info">Slide 65 / 79 &nbsp;&middot;&nbsp; 🗄️ Lecture 3: JPA and Database Integration</span>
+  <a href="#slide-66">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-66" class="slide">
+<h2>JNDI Configuration in Liberty</h2>
+<p><strong>server.xml:</strong></p>
+<pre class="dark"><span class="lang-badge">xml</span>
+<code>&lt;server&gt;
+    
+    &lt;dataSource id=&quot;bankDS&quot; jndiName=&quot;jdbc/bankDS&quot;&gt;
+        &lt;jdbcDriver libraryRef=&quot;postgresql-lib&quot;/&gt;
+        &lt;properties.postgresql 
+            serverName=&quot;localhost&quot;
+            portNumber=&quot;5432&quot;
+            databaseName=&quot;bankdb&quot;
+            user=&quot;bankuser&quot;
+            password=&quot;bankpass&quot;/&gt;
+    &lt;/dataSource&gt;
+    
+    
+    &lt;jmsQueue id=&quot;notificationQueue&quot; jndiName=&quot;jms/notificationQueue&quot;&gt;
+        &lt;properties.wasJms queueName=&quot;NOTIFICATION_QUEUE&quot;/&gt;
+    &lt;/jmsQueue&gt;
+    
+    
+    &lt;application location=&quot;banking-app.war&quot;&gt;
+        &lt;application-bnd&gt;
+            &lt;env-entry name=&quot;app/maxRetries&quot; value=&quot;3&quot;/&gt;
+            &lt;env-entry name=&quot;app/timeout&quot; value=&quot;30000&quot;/&gt;
+        &lt;/application-bnd&gt;
+    &lt;/application&gt;
+&lt;/server&gt;</code></pre>
+
+<span class="slide-counter">66 / 79</span>
+<div class="slide-nav">
+  <a href="#slide-65">&#8592; Previous</a>
+  <span class="slide-info">Slide 66 / 79 &nbsp;&middot;&nbsp; 🗄️ Lecture 3: JPA and Database Integration</span>
+  <a href="#slide-67">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-67" class="slide">
+<h2 data-en="JNDI Best Practices" data-fr="JNDI Bonnes pratiques">JNDI Best Practices</h2>
+<p><strong>DO:</strong></p>
+<ul>
+<li>✅ Use <code>java:comp/env</code> for portable names</li>
+<li>✅ Cache JNDI lookups when possible</li>
+<li>✅ Close InitialContext in finally block</li>
+<li>✅ Use resource injection when available</li>
+<li>✅ Handle NamingException properly</li>
+<li data-en="✅ Document JNDI names in configuration" data-fr="✅ Document JNDI names in Configuration">✅ Document JNDI names in configuration</li>
+<li>✅ Use meaningful resource names</li>
+</ul>
+<p><strong>DON'T:</strong></p>
+<ul>
+<li>❌ Don't hardcode server-specific names</li>
+<li>❌ Don't lookup resources repeatedly</li>
+<li>❌ Don't ignore NamingException</li>
+<li data-en="❌ Don't use JNDI for simple configuration" data-fr="❌ Don't use JNDI for Simple Configuration">❌ Don't use JNDI for simple configuration</li>
+<li>❌ Don't forget to configure resource references</li>
+</ul>
+
+<span class="slide-counter">67 / 79</span>
+<div class="slide-nav">
+  <a href="#slide-66">&#8592; Previous</a>
+  <span class="slide-info">Slide 67 / 79 &nbsp;&middot;&nbsp; 🗄️ Lecture 3: JPA and Database Integration</span>
+  <a href="#slide-68">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-68" class="slide">
+<h2>Common JNDI Errors</h2>
+<p><strong>Error 1: Name not found</strong></p>
+<pre class="dark"><code>javax.naming.NameNotFoundException: jdbc/bankDS not bound</code></pre>
+<p data-en="<strong>Solution:</strong> Check server.xml configuration and JNDI name spelling" data-fr="Solution: Check server.xml Configuration and JNDI name spelling"><strong>Solution:</strong> Check server.xml configuration and JNDI name spelling</p>
+<p><strong>Error 2: Class cast exception</strong></p>
+<pre class="dark"><code>java.lang.ClassCastException: Cannot cast to DataSource</code></pre>
+<p><strong>Solution:</strong> Verify resource type matches lookup</p>
+<p><strong>Error 3: Context not initialized</strong></p>
+<pre class="dark"><code>javax.naming.NoInitialContextException</code></pre>
+<p><strong>Solution:</strong> Ensure application server is running and JNDI is configured</p>
+
+<span class="slide-counter">68 / 79</span>
+<div class="slide-nav">
+  <a href="#slide-67">&#8592; Previous</a>
+  <span class="slide-info">Slide 68 / 79 &nbsp;&middot;&nbsp; 🗄️ Lecture 3: JPA and Database Integration</span>
+  <a href="#slide-69">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-69" class="slide">
+<h2>JNDI Troubleshooting</h2>
+<p><strong>Debug JNDI lookups:</strong></p>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>import javax.naming.InitialContext;
+import javax.naming.NameClassPair;
+import javax.naming.NamingEnumeration;
+
+public class JNDIDebug {
+    
+    public static void listBindings(String contextName) {
+        try {
+            InitialContext ctx = new InitialContext();
+            NamingEnumeration&lt;NameClassPair&gt; list = ctx.list(contextName);
+            
+            System.out.println(&quot;Bindings in &quot; + contextName + &quot;:&quot;);
+            while (list.hasMore()) {
+                NameClassPair nc = list.next();
+                System.out.println(&quot;  &quot; + nc.getName() + &quot; : &quot; + nc.getClassName());
+            }
+        } catch (Exception e) {
+            System.err.println(&quot;Error listing bindings: &quot; + e.getMessage());
+        }
+    }
+    
+    public static void main(String[] args) {
+        listBindings(&quot;java:comp/env&quot;);
+        listBindings(&quot;java:comp/env/jdbc&quot;);
+    }
+}</code></pre>
+
+<span class="slide-counter">69 / 79</span>
+<div class="slide-nav">
+  <a href="#slide-68">&#8592; Previous</a>
+  <span class="slide-info">Slide 69 / 79 &nbsp;&middot;&nbsp; 🗄️ Lecture 3: JPA and Database Integration</span>
+  <a href="#slide-70">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-70" class="slide">
+<h2 data-en="JNDI Summary" data-fr="JNDI Résumé">JNDI Summary</h2>
+<p><strong>Key Points:</strong></p>
+<ol>
+<li><strong>JNDI provides unified access</strong> to naming and directory services</li>
+<li><strong>Use <code>java:comp/env</code></strong> for portable resource references</li>
+<li><strong>Prefer resource injection</strong> over manual lookups when possible</li>
+<li data-en="<strong>Cache lookups</strong> to improve performance" data-fr="Cache lookups to improve Performance"><strong>Cache lookups</strong> to improve performance</li>
+<li><strong>Configure resources</strong> in web.xml and server.xml</li>
+<li><strong>Handle exceptions</strong> properly with try-catch or try-with-resources</li>
+</ol>
+<p><strong>When to use JNDI:</strong></p>
+<ul>
+<li>Looking up DataSources, EJBs, JMS resources</li>
+<li data-en="Accessing environment configuration" data-fr="Accessing environment Configuration">Accessing environment configuration</li>
+<li>Dynamic resource selection</li>
+<li>Working with non-managed classes</li>
+</ul>
+<p><strong>When to use injection:</strong></p>
+<ul>
+<li>Fixed resource references in managed beans</li>
+<li>Cleaner, more maintainable code</li>
+<li>Type-safe resource access</li>
+</ul>
+
+<span class="slide-counter">70 / 79</span>
+<div class="slide-nav">
+  <a href="#slide-69">&#8592; Previous</a>
+  <span class="slide-info">Slide 70 / 79 &nbsp;&middot;&nbsp; 🗄️ Lecture 3: JPA and Database Integration</span>
+  <a href="#slide-71">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-71" class="slide">
+<h2 data-en="📊 Summary" data-fr="📊 Résumé">📊 Summary</h2>
+<p><strong>What we learned:</strong></p>
+<ol>
+<li data-en="<strong>JPA Basics:</strong> ORM concepts, entity mapping, annotations" data-fr="JPA Basics: ORM concepts, entity mapping, Annotation"><strong>JPA Basics:</strong> ORM concepts, entity mapping, annotations</li>
+<li><strong>Relationships:</strong> One-to-Many, Many-to-One, Many-to-Many</li>
+<li><strong>Querying:</strong> JPQL for object-oriented queries</li>
+<li data-en="<strong>Criteria API:</strong> Type-safe, dynamic query building" data-fr="Criteria API: Type-safe, dynamic query Construction"><strong>Criteria API:</strong> Type-safe, dynamic query building</li>
+<li data-en="<strong>Transactions:</strong> Manual transaction management with EntityManager" data-fr="Transactions: Manual Gestion des transactions with EntityManager"><strong>Transactions:</strong> Manual transaction management with EntityManager</li>
+<li><strong>Migrations:</strong> Flyway for version-controlled schema changes</li>
+</ol>
+<p data-en="<strong>Key Takeaways:</strong>" data-fr="Points clés:"><strong>Key Takeaways:</strong></p>
+<ul>
+<li>Use JPA for database abstraction</li>
+<li>Prefer LAZY loading for collections</li>
+<li>Manage transactions explicitly with EntityTransaction</li>
+<li>Always close EntityManager in finally blocks</li>
+<li>Manage schema with migration tools</li>
+<li>Test queries and transactions thoroughly</li>
+</ul>
+<p data-en="<strong>Note:</strong> CDI and declarative transaction management (<code>@Transactional</code>) will be covered in Course 4." data-fr="Note: CDI and declarative Gestion des transactions (@Transactional) will be covered in Course 4."><strong>Note:</strong> CDI and declarative transaction management (<code>@Transactional</code>) will be covered in Course 4.</p>
+
+<span class="slide-counter">71 / 79</span>
+<div class="slide-nav">
+  <a href="#slide-70">&#8592; Previous</a>
+  <span class="slide-info">Slide 71 / 79 &nbsp;&middot;&nbsp; 🗄️ Lecture 3: JPA and Database Integration</span>
+  <a href="#slide-72">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-72" class="slide">
+<h2>🎯 Lab 3 Preview</h2>
+<p><strong>In the next lab, you will:</strong></p>
+<ol>
+<li>Convert Client and Account to JPA entities</li>
+<li>Configure persistence.xml and data source</li>
+<li>Create service classes with manual EntityManager management</li>
+<li>Write JPQL queries for CRUD operations</li>
+<li>Implement Criteria API for dynamic search</li>
+<li>Manage transactions manually with EntityTransaction</li>
+<li>Set up Flyway migrations for database schema</li>
+<li>Use ServletContextListener for application initialization</li>
+<li><strong>NEW:</strong> Use JNDI to lookup DataSource programmatically</li>
+<li><strong>NEW:</strong> Configure environment entries in web.xml</li>
+<li data-en="<strong>NEW:</strong> Implement configuration service using JNDI" data-fr="NEW: Implement Configuration service Utilisation de JNDI"><strong>NEW:</strong> Implement configuration service using JNDI</li>
+<li>Test the complete persistence layer</li>
+</ol>
+<p data-en="<strong>Get ready to make your banking app database-backed!</strong>" data-fr="Get Prêt à make your banking app database-backed!"><strong>Get ready to make your banking app database-backed!</strong></p>
+
+<span class="slide-counter">72 / 79</span>
+<div class="slide-nav">
+  <a href="#slide-71">&#8592; Previous</a>
+  <span class="slide-info">Slide 72 / 79 &nbsp;&middot;&nbsp; 🗄️ Lecture 3: JPA and Database Integration</span>
+  <a href="#slide-73">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-73" class="slide">
+<h2 data-en="📚 Additional Resources" data-fr="📚 Ressources supplémentaires">📚 Additional Resources</h2>
+<p><strong>Official Documentation:</strong></p>
+<ul>
+<li>Jakarta Persistence Specification: https://jakarta.ee/specifications/persistence/</li>
+<li>Hibernate Documentation: https://hibernate.org/orm/documentation/</li>
+<li>Flyway Documentation: https://flywaydb.org/documentation/</li>
+</ul>
+<p><strong>Tutorials:</strong></p>
+<ul>
+<li>Jakarta EE Tutorial (JPA Chapter): https://jakarta.ee/learn/docs/jakartaee-tutorial/</li>
+<li>Baeldung JPA Guide: https://www.baeldung.com/jpa-hibernate-guide</li>
+</ul>
+<p><strong>Books:</strong></p>
+<ul>
+<li>"Pro JPA 2" by Mike Keith and Merrick Schincariol</li>
+<li>"Java Persistence with Hibernate" by Christian Bauer</li>
+</ul>
+
+<span class="slide-counter">73 / 79</span>
+<div class="slide-nav">
+  <a href="#slide-72">&#8592; Previous</a>
+  <span class="slide-info">Slide 73 / 79 &nbsp;&middot;&nbsp; 🗄️ Lecture 3: JPA and Database Integration</span>
+  <a href="#slide-74">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-74" class="slide">
+<h2 data-en="📝 Homework" data-fr="📝 Devoirs">📝 Homework</h2>
+<p data-en="<strong>Before Next Lecture:</strong>" data-fr="Before Prochaine leçon:"><strong>Before Next Lecture:</strong></p>
+<table class="slide-table"><thead><tr><th></th><th></th></tr></thead><tbody>
+<tr><td>✅</td><td>Complete Lab 3: JPA Database Integration</td></tr>
+<tr><td>✅</td><td>Practice writing JPQL queries</td></tr>
+<tr><td>✅</td><td>Experiment with Criteria API</td></tr>
+<tr><td>✅</td><td>Set up Flyway migrations</td></tr>
+</tbody></table>
+<p><strong>Optional:</strong></p>
+<ul>
+<li data-en="Read about CDI and dependency injection" data-fr="Read about CDI and Injection de dépendances">Read about CDI and dependency injection</li>
+<li data-en="Explore transaction management patterns" data-fr="Explore Gestion des transactions patterns">Explore transaction management patterns</li>
+<li data-en="Review JPA best practices" data-fr="Review JPA Bonnes pratiques">Review JPA best practices</li>
+</ul>
+
+<span class="slide-counter">74 / 79</span>
+<div class="slide-nav">
+  <a href="#slide-73">&#8592; Previous</a>
+  <span class="slide-info">Slide 74 / 79 &nbsp;&middot;&nbsp; 🗄️ Lecture 3: JPA and Database Integration</span>
+  <a href="#slide-75">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-75" class="slide">
+<h2>🙋 Questions &amp; Discussion</h2>
+<p><strong>Discussion Topics:</strong></p>
+<ul>
+<li>When to use JPQL vs Criteria API?</li>
+<li data-en="How to handle complex entity relationships?" data-fr="Comment handle complex entity relationships?">How to handle complex entity relationships?</li>
+<li data-en="What are the trade-offs of manual vs automatic transaction management?" data-fr="What are the trade-offs of manual vs automatic Gestion des transactions?">What are the trade-offs of manual vs automatic transaction management?</li>
+</ul>
+<p><strong>Office Hours:</strong></p>
+<ul>
+<li><strong>When:</strong> [Your schedule]</li>
+<li><strong>Where:</strong> [Your location/online]</li>
+<li><strong>Contact:</strong> [Your email]</li>
+</ul>
+
+<span class="slide-counter">75 / 79</span>
+<div class="slide-nav">
+  <a href="#slide-74">&#8592; Previous</a>
+  <span class="slide-info">Slide 75 / 79 &nbsp;&middot;&nbsp; 🗄️ Lecture 3: JPA and Database Integration</span>
+  <a href="#slide-76">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-76" class="slide">
+<h2 data-en="📅 Next Lecture" data-fr="📅 Prochaine leçon">📅 Next Lecture</h2>
+<h3 data-en="CDI and Dependency Injection" data-fr="CDI and Injection de dépendances">CDI and Dependency Injection</h3>
+<p><strong>Date:</strong> [Next session date]</p>
+<p><strong>Duration:</strong> 3 hours</p>
+<p><strong>Topics:</strong></p>
+<ul>
+<li>CDI fundamentals and bean scopes</li>
+<li data-en="Dependency injection patterns" data-fr="Injection de dépendances patterns">Dependency injection patterns</li>
+<li>Qualifiers and alternatives</li>
+<li>Producer methods</li>
+<li data-en="Declarative transaction management with @Transactional" data-fr="Declarative Gestion des transactions with @Transactional">Declarative transaction management with @Transactional</li>
+</ul>
+<p data-en="<strong>Preparation:</strong> Complete Lab 3 and review dependency injection concepts" data-fr="Preparation: Complete Lab 3 and review Injection de dépendances concepts"><strong>Preparation:</strong> Complete Lab 3 and review dependency injection concepts</p>
+
+<span class="slide-counter">76 / 79</span>
+<div class="slide-nav">
+  <a href="#slide-75">&#8592; Previous</a>
+  <span class="slide-info">Slide 76 / 79 &nbsp;&middot;&nbsp; 🗄️ Lecture 3: JPA and Database Integration</span>
+  <a href="#slide-77">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-77" class="slide">
+<h2>❓ Questions?</h2>
+<p data-en="<strong>Common Questions:</strong>" data-fr="Questions fréquentes:"><strong>Common Questions:</strong></p>
+<p>Q: When should I use JPQL vs Criteria API?</p>
+<p>A: Use JPQL for static queries, Criteria API for dynamic queries.</p>
+<p>Q: What's the difference between <code>persist()</code> and <code>merge()</code>?</p>
+<p>A: <code>persist()</code> for new entities, <code>merge()</code> for detached entities.</p>
+<p>Q: Should I use bidirectional relationships?</p>
+<p>A: Only when you need to navigate from both sides.</p>
+<p>Q: How do I avoid N+1 query problem?</p>
+<p>A: Use JOIN FETCH in JPQL or fetch joins in Criteria API.</p>
+
+<span class="slide-counter">77 / 79</span>
+<div class="slide-nav">
+  <a href="#slide-76">&#8592; Previous</a>
+  <span class="slide-info">Slide 77 / 79 &nbsp;&middot;&nbsp; 🗄️ Lecture 3: JPA and Database Integration</span>
+  <a href="#slide-78">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-78" class="slide slide--section">
+<h1>🚀 Ready for Lab 3!</h1>
+<p data-en="<strong>Next Steps:</strong>" data-fr="Prochaines étapes:"><strong>Next Steps:</strong></p>
+<ol>
+<li>Review this lecture</li>
+<li data-en="Complete Lab 3: JPA Database Integration" data-fr="Complete Lab 3: JPA Intégration base de données">Complete Lab 3: JPA Database Integration</li>
+<li>Practice writing JPQL queries</li>
+<li>Experiment with Criteria API</li>
+<li>Set up Flyway migrations</li>
+</ol>
+<p data-en="<strong>See you in the lab!</strong>" data-fr="À bientôt dans the lab!"><strong>See you in the lab!</strong></p>
+
+<span class="slide-counter">78 / 79</span>
+<div class="slide-nav">
+  <a href="#slide-77">&#8592; Previous</a>
+  <span class="slide-info">Slide 78 / 79 &nbsp;&middot;&nbsp; 🗄️ Lecture 3: JPA and Database Integration</span>
+  <a href="#slide-79">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-79" class="slide">
+<p><strong>End of Lecture 3</strong></p>
+<p>© 2025 - Jakarta EE &amp; MicroProfile Course</p>
+
+<span class="slide-counter">79 / 79</span>
+<div class="slide-nav">
+  <a href="#slide-78">&#8592; Previous</a>
+  <span class="slide-info">Slide 79 / 79 &nbsp;&middot;&nbsp; 🗄️ Lecture 3: JPA and Database Integration</span>
+  <a class="disabled">Next &#8594;</a>
+</div>
+</section>
+    </div>
+  </main>
+</div>
+<footer class="site-footer">Made with IBM Bob &nbsp;&middot;&nbsp; &copy; 2026 Olivier Planson</footer>
+<script>
+/* ── EN/FR language toggle — global scope so buttons can call it ── */
+var _lang = localStorage.getItem('slide-lang') || 'en';
+function setLang(lang) {
+  _lang = lang;
+  localStorage.setItem('slide-lang', lang);
+  document.getElementById('btn-en').classList.toggle('active', lang === 'en');
+  document.getElementById('btn-fr').classList.toggle('active', lang === 'fr');
+  document.querySelectorAll('[data-en][data-fr]').forEach(function(el) {
+    el.innerHTML = lang === 'fr' ? el.getAttribute('data-fr') : el.getAttribute('data-en');
+  });
+}
+
+(function() {
+  /* ── Sidenav hover ── */
+  var nav     = document.getElementById('sidenav');
+  var navTrig = document.getElementById('sidenav-trigger');
+  var navTimer = null;
+  function navShow() { clearTimeout(navTimer); nav.classList.add('sidenav--open'); }
+  function navHide() { navTimer = setTimeout(function(){ nav.classList.remove('sidenav--open'); }, 300); }
+  navTrig.addEventListener('mouseenter', navShow);
+  navTrig.addEventListener('mouseleave', navHide);
+  nav.addEventListener('mouseenter', navShow);
+  nav.addEventListener('mouseleave', navHide);
+
+  /* ── Progress bar hover ── */
+  var pbWrap  = document.getElementById('pb-wrap');
+  var pbTrig  = document.getElementById('pb-trigger');
+  var pbTimer = null;
+  function pbShow() { clearTimeout(pbTimer); pbWrap.classList.add('pb-open'); }
+  function pbHide() { pbTimer = setTimeout(function(){ pbWrap.classList.remove('pb-open'); }, 400); }
+  pbTrig.addEventListener('mouseenter', pbShow);
+  pbTrig.addEventListener('mouseleave', pbHide);
+  pbWrap.addEventListener('mouseenter', pbShow);
+  pbWrap.addEventListener('mouseleave', pbHide);
+
+  /* ── Wire EN/FR buttons via addEventListener (no inline onclick) ── */
+  document.getElementById('btn-en').addEventListener('click', function() { setLang('en'); });
+  document.getElementById('btn-fr').addEventListener('click', function() { setLang('fr'); });
+
+  /* Apply stored preference on page load */
+  if (_lang === 'fr') setLang('fr');
+})();
+</script>
+</body>
+</html>

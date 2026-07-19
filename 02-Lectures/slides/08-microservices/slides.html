@@ -1,0 +1,2973 @@
+<!-- © Copyright 2026 Olivier Planson. All rights reserved. Reproduction prohibited. Made with IBM Bob. -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>ESIPE — 🏗️ Lecture 8: Microservices Architecture — Slides</title>
+  <link rel="stylesheet" href="../assets/slide.css"/>
+  <style>
+/* suppress static .current when a slide is targeted */
+body:has(.slide:target) .progress-bar a.current { background: var(--bg); color: var(--muted); border-color: var(--border); }
+body:has(#slide-1:target) .progress-bar a[href="#slide-1"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-2:target) .progress-bar a[href="#slide-2"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-3:target) .progress-bar a[href="#slide-3"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-4:target) .progress-bar a[href="#slide-4"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-5:target) .progress-bar a[href="#slide-5"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-6:target) .progress-bar a[href="#slide-6"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-7:target) .progress-bar a[href="#slide-7"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-8:target) .progress-bar a[href="#slide-8"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-9:target) .progress-bar a[href="#slide-9"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-10:target) .progress-bar a[href="#slide-10"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-11:target) .progress-bar a[href="#slide-11"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-12:target) .progress-bar a[href="#slide-12"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-13:target) .progress-bar a[href="#slide-13"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-14:target) .progress-bar a[href="#slide-14"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-15:target) .progress-bar a[href="#slide-15"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-16:target) .progress-bar a[href="#slide-16"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-17:target) .progress-bar a[href="#slide-17"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-18:target) .progress-bar a[href="#slide-18"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-19:target) .progress-bar a[href="#slide-19"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-20:target) .progress-bar a[href="#slide-20"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-21:target) .progress-bar a[href="#slide-21"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-22:target) .progress-bar a[href="#slide-22"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-23:target) .progress-bar a[href="#slide-23"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-24:target) .progress-bar a[href="#slide-24"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-25:target) .progress-bar a[href="#slide-25"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-26:target) .progress-bar a[href="#slide-26"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-27:target) .progress-bar a[href="#slide-27"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-28:target) .progress-bar a[href="#slide-28"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-29:target) .progress-bar a[href="#slide-29"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-30:target) .progress-bar a[href="#slide-30"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-31:target) .progress-bar a[href="#slide-31"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-32:target) .progress-bar a[href="#slide-32"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-33:target) .progress-bar a[href="#slide-33"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-34:target) .progress-bar a[href="#slide-34"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-35:target) .progress-bar a[href="#slide-35"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-36:target) .progress-bar a[href="#slide-36"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-37:target) .progress-bar a[href="#slide-37"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-38:target) .progress-bar a[href="#slide-38"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-39:target) .progress-bar a[href="#slide-39"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-40:target) .progress-bar a[href="#slide-40"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-41:target) .progress-bar a[href="#slide-41"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-42:target) .progress-bar a[href="#slide-42"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-43:target) .progress-bar a[href="#slide-43"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-44:target) .progress-bar a[href="#slide-44"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-45:target) .progress-bar a[href="#slide-45"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-46:target) .progress-bar a[href="#slide-46"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-47:target) .progress-bar a[href="#slide-47"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-48:target) .progress-bar a[href="#slide-48"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-49:target) .progress-bar a[href="#slide-49"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-50:target) .progress-bar a[href="#slide-50"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-51:target) .progress-bar a[href="#slide-51"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-52:target) .progress-bar a[href="#slide-52"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-53:target) .progress-bar a[href="#slide-53"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-54:target) .progress-bar a[href="#slide-54"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-55:target) .progress-bar a[href="#slide-55"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-56:target) .progress-bar a[href="#slide-56"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-57:target) .progress-bar a[href="#slide-57"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-58:target) .progress-bar a[href="#slide-58"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-59:target) .progress-bar a[href="#slide-59"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-60:target) .progress-bar a[href="#slide-60"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-61:target) .progress-bar a[href="#slide-61"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-62:target) .progress-bar a[href="#slide-62"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-63:target) .progress-bar a[href="#slide-63"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-64:target) .progress-bar a[href="#slide-64"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-65:target) .progress-bar a[href="#slide-65"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-66:target) .progress-bar a[href="#slide-66"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-67:target) .progress-bar a[href="#slide-67"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-68:target) .progress-bar a[href="#slide-68"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-69:target) .progress-bar a[href="#slide-69"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-70:target) .progress-bar a[href="#slide-70"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-71:target) .progress-bar a[href="#slide-71"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-72:target) .progress-bar a[href="#slide-72"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-73:target) .progress-bar a[href="#slide-73"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-74:target) .progress-bar a[href="#slide-74"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-75:target) .progress-bar a[href="#slide-75"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-76:target) .progress-bar a[href="#slide-76"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-77:target) .progress-bar a[href="#slide-77"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-78:target) .progress-bar a[href="#slide-78"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-79:target) .progress-bar a[href="#slide-79"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-80:target) .progress-bar a[href="#slide-80"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-81:target) .progress-bar a[href="#slide-81"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-82:target) .progress-bar a[href="#slide-82"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-83:target) .progress-bar a[href="#slide-83"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-84:target) .progress-bar a[href="#slide-84"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-85:target) .progress-bar a[href="#slide-85"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-86:target) .progress-bar a[href="#slide-86"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-87:target) .progress-bar a[href="#slide-87"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-88:target) .progress-bar a[href="#slide-88"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-89:target) .progress-bar a[href="#slide-89"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-90:target) .progress-bar a[href="#slide-90"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-91:target) .progress-bar a[href="#slide-91"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-92:target) .progress-bar a[href="#slide-92"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-93:target) .progress-bar a[href="#slide-93"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-94:target) .progress-bar a[href="#slide-94"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-95:target) .progress-bar a[href="#slide-95"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-96:target) .progress-bar a[href="#slide-96"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-97:target) .progress-bar a[href="#slide-97"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-98:target) .progress-bar a[href="#slide-98"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-99:target) .progress-bar a[href="#slide-99"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+  </style>
+</head>
+<body>
+<header class="site-header">
+  <a class="brand" href="../index.html">ESIPE<span>Jakarta EE &amp; Microservices</span></a>
+  <!-- EN/FR language toggle -->
+  <div class="lang-toggle" id="lang-toggle">
+    <button id="btn-en" class="active">EN</button>
+    <span class="sep">|</span>
+    <button id="btn-fr">FR</button>
+  </div>
+  <a class="back-link" href="../index.html">&#8592; All Courses</a>
+</header>
+<!-- Thin trigger strip at top: hover to reveal progress bar -->
+<div class="progress-bar-trigger" id="pb-trigger"></div>
+<!-- Progress bar — hidden by default, revealed on hover -->
+<div class="progress-bar-wrap" id="pb-wrap">
+  <div class="progress-bar">
+    <a href="#slide-1" class="current">1</a>
+      <a href="#slide-2">2</a>
+      <a href="#slide-3">3</a>
+      <a href="#slide-4">4</a>
+      <a href="#slide-5">5</a>
+      <a href="#slide-6">6</a>
+      <a href="#slide-7">7</a>
+      <a href="#slide-8">8</a>
+      <a href="#slide-9">9</a>
+      <a href="#slide-10">10</a>
+      <a href="#slide-11">11</a>
+      <a href="#slide-12">12</a>
+      <a href="#slide-13">13</a>
+      <a href="#slide-14">14</a>
+      <a href="#slide-15">15</a>
+      <a href="#slide-16">16</a>
+      <a href="#slide-17">17</a>
+      <a href="#slide-18">18</a>
+      <a href="#slide-19">19</a>
+      <a href="#slide-20">20</a>
+      <a href="#slide-21">21</a>
+      <a href="#slide-22">22</a>
+      <a href="#slide-23">23</a>
+      <a href="#slide-24">24</a>
+      <a href="#slide-25">25</a>
+      <a href="#slide-26">26</a>
+      <a href="#slide-27">27</a>
+      <a href="#slide-28">28</a>
+      <a href="#slide-29">29</a>
+      <a href="#slide-30">30</a>
+      <a href="#slide-31">31</a>
+      <a href="#slide-32">32</a>
+      <a href="#slide-33">33</a>
+      <a href="#slide-34">34</a>
+      <a href="#slide-35">35</a>
+      <a href="#slide-36">36</a>
+      <a href="#slide-37">37</a>
+      <a href="#slide-38">38</a>
+      <a href="#slide-39">39</a>
+      <a href="#slide-40">40</a>
+      <a href="#slide-41">41</a>
+      <a href="#slide-42">42</a>
+      <a href="#slide-43">43</a>
+      <a href="#slide-44">44</a>
+      <a href="#slide-45">45</a>
+      <a href="#slide-46">46</a>
+      <a href="#slide-47">47</a>
+      <a href="#slide-48">48</a>
+      <a href="#slide-49">49</a>
+      <a href="#slide-50">50</a>
+      <a href="#slide-51">51</a>
+      <a href="#slide-52">52</a>
+      <a href="#slide-53">53</a>
+      <a href="#slide-54">54</a>
+      <a href="#slide-55">55</a>
+      <a href="#slide-56">56</a>
+      <a href="#slide-57">57</a>
+      <a href="#slide-58">58</a>
+      <a href="#slide-59">59</a>
+      <a href="#slide-60">60</a>
+      <a href="#slide-61">61</a>
+      <a href="#slide-62">62</a>
+      <a href="#slide-63">63</a>
+      <a href="#slide-64">64</a>
+      <a href="#slide-65">65</a>
+      <a href="#slide-66">66</a>
+      <a href="#slide-67">67</a>
+      <a href="#slide-68">68</a>
+      <a href="#slide-69">69</a>
+      <a href="#slide-70">70</a>
+      <a href="#slide-71">71</a>
+      <a href="#slide-72">72</a>
+      <a href="#slide-73">73</a>
+      <a href="#slide-74">74</a>
+      <a href="#slide-75">75</a>
+      <a href="#slide-76">76</a>
+      <a href="#slide-77">77</a>
+      <a href="#slide-78">78</a>
+      <a href="#slide-79">79</a>
+      <a href="#slide-80">80</a>
+      <a href="#slide-81">81</a>
+      <a href="#slide-82">82</a>
+      <a href="#slide-83">83</a>
+      <a href="#slide-84">84</a>
+      <a href="#slide-85">85</a>
+      <a href="#slide-86">86</a>
+      <a href="#slide-87">87</a>
+      <a href="#slide-88">88</a>
+      <a href="#slide-89">89</a>
+      <a href="#slide-90">90</a>
+      <a href="#slide-91">91</a>
+      <a href="#slide-92">92</a>
+      <a href="#slide-93">93</a>
+      <a href="#slide-94">94</a>
+      <a href="#slide-95">95</a>
+      <a href="#slide-96">96</a>
+      <a href="#slide-97">97</a>
+      <a href="#slide-98">98</a>
+      <a href="#slide-99">99</a>
+  </div>
+</div>
+<!-- Thin trigger strip at left: hover to reveal sidenav -->
+<div class="sidenav-trigger" id="sidenav-trigger"></div>
+<div class="shell">
+  <nav class="sidenav" id="sidenav">
+    <div class="sidenav-section">Course outline</div>
+    <a href="#slide-1" class="active">From Monolith to Microservices</a>
+    <a href="#slide-4">📚 Prerequisites</a>
+    <a href="#slide-5">🏛️ What are Microservices?</a>
+    <a href="#slide-6">Definition</a>
+    <a href="#slide-7">Monolith vs Microservices</a>
+    <a href="#slide-9">Benefits of Microservices</a>
+    <a href="#slide-10">Benefits (Continued)</a>
+    <a href="#slide-11">Challenges of Microservices</a>
+    <a href="#slide-12">Challenges (Continued)</a>
+    <a href="#slide-13">When to Use Microservices?</a>
+    <a href="#slide-14">Conway's Law</a>
+    <a href="#slide-16">Decomposition Strategies</a>
+    <a href="#slide-17">Banking Application Decomposition</a>
+    <a href="#slide-18">Proposed Microservices (Lab 08)</a>
+    <a href="#slide-19">Service Responsibilities</a>
+    <a href="#slide-20">Service Responsibilities (Continued)</a>
+    <a href="#slide-21">Service Responsibilities (Continued)</a>
+    <a href="#slide-22">Database Per Service Pattern</a>
+    <a href="#slide-23">Shared Database Anti-Pattern</a>
+    <a href="#slide-24">Data Consistency Strategies</a>
+    <a href="#slide-25">🔗 How Services Talk to Each Other</a>
+    <a href="#slide-26">Communication Patterns</a>
+    <a href="#slide-27">REST-Based Communication</a>
+    <a href="#slide-29">Configuration with MicroProfile Config</a>
+    <a href="#slide-30">Fault Tolerance with MicroProfile</a>
+    <a href="#slide-31">Circuit Breaker States</a>
+    <a href="#slide-32">Retry Strategy</a>
+    <a href="#slide-33">Bulkhead Pattern</a>
+    <a href="#slide-34">🚪 Single Entry Point</a>
+    <a href="#slide-36">API Gateway Architecture</a>
+    <a href="#slide-37">Request Routing</a>
+    <a href="#slide-38">Response Aggregation</a>
+    <a href="#slide-39">Response Aggregation DTO</a>
+    <a href="#slide-40">Authentication at Gateway</a>
+    <a href="#slide-41">Rate Limiting</a>
+    <a href="#slide-42">🔍 Finding Services Dynamically</a>
+    <a href="#slide-43">Service Discovery</a>
+    <a href="#slide-44">Service Discovery Patterns</a>
+    <a href="#slide-45">Service Discovery in Docker Compose</a>
+    <a href="#slide-46">MicroProfile Config</a>
+    <a href="#slide-47">Configuration Sources</a>
+    <a href="#slide-48">Environment-Specific Configuration</a>
+    <a href="#slide-49">📊 Observability in Microservices</a>
+    <a href="#slide-50">The Three Pillars of Observability</a>
+    <a href="#slide-51">Distributed Tracing</a>
+    <a href="#slide-52">MicroProfile OpenTracing</a>
+    <a href="#slide-53">Correlation IDs</a>
+    <a href="#slide-54">Structured Logging</a>
+    <a href="#slide-55">MicroProfile Metrics</a>
+    <a href="#slide-56">Custom Metrics</a>
+    <a href="#slide-57">Health Checks</a>
+    <a href="#slide-58">Health Check Endpoints</a>
+    <a href="#slide-59">Metrics Endpoint</a>
+    <a href="#slide-60">🔄 Managing Distributed Data</a>
+    <a href="#slide-61">The CAP Theorem</a>
+    <a href="#slide-62">Eventual Consistency</a>
+    <a href="#slide-63">Saga Pattern</a>
+    <a href="#slide-64">Saga Implementation: Choreography</a>
+    <a href="#slide-65">Saga Implementation: Orchestration</a>
+    <a href="#slide-66">Event Sourcing</a>
+    <a href="#slide-67">CQRS Pattern</a>
+    <a href="#slide-68">🚀 Running Microservices in Production</a>
+    <a href="#slide-69">Containerization with Docker</a>
+    <a href="#slide-71">Docker Compose (Continued)</a>
+    <a href="#slide-72">Docker Compose (Continued)</a>
+    <a href="#slide-73">Running with Docker Compose</a>
+    <a href="#slide-74">Kubernetes Introduction</a>
+    <a href="#slide-78">CI/CD Pipeline</a>
+    <a href="#slide-81">Monitoring and Alerting</a>
+    <a href="#slide-82">Monitoring Stack</a>
+    <a href="#slide-83">Logging Stack (ELK)</a>
+    <a href="#slide-85">Microservices Principles</a>
+    <a href="#slide-89">Common Pitfalls to Avoid</a>
+    <a href="#slide-90">Common Pitfalls (Continued)</a>
+    <a href="#slide-91">Migration Strategy</a>
+    <a href="#slide-92">When to Use Microservices</a>
+    <a href="#slide-93">Lab 08 Preview</a>
+    <a href="#slide-94">Lab 08 Preview (Continued)</a>
+    <a href="#slide-96">Resources</a>
+    <a href="#slide-97">Questions?</a>
+    <hr>
+    <div class="sidenav-section">Navigation</div>
+    <a href="index.html">&#9675; Overview</a>
+  </nav>
+  <main class="content">
+    <div class="slide-wrapper">
+<section id="slide-1" class="slide slide--title">
+<h1 data-en="🏗️ Lecture 8: Microservices Architecture" data-fr="🏗️ Lecture 8: Architecture microservices">🏗️ Lecture 8: Microservices Architecture</h1>
+<h2>From Monolith to Microservices</h2>
+<p><strong>Jakarta EE and MicroProfile Course</strong></p>
+
+<span class="slide-counter">1 / 99</span>
+<div class="slide-nav">
+  <a class="disabled">&#8592; Previous</a>
+  <span class="slide-info">Slide 1 / 99 &nbsp;&middot;&nbsp; 🏗️ Lecture 8: Microservices Architecture</span>
+  <a href="#slide-2">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-2" class="slide">
+<h2 data-en="📋 Lecture Overview" data-fr="📋 Lecture Vue d'ensemble">📋 Lecture Overview</h2>
+<h3>Topics Covered</h3>
+<ul>
+<li>Microservices fundamentals and principles</li>
+<li>Service decomposition strategies</li>
+<li>Inter-service communication patterns</li>
+<li>API Gateway pattern</li>
+<li data-en="Service discovery and configuration" data-fr="Service discovery and Configuration">Service discovery and configuration</li>
+<li>Distributed tracing and monitoring</li>
+<li>Data consistency in distributed systems</li>
+<li data-en="Deployment and DevOps practices" data-fr="Déploiement and DevOps practices">Deployment and DevOps practices</li>
+</ul>
+<h3 data-en="Duration: 4 hours (2h lecture + 1h advanced topics + 1h lab intro)" data-fr="Duration: 4 hours (2h lecture + 1h Avancé topics + 1h lab intro)">Duration: 4 hours (2h lecture + 1h advanced topics + 1h lab intro)</h3>
+
+<span class="slide-counter">2 / 99</span>
+<div class="slide-nav">
+  <a href="#slide-1">&#8592; Previous</a>
+  <span class="slide-info">Slide 2 / 99 &nbsp;&middot;&nbsp; 🏗️ Lecture 8: Microservices Architecture</span>
+  <a href="#slide-3">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-3" class="slide">
+<h2 data-en="🎯 Learning Objectives" data-fr="🎯 Objectifs pédagogiques">🎯 Learning Objectives</h2>
+<p data-en="By the end of this lecture, you will be able to:" data-fr="À la fin de cette leçon, vous serez en mesure de:">By the end of this lecture, you will be able to:</p>
+<ol>
+<li data-en="✅ Understand microservices architecture principles" data-fr="✅ Understand Architecture microservices principles">✅ Understand microservices architecture principles</li>
+<li>✅ Decompose monolithic applications into services</li>
+<li>✅ Implement inter-service communication</li>
+<li>✅ Apply API Gateway pattern</li>
+<li data-en="✅ Configure service discovery and externalized configuration" data-fr="✅ Configure service discovery and externalized Configuration">✅ Configure service discovery and externalized configuration</li>
+<li>✅ Implement distributed tracing and monitoring</li>
+<li>✅ Handle data consistency in distributed systems</li>
+<li>✅ Deploy microservices with Docker Compose</li>
+</ol>
+
+<span class="slide-counter">3 / 99</span>
+<div class="slide-nav">
+  <a href="#slide-2">&#8592; Previous</a>
+  <span class="slide-info">Slide 3 / 99 &nbsp;&middot;&nbsp; 🏗️ Lecture 8: Microservices Architecture</span>
+  <a href="#slide-4">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-4" class="slide">
+<h2>📚 Prerequisites</h2>
+<h3>Required Knowledge</h3>
+<ul>
+<li>✅ Jakarta EE fundamentals (Lectures 1-5)</li>
+<li data-en="✅ Domain-Driven Design (Lecture 6)" data-fr="✅ Conception pilotée par le domaine (Lecture 6)">✅ Domain-Driven Design (Lecture 6)</li>
+<li data-en="✅ Hexagonal Architecture (Lecture 7)" data-fr="✅ Architecture hexagonale (Lecture 7)">✅ Hexagonal Architecture (Lecture 7)</li>
+<li>✅ REST API design</li>
+<li>✅ Docker basics</li>
+</ul>
+<h3>Required Tools</h3>
+<ul>
+<li>JDK 17+</li>
+<li>Maven 3.8+</li>
+<li>Docker or Podman</li>
+<li>PostgreSQL 16+</li>
+</ul>
+
+<span class="slide-counter">4 / 99</span>
+<div class="slide-nav">
+  <a href="#slide-3">&#8592; Previous</a>
+  <span class="slide-info">Slide 4 / 99 &nbsp;&middot;&nbsp; 🏗️ Lecture 8: Microservices Architecture</span>
+  <a href="#slide-5">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-5" class="slide slide--section">
+<h1>Part 1: Microservices Fundamentals</h1>
+<h2>🏛️ What are Microservices?</h2>
+
+<span class="slide-counter">5 / 99</span>
+<div class="slide-nav">
+  <a href="#slide-4">&#8592; Previous</a>
+  <span class="slide-info">Slide 5 / 99 &nbsp;&middot;&nbsp; 🏗️ Lecture 8: Microservices Architecture</span>
+  <a href="#slide-6">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-6" class="slide">
+<h2>Definition</h2>
+<blockquote><strong>Microservices</strong> is an architectural style that structures an application as a collection of small, autonomous services modeled around a business domain.</blockquote>
+<h3 data-en="Key Characteristics" data-fr="Caractéristiques clés">Key Characteristics</h3>
+<ul>
+<li><strong>Small and Focused</strong>: Each service does one thing well</li>
+<li><strong>Independently Deployable</strong>: Can be deployed without affecting others</li>
+<li><strong>Loosely Coupled</strong>: Services communicate via well-defined APIs</li>
+<li><strong>Owned by Small Teams</strong>: Each team owns one or more services</li>
+<li><strong>Technology Agnostic</strong>: Can use different technologies per service</li>
+</ul>
+
+<span class="slide-counter">6 / 99</span>
+<div class="slide-nav">
+  <a href="#slide-5">&#8592; Previous</a>
+  <span class="slide-info">Slide 6 / 99 &nbsp;&middot;&nbsp; 🏗️ Lecture 8: Microservices Architecture</span>
+  <a href="#slide-7">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-7" class="slide">
+<h2>Monolith vs Microservices</h2>
+<div class="slide-columns">
+<h3>Monolithic Architecture</h3>
+<p><img src="../../images/08-microservices-architecture-diagram-1.png" alt="width:70%"></p>
+<h3 data-en="Microservices Architecture" data-fr="Architecture microservices">Microservices Architecture</h3>
+<p><img src="../../images/08-microservices-architecture-diagram-2.png" alt="width:70%"></p>
+</div>
+
+<span class="slide-counter">7 / 99</span>
+<div class="slide-nav">
+  <a href="#slide-6">&#8592; Previous</a>
+  <span class="slide-info">Slide 7 / 99 &nbsp;&middot;&nbsp; 🏗️ Lecture 8: Microservices Architecture</span>
+  <a href="#slide-8">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-8" class="slide">
+<h2 data-en="Comparison Table" data-fr="Comparaison Table">Comparison Table</h2>
+<table class="slide-table"><thead><tr><th>Aspect</th><th>Monolith</th><th>Microservices</th></tr></thead><tbody>
+<tr><td><strong>Deployment</strong></td><td>Single unit</td><td>Multiple services</td></tr>
+<tr><td><strong>Scaling</strong></td><td>Scale entire app</td><td>Scale services independently</td></tr>
+<tr><td><strong>Technology</strong></td><td>Single stack</td><td>Polyglot possible</td></tr>
+<tr><td><strong>Development</strong></td><td>Simpler initially</td><td>More complex</td></tr>
+<tr><td><strong>Testing</strong></td><td>Easier</td><td>More challenging</td></tr>
+<tr><td><strong>Resilience</strong></td><td>Single point of failure</td><td>Fault isolation</td></tr>
+<tr><td><strong>Team Structure</strong></td><td>Large team</td><td>Small, autonomous teams</td></tr>
+<tr><td><strong>Data Management</strong></td><td>Shared database</td><td>Database per service</td></tr>
+</tbody></table>
+
+<span class="slide-counter">8 / 99</span>
+<div class="slide-nav">
+  <a href="#slide-7">&#8592; Previous</a>
+  <span class="slide-info">Slide 8 / 99 &nbsp;&middot;&nbsp; 🏗️ Lecture 8: Microservices Architecture</span>
+  <a href="#slide-9">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-9" class="slide">
+<h2>Benefits of Microservices</h2>
+<h3 data-en="1. <strong>Independent Deployment</strong>" data-fr="1. Independent Déploiement">1. <strong>Independent Deployment</strong></h3>
+<ul>
+<li>Deploy services independently</li>
+<li>Faster release cycles</li>
+<li data-en="Reduced deployment risk" data-fr="Reduced Déploiement risk">Reduced deployment risk</li>
+</ul>
+<h3>2. <strong>Technology Flexibility</strong></h3>
+<ul>
+<li>Choose best technology per service</li>
+<li>Easier to adopt new technologies</li>
+<li>Experiment with new approaches</li>
+</ul>
+<h3 data-en="3. <strong>Scalability</strong>" data-fr="3. Scalabilité">3. <strong>Scalability</strong></h3>
+<ul>
+<li>Scale services independently</li>
+<li>Optimize resource usage</li>
+<li>Handle varying loads efficiently</li>
+</ul>
+
+<span class="slide-counter">9 / 99</span>
+<div class="slide-nav">
+  <a href="#slide-8">&#8592; Previous</a>
+  <span class="slide-info">Slide 9 / 99 &nbsp;&middot;&nbsp; 🏗️ Lecture 8: Microservices Architecture</span>
+  <a href="#slide-10">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-10" class="slide">
+<h2>Benefits (Continued)</h2>
+<h3>4. <strong>Fault Isolation</strong></h3>
+<ul>
+<li>Failures contained to single service</li>
+<li>System remains partially functional</li>
+<li>Easier to identify and fix issues</li>
+</ul>
+<h3>5. <strong>Team Autonomy</strong></h3>
+<ul>
+<li>Small teams own services</li>
+<li>Faster decision making</li>
+<li>Clear ownership and responsibility</li>
+</ul>
+<h3>6. <strong>Easier to Understand</strong></h3>
+<ul>
+<li>Smaller codebase per service</li>
+<li>Focused business logic</li>
+<li>Simpler mental model</li>
+</ul>
+
+<span class="slide-counter">10 / 99</span>
+<div class="slide-nav">
+  <a href="#slide-9">&#8592; Previous</a>
+  <span class="slide-info">Slide 10 / 99 &nbsp;&middot;&nbsp; 🏗️ Lecture 8: Microservices Architecture</span>
+  <a href="#slide-11">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-11" class="slide">
+<h2>Challenges of Microservices</h2>
+<h3>1. <strong>Distributed System Complexity</strong></h3>
+<ul>
+<li>Network latency and failures</li>
+<li>Partial failures</li>
+<li>Distributed transactions</li>
+<li>Data consistency</li>
+</ul>
+<h3>2. <strong>Operational Overhead</strong></h3>
+<ul>
+<li>More services to deploy and monitor</li>
+<li>Complex infrastructure</li>
+<li data-en="Service discovery and configuration" data-fr="Service discovery and Configuration">Service discovery and configuration</li>
+<li>Distributed tracing</li>
+</ul>
+
+<span class="slide-counter">11 / 99</span>
+<div class="slide-nav">
+  <a href="#slide-10">&#8592; Previous</a>
+  <span class="slide-info">Slide 11 / 99 &nbsp;&middot;&nbsp; 🏗️ Lecture 8: Microservices Architecture</span>
+  <a href="#slide-12">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-12" class="slide">
+<h2>Challenges (Continued)</h2>
+<h3 data-en="3. <strong>Testing Complexity</strong>" data-fr="3. Tests Complexity">3. <strong>Testing Complexity</strong></h3>
+<ul>
+<li data-en="Integration testing across services" data-fr="Integration Tests across services">Integration testing across services</li>
+<li data-en="End-to-end testing" data-fr="End-to-end Tests">End-to-end testing</li>
+<li data-en="Contract testing" data-fr="Contract Tests">Contract testing</li>
+<li>Test data management</li>
+</ul>
+<h3>4. <strong>Data Management</strong></h3>
+<ul>
+<li>No ACID transactions across services</li>
+<li>Eventual consistency</li>
+<li>Data duplication</li>
+<li>Query complexity</li>
+</ul>
+<h3>5. <strong>Organizational Changes</strong></h3>
+<ul>
+<li>Team structure changes</li>
+<li>DevOps culture required</li>
+<li>Communication overhead</li>
+<li>Skill requirements</li>
+</ul>
+
+<span class="slide-counter">12 / 99</span>
+<div class="slide-nav">
+  <a href="#slide-11">&#8592; Previous</a>
+  <span class="slide-info">Slide 12 / 99 &nbsp;&middot;&nbsp; 🏗️ Lecture 8: Microservices Architecture</span>
+  <a href="#slide-13">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-13" class="slide">
+<h2>When to Use Microservices?</h2>
+<h3>✅ Good Fit When:</h3>
+<ul>
+<li>Large, complex applications</li>
+<li>Multiple teams working independently</li>
+<li>Different parts need different scaling</li>
+<li data-en="Rapid deployment required" data-fr="Rapid Déploiement required">Rapid deployment required</li>
+<li>Technology diversity needed</li>
+<li>High availability critical</li>
+</ul>
+<h3>❌ Not Recommended When:</h3>
+<ul>
+<li data-en="Small, simple applications" data-fr="Small, Simple applications">Small, simple applications</li>
+<li>Single team</li>
+<li>Tight coupling between components</li>
+<li>Limited operational expertise</li>
+<li>Startup/MVP phase</li>
+</ul>
+
+<span class="slide-counter">13 / 99</span>
+<div class="slide-nav">
+  <a href="#slide-12">&#8592; Previous</a>
+  <span class="slide-info">Slide 13 / 99 &nbsp;&middot;&nbsp; 🏗️ Lecture 8: Microservices Architecture</span>
+  <a href="#slide-14">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-14" class="slide">
+<h2>Conway's Law</h2>
+<blockquote>"Organizations which design systems are constrained to produce designs which are copies of the communication structures of these organizations."</blockquote>
+<blockquote>— Melvin Conway, 1967</blockquote>
+<h3>Implications for Microservices</h3>
+<ul>
+<li>Service boundaries should match team boundaries</li>
+<li data-en="Team structure influences architecture" data-fr="Team structure influences Architecture">Team structure influences architecture</li>
+<li data-en="Inverse Conway Maneuver: Design teams around desired architecture" data-fr="Inverse Conway Maneuver: Design teams around desired Architecture">Inverse Conway Maneuver: Design teams around desired architecture</li>
+<li>Communication patterns affect system design</li>
+</ul>
+
+<span class="slide-counter">14 / 99</span>
+<div class="slide-nav">
+  <a href="#slide-13">&#8592; Previous</a>
+  <span class="slide-info">Slide 14 / 99 &nbsp;&middot;&nbsp; 🏗️ Lecture 8: Microservices Architecture</span>
+  <a href="#slide-15">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-15" class="slide slide--section">
+<h1>Part 2: Service Decomposition Strategies</h1>
+<h2 data-en="🔪 How to Split a Monolith" data-fr="🔪 Comment Split a Monolith">🔪 How to Split a Monolith</h2>
+
+<span class="slide-counter">15 / 99</span>
+<div class="slide-nav">
+  <a href="#slide-14">&#8592; Previous</a>
+  <span class="slide-info">Slide 15 / 99 &nbsp;&middot;&nbsp; 🏗️ Lecture 8: Microservices Architecture</span>
+  <a href="#slide-16">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-16" class="slide">
+<h2>Decomposition Strategies</h2>
+<h3>1. <strong>By Business Capability</strong></h3>
+<ul>
+<li>Identify business capabilities</li>
+<li>Create service per capability</li>
+<li data-en="Example: Client Management, Account Management, Transaction Processing" data-fr="Exemple: Client Management, Account Management, Transaction Processing">Example: Client Management, Account Management, Transaction Processing</li>
+</ul>
+<h3>2. <strong>By Subdomain (DDD)</strong></h3>
+<ul>
+<li data-en="Use Domain-Driven Design" data-fr="Use Conception pilotée par le domaine">Use Domain-Driven Design</li>
+<li>Identify bounded contexts</li>
+<li>Create service per bounded context</li>
+<li data-en="Example: Client Context, Account Context" data-fr="Exemple: Client Context, Account Context">Example: Client Context, Account Context</li>
+</ul>
+<h3>3. <strong>By Transaction Boundaries</strong></h3>
+<ul>
+<li>Group operations that must be atomic</li>
+<li>Minimize distributed transactions</li>
+<li data-en="Example: Account + Transaction in same service" data-fr="Exemple: Account + Transaction in same service">Example: Account + Transaction in same service</li>
+</ul>
+
+<span class="slide-counter">16 / 99</span>
+<div class="slide-nav">
+  <a href="#slide-15">&#8592; Previous</a>
+  <span class="slide-info">Slide 16 / 99 &nbsp;&middot;&nbsp; 🏗️ Lecture 8: Microservices Architecture</span>
+  <a href="#slide-17">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-17" class="slide">
+<h2>Banking Application Decomposition</h2>
+<h3>Original Monolith (Lab 07)</h3>
+<pre class="dark"><code>Banking Application
+├── Client Management
+│   ├── Create/Update/Delete Client
+│   └── Query Clients
+├── Account Management
+│   ├── Create/Update/Delete Account
+│   ├── Query Accounts
+│   └── Link to Client
+└── Transaction Management
+    ├── Deposit
+    ├── Withdraw
+    └── Transfer</code></pre>
+
+<span class="slide-counter">17 / 99</span>
+<div class="slide-nav">
+  <a href="#slide-16">&#8592; Previous</a>
+  <span class="slide-info">Slide 17 / 99 &nbsp;&middot;&nbsp; 🏗️ Lecture 8: Microservices Architecture</span>
+  <a href="#slide-18">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-18" class="slide">
+<h2>Proposed Microservices (Lab 08)</h2>
+<p><img src="../../images/08-microservices-architecture-diagram-3.png" alt="width:70%"></p>
+
+<span class="slide-counter">18 / 99</span>
+<div class="slide-nav">
+  <a href="#slide-17">&#8592; Previous</a>
+  <span class="slide-info">Slide 18 / 99 &nbsp;&middot;&nbsp; 🏗️ Lecture 8: Microservices Architecture</span>
+  <a href="#slide-19">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-19" class="slide">
+<h2>Service Responsibilities</h2>
+<h3>Client Service</h3>
+<ul>
+<li><strong>Bounded Context</strong>: Client Management</li>
+<li><strong>Responsibilities</strong>:</li>
+<li>Create, update, delete clients</li>
+<li>Query client information</li>
+<li>Validate client data</li>
+<li data-en="Manage client lifecycle" data-fr="Manage client Cycle de vie">Manage client lifecycle</li>
+<li><strong>Database</strong>: banking_client_db</li>
+<li><strong>Port</strong>: 9081</li>
+</ul>
+
+<span class="slide-counter">19 / 99</span>
+<div class="slide-nav">
+  <a href="#slide-18">&#8592; Previous</a>
+  <span class="slide-info">Slide 19 / 99 &nbsp;&middot;&nbsp; 🏗️ Lecture 8: Microservices Architecture</span>
+  <a href="#slide-20">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-20" class="slide">
+<h2>Service Responsibilities (Continued)</h2>
+<h3>Account Service</h3>
+<ul>
+<li><strong>Bounded Context</strong>: Account Management + Transactions</li>
+<li><strong>Responsibilities</strong>:</li>
+<li>Create, update, delete accounts</li>
+<li>Query account information</li>
+<li>Deposit and withdraw money</li>
+<li>Transfer between accounts</li>
+<li>Validate account operations</li>
+<li>Verify client existence (via Client Service)</li>
+<li><strong>Database</strong>: banking_account_db</li>
+<li><strong>Port</strong>: 9082</li>
+<li><strong>Dependencies</strong>: Client Service (for validation)</li>
+</ul>
+
+<span class="slide-counter">20 / 99</span>
+<div class="slide-nav">
+  <a href="#slide-19">&#8592; Previous</a>
+  <span class="slide-info">Slide 20 / 99 &nbsp;&middot;&nbsp; 🏗️ Lecture 8: Microservices Architecture</span>
+  <a href="#slide-21">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-21" class="slide">
+<h2>Service Responsibilities (Continued)</h2>
+<h3>API Gateway</h3>
+<ul>
+<li><strong>Responsibilities</strong>:</li>
+<li>Route requests to appropriate services</li>
+<li>Aggregate responses from multiple services</li>
+<li>Handle authentication and authorization</li>
+<li>Provide unified API documentation</li>
+<li>Implement rate limiting (optional)</li>
+<li>Handle cross-cutting concerns</li>
+<li><strong>No Database</strong>: Stateless</li>
+<li><strong>Port</strong>: 9080</li>
+<li><strong>Dependencies</strong>: Client Service, Account Service</li>
+</ul>
+
+<span class="slide-counter">21 / 99</span>
+<div class="slide-nav">
+  <a href="#slide-20">&#8592; Previous</a>
+  <span class="slide-info">Slide 21 / 99 &nbsp;&middot;&nbsp; 🏗️ Lecture 8: Microservices Architecture</span>
+  <a href="#slide-22">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-22" class="slide">
+<h2>Database Per Service Pattern</h2>
+<h3>Principle</h3>
+<blockquote>Each microservice has its own database that only it can access directly.</blockquote>
+<h3>Benefits</h3>
+<ul>
+<li><strong>Loose Coupling</strong>: Services don't share database schema</li>
+<li><strong>Independent Evolution</strong>: Change schema without affecting others</li>
+<li><strong>Technology Choice</strong>: Use different databases per service</li>
+<li data-en="<strong>Scalability</strong>: Scale databases independently" data-fr="Scalabilité: Scale databases independently"><strong>Scalability</strong>: Scale databases independently</li>
+</ul>
+<h3>Challenges</h3>
+<ul>
+<li><strong>Data Consistency</strong>: No ACID transactions across services</li>
+<li><strong>Queries</strong>: Can't join across databases</li>
+<li><strong>Data Duplication</strong>: May need to replicate data</li>
+</ul>
+
+<span class="slide-counter">22 / 99</span>
+<div class="slide-nav">
+  <a href="#slide-21">&#8592; Previous</a>
+  <span class="slide-info">Slide 22 / 99 &nbsp;&middot;&nbsp; 🏗️ Lecture 8: Microservices Architecture</span>
+  <a href="#slide-23">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-23" class="slide">
+<h2>Shared Database Anti-Pattern</h2>
+<h3 data-en="Why to Avoid" data-fr="Pourquoi to Avoid">Why to Avoid</h3>
+<p><img src="../../images/08-microservices-architecture-diagram-4.png" alt="width:70%"></p>
+<h3>Problems</h3>
+<ul>
+<li>❌ Tight coupling through database schema</li>
+<li>❌ Can't change schema without coordinating all services</li>
+<li>❌ Can't scale services independently</li>
+<li>❌ Can't use different database technologies</li>
+<li>❌ Defeats purpose of microservices</li>
+</ul>
+
+<span class="slide-counter">23 / 99</span>
+<div class="slide-nav">
+  <a href="#slide-22">&#8592; Previous</a>
+  <span class="slide-info">Slide 23 / 99 &nbsp;&middot;&nbsp; 🏗️ Lecture 8: Microservices Architecture</span>
+  <a href="#slide-24">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-24" class="slide">
+<h2>Data Consistency Strategies</h2>
+<h3>1. <strong>Eventual Consistency</strong></h3>
+<ul>
+<li>Accept that data may be temporarily inconsistent</li>
+<li>Use events to propagate changes</li>
+<li>Design for eventual consistency</li>
+</ul>
+<h3>2. <strong>Saga Pattern</strong></h3>
+<ul>
+<li>Sequence of local transactions</li>
+<li>Each transaction updates one service</li>
+<li>Compensating transactions for rollback</li>
+</ul>
+<h3>3. <strong>Event Sourcing</strong></h3>
+<ul>
+<li>Store events instead of current state</li>
+<li>Rebuild state by replaying events</li>
+<li>Natural audit trail</li>
+</ul>
+
+<span class="slide-counter">24 / 99</span>
+<div class="slide-nav">
+  <a href="#slide-23">&#8592; Previous</a>
+  <span class="slide-info">Slide 24 / 99 &nbsp;&middot;&nbsp; 🏗️ Lecture 8: Microservices Architecture</span>
+  <a href="#slide-25">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-25" class="slide slide--section">
+<h1>Part 3: Inter-Service Communication</h1>
+<h2>🔗 How Services Talk to Each Other</h2>
+
+<span class="slide-counter">25 / 99</span>
+<div class="slide-nav">
+  <a href="#slide-24">&#8592; Previous</a>
+  <span class="slide-info">Slide 25 / 99 &nbsp;&middot;&nbsp; 🏗️ Lecture 8: Microservices Architecture</span>
+  <a href="#slide-26">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-26" class="slide">
+<h2>Communication Patterns</h2>
+<h3>1. <strong>Synchronous Communication</strong></h3>
+<ul>
+<li>Request/Response pattern</li>
+<li>Caller waits for response</li>
+<li data-en="Examples: REST, gRPC" data-fr="Exemples: REST, gRPC">Examples: REST, gRPC</li>
+<li><strong>Use when</strong>: Immediate response needed</li>
+</ul>
+<h3>2. <strong>Asynchronous Communication</strong></h3>
+<ul>
+<li>Fire and forget</li>
+<li>Caller doesn't wait</li>
+<li data-en="Examples: Messaging, Events" data-fr="Exemples: Messaging, Events">Examples: Messaging, Events</li>
+<li><strong>Use when</strong>: Response not immediately needed</li>
+</ul>
+
+<span class="slide-counter">26 / 99</span>
+<div class="slide-nav">
+  <a href="#slide-25">&#8592; Previous</a>
+  <span class="slide-info">Slide 26 / 99 &nbsp;&middot;&nbsp; 🏗️ Lecture 8: Microservices Architecture</span>
+  <a href="#slide-27">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-27" class="slide">
+<h2>REST-Based Communication</h2>
+<h3>MicroProfile Rest Client</h3>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>@Path(&quot;/clients&quot;)
+@Produces(MediaType.APPLICATION_JSON)
+@RegisterRestClient(configKey = &quot;com.bank.account.infrastructure.client.ClientServiceClient&quot;)
+public interface ClientServiceClient {
+    
+    @GET
+    @Path(&quot;/{id}&quot;)
+    ClientDTO getClientById(@PathParam(&quot;id&quot;) Long id);
+    
+    @GET
+    List&lt;ClientDTO&gt; getAllClients();
+    
+    @POST
+    @Consumes(MediaType.APPLICATION_JSON)
+    ClientDTO createClient(ClientDTO client);
+}</code></pre>
+
+<span class="slide-counter">27 / 99</span>
+<div class="slide-nav">
+  <a href="#slide-26">&#8592; Previous</a>
+  <span class="slide-info">Slide 27 / 99 &nbsp;&middot;&nbsp; 🏗️ Lecture 8: Microservices Architecture</span>
+  <a href="#slide-28">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-28" class="slide">
+<h2 data-en="Using Rest Client" data-fr="Utilisation de Rest Client">Using Rest Client</h2>
+<h3>In Account Service</h3>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>@ApplicationScoped
+public class AccountService {
+    
+    @Inject
+    @RestClient
+    ClientServiceClient clientServiceClient;
+    
+    public AccountDTO createAccount(AccountDTO accountDTO) {
+        // Verify client exists by calling Client Service
+        try {
+            ClientDTO client = clientServiceClient.getClientById(accountDTO.getClientId());
+            if (client == null || client.getId() == null) {
+                throw new IllegalArgumentException(&quot;Client not found&quot;);
+            }
+        } catch (Exception e) {
+            throw new IllegalArgumentException(
+                &quot;Unable to verify client with ID: &quot; + accountDTO.getClientId());
+        }
+        
+        // Create and persist the account
+        Account account = accountMapper.toDomain(accountDTO);
+        Account savedAccount = accountRepository.save(account);
+        return accountMapper.toDTO(savedAccount);
+    }
+}</code></pre>
+
+<span class="slide-counter">28 / 99</span>
+<div class="slide-nav">
+  <a href="#slide-27">&#8592; Previous</a>
+  <span class="slide-info">Slide 28 / 99 &nbsp;&middot;&nbsp; 🏗️ Lecture 8: Microservices Architecture</span>
+  <a href="#slide-29">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-29" class="slide">
+<h2>Configuration with MicroProfile Config</h2>
+<h3>microprofile-config.properties</h3>
+<pre class="dark"><span class="lang-badge">properties</span>
+<code># Client Service URL (env var with default; /api base path appended)
+com.bank.account.infrastructure.client.ClientServiceClient/mp-rest/url=${CLIENT_SERVICE_URL:http://localhost:9081}/api
+com.bank.account.infrastructure.client.ClientServiceClient/mp-rest/scope=jakarta.inject.Singleton
+
+# Timeouts
+com.bank.account.infrastructure.client.ClientServiceClient/mp-rest/connectTimeout=2000
+com.bank.account.infrastructure.client.ClientServiceClient/mp-rest/readTimeout=5000</code></pre>
+<h3>Environment Variables (Docker Compose)</h3>
+<pre class="dark"><span class="lang-badge">yaml</span>
+<code>environment:
+  CLIENT_SERVICE_URL: http://client-service:9080</code></pre>
+
+<span class="slide-counter">29 / 99</span>
+<div class="slide-nav">
+  <a href="#slide-28">&#8592; Previous</a>
+  <span class="slide-info">Slide 29 / 99 &nbsp;&middot;&nbsp; 🏗️ Lecture 8: Microservices Architecture</span>
+  <a href="#slide-30">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-30" class="slide">
+<h2>Fault Tolerance with MicroProfile</h2>
+<h3>Circuit Breaker Pattern</h3>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>@Path(&quot;/clients&quot;)
+@Produces(MediaType.APPLICATION_JSON)
+@RegisterRestClient(configKey = &quot;com.bank.account.infrastructure.client.ClientServiceClient&quot;)
+public interface ClientServiceClient {
+    
+    @GET
+    @Path(&quot;/{id}&quot;)
+    @CircuitBreaker(
+        requestVolumeThreshold = 4,
+        failureRatio = 0.5,
+        delay = 5000,
+        successThreshold = 2
+    )
+    @Fallback(fallbackMethod = &quot;getClientByIdFallback&quot;)
+    @Timeout(2000)
+    ClientDTO getClientById(@PathParam(&quot;id&quot;) Long id);
+    
+    default ClientDTO getClientByIdFallback(Long id) {
+        // Return a default response when Client Service is unavailable
+        ClientDTO fallback = new ClientDTO();
+        fallback.setId(id);
+        fallback.setFirstName(&quot;Unknown&quot;);
+        fallback.setLastName(&quot;Client&quot;);
+        fallback.setEmail(&quot;unavailable@bank.com&quot;);
+        return fallback;
+    }
+}</code></pre>
+
+<span class="slide-counter">30 / 99</span>
+<div class="slide-nav">
+  <a href="#slide-29">&#8592; Previous</a>
+  <span class="slide-info">Slide 30 / 99 &nbsp;&middot;&nbsp; 🏗️ Lecture 8: Microservices Architecture</span>
+  <a href="#slide-31">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-31" class="slide">
+<h2>Circuit Breaker States</h2>
+<p><img src="../../images/08-microservices-architecture-diagram-5.png" alt="width:70%"></p>
+
+<span class="slide-counter">31 / 99</span>
+<div class="slide-nav">
+  <a href="#slide-30">&#8592; Previous</a>
+  <span class="slide-info">Slide 31 / 99 &nbsp;&middot;&nbsp; 🏗️ Lecture 8: Microservices Architecture</span>
+  <a href="#slide-32">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-32" class="slide">
+<h2>Retry Strategy</h2>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>@GET
+@Path(&quot;/{id}&quot;)
+@Retry(
+    maxRetries = 3,
+    delay = 1000,
+    delayUnit = ChronoUnit.MILLIS,
+    maxDuration = 5000,
+    durationUnit = ChronoUnit.MILLIS,
+    retryOn = {ServiceUnavailableException.class, TimeoutException.class}
+)
+@Timeout(2000)
+ClientDTO getClientById(@PathParam(&quot;id&quot;) Long id);</code></pre>
+<h3>Retry Behavior</h3>
+<ol>
+<li>First attempt fails → Wait 1 second</li>
+<li>Second attempt fails → Wait 1 second</li>
+<li>Third attempt fails → Wait 1 second</li>
+<li>Fourth attempt fails → Give up</li>
+<li>Total max duration: 5 seconds</li>
+</ol>
+
+<span class="slide-counter">32 / 99</span>
+<div class="slide-nav">
+  <a href="#slide-31">&#8592; Previous</a>
+  <span class="slide-info">Slide 32 / 99 &nbsp;&middot;&nbsp; 🏗️ Lecture 8: Microservices Architecture</span>
+  <a href="#slide-33">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-33" class="slide">
+<h2>Bulkhead Pattern</h2>
+<h3>Isolate Resources</h3>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>@Bulkhead(value = 10, waitingTaskQueue = 10)
+public ClientWithAccountsDTO getClientWithAccounts(Long clientId) {
+    ClientDTO client = clientServiceClient.getClientById(clientId);
+    List&lt;AccountDTO&gt; accounts = accountServiceClient.getAccountsByClientId(clientId);
+    return new ClientWithAccountsDTO(client, accounts);
+}</code></pre>
+<h3>Purpose</h3>
+<ul>
+<li>Limit concurrent calls to a service</li>
+<li>Prevent resource exhaustion</li>
+<li>Isolate failures</li>
+<li>Protect downstream services</li>
+</ul>
+
+<span class="slide-counter">33 / 99</span>
+<div class="slide-nav">
+  <a href="#slide-32">&#8592; Previous</a>
+  <span class="slide-info">Slide 33 / 99 &nbsp;&middot;&nbsp; 🏗️ Lecture 8: Microservices Architecture</span>
+  <a href="#slide-34">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-34" class="slide slide--section">
+<h1>Part 4: API Gateway Pattern</h1>
+<h2>🚪 Single Entry Point</h2>
+
+<span class="slide-counter">34 / 99</span>
+<div class="slide-nav">
+  <a href="#slide-33">&#8592; Previous</a>
+  <span class="slide-info">Slide 34 / 99 &nbsp;&middot;&nbsp; 🏗️ Lecture 8: Microservices Architecture</span>
+  <a href="#slide-35">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-35" class="slide">
+<h2 data-en="What is an API Gateway?" data-fr="Qu'est-ce que an API Gateway?">What is an API Gateway?</h2>
+<blockquote data-en="An <strong>API Gateway</strong> is a server that acts as an API front-end, receiving API requests, enforcing throttling and security policies, passing requests to the back-end service, and then passing the response back to the requester." data-fr="An API Gateway is a server that acts as an API front-end, receiving API requests, enforcing throttling and Sécurité policies, passing requests to the back-end service, and then passing the response back to the requester.">An <strong>API Gateway</strong> is a server that acts as an API front-end, receiving API requests, enforcing throttling and security policies, passing requests to the back-end service, and then passing the response back to the requester.</blockquote>
+<h3>Responsibilities</h3>
+<ul>
+<li><strong>Routing</strong>: Direct requests to appropriate services</li>
+<li><strong>Aggregation</strong>: Combine responses from multiple services</li>
+<li><strong>Authentication</strong>: Verify user identity</li>
+<li><strong>Authorization</strong>: Check permissions</li>
+<li><strong>Rate Limiting</strong>: Prevent abuse</li>
+<li data-en="<strong>Caching</strong>: Improve performance" data-fr="Caching: Improve Performance"><strong>Caching</strong>: Improve performance</li>
+<li><strong>Monitoring</strong>: Track API usage</li>
+</ul>
+
+<span class="slide-counter">35 / 99</span>
+<div class="slide-nav">
+  <a href="#slide-34">&#8592; Previous</a>
+  <span class="slide-info">Slide 35 / 99 &nbsp;&middot;&nbsp; 🏗️ Lecture 8: Microservices Architecture</span>
+  <a href="#slide-36">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-36" class="slide">
+<h2>API Gateway Architecture</h2>
+<p><img src="../../images/08-microservices-architecture-diagram-6.png" alt="width:70%"></p>
+
+<span class="slide-counter">36 / 99</span>
+<div class="slide-nav">
+  <a href="#slide-35">&#8592; Previous</a>
+  <span class="slide-info">Slide 36 / 99 &nbsp;&middot;&nbsp; 🏗️ Lecture 8: Microservices Architecture</span>
+  <a href="#slide-37">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-37" class="slide">
+<h2>Request Routing</h2>
+<h3>Simple Routing</h3>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>@Path(&quot;/api&quot;)
+@ApplicationScoped
+public class ApiGateway {
+    
+    @Inject
+    @RestClient
+    ClientServiceClient clientService;
+    
+    @Inject
+    @RestClient
+    AccountServiceClient accountService;
+    
+    // Route to Client Service
+    @GET
+    @Path(&quot;/clients&quot;)
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getClients() {
+        List&lt;ClientDTO&gt; clients = clientService.getAllClients();
+        return Response.ok(clients).build();
+    }
+    
+    // Route to Account Service
+    @GET
+    @Path(&quot;/accounts&quot;)
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getAccounts() {
+        List&lt;AccountDTO&gt; accounts = accountService.getAllAccounts();
+        return Response.ok(accounts).build();
+    }
+}</code></pre>
+
+<span class="slide-counter">37 / 99</span>
+<div class="slide-nav">
+  <a href="#slide-36">&#8592; Previous</a>
+  <span class="slide-info">Slide 37 / 99 &nbsp;&middot;&nbsp; 🏗️ Lecture 8: Microservices Architecture</span>
+  <a href="#slide-38">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-38" class="slide">
+<h2>Response Aggregation</h2>
+<h3>Combining Multiple Services</h3>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>@GET
+@Path(&quot;/clients/{id}/accounts&quot;)
+@Produces(MediaType.APPLICATION_JSON)
+public Response getClientWithAccounts(@PathParam(&quot;id&quot;) Long clientId) {
+    // Call Client Service
+    ClientDTO client = clientService.getClientById(clientId);
+    if (client == null || client.getId() == null) {
+        return Response.status(404).build();
+    }
+    
+    // Call Account Service
+    List&lt;AccountDTO&gt; accounts = accountService.getAccountsByClientId(clientId);
+    
+    // Aggregate response (totals computed by the DTO)
+    ClientWithAccountsDTO response = new ClientWithAccountsDTO(client, accounts);
+    
+    return Response.ok(response).build();
+}</code></pre>
+
+<span class="slide-counter">38 / 99</span>
+<div class="slide-nav">
+  <a href="#slide-37">&#8592; Previous</a>
+  <span class="slide-info">Slide 38 / 99 &nbsp;&middot;&nbsp; 🏗️ Lecture 8: Microservices Architecture</span>
+  <a href="#slide-39">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-39" class="slide">
+<h2>Response Aggregation DTO</h2>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>public class ClientWithAccountsDTO {
+    private ClientDTO client;
+    private List&lt;AccountDTO&gt; accounts;
+    private BigDecimal totalBalance;
+    private int accountCount;
+
+    public ClientWithAccountsDTO(ClientDTO client, List&lt;AccountDTO&gt; accounts) {
+        this.client = client;
+        this.accounts = accounts != null ? accounts : new ArrayList&lt;&gt;();
+        // totalBalance and accountCount are computed from accounts
+    }
+    // getters ...
+}</code></pre>
+<h3 data-en="Response Example" data-fr="Response Exemple">Response Example</h3>
+<pre class="dark"><span class="lang-badge">json</span>
+<code>{
+  &quot;client&quot;: {
+    &quot;id&quot;: 1,
+    &quot;firstName&quot;: &quot;John&quot;,
+    &quot;lastName&quot;: &quot;Doe&quot;,
+    &quot;email&quot;: &quot;john.doe@example.com&quot;
+  },
+  &quot;accounts&quot;: [
+    {
+      &quot;id&quot;: 101,
+      &quot;accountNumber&quot;: &quot;ACC-001&quot;,
+      &quot;balance&quot;: 1000.00,
+      &quot;accountType&quot;: &quot;CHECKING&quot;
+    },
+    {
+      &quot;id&quot;: 102,
+      &quot;accountNumber&quot;: &quot;ACC-002&quot;,
+      &quot;balance&quot;: 5000.00,
+      &quot;accountType&quot;: &quot;SAVINGS&quot;
+    }
+  ],
+  &quot;totalBalance&quot;: 6000.00,
+  &quot;accountCount&quot;: 2
+}</code></pre>
+
+<span class="slide-counter">39 / 99</span>
+<div class="slide-nav">
+  <a href="#slide-38">&#8592; Previous</a>
+  <span class="slide-info">Slide 39 / 99 &nbsp;&middot;&nbsp; 🏗️ Lecture 8: Microservices Architecture</span>
+  <a href="#slide-40">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-40" class="slide">
+<h2>Authentication at Gateway</h2>
+<h3 data-en="Basic Authentication Example" data-fr="Basic Authentication Exemple">Basic Authentication Example</h3>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>@Provider
+@Priority(Priorities.AUTHENTICATION)
+public class AuthenticationFilter implements ContainerRequestFilter {
+    
+    @Override
+    public void filter(ContainerRequestContext requestContext) {
+        String authHeader = requestContext.getHeaderString(&quot;Authorization&quot;);
+        
+        if (authHeader == null || !authHeader.startsWith(&quot;Bearer &quot;)) {
+            requestContext.abortWith(
+                Response.status(401)
+                    .entity(&quot;Unauthorized&quot;)
+                    .build()
+            );
+            return;
+        }
+        
+        String token = authHeader.substring(&quot;Bearer &quot;.length());
+        if (!validateToken(token)) {
+            requestContext.abortWith(
+                Response.status(401)
+                    .entity(&quot;Invalid token&quot;)
+                    .build()
+            );
+        }
+    }
+    
+    private boolean validateToken(String token) {
+        // Validate JWT token or session token
+        return true; // Simplified
+    }
+}</code></pre>
+
+<span class="slide-counter">40 / 99</span>
+<div class="slide-nav">
+  <a href="#slide-39">&#8592; Previous</a>
+  <span class="slide-info">Slide 40 / 99 &nbsp;&middot;&nbsp; 🏗️ Lecture 8: Microservices Architecture</span>
+  <a href="#slide-41">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-41" class="slide">
+<h2>Rate Limiting</h2>
+<h3>Simple Rate Limiter</h3>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>@Provider
+@Priority(Priorities.USER)
+public class RateLimitFilter implements ContainerRequestFilter {
+    
+    private final Map&lt;String, RateLimiter&gt; limiters = new ConcurrentHashMap&lt;&gt;();
+    
+    @Override
+    public void filter(ContainerRequestContext requestContext) {
+        String clientId = getClientId(requestContext);
+        RateLimiter limiter = limiters.computeIfAbsent(
+            clientId, 
+            k -&gt; RateLimiter.create(100.0) // 100 requests per second
+        );
+        
+        if (!limiter.tryAcquire()) {
+            requestContext.abortWith(
+                Response.status(429)
+                    .entity(&quot;Too many requests&quot;)
+                    .build()
+            );
+        }
+    }
+    
+    private String getClientId(ContainerRequestContext ctx) {
+        // Extract from token or IP address
+        return ctx.getHeaderString(&quot;X-Client-ID&quot;);
+    }
+}</code></pre>
+
+<span class="slide-counter">41 / 99</span>
+<div class="slide-nav">
+  <a href="#slide-40">&#8592; Previous</a>
+  <span class="slide-info">Slide 41 / 99 &nbsp;&middot;&nbsp; 🏗️ Lecture 8: Microservices Architecture</span>
+  <a href="#slide-42">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-42" class="slide slide--section">
+<h1>Part 5: Service Discovery and Configuration</h1>
+<h2>🔍 Finding Services Dynamically</h2>
+
+<span class="slide-counter">42 / 99</span>
+<div class="slide-nav">
+  <a href="#slide-41">&#8592; Previous</a>
+  <span class="slide-info">Slide 42 / 99 &nbsp;&middot;&nbsp; 🏗️ Lecture 8: Microservices Architecture</span>
+  <a href="#slide-43">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-43" class="slide">
+<h2>Service Discovery</h2>
+<h3>Problem</h3>
+<ul>
+<li>Services need to find each other</li>
+<li>Service instances can change (scaling, failures)</li>
+<li>Hard-coded URLs don't work in dynamic environments</li>
+</ul>
+<h3>Solution</h3>
+<ul>
+<li><strong>Service Registry</strong>: Central directory of services</li>
+<li><strong>Service Registration</strong>: Services register themselves</li>
+<li><strong>Service Discovery</strong>: Services query registry</li>
+</ul>
+
+<span class="slide-counter">43 / 99</span>
+<div class="slide-nav">
+  <a href="#slide-42">&#8592; Previous</a>
+  <span class="slide-info">Slide 43 / 99 &nbsp;&middot;&nbsp; 🏗️ Lecture 8: Microservices Architecture</span>
+  <a href="#slide-44">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-44" class="slide">
+<h2>Service Discovery Patterns</h2>
+<h3>1. <strong>Client-Side Discovery</strong></h3>
+<p><img src="../../images/08-microservices-architecture-diagram-7.png" alt="width:70%"></p>
+<h3>2. <strong>Server-Side Discovery</strong></h3>
+<p><img src="../../images/08-microservices-architecture-diagram-8.png" alt="width:70%"></p>
+
+<span class="slide-counter">44 / 99</span>
+<div class="slide-nav">
+  <a href="#slide-43">&#8592; Previous</a>
+  <span class="slide-info">Slide 44 / 99 &nbsp;&middot;&nbsp; 🏗️ Lecture 8: Microservices Architecture</span>
+  <a href="#slide-45">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-45" class="slide">
+<h2>Service Discovery in Docker Compose</h2>
+<h3 data-en="Using Service Names" data-fr="Utilisation de Service Names">Using Service Names</h3>
+<pre class="dark"><span class="lang-badge">yaml</span>
+<code>services:
+  client-service:
+    image: client-service:latest
+    ports:
+      - &quot;9081:9080&quot;
+    networks:
+      - banking-network
+
+  account-service:
+    image: account-service:latest
+    ports:
+      - &quot;9082:9080&quot;
+    environment:
+      CLIENT_SERVICE_URL: http://client-service:9080
+    networks:
+      - banking-network
+
+networks:
+  banking-network:
+    driver: bridge</code></pre>
+<h3>Docker's Built-in DNS</h3>
+<ul>
+<li>Services can reference each other by name</li>
+<li>Docker resolves service names to IP addresses</li>
+<li>Automatic load balancing for scaled services</li>
+</ul>
+
+<span class="slide-counter">45 / 99</span>
+<div class="slide-nav">
+  <a href="#slide-44">&#8592; Previous</a>
+  <span class="slide-info">Slide 45 / 99 &nbsp;&middot;&nbsp; 🏗️ Lecture 8: Microservices Architecture</span>
+  <a href="#slide-46">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-46" class="slide">
+<h2>MicroProfile Config</h2>
+<h3>Externalized Configuration</h3>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>@ApplicationScoped
+public class AccountService {
+    
+    @Inject
+    @ConfigProperty(name = &quot;client.service.url&quot;, 
+                    defaultValue = &quot;http://localhost:9081&quot;)
+    String clientServiceUrl;
+    
+    @Inject
+    @ConfigProperty(name = &quot;account.max.balance&quot;, 
+                    defaultValue = &quot;1000000&quot;)
+    BigDecimal maxBalance;
+    
+    @Inject
+    @ConfigProperty(name = &quot;account.min.balance&quot;, 
+                    defaultValue = &quot;0&quot;)
+    BigDecimal minBalance;
+}</code></pre>
+
+<span class="slide-counter">46 / 99</span>
+<div class="slide-nav">
+  <a href="#slide-45">&#8592; Previous</a>
+  <span class="slide-info">Slide 46 / 99 &nbsp;&middot;&nbsp; 🏗️ Lecture 8: Microservices Architecture</span>
+  <a href="#slide-47">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-47" class="slide">
+<h2>Configuration Sources</h2>
+<h3>Priority Order (highest to lowest)</h3>
+<ol>
+<li><strong>System Properties</strong>: <code>-Dclient.service.url=http://...</code></li>
+<li><strong>Environment Variables</strong>: <code>CLIENT_SERVICE_URL=http://...</code></li>
+<li><strong>microprofile-config.properties</strong>: In <code>src/main/resources/META-INF/</code></li>
+<li data-en="<strong>Default Values</strong>: In <code>@ConfigProperty</code> annotation" data-fr="Default Values: In @ConfigProperty Annotation"><strong>Default Values</strong>: In <code>@ConfigProperty</code> annotation</li>
+</ol>
+<h3 data-en="Example: microprofile-config.properties" data-fr="Exemple: microprofile-config.properties">Example: microprofile-config.properties</h3>
+<pre class="dark"><span class="lang-badge">properties</span>
+<code># Client Service Configuration
+client.service.url=http://localhost:9081
+client.service.timeout=5000
+
+# Account Service Configuration
+account.max.balance=1000000
+account.min.balance=0
+account.overdraft.enabled=false
+
+# Database Configuration
+db.host=localhost
+db.port=5432
+db.name=banking_account_db</code></pre>
+
+<span class="slide-counter">47 / 99</span>
+<div class="slide-nav">
+  <a href="#slide-46">&#8592; Previous</a>
+  <span class="slide-info">Slide 47 / 99 &nbsp;&middot;&nbsp; 🏗️ Lecture 8: Microservices Architecture</span>
+  <a href="#slide-48">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-48" class="slide">
+<h2>Environment-Specific Configuration</h2>
+<h3 data-en="Development (docker-compose.yml)" data-fr="Développement (docker-compose.yml)">Development (docker-compose.yml)</h3>
+<pre class="dark"><span class="lang-badge">yaml</span>
+<code>account-service:
+  environment:
+    CLIENT_SERVICE_URL: http://client-service:9080
+    DB_HOST: account-db
+    DB_PORT: 5432
+    LOG_LEVEL: DEBUG</code></pre>
+<h3>Production (Kubernetes ConfigMap)</h3>
+<pre class="dark"><span class="lang-badge">yaml</span>
+<code>apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: account-service-config
+data:
+  CLIENT_SERVICE_URL: &quot;http://client-service.prod.svc.cluster.local&quot;
+  DB_HOST: &quot;prod-postgres.database.azure.com&quot;
+  LOG_LEVEL: &quot;INFO&quot;</code></pre>
+
+<span class="slide-counter">48 / 99</span>
+<div class="slide-nav">
+  <a href="#slide-47">&#8592; Previous</a>
+  <span class="slide-info">Slide 48 / 99 &nbsp;&middot;&nbsp; 🏗️ Lecture 8: Microservices Architecture</span>
+  <a href="#slide-49">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-49" class="slide slide--section">
+<h1>Part 6: Distributed Tracing and Monitoring</h1>
+<h2>📊 Observability in Microservices</h2>
+
+<span class="slide-counter">49 / 99</span>
+<div class="slide-nav">
+  <a href="#slide-48">&#8592; Previous</a>
+  <span class="slide-info">Slide 49 / 99 &nbsp;&middot;&nbsp; 🏗️ Lecture 8: Microservices Architecture</span>
+  <a href="#slide-50">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-50" class="slide">
+<h2>The Three Pillars of Observability</h2>
+<h3>1. <strong>Logging</strong></h3>
+<ul>
+<li>Record events and errors</li>
+<li>Structured logging (JSON)</li>
+<li>Centralized log aggregation</li>
+</ul>
+<h3>2. <strong>Metrics</strong></h3>
+<ul>
+<li>Measure system behavior</li>
+<li>Performance indicators</li>
+<li>Resource utilization</li>
+</ul>
+<h3>3. <strong>Tracing</strong></h3>
+<ul>
+<li>Track requests across services</li>
+<li>Identify bottlenecks</li>
+<li>Understand dependencies</li>
+</ul>
+
+<span class="slide-counter">50 / 99</span>
+<div class="slide-nav">
+  <a href="#slide-49">&#8592; Previous</a>
+  <span class="slide-info">Slide 50 / 99 &nbsp;&middot;&nbsp; 🏗️ Lecture 8: Microservices Architecture</span>
+  <a href="#slide-51">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-51" class="slide">
+<h2>Distributed Tracing</h2>
+<h3>Problem</h3>
+<p><img src="../../images/08-microservices-architecture-diagram-9.png" alt="width:70%"></p>
+<p data-en="<strong>Question</strong>: Where is the slowness?" data-fr="Questions: Where is the slowness?"><strong>Question</strong>: Where is the slowness?</p>
+<h3>Solution: Distributed Tracing</h3>
+<ul>
+<li>Assign unique ID to each request (Trace ID)</li>
+<li>Track request through all services</li>
+<li>Measure time in each service</li>
+<li>Visualize request flow</li>
+</ul>
+
+<span class="slide-counter">51 / 99</span>
+<div class="slide-nav">
+  <a href="#slide-50">&#8592; Previous</a>
+  <span class="slide-info">Slide 51 / 99 &nbsp;&middot;&nbsp; 🏗️ Lecture 8: Microservices Architecture</span>
+  <a href="#slide-52">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-52" class="slide">
+<h2>MicroProfile OpenTracing</h2>
+<h3>Automatic Tracing</h3>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>@Path(&quot;/api/accounts&quot;)
+@ApplicationScoped
+@Traced // Automatically trace all methods
+public class AccountResource {
+    
+    @GET
+    @Path(&quot;/{id}&quot;)
+    public Response getAccount(@PathParam(&quot;id&quot;) Long id) {
+        // Automatically traced
+        Account account = accountService.getAccount(id);
+        return Response.ok(account).build();
+    }
+}</code></pre>
+<h3>Manual Tracing</h3>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>@Inject
+Tracer tracer;
+
+public void processAccount(Long accountId) {
+    Span span = tracer.buildSpan(&quot;processAccount&quot;).start();
+    try {
+        // Business logic
+        span.setTag(&quot;account.id&quot;, accountId);
+        span.log(&quot;Processing started&quot;);
+        
+        // ... processing ...
+        
+        span.log(&quot;Processing completed&quot;);
+    } finally {
+        span.finish();
+    }
+}</code></pre>
+
+<span class="slide-counter">52 / 99</span>
+<div class="slide-nav">
+  <a href="#slide-51">&#8592; Previous</a>
+  <span class="slide-info">Slide 52 / 99 &nbsp;&middot;&nbsp; 🏗️ Lecture 8: Microservices Architecture</span>
+  <a href="#slide-53">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-53" class="slide">
+<h2>Correlation IDs</h2>
+<h3>Propagating Request Context</h3>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>@Provider
+@Priority(Priorities.USER)
+public class CorrelationIdFilter implements ContainerRequestFilter {
+    
+    private static final String CORRELATION_ID_HEADER = &quot;X-Correlation-ID&quot;;
+    
+    @Override
+    public void filter(ContainerRequestContext requestContext) {
+        String correlationId = requestContext.getHeaderString(CORRELATION_ID_HEADER);
+        
+        if (correlationId == null) {
+            correlationId = UUID.randomUUID().toString();
+        }
+        
+        // Store in thread-local or MDC
+        MDC.put(&quot;correlationId&quot;, correlationId);
+        
+        // Add to response
+        requestContext.getHeaders().add(CORRELATION_ID_HEADER, correlationId);
+    }
+}</code></pre>
+
+<span class="slide-counter">53 / 99</span>
+<div class="slide-nav">
+  <a href="#slide-52">&#8592; Previous</a>
+  <span class="slide-info">Slide 53 / 99 &nbsp;&middot;&nbsp; 🏗️ Lecture 8: Microservices Architecture</span>
+  <a href="#slide-54">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-54" class="slide">
+<h2>Structured Logging</h2>
+<h3>With Correlation ID</h3>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>@ApplicationScoped
+public class AccountService {
+    
+    private static final Logger logger = Logger.getLogger(AccountService.class.getName());
+    
+    public Account createAccount(CreateAccountCommand command) {
+        logger.info(String.format(
+            &quot;{\&quot;event\&quot;:\&quot;account.create.start\&quot;,\&quot;clientId\&quot;:%d,\&quot;type\&quot;:\&quot;%s\&quot;,\&quot;correlationId\&quot;:\&quot;%s\&quot;}&quot;,
+            command.clientId(),
+            command.accountType(),
+            MDC.get(&quot;correlationId&quot;)
+        ));
+        
+        try {
+            Account account = new Account(command.clientId(), command.accountType());
+            accountRepository.save(account);
+            
+            logger.info(String.format(
+                &quot;{\&quot;event\&quot;:\&quot;account.create.success\&quot;,\&quot;accountId\&quot;:%d,\&quot;correlationId\&quot;:\&quot;%s\&quot;}&quot;,
+                account.getId(),
+                MDC.get(&quot;correlationId&quot;)
+            ));
+            
+            return account;
+        } catch (Exception e) {
+            logger.severe(String.format(
+                &quot;{\&quot;event\&quot;:\&quot;account.create.error\&quot;,\&quot;error\&quot;:\&quot;%s\&quot;,\&quot;correlationId\&quot;:\&quot;%s\&quot;}&quot;,
+                e.getMessage(),
+                MDC.get(&quot;correlationId&quot;)
+            ));
+            throw e;
+        }
+    }
+}</code></pre>
+
+<span class="slide-counter">54 / 99</span>
+<div class="slide-nav">
+  <a href="#slide-53">&#8592; Previous</a>
+  <span class="slide-info">Slide 54 / 99 &nbsp;&middot;&nbsp; 🏗️ Lecture 8: Microservices Architecture</span>
+  <a href="#slide-55">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-55" class="slide">
+<h2>MicroProfile Metrics</h2>
+<h3>Automatic Metrics</h3>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>@Path(&quot;/api/accounts&quot;)
+@ApplicationScoped
+public class AccountResource {
+    
+    @GET
+    @Path(&quot;/{id}&quot;)
+    @Timed(name = &quot;getAccountTimer&quot;, 
+           description = &quot;Time to get account&quot;,
+           unit = MetricUnits.MILLISECONDS)
+    @Counted(name = &quot;getAccountCount&quot;,
+             description = &quot;Number of times account retrieved&quot;)
+    public Response getAccount(@PathParam(&quot;id&quot;) Long id) {
+        Account account = accountService.getAccount(id);
+        return Response.ok(account).build();
+    }
+}</code></pre>
+
+<span class="slide-counter">55 / 99</span>
+<div class="slide-nav">
+  <a href="#slide-54">&#8592; Previous</a>
+  <span class="slide-info">Slide 55 / 99 &nbsp;&middot;&nbsp; 🏗️ Lecture 8: Microservices Architecture</span>
+  <a href="#slide-56">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-56" class="slide">
+<h2>Custom Metrics</h2>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>@ApplicationScoped
+public class AccountService {
+    
+    @Inject
+    @Metric(name = &quot;account.balance.total&quot;)
+    Gauge&lt;Double&gt; totalBalance;
+    
+    @Inject
+    @Metric(name = &quot;account.created&quot;)
+    Counter accountsCreated;
+    
+    @Inject
+    @Metric(name = &quot;account.transaction.duration&quot;)
+    Timer transactionTimer;
+    
+    public Account createAccount(CreateAccountCommand command) {
+        Timer.Context context = transactionTimer.time();
+        try {
+            Account account = new Account(command.clientId(), command.accountType());
+            accountRepository.save(account);
+            accountsCreated.inc();
+            return account;
+        } finally {
+            context.stop();
+        }
+    }
+}</code></pre>
+
+<span class="slide-counter">56 / 99</span>
+<div class="slide-nav">
+  <a href="#slide-55">&#8592; Previous</a>
+  <span class="slide-info">Slide 56 / 99 &nbsp;&middot;&nbsp; 🏗️ Lecture 8: Microservices Architecture</span>
+  <a href="#slide-57">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-57" class="slide">
+<h2>Health Checks</h2>
+<h3>Liveness, Readiness, Startup</h3>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>@Liveness
+@ApplicationScoped
+public class LivenessCheck implements HealthCheck {
+    
+    @Override
+    public HealthCheckResponse call() {
+        // Check if application is alive
+        return HealthCheckResponse.up(&quot;account-service-live&quot;);
+    }
+}
+
+@Readiness
+@ApplicationScoped
+public class ReadinessCheck implements HealthCheck {
+    
+    @Inject
+    DataSource dataSource;
+    
+    @Override
+    public HealthCheckResponse call() {
+        try (Connection conn = dataSource.getConnection()) {
+            return HealthCheckResponse.up(&quot;account-service-ready&quot;);
+        } catch (SQLException e) {
+            return HealthCheckResponse.down(&quot;account-service-not-ready&quot;);
+        }
+    }
+}</code></pre>
+
+<span class="slide-counter">57 / 99</span>
+<div class="slide-nav">
+  <a href="#slide-56">&#8592; Previous</a>
+  <span class="slide-info">Slide 57 / 99 &nbsp;&middot;&nbsp; 🏗️ Lecture 8: Microservices Architecture</span>
+  <a href="#slide-58">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-58" class="slide">
+<h2>Health Check Endpoints</h2>
+<h3>Accessing Health Information</h3>
+<pre class="dark"><span class="lang-badge">bash</span>
+<code># Liveness probe
+curl http://localhost:9082/health/live
+
+# Readiness probe
+curl http://localhost:9082/health/ready
+
+# All health checks
+curl http://localhost:9082/health</code></pre>
+<h3 data-en="Response Example" data-fr="Response Exemple">Response Example</h3>
+<pre class="dark"><span class="lang-badge">json</span>
+<code>{
+  &quot;status&quot;: &quot;UP&quot;,
+  &quot;checks&quot;: [
+    {
+      &quot;name&quot;: &quot;account-service-live&quot;,
+      &quot;status&quot;: &quot;UP&quot;
+    },
+    {
+      &quot;name&quot;: &quot;account-service-ready&quot;,
+      &quot;status&quot;: &quot;UP&quot;
+    },
+    {
+      &quot;name&quot;: &quot;database-connection&quot;,
+      &quot;status&quot;: &quot;UP&quot;,
+      &quot;data&quot;: {
+        &quot;connection&quot;: &quot;active&quot;
+      }
+    }
+  ]
+}</code></pre>
+
+<span class="slide-counter">58 / 99</span>
+<div class="slide-nav">
+  <a href="#slide-57">&#8592; Previous</a>
+  <span class="slide-info">Slide 58 / 99 &nbsp;&middot;&nbsp; 🏗️ Lecture 8: Microservices Architecture</span>
+  <a href="#slide-59">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-59" class="slide">
+<h2>Metrics Endpoint</h2>
+<h3>Accessing Metrics</h3>
+<pre class="dark"><span class="lang-badge">bash</span>
+<code># All metrics
+curl http://localhost:9082/metrics
+
+# Application metrics only
+curl http://localhost:9082/metrics/application
+
+# Base metrics (JVM, etc.)
+curl http://localhost:9082/metrics/base
+
+# Vendor metrics
+curl http://localhost:9082/metrics/vendor</code></pre>
+<h3>Prometheus Format</h3>
+<pre class="dark"><code># TYPE application_account_created_total counter
+application_account_created_total 42.0
+
+# TYPE application_account_transaction_duration_seconds summary
+application_account_transaction_duration_seconds_count 100.0
+application_account_transaction_duration_seconds_sum 5.234</code></pre>
+
+<span class="slide-counter">59 / 99</span>
+<div class="slide-nav">
+  <a href="#slide-58">&#8592; Previous</a>
+  <span class="slide-info">Slide 59 / 99 &nbsp;&middot;&nbsp; 🏗️ Lecture 8: Microservices Architecture</span>
+  <a href="#slide-60">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-60" class="slide slide--section">
+<h1>Part 7: Data Consistency in Distributed Systems</h1>
+<h2>🔄 Managing Distributed Data</h2>
+
+<span class="slide-counter">60 / 99</span>
+<div class="slide-nav">
+  <a href="#slide-59">&#8592; Previous</a>
+  <span class="slide-info">Slide 60 / 99 &nbsp;&middot;&nbsp; 🏗️ Lecture 8: Microservices Architecture</span>
+  <a href="#slide-61">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-61" class="slide">
+<h2>The CAP Theorem</h2>
+<h3>You Can Only Choose Two</h3>
+<ul>
+<li><strong>C</strong>onsistency: All nodes see the same data</li>
+<li><strong>A</strong>vailability: Every request gets a response</li>
+<li><strong>P</strong>artition Tolerance: System works despite network failures</li>
+</ul>
+<p><img src="../../images/08-microservices-architecture-diagram-10.png" alt="width:70%"></p>
+<h3>In Practice</h3>
+<ul>
+<li>Network partitions will happen (P is required)</li>
+<li>Choose between C and A</li>
+<li>Microservices typically choose AP (Availability + Partition Tolerance)</li>
+</ul>
+
+<span class="slide-counter">61 / 99</span>
+<div class="slide-nav">
+  <a href="#slide-60">&#8592; Previous</a>
+  <span class="slide-info">Slide 61 / 99 &nbsp;&middot;&nbsp; 🏗️ Lecture 8: Microservices Architecture</span>
+  <a href="#slide-62">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-62" class="slide">
+<h2>Eventual Consistency</h2>
+<h3>Definition</h3>
+<blockquote>The system will eventually become consistent, but may be temporarily inconsistent.</blockquote>
+<h3 data-en="Example: Account Balance" data-fr="Exemple: Account Balance">Example: Account Balance</h3>
+<ol>
+<li>Client Service updates client status to "Premium"</li>
+<li>Event published: "ClientUpgradedToPremium"</li>
+<li>Account Service receives event (after delay)</li>
+<li>Account Service updates account benefits</li>
+<li><strong>Temporary inconsistency</strong>: Client is premium but doesn't have premium benefits yet</li>
+</ol>
+<h3>Handling Eventual Consistency</h3>
+<ul>
+<li>Design UI to handle stale data</li>
+<li>Use timestamps and versioning</li>
+<li>Implement conflict resolution</li>
+<li>Communicate delays to users</li>
+</ul>
+
+<span class="slide-counter">62 / 99</span>
+<div class="slide-nav">
+  <a href="#slide-61">&#8592; Previous</a>
+  <span class="slide-info">Slide 62 / 99 &nbsp;&middot;&nbsp; 🏗️ Lecture 8: Microservices Architecture</span>
+  <a href="#slide-63">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-63" class="slide">
+<h2>Saga Pattern</h2>
+<h3>Distributed Transaction Alternative</h3>
+<blockquote>A <strong>saga</strong> is a sequence of local transactions where each transaction updates data within a single service. If a transaction fails, the saga executes compensating transactions to undo the changes.</blockquote>
+<h3 data-en="Example: Create Account with Client Validation" data-fr="Exemple: Create Account with Client Validation">Example: Create Account with Client Validation</h3>
+<pre class="dark"><code>1. Account Service: Create account (local transaction)
+2. Client Service: Verify client exists (local transaction)
+3. If client doesn't exist:
+   - Account Service: Delete account (compensating transaction)</code></pre>
+
+<span class="slide-counter">63 / 99</span>
+<div class="slide-nav">
+  <a href="#slide-62">&#8592; Previous</a>
+  <span class="slide-info">Slide 63 / 99 &nbsp;&middot;&nbsp; 🏗️ Lecture 8: Microservices Architecture</span>
+  <a href="#slide-64">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-64" class="slide">
+<h2>Saga Implementation: Choreography</h2>
+<h3>Event-Driven Approach</h3>
+<p><img src="../../images/08-microservices-architecture-diagram-11.png" alt="width:70%"></p>
+
+<span class="slide-counter">64 / 99</span>
+<div class="slide-nav">
+  <a href="#slide-63">&#8592; Previous</a>
+  <span class="slide-info">Slide 64 / 99 &nbsp;&middot;&nbsp; 🏗️ Lecture 8: Microservices Architecture</span>
+  <a href="#slide-65">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-65" class="slide">
+<h2>Saga Implementation: Orchestration</h2>
+<h3>Centralized Coordinator</h3>
+<p><img src="../../images/08-microservices-architecture-diagram-12.png" alt="width:70%"></p>
+
+<span class="slide-counter">65 / 99</span>
+<div class="slide-nav">
+  <a href="#slide-64">&#8592; Previous</a>
+  <span class="slide-info">Slide 65 / 99 &nbsp;&middot;&nbsp; 🏗️ Lecture 8: Microservices Architecture</span>
+  <a href="#slide-66">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-66" class="slide">
+<h2>Event Sourcing</h2>
+<h3>Store Events, Not State</h3>
+<p><strong>Traditional Approach</strong>:</p>
+<pre class="dark"><span class="lang-badge">sql</span>
+<code>UPDATE accounts SET balance = 1500 WHERE id = 1;</code></pre>
+<p><strong>Event Sourcing Approach</strong>:</p>
+<pre class="dark"><span class="lang-badge">sql</span>
+<code>INSERT INTO events (aggregate_id, event_type, data, timestamp)
+VALUES (1, 'MoneyDeposited', '{&quot;amount&quot;: 500}', NOW());</code></pre>
+<h3>Benefits</h3>
+<ul>
+<li>Complete audit trail</li>
+<li>Temporal queries (state at any point in time)</li>
+<li>Event replay for debugging</li>
+<li data-en="Natural fit for event-driven architecture" data-fr="Natural fit for event-driven Architecture">Natural fit for event-driven architecture</li>
+</ul>
+<h3>Challenges</h3>
+<ul>
+<li>More complex queries</li>
+<li>Event schema evolution</li>
+<li>Storage requirements</li>
+<li>Performance considerations</li>
+</ul>
+
+<span class="slide-counter">66 / 99</span>
+<div class="slide-nav">
+  <a href="#slide-65">&#8592; Previous</a>
+  <span class="slide-info">Slide 66 / 99 &nbsp;&middot;&nbsp; 🏗️ Lecture 8: Microservices Architecture</span>
+  <a href="#slide-67">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-67" class="slide">
+<h2>CQRS Pattern</h2>
+<h3>Command Query Responsibility Segregation</h3>
+<p><img src="../../images/08-microservices-architecture-diagram-13.png" alt="width:70%"></p>
+<h3>Benefits</h3>
+<ul>
+<li>Optimize read and write models separately</li>
+<li>Scale reads and writes independently</li>
+<li>Simpler queries</li>
+<li data-en="Better performance" data-fr="Better Performance">Better performance</li>
+</ul>
+
+<span class="slide-counter">67 / 99</span>
+<div class="slide-nav">
+  <a href="#slide-66">&#8592; Previous</a>
+  <span class="slide-info">Slide 67 / 99 &nbsp;&middot;&nbsp; 🏗️ Lecture 8: Microservices Architecture</span>
+  <a href="#slide-68">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-68" class="slide slide--section">
+<h1 data-en="Part 8: Deployment and DevOps" data-fr="Part 8: Déploiement and DevOps">Part 8: Deployment and DevOps</h1>
+<h2>🚀 Running Microservices in Production</h2>
+
+<span class="slide-counter">68 / 99</span>
+<div class="slide-nav">
+  <a href="#slide-67">&#8592; Previous</a>
+  <span class="slide-info">Slide 68 / 99 &nbsp;&middot;&nbsp; 🏗️ Lecture 8: Microservices Architecture</span>
+  <a href="#slide-69">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-69" class="slide">
+<h2>Containerization with Docker</h2>
+<h3 data-en="Why Containers?" data-fr="Pourquoi Containers?">Why Containers?</h3>
+<ul>
+<li><strong>Consistency</strong>: Same environment everywhere</li>
+<li><strong>Isolation</strong>: Each service in its own container</li>
+<li><strong>Portability</strong>: Run anywhere Docker runs</li>
+<li><strong>Efficiency</strong>: Lightweight compared to VMs</li>
+<li data-en="<strong>Scalability</strong>: Easy to scale up/down" data-fr="Scalabilité: Easy to scale up/down"><strong>Scalability</strong>: Easy to scale up/down</li>
+</ul>
+<h3 data-en="Dockerfile Example" data-fr="Dockerfile Exemple">Dockerfile Example</h3>
+<pre class="dark"><span class="lang-badge">dockerfile</span>
+<code>FROM icr.io/appcafe/open-liberty:full-java17-openj9-ubi
+
+# Copy application
+COPY --chown=1001:0 target/*.war /config/apps/
+
+# Copy server configuration
+COPY --chown=1001:0 src/main/liberty/config/server.xml /config/
+
+# Expose ports
+EXPOSE 9080 9443
+
+# Run as non-root
+USER 1001
+
+# Start server
+CMD [&quot;/opt/ol/wlp/bin/server&quot;, &quot;run&quot;, &quot;defaultServer&quot;]</code></pre>
+
+<span class="slide-counter">69 / 99</span>
+<div class="slide-nav">
+  <a href="#slide-68">&#8592; Previous</a>
+  <span class="slide-info">Slide 69 / 99 &nbsp;&middot;&nbsp; 🏗️ Lecture 8: Microservices Architecture</span>
+  <a href="#slide-70">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-70" class="slide">
+<h2 data-en="Docker Compose for Local Development" data-fr="Docker Compose for Local Développement">Docker Compose for Local Development</h2>
+<h3>Complete Stack</h3>
+<pre class="dark"><span class="lang-badge">yaml</span>
+<code>version: '3.8'
+
+services:
+  # Databases
+  client-db:
+    image: postgres:16
+    environment:
+      POSTGRES_DB: banking_client_db
+      POSTGRES_USER: bankuser
+      POSTGRES_PASSWORD: bankpass
+    ports:
+      - &quot;5433:5432&quot;
+    volumes:
+      - client-db-data:/var/lib/postgresql/data
+    healthcheck:
+      test: [&quot;CMD-SHELL&quot;, &quot;pg_isready -U bankuser&quot;]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  account-db:
+    image: postgres:16
+    environment:
+      POSTGRES_DB: banking_account_db
+      POSTGRES_USER: bankuser
+      POSTGRES_PASSWORD: bankpass
+    ports:
+      - &quot;5434:5432&quot;
+    volumes:
+      - account-db-data:/var/lib/postgresql/data
+    healthcheck:
+      test: [&quot;CMD-SHELL&quot;, &quot;pg_isready -U bankuser&quot;]
+      interval: 10s
+      timeout: 5s
+      retries: 5</code></pre>
+
+<span class="slide-counter">70 / 99</span>
+<div class="slide-nav">
+  <a href="#slide-69">&#8592; Previous</a>
+  <span class="slide-info">Slide 70 / 99 &nbsp;&middot;&nbsp; 🏗️ Lecture 8: Microservices Architecture</span>
+  <a href="#slide-71">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-71" class="slide">
+<h2>Docker Compose (Continued)</h2>
+<pre class="dark"><span class="lang-badge">yaml</span>
+<code>  # Services
+  client-service:
+    build:
+      context: ./client-service
+      dockerfile: Containerfile
+    ports:
+      - &quot;9081:9080&quot;
+    environment:
+      DB_HOST: client-db
+      DB_PORT: 5432
+      DB_NAME: banking_client_db
+      DB_USER: bankuser
+      DB_PASSWORD: bankpass
+    depends_on:
+      client-db:
+        condition: service_healthy
+    healthcheck:
+      test: [&quot;CMD&quot;, &quot;curl&quot;, &quot;-f&quot;, &quot;http://localhost:9080/health/live&quot;]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  account-service:
+    build:
+      context: ./account-service
+      dockerfile: Containerfile
+    ports:
+      - &quot;9082:9080&quot;
+    environment:
+      DB_HOST: account-db
+      DB_PORT: 5432
+      DB_NAME: banking_account_db
+      DB_USER: bankuser
+      DB_PASSWORD: bankpass
+      CLIENT_SERVICE_URL: http://client-service:9080
+    depends_on:
+      account-db:
+        condition: service_healthy
+      client-service:
+        condition: service_healthy</code></pre>
+
+<span class="slide-counter">71 / 99</span>
+<div class="slide-nav">
+  <a href="#slide-70">&#8592; Previous</a>
+  <span class="slide-info">Slide 71 / 99 &nbsp;&middot;&nbsp; 🏗️ Lecture 8: Microservices Architecture</span>
+  <a href="#slide-72">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-72" class="slide">
+<h2>Docker Compose (Continued)</h2>
+<pre class="dark"><span class="lang-badge">yaml</span>
+<code>  api-gateway:
+    build:
+      context: ./api-gateway
+      dockerfile: Containerfile
+    ports:
+      - &quot;9080:9080&quot;
+    environment:
+      CLIENT_SERVICE_URL: http://client-service:9080
+      ACCOUNT_SERVICE_URL: http://account-service:9080
+    depends_on:
+      - client-service
+      - account-service
+    healthcheck:
+      test: [&quot;CMD&quot;, &quot;curl&quot;, &quot;-f&quot;, &quot;http://localhost:9080/health/live&quot;]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+volumes:
+  client-db-data:
+  account-db-data:
+
+networks:
+  default:
+    name: banking-network</code></pre>
+
+<span class="slide-counter">72 / 99</span>
+<div class="slide-nav">
+  <a href="#slide-71">&#8592; Previous</a>
+  <span class="slide-info">Slide 72 / 99 &nbsp;&middot;&nbsp; 🏗️ Lecture 8: Microservices Architecture</span>
+  <a href="#slide-73">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-73" class="slide">
+<h2>Running with Docker Compose</h2>
+<h3>Commands</h3>
+<pre class="dark"><span class="lang-badge">bash</span>
+<code># Start all services
+docker-compose up -d
+
+# View logs
+docker-compose logs -f
+
+# View logs for specific service
+docker-compose logs -f account-service
+
+# Check status
+docker-compose ps
+
+# Stop all services
+docker-compose down
+
+# Stop and remove volumes
+docker-compose down -v
+
+# Rebuild and restart
+docker-compose up -d --build</code></pre>
+
+<span class="slide-counter">73 / 99</span>
+<div class="slide-nav">
+  <a href="#slide-72">&#8592; Previous</a>
+  <span class="slide-info">Slide 73 / 99 &nbsp;&middot;&nbsp; 🏗️ Lecture 8: Microservices Architecture</span>
+  <a href="#slide-74">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-74" class="slide">
+<h2>Kubernetes Introduction</h2>
+<h3 data-en="Why Kubernetes?" data-fr="Pourquoi Kubernetes?">Why Kubernetes?</h3>
+<ul>
+<li><strong>Orchestration</strong>: Manage multiple containers</li>
+<li><strong>Self-Healing</strong>: Restart failed containers</li>
+<li><strong>Scaling</strong>: Horizontal pod autoscaling</li>
+<li><strong>Load Balancing</strong>: Distribute traffic</li>
+<li><strong>Rolling Updates</strong>: Zero-downtime deployments</li>
+<li><strong>Service Discovery</strong>: Built-in DNS</li>
+</ul>
+<h3>Basic Concepts</h3>
+<ul>
+<li><strong>Pod</strong>: Smallest deployable unit (one or more containers)</li>
+<li data-en="<strong>Deployment</strong>: Manages pod replicas" data-fr="Déploiement: Manages pod replicas"><strong>Deployment</strong>: Manages pod replicas</li>
+<li><strong>Service</strong>: Stable network endpoint</li>
+<li><strong>ConfigMap</strong>: Configuration data</li>
+<li><strong>Secret</strong>: Sensitive data</li>
+<li><strong>Ingress</strong>: External access</li>
+</ul>
+
+<span class="slide-counter">74 / 99</span>
+<div class="slide-nav">
+  <a href="#slide-73">&#8592; Previous</a>
+  <span class="slide-info">Slide 74 / 99 &nbsp;&middot;&nbsp; 🏗️ Lecture 8: Microservices Architecture</span>
+  <a href="#slide-75">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-75" class="slide">
+<h2 data-en="Kubernetes Deployment Example" data-fr="Kubernetes Déploiement Exemple">Kubernetes Deployment Example</h2>
+<pre class="dark"><span class="lang-badge">yaml</span>
+<code>apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: account-service
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: account-service
+  template:
+    metadata:
+      labels:
+        app: account-service
+    spec:
+      containers:
+      - name: account-service
+        image: account-service:1.0.0
+        ports:
+        - containerPort: 9080
+        env:
+        - name: DB_HOST
+          valueFrom:
+            configMapKeyRef:
+              name: account-config
+              key: db.host
+        - name: DB_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: account-secrets
+              key: db.password
+        livenessProbe:
+          httpGet:
+            path: /health/live
+            port: 9080
+          initialDelaySeconds: 30
+          periodSeconds: 10
+        readinessProbe:
+          httpGet:
+            path: /health/ready
+            port: 9080
+          initialDelaySeconds: 10
+          periodSeconds: 5</code></pre>
+
+<span class="slide-counter">75 / 99</span>
+<div class="slide-nav">
+  <a href="#slide-74">&#8592; Previous</a>
+  <span class="slide-info">Slide 75 / 99 &nbsp;&middot;&nbsp; 🏗️ Lecture 8: Microservices Architecture</span>
+  <a href="#slide-76">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-76" class="slide">
+<h2 data-en="Kubernetes Service Example" data-fr="Kubernetes Service Exemple">Kubernetes Service Example</h2>
+
+<span class="slide-counter">76 / 99</span>
+<div class="slide-nav">
+  <a href="#slide-75">&#8592; Previous</a>
+  <span class="slide-info">Slide 76 / 99 &nbsp;&middot;&nbsp; 🏗️ Lecture 8: Microservices Architecture</span>
+  <a href="#slide-77">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-77" class="slide">
+<p>apiVersion: v1</p>
+<p>kind: Service</p>
+<p>metadata:</p>
+<p>name: api-gateway</p>
+<p>spec:</p>
+<p>selector:</p>
+<p>app: api-gateway</p>
+<p>ports:</p>
+<ul>
+<li>protocol: TCP</li>
+</ul>
+<p>port: 80</p>
+<p>targetPort: 9080</p>
+<p>type: LoadBalancer</p>
+
+<span class="slide-counter">77 / 99</span>
+<div class="slide-nav">
+  <a href="#slide-76">&#8592; Previous</a>
+  <span class="slide-info">Slide 77 / 99 &nbsp;&middot;&nbsp; 🏗️ Lecture 8: Microservices Architecture</span>
+  <a href="#slide-78">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-78" class="slide">
+<h2>CI/CD Pipeline</h2>
+<h3 data-en="Continuous Integration/Continuous Deployment" data-fr="Continuous Integration/Continuous Déploiement">Continuous Integration/Continuous Deployment</h3>
+<p><img src="../../images/08-microservices-architecture-diagram-14.png" alt="width:70%"></p>
+<h3>Pipeline Stages</h3>
+<ol>
+<li><strong>Source</strong>: Code commit triggers pipeline</li>
+<li><strong>Build</strong>: Compile code, run unit tests</li>
+<li data-en="<strong>Test</strong>: Integration tests, security scans" data-fr="Test: Integration tests, Sécurité scans"><strong>Test</strong>: Integration tests, security scans</li>
+<li><strong>Package</strong>: Build Docker image</li>
+<li><strong>Deploy</strong>: Deploy to environment (dev/staging/prod)</li>
+<li><strong>Verify</strong>: Smoke tests, health checks</li>
+</ol>
+
+<span class="slide-counter">78 / 99</span>
+<div class="slide-nav">
+  <a href="#slide-77">&#8592; Previous</a>
+  <span class="slide-info">Slide 78 / 99 &nbsp;&middot;&nbsp; 🏗️ Lecture 8: Microservices Architecture</span>
+  <a href="#slide-79">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-79" class="slide">
+<h2 data-en="Deployment Strategies" data-fr="Déploiement Strategies">Deployment Strategies</h2>
+<h3 data-en="1. <strong>Blue-Green Deployment</strong>" data-fr="1. Blue-Green Déploiement">1. <strong>Blue-Green Deployment</strong></h3>
+<p><img src="../../images/08-microservices-architecture-diagram-15.png" alt="width:70%"></p>
+<p><strong>Benefits</strong>: Instant rollback, zero downtime</p>
+<p><strong>Drawbacks</strong>: Requires double resources</p>
+
+<span class="slide-counter">79 / 99</span>
+<div class="slide-nav">
+  <a href="#slide-78">&#8592; Previous</a>
+  <span class="slide-info">Slide 79 / 99 &nbsp;&middot;&nbsp; 🏗️ Lecture 8: Microservices Architecture</span>
+  <a href="#slide-80">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-80" class="slide">
+<h2 data-en="Deployment Strategies (Continued)" data-fr="Déploiement Strategies (Continued)">Deployment Strategies (Continued)</h2>
+<h3 data-en="2. <strong>Canary Deployment</strong>" data-fr="2. Canary Déploiement">2. <strong>Canary Deployment</strong></h3>
+<p><img src="../../images/08-microservices-architecture-diagram-16.png" alt="width:70%"></p>
+<p><strong>Benefits</strong>: Gradual rollout, early problem detection</p>
+<p data-en="<strong>Drawbacks</strong>: Complex routing, longer deployment time" data-fr="Drawbacks: Complex routing, longer Déploiement time"><strong>Drawbacks</strong>: Complex routing, longer deployment time</p>
+<h3>3. <strong>Rolling Update</strong></h3>
+<pre class="dark"><code>Step 1: [v1] [v1] [v1] [v1]
+Step 2: [v2] [v1] [v1] [v1]
+Step 3: [v2] [v2] [v1] [v1]
+Step 4: [v2] [v2] [v2] [v1]
+Step 5: [v2] [v2] [v2] [v2]</code></pre>
+<p><strong>Benefits</strong>: No downtime, no extra resources</p>
+<p><strong>Drawbacks</strong>: Slower rollback, mixed versions running</p>
+
+<span class="slide-counter">80 / 99</span>
+<div class="slide-nav">
+  <a href="#slide-79">&#8592; Previous</a>
+  <span class="slide-info">Slide 80 / 99 &nbsp;&middot;&nbsp; 🏗️ Lecture 8: Microservices Architecture</span>
+  <a href="#slide-81">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-81" class="slide">
+<h2>Monitoring and Alerting</h2>
+<h3>Key Metrics to Monitor</h3>
+<p><strong>Service Metrics</strong>:</p>
+<ul>
+<li>Request rate (requests/second)</li>
+<li>Error rate (errors/total requests)</li>
+<li>Response time (p50, p95, p99)</li>
+<li>Availability (uptime percentage)</li>
+</ul>
+<p><strong>Infrastructure Metrics</strong>:</p>
+<ul>
+<li>CPU usage</li>
+<li>Memory usage</li>
+<li>Disk I/O</li>
+<li>Network traffic</li>
+</ul>
+<p><strong>Business Metrics</strong>:</p>
+<ul>
+<li>Accounts created</li>
+<li>Transactions processed</li>
+<li>Revenue generated</li>
+<li>User activity</li>
+</ul>
+
+<span class="slide-counter">81 / 99</span>
+<div class="slide-nav">
+  <a href="#slide-80">&#8592; Previous</a>
+  <span class="slide-info">Slide 81 / 99 &nbsp;&middot;&nbsp; 🏗️ Lecture 8: Microservices Architecture</span>
+  <a href="#slide-82">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-82" class="slide">
+<h2>Monitoring Stack</h2>
+<h3>Common Tools</h3>
+<p><img src="../../images/08-microservices-architecture-diagram-17.png" alt="width:70%"></p>
+
+<span class="slide-counter">82 / 99</span>
+<div class="slide-nav">
+  <a href="#slide-81">&#8592; Previous</a>
+  <span class="slide-info">Slide 82 / 99 &nbsp;&middot;&nbsp; 🏗️ Lecture 8: Microservices Architecture</span>
+  <a href="#slide-83">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-83" class="slide">
+<h2>Logging Stack (ELK)</h2>
+<p><img src="../../images/08-microservices-architecture-diagram-18.png" alt="width:70%"></p>
+
+<span class="slide-counter">83 / 99</span>
+<div class="slide-nav">
+  <a href="#slide-82">&#8592; Previous</a>
+  <span class="slide-info">Slide 83 / 99 &nbsp;&middot;&nbsp; 🏗️ Lecture 8: Microservices Architecture</span>
+  <a href="#slide-84">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-84" class="slide">
+<h1 data-en="Summary and Best Practices" data-fr="Résumé and Bonnes pratiques">Summary and Best Practices</h1>
+<h2 data-en="📝 Key Takeaways" data-fr="📝 Points clés">📝 Key Takeaways</h2>
+
+<span class="slide-counter">84 / 99</span>
+<div class="slide-nav">
+  <a href="#slide-83">&#8592; Previous</a>
+  <span class="slide-info">Slide 84 / 99 &nbsp;&middot;&nbsp; 🏗️ Lecture 8: Microservices Architecture</span>
+  <a href="#slide-85">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-85" class="slide">
+<h2>Microservices Principles</h2>
+<h3>1. <strong>Single Responsibility</strong></h3>
+<ul>
+<li>Each service does one thing well</li>
+<li>Clear boundaries</li>
+<li>Focused business capability</li>
+</ul>
+<h3>2. <strong>Autonomy</strong></h3>
+<ul>
+<li data-en="Independent deployment" data-fr="Independent Déploiement">Independent deployment</li>
+<li>Own database</li>
+<li>Minimal dependencies</li>
+</ul>
+<h3>3. <strong>Resilience</strong></h3>
+<ul>
+<li>Design for failure</li>
+<li>Circuit breakers</li>
+<li>Graceful degradation</li>
+</ul>
+
+<span class="slide-counter">85 / 99</span>
+<div class="slide-nav">
+  <a href="#slide-84">&#8592; Previous</a>
+  <span class="slide-info">Slide 85 / 99 &nbsp;&middot;&nbsp; 🏗️ Lecture 8: Microservices Architecture</span>
+  <a href="#slide-86">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-86" class="slide">
+<h2 data-en="Best Practices" data-fr="Bonnes pratiques">Best Practices</h2>
+<h3>Service Design</h3>
+<p>✅ Keep services small and focused</p>
+<p>✅ Design for failure</p>
+<p>✅ Use asynchronous communication when possible</p>
+<p data-en="✅ Implement proper error handling" data-fr="✅ Implement proper Gestion des erreurs">✅ Implement proper error handling</p>
+<p>✅ Version your APIs</p>
+<h3>Data Management</h3>
+<p>✅ Database per service</p>
+<p>✅ Avoid distributed transactions</p>
+<p>✅ Use eventual consistency</p>
+<p>✅ Implement compensation logic</p>
+<p>✅ Consider event sourcing for audit trails</p>
+
+<span class="slide-counter">86 / 99</span>
+<div class="slide-nav">
+  <a href="#slide-85">&#8592; Previous</a>
+  <span class="slide-info">Slide 86 / 99 &nbsp;&middot;&nbsp; 🏗️ Lecture 8: Microservices Architecture</span>
+  <a href="#slide-87">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-87" class="slide">
+<h2 data-en="Best Practices (Continued)" data-fr="Bonnes pratiques (Continued)">Best Practices (Continued)</h2>
+<h3>Communication</h3>
+<p>✅ Use REST for synchronous communication</p>
+<p>✅ Use messaging for asynchronous communication</p>
+<p>✅ Implement circuit breakers</p>
+<p>✅ Use correlation IDs</p>
+<p>✅ Handle timeouts and retries</p>
+<h3>Observability</h3>
+<p>✅ Implement health checks</p>
+<p>✅ Collect metrics</p>
+<p>✅ Use distributed tracing</p>
+<p>✅ Centralize logs</p>
+<p>✅ Monitor business metrics</p>
+
+<span class="slide-counter">87 / 99</span>
+<div class="slide-nav">
+  <a href="#slide-86">&#8592; Previous</a>
+  <span class="slide-info">Slide 87 / 99 &nbsp;&middot;&nbsp; 🏗️ Lecture 8: Microservices Architecture</span>
+  <a href="#slide-88">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-88" class="slide">
+<h2 data-en="Best Practices (Continued)" data-fr="Bonnes pratiques (Continued)">Best Practices (Continued)</h2>
+<h3 data-en="Security" data-fr="Sécurité">Security</h3>
+<p>✅ Secure service-to-service communication</p>
+<p>✅ Implement authentication at gateway</p>
+<p>✅ Use HTTPS in production</p>
+<p>✅ Validate all inputs</p>
+<p>✅ Keep secrets in secure storage</p>
+<h3 data-en="Deployment" data-fr="Déploiement">Deployment</h3>
+<p>✅ Containerize services</p>
+<p>✅ Use orchestration (Kubernetes)</p>
+<p>✅ Implement CI/CD pipelines</p>
+<p>✅ Use blue-green or canary deployments</p>
+<p>✅ Automate everything</p>
+
+<span class="slide-counter">88 / 99</span>
+<div class="slide-nav">
+  <a href="#slide-87">&#8592; Previous</a>
+  <span class="slide-info">Slide 88 / 99 &nbsp;&middot;&nbsp; 🏗️ Lecture 8: Microservices Architecture</span>
+  <a href="#slide-89">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-89" class="slide">
+<h2>Common Pitfalls to Avoid</h2>
+<h3>1. <strong>Too Many Microservices</strong></h3>
+<ul>
+<li>Don't create nano-services</li>
+<li>Start with a monolith, split when needed</li>
+<li>Consider team size and complexity</li>
+</ul>
+<h3>2. <strong>Shared Database</strong></h3>
+<ul>
+<li>Defeats purpose of microservices</li>
+<li>Creates tight coupling</li>
+<li>Prevents independent scaling</li>
+</ul>
+<h3>3. <strong>Ignoring Network Issues</strong></h3>
+<ul>
+<li>Network is unreliable</li>
+<li>Implement retries and timeouts</li>
+<li>Use circuit breakers</li>
+</ul>
+
+<span class="slide-counter">89 / 99</span>
+<div class="slide-nav">
+  <a href="#slide-88">&#8592; Previous</a>
+  <span class="slide-info">Slide 89 / 99 &nbsp;&middot;&nbsp; 🏗️ Lecture 8: Microservices Architecture</span>
+  <a href="#slide-90">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-90" class="slide">
+<h2>Common Pitfalls (Continued)</h2>
+<h3>4. <strong>Insufficient Monitoring</strong></h3>
+<ul>
+<li>Can't debug what you can't see</li>
+<li>Implement comprehensive logging</li>
+<li>Use distributed tracing</li>
+<li>Monitor all layers</li>
+</ul>
+<h3>5. <strong>Complex Distributed Transactions</strong></h3>
+<ul>
+<li>Avoid if possible</li>
+<li>Use saga pattern</li>
+<li>Accept eventual consistency</li>
+<li>Design for compensation</li>
+</ul>
+<h3 data-en="6. <strong>Not Testing Failure Scenarios</strong>" data-fr="6. Not Tests Failure Scenarios">6. <strong>Not Testing Failure Scenarios</strong></h3>
+<ul>
+<li>Test circuit breakers</li>
+<li>Test timeouts</li>
+<li>Test partial failures</li>
+<li>Use chaos engineering</li>
+</ul>
+
+<span class="slide-counter">90 / 99</span>
+<div class="slide-nav">
+  <a href="#slide-89">&#8592; Previous</a>
+  <span class="slide-info">Slide 90 / 99 &nbsp;&middot;&nbsp; 🏗️ Lecture 8: Microservices Architecture</span>
+  <a href="#slide-91">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-91" class="slide">
+<h2>Migration Strategy</h2>
+<h3>From Monolith to Microservices</h3>
+<p><strong>Phase 1: Preparation</strong></p>
+<ol>
+<li>Identify bounded contexts</li>
+<li>Define service boundaries</li>
+<li>Plan data migration</li>
+<li>Set up infrastructure</li>
+</ol>
+<p><strong>Phase 2: Strangler Pattern</strong></p>
+<ol>
+<li>Route new features to microservices</li>
+<li>Gradually migrate existing features</li>
+<li>Keep monolith running</li>
+<li>Reduce monolith over time</li>
+</ol>
+<p><strong>Phase 3: Complete Migration</strong></p>
+<ol>
+<li>Migrate remaining features</li>
+<li>Decommission monolith</li>
+<li>Optimize microservices</li>
+<li>Continuous improvement</li>
+</ol>
+
+<span class="slide-counter">91 / 99</span>
+<div class="slide-nav">
+  <a href="#slide-90">&#8592; Previous</a>
+  <span class="slide-info">Slide 91 / 99 &nbsp;&middot;&nbsp; 🏗️ Lecture 8: Microservices Architecture</span>
+  <a href="#slide-92">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-92" class="slide">
+<h2>When to Use Microservices</h2>
+<h3>✅ Good Fit</h3>
+<ul>
+<li>Large, complex applications</li>
+<li>Multiple teams</li>
+<li>Different scaling requirements</li>
+<li data-en="Rapid deployment needed" data-fr="Rapid Déploiement needed">Rapid deployment needed</li>
+<li>Technology diversity required</li>
+<li>High availability critical</li>
+</ul>
+<h3>❌ Not Recommended</h3>
+<ul>
+<li data-en="Small, simple applications" data-fr="Small, Simple applications">Small, simple applications</li>
+<li>Single team</li>
+<li>Tight coupling</li>
+<li>Limited operational expertise</li>
+<li>Startup/MVP phase</li>
+<li>Unclear requirements</li>
+</ul>
+
+<span class="slide-counter">92 / 99</span>
+<div class="slide-nav">
+  <a href="#slide-91">&#8592; Previous</a>
+  <span class="slide-info">Slide 92 / 99 &nbsp;&middot;&nbsp; 🏗️ Lecture 8: Microservices Architecture</span>
+  <a href="#slide-93">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-93" class="slide">
+<h2>Lab 08 Preview</h2>
+<h3>What You'll Build</h3>
+<p><strong>Three Microservices</strong>:</p>
+<ol>
+<li><strong>Client Service</strong> (Port 9081)</li>
+</ol>
+<ul>
+<li>Client CRUD operations</li>
+<li>PostgreSQL database</li>
+</ul>
+<ol>
+<li><strong>Account Service</strong> (Port 9082)</li>
+</ol>
+<ul>
+<li>Account CRUD operations</li>
+<li>Transaction operations</li>
+<li>Calls Client Service</li>
+<li>PostgreSQL database</li>
+</ul>
+<ol>
+<li><strong>API Gateway</strong> (Port 9080)</li>
+</ol>
+<ul>
+<li>Request routing</li>
+<li>Response aggregation</li>
+<li>Authentication</li>
+</ul>
+
+<span class="slide-counter">93 / 99</span>
+<div class="slide-nav">
+  <a href="#slide-92">&#8592; Previous</a>
+  <span class="slide-info">Slide 93 / 99 &nbsp;&middot;&nbsp; 🏗️ Lecture 8: Microservices Architecture</span>
+  <a href="#slide-94">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-94" class="slide">
+<h2>Lab 08 Preview (Continued)</h2>
+<h3>Technologies Used</h3>
+<ul>
+<li>Jakarta EE 10</li>
+<li>MicroProfile (Config, Rest Client, Fault Tolerance, Health, Metrics, OpenAPI)</li>
+<li>PostgreSQL 16</li>
+<li>Docker Compose</li>
+<li>Open Liberty</li>
+</ul>
+<h3>Learning Outcomes</h3>
+<ul>
+<li>Decompose monolith into microservices</li>
+<li>Implement inter-service communication</li>
+<li>Apply fault tolerance patterns</li>
+<li>Configure service discovery</li>
+<li>Implement distributed tracing</li>
+<li>Deploy with Docker Compose</li>
+</ul>
+
+<span class="slide-counter">94 / 99</span>
+<div class="slide-nav">
+  <a href="#slide-93">&#8592; Previous</a>
+  <span class="slide-info">Slide 94 / 99 &nbsp;&middot;&nbsp; 🏗️ Lecture 8: Microservices Architecture</span>
+  <a href="#slide-95">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-95" class="slide">
+<h2 data-en="Next Lecture" data-fr="Prochaine leçon">Next Lecture</h2>
+<h3 data-en="Advanced Topics (Optional)" data-fr="Avancé Topics (Optional)">Advanced Topics (Optional)</h3>
+<ul>
+<li><strong>Event-Driven Architecture</strong>: Kafka, RabbitMQ</li>
+<li><strong>Service Mesh</strong>: Istio, Linkerd</li>
+<li><strong>API Management</strong>: Kong, Apigee</li>
+<li><strong>Serverless</strong>: AWS Lambda, Azure Functions</li>
+<li><strong>GraphQL</strong>: Alternative to REST</li>
+<li data-en="<strong>gRPC</strong>: High-performance RPC" data-fr="gRPC: High-Performance RPC"><strong>gRPC</strong>: High-performance RPC</li>
+<li data-en="<strong>Kubernetes Advanced</strong>: Operators, Custom Resources" data-fr="Kubernetes Avancé: Operators, Custom Resources"><strong>Kubernetes Advanced</strong>: Operators, Custom Resources</li>
+<li data-en="<strong>Security</strong>: OAuth2, JWT, mTLS" data-fr="Sécurité: OAuth2, JWT, mTLS"><strong>Security</strong>: OAuth2, JWT, mTLS</li>
+</ul>
+
+<span class="slide-counter">95 / 99</span>
+<div class="slide-nav">
+  <a href="#slide-94">&#8592; Previous</a>
+  <span class="slide-info">Slide 95 / 99 &nbsp;&middot;&nbsp; 🏗️ Lecture 8: Microservices Architecture</span>
+  <a href="#slide-96">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-96" class="slide">
+<h2>Resources</h2>
+<h3>Books</h3>
+<ul>
+<li data-en="&quot;Building Microservices&quot; by Sam Newman" data-fr="&quot;Construction Microservices&quot; by Sam Newman">"Building Microservices" by Sam Newman</li>
+<li>"Microservices Patterns" by Chris Richardson</li>
+<li>"Release It!" by Michael Nygard</li>
+<li>"The Phoenix Project" by Gene Kim</li>
+</ul>
+<h3>Online</h3>
+<ul>
+<li><a href="https://microservices.io/">Microservices.io</a> - Patterns catalog</li>
+<li><a href="https://microprofile.io/">MicroProfile.io</a> - Specifications</li>
+<li data-en="<a href=&quot;https://12factor.net/&quot;>12factor.net</a> - Best practices" data-fr="12factor.net - Bonnes pratiques"><a href="https://12factor.net/">12factor.net</a> - Best practices</li>
+<li><a href="https://martinfowler.com/">Martin Fowler's Blog</a> - Architecture articles</li>
+</ul>
+
+<span class="slide-counter">96 / 99</span>
+<div class="slide-nav">
+  <a href="#slide-95">&#8592; Previous</a>
+  <span class="slide-info">Slide 96 / 99 &nbsp;&middot;&nbsp; 🏗️ Lecture 8: Microservices Architecture</span>
+  <a href="#slide-97">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-97" class="slide">
+<h2>Questions?</h2>
+<h3>Discussion Topics</h3>
+<ul>
+<li>When would you choose microservices over a monolith?</li>
+<li>How do you handle data consistency across services?</li>
+<li>What are the biggest challenges in microservices?</li>
+<li>How do you test microservices effectively?</li>
+<li>What monitoring tools have you used?</li>
+</ul>
+
+<span class="slide-counter">97 / 99</span>
+<div class="slide-nav">
+  <a href="#slide-96">&#8592; Previous</a>
+  <span class="slide-info">Slide 97 / 99 &nbsp;&middot;&nbsp; 🏗️ Lecture 8: Microservices Architecture</span>
+  <a href="#slide-98">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-98" class="slide">
+<h2 data-en="Thank You!" data-fr="Merci !!">Thank You!</h2>
+<h3>Ready for Lab 08?</h3>
+<p data-en="<strong>Next Steps</strong>:" data-fr="Prochaines étapes:"><strong>Next Steps</strong>:</p>
+<ol>
+<li>Review lecture materials</li>
+<li>Read Lab 08 instructions</li>
+<li>Set up Docker environment</li>
+<li>Start with Client Service</li>
+<li>Build Account Service</li>
+<li>Implement API Gateway</li>
+<li>Test complete system</li>
+</ol>
+<p><strong>Remember</strong>: Microservices are about trade-offs. Choose wisely based on your requirements!</p>
+
+<span class="slide-counter">98 / 99</span>
+<div class="slide-nav">
+  <a href="#slide-97">&#8592; Previous</a>
+  <span class="slide-info">Slide 98 / 99 &nbsp;&middot;&nbsp; 🏗️ Lecture 8: Microservices Architecture</span>
+  <a href="#slide-99">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-99" class="slide slide--section">
+<h1>End of Lecture 8</h1>
+<p data-en="<strong>See you in Lab 08!</strong> 🚀" data-fr="À bientôt dans Lab 08! 🚀"><strong>See you in Lab 08!</strong> 🚀</p>
+
+<span class="slide-counter">99 / 99</span>
+<div class="slide-nav">
+  <a href="#slide-98">&#8592; Previous</a>
+  <span class="slide-info">Slide 99 / 99 &nbsp;&middot;&nbsp; 🏗️ Lecture 8: Microservices Architecture</span>
+  <a class="disabled">Next &#8594;</a>
+</div>
+</section>
+    </div>
+  </main>
+</div>
+<footer class="site-footer">Made with IBM Bob &nbsp;&middot;&nbsp; &copy; 2026 Olivier Planson</footer>
+<script>
+/* ── EN/FR language toggle — global scope so buttons can call it ── */
+var _lang = localStorage.getItem('slide-lang') || 'en';
+function setLang(lang) {
+  _lang = lang;
+  localStorage.setItem('slide-lang', lang);
+  document.getElementById('btn-en').classList.toggle('active', lang === 'en');
+  document.getElementById('btn-fr').classList.toggle('active', lang === 'fr');
+  document.querySelectorAll('[data-en][data-fr]').forEach(function(el) {
+    el.innerHTML = lang === 'fr' ? el.getAttribute('data-fr') : el.getAttribute('data-en');
+  });
+}
+
+(function() {
+  /* ── Sidenav hover ── */
+  var nav     = document.getElementById('sidenav');
+  var navTrig = document.getElementById('sidenav-trigger');
+  var navTimer = null;
+  function navShow() { clearTimeout(navTimer); nav.classList.add('sidenav--open'); }
+  function navHide() { navTimer = setTimeout(function(){ nav.classList.remove('sidenav--open'); }, 300); }
+  navTrig.addEventListener('mouseenter', navShow);
+  navTrig.addEventListener('mouseleave', navHide);
+  nav.addEventListener('mouseenter', navShow);
+  nav.addEventListener('mouseleave', navHide);
+
+  /* ── Progress bar hover ── */
+  var pbWrap  = document.getElementById('pb-wrap');
+  var pbTrig  = document.getElementById('pb-trigger');
+  var pbTimer = null;
+  function pbShow() { clearTimeout(pbTimer); pbWrap.classList.add('pb-open'); }
+  function pbHide() { pbTimer = setTimeout(function(){ pbWrap.classList.remove('pb-open'); }, 400); }
+  pbTrig.addEventListener('mouseenter', pbShow);
+  pbTrig.addEventListener('mouseleave', pbHide);
+  pbWrap.addEventListener('mouseenter', pbShow);
+  pbWrap.addEventListener('mouseleave', pbHide);
+
+  /* ── Wire EN/FR buttons via addEventListener (no inline onclick) ── */
+  document.getElementById('btn-en').addEventListener('click', function() { setLang('en'); });
+  document.getElementById('btn-fr').addEventListener('click', function() { setLang('fr'); });
+
+  /* Apply stored preference on page load */
+  if (_lang === 'fr') setLang('fr');
+})();
+</script>
+</body>
+</html>

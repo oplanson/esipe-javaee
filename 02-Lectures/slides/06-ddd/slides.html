@@ -1,0 +1,2577 @@
+<!-- © Copyright 2026 Olivier Planson. All rights reserved. Reproduction prohibited. Made with IBM Bob. -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>ESIPE — Lecture 6: Domain-Driven Design (DDD) — Slides</title>
+  <link rel="stylesheet" href="../assets/slide.css"/>
+  <style>
+/* suppress static .current when a slide is targeted */
+body:has(.slide:target) .progress-bar a.current { background: var(--bg); color: var(--muted); border-color: var(--border); }
+body:has(#slide-1:target) .progress-bar a[href="#slide-1"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-2:target) .progress-bar a[href="#slide-2"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-3:target) .progress-bar a[href="#slide-3"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-4:target) .progress-bar a[href="#slide-4"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-5:target) .progress-bar a[href="#slide-5"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-6:target) .progress-bar a[href="#slide-6"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-7:target) .progress-bar a[href="#slide-7"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-8:target) .progress-bar a[href="#slide-8"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-9:target) .progress-bar a[href="#slide-9"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-10:target) .progress-bar a[href="#slide-10"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-11:target) .progress-bar a[href="#slide-11"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-12:target) .progress-bar a[href="#slide-12"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-13:target) .progress-bar a[href="#slide-13"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-14:target) .progress-bar a[href="#slide-14"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-15:target) .progress-bar a[href="#slide-15"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-16:target) .progress-bar a[href="#slide-16"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-17:target) .progress-bar a[href="#slide-17"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-18:target) .progress-bar a[href="#slide-18"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-19:target) .progress-bar a[href="#slide-19"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-20:target) .progress-bar a[href="#slide-20"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-21:target) .progress-bar a[href="#slide-21"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-22:target) .progress-bar a[href="#slide-22"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-23:target) .progress-bar a[href="#slide-23"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-24:target) .progress-bar a[href="#slide-24"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-25:target) .progress-bar a[href="#slide-25"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-26:target) .progress-bar a[href="#slide-26"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-27:target) .progress-bar a[href="#slide-27"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-28:target) .progress-bar a[href="#slide-28"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-29:target) .progress-bar a[href="#slide-29"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-30:target) .progress-bar a[href="#slide-30"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-31:target) .progress-bar a[href="#slide-31"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-32:target) .progress-bar a[href="#slide-32"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-33:target) .progress-bar a[href="#slide-33"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-34:target) .progress-bar a[href="#slide-34"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-35:target) .progress-bar a[href="#slide-35"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-36:target) .progress-bar a[href="#slide-36"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-37:target) .progress-bar a[href="#slide-37"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-38:target) .progress-bar a[href="#slide-38"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-39:target) .progress-bar a[href="#slide-39"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-40:target) .progress-bar a[href="#slide-40"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-41:target) .progress-bar a[href="#slide-41"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-42:target) .progress-bar a[href="#slide-42"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-43:target) .progress-bar a[href="#slide-43"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-44:target) .progress-bar a[href="#slide-44"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-45:target) .progress-bar a[href="#slide-45"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-46:target) .progress-bar a[href="#slide-46"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-47:target) .progress-bar a[href="#slide-47"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-48:target) .progress-bar a[href="#slide-48"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-49:target) .progress-bar a[href="#slide-49"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-50:target) .progress-bar a[href="#slide-50"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-51:target) .progress-bar a[href="#slide-51"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-52:target) .progress-bar a[href="#slide-52"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+  </style>
+</head>
+<body>
+<header class="site-header">
+  <a class="brand" href="../index.html">ESIPE<span>Jakarta EE &amp; Microservices</span></a>
+  <!-- EN/FR language toggle -->
+  <div class="lang-toggle" id="lang-toggle">
+    <button id="btn-en" class="active">EN</button>
+    <span class="sep">|</span>
+    <button id="btn-fr">FR</button>
+  </div>
+  <a class="back-link" href="../index.html">&#8592; All Courses</a>
+</header>
+<!-- Thin trigger strip at top: hover to reveal progress bar -->
+<div class="progress-bar-trigger" id="pb-trigger"></div>
+<!-- Progress bar — hidden by default, revealed on hover -->
+<div class="progress-bar-wrap" id="pb-wrap">
+  <div class="progress-bar">
+    <a href="#slide-1" class="current">1</a>
+      <a href="#slide-2">2</a>
+      <a href="#slide-3">3</a>
+      <a href="#slide-4">4</a>
+      <a href="#slide-5">5</a>
+      <a href="#slide-6">6</a>
+      <a href="#slide-7">7</a>
+      <a href="#slide-8">8</a>
+      <a href="#slide-9">9</a>
+      <a href="#slide-10">10</a>
+      <a href="#slide-11">11</a>
+      <a href="#slide-12">12</a>
+      <a href="#slide-13">13</a>
+      <a href="#slide-14">14</a>
+      <a href="#slide-15">15</a>
+      <a href="#slide-16">16</a>
+      <a href="#slide-17">17</a>
+      <a href="#slide-18">18</a>
+      <a href="#slide-19">19</a>
+      <a href="#slide-20">20</a>
+      <a href="#slide-21">21</a>
+      <a href="#slide-22">22</a>
+      <a href="#slide-23">23</a>
+      <a href="#slide-24">24</a>
+      <a href="#slide-25">25</a>
+      <a href="#slide-26">26</a>
+      <a href="#slide-27">27</a>
+      <a href="#slide-28">28</a>
+      <a href="#slide-29">29</a>
+      <a href="#slide-30">30</a>
+      <a href="#slide-31">31</a>
+      <a href="#slide-32">32</a>
+      <a href="#slide-33">33</a>
+      <a href="#slide-34">34</a>
+      <a href="#slide-35">35</a>
+      <a href="#slide-36">36</a>
+      <a href="#slide-37">37</a>
+      <a href="#slide-38">38</a>
+      <a href="#slide-39">39</a>
+      <a href="#slide-40">40</a>
+      <a href="#slide-41">41</a>
+      <a href="#slide-42">42</a>
+      <a href="#slide-43">43</a>
+      <a href="#slide-44">44</a>
+      <a href="#slide-45">45</a>
+      <a href="#slide-46">46</a>
+      <a href="#slide-47">47</a>
+      <a href="#slide-48">48</a>
+      <a href="#slide-49">49</a>
+      <a href="#slide-50">50</a>
+      <a href="#slide-51">51</a>
+      <a href="#slide-52">52</a>
+  </div>
+</div>
+<!-- Thin trigger strip at left: hover to reveal sidenav -->
+<div class="sidenav-trigger" id="sidenav-trigger"></div>
+<div class="shell">
+  <nav class="sidenav" id="sidenav">
+    <div class="sidenav-section">Course outline</div>
+    <a href="#slide-1" class="active">Strategic and Tactical Patterns for Enterprise Applications</a>
+    <a href="#slide-4">📚 DDD: Strategic vs Tactical Patterns</a>
+    <a href="#slide-5">🗺️ Strategic Pattern: Bounded Context</a>
+    <a href="#slide-6">🌐 Ubiquitous Language</a>
+    <a href="#slide-7">🎯 Tactical Pattern: Entity</a>
+    <a href="#slide-8">💎 Tactical Pattern: Value Object</a>
+    <a href="#slide-9">🔗 Entity vs Value Object</a>
+    <a href="#slide-10">🔄 API Versioning and Breaking Changes</a>
+    <a href="#slide-11">📦 Tactical Pattern: Aggregate</a>
+    <a href="#slide-13">🎯 Aggregate Design Rules</a>
+    <a href="#slide-14">📚 Tactical Pattern: Repository</a>
+    <a href="#slide-15">🔧 Repository Implementation with JPA</a>
+    <a href="#slide-16">⚙️ Tactical Pattern: Domain Service</a>
+    <a href="#slide-17">🎭 Domain Service vs Application Service</a>
+    <a href="#slide-18">📢 Tactical Pattern: Domain Events</a>
+    <a href="#slide-19">🔔 Publishing Domain Events with CDI</a>
+    <a href="#slide-20">🏗️ DDD Layered Architecture</a>
+    <a href="#slide-21">📦 DDD Package Structure</a>
+    <a href="#slide-22">🔄 Refactoring to DDD: Before and After</a>
+    <a href="#slide-24">⚠️ Common DDD Pitfalls</a>
+    <a href="#slide-25">🏦 Banking Application: DDD Refactoring</a>
+    <a href="#slide-26">💰 Value Object: Money</a>
+    <a href="#slide-27">🔢 Value Object: AccountNumber</a>
+    <a href="#slide-28">🏦 Refactored Account Aggregate</a>
+    <a href="#slide-29">🔄 Domain Service: Transfer</a>
+    <a href="#slide-30">📊 DDD Benefits in Banking App</a>
+    <a href="#slide-31">🎯 Lab 6 Preview: DDD Refactoring</a>
+    <a href="#slide-32">🎯 Modern Java: Records in DDD (JDK 17+)</a>
+    <a href="#slide-33">📊 Records in DDD: Compatibility Matrix</a>
+    <a href="#slide-37">⚠️ Records Limitations in Jakarta EE</a>
+    <a href="#slide-39">🎓 Records Migration Strategy</a>
+    <a href="#slide-41">📈 Records Benefits in DDD</a>
+    <a href="#slide-42">🔍 Records vs Traditional Classes</a>
+    <a href="#slide-44">📝 Documenting Your DDD Implementation</a>
+    <a href="#slide-45">📖 Recommended Reading</a>
+    <a href="#slide-49">🔍 Lab 6 Preview: What to Expect</a>
+    <a href="#slide-50">🎉 Ready for Lab 6!</a>
+    <a href="#slide-51">📞 Questions &amp; Discussion</a>
+    <hr>
+    <div class="sidenav-section">Navigation</div>
+    <a href="index.html">&#9675; Overview</a>
+  </nav>
+  <main class="content">
+    <div class="slide-wrapper">
+<section id="slide-1" class="slide slide--title">
+<h1 data-en="Lecture 6: Domain-Driven Design (DDD)" data-fr="Lecture 6: Conception pilotée par le domaine (DDD)">Lecture 6: Domain-Driven Design (DDD)</h1>
+<h2>Strategic and Tactical Patterns for Enterprise Applications</h2>
+<div class="slide-meta"><span><strong>Duration:</strong> 3 hours</span><span><strong>Instructor:</strong> Olivier Planson</span><span><strong>Date:</strong> January 2026</span><span><strong>Course:</strong> Jakarta EE, MicroProfile and Microservices</span></div>
+<span class="slide-counter">1 / 52</span>
+<div class="slide-nav">
+  <a class="disabled">&#8592; Previous</a>
+  <span class="slide-info">Slide 1 / 52 &nbsp;&middot;&nbsp; Lecture 6: Domain-Driven Design (DDD)</span>
+  <a href="#slide-2">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-2" class="slide">
+<h2 data-en="📋 Learning Objectives" data-fr="📋 Objectifs pédagogiques">📋 Learning Objectives</h2>
+<p data-en="By the end of this lecture, you will be able to:" data-fr="À la fin de cette leçon, vous serez en mesure de:">By the end of this lecture, you will be able to:</p>
+<table class="slide-table"><thead><tr><th></th><th></th></tr></thead><tbody>
+<tr><td>✅</td><td>Understand Domain-Driven Design philosophy and benefits</td></tr>
+<tr><td>✅</td><td>Apply strategic DDD patterns (Bounded Contexts, Context Maps)</td></tr>
+<tr><td>✅</td><td>Implement tactical DDD patterns (Entities, Value Objects, Aggregates)</td></tr>
+<tr><td>✅</td><td>Design domain models using ubiquitous language</td></tr>
+<tr><td>✅</td><td>Refactor existing code to DDD architecture</td></tr>
+<tr><td>✅</td><td>Apply DDD to the banking application</td></tr>
+</tbody></table>
+
+<span class="slide-counter">2 / 52</span>
+<div class="slide-nav">
+  <a href="#slide-1">&#8592; Previous</a>
+  <span class="slide-info">Slide 2 / 52 &nbsp;&middot;&nbsp; Lecture 6: Domain-Driven Design (DDD)</span>
+  <a href="#slide-3">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-3" class="slide">
+<h2 data-en="🎯 What is Domain-Driven Design?" data-fr="🎯 Qu'est-ce que Conception pilotée par le domaine?">🎯 What is Domain-Driven Design?</h2>
+<p data-en="<strong>Domain-Driven Design (DDD)</strong> is an approach to software development that emphasizes collaboration between technical and domain experts to create a model that reflects the business domain." data-fr="Conception pilotée par le domaine (DDD) is an approach to software Développement that emphasizes collaboration between technical and domain experts to create a model that reflects the business domain."><strong>Domain-Driven Design (DDD)</strong> is an approach to software development that emphasizes collaboration between technical and domain experts to create a model that reflects the business domain.</p>
+<h3>Core Philosophy:</h3>
+<ul>
+<li><strong>Focus on the domain and domain logic</strong></li>
+<li><strong>Base complex designs on a model of the domain</strong></li>
+<li><strong>Collaborate with domain experts to improve the model</strong></li>
+<li><strong>Use a ubiquitous language within a bounded context</strong></li>
+</ul>
+<h3>Key Benefits:</h3>
+<ul>
+<li>Better alignment between business and code</li>
+<li>More maintainable and flexible software</li>
+<li>Clearer communication between teams</li>
+<li>Reduced complexity through proper boundaries</li>
+</ul>
+
+<span class="slide-counter">3 / 52</span>
+<div class="slide-nav">
+  <a href="#slide-2">&#8592; Previous</a>
+  <span class="slide-info">Slide 3 / 52 &nbsp;&middot;&nbsp; Lecture 6: Domain-Driven Design (DDD)</span>
+  <a href="#slide-4">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-4" class="slide">
+<h2>📚 DDD: Strategic vs Tactical Patterns</h2>
+<h3>Strategic Patterns (Big Picture)</h3>
+<p>Focus on <strong>high-level organization</strong> and <strong>boundaries</strong>:</p>
+<ul>
+<li>Bounded Contexts</li>
+<li>Context Mapping</li>
+<li>Ubiquitous Language</li>
+<li>Subdomains (Core, Supporting, Generic)</li>
+</ul>
+<h3>Tactical Patterns (Implementation)</h3>
+<p>Focus on <strong>code-level design</strong> within a bounded context:</p>
+<ul>
+<li>Entities</li>
+<li>Value Objects</li>
+<li>Aggregates</li>
+<li>Repositories</li>
+<li>Domain Services</li>
+<li>Domain Events</li>
+</ul>
+
+<span class="slide-counter">4 / 52</span>
+<div class="slide-nav">
+  <a href="#slide-3">&#8592; Previous</a>
+  <span class="slide-info">Slide 4 / 52 &nbsp;&middot;&nbsp; Lecture 6: Domain-Driven Design (DDD)</span>
+  <a href="#slide-5">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-5" class="slide">
+<h2>🗺️ Strategic Pattern: Bounded Context</h2>
+<p>A <strong>Bounded Context</strong> is an explicit boundary within which a domain model is defined and applicable.</p>
+<h3 data-en="Key Characteristics:" data-fr="Caractéristiques clés:">Key Characteristics:</h3>
+<ul>
+<li><strong>Clear boundaries:</strong> Each context has its own model</li>
+<li><strong>Ubiquitous language:</strong> Terms have specific meaning within context</li>
+<li><strong>Independence:</strong> Contexts can evolve separately</li>
+<li><strong>Integration points:</strong> Explicit interfaces between contexts</li>
+</ul>
+<h3 data-en="Banking Example:" data-fr="Banking Exemple:">Banking Example:</h3>
+<p><img src="../../images/06-domain-driven-design-diagram-1.png" alt="width:70%"></p>
+
+<span class="slide-counter">5 / 52</span>
+<div class="slide-nav">
+  <a href="#slide-4">&#8592; Previous</a>
+  <span class="slide-info">Slide 5 / 52 &nbsp;&middot;&nbsp; Lecture 6: Domain-Driven Design (DDD)</span>
+  <a href="#slide-6">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-6" class="slide">
+<h2>🌐 Ubiquitous Language</h2>
+<p><strong>Ubiquitous Language</strong> is a common, rigorous language between developers and domain experts.</p>
+<h3>Principles:</h3>
+<ul>
+<li>Use the <strong>same terms</strong> in conversations, code, and documentation</li>
+<li><strong>Avoid technical jargon</strong> when talking to domain experts</li>
+<li><strong>Refine the language</strong> as understanding deepens</li>
+<li><strong>Model the language</strong> in code (class names, method names)</li>
+</ul>
+<h3 data-en="Banking Example:" data-fr="Banking Exemple:">Banking Example:</h3>
+<table class="slide-table"><thead><tr><th>Domain Term</th><th>Code Representation</th><th>Meaning</th></tr></thead><tbody>
+<tr><td>Account</td><td><code>Account</code> entity</td><td>Customer's bank account</td></tr>
+<tr><td>Deposit</td><td><code>deposit()</code> method</td><td>Add money to account</td></tr>
+<tr><td>Withdrawal</td><td><code>withdraw()</code> method</td><td>Remove money from account</td></tr>
+<tr><td>Transfer</td><td><code>transfer()</code> method</td><td>Move money between accounts</td></tr>
+<tr><td>Balance</td><td><code>balance</code> field</td><td>Current account balance</td></tr>
+</tbody></table>
+
+<span class="slide-counter">6 / 52</span>
+<div class="slide-nav">
+  <a href="#slide-5">&#8592; Previous</a>
+  <span class="slide-info">Slide 6 / 52 &nbsp;&middot;&nbsp; Lecture 6: Domain-Driven Design (DDD)</span>
+  <a href="#slide-7">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-7" class="slide">
+<h2>🎯 Tactical Pattern: Entity</h2>
+<p>An <strong>Entity</strong> is an object defined by its <strong>identity</strong> rather than its attributes.</p>
+<h3>Characteristics:</h3>
+<ul>
+<li>Has a <strong>unique identifier</strong> (ID)</li>
+<li><strong>Mutable:</strong> Attributes can change over time</li>
+<li data-en="<strong>Identity persists</strong> through lifecycle" data-fr="Identity persists through Cycle de vie"><strong>Identity persists</strong> through lifecycle</li>
+<li><strong>Equality based on ID</strong>, not attributes</li>
+</ul>
+<h3 data-en="Entity Example:" data-fr="Entity Exemple:">Entity Example:</h3>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>@Entity
+public class Account {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;  // Identity
+    
+    private String accountNumber;
+    private BigDecimal balance;  // Can change
+    private AccountType type;
+    
+    // Equality based on ID
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Account)) return false;
+        Account account = (Account) o;
+        return Objects.equals(id, account.id);
+    }
+}</code></pre>
+
+<span class="slide-counter">7 / 52</span>
+<div class="slide-nav">
+  <a href="#slide-6">&#8592; Previous</a>
+  <span class="slide-info">Slide 7 / 52 &nbsp;&middot;&nbsp; Lecture 6: Domain-Driven Design (DDD)</span>
+  <a href="#slide-8">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-8" class="slide">
+<h2>💎 Tactical Pattern: Value Object</h2>
+<p>A <strong>Value Object</strong> is an object defined by its <strong>attributes</strong> rather than identity.</p>
+<h3>Characteristics:</h3>
+<ul>
+<li><strong>No unique identifier</strong></li>
+<li><strong>Immutable:</strong> Cannot change after creation</li>
+<li><strong>Equality based on attributes</strong></li>
+<li><strong>Replaceable:</strong> Create new instance instead of modifying</li>
+</ul>
+<h3 data-en="Value Object Example:" data-fr="Value Object Exemple:">Value Object Example:</h3>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>public class Money {
+    private final BigDecimal amount;
+    private final Currency currency;
+    
+    public Money(BigDecimal amount, Currency currency) {
+        this.amount = Objects.requireNonNull(amount);
+        this.currency = Objects.requireNonNull(currency);
+    }
+    
+    // Immutable - returns new instance
+    public Money add(Money other) {
+        if (!this.currency.equals(other.currency)) {
+            throw new IllegalArgumentException(&quot;Currency mismatch&quot;);
+        }
+        return new Money(this.amount.add(other.amount), this.currency);
+    }
+    
+    // Equality based on attributes
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Money)) return false;
+        Money money = (Money) o;
+        return amount.equals(money.amount) &amp;&amp; currency.equals(money.currency);
+    }
+}</code></pre>
+
+<span class="slide-counter">8 / 52</span>
+<div class="slide-nav">
+  <a href="#slide-7">&#8592; Previous</a>
+  <span class="slide-info">Slide 8 / 52 &nbsp;&middot;&nbsp; Lecture 6: Domain-Driven Design (DDD)</span>
+  <a href="#slide-9">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-9" class="slide">
+<h2>🔗 Entity vs Value Object</h2>
+<h3>When to Use Each:</h3>
+<div class="slide-columns">
+<div class="slide-col">
+<h3>Entity</h3>
+<ul>
+<li>Needs to be <strong>tracked over time</strong></li>
+<li data-en="Has a <strong>lifecycle</strong>" data-fr="Has a Cycle de vie">Has a <strong>lifecycle</strong></li>
+<li><strong>Identity matters</strong></li>
+<li data-en="Examples:" data-fr="Exemples:">Examples:</li>
+<li>Customer</li>
+<li>Account</li>
+<li>Order</li>
+<li>Invoice</li>
+</ul>
+</div>
+<div class="slide-col">
+<h3>Value Object</h3>
+<ul>
+<li>Describes or measures something</li>
+<li data-en="<strong>No lifecycle</strong>" data-fr="No Cycle de vie"><strong>No lifecycle</strong></li>
+<li><strong>Attributes matter</strong>, not identity</li>
+<li data-en="Examples:" data-fr="Exemples:">Examples:</li>
+<li>Money</li>
+<li>Address</li>
+<li>DateRange</li>
+<li>Email</li>
+</ul>
+</div>
+</div>
+<h3>Rule of Thumb:</h3>
+<p><strong>If you can replace it without anyone noticing, it's a Value Object.</strong></p>
+
+<span class="slide-counter">9 / 52</span>
+<div class="slide-nav">
+  <a href="#slide-8">&#8592; Previous</a>
+  <span class="slide-info">Slide 9 / 52 &nbsp;&middot;&nbsp; Lecture 6: Domain-Driven Design (DDD)</span>
+  <a href="#slide-10">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-10" class="slide">
+<h2>🔄 API Versioning and Breaking Changes</h2>
+<h3>The Challenge of Refactoring</h3>
+<p data-en="When refactoring to DDD, we often need to change our data model significantly. This raises an important question: <strong>How do we evolve our API without breaking existing clients?</strong>" data-fr="When refactoring to DDD, we often need to change our data model significantly. This raises an important Questions: How do we evolve our API without breaking existing clients?">When refactoring to DDD, we often need to change our data model significantly. This raises an important question: <strong>How do we evolve our API without breaking existing clients?</strong></p>
+<h3 data-en="Example: Money Value Object Migration" data-fr="Exemple: Money Value Object Migration">Example: Money Value Object Migration</h3>
+<p data-en="In our banking application, we're refactoring from a simple <code>balance</code> field to a <code>Money</code> Value Object with <code>amount</code> and <code>currency</code>:" data-fr="In our banking application, we're refactoring from a Simple balance field to a Money Value Object with amount and currency:">In our banking application, we're refactoring from a simple <code>balance</code> field to a <code>Money</code> Value Object with <code>amount</code> and <code>currency</code>:</p>
+<p><strong>Before (Lab 5):</strong></p>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>@Entity
+public class Account {
+    private BigDecimal balance;  // Simple field
+}</code></pre>
+<p><strong>After (Lab 6):</strong></p>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>@Entity
+public class Account {
+    @Embedded
+    private Money balance;  // Value Object with amount + currency
+}</code></pre>
+<h3>Migration Strategies</h3>
+<p>#### ❌ Option 1: Breaking Change (Not Recommended)</p>
+<pre class="dark"><span class="lang-badge">sql</span>
+<code>-- Drop old column, add new ones
+ALTER TABLE accounts DROP COLUMN balance;
+ALTER TABLE accounts ADD COLUMN balance_amount DECIMAL(19,2);
+ALTER TABLE accounts ADD COLUMN balance_currency VARCHAR(3);</code></pre>
+<p><strong>Problems:</strong></p>
+<ul>
+<li>❌ Breaks all existing clients immediately</li>
+<li data-en="❌ Requires coordinated deployment" data-fr="❌ Requires coordinated Déploiement">❌ Requires coordinated deployment</li>
+<li>❌ No rollback possible</li>
+<li>❌ High risk in production</li>
+</ul>
+<p>#### ❌ Option 2: Big Bang Migration</p>
+<pre class="dark"><span class="lang-badge">sql</span>
+<code>-- Rename and add in one step
+ALTER TABLE accounts RENAME COLUMN balance TO balance_amount;
+ALTER TABLE accounts ADD COLUMN balance_currency VARCHAR(3);</code></pre>
+<p><strong>Problems:</strong></p>
+<ul>
+<li>❌ Still breaks existing code</li>
+<li>❌ Difficult to test incrementally</li>
+<li>❌ All or nothing approach</li>
+</ul>
+<p>#### ❌ Option 3: Dual Write (Complex)</p>
+<p>Keep both old and new fields, write to both:</p>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>public void setBalance(Money money) {
+    this.balance = money.getAmount();  // Old field
+    this.balanceAmount = money.getAmount();  // New field
+    this.balanceCurrency = money.getCurrency();  // New field
+}</code></pre>
+<p><strong>Problems:</strong></p>
+<ul>
+<li>❌ Code duplication</li>
+<li>❌ Risk of inconsistency</li>
+<li>❌ Maintenance burden</li>
+</ul>
+<p>#### ✅ Option 4: Backward Compatible Migration (Recommended)</p>
+<p>This is the approach we use in Lab 6:</p>
+<pre class="dark"><span class="lang-badge">sql</span>
+<code>-- Step 1: Add new columns (non-breaking)
+ALTER TABLE accounts ADD COLUMN balance_amount DECIMAL(19,2);
+ALTER TABLE accounts ADD COLUMN balance_currency VARCHAR(3) DEFAULT 'EUR';
+
+-- Step 2: Migrate existing data
+UPDATE accounts SET balance_amount = balance WHERE balance_amount IS NULL;
+
+-- Step 3: Keep old column in sync with trigger
+CREATE OR REPLACE FUNCTION sync_account_balance()
+RETURNS TRIGGER AS $$
+BEGIN
+    NEW.balance = NEW.balance_amount;  -- Sync old column
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER trigger_sync_account_balance
+    BEFORE INSERT OR UPDATE ON accounts
+    FOR EACH ROW
+    EXECUTE FUNCTION sync_account_balance();</code></pre>
+<p><strong>Advantages:</strong></p>
+<ul>
+<li>✅ No breaking changes</li>
+<li>✅ Gradual migration possible</li>
+<li>✅ Easy rollback</li>
+<li>✅ Old and new code can coexist</li>
+<li>✅ Low risk</li>
+</ul>
+<h3>API Versioning Strategies</h3>
+<p>#### 1. URL Versioning</p>
+<pre class="dark"><code>GET /api/v1/accounts/{id}  → Returns { &quot;balance&quot;: 1000.00 }
+GET /api/v2/accounts/{id}  → Returns { &quot;balance&quot;: { &quot;amount&quot;: 1000.00, &quot;currency&quot;: &quot;EUR&quot; } }</code></pre>
+<p><strong>Pros:</strong> Clear, easy to understand</p>
+<p><strong>Cons:</strong> URL proliferation, maintenance burden</p>
+<p>#### 2. Header Versioning</p>
+<pre class="dark"><code>GET /api/accounts/{id}
+Accept: application/vnd.bank.v1+json  → Old format
+Accept: application/vnd.bank.v2+json  → New format</code></pre>
+<p><strong>Pros:</strong> Clean URLs, flexible</p>
+<p><strong>Cons:</strong> Less visible, harder to test</p>
+<p>#### 3. Content Negotiation</p>
+<pre class="dark"><code>GET /api/accounts/{id}
+Accept: application/json  → Default (latest)
+Accept: application/vnd.bank.legacy+json  → Old format</code></pre>
+<p><strong>Pros:</strong> Backward compatible by default</p>
+<p><strong>Cons:</strong> Complex to implement</p>
+<p>#### 4. Deprecation Strategy (Our Approach)</p>
+<p>We use a <strong>deprecation period</strong> approach:</p>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>@GET
+@Path(&quot;/{id}&quot;)
+public Response getAccount(@PathParam(&quot;id&quot;) Long id) {
+    Account account = accountService.findById(id);
+    
+    // Return new format with Money Value Object
+    AccountDTO dto = new AccountDTO();
+    dto.setId(account.getId());
+    dto.setBalance(account.getBalance());  // Money object
+    
+    // Add deprecation warning header
+    return Response.ok(dto)
+        .header(&quot;X-API-Deprecation&quot;, &quot;balance field will change format in v2.0&quot;)
+        .header(&quot;X-API-Sunset&quot;, &quot;2026-06-01&quot;)
+        .build();
+}</code></pre>
+<p data-en="#### 5. JAX-RS Resource Registration Best Practices" data-fr="#### 5. JAX-RS Resource Registration Bonnes pratiques">#### 5. JAX-RS Resource Registration Best Practices</p>
+<p data-en="When implementing API versioning with JAX-RS, <strong>explicit resource registration</strong> is crucial to prevent version mixing." data-fr="When Implémentation de API versioning with JAX-RS, explicit resource registration is crucial to prevent version mixing.">When implementing API versioning with JAX-RS, <strong>explicit resource registration</strong> is crucial to prevent version mixing.</p>
+<p>##### ⚠️ Common Pitfall: Auto-Discovery Conflicts</p>
+<p>By default, JAX-RS applications use auto-discovery to find all <code>@Path</code> annotated classes:</p>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>@ApplicationPath(&quot;/api&quot;)
+public class RestApplication extends Application {
+    // Auto-discovers ALL @Path classes in the application
+}
+
+@ApplicationPath(&quot;/api/v2&quot;)
+public class RestApplicationV2 extends Application {
+    // Also auto-discovers ALL @Path classes!
+}</code></pre>
+<p><strong>Problem:</strong> Both applications discover and register ALL resources, causing:</p>
+<ul>
+<li>V2 resources appear in V1 API with V1 deprecation headers ❌</li>
+<li>V1 resources appear in V2 API ❌</li>
+<li>Inconsistent behavior and confusing API contracts</li>
+</ul>
+<p>##### ✅ Solution: Explicit Resource Registration</p>
+<p>Override <code>getClasses()</code> to explicitly register only the resources for each version:</p>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>@ApplicationPath(&quot;/api&quot;)
+public class RestApplication extends Application {
+    
+    @Override
+    public Set&lt;Class&lt;?&gt;&gt; getClasses() {
+        Set&lt;Class&lt;?&gt;&gt; classes = new HashSet&lt;&gt;();
+        // Only register V1 resources
+        classes.add(AccountResource.class);
+        classes.add(ClientResource.class);
+        return classes;
+    }
+}
+
+@ApplicationPath(&quot;/api/v2&quot;)
+public class RestApplicationV2 extends Application {
+    
+    @Override
+    public Set&lt;Class&lt;?&gt;&gt; getClasses() {
+        Set&lt;Class&lt;?&gt;&gt; classes = new HashSet&lt;&gt;();
+        // Only register V2 resources
+        classes.add(AccountResourceV2.class);
+        return classes;
+    }
+}</code></pre>
+<p>##### 📋 Benefits of Explicit Registration</p>
+<ol>
+<li><strong>Clear API Contract</strong> - You know exactly what's exposed in each version</li>
+<li><strong>No Surprises</strong> - Prevents accidental resource exposure</li>
+<li><strong>Easy to Audit</strong> - Simple to verify what's in each API version</li>
+<li><strong>Version Isolation</strong> - Complete separation between API versions</li>
+<li><strong>Maintainable</strong> - Easy to add/remove resources per version</li>
+</ol>
+<p data-en="##### 🎯 Best Practice Checklist" data-fr="##### 🎯 Bonnes pratiques Checklist">##### 🎯 Best Practice Checklist</p>
+<ul>
+<li>✅ Override <code>getClasses()</code> in each <code>Application</code> class</li>
+<li>✅ Explicitly register resources for each version</li>
+<li data-en="✅ Document why explicit registration is used" data-fr="✅ Document Pourquoi explicit registration is used">✅ Document why explicit registration is used</li>
+<li>✅ Keep V1 and V2 resources in separate packages (optional but recommended)</li>
+<li>✅ Test that resources don't leak between versions</li>
+</ul>
+<p>##### 📚 Alternative Approaches</p>
+<p><strong>Package-Based Scanning:</strong></p>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>@Override
+public Set&lt;Class&lt;?&gt;&gt; getClasses() {
+    // Scan only specific package
+    return scanPackage(&quot;com.bank.api.v1&quot;);
+}</code></pre>
+<p><strong>Pros:</strong> Automatic within package</p>
+<p><strong>Cons:</strong> Requires package restructuring, more complex</p>
+<p><strong>Annotation-Based Filtering:</strong></p>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>@ApiVersion(&quot;v1&quot;)
+public class AccountResource { }
+
+// Filter by annotation in Application</code></pre>
+<p><strong>Pros:</strong> Flexible</p>
+<p><strong>Cons:</strong> Custom implementation, non-standard</p>
+<p data-en="##### 🔍 Real-World Example" data-fr="##### 🔍 Real-World Exemple">##### 🔍 Real-World Example</p>
+<p><strong>Stripe API</strong> uses explicit versioning with date-based versions:</p>
+<ul>
+<li>Each API version is explicitly defined</li>
+<li>Resources are carefully curated per version</li>
+<li>Clear migration guides between versions</li>
+</ul>
+<p><strong>GitHub API</strong> uses URL versioning with explicit resource sets:</p>
+<ul>
+<li><code>/api/v3/</code> and <code>/api/v4/</code> are completely separate</li>
+<li>No resource leakage between versions</li>
+<li>Deprecation headers on old versions</li>
+</ul>
+<p>##### 💡 Key Takeaway</p>
+<blockquote><strong>"Explicit is better than implicit"</strong> - Python Zen, applicable to API design</blockquote>
+<blockquote></blockquote>
+<blockquote>When versioning APIs, always prefer explicit resource registration over auto-discovery to maintain clear boundaries and prevent unexpected behavior.</blockquote>
+<h3>Breaking Change Checklist</h3>
+<p>Before introducing a breaking change, ask:</p>
+<ol>
+<li>✅ <strong>Can we make it backward compatible?</strong></li>
+</ol>
+<ul>
+<li>Add new fields instead of changing existing ones</li>
+<li>Use database triggers for synchronization</li>
+<li>Support both old and new formats</li>
+</ul>
+<ol>
+<li>✅ <strong>Do we need versioning?</strong></li>
+</ol>
+<ul>
+<li>Major changes → New API version</li>
+<li>Minor changes → Deprecation period</li>
+<li>Bug fixes → No version change</li>
+</ul>
+<ol>
+<li>✅ <strong>Have we communicated the change?</strong></li>
+</ol>
+<ul>
+<li>Documentation updated</li>
+<li>Deprecation warnings in responses</li>
+<li>Migration guide provided</li>
+<li>Sunset date announced</li>
+</ul>
+<ol>
+<li>✅ <strong>Is there a migration path?</strong></li>
+</ol>
+<ul>
+<li>Step-by-step guide</li>
+<li data-en="Code examples" data-fr="Code Exemples">Code examples</li>
+<li data-en="Testing tools" data-fr="Tests tools">Testing tools</li>
+<li>Rollback plan</li>
+</ul>
+<h3>Lab 6 Migration Strategy</h3>
+<p>In Lab 6, we implement <strong>Option 4</strong> with these steps:</p>
+<p><strong>Phase 1: Preparation (Non-breaking)</strong></p>
+<pre class="dark"><span class="lang-badge">sql</span>
+<code>-- Add new columns
+ALTER TABLE accounts ADD COLUMN balance_amount DECIMAL(19,2);
+ALTER TABLE accounts ADD COLUMN balance_currency VARCHAR(3);
+-- Old 'balance' column still exists</code></pre>
+<p><strong>Phase 2: Dual Operation (Transition)</strong></p>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>// Code works with both old and new columns
+// Trigger keeps them in sync</code></pre>
+<p><strong>Phase 3: Deprecation (Future)</strong></p>
+<pre class="dark"><span class="lang-badge">sql</span>
+<code>-- In V6 migration (future):
+-- ALTER TABLE accounts DROP COLUMN balance;</code></pre>
+<h3>Key Lessons</h3>
+<ol>
+<li><strong>Backward Compatibility is King</strong></li>
+</ol>
+<ul>
+<li>Never break existing clients without warning</li>
+<li>Provide migration period (3-6 months minimum)</li>
+<li>Support old format during transition</li>
+</ul>
+<ol>
+<li><strong>Database Changes are Permanent</strong></li>
+</ol>
+<ul>
+<li>Plan migrations carefully</li>
+<li>Test rollback procedures</li>
+<li>Use feature flags for code changes</li>
+</ul>
+<ol>
+<li><strong>Communication is Critical</strong></li>
+</ol>
+<ul>
+<li>Document all breaking changes</li>
+<li>Provide migration guides</li>
+<li>Set clear sunset dates</li>
+</ul>
+<ol>
+<li><strong>Incremental is Better</strong></li>
+</ol>
+<ul>
+<li>Small, frequent changes > Big bang</li>
+<li>Each step should be deployable</li>
+<li>Validate at each stage</li>
+</ul>
+<h3 data-en="Real-World Example: Stripe API" data-fr="Real-World Exemple: Stripe API">Real-World Example: Stripe API</h3>
+<p>Stripe handles API versioning excellently:</p>
+<pre class="dark"><code># Each account has an API version
+GET /v1/charges
+Stripe-Version: 2023-10-16
+
+# Old versions supported for years
+# Breaking changes only in new versions
+# Automatic upgrades with warnings</code></pre>
+<p><strong>Lessons from Stripe:</strong></p>
+<ul>
+<li>Version per account, not globally</li>
+<li>Long deprecation periods (1-2 years)</li>
+<li>Extensive documentation</li>
+<li>Migration tools provided</li>
+</ul>
+<h3>Discussion Questions</h3>
+<ol>
+<li>When is it acceptable to introduce a breaking change?</li>
+<li>How long should a deprecation period be?</li>
+<li>What's the cost of maintaining multiple API versions?</li>
+<li>How do you test backward compatibility?</li>
+</ol>
+
+<span class="slide-counter">10 / 52</span>
+<div class="slide-nav">
+  <a href="#slide-9">&#8592; Previous</a>
+  <span class="slide-info">Slide 10 / 52 &nbsp;&middot;&nbsp; Lecture 6: Domain-Driven Design (DDD)</span>
+  <a href="#slide-11">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-11" class="slide">
+<h2>📦 Tactical Pattern: Aggregate</h2>
+<p>An <strong>Aggregate</strong> is a cluster of domain objects treated as a single unit for data changes.</p>
+<h3>Key Concepts:</h3>
+<ul>
+<li><strong>Aggregate Root:</strong> Entry point for all operations</li>
+<li><strong>Consistency Boundary:</strong> Ensures invariants are maintained</li>
+<li><strong>Transaction Boundary:</strong> Changes are atomic</li>
+<li><strong>Reference by ID:</strong> External objects reference root by ID only</li>
+</ul>
+<h3>Aggregate Structure:</h3>
+<p><img src="../../images/06-domain-driven-design-diagram-2.png" alt="width:70%"></p>
+
+<span class="slide-counter">11 / 52</span>
+<div class="slide-nav">
+  <a href="#slide-10">&#8592; Previous</a>
+  <span class="slide-info">Slide 11 / 52 &nbsp;&middot;&nbsp; Lecture 6: Domain-Driven Design (DDD)</span>
+  <a href="#slide-12">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-12" class="slide">
+<h2 data-en="🏦 Banking Aggregate Example" data-fr="🏦 Banking Aggregate Exemple">🏦 Banking Aggregate Example</h2>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>@Entity
+public class Account {  // Aggregate Root
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+    
+    private String accountNumber;
+    private BigDecimal balance;
+    
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    private List&lt;Transaction&gt; transactions = new ArrayList&lt;&gt;();
+    
+    // Business logic in aggregate root
+    public void deposit(BigDecimal amount) {
+        if (amount.compareTo(BigDecimal.ZERO) &lt;= 0) {
+            throw new IllegalArgumentException(&quot;Amount must be positive&quot;);
+        }
+        this.balance = this.balance.add(amount);
+        this.transactions.add(new Transaction(TransactionType.DEPOSIT, amount));
+    }
+    
+    public void withdraw(BigDecimal amount) {
+        if (amount.compareTo(balance) &gt; 0) {
+            throw new InsufficientFundsException(&quot;Insufficient funds&quot;);
+        }
+        this.balance = this.balance.subtract(amount);
+        this.transactions.add(new Transaction(TransactionType.WITHDRAWAL, amount));
+    }
+}</code></pre>
+
+<span class="slide-counter">12 / 52</span>
+<div class="slide-nav">
+  <a href="#slide-11">&#8592; Previous</a>
+  <span class="slide-info">Slide 12 / 52 &nbsp;&middot;&nbsp; Lecture 6: Domain-Driven Design (DDD)</span>
+  <a href="#slide-13">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-13" class="slide">
+<h2>🎯 Aggregate Design Rules</h2>
+<h3>Rule 1: Reference Other Aggregates by ID Only</h3>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>@Entity
+public class Account {
+    @Id
+    private Long id;
+    
+    // ❌ BAD: Direct reference to another aggregate
+    // @ManyToOne
+    // private Client client;
+    
+    // ✅ GOOD: Reference by ID
+    private Long clientId;
+}</code></pre>
+<h3>Rule 2: Keep Aggregates Small</h3>
+<ul>
+<li>Include only what needs to be <strong>consistent together</strong></li>
+<li>Larger aggregates = more contention and complexity</li>
+<li>Prefer <strong>multiple small aggregates</strong> over one large one</li>
+</ul>
+<h3>Rule 3: Enforce Invariants</h3>
+<ul>
+<li>All business rules enforced <strong>within the aggregate</strong></li>
+<li><strong>No external code</strong> can violate invariants</li>
+<li>Use <strong>private setters</strong> and <strong>public methods</strong> for operations</li>
+</ul>
+
+<span class="slide-counter">13 / 52</span>
+<div class="slide-nav">
+  <a href="#slide-12">&#8592; Previous</a>
+  <span class="slide-info">Slide 13 / 52 &nbsp;&middot;&nbsp; Lecture 6: Domain-Driven Design (DDD)</span>
+  <a href="#slide-14">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-14" class="slide">
+<h2>📚 Tactical Pattern: Repository</h2>
+<p>A <strong>Repository</strong> provides collection-like access to aggregates.</p>
+<h3>Characteristics:</h3>
+<ul>
+<li><strong>One repository per aggregate root</strong></li>
+<li>Abstracts data access details</li>
+<li>Returns fully-formed aggregates</li>
+<li>Supports querying by business criteria</li>
+</ul>
+<h3>Repository Interface:</h3>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>public interface AccountRepository {
+    // Basic CRUD
+    Account findById(Long id);
+    List&lt;Account&gt; findAll();
+    void save(Account account);
+    void delete(Account account);
+    
+    // Business queries
+    List&lt;Account&gt; findByClientId(Long clientId);
+    Account findByAccountNumber(String accountNumber);
+    List&lt;Account&gt; findByBalanceGreaterThan(BigDecimal amount);
+    
+    // No methods that return partial aggregates!
+    // ❌ List&lt;Transaction&gt; findTransactionsByAccountId(Long accountId);
+}</code></pre>
+
+<span class="slide-counter">14 / 52</span>
+<div class="slide-nav">
+  <a href="#slide-13">&#8592; Previous</a>
+  <span class="slide-info">Slide 14 / 52 &nbsp;&middot;&nbsp; Lecture 6: Domain-Driven Design (DDD)</span>
+  <a href="#slide-15">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-15" class="slide">
+<h2>🔧 Repository Implementation with JPA</h2>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>@ApplicationScoped
+public class JpaAccountRepository implements AccountRepository {
+    
+    @Inject
+    private EntityManager em;
+    
+    @Override
+    public Account findById(Long id) {
+        return em.find(Account.class, id);
+    }
+    
+    @Override
+    public List&lt;Account&gt; findAll() {
+        return em.createQuery(&quot;SELECT a FROM Account a&quot;, Account.class)
+                 .getResultList();
+    }
+    
+    @Override
+    @Transactional
+    public void save(Account account) {
+        if (account.getId() == null) {
+            em.persist(account);
+        } else {
+            em.merge(account);
+        }
+    }
+    
+    @Override
+    public Account findByAccountNumber(String accountNumber) {
+        return em.createQuery(
+            &quot;SELECT a FROM Account a WHERE a.accountNumber = :number&quot;, 
+            Account.class)
+            .setParameter(&quot;number&quot;, accountNumber)
+            .getSingleResult();
+    }
+}</code></pre>
+
+<span class="slide-counter">15 / 52</span>
+<div class="slide-nav">
+  <a href="#slide-14">&#8592; Previous</a>
+  <span class="slide-info">Slide 15 / 52 &nbsp;&middot;&nbsp; Lecture 6: Domain-Driven Design (DDD)</span>
+  <a href="#slide-16">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-16" class="slide">
+<h2>⚙️ Tactical Pattern: Domain Service</h2>
+<p>A <strong>Domain Service</strong> contains domain logic that doesn't naturally fit in an entity or value object.</p>
+<h3>When to Use:</h3>
+<ul>
+<li>Operation involves <strong>multiple aggregates</strong></li>
+<li>Logic is <strong>stateless</strong></li>
+<li>Represents a <strong>domain concept</strong> (not technical)</li>
+</ul>
+<h3 data-en="Domain Service Example:" data-fr="Domain Service Exemple:">Domain Service Example:</h3>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>@ApplicationScoped
+public class TransferService {  // Domain Service
+    
+    @Inject
+    private AccountRepository accountRepository;
+    
+    @Transactional
+    public void transfer(Long fromAccountId, Long toAccountId, BigDecimal amount) {
+        // Load both aggregates
+        Account fromAccount = accountRepository.findById(fromAccountId);
+        Account toAccount = accountRepository.findById(toAccountId);
+        
+        // Validate
+        if (fromAccount == null || toAccount == null) {
+            throw new AccountNotFoundException();
+        }
+        
+        // Execute domain logic
+        fromAccount.withdraw(amount);  // Aggregate enforces rules
+        toAccount.deposit(amount);     // Aggregate enforces rules
+        
+        // Save both aggregates
+        accountRepository.save(fromAccount);
+        accountRepository.save(toAccount);
+    }
+}</code></pre>
+
+<span class="slide-counter">16 / 52</span>
+<div class="slide-nav">
+  <a href="#slide-15">&#8592; Previous</a>
+  <span class="slide-info">Slide 16 / 52 &nbsp;&middot;&nbsp; Lecture 6: Domain-Driven Design (DDD)</span>
+  <a href="#slide-17">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-17" class="slide">
+<h2>🎭 Domain Service vs Application Service</h2>
+<h3>Domain Service</h3>
+<ul>
+<li>Contains <strong>domain logic</strong></li>
+<li>Uses <strong>ubiquitous language</strong></li>
+<li>Coordinates <strong>multiple aggregates</strong></li>
+<li data-en="Example: <code>TransferService.transfer()</code>" data-fr="Exemple: TransferService.transfer()">Example: <code>TransferService.transfer()</code></li>
+</ul>
+<h3>Application Service</h3>
+<ul>
+<li><strong>Orchestrates</strong> use cases</li>
+<li>Handles <strong>transactions</strong></li>
+<li>Manages <strong>infrastructure concerns</strong></li>
+<li data-en="Example: <code>AccountApplicationService.createAccount()</code>" data-fr="Exemple: AccountApplicationService.createAccount()">Example: <code>AccountApplicationService.createAccount()</code></li>
+</ul>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>@ApplicationScoped
+public class AccountApplicationService {  // Application Service
+    
+    @Inject
+    private AccountRepository accountRepository;
+    
+    @Inject
+    private TransferService transferService;  // Uses domain service
+    
+    @Transactional
+    public AccountDTO createAccount(CreateAccountRequest request) {
+        // Orchestration logic
+        Account account = new Account(request.getAccountNumber(), 
+                                     request.getInitialBalance());
+        accountRepository.save(account);
+        return AccountDTO.from(account);
+    }
+}</code></pre>
+
+<span class="slide-counter">17 / 52</span>
+<div class="slide-nav">
+  <a href="#slide-16">&#8592; Previous</a>
+  <span class="slide-info">Slide 17 / 52 &nbsp;&middot;&nbsp; Lecture 6: Domain-Driven Design (DDD)</span>
+  <a href="#slide-18">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-18" class="slide">
+<h2>📢 Tactical Pattern: Domain Events</h2>
+<p><strong>Domain Events</strong> represent something significant that happened in the domain.</p>
+<h3>Characteristics:</h3>
+<ul>
+<li><strong>Immutable:</strong> Cannot be changed after creation</li>
+<li><strong>Past tense:</strong> Describes what happened</li>
+<li><strong>Contains relevant data</strong></li>
+<li><strong>Triggers side effects</strong></li>
+</ul>
+<h3 data-en="Domain Event Example:" data-fr="Domain Event Exemple:">Domain Event Example:</h3>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>public class AccountCreatedEvent {
+    private final Long accountId;
+    private final String accountNumber;
+    private final Long clientId;
+    private final LocalDateTime occurredOn;
+    
+    public AccountCreatedEvent(Long accountId, String accountNumber, Long clientId) {
+        this.accountId = accountId;
+        this.accountNumber = accountNumber;
+        this.clientId = clientId;
+        this.occurredOn = LocalDateTime.now();
+    }
+    
+    // Getters only - immutable
+}</code></pre>
+
+<span class="slide-counter">18 / 52</span>
+<div class="slide-nav">
+  <a href="#slide-17">&#8592; Previous</a>
+  <span class="slide-info">Slide 18 / 52 &nbsp;&middot;&nbsp; Lecture 6: Domain-Driven Design (DDD)</span>
+  <a href="#slide-19">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-19" class="slide">
+<h2>🔔 Publishing Domain Events with CDI</h2>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>@Entity
+public class Account {
+    @Id
+    private Long id;
+    
+    @Transient  // Not persisted
+    @Inject
+    private Event&lt;AccountCreatedEvent&gt; accountCreatedEvent;
+    
+    public static Account create(String accountNumber, Long clientId) {
+        Account account = new Account();
+        account.accountNumber = accountNumber;
+        account.clientId = clientId;
+        
+        // Publish domain event
+        if (account.accountCreatedEvent != null) {
+            account.accountCreatedEvent.fire(
+                new AccountCreatedEvent(account.id, accountNumber, clientId)
+            );
+        }
+        
+        return account;
+    }
+}
+
+// Event Observer
+@ApplicationScoped
+public class AccountEventHandler {
+    
+    public void onAccountCreated(@Observes AccountCreatedEvent event) {
+        // Send welcome email, create audit log, etc.
+        System.out.println(&quot;Account created: &quot; + event.getAccountNumber());
+    }
+}</code></pre>
+
+<span class="slide-counter">19 / 52</span>
+<div class="slide-nav">
+  <a href="#slide-18">&#8592; Previous</a>
+  <span class="slide-info">Slide 19 / 52 &nbsp;&middot;&nbsp; Lecture 6: Domain-Driven Design (DDD)</span>
+  <a href="#slide-20">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-20" class="slide">
+<h2>🏗️ DDD Layered Architecture</h2>
+<p><img src="../../images/06-domain-driven-design-diagram-3.png" alt="width:70%"></p>
+<p><strong>Key Principle:</strong> Domain layer has <strong>no dependencies</strong> on other layers!</p>
+
+<span class="slide-counter">20 / 52</span>
+<div class="slide-nav">
+  <a href="#slide-19">&#8592; Previous</a>
+  <span class="slide-info">Slide 20 / 52 &nbsp;&middot;&nbsp; Lecture 6: Domain-Driven Design (DDD)</span>
+  <a href="#slide-21">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-21" class="slide">
+<h2>📦 DDD Package Structure</h2>
+<pre class="dark"><code>com.bank/
+├── domain/                    # Domain Layer
+│   ├── model/
+│   │   ├── account/
+│   │   │   ├── Account.java           # Aggregate Root
+│   │   │   ├── AccountNumber.java     # Value Object
+│   │   │   ├── Transaction.java       # Entity
+│   │   │   └── AccountRepository.java # Repository Interface
+│   │   └── client/
+│   │       ├── Client.java
+│   │       ├── Email.java             # Value Object
+│   │       └── ClientRepository.java
+│   ├── service/
+│   │   └── TransferService.java       # Domain Service
+│   └── event/
+│       └── AccountCreatedEvent.java   # Domain Event
+├── application/               # Application Layer
+│   ├── service/
+│   │   └── AccountApplicationService.java
+│   └── dto/
+│       └── AccountDTO.java
+├── infrastructure/            # Infrastructure Layer
+│   ├── persistence/
+│   │   └── JpaAccountRepository.java  # Repository Implementation
+│   └── messaging/
+└── presentation/              # Presentation Layer
+    └── rest/
+        └── AccountResource.java       # REST API</code></pre>
+
+<span class="slide-counter">21 / 52</span>
+<div class="slide-nav">
+  <a href="#slide-20">&#8592; Previous</a>
+  <span class="slide-info">Slide 21 / 52 &nbsp;&middot;&nbsp; Lecture 6: Domain-Driven Design (DDD)</span>
+  <a href="#slide-22">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-22" class="slide">
+<h2>🔄 Refactoring to DDD: Before and After</h2>
+<h3>Before (Anemic Domain Model):</h3>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>// Just data, no behavior
+@Entity
+public class Account {
+    private Long id;
+    private BigDecimal balance;
+    // Getters and setters only
+}
+
+// All logic in service
+@ApplicationScoped
+public class AccountService {
+    public void deposit(Account account, BigDecimal amount) {
+        account.setBalance(account.getBalance().add(amount));
+        accountRepository.save(account);
+    }
+}</code></pre>
+<h3>After (Rich Domain Model):</h3>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>// Behavior in domain
+@Entity
+public class Account {
+    private Long id;
+    private BigDecimal balance;
+    
+    // Business logic in entity
+    public void deposit(BigDecimal amount) {
+        if (amount.compareTo(BigDecimal.ZERO) &lt;= 0) {
+            throw new IllegalArgumentException(&quot;Amount must be positive&quot;);
+        }
+        this.balance = this.balance.add(amount);
+    }
+}
+
+// Service just coordinates
+@ApplicationScoped
+public class AccountService {
+    public void deposit(Long accountId, BigDecimal amount) {
+        Account account = accountRepository.findById(accountId);
+        account.deposit(amount);  // Domain logic in entity
+        accountRepository.save(account);
+    }
+}</code></pre>
+
+<span class="slide-counter">22 / 52</span>
+<div class="slide-nav">
+  <a href="#slide-21">&#8592; Previous</a>
+  <span class="slide-info">Slide 22 / 52 &nbsp;&middot;&nbsp; Lecture 6: Domain-Driven Design (DDD)</span>
+  <a href="#slide-23">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-23" class="slide">
+<h2 data-en="✅ DDD Best Practices" data-fr="✅ DDD Bonnes pratiques">✅ DDD Best Practices</h2>
+<h3>1. Start with the Domain</h3>
+<ul>
+<li>Understand the business <strong>before</strong> coding</li>
+<li>Collaborate with domain experts</li>
+<li>Use <strong>ubiquitous language</strong> everywhere</li>
+</ul>
+<h3>2. Keep Aggregates Small</h3>
+<ul>
+<li>Only include what must be <strong>consistent together</strong></li>
+<li>Reference other aggregates by ID</li>
+<li>Avoid deep object graphs</li>
+</ul>
+<h3>3. Protect Invariants</h3>
+<ul>
+<li>Enforce business rules in <strong>aggregate roots</strong></li>
+<li>Use <strong>private setters</strong>, public methods</li>
+<li>Validate in constructors</li>
+</ul>
+<h3>4. Use Value Objects</h3>
+<ul>
+<li>Make them <strong>immutable</strong></li>
+<li>Use for concepts without identity</li>
+<li>Reduces complexity</li>
+</ul>
+
+<span class="slide-counter">23 / 52</span>
+<div class="slide-nav">
+  <a href="#slide-22">&#8592; Previous</a>
+  <span class="slide-info">Slide 23 / 52 &nbsp;&middot;&nbsp; Lecture 6: Domain-Driven Design (DDD)</span>
+  <a href="#slide-24">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-24" class="slide">
+<h2>⚠️ Common DDD Pitfalls</h2>
+<h3>1. Anemic Domain Model</h3>
+<p><strong>Problem:</strong> Entities with only getters/setters, all logic in services</p>
+<p><strong>Solution:</strong> Move business logic into entities and value objects</p>
+<h3>2. Large Aggregates</h3>
+<p><strong>Problem:</strong> Including too much in one aggregate</p>
+<p><strong>Solution:</strong> Keep aggregates small, reference by ID</p>
+<h3>3. Ignoring Ubiquitous Language</h3>
+<p><strong>Problem:</strong> Technical terms in domain code</p>
+<p><strong>Solution:</strong> Use business terms consistently</p>
+<h3>4. Over-Engineering</h3>
+<p><strong>Problem:</strong> Applying all DDD patterns everywhere</p>
+<p><strong>Solution:</strong> Use DDD where complexity justifies it</p>
+
+<span class="slide-counter">24 / 52</span>
+<div class="slide-nav">
+  <a href="#slide-23">&#8592; Previous</a>
+  <span class="slide-info">Slide 24 / 52 &nbsp;&middot;&nbsp; Lecture 6: Domain-Driven Design (DDD)</span>
+  <a href="#slide-25">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-25" class="slide">
+<h2>🏦 Banking Application: DDD Refactoring</h2>
+<h3>Current Structure (Lab 5):</h3>
+<ul>
+<li>Entities: <code>Client</code>, <code>Account</code></li>
+<li>Services: <code>ClientService</code>, <code>AccountService</code></li>
+<li>REST: <code>ClientResource</code>, <code>AccountResource</code></li>
+</ul>
+<h3>DDD Refactoring (Lab 6):</h3>
+<ol>
+<li><strong>Identify Aggregates:</strong></li>
+</ol>
+<ul>
+<li><code>Client</code> aggregate (root: Client)</li>
+<li><code>Account</code> aggregate (root: Account, children: Transactions)</li>
+</ul>
+<ol>
+<li><strong>Extract Value Objects:</strong></li>
+</ol>
+<ul>
+<li><code>Money</code> (amount + currency)</li>
+<li><code>AccountNumber</code></li>
+<li><code>Email</code></li>
+</ul>
+<ol>
+<li><strong>Define Domain Services:</strong></li>
+</ol>
+<ul>
+<li><code>TransferService</code> (coordinates two accounts)</li>
+</ul>
+<ol>
+<li><strong>Add Domain Events:</strong></li>
+</ol>
+<ul>
+<li><code>AccountCreatedEvent</code></li>
+<li><code>MoneyDepositedEvent</code></li>
+<li><code>MoneyWithdrawnEvent</code></li>
+</ul>
+
+<span class="slide-counter">25 / 52</span>
+<div class="slide-nav">
+  <a href="#slide-24">&#8592; Previous</a>
+  <span class="slide-info">Slide 25 / 52 &nbsp;&middot;&nbsp; Lecture 6: Domain-Driven Design (DDD)</span>
+  <a href="#slide-26">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-26" class="slide">
+<h2>💰 Value Object: Money</h2>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>@Embeddable
+public class Money {
+    private BigDecimal amount;
+    private String currency;
+    
+    protected Money() {} // Required by JPA
+    
+    public Money(BigDecimal amount, String currency) {
+        if (amount == null) {
+            throw new IllegalArgumentException(&quot;Amount cannot be null&quot;);
+        }
+        if (currency == null || currency.trim().isEmpty()) {
+            throw new IllegalArgumentException(&quot;Currency cannot be null or empty&quot;);
+        }
+        Currency.getInstance(currency.toUpperCase()); // Validate ISO 4217
+        this.amount = amount.setScale(2, RoundingMode.HALF_UP);
+        this.currency = currency.toUpperCase();
+    }
+    
+    public static Money of(BigDecimal amount, String currency) {
+        return new Money(amount, currency);
+    }
+    
+    public static Money euros(BigDecimal amount) {
+        return new Money(amount, &quot;EUR&quot;);
+    }
+    
+    public Money add(Money other) {
+        if (!this.currency.equals(other.currency)) {
+            throw new IllegalArgumentException(&quot;Cannot add different currencies&quot;);
+        }
+        return new Money(this.amount.add(other.amount), this.currency);
+    }
+    
+    public Money subtract(Money other) {
+        if (!this.currency.equals(other.currency)) {
+            throw new IllegalArgumentException(&quot;Cannot subtract different currencies&quot;);
+        }
+        return new Money(this.amount.subtract(other.amount), this.currency);
+    }
+    
+    public boolean isGreaterThan(Money other) {
+        if (!this.currency.equals(other.currency)) {
+            throw new IllegalArgumentException(&quot;Cannot compare different currencies&quot;);
+        }
+        return this.amount.compareTo(other.amount) &gt; 0;
+    }
+    
+    // Getters, equals, hashCode
+}</code></pre>
+
+<span class="slide-counter">26 / 52</span>
+<div class="slide-nav">
+  <a href="#slide-25">&#8592; Previous</a>
+  <span class="slide-info">Slide 26 / 52 &nbsp;&middot;&nbsp; Lecture 6: Domain-Driven Design (DDD)</span>
+  <a href="#slide-27">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-27" class="slide">
+<h2>🔢 Value Object: AccountNumber</h2>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>@Embeddable
+public class AccountNumber {
+    private static final String IBAN_PATTERN = &quot;^[A-Z]{2}[0-9]{2}[A-Z0-9]{1,30}$&quot;;
+    
+    private String value;
+    
+    protected AccountNumber() {} // Required by JPA
+    
+    public AccountNumber(String value) {
+        if (value == null || value.trim().isEmpty()) {
+            throw new IllegalArgumentException(&quot;Account number cannot be null or empty&quot;);
+        }
+        String normalized = value.trim().toUpperCase().replaceAll(&quot;\\s&quot;, &quot;&quot;);
+        if (!normalized.matches(IBAN_PATTERN)) {
+            throw new IllegalArgumentException(&quot;Invalid IBAN format: &quot; + value);
+        }
+        this.value = normalized;
+    }
+    
+    public static AccountNumber generate() {
+        // Generate a random IBAN: FR76 + 23 digits
+        String digits = UUID.randomUUID().toString().replaceAll(&quot;[^0-9]&quot;, &quot;&quot;);
+        digits = (digits + &quot;00000000000000000000000&quot;).substring(0, 23);
+        return new AccountNumber(&quot;FR76&quot; + digits);
+    }
+    
+    public String getValue() {
+        return value;
+    }
+    
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        AccountNumber that = (AccountNumber) o;
+        return Objects.equals(value, that.value);
+    }
+    
+    @Override
+    public int hashCode() {
+        return Objects.hash(value);
+    }
+    
+    @Override
+    public String toString() {
+        return value;
+    }
+}</code></pre>
+
+<span class="slide-counter">27 / 52</span>
+<div class="slide-nav">
+  <a href="#slide-26">&#8592; Previous</a>
+  <span class="slide-info">Slide 27 / 52 &nbsp;&middot;&nbsp; Lecture 6: Domain-Driven Design (DDD)</span>
+  <a href="#slide-28">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-28" class="slide">
+<h2>🏦 Refactored Account Aggregate</h2>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>@Entity
+public class Account {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+    
+    @Embedded
+    private AccountNumber accountNumber;
+    
+    @Embedded
+    private Money balance;
+    
+    @Enumerated(EnumType.STRING)
+    private AccountType type;
+    
+    private Long clientId;  // Reference by ID
+    
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    private List&lt;Transaction&gt; transactions = new ArrayList&lt;&gt;();
+    
+    // Factory method
+    public static Account open(AccountNumber accountNumber, Money initialBalance, 
+                              AccountType type, Long clientId) {
+        Account account = new Account();
+        account.accountNumber = accountNumber;
+        account.balance = initialBalance;
+        account.type = type;
+        account.clientId = clientId;
+        return account;
+    }
+    
+    // Business methods
+    public void deposit(Money amount) {
+        if (amount == null || !amount.isPositive()) {
+            throw new IllegalArgumentException(&quot;Deposit amount must be positive&quot;);
+        }
+        this.balance = this.balance.add(amount);
+        this.transactions.add(Transaction.deposit(amount));
+    }
+    
+    public void withdraw(Money amount) {
+        if (amount == null || !amount.isPositive()) {
+            throw new IllegalArgumentException(&quot;Withdrawal amount must be positive&quot;);
+        }
+        if (amount.isGreaterThan(this.balance)) {
+            throw new InsufficientFundsException(&quot;Insufficient funds&quot;);
+        }
+        this.balance = this.balance.subtract(amount);
+        this.transactions.add(Transaction.withdrawal(amount));
+    }
+    
+    // Getters only - no setters!
+}</code></pre>
+
+<span class="slide-counter">28 / 52</span>
+<div class="slide-nav">
+  <a href="#slide-27">&#8592; Previous</a>
+  <span class="slide-info">Slide 28 / 52 &nbsp;&middot;&nbsp; Lecture 6: Domain-Driven Design (DDD)</span>
+  <a href="#slide-29">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-29" class="slide">
+<h2>🔄 Domain Service: Transfer</h2>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>@ApplicationScoped
+public class TransferService {
+    
+    @Inject
+    private AccountRepository accountRepository;
+    
+    @Inject
+    private Event&lt;MoneyTransferredEvent&gt; transferEvent;
+    
+    @Transactional
+    public void transfer(Long fromAccountId, Long toAccountId, Money amount) {
+        // Load aggregates
+        Account fromAccount = accountRepository.findById(fromAccountId)
+            .orElseThrow(() -&gt; new AccountNotFoundException(fromAccountId));
+        Account toAccount = accountRepository.findById(toAccountId)
+            .orElseThrow(() -&gt; new AccountNotFoundException(toAccountId));
+        
+        // Validate
+        if (fromAccount.equals(toAccount)) {
+            throw new IllegalArgumentException(&quot;Cannot transfer to same account&quot;);
+        }
+        
+        // Execute transfer (domain logic in aggregates)
+        fromAccount.withdraw(amount);
+        toAccount.deposit(amount);
+        
+        // Save both aggregates
+        accountRepository.save(fromAccount);
+        accountRepository.save(toAccount);
+        
+        // Publish domain event
+        transferEvent.fire(new MoneyTransferredEvent(
+            fromAccountId, toAccountId, amount, LocalDateTime.now()
+        ));
+    }
+}</code></pre>
+
+<span class="slide-counter">29 / 52</span>
+<div class="slide-nav">
+  <a href="#slide-28">&#8592; Previous</a>
+  <span class="slide-info">Slide 29 / 52 &nbsp;&middot;&nbsp; Lecture 6: Domain-Driven Design (DDD)</span>
+  <a href="#slide-30">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-30" class="slide">
+<h2>📊 DDD Benefits in Banking App</h2>
+<h3>Before DDD:</h3>
+<ul>
+<li>Business logic scattered across services</li>
+<li>Entities are just data containers</li>
+<li>Difficult to understand business rules</li>
+<li>Hard to maintain consistency</li>
+</ul>
+<h3>After DDD:</h3>
+<ul>
+<li>Business logic in domain entities</li>
+<li>Clear aggregate boundaries</li>
+<li>Ubiquitous language in code</li>
+<li>Invariants protected by aggregates</li>
+<li>Domain events for side effects</li>
+</ul>
+<h3>Concrete Improvements:</h3>
+<ol>
+<li><strong>Money</strong> value object prevents currency errors</li>
+<li><strong>AccountNumber</strong> value object enforces format</li>
+<li><strong>Account</strong> aggregate protects balance invariants</li>
+<li><strong>TransferService</strong> coordinates complex operations</li>
+<li><strong>Domain events</strong> enable audit trail and notifications</li>
+</ol>
+
+<span class="slide-counter">30 / 52</span>
+<div class="slide-nav">
+  <a href="#slide-29">&#8592; Previous</a>
+  <span class="slide-info">Slide 30 / 52 &nbsp;&middot;&nbsp; Lecture 6: Domain-Driven Design (DDD)</span>
+  <a href="#slide-31">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-31" class="slide">
+<h2>🎯 Lab 6 Preview: DDD Refactoring</h2>
+<h3 data-en="Objectives:" data-fr="Objectifs:">Objectives:</h3>
+<ol>
+<li data-en="Refactor Lab 5 code to DDD architecture" data-fr="Refactor Lab 5 code to DDD Architecture">Refactor Lab 5 code to DDD architecture</li>
+<li>Create value objects (Money, AccountNumber, Email)</li>
+<li>Define clear aggregate boundaries</li>
+<li>Implement domain services</li>
+<li>Add domain events</li>
+<li>Reorganize package structure</li>
+</ol>
+<h3>What You'll Build:</h3>
+<ul>
+<li>Rich domain model with business logic</li>
+<li>Value objects for key concepts</li>
+<li>Domain services for complex operations</li>
+<li data-en="Event-driven architecture" data-fr="Event-driven Architecture">Event-driven architecture</li>
+<li>Clean separation of concerns</li>
+</ul>
+<p><strong>Duration:</strong> 3 hours</p>
+<p data-en="<strong>Difficulty:</strong> Intermediate to Advanced" data-fr="Difficulty: Intermediate to Avancé"><strong>Difficulty:</strong> Intermediate to Advanced</p>
+
+<span class="slide-counter">31 / 52</span>
+<div class="slide-nav">
+  <a href="#slide-30">&#8592; Previous</a>
+  <span class="slide-info">Slide 31 / 52 &nbsp;&middot;&nbsp; Lecture 6: Domain-Driven Design (DDD)</span>
+  <a href="#slide-32">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-32" class="slide">
+<h2 data-en="📚 Key Takeaways" data-fr="📚 Points clés">📚 Key Takeaways</h2>
+<h3>Strategic DDD:</h3>
+<ul>
+<li><strong>Bounded Contexts</strong> define clear boundaries</li>
+<li><strong>Ubiquitous Language</strong> aligns business and code</li>
+<li><strong>Context Mapping</strong> manages integration</li>
+</ul>
+<h3>Tactical DDD:</h3>
+<ul>
+<li data-en="<strong>Entities</strong> have identity and lifecycle" data-fr="Entities have identity and Cycle de vie"><strong>Entities</strong> have identity and lifecycle</li>
+<li><strong>Value Objects</strong> are immutable and replaceable</li>
+<li><strong>Aggregates</strong> maintain consistency</li>
+<li><strong>Repositories</strong> provide collection-like access</li>
+<li><strong>Domain Services</strong> coordinate multiple aggregates</li>
+<li><strong>Domain Events</strong> enable loose coupling</li>
+</ul>
+<h3>Remember:</h3>
+<p data-en="<strong>DDD is about understanding the domain and modeling it in code using a shared language.</strong>" data-fr="DDD is about understanding the domain and modeling it in code Utilisation de a shared language."><strong>DDD is about understanding the domain and modeling it in code using a shared language.</strong></p>
+<h2>🎯 Modern Java: Records in DDD (JDK 17+)</h2>
+<p>Java Records provide a concise way to create immutable data carriers, making them ideal for certain DDD patterns.</p>
+<h3>What are Records?</h3>
+<p>Records are a special kind of class introduced in JDK 17 that:</p>
+<ul>
+<li>Are <strong>immutable by default</strong></li>
+<li>Provide <strong>automatic</strong> <code>equals()</code>, <code>hashCode()</code>, and <code>toString()</code></li>
+<li>Have <strong>compact syntax</strong> (no boilerplate)</li>
+<li>Are <strong>final</strong> (cannot be extended)</li>
+</ul>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>// Traditional class (50+ lines)
+public class ClientDTO {
+    private final Long id;
+    private final String name;
+    private final String email;
+    
+    public ClientDTO(Long id, String name, String email) {
+        this.id = id;
+        this.name = name;
+        this.email = email;
+    }
+    
+    public Long getId() { return id; }
+    public String getName() { return name; }
+    public String getEmail() { return email; }
+    
+    @Override
+    public boolean equals(Object o) { /* ... */ }
+    @Override
+    public int hashCode() { /* ... */ }
+    @Override
+    public String toString() { /* ... */ }
+}
+
+// Record (1 line!)
+public record ClientDTO(Long id, String name, String email) {}</code></pre>
+
+<span class="slide-counter">32 / 52</span>
+<div class="slide-nav">
+  <a href="#slide-31">&#8592; Previous</a>
+  <span class="slide-info">Slide 32 / 52 &nbsp;&middot;&nbsp; Lecture 6: Domain-Driven Design (DDD)</span>
+  <a href="#slide-33">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-33" class="slide">
+<h2>📊 Records in DDD: Compatibility Matrix</h2>
+<p>Not all DDD patterns are compatible with Records due to Jakarta EE constraints.</p>
+<table class="slide-table"><thead><tr><th>DDD Pattern</th><th>Record Compatible?</th><th>Reason</th></tr></thead><tbody>
+<tr><td><strong>DTOs</strong></td><td>✅ Yes</td><td>Perfect fit - immutable data transfer</td></tr>
+<tr><td><strong>Events</strong></td><td>✅ Yes</td><td>Immutable by nature</td></tr>
+<tr><td><strong>Commands</strong></td><td>✅ Yes</td><td>Immutable intent objects</td></tr>
+<tr><td><strong>Value Objects</strong></td><td>❌ No*</td><td>Cannot be <code>@Embeddable</code> in JPA</td></tr>
+<tr><td><strong>Entities</strong></td><td>❌ No</td><td>Need mutable state, JPA requires no-arg constructor</td></tr>
+<tr><td><strong>Aggregates</strong></td><td>❌ No</td><td>Complex lifecycle, mutable state</td></tr>
+</tbody></table>
+<p><strong>\*Value Objects:</strong> While philosophically compatible, JPA's <code>@Embeddable</code> requires a no-arg constructor that Records don't have.</p>
+
+<span class="slide-counter">33 / 52</span>
+<div class="slide-nav">
+  <a href="#slide-32">&#8592; Previous</a>
+  <span class="slide-info">Slide 33 / 52 &nbsp;&middot;&nbsp; Lecture 6: Domain-Driven Design (DDD)</span>
+  <a href="#slide-34">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-34" class="slide">
+<h2 data-en="✅ Best Practices: When to Use Records" data-fr="✅ Bonnes pratiques: When to Use Records">✅ Best Practices: When to Use Records</h2>
+<h3>1. Data Transfer Objects (DTOs)</h3>
+<p><strong>Perfect use case</strong> - DTOs are immutable data carriers between layers.</p>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>// Application Layer DTO
+public record AccountDTO(
+    Long id,
+    String accountNumber,
+    BigDecimal balance,
+    String currency,
+    String accountType,
+    Long clientId,
+    String clientName
+) {
+    // Factory method for domain-to-DTO conversion
+    public static AccountDTO fromEntity(Account account) {
+        if (account == null) {
+            return null;
+        }
+        return new AccountDTO(
+            account.getId(),
+            account.getAccountNumber().getValue(),
+            account.getBalance().getAmount(),
+            account.getBalance().getCurrency(),
+            account.getAccountType().name(),
+            account.getClientId(),
+            account.getClient() != null ? account.getClient().getName() : null
+        );
+    }
+}</code></pre>
+<p><strong>Benefits:</strong></p>
+<ul>
+<li>~90 lines of code eliminated</li>
+<li>Automatic immutability</li>
+<li>Clear intent: "this is just data"</li>
+</ul>
+
+<span class="slide-counter">34 / 52</span>
+<div class="slide-nav">
+  <a href="#slide-33">&#8592; Previous</a>
+  <span class="slide-info">Slide 34 / 52 &nbsp;&middot;&nbsp; Lecture 6: Domain-Driven Design (DDD)</span>
+  <a href="#slide-35">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-35" class="slide">
+<h3>2. Domain Events</h3>
+<p><strong>Excellent use case</strong> - Events should never be modified after creation.</p>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>public record AccountCreatedEvent(
+    Account account,
+    long timestamp
+) {
+    // Compact constructor for validation
+    public AccountCreatedEvent {
+        if (account == null) {
+            throw new IllegalArgumentException(&quot;Account cannot be null&quot;);
+        }
+        if (timestamp &lt;= 0) {
+            timestamp = System.currentTimeMillis();
+        }
+    }
+    
+    // Convenience constructor
+    public AccountCreatedEvent(Account account) {
+        this(account, System.currentTimeMillis());
+    }
+}</code></pre>
+<p><strong>Benefits:</strong></p>
+<ul>
+<li>Thread-safe by design</li>
+<li>Cannot be accidentally modified</li>
+<li>Clear event semantics</li>
+</ul>
+
+<span class="slide-counter">35 / 52</span>
+<div class="slide-nav">
+  <a href="#slide-34">&#8592; Previous</a>
+  <span class="slide-info">Slide 35 / 52 &nbsp;&middot;&nbsp; Lecture 6: Domain-Driven Design (DDD)</span>
+  <a href="#slide-36">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-36" class="slide">
+<h3>3. Complex Events with Nested Data</h3>
+<p>Records can contain other Records and enums for rich event structures.</p>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>public record TransactionEvent(
+    Account account,
+    TransactionType type,
+    double amount,
+    Long targetAccountId,
+    String performedBy,
+    long timestamp
+) {
+    public enum TransactionType {
+        DEPOSIT, WITHDRAWAL, TRANSFER
+    }
+    
+    // Multiple constructors for different scenarios
+    public TransactionEvent(Account account, TransactionType type, double amount) {
+        this(account, type, amount, null, &quot;system&quot;, System.currentTimeMillis());
+    }
+    
+    public TransactionEvent(Account account, TransactionType type, 
+                           double amount, Long targetAccountId) {
+        this(account, type, amount, targetAccountId, &quot;system&quot;, System.currentTimeMillis());
+    }
+}</code></pre>
+
+<span class="slide-counter">36 / 52</span>
+<div class="slide-nav">
+  <a href="#slide-35">&#8592; Previous</a>
+  <span class="slide-info">Slide 36 / 52 &nbsp;&middot;&nbsp; Lecture 6: Domain-Driven Design (DDD)</span>
+  <a href="#slide-37">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-37" class="slide">
+<h2>⚠️ Records Limitations in Jakarta EE</h2>
+<h3>1. Cannot Use as @Embeddable Value Objects</h3>
+<p><strong>Problem:</strong> JPA requires a no-arg constructor for <code>@Embeddable</code> types.</p>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>// ❌ This DOES NOT work
+@Embeddable
+public record Money(BigDecimal amount, String currency) {}
+
+// Error: NoSuchMethodException: Money.&lt;init&gt;()</code></pre>
+<p><strong>Solution:</strong> Keep Value Objects as regular classes.</p>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>// ✅ This works
+@Embeddable
+public class Money {
+    private BigDecimal amount;
+    private String currency;
+    
+    protected Money() {} // Required by JPA
+    
+    private Money(BigDecimal amount, String currency) {
+        this.amount = amount;
+        this.currency = currency;
+    }
+    
+    // Factory method (Record-like API)
+    public static Money of(BigDecimal amount, String currency) {
+        return new Money(amount, currency);
+    }
+    
+    // Getters, equals, hashCode...
+}</code></pre>
+
+<span class="slide-counter">37 / 52</span>
+<div class="slide-nav">
+  <a href="#slide-36">&#8592; Previous</a>
+  <span class="slide-info">Slide 37 / 52 &nbsp;&middot;&nbsp; Lecture 6: Domain-Driven Design (DDD)</span>
+  <a href="#slide-38">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-38" class="slide">
+<h3>2. Immutable Collections Pattern</h3>
+<p>Records return immutable views to protect internal state.</p>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>@Entity
+public class Client {
+    @OneToMany(mappedBy = &quot;client&quot;)
+    private List&lt;Account&gt; accounts = new ArrayList&lt;&gt;();
+    
+    // Return immutable view (DDD best practice)
+    public List&lt;Account&gt; getAccounts() {
+        return Collections.unmodifiableList(accounts);
+    }
+    
+    // Separate method for internal modifications
+    public void removeAccountFromCollection(Account account) {
+        accounts.remove(account);
+    }
+}</code></pre>
+<p data-en="<strong>Why this matters:</strong>" data-fr="Pourquoi this matters:"><strong>Why this matters:</strong></p>
+<ul>
+<li>Prevents external code from modifying internal collections</li>
+<li>Maintains aggregate consistency</li>
+<li>Requires careful handling in delete operations</li>
+</ul>
+
+<span class="slide-counter">38 / 52</span>
+<div class="slide-nav">
+  <a href="#slide-37">&#8592; Previous</a>
+  <span class="slide-info">Slide 38 / 52 &nbsp;&middot;&nbsp; Lecture 6: Domain-Driven Design (DDD)</span>
+  <a href="#slide-39">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-39" class="slide">
+<h2>🎓 Records Migration Strategy</h2>
+<h3>Step 1: Identify Candidates</h3>
+<p>Analyze your codebase for immutable data carriers:</p>
+<pre class="dark"><span class="lang-badge">bash</span>
+<code># Good candidates:
+- DTOs in application layer
+- Domain events
+- Command objects
+- Query result objects
+
+# Bad candidates:
+- JPA entities
+- Value objects with @Embeddable
+- Classes with mutable state
+- Classes requiring inheritance</code></pre>
+<h3>Step 2: Convert Incrementally</h3>
+<p>Start with DTOs and Events, which have the highest benefit-to-risk ratio.</p>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>// Before: 90 lines
+public class AccountDTO {
+    private final Long id;
+    private final String accountNumber;
+    // ... 15 fields
+    // ... constructor
+    // ... 15 getters
+    // ... equals, hashCode, toString
+}
+
+// After: 8 lines
+public record AccountDTO(
+    Long id,
+    String accountNumber,
+    // ... 15 fields
+) {
+    // Optional: factory methods
+}</code></pre>
+
+<span class="slide-counter">39 / 52</span>
+<div class="slide-nav">
+  <a href="#slide-38">&#8592; Previous</a>
+  <span class="slide-info">Slide 39 / 52 &nbsp;&middot;&nbsp; Lecture 6: Domain-Driven Design (DDD)</span>
+  <a href="#slide-40">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-40" class="slide">
+<h3>Step 3: Handle Edge Cases</h3>
+<p><strong>Formatting Issues:</strong></p>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>// Problem: Cannot format Money object directly
+String.format(&quot;%.2f&quot;, account.getBalance()) // ❌ Error!
+
+// Solution: Add conversion method
+public class Money {
+    public double getAmountAsDouble() {
+        return amount.doubleValue();
+    }
+}
+
+String.format(&quot;%.2f&quot;, account.getBalanceAsDouble()) // ✅ Works!</code></pre>
+<p><strong>Collection Modifications:</strong></p>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>// Problem: Trying to modify immutable collection
+client.getAccounts().remove(account); // ❌ UnsupportedOperationException!
+
+// Solution: Use dedicated method
+client.removeAccountFromCollection(account); // ✅ Works!</code></pre>
+
+<span class="slide-counter">40 / 52</span>
+<div class="slide-nav">
+  <a href="#slide-39">&#8592; Previous</a>
+  <span class="slide-info">Slide 40 / 52 &nbsp;&middot;&nbsp; Lecture 6: Domain-Driven Design (DDD)</span>
+  <a href="#slide-41">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-41" class="slide">
+<h2>📈 Records Benefits in DDD</h2>
+<h3>Code Reduction</h3>
+<p data-en="Real-world example from Lab06-DDD:" data-fr="Real-world Exemple from Lab06-DDD:">Real-world example from Lab06-DDD:</p>
+<table class="slide-table"><thead><tr><th>Class</th><th>Before</th><th>After</th><th>Reduction</th></tr></thead><tbody>
+<tr><td>AccountDTO</td><td>95 lines</td><td>8 lines</td><td><strong>-92%</strong></td></tr>
+<tr><td>ClientDTO</td><td>78 lines</td><td>6 lines</td><td><strong>-92%</strong></td></tr>
+<tr><td>AccountCreatedEvent</td><td>45 lines</td><td>12 lines</td><td><strong>-73%</strong></td></tr>
+<tr><td>TransactionEvent</td><td>68 lines</td><td>22 lines</td><td><strong>-68%</strong></td></tr>
+<tr><td><strong>Total</strong></td><td><strong>286 lines</strong></td><td><strong>48 lines</strong></td><td><strong>-83%</strong></td></tr>
+</tbody></table>
+<h3>Maintainability Improvements</h3>
+<ul>
+<li><strong>Less boilerplate</strong> = fewer bugs</li>
+<li><strong>Immutability</strong> = thread-safe by default</li>
+<li><strong>Clear intent</strong> = easier to understand</li>
+<li><strong>Automatic methods</strong> = consistent behavior</li>
+</ul>
+
+<span class="slide-counter">41 / 52</span>
+<div class="slide-nav">
+  <a href="#slide-40">&#8592; Previous</a>
+  <span class="slide-info">Slide 41 / 52 &nbsp;&middot;&nbsp; Lecture 6: Domain-Driven Design (DDD)</span>
+  <a href="#slide-42">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-42" class="slide">
+<h2>🔍 Records vs Traditional Classes</h2>
+<h3>When to Use Records</h3>
+<p>✅ <strong>Use Records when:</strong></p>
+<ul>
+<li>Data is immutable</li>
+<li>No complex business logic</li>
+<li>Simple data transfer</li>
+<li>Event objects</li>
+<li>Query results</li>
+</ul>
+<p>❌ <strong>Don't Use Records when:</strong></p>
+<ul>
+<li>Need mutable state</li>
+<li>JPA entity or @Embeddable</li>
+<li>Complex inheritance hierarchy</li>
+<li>Need custom serialization</li>
+<li>Framework requires no-arg constructor</li>
+</ul>
+<h3>Hybrid Approach</h3>
+<p data-en="<strong>Best practice:</strong> Combine Records and traditional classes based on constraints." data-fr="Bonnes pratiques: Combine Records and traditional classes based on constraints."><strong>Best practice:</strong> Combine Records and traditional classes based on constraints.</p>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>// DTOs: Use Records
+public record ClientDTO(Long id, String name, String email) {}
+
+// Value Objects: Use Classes (JPA constraint)
+@Embeddable
+public class Email {
+    private String value;
+    protected Email() {}
+    public static Email of(String value) { /* ... */ }
+}
+
+// Entities: Use Classes (mutable, JPA)
+@Entity
+public class Client {
+    @Id private Long id;
+    @Embedded private Email email;
+    // ...
+}</code></pre>
+
+<span class="slide-counter">42 / 52</span>
+<div class="slide-nav">
+  <a href="#slide-41">&#8592; Previous</a>
+  <span class="slide-info">Slide 42 / 52 &nbsp;&middot;&nbsp; Lecture 6: Domain-Driven Design (DDD)</span>
+  <a href="#slide-43">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-43" class="slide">
+<h2 data-en="💡 Key Takeaways: Records in DDD" data-fr="💡 Points clés: Records in DDD">💡 Key Takeaways: Records in DDD</h2>
+<ol>
+<li><strong>Records are perfect for DTOs and Events</strong> - immutable data carriers</li>
+<li><strong>Cannot use Records for JPA @Embeddable</strong> - EclipseLink limitation</li>
+<li><strong>Hybrid approach works best</strong> - Records where possible, classes where required</li>
+<li><strong>Significant code reduction</strong> - 80-90% less boilerplate</li>
+<li><strong>Immutability by default</strong> - thread-safe, predictable behavior</li>
+<li><strong>Modern Java feature</strong> - requires JDK 17+</li>
+</ol>
+<h3>Remember:</h3>
+<p><strong>Records are a tool, not a silver bullet. Use them where they fit naturally in your DDD design.</strong></p>
+
+<span class="slide-counter">43 / 52</span>
+<div class="slide-nav">
+  <a href="#slide-42">&#8592; Previous</a>
+  <span class="slide-info">Slide 43 / 52 &nbsp;&middot;&nbsp; Lecture 6: Domain-Driven Design (DDD)</span>
+  <a href="#slide-44">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-44" class="slide">
+<h2>📝 Documenting Your DDD Implementation</h2>
+<p>Proper documentation is crucial for maintaining a DDD implementation and ensuring team alignment.</p>
+<h3>Essential Documentation Artifacts</h3>
+<p>#### 1. Bounded Context Document</p>
+<p>A comprehensive document that defines your bounded context:</p>
+<pre class="dark"><span class="lang-badge">markdown</span>
+<code># Banking Bounded Context
+
+## Context Definition
+- **Name:** Banking Core Context
+- **Purpose:** Manage core banking operations
+- **Scope:** Client accounts, transactions, transfers
+- **Out of Scope:** Loans, investments, credit cards
+
+## Ubiquitous Language
+| Term | Definition | Type |
+|------|------------|------|
+| Client | Person/entity with accounts | Aggregate Root |
+| Account | Financial account holding money | Aggregate Root |
+| Money | Amount with currency | Value Object |
+| Deposit | Adding money to account | Domain Operation |
+| Transfer | Moving money between accounts | Domain Service |
+
+## Domain Model
+### Aggregates
+- **Account Aggregate**
+  - Root: Account
+  - Value Objects: Money, AccountNumber, AccountType
+  - Invariants: Balance limits, currency consistency
+  
+### Domain Services
+- **TransferService:** Coordinates money transfers
+
+### Domain Events
+- MoneyDepositedEvent
+- MoneyWithdrawnEvent
+- MoneyTransferredEvent
+
+## Business Rules
+1. Minimum initial deposit: 10 EUR
+2. CHECKING accounts: overdraft up to -500 EUR
+3. SAVINGS accounts: no negative balance
+4. All operations must use same currency
+
+## Context Boundaries
+### Inside Context
+✅ Account management
+✅ Money transfers
+✅ Balance tracking
+
+### Outside Context
+❌ Loan processing
+❌ Investment products
+❌ External payments
+
+## Integration Points
+- Identity Context (authentication)
+- Notification Context (emails/SMS)
+- Audit Context (compliance)</code></pre>
+<p>#### 2. Repository Interfaces</p>
+<p>Document repository contracts in the domain layer:</p>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>/**
+ * Repository interface for Account aggregate.
+ * 
+ * DDD Pattern: Repository
+ * - Provides collection-like interface
+ * - Abstracts persistence mechanism
+ * - Uses domain language and types
+ * - Part of domain layer (interface)
+ * - Implementation in infrastructure layer
+ */
+public interface AccountRepository {
+    
+    // Save/Update
+    Account save(Account account);
+    
+    // Queries using domain types
+    Optional&lt;Account&gt; findById(Long id);
+    Optional&lt;Account&gt; findByAccountNumber(AccountNumber accountNumber);
+    List&lt;Account&gt; findByClientId(Long clientId);
+    List&lt;Account&gt; findByType(AccountType accountType);
+    
+    // Business queries
+    long countByClientId(Long clientId);
+    boolean existsByAccountNumber(AccountNumber accountNumber);
+    
+    // Deletion
+    void delete(Account account);
+}</code></pre>
+<p><strong>Key Points:</strong></p>
+<ul>
+<li>Interface in <code>domain.repository</code> package</li>
+<li>Uses Value Objects (AccountNumber, AccountType)</li>
+<li>Domain language (findByAccountNumber, not findByNumber)</li>
+<li data-en="No infrastructure concerns (no SQL, no JPA annotations)" data-fr="No infrastructure concerns (no SQL, no JPA Annotation)">No infrastructure concerns (no SQL, no JPA annotations)</li>
+</ul>
+<p>#### 3. Context Map</p>
+<p>Visual representation of context relationships:</p>
+<p><img src="../../images/06-domain-driven-design-diagram-4.png" alt="width:70%"></p>
+<p><strong>Relationship: Customer/Supplier</strong></p>
+<ul>
+<li>Banking Core is Supplier (upstream)</li>
+<li>Others are Customers (downstream)</li>
+<li>Integration via Domain Events</li>
+</ul>
+<h3 data-en="Documentation Best Practices" data-fr="Documentation Bonnes pratiques">Documentation Best Practices</h3>
+<p>#### 1. Keep Documentation Close to Code</p>
+<pre class="dark"><code>project/
+├── BOUNDED-CONTEXT.md          # Context definition
+├── src/
+│   └── main/
+│       └── java/
+│           └── com/
+│               └── bank/
+│                   ├── domain/
+│                   │   ├── repository/
+│                   │   │   ├── AccountRepository.java
+│                   │   │   └── ClientRepository.java
+│                   │   ├── README.md    # Domain layer guide
+│                   │   └── ...
+│                   └── ...</code></pre>
+<p>#### 2. Document Business Rules in Code</p>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>public class Account {
+    
+    /**
+     * Deposit money into account.
+     * 
+     * Business Rules:
+     * - Amount must be positive
+     * - Currency must match account currency
+     * - All accounts can accept deposits
+     * 
+     * Domain Event: MoneyDepositedEvent
+     */
+    public void deposit(Money amount) {
+        validateDeposit(amount);
+        this.balance = this.balance.add(amount);
+        publishEvent(new MoneyDepositedEvent(this, amount));
+    }
+}</code></pre>
+<p>#### 3. Maintain Ubiquitous Language Glossary</p>
+<p>Create a living document that evolves with the domain:</p>
+<pre class="dark"><span class="lang-badge">markdown</span>
+<code>## Ubiquitous Language - Banking Context
+
+### Core Concepts
+- **Account:** A financial account that holds money
+- **Client:** A person or entity that owns accounts
+- **Money:** An amount with a specific currency
+- **Balance:** Current amount of money in an account
+
+### Operations
+- **Deposit:** Add money to an account
+- **Withdraw:** Remove money from an account
+- **Transfer:** Move money from one account to another
+
+### Business Terms
+- **Overdraft:** Negative balance allowed for checking accounts
+- **Premium Client:** Client with enhanced privileges
+- **Account Type:** Classification (CHECKING, SAVINGS)</code></pre>
+<p>#### 4. Document Aggregate Boundaries</p>
+<pre class="dark"><span class="lang-badge">markdown</span>
+<code>## Aggregate Design Decisions
+
+### Account Aggregate
+**Included:**
+- Account (root)
+- Money (value object)
+- AccountNumber (value object)
+- AccountType (value object)
+
+**Excluded:**
+- Client (separate aggregate, referenced by ID)
+- Transactions (could be separate aggregate if needed)
+
+**Rationale:**
+- Account is the consistency boundary
+- Client can exist without accounts
+- Transactions are historical, don't need strong consistency</code></pre>
+<h3>Documentation Maintenance</h3>
+<p>#### When to Update Documentation</p>
+<ol>
+<li><strong>New Features:</strong> Document new aggregates, services, or events</li>
+<li><strong>Business Rule Changes:</strong> Update rules and invariants</li>
+<li><strong>Context Evolution:</strong> Adjust boundaries and scope</li>
+<li><strong>Integration Changes:</strong> Update context map</li>
+<li><strong>Refactoring:</strong> Keep structure diagrams current</li>
+</ol>
+<p>#### Documentation Review Checklist</p>
+<ul>
+<li>[ ] Bounded Context definition is current</li>
+<li>[ ] Ubiquitous Language reflects actual code</li>
+<li>[ ] All aggregates are documented</li>
+<li>[ ] Business rules are explicit</li>
+<li>[ ] Context boundaries are clear</li>
+<li>[ ] Integration points are defined</li>
+<li>[ ] Repository interfaces are documented</li>
+</ul>
+<h3 data-en="Lab 6 Documentation Example" data-fr="Lab 6 Documentation Exemple">Lab 6 Documentation Example</h3>
+<p>In Lab 6, you'll find complete documentation:</p>
+<ol>
+<li><strong>BOUNDED-CONTEXT.md</strong> - Full context definition</li>
+<li><strong>Repository Interfaces</strong> - Explicit domain contracts</li>
+<li><strong>Code Comments</strong> - Business rules in code</li>
+<li><strong>README</strong> - Quick reference guide</li>
+</ol>
+<p>This documentation serves as:</p>
+<ul>
+<li><strong>Team Reference:</strong> Shared understanding</li>
+<li><strong>Onboarding Tool:</strong> New developers learn quickly</li>
+<li><strong>Design Record:</strong> Decisions and rationale</li>
+<li data-en="<strong>Evolution Guide:</strong> How to extend the system" data-fr="Evolution Guide: Comment extend the system"><strong>Evolution Guide:</strong> How to extend the system</li>
+</ul>
+
+<span class="slide-counter">44 / 52</span>
+<div class="slide-nav">
+  <a href="#slide-43">&#8592; Previous</a>
+  <span class="slide-info">Slide 44 / 52 &nbsp;&middot;&nbsp; Lecture 6: Domain-Driven Design (DDD)</span>
+  <a href="#slide-45">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-45" class="slide">
+<h2>📖 Recommended Reading</h2>
+<h3>Essential Books:</h3>
+<ul>
+<li data-en="<strong>&quot;Domain-Driven Design&quot;</strong> by Eric Evans (The Blue Book)" data-fr="&quot;Conception pilotée par le domaine&quot; by Eric Evans (The Blue Book)"><strong>"Domain-Driven Design"</strong> by Eric Evans (The Blue Book)</li>
+<li data-en="<strong>&quot;Implementing Domain-Driven Design&quot;</strong> by Vaughn Vernon (The Red Book)" data-fr="&quot;Implémentation de Conception pilotée par le domaine&quot; by Vaughn Vernon (The Red Book)"><strong>"Implementing Domain-Driven Design"</strong> by Vaughn Vernon (The Red Book)</li>
+<li data-en="<strong>&quot;Domain-Driven Design Distilled&quot;</strong> by Vaughn Vernon (Quick intro)" data-fr="&quot;Conception pilotée par le domaine Distilled&quot; by Vaughn Vernon (Quick intro)"><strong>"Domain-Driven Design Distilled"</strong> by Vaughn Vernon (Quick intro)</li>
+</ul>
+<h3>Online Resources:</h3>
+<ul>
+<li>DDD Community: https://www.domainlanguage.com/</li>
+<li>Martin Fowler's DDD articles: https://martinfowler.com/tags/domain%20driven%20design.html</li>
+<li>DDD Reference: https://www.domainlanguage.com/ddd/reference/</li>
+</ul>
+<h3>Patterns:</h3>
+<ul>
+<li>Aggregate Design: https://vaughnvernon.com/</li>
+<li>Event Storming: https://www.eventstorming.com/</li>
+</ul>
+
+<span class="slide-counter">45 / 52</span>
+<div class="slide-nav">
+  <a href="#slide-44">&#8592; Previous</a>
+  <span class="slide-info">Slide 45 / 52 &nbsp;&middot;&nbsp; Lecture 6: Domain-Driven Design (DDD)</span>
+  <a href="#slide-46">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-46" class="slide">
+<h2 data-en="❓ Common Questions" data-fr="❓ Questions fréquentes">❓ Common Questions</h2>
+<p><strong>Q: When should I use DDD?</strong></p>
+<p data-en="A: Use DDD for complex domains with significant business logic. Not needed for simple CRUD applications." data-fr="A: Use DDD for complex domains with significant business logic. Not needed for Simple CRUD applications.">A: Use DDD for complex domains with significant business logic. Not needed for simple CRUD applications.</p>
+<p><strong>Q: Do I need to use all DDD patterns?</strong></p>
+<p>A: No! Use what makes sense for your domain. Start with aggregates and value objects.</p>
+<p><strong>Q: How do I identify aggregates?</strong></p>
+<p>A: Look for consistency boundaries. What must change together atomically?</p>
+<p><strong>Q: Should everything be a value object?</strong></p>
+<p>A: No. Use value objects for concepts without identity that are immutable.</p>
+<p><strong>Q: How do I handle relationships between aggregates?</strong></p>
+
+<span class="slide-counter">46 / 52</span>
+<div class="slide-nav">
+  <a href="#slide-45">&#8592; Previous</a>
+  <span class="slide-info">Slide 46 / 52 &nbsp;&middot;&nbsp; Lecture 6: Domain-Driven Design (DDD)</span>
+  <a href="#slide-47">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-47" class="slide">
+<h2 data-en="Next Steps" data-fr="Prochaines étapes">Next Steps</h2>
+<h3 data-en="Lecture 7: Hexagonal Architecture" data-fr="Lecture 7: Architecture hexagonale">Lecture 7: Hexagonal Architecture</h3>
+<ul>
+<li>Ports and Adapters pattern</li>
+<li>Dependency Inversion Principle</li>
+<li>Clean Architecture principles</li>
+<li>Separating domain from infrastructure</li>
+</ul>
+<h3 data-en="Lab 7: Hexagonal Architecture Implementation" data-fr="Lab 7: Architecture hexagonale Implementation">Lab 7: Hexagonal Architecture Implementation</h3>
+<ul>
+<li data-en="Restructure application with hexagonal architecture" data-fr="Restructure application with Architecture hexagonale">Restructure application with hexagonal architecture</li>
+<li>Define ports (interfaces) for external systems</li>
+<li>Implement adapters for database, REST, etc.</li>
+<li>Achieve true independence of domain logic</li>
+</ul>
+
+<span class="slide-counter">47 / 52</span>
+<div class="slide-nav">
+  <a href="#slide-46">&#8592; Previous</a>
+  <span class="slide-info">Slide 47 / 52 &nbsp;&middot;&nbsp; Lecture 6: Domain-Driven Design (DDD)</span>
+  <a href="#slide-48">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-48" class="slide">
+<p>A: Reference by ID only. Use domain services to coordinate operations.</p>
+
+<span class="slide-counter">48 / 52</span>
+<div class="slide-nav">
+  <a href="#slide-47">&#8592; Previous</a>
+  <span class="slide-info">Slide 48 / 52 &nbsp;&middot;&nbsp; Lecture 6: Domain-Driven Design (DDD)</span>
+  <a href="#slide-49">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-49" class="slide">
+<h2>🔍 Lab 6 Preview: What to Expect</h2>
+<h3>Part 1: Value Objects (45 min)</h3>
+<ul>
+<li>Create <code>Money</code> value object</li>
+<li>Create <code>AccountNumber</code> value object</li>
+<li>Create <code>Email</code> value object</li>
+<li>Update entities to use value objects</li>
+</ul>
+<h3>Part 2: Aggregates (45 min)</h3>
+<ul>
+<li>Define <code>Account</code> aggregate with transactions</li>
+<li>Define <code>Client</code> aggregate</li>
+<li>Implement business logic in aggregates</li>
+<li>Protect invariants</li>
+</ul>
+<h3>Part 3: Domain Services (45 min)</h3>
+<ul>
+<li>Implement <code>TransferService</code></li>
+<li>Add domain events</li>
+<li>Refactor application services</li>
+</ul>
+<h3 data-en="Part 4: Testing (45 min)" data-fr="Part 4: Tests (45 min)">Part 4: Testing (45 min)</h3>
+<ul>
+<li>Test value objects</li>
+<li>Test aggregate business rules</li>
+<li>Test domain services</li>
+<li>Deploy and verify</li>
+</ul>
+
+<span class="slide-counter">49 / 52</span>
+<div class="slide-nav">
+  <a href="#slide-48">&#8592; Previous</a>
+  <span class="slide-info">Slide 49 / 52 &nbsp;&middot;&nbsp; Lecture 6: Domain-Driven Design (DDD)</span>
+  <a href="#slide-50">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-50" class="slide">
+<h2>🎉 Ready for Lab 6!</h2>
+<h3>What You've Learned:</h3>
+<ul>
+<li>✅ DDD philosophy and benefits</li>
+<li>✅ Strategic patterns (Bounded Contexts, Ubiquitous Language)</li>
+<li>✅ Tactical patterns (Entities, Value Objects, Aggregates)</li>
+<li>✅ Domain services and events</li>
+<li data-en="✅ DDD layered architecture" data-fr="✅ DDD layered Architecture">✅ DDD layered architecture</li>
+</ul>
+<h3 data-en="Next Steps:" data-fr="Prochaines étapes:">Next Steps:</h3>
+<ol>
+<li>Review lecture slides</li>
+<li>Read DDD reference materials</li>
+<li>Start Lab 6: DDD Refactoring</li>
+<li>Apply patterns to banking application</li>
+</ol>
+<p><strong>Let's build a rich domain model! 🚀</strong></p>
+
+<span class="slide-counter">50 / 52</span>
+<div class="slide-nav">
+  <a href="#slide-49">&#8592; Previous</a>
+  <span class="slide-info">Slide 50 / 52 &nbsp;&middot;&nbsp; Lecture 6: Domain-Driven Design (DDD)</span>
+  <a href="#slide-51">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-51" class="slide">
+<h2>📞 Questions &amp; Discussion</h2>
+<h3>Discussion Topics:</h3>
+<ul>
+<li>How does DDD improve code maintainability?</li>
+<li>When is DDD overkill?</li>
+<li>How do you identify bounded contexts?</li>
+<li data-en="What are the challenges of implementing DDD?" data-fr="What are the challenges of Implémentation de DDD?">What are the challenges of implementing DDD?</li>
+</ul>
+<h3>Office Hours:</h3>
+<ul>
+<li><strong>When:</strong> [Your schedule]</li>
+<li><strong>Where:</strong> [Your location/online]</li>
+<li><strong>Contact:</strong> [Your email]</li>
+</ul>
+
+<span class="slide-counter">51 / 52</span>
+<div class="slide-nav">
+  <a href="#slide-50">&#8592; Previous</a>
+  <span class="slide-info">Slide 51 / 52 &nbsp;&middot;&nbsp; Lecture 6: Domain-Driven Design (DDD)</span>
+  <a href="#slide-52">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-52" class="slide">
+<h1 data-en="Thank You!" data-fr="Merci !!">Thank You!</h1>
+<h2 data-en="Domain-Driven Design: Aligning Code with Business 🎯" data-fr="Conception pilotée par le domaine: Aligning Code with Business 🎯">Domain-Driven Design: Aligning Code with Business 🎯</h2>
+<p><strong>Remember:</strong></p>
+<ul>
+<li>Focus on the domain and domain logic</li>
+<li>Use ubiquitous language consistently</li>
+<li>Keep aggregates small and focused</li>
+<li>Protect invariants in aggregate roots</li>
+<li>Use value objects for immutable concepts</li>
+</ul>
+<p data-en="<strong>See you in Lab 6!</strong>" data-fr="À bientôt dans Lab 6!"><strong>See you in Lab 6!</strong></p>
+
+<span class="slide-counter">52 / 52</span>
+<div class="slide-nav">
+  <a href="#slide-51">&#8592; Previous</a>
+  <span class="slide-info">Slide 52 / 52 &nbsp;&middot;&nbsp; Lecture 6: Domain-Driven Design (DDD)</span>
+  <a class="disabled">Next &#8594;</a>
+</div>
+</section>
+    </div>
+  </main>
+</div>
+<footer class="site-footer">Made with IBM Bob &nbsp;&middot;&nbsp; &copy; 2026 Olivier Planson</footer>
+<script>
+/* ── EN/FR language toggle — global scope so buttons can call it ── */
+var _lang = localStorage.getItem('slide-lang') || 'en';
+function setLang(lang) {
+  _lang = lang;
+  localStorage.setItem('slide-lang', lang);
+  document.getElementById('btn-en').classList.toggle('active', lang === 'en');
+  document.getElementById('btn-fr').classList.toggle('active', lang === 'fr');
+  document.querySelectorAll('[data-en][data-fr]').forEach(function(el) {
+    el.innerHTML = lang === 'fr' ? el.getAttribute('data-fr') : el.getAttribute('data-en');
+  });
+}
+
+(function() {
+  /* ── Sidenav hover ── */
+  var nav     = document.getElementById('sidenav');
+  var navTrig = document.getElementById('sidenav-trigger');
+  var navTimer = null;
+  function navShow() { clearTimeout(navTimer); nav.classList.add('sidenav--open'); }
+  function navHide() { navTimer = setTimeout(function(){ nav.classList.remove('sidenav--open'); }, 300); }
+  navTrig.addEventListener('mouseenter', navShow);
+  navTrig.addEventListener('mouseleave', navHide);
+  nav.addEventListener('mouseenter', navShow);
+  nav.addEventListener('mouseleave', navHide);
+
+  /* ── Progress bar hover ── */
+  var pbWrap  = document.getElementById('pb-wrap');
+  var pbTrig  = document.getElementById('pb-trigger');
+  var pbTimer = null;
+  function pbShow() { clearTimeout(pbTimer); pbWrap.classList.add('pb-open'); }
+  function pbHide() { pbTimer = setTimeout(function(){ pbWrap.classList.remove('pb-open'); }, 400); }
+  pbTrig.addEventListener('mouseenter', pbShow);
+  pbTrig.addEventListener('mouseleave', pbHide);
+  pbWrap.addEventListener('mouseenter', pbShow);
+  pbWrap.addEventListener('mouseleave', pbHide);
+
+  /* ── Wire EN/FR buttons via addEventListener (no inline onclick) ── */
+  document.getElementById('btn-en').addEventListener('click', function() { setLang('en'); });
+  document.getElementById('btn-fr').addEventListener('click', function() { setLang('fr'); });
+
+  /* Apply stored preference on page load */
+  if (_lang === 'fr') setLang('fr');
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,2246 @@
+<!-- © Copyright 2026 Olivier Planson. All rights reserved. Reproduction prohibited. Made with IBM Bob. -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>ESIPE — Lecture 2B: JavaServer Faces (JSF) — Slides</title>
+  <link rel="stylesheet" href="../assets/slide.css"/>
+  <style>
+/* suppress static .current when a slide is targeted */
+body:has(.slide:target) .progress-bar a.current { background: var(--bg); color: var(--muted); border-color: var(--border); }
+body:has(#slide-1:target) .progress-bar a[href="#slide-1"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-2:target) .progress-bar a[href="#slide-2"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-3:target) .progress-bar a[href="#slide-3"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-4:target) .progress-bar a[href="#slide-4"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-5:target) .progress-bar a[href="#slide-5"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-6:target) .progress-bar a[href="#slide-6"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-7:target) .progress-bar a[href="#slide-7"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-8:target) .progress-bar a[href="#slide-8"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-9:target) .progress-bar a[href="#slide-9"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-10:target) .progress-bar a[href="#slide-10"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-11:target) .progress-bar a[href="#slide-11"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-12:target) .progress-bar a[href="#slide-12"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-13:target) .progress-bar a[href="#slide-13"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-14:target) .progress-bar a[href="#slide-14"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-15:target) .progress-bar a[href="#slide-15"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-16:target) .progress-bar a[href="#slide-16"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-17:target) .progress-bar a[href="#slide-17"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-18:target) .progress-bar a[href="#slide-18"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-19:target) .progress-bar a[href="#slide-19"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-20:target) .progress-bar a[href="#slide-20"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-21:target) .progress-bar a[href="#slide-21"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-22:target) .progress-bar a[href="#slide-22"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-23:target) .progress-bar a[href="#slide-23"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-24:target) .progress-bar a[href="#slide-24"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-25:target) .progress-bar a[href="#slide-25"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-26:target) .progress-bar a[href="#slide-26"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-27:target) .progress-bar a[href="#slide-27"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-28:target) .progress-bar a[href="#slide-28"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-29:target) .progress-bar a[href="#slide-29"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-30:target) .progress-bar a[href="#slide-30"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-31:target) .progress-bar a[href="#slide-31"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-32:target) .progress-bar a[href="#slide-32"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-33:target) .progress-bar a[href="#slide-33"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-34:target) .progress-bar a[href="#slide-34"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-35:target) .progress-bar a[href="#slide-35"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-36:target) .progress-bar a[href="#slide-36"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-37:target) .progress-bar a[href="#slide-37"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-38:target) .progress-bar a[href="#slide-38"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-39:target) .progress-bar a[href="#slide-39"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-40:target) .progress-bar a[href="#slide-40"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-41:target) .progress-bar a[href="#slide-41"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-42:target) .progress-bar a[href="#slide-42"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-43:target) .progress-bar a[href="#slide-43"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-44:target) .progress-bar a[href="#slide-44"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-45:target) .progress-bar a[href="#slide-45"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-46:target) .progress-bar a[href="#slide-46"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-47:target) .progress-bar a[href="#slide-47"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-48:target) .progress-bar a[href="#slide-48"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-49:target) .progress-bar a[href="#slide-49"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-50:target) .progress-bar a[href="#slide-50"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-51:target) .progress-bar a[href="#slide-51"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-52:target) .progress-bar a[href="#slide-52"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-53:target) .progress-bar a[href="#slide-53"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-54:target) .progress-bar a[href="#slide-54"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-55:target) .progress-bar a[href="#slide-55"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-56:target) .progress-bar a[href="#slide-56"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-57:target) .progress-bar a[href="#slide-57"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-58:target) .progress-bar a[href="#slide-58"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-59:target) .progress-bar a[href="#slide-59"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-60:target) .progress-bar a[href="#slide-60"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-61:target) .progress-bar a[href="#slide-61"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-62:target) .progress-bar a[href="#slide-62"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-63:target) .progress-bar a[href="#slide-63"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-64:target) .progress-bar a[href="#slide-64"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-65:target) .progress-bar a[href="#slide-65"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-66:target) .progress-bar a[href="#slide-66"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-67:target) .progress-bar a[href="#slide-67"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-68:target) .progress-bar a[href="#slide-68"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-69:target) .progress-bar a[href="#slide-69"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-70:target) .progress-bar a[href="#slide-70"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-71:target) .progress-bar a[href="#slide-71"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+  </style>
+</head>
+<body>
+<header class="site-header">
+  <a class="brand" href="../index.html">ESIPE<span>Jakarta EE &amp; Microservices</span></a>
+  <!-- EN/FR language toggle -->
+  <div class="lang-toggle" id="lang-toggle">
+    <button id="btn-en" class="active">EN</button>
+    <span class="sep">|</span>
+    <button id="btn-fr">FR</button>
+  </div>
+  <a class="back-link" href="../index.html">&#8592; All Courses</a>
+</header>
+<!-- Thin trigger strip at top: hover to reveal progress bar -->
+<div class="progress-bar-trigger" id="pb-trigger"></div>
+<!-- Progress bar — hidden by default, revealed on hover -->
+<div class="progress-bar-wrap" id="pb-wrap">
+  <div class="progress-bar">
+    <a href="#slide-1" class="current">1</a>
+      <a href="#slide-2">2</a>
+      <a href="#slide-3">3</a>
+      <a href="#slide-4">4</a>
+      <a href="#slide-5">5</a>
+      <a href="#slide-6">6</a>
+      <a href="#slide-7">7</a>
+      <a href="#slide-8">8</a>
+      <a href="#slide-9">9</a>
+      <a href="#slide-10">10</a>
+      <a href="#slide-11">11</a>
+      <a href="#slide-12">12</a>
+      <a href="#slide-13">13</a>
+      <a href="#slide-14">14</a>
+      <a href="#slide-15">15</a>
+      <a href="#slide-16">16</a>
+      <a href="#slide-17">17</a>
+      <a href="#slide-18">18</a>
+      <a href="#slide-19">19</a>
+      <a href="#slide-20">20</a>
+      <a href="#slide-21">21</a>
+      <a href="#slide-22">22</a>
+      <a href="#slide-23">23</a>
+      <a href="#slide-24">24</a>
+      <a href="#slide-25">25</a>
+      <a href="#slide-26">26</a>
+      <a href="#slide-27">27</a>
+      <a href="#slide-28">28</a>
+      <a href="#slide-29">29</a>
+      <a href="#slide-30">30</a>
+      <a href="#slide-31">31</a>
+      <a href="#slide-32">32</a>
+      <a href="#slide-33">33</a>
+      <a href="#slide-34">34</a>
+      <a href="#slide-35">35</a>
+      <a href="#slide-36">36</a>
+      <a href="#slide-37">37</a>
+      <a href="#slide-38">38</a>
+      <a href="#slide-39">39</a>
+      <a href="#slide-40">40</a>
+      <a href="#slide-41">41</a>
+      <a href="#slide-42">42</a>
+      <a href="#slide-43">43</a>
+      <a href="#slide-44">44</a>
+      <a href="#slide-45">45</a>
+      <a href="#slide-46">46</a>
+      <a href="#slide-47">47</a>
+      <a href="#slide-48">48</a>
+      <a href="#slide-49">49</a>
+      <a href="#slide-50">50</a>
+      <a href="#slide-51">51</a>
+      <a href="#slide-52">52</a>
+      <a href="#slide-53">53</a>
+      <a href="#slide-54">54</a>
+      <a href="#slide-55">55</a>
+      <a href="#slide-56">56</a>
+      <a href="#slide-57">57</a>
+      <a href="#slide-58">58</a>
+      <a href="#slide-59">59</a>
+      <a href="#slide-60">60</a>
+      <a href="#slide-61">61</a>
+      <a href="#slide-62">62</a>
+      <a href="#slide-63">63</a>
+      <a href="#slide-64">64</a>
+      <a href="#slide-65">65</a>
+      <a href="#slide-66">66</a>
+      <a href="#slide-67">67</a>
+      <a href="#slide-68">68</a>
+      <a href="#slide-69">69</a>
+      <a href="#slide-70">70</a>
+      <a href="#slide-71">71</a>
+  </div>
+</div>
+<!-- Thin trigger strip at left: hover to reveal sidenav -->
+<div class="sidenav-trigger" id="sidenav-trigger"></div>
+<div class="shell">
+  <nav class="sidenav" id="sidenav">
+    <div class="sidenav-section">Course outline</div>
+    <a href="#slide-4" class="active">JSF vs Traditional Web Technologies</a>
+    <a href="#slide-5">JSF Architecture</a>
+    <a href="#slide-7">The Six Phases</a>
+    <a href="#slide-8">The Six Phases (continued)</a>
+    <a href="#slide-11">Managed Beans with CDI</a>
+    <a href="#slide-12">Bean Scopes</a>
+    <a href="#slide-15">What are Facelets?</a>
+    <a href="#slide-16">Basic Facelets Page</a>
+    <a href="#slide-17">Template Layout</a>
+    <a href="#slide-20">Core Components</a>
+    <a href="#slide-21">Output and Command Components</a>
+    <a href="#slide-22">Layout Components</a>
+    <a href="#slide-24">Built-in Validators</a>
+    <a href="#slide-25">Custom Validator</a>
+    <a href="#slide-26">Converters</a>
+    <a href="#slide-27">Custom Converter</a>
+    <a href="#slide-29">AJAX Support</a>
+    <a href="#slide-31">AJAX Attributes</a>
+    <a href="#slide-34">Navigation Rules</a>
+    <a href="#slide-35">Navigation Modes</a>
+    <a href="#slide-36">View Parameters</a>
+    <a href="#slide-37">Navigation Rule Structure</a>
+    <a href="#slide-40">Multiple Outcome Variants</a>
+    <a href="#slide-41">Redirect vs Forward</a>
+    <a href="#slide-42">Conditional Navigation</a>
+    <a href="#slide-43">Implicit vs Explicit Navigation</a>
+    <a href="#slide-44">Implicit vs Explicit Navigation (cont.)</a>
+    <a href="#slide-48">Creating Reusable Components</a>
+    <a href="#slide-53">When to Use Each</a>
+    <a href="#slide-63">web.xml Configuration</a>
+    <a href="#slide-64">faces-config.xml (Optional)</a>
+    <a href="#slide-67">Resources</a>
+    <a href="#slide-68">JSF Client Management</a>
+    <a href="#slide-71">References</a>
+    <hr>
+    <div class="sidenav-section">Navigation</div>
+    <a href="index.html">&#9675; Overview</a>
+  </nav>
+  <main class="content">
+    <div class="slide-wrapper">
+<section id="slide-1" class="slide slide--title">
+<h1>Lecture 2B: JavaServer Faces (JSF)</h1>
+<p><strong>Jakarta EE 10 &amp; MicroProfile Course</strong></p>
+<p data-en="ESIPE - Advanced Java Enterprise Development" data-fr="ESIPE - Avancé Java Enterprise Développement">ESIPE - Advanced Java Enterprise Development</p>
+
+<span class="slide-counter">1 / 71</span>
+<div class="slide-nav">
+  <a class="disabled">&#8592; Previous</a>
+  <span class="slide-info">Slide 1 / 71 &nbsp;&middot;&nbsp; Lecture 2B: JavaServer Faces (JSF)</span>
+  <a href="#slide-2">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-2" class="slide slide--section">
+<h1 data-en="Introduction to JSF" data-fr="Introduction à JSF">Introduction to JSF</h1>
+
+<span class="slide-counter">2 / 71</span>
+<div class="slide-nav">
+  <a href="#slide-1">&#8592; Previous</a>
+  <span class="slide-info">Slide 2 / 71 &nbsp;&middot;&nbsp; Lecture 2B: JavaServer Faces (JSF)</span>
+  <a href="#slide-3">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-3" class="slide">
+<h2 data-en="What is JavaServer Faces?" data-fr="Qu'est-ce que JavaServer Faces?">What is JavaServer Faces?</h2>
+<p data-en="<strong>JSF</strong> is a component-based web framework for building Java web applications" data-fr="JSF is a component-based web framework for Construction Java web applications"><strong>JSF</strong> is a component-based web framework for building Java web applications</p>
+<h3 data-en="Key Characteristics" data-fr="Caractéristiques clés">Key Characteristics</h3>
+<ul>
+<li><strong>Component-based</strong>: UI built from reusable components</li>
+<li><strong>Event-driven</strong>: User interactions trigger server-side events</li>
+<li data-en="<strong>MVC architecture</strong>: Clear separation of concerns" data-fr="MVC Architecture: Clear separation of concerns"><strong>MVC architecture</strong>: Clear separation of concerns</li>
+<li><strong>Facelets</strong>: Modern templating system</li>
+<li><strong>AJAX support</strong>: Built-in asynchronous updates</li>
+<li><strong>Validation</strong>: Integrated validation framework</li>
+<li><strong>Internationalization</strong>: Built-in i18n support</li>
+</ul>
+
+<span class="slide-counter">3 / 71</span>
+<div class="slide-nav">
+  <a href="#slide-2">&#8592; Previous</a>
+  <span class="slide-info">Slide 3 / 71 &nbsp;&middot;&nbsp; Lecture 2B: JavaServer Faces (JSF)</span>
+  <a href="#slide-4">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-4" class="slide">
+<h2>JSF vs Traditional Web Technologies</h2>
+<table class="slide-table"><thead><tr><th>Aspect</th><th>JSP/Servlets</th><th>JSF</th></tr></thead><tbody>
+<tr><td><strong>Approach</strong></td><td>Page-centric</td><td>Component-centric</td></tr>
+<tr><td><strong>State Management</strong></td><td>Manual</td><td>Automatic</td></tr>
+<tr><td><strong>Validation</strong></td><td>Manual</td><td>Declarative</td></tr>
+<tr><td><strong>AJAX</strong></td><td>Manual JavaScript</td><td>Built-in tags</td></tr>
+<tr><td><strong>Reusability</strong></td><td>Limited</td><td>High (components)</td></tr>
+<tr><td><strong>Learning Curve</strong></td><td>Lower</td><td>Higher</td></tr>
+</tbody></table>
+<p><strong>When to use JSF:</strong></p>
+<ul>
+<li>Complex forms with validation</li>
+<li>Rich component libraries needed</li>
+<li data-en="Rapid development required" data-fr="Rapid Développement required">Rapid development required</li>
+<li>Enterprise applications</li>
+</ul>
+
+<span class="slide-counter">4 / 71</span>
+<div class="slide-nav">
+  <a href="#slide-3">&#8592; Previous</a>
+  <span class="slide-info">Slide 4 / 71 &nbsp;&middot;&nbsp; Lecture 2B: JavaServer Faces (JSF)</span>
+  <a href="#slide-5">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-5" class="slide">
+<h2>JSF Architecture</h2>
+<p><img src="../../images/02b-jsf-javaserver-faces-diagram-1.png" alt="width:70%"></p>
+
+<span class="slide-counter">5 / 71</span>
+<div class="slide-nav">
+  <a href="#slide-4">&#8592; Previous</a>
+  <span class="slide-info">Slide 5 / 71 &nbsp;&middot;&nbsp; Lecture 2B: JavaServer Faces (JSF)</span>
+  <a href="#slide-6">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-6" class="slide slide--section">
+<h1 data-en="JSF Lifecycle" data-fr="JSF Cycle de vie">JSF Lifecycle</h1>
+
+<span class="slide-counter">6 / 71</span>
+<div class="slide-nav">
+  <a href="#slide-5">&#8592; Previous</a>
+  <span class="slide-info">Slide 6 / 71 &nbsp;&middot;&nbsp; Lecture 2B: JavaServer Faces (JSF)</span>
+  <a href="#slide-7">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-7" class="slide">
+<h2>The Six Phases</h2>
+<h3>1. <strong>Restore View</strong></h3>
+<ul>
+<li>Builds or restores component tree</li>
+<li>First request: creates new view</li>
+<li>Postback: restores existing view from state</li>
+</ul>
+<h3>2. <strong>Apply Request Values</strong></h3>
+<ul>
+<li>Extracts values from HTTP request</li>
+<li>Stores in component tree</li>
+<li>Queues events</li>
+</ul>
+<h3>3. <strong>Process Validations</strong></h3>
+<ul>
+<li>Validates converted values</li>
+<li>Executes validators</li>
+<li>Queues validation messages</li>
+</ul>
+
+<span class="slide-counter">7 / 71</span>
+<div class="slide-nav">
+  <a href="#slide-6">&#8592; Previous</a>
+  <span class="slide-info">Slide 7 / 71 &nbsp;&middot;&nbsp; Lecture 2B: JavaServer Faces (JSF)</span>
+  <a href="#slide-8">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-8" class="slide">
+<h2>The Six Phases (continued)</h2>
+<h3>4. <strong>Update Model Values</strong></h3>
+<ul>
+<li>Updates backing bean properties</li>
+<li>Only if validation passed</li>
+<li>Uses EL expressions</li>
+</ul>
+<h3>5. <strong>Invoke Application</strong></h3>
+<ul>
+<li>Executes application logic</li>
+<li>Handles action events</li>
+<li>Navigation processing</li>
+</ul>
+<h3>6. <strong>Render Response</strong></h3>
+<ul>
+<li>Generates HTML response</li>
+<li>Saves view state</li>
+<li>Sends to client</li>
+</ul>
+
+<span class="slide-counter">8 / 71</span>
+<div class="slide-nav">
+  <a href="#slide-7">&#8592; Previous</a>
+  <span class="slide-info">Slide 8 / 71 &nbsp;&middot;&nbsp; Lecture 2B: JavaServer Faces (JSF)</span>
+  <a href="#slide-9">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-9" class="slide">
+<h2 data-en="Lifecycle Diagram" data-fr="Cycle de vie Diagram">Lifecycle Diagram</h2>
+<p><img src="../../images/02b-jsf-javaserver-faces-diagram-2.png" alt="width:70%"></p>
+<p><strong>Short-circuit scenarios:</strong></p>
+<ul>
+<li>Validation errors → skip to Render Response</li>
+<li>Immediate actions → skip validation</li>
+<li>Navigation → skip remaining phases</li>
+</ul>
+
+<span class="slide-counter">9 / 71</span>
+<div class="slide-nav">
+  <a href="#slide-8">&#8592; Previous</a>
+  <span class="slide-info">Slide 9 / 71 &nbsp;&middot;&nbsp; Lecture 2B: JavaServer Faces (JSF)</span>
+  <a href="#slide-10">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-10" class="slide slide--section">
+<h1>Managed Beans</h1>
+
+<span class="slide-counter">10 / 71</span>
+<div class="slide-nav">
+  <a href="#slide-9">&#8592; Previous</a>
+  <span class="slide-info">Slide 10 / 71 &nbsp;&middot;&nbsp; Lecture 2B: JavaServer Faces (JSF)</span>
+  <a href="#slide-11">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-11" class="slide">
+<h2>Managed Beans with CDI</h2>
+<p><strong>Managed beans</strong> are Java classes that back JSF pages</p>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>import jakarta.inject.Named;
+import jakarta.enterprise.context.RequestScoped;
+import java.io.Serializable;
+
+@Named
+@RequestScoped
+public class ClientBean implements Serializable {
+    
+    private String name;
+    private String email;
+    
+    // Getters and setters
+    public String getName() { return name; }
+    public void setName(String name) { this.name = name; }
+    
+    public String getEmail() { return email; }
+    public void setEmail(String email) { this.email = email; }
+    
+    // Action method
+    public String save() {
+        // Business logic
+        return &quot;success&quot;; // Navigation outcome
+    }
+}</code></pre>
+
+<span class="slide-counter">11 / 71</span>
+<div class="slide-nav">
+  <a href="#slide-10">&#8592; Previous</a>
+  <span class="slide-info">Slide 11 / 71 &nbsp;&middot;&nbsp; Lecture 2B: JavaServer Faces (JSF)</span>
+  <a href="#slide-12">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-12" class="slide">
+<h2>Bean Scopes</h2>
+<table class="slide-table"><thead><tr><th>Scope</th><th>Annotation</th><th>Lifecycle</th><th>Use Case</th></tr></thead><tbody>
+<tr><td><strong>Request</strong></td><td><code>@RequestScoped</code></td><td>Single HTTP request</td><td>Simple forms</td></tr>
+<tr><td><strong>View</strong></td><td><code>@ViewScoped</code></td><td>Single JSF view</td><td>Multi-step forms, AJAX</td></tr>
+<tr><td><strong>Session</strong></td><td><code>@SessionScoped</code></td><td>HTTP session</td><td>User data, shopping cart</td></tr>
+<tr><td><strong>Application</strong></td><td><code>@ApplicationScoped</code></td><td>Application lifetime</td><td>Configuration, cache</td></tr>
+<tr><td><strong>Conversation</strong></td><td><code>@ConversationScoped</code></td><td>Multiple requests</td><td>Wizards, workflows</td></tr>
+</tbody></table>
+<p data-en="<strong>Best Practice:</strong> Use the narrowest scope possible" data-fr="Bonnes pratiques: Use the narrowest scope possible"><strong>Best Practice:</strong> Use the narrowest scope possible</p>
+
+<span class="slide-counter">12 / 71</span>
+<div class="slide-nav">
+  <a href="#slide-11">&#8592; Previous</a>
+  <span class="slide-info">Slide 12 / 71 &nbsp;&middot;&nbsp; Lecture 2B: JavaServer Faces (JSF)</span>
+  <a href="#slide-13">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-13" class="slide">
+<h2 data-en="Complete Managed Bean Example" data-fr="Complete Managed Bean Exemple">Complete Managed Bean Example</h2>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>@Named
+@ViewScoped
+public class ClientBean implements Serializable {
+    
+    @Inject
+    private ClientService clientService;
+    
+    private Client client = new Client();
+    private List&lt;Client&gt; clients;
+    private Long selectedClientId;
+    
+    @PostConstruct
+    public void init() {
+        loadClients();
+    }
+    
+    public void loadClients() {
+        clients = clientService.findAll();
+    }
+    
+    public String save() {
+        try {
+            clientService.save(client);
+            FacesContext.getCurrentInstance().addMessage(null,
+                new FacesMessage(&quot;Client saved successfully&quot;));
+            loadClients();
+            client = new Client(); // Reset form
+            return null; // Stay on same page
+        } catch (Exception e) {
+            FacesContext.getCurrentInstance().addMessage(null,
+                new FacesMessage(FacesMessage.SEVERITY_ERROR, 
+                    &quot;Error saving client&quot;, e.getMessage()));
+            return null;
+        }
+    }
+    
+    public String edit() {
+        client = clientService.findById(selectedClientId);
+        return &quot;client-form?faces-redirect=true&quot;;
+    }
+    
+    public String delete() {
+        clientService.delete(selectedClientId);
+        loadClients();
+        return null;
+    }
+    
+    // Getters and setters...
+}</code></pre>
+
+<span class="slide-counter">13 / 71</span>
+<div class="slide-nav">
+  <a href="#slide-12">&#8592; Previous</a>
+  <span class="slide-info">Slide 13 / 71 &nbsp;&middot;&nbsp; Lecture 2B: JavaServer Faces (JSF)</span>
+  <a href="#slide-14">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-14" class="slide slide--section">
+<h1>Facelets Templating</h1>
+
+<span class="slide-counter">14 / 71</span>
+<div class="slide-nav">
+  <a href="#slide-13">&#8592; Previous</a>
+  <span class="slide-info">Slide 14 / 71 &nbsp;&middot;&nbsp; Lecture 2B: JavaServer Faces (JSF)</span>
+  <a href="#slide-15">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-15" class="slide">
+<h2>What are Facelets?</h2>
+<p><strong>Facelets</strong> is the view declaration language for JSF</p>
+<h3>Features</h3>
+<ul>
+<li><strong>XHTML-based</strong>: Valid XML syntax</li>
+<li><strong>Templating</strong>: Reusable page layouts</li>
+<li><strong>Composition</strong>: Component composition</li>
+<li><strong>EL expressions</strong>: <code>#{bean.property}</code></li>
+<li><strong>Custom components</strong>: Easy to create</li>
+<li><strong>No scriptlets</strong>: Pure declarative</li>
+</ul>
+
+<span class="slide-counter">15 / 71</span>
+<div class="slide-nav">
+  <a href="#slide-14">&#8592; Previous</a>
+  <span class="slide-info">Slide 15 / 71 &nbsp;&middot;&nbsp; Lecture 2B: JavaServer Faces (JSF)</span>
+  <a href="#slide-16">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-16" class="slide">
+<h2>Basic Facelets Page</h2>
+<pre class="dark"><span class="lang-badge">xhtml</span>
+<code>&lt;!DOCTYPE html&gt;
+&lt;html xmlns=&quot;http://www.w3.org/1999/xhtml&quot;
+      xmlns:h=&quot;jakarta.faces.html&quot;
+      xmlns:f=&quot;jakarta.faces.core&quot;&gt;
+&lt;h:head&gt;
+    &lt;title&gt;Client Form&lt;/title&gt;
+    &lt;h:outputStylesheet library=&quot;css&quot; name=&quot;style.css&quot;/&gt;
+&lt;/h:head&gt;
+&lt;h:body&gt;
+    &lt;h1&gt;Client Registration&lt;/h1&gt;
+    
+    &lt;h:form id=&quot;clientForm&quot;&gt;
+        &lt;h:panelGrid columns=&quot;2&quot;&gt;
+            &lt;h:outputLabel value=&quot;Name:&quot; for=&quot;name&quot;/&gt;
+            &lt;h:inputText id=&quot;name&quot; value=&quot;#{clientBean.client.name}&quot; 
+                         required=&quot;true&quot;/&gt;
+            
+            &lt;h:outputLabel value=&quot;Email:&quot; for=&quot;email&quot;/&gt;
+            &lt;h:inputText id=&quot;email&quot; value=&quot;#{clientBean.client.email}&quot;
+                         required=&quot;true&quot;/&gt;
+        &lt;/h:panelGrid&gt;
+        
+        &lt;h:commandButton value=&quot;Save&quot; action=&quot;#{clientBean.save}&quot;/&gt;
+        &lt;h:messages/&gt;
+    &lt;/h:form&gt;
+&lt;/h:body&gt;
+&lt;/html&gt;</code></pre>
+
+<span class="slide-counter">16 / 71</span>
+<div class="slide-nav">
+  <a href="#slide-15">&#8592; Previous</a>
+  <span class="slide-info">Slide 16 / 71 &nbsp;&middot;&nbsp; Lecture 2B: JavaServer Faces (JSF)</span>
+  <a href="#slide-17">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-17" class="slide">
+<h2>Template Layout</h2>
+<p><strong>Template file</strong> (<code>template.xhtml</code>):</p>
+<pre class="dark"><span class="lang-badge">xhtml</span>
+<code>&lt;!DOCTYPE html&gt;
+&lt;html xmlns=&quot;http://www.w3.org/1999/xhtml&quot;
+      xmlns:h=&quot;jakarta.faces.html&quot;
+      xmlns:ui=&quot;jakarta.faces.facelets&quot;&gt;
+&lt;h:head&gt;
+    &lt;title&gt;&lt;ui:insert name=&quot;title&quot;&gt;Default Title&lt;/ui:insert&gt;&lt;/title&gt;
+    &lt;h:outputStylesheet library=&quot;css&quot; name=&quot;style.css&quot;/&gt;
+&lt;/h:head&gt;
+&lt;h:body&gt;
+    &lt;div id=&quot;header&quot;&gt;
+        &lt;ui:insert name=&quot;header&quot;&gt;
+            &lt;h1&gt;Banking Application&lt;/h1&gt;
+        &lt;/ui:insert&gt;
+    &lt;/div&gt;
+    
+    &lt;div id=&quot;content&quot;&gt;
+        &lt;ui:insert name=&quot;content&quot;&gt;
+            
+        &lt;/ui:insert&gt;
+    &lt;/div&gt;
+    
+    &lt;div id=&quot;footer&quot;&gt;
+        &lt;ui:insert name=&quot;footer&quot;&gt;
+            &lt;p&gt;&amp;copy; 2026 ESIPE Bank&lt;/p&gt;
+        &lt;/ui:insert&gt;
+    &lt;/div&gt;
+&lt;/h:body&gt;
+&lt;/html&gt;</code></pre>
+
+<span class="slide-counter">17 / 71</span>
+<div class="slide-nav">
+  <a href="#slide-16">&#8592; Previous</a>
+  <span class="slide-info">Slide 17 / 71 &nbsp;&middot;&nbsp; Lecture 2B: JavaServer Faces (JSF)</span>
+  <a href="#slide-18">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-18" class="slide">
+<h2 data-en="Using Templates" data-fr="Utilisation de Templates">Using Templates</h2>
+<p data-en="<strong>Page using template</strong> (<code>client-list.xhtml</code>):" data-fr="Page Utilisation de template (client-list.xhtml):"><strong>Page using template</strong> (<code>client-list.xhtml</code>):</p>
+<pre class="dark"><span class="lang-badge">xhtml</span>
+<code>&lt;!DOCTYPE html&gt;
+&lt;html xmlns=&quot;http://www.w3.org/1999/xhtml&quot;
+      xmlns:ui=&quot;jakarta.faces.facelets&quot;
+      xmlns:h=&quot;jakarta.faces.html&quot;
+      xmlns:f=&quot;jakarta.faces.core&quot;&gt;
+
+&lt;ui:composition template=&quot;/WEB-INF/templates/template.xhtml&quot;&gt;
+    
+    &lt;ui:define name=&quot;title&quot;&gt;Client List&lt;/ui:define&gt;
+    
+    &lt;ui:define name=&quot;content&quot;&gt;
+        &lt;h2&gt;Clients&lt;/h2&gt;
+        
+        &lt;h:form&gt;
+            &lt;h:dataTable value=&quot;#{clientBean.clients}&quot; var=&quot;client&quot;
+                        styleClass=&quot;data-table&quot;&gt;
+                &lt;h:column&gt;
+                    &lt;f:facet name=&quot;header&quot;&gt;ID&lt;/f:facet&gt;
+                    #{client.id}
+                &lt;/h:column&gt;
+                &lt;h:column&gt;
+                    &lt;f:facet name=&quot;header&quot;&gt;Name&lt;/f:facet&gt;
+                    #{client.name}
+                &lt;/h:column&gt;
+                &lt;h:column&gt;
+                    &lt;f:facet name=&quot;header&quot;&gt;Email&lt;/f:facet&gt;
+                    #{client.email}
+                &lt;/h:column&gt;
+                &lt;h:column&gt;
+                    &lt;f:facet name=&quot;header&quot;&gt;Actions&lt;/f:facet&gt;
+                    &lt;h:commandButton value=&quot;Edit&quot; 
+                                    action=&quot;#{clientBean.edit(client.id)}&quot;/&gt;
+                    &lt;h:commandButton value=&quot;Delete&quot; 
+                                    action=&quot;#{clientBean.delete(client.id)}&quot;/&gt;
+                &lt;/h:column&gt;
+            &lt;/h:dataTable&gt;
+        &lt;/h:form&gt;
+    &lt;/ui:define&gt;
+    
+&lt;/ui:composition&gt;
+&lt;/html&gt;</code></pre>
+
+<span class="slide-counter">18 / 71</span>
+<div class="slide-nav">
+  <a href="#slide-17">&#8592; Previous</a>
+  <span class="slide-info">Slide 18 / 71 &nbsp;&middot;&nbsp; Lecture 2B: JavaServer Faces (JSF)</span>
+  <a href="#slide-19">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-19" class="slide slide--section">
+<h1>JSF Components</h1>
+
+<span class="slide-counter">19 / 71</span>
+<div class="slide-nav">
+  <a href="#slide-18">&#8592; Previous</a>
+  <span class="slide-info">Slide 19 / 71 &nbsp;&middot;&nbsp; Lecture 2B: JavaServer Faces (JSF)</span>
+  <a href="#slide-20">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-20" class="slide">
+<h2>Core Components</h2>
+<h3>Input Components</h3>
+<pre class="dark"><span class="lang-badge">xhtml</span>
+<code>
+&lt;h:inputText value=&quot;#{bean.name}&quot; required=&quot;true&quot;/&gt;
+
+
+&lt;h:inputSecret value=&quot;#{bean.password}&quot;/&gt;
+
+
+&lt;h:inputTextarea value=&quot;#{bean.description}&quot; rows=&quot;5&quot; cols=&quot;40&quot;/&gt;
+
+
+&lt;h:selectBooleanCheckbox value=&quot;#{bean.accepted}&quot;/&gt;
+
+
+&lt;h:selectOneRadio value=&quot;#{bean.gender}&quot;&gt;
+    &lt;f:selectItem itemValue=&quot;M&quot; itemLabel=&quot;Male&quot;/&gt;
+    &lt;f:selectItem itemValue=&quot;F&quot; itemLabel=&quot;Female&quot;/&gt;
+&lt;/h:selectOneRadio&gt;
+
+
+&lt;h:selectOneMenu value=&quot;#{bean.country}&quot;&gt;
+    &lt;f:selectItems value=&quot;#{bean.countries}&quot;/&gt;
+&lt;/h:selectOneMenu&gt;
+
+
+&lt;h:selectManyCheckbox value=&quot;#{bean.interests}&quot;&gt;
+    &lt;f:selectItems value=&quot;#{bean.availableInterests}&quot;/&gt;
+&lt;/h:selectManyCheckbox&gt;</code></pre>
+
+<span class="slide-counter">20 / 71</span>
+<div class="slide-nav">
+  <a href="#slide-19">&#8592; Previous</a>
+  <span class="slide-info">Slide 20 / 71 &nbsp;&middot;&nbsp; Lecture 2B: JavaServer Faces (JSF)</span>
+  <a href="#slide-21">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-21" class="slide">
+<h2>Output and Command Components</h2>
+<pre class="dark"><span class="lang-badge">xhtml</span>
+<code>
+&lt;h:outputText value=&quot;#{bean.message}&quot;/&gt;
+
+
+&lt;h:outputLabel value=&quot;Name:&quot; for=&quot;nameInput&quot;/&gt;
+
+
+&lt;h:outputLink value=&quot;http://example.com&quot;&gt;
+    &lt;h:outputText value=&quot;Visit Example&quot;/&gt;
+&lt;/h:outputLink&gt;
+
+
+&lt;h:commandButton value=&quot;Save&quot; action=&quot;#{bean.save}&quot;/&gt;
+
+
+&lt;h:commandLink value=&quot;Delete&quot; action=&quot;#{bean.delete}&quot;/&gt;
+
+
+&lt;h:button value=&quot;Cancel&quot; outcome=&quot;index&quot;/&gt;
+
+
+&lt;h:link value=&quot;Back&quot; outcome=&quot;client-list&quot;/&gt;</code></pre>
+
+<span class="slide-counter">21 / 71</span>
+<div class="slide-nav">
+  <a href="#slide-20">&#8592; Previous</a>
+  <span class="slide-info">Slide 21 / 71 &nbsp;&middot;&nbsp; Lecture 2B: JavaServer Faces (JSF)</span>
+  <a href="#slide-22">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-22" class="slide">
+<h2>Layout Components</h2>
+<pre class="dark"><span class="lang-badge">xhtml</span>
+<code>
+&lt;h:panelGrid columns=&quot;2&quot; styleClass=&quot;form-grid&quot;&gt;
+    &lt;h:outputLabel value=&quot;Name:&quot;/&gt;
+    &lt;h:inputText value=&quot;#{bean.name}&quot;/&gt;
+    
+    &lt;h:outputLabel value=&quot;Email:&quot;/&gt;
+    &lt;h:inputText value=&quot;#{bean.email}&quot;/&gt;
+&lt;/h:panelGrid&gt;
+
+
+&lt;h:panelGroup layout=&quot;block&quot; styleClass=&quot;form-section&quot;&gt;
+    &lt;h:outputText value=&quot;Personal Information&quot;/&gt;
+    
+&lt;/h:panelGroup&gt;
+
+
+&lt;h:dataTable value=&quot;#{bean.items}&quot; var=&quot;item&quot;&gt;
+    &lt;h:column&gt;
+        &lt;f:facet name=&quot;header&quot;&gt;Name&lt;/f:facet&gt;
+        #{item.name}
+    &lt;/h:column&gt;
+&lt;/h:dataTable&gt;
+
+
+&lt;ui:repeat value=&quot;#{bean.items}&quot; var=&quot;item&quot;&gt;
+    &lt;div&gt;#{item.name}&lt;/div&gt;
+&lt;/ui:repeat&gt;</code></pre>
+
+<span class="slide-counter">22 / 71</span>
+<div class="slide-nav">
+  <a href="#slide-21">&#8592; Previous</a>
+  <span class="slide-info">Slide 22 / 71 &nbsp;&middot;&nbsp; Lecture 2B: JavaServer Faces (JSF)</span>
+  <a href="#slide-23">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-23" class="slide slide--section">
+<h1>Validation and Conversion</h1>
+
+<span class="slide-counter">23 / 71</span>
+<div class="slide-nav">
+  <a href="#slide-22">&#8592; Previous</a>
+  <span class="slide-info">Slide 23 / 71 &nbsp;&middot;&nbsp; Lecture 2B: JavaServer Faces (JSF)</span>
+  <a href="#slide-24">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-24" class="slide">
+<h2>Built-in Validators</h2>
+<pre class="dark"><span class="lang-badge">xhtml</span>
+<code>
+&lt;h:inputText value=&quot;#{bean.name}&quot; required=&quot;true&quot;
+             requiredMessage=&quot;Name is required&quot;/&gt;
+
+
+&lt;h:inputText value=&quot;#{bean.username}&quot;&gt;
+    &lt;f:validateLength minimum=&quot;3&quot; maximum=&quot;20&quot;/&gt;
+&lt;/h:inputText&gt;
+
+
+&lt;h:inputText value=&quot;#{bean.age}&quot;&gt;
+    &lt;f:validateLongRange minimum=&quot;18&quot; maximum=&quot;100&quot;/&gt;
+&lt;/h:inputText&gt;
+
+
+&lt;h:inputText value=&quot;#{bean.email}&quot;&gt;
+    &lt;f:validateRegex pattern=&quot;[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}&quot;/&gt;
+&lt;/h:inputText&gt;
+
+
+&lt;h:inputText value=&quot;#{bean.client.email}&quot;/&gt;</code></pre>
+
+<span class="slide-counter">24 / 71</span>
+<div class="slide-nav">
+  <a href="#slide-23">&#8592; Previous</a>
+  <span class="slide-info">Slide 24 / 71 &nbsp;&middot;&nbsp; Lecture 2B: JavaServer Faces (JSF)</span>
+  <a href="#slide-25">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-25" class="slide">
+<h2>Custom Validator</h2>
+<p><strong>Validator class:</strong></p>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>@FacesValidator(&quot;emailValidator&quot;)
+public class EmailValidator implements Validator&lt;String&gt; {
+    
+    private static final Pattern EMAIL_PATTERN = 
+        Pattern.compile(&quot;^[A-Za-z0-9+_.-]+@(.+)$&quot;);
+    
+    @Override
+    public void validate(FacesContext context, UIComponent component, 
+                        String value) throws ValidatorException {
+        if (value == null || value.isEmpty()) {
+            return; // Use required=&quot;true&quot; for required validation
+        }
+        
+        if (!EMAIL_PATTERN.matcher(value).matches()) {
+            FacesMessage msg = new FacesMessage(
+                &quot;Invalid email format&quot;,
+                &quot;Please enter a valid email address&quot;);
+            msg.setSeverity(FacesMessage.SEVERITY_ERROR);
+            throw new ValidatorException(msg);
+        }
+    }
+}</code></pre>
+<p><strong>Usage:</strong></p>
+<pre class="dark"><span class="lang-badge">xhtml</span>
+<code>&lt;h:inputText value=&quot;#{bean.email}&quot;&gt;
+    &lt;f:validator validatorId=&quot;emailValidator&quot;/&gt;
+&lt;/h:inputText&gt;</code></pre>
+
+<span class="slide-counter">25 / 71</span>
+<div class="slide-nav">
+  <a href="#slide-24">&#8592; Previous</a>
+  <span class="slide-info">Slide 25 / 71 &nbsp;&middot;&nbsp; Lecture 2B: JavaServer Faces (JSF)</span>
+  <a href="#slide-26">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-26" class="slide">
+<h2>Converters</h2>
+<p><strong>Built-in converters:</strong></p>
+<pre class="dark"><span class="lang-badge">xhtml</span>
+<code>
+&lt;h:outputText value=&quot;#{bean.price}&quot;&gt;
+    &lt;f:convertNumber type=&quot;currency&quot; currencySymbol=&quot;€&quot;/&gt;
+&lt;/h:outputText&gt;
+
+
+&lt;h:outputText value=&quot;#{bean.birthDate}&quot;&gt;
+    &lt;f:convertDateTime pattern=&quot;dd/MM/yyyy&quot;/&gt;
+&lt;/h:outputText&gt;
+
+
+&lt;h:inputText value=&quot;#{bean.amount}&quot;&gt;
+    &lt;f:convertNumber minFractionDigits=&quot;2&quot; maxFractionDigits=&quot;2&quot;/&gt;
+&lt;/h:inputText&gt;</code></pre>
+
+<span class="slide-counter">26 / 71</span>
+<div class="slide-nav">
+  <a href="#slide-25">&#8592; Previous</a>
+  <span class="slide-info">Slide 26 / 71 &nbsp;&middot;&nbsp; Lecture 2B: JavaServer Faces (JSF)</span>
+  <a href="#slide-27">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-27" class="slide">
+<h2>Custom Converter</h2>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>@FacesConverter(value = &quot;clientConverter&quot;, managed = true)
+public class ClientConverter implements Converter&lt;Client&gt; {
+    
+    @Inject
+    private ClientService clientService;
+    
+    @Override
+    public Client getAsObject(FacesContext context, UIComponent component, 
+                             String value) {
+        if (value == null || value.isEmpty()) {
+            return null;
+        }
+        try {
+            Long id = Long.parseLong(value);
+            return clientService.findById(id);
+        } catch (NumberFormatException e) {
+            throw new ConverterException(
+                new FacesMessage(&quot;Invalid client ID&quot;));
+        }
+    }
+    
+    @Override
+    public String getAsString(FacesContext context, UIComponent component, 
+                             Client client) {
+        if (client == null) {
+            return &quot;&quot;;
+        }
+        return String.valueOf(client.getId());
+    }
+}</code></pre>
+
+<span class="slide-counter">27 / 71</span>
+<div class="slide-nav">
+  <a href="#slide-26">&#8592; Previous</a>
+  <span class="slide-info">Slide 27 / 71 &nbsp;&middot;&nbsp; Lecture 2B: JavaServer Faces (JSF)</span>
+  <a href="#slide-28">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-28" class="slide slide--section">
+<h1>AJAX with JSF</h1>
+
+<span class="slide-counter">28 / 71</span>
+<div class="slide-nav">
+  <a href="#slide-27">&#8592; Previous</a>
+  <span class="slide-info">Slide 28 / 71 &nbsp;&middot;&nbsp; Lecture 2B: JavaServer Faces (JSF)</span>
+  <a href="#slide-29">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-29" class="slide">
+<h2>AJAX Support</h2>
+<p><strong>JSF provides built-in AJAX</strong> through <code><f:ajax></code> tag</p>
+<h3>Benefits</h3>
+<ul>
+<li><strong>Partial page updates</strong>: Update only specific components</li>
+<li><strong>Reduced bandwidth</strong>: Send/receive only necessary data</li>
+<li><strong>Better UX</strong>: No full page refresh</li>
+<li><strong>Easy to use</strong>: Declarative approach</li>
+<li><strong>Automatic</strong>: Handles JavaScript complexity</li>
+</ul>
+
+<span class="slide-counter">29 / 71</span>
+<div class="slide-nav">
+  <a href="#slide-28">&#8592; Previous</a>
+  <span class="slide-info">Slide 29 / 71 &nbsp;&middot;&nbsp; Lecture 2B: JavaServer Faces (JSF)</span>
+  <a href="#slide-30">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-30" class="slide">
+<h2 data-en="Basic AJAX Example" data-fr="Basic AJAX Exemple">Basic AJAX Example</h2>
+<pre class="dark"><span class="lang-badge">xhtml</span>
+<code>&lt;h:form&gt;
+    
+    &lt;h:inputText value=&quot;#{bean.searchTerm}&quot;&gt;
+        &lt;f:ajax event=&quot;keyup&quot; 
+                listener=&quot;#{bean.search}&quot; 
+                render=&quot;results&quot;/&gt;
+    &lt;/h:inputText&gt;
+    
+    
+    &lt;h:panelGroup id=&quot;results&quot;&gt;
+        &lt;h:dataTable value=&quot;#{bean.searchResults}&quot; var=&quot;result&quot;&gt;
+            &lt;h:column&gt;
+                #{result.name}
+            &lt;/h:column&gt;
+        &lt;/h:dataTable&gt;
+    &lt;/h:panelGroup&gt;
+    
+    
+    &lt;h:commandButton value=&quot;Load More&quot; action=&quot;#{bean.loadMore}&quot;&gt;
+        &lt;f:ajax execute=&quot;@form&quot; render=&quot;results&quot;/&gt;
+    &lt;/h:commandButton&gt;
+&lt;/h:form&gt;</code></pre>
+
+<span class="slide-counter">30 / 71</span>
+<div class="slide-nav">
+  <a href="#slide-29">&#8592; Previous</a>
+  <span class="slide-info">Slide 30 / 71 &nbsp;&middot;&nbsp; Lecture 2B: JavaServer Faces (JSF)</span>
+  <a href="#slide-31">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-31" class="slide">
+<h2>AJAX Attributes</h2>
+<table class="slide-table"><thead><tr><th>Attribute</th><th>Description</th><th>Example</th></tr></thead><tbody>
+<tr><td><strong>event</strong></td><td>JavaScript event</td><td><code>keyup</code>, <code>change</code>, <code>click</code></td></tr>
+<tr><td><strong>execute</strong></td><td>Components to process</td><td><code>@form</code>, <code>@this</code>, <code>componentId</code></td></tr>
+<tr><td><strong>render</strong></td><td>Components to update</td><td><code>@form</code>, <code>@this</code>, <code>componentId</code></td></tr>
+<tr><td><strong>listener</strong></td><td>Method to invoke</td><td><code>#{bean.method}</code></td></tr>
+<tr><td><strong>onevent</strong></td><td>JavaScript callback</td><td><code>handleAjaxEvent</code></td></tr>
+<tr><td><strong>onerror</strong></td><td>Error handler</td><td><code>handleAjaxError</code></td></tr>
+</tbody></table>
+<p><strong>Special keywords:</strong></p>
+<ul>
+<li><code>@this</code>: Current component</li>
+<li><code>@form</code>: Enclosing form</li>
+<li><code>@all</code>: Entire page</li>
+<li><code>@none</code>: Nothing</li>
+</ul>
+
+<span class="slide-counter">31 / 71</span>
+<div class="slide-nav">
+  <a href="#slide-30">&#8592; Previous</a>
+  <span class="slide-info">Slide 31 / 71 &nbsp;&middot;&nbsp; Lecture 2B: JavaServer Faces (JSF)</span>
+  <a href="#slide-32">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-32" class="slide">
+<h2 data-en="Advanced AJAX Example" data-fr="Avancé AJAX Exemple">Advanced AJAX Example</h2>
+<pre class="dark"><span class="lang-badge">xhtml</span>
+<code>&lt;h:form id=&quot;clientForm&quot;&gt;
+    &lt;h:panelGrid columns=&quot;2&quot;&gt;
+        &lt;h:outputLabel value=&quot;Country:&quot;/&gt;
+        &lt;h:selectOneMenu value=&quot;#{bean.selectedCountry}&quot;&gt;
+            &lt;f:selectItems value=&quot;#{bean.countries}&quot;/&gt;
+            &lt;f:ajax event=&quot;change&quot; 
+                    listener=&quot;#{bean.loadCities}&quot;
+                    render=&quot;cityMenu&quot;/&gt;
+        &lt;/h:selectOneMenu&gt;
+        
+        &lt;h:outputLabel value=&quot;City:&quot;/&gt;
+        &lt;h:selectOneMenu id=&quot;cityMenu&quot; value=&quot;#{bean.selectedCity}&quot;&gt;
+            &lt;f:selectItems value=&quot;#{bean.cities}&quot;/&gt;
+        &lt;/h:selectOneMenu&gt;
+    &lt;/h:panelGrid&gt;
+    
+    &lt;h:commandButton value=&quot;Save&quot; action=&quot;#{bean.save}&quot;&gt;
+        &lt;f:ajax execute=&quot;@form&quot; 
+                render=&quot;@form messages&quot;
+                onevent=&quot;handleSave&quot;/&gt;
+    &lt;/h:commandButton&gt;
+    
+    &lt;h:messages id=&quot;messages&quot;/&gt;
+&lt;/h:form&gt;
+
+&lt;script&gt;
+function handleSave(data) {
+    var status = data.status;
+    if (status === &quot;success&quot;) {
+        console.log(&quot;Save completed successfully&quot;);
+    }
+}
+&lt;/script&gt;</code></pre>
+
+<span class="slide-counter">32 / 71</span>
+<div class="slide-nav">
+  <a href="#slide-31">&#8592; Previous</a>
+  <span class="slide-info">Slide 32 / 71 &nbsp;&middot;&nbsp; Lecture 2B: JavaServer Faces (JSF)</span>
+  <a href="#slide-33">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-33" class="slide slide--section">
+<h1>Navigation</h1>
+
+<span class="slide-counter">33 / 71</span>
+<div class="slide-nav">
+  <a href="#slide-32">&#8592; Previous</a>
+  <span class="slide-info">Slide 33 / 71 &nbsp;&middot;&nbsp; Lecture 2B: JavaServer Faces (JSF)</span>
+  <a href="#slide-34">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-34" class="slide">
+<h2>Navigation Rules</h2>
+<h3>Implicit Navigation</h3>
+<p><strong>Return outcome from action method:</strong></p>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>@Named
+@RequestScoped
+public class ClientBean {
+    
+    public String save() {
+        // Save logic
+        return &quot;client-list&quot;; // Navigate to client-list.xhtml
+    }
+    
+    public String cancel() {
+        return &quot;index?faces-redirect=true&quot;; // Redirect
+    }
+    
+    public String edit() {
+        return &quot;client-form?faces-redirect=true&amp;includeViewParams=true&quot;;
+    }
+}</code></pre>
+<p><strong>In Facelets:</strong></p>
+<pre class="dark"><span class="lang-badge">xhtml</span>
+<code>&lt;h:commandButton value=&quot;Save&quot; action=&quot;#{clientBean.save}&quot;/&gt;
+&lt;h:button value=&quot;Cancel&quot; outcome=&quot;index&quot;/&gt;</code></pre>
+
+<span class="slide-counter">34 / 71</span>
+<div class="slide-nav">
+  <a href="#slide-33">&#8592; Previous</a>
+  <span class="slide-info">Slide 34 / 71 &nbsp;&middot;&nbsp; Lecture 2B: JavaServer Faces (JSF)</span>
+  <a href="#slide-35">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-35" class="slide">
+<h2>Navigation Modes</h2>
+<h3>1. <strong>Forward</strong> (default)</h3>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>return &quot;client-list&quot;; // Forward to client-list.xhtml</code></pre>
+<ul>
+<li>Server-side forward</li>
+<li>URL doesn't change</li>
+<li>Faster</li>
+<li>Can't bookmark</li>
+</ul>
+<h3>2. <strong>Redirect</strong></h3>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>return &quot;client-list?faces-redirect=true&quot;;</code></pre>
+<ul>
+<li>HTTP redirect</li>
+<li>URL changes</li>
+<li>Can bookmark</li>
+<li>Prevents double-submit</li>
+</ul>
+<h3>3. <strong>With Parameters</strong></h3>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>return &quot;client-details?faces-redirect=true&amp;id=&quot; + clientId;</code></pre>
+
+<span class="slide-counter">35 / 71</span>
+<div class="slide-nav">
+  <a href="#slide-34">&#8592; Previous</a>
+  <span class="slide-info">Slide 35 / 71 &nbsp;&middot;&nbsp; Lecture 2B: JavaServer Faces (JSF)</span>
+  <a href="#slide-36">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-36" class="slide">
+<h2>View Parameters</h2>
+<p><strong>Passing parameters between pages:</strong></p>
+<p><strong>Source page:</strong></p>
+<pre class="dark"><span class="lang-badge">xhtml</span>
+<code>&lt;h:commandButton value=&quot;Edit&quot; 
+                action=&quot;#{clientBean.edit}&quot;&gt;
+    &lt;f:param name=&quot;id&quot; value=&quot;#{client.id}&quot;/&gt;
+&lt;/h:commandButton&gt;</code></pre>
+<p><strong>Target page:</strong></p>
+<pre class="dark"><span class="lang-badge">xhtml</span>
+<code>&lt;f:metadata&gt;
+    &lt;f:viewParam name=&quot;id&quot; value=&quot;#{clientBean.clientId}&quot;/&gt;
+    &lt;f:viewAction action=&quot;#{clientBean.load}&quot;/&gt;
+&lt;/f:metadata&gt;</code></pre>
+<p><strong>Backing bean:</strong></p>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>@Named
+@ViewScoped
+public class ClientBean implements Serializable {
+    private Long clientId;
+    private Client client;
+    
+    public void load() {
+        if (clientId != null) {
+            client = clientService.findById(clientId);
+        }
+    }
+    
+    // Getters and setters
+}</code></pre>
+<h2>Explicit Navigation Rules</h2>
+<p data-en="<strong>Navigation rules</strong> in <code>faces-config.xml</code> provide centralized navigation configuration" data-fr="Navigation rules in faces-config.xml provide centralized navigation Configuration"><strong>Navigation rules</strong> in <code>faces-config.xml</code> provide centralized navigation configuration</p>
+<h3 data-en="Why Use Navigation Rules?" data-fr="Pourquoi Navigation Rules?">Why Use Navigation Rules?</h3>
+<ul>
+<li>✅ <strong>Centralization</strong>: All navigation logic in one place</li>
+<li>✅ <strong>Abstraction</strong>: Change view paths without touching code</li>
+<li>✅ <strong>Maintainability</strong>: Easier to manage complex navigation</li>
+<li>✅ <strong>Flexibility</strong>: Conditional navigation based on outcomes</li>
+</ul>
+
+<span class="slide-counter">36 / 71</span>
+<div class="slide-nav">
+  <a href="#slide-35">&#8592; Previous</a>
+  <span class="slide-info">Slide 36 / 71 &nbsp;&middot;&nbsp; Lecture 2B: JavaServer Faces (JSF)</span>
+  <a href="#slide-37">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-37" class="slide">
+<h2>Navigation Rule Structure</h2>
+<pre class="dark"><span class="lang-badge">xml</span>
+<code>&lt;navigation-rule&gt;
+    &lt;from-view-id&gt;*&lt;/from-view-id&gt;  
+    &lt;navigation-case&gt;
+        &lt;from-outcome&gt;client-list&lt;/from-outcome&gt;  
+        &lt;to-view-id&gt;/views/client-list.xhtml&lt;/to-view-id&gt;  
+        &lt;redirect/&gt;  
+    &lt;/navigation-case&gt;
+&lt;/navigation-rule&gt;</code></pre>
+<h3>Key Elements</h3>
+<table class="slide-table"><thead><tr><th>Element</th><th>Purpose</th></tr></thead><tbody>
+<tr><td><code><from-view-id></code></td><td>Source page (use <code>*</code> for all pages)</td></tr>
+<tr><td><code><from-outcome></code></td><td>Value returned by backing bean method</td></tr>
+<tr><td><code><to-view-id></code></td><td>Path to target XHTML file</td></tr>
+<tr><td><code><redirect/></code></td><td>Forces HTTP redirect (changes URL)</td></tr>
+</tbody></table>
+
+<span class="slide-counter">37 / 71</span>
+<div class="slide-nav">
+  <a href="#slide-36">&#8592; Previous</a>
+  <span class="slide-info">Slide 37 / 71 &nbsp;&middot;&nbsp; Lecture 2B: JavaServer Faces (JSF)</span>
+  <a href="#slide-38">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-38" class="slide">
+<h2 data-en="Navigation Flow Example" data-fr="Navigation Flow Exemple">Navigation Flow Example</h2>
+<h3>1. Backing Bean Returns Outcome</h3>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>@Named
+@ViewScoped
+public class ClientBean implements Serializable {
+    
+    public String save() {
+        clientService.save(client);
+        return &quot;client-list?faces-redirect=true&quot;;  // ← Returns outcome
+    }
+    
+    public String edit() {
+        client = clientService.findById(selectedClientId);
+        return &quot;client-form?faces-redirect=true&quot;;  // ← Returns outcome
+    }
+}</code></pre>
+
+<span class="slide-counter">38 / 71</span>
+<div class="slide-nav">
+  <a href="#slide-37">&#8592; Previous</a>
+  <span class="slide-info">Slide 38 / 71 &nbsp;&middot;&nbsp; Lecture 2B: JavaServer Faces (JSF)</span>
+  <a href="#slide-39">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-39" class="slide">
+<h2 data-en="Navigation Flow Example (cont.)" data-fr="Navigation Flow Exemple (cont.)">Navigation Flow Example (cont.)</h2>
+<h3>2. JSF Finds Matching Navigation Rule</h3>
+<pre class="dark"><span class="lang-badge">xml</span>
+<code>&lt;navigation-rule&gt;
+    &lt;from-view-id&gt;*&lt;/from-view-id&gt;
+    &lt;navigation-case&gt;
+        &lt;from-outcome&gt;client-list&lt;/from-outcome&gt;  
+        &lt;to-view-id&gt;/views/client-list.xhtml&lt;/to-view-id&gt;
+        &lt;redirect/&gt;
+    &lt;/navigation-case&gt;
+    &lt;navigation-case&gt;
+        &lt;from-outcome&gt;client-form&lt;/from-outcome&gt;  
+        &lt;to-view-id&gt;/views/client-form.xhtml&lt;/to-view-id&gt;
+        &lt;redirect/&gt;
+    &lt;/navigation-case&gt;
+&lt;/navigation-rule&gt;</code></pre>
+<h3>3. JSF Navigates to Target Page</h3>
+<ul>
+<li>Loads <code>/views/client-list.xhtml</code> or <code>/views/client-form.xhtml</code></li>
+<li>With <code><redirect/></code>: URL changes in browser</li>
+<li>Without <code><redirect/></code>: Server-side forward (URL stays same)</li>
+</ul>
+
+<span class="slide-counter">39 / 71</span>
+<div class="slide-nav">
+  <a href="#slide-38">&#8592; Previous</a>
+  <span class="slide-info">Slide 39 / 71 &nbsp;&middot;&nbsp; Lecture 2B: JavaServer Faces (JSF)</span>
+  <a href="#slide-40">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-40" class="slide">
+<h2>Multiple Outcome Variants</h2>
+<p><strong>Support both short and full path outcomes:</strong></p>
+<pre class="dark"><span class="lang-badge">xml</span>
+<code>&lt;navigation-rule&gt;
+    &lt;from-view-id&gt;*&lt;/from-view-id&gt;
+    
+    
+    &lt;navigation-case&gt;
+        &lt;from-outcome&gt;client-list&lt;/from-outcome&gt;
+        &lt;to-view-id&gt;/views/client-list.xhtml&lt;/to-view-id&gt;
+        &lt;redirect/&gt;
+    &lt;/navigation-case&gt;
+    
+    
+    &lt;navigation-case&gt;
+        &lt;from-outcome&gt;/views/client-list&lt;/from-outcome&gt;
+        &lt;to-view-id&gt;/views/client-list.xhtml&lt;/to-view-id&gt;
+        &lt;redirect/&gt;
+    &lt;/navigation-case&gt;
+&lt;/navigation-rule&gt;</code></pre>
+<p><strong>Allows flexible usage:</strong></p>
+<ul>
+<li><code>return "client-list?faces-redirect=true";</code></li>
+<li><code>return "/views/client-list?faces-redirect=true";</code></li>
+<li><code><h:link outcome="/views/client-list" /></code></li>
+</ul>
+
+<span class="slide-counter">40 / 71</span>
+<div class="slide-nav">
+  <a href="#slide-39">&#8592; Previous</a>
+  <span class="slide-info">Slide 40 / 71 &nbsp;&middot;&nbsp; Lecture 2B: JavaServer Faces (JSF)</span>
+  <a href="#slide-41">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-41" class="slide">
+<h2>Redirect vs Forward</h2>
+<h3>With <code><redirect/></code></h3>
+<pre class="dark"><span class="lang-badge">xml</span>
+<code>&lt;navigation-case&gt;
+    &lt;from-outcome&gt;success&lt;/from-outcome&gt;
+    &lt;to-view-id&gt;/views/success.xhtml&lt;/to-view-id&gt;
+    &lt;redirect/&gt;  
+&lt;/navigation-case&gt;</code></pre>
+<ul>
+<li>✅ URL changes in browser</li>
+<li>✅ Can bookmark result page</li>
+<li>✅ Prevents double-submit (POST-Redirect-GET pattern)</li>
+<li>❌ Slightly slower (extra HTTP round-trip)</li>
+</ul>
+<h3>Without <code><redirect/></code></h3>
+<pre class="dark"><span class="lang-badge">xml</span>
+<code>&lt;navigation-case&gt;
+    &lt;from-outcome&gt;success&lt;/from-outcome&gt;
+    &lt;to-view-id&gt;/views/success.xhtml&lt;/to-view-id&gt;
+    
+&lt;/navigation-case&gt;</code></pre>
+<ul>
+<li>✅ Faster (no extra HTTP request)</li>
+<li>✅ Request scope preserved</li>
+<li>❌ URL doesn't change</li>
+<li>❌ Can't bookmark</li>
+<li>❌ Browser refresh resubmits form</li>
+</ul>
+
+<span class="slide-counter">41 / 71</span>
+<div class="slide-nav">
+  <a href="#slide-40">&#8592; Previous</a>
+  <span class="slide-info">Slide 41 / 71 &nbsp;&middot;&nbsp; Lecture 2B: JavaServer Faces (JSF)</span>
+  <a href="#slide-42">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-42" class="slide">
+<h2>Conditional Navigation</h2>
+<p><strong>Navigate to different pages based on outcome:</strong></p>
+<pre class="dark"><span class="lang-badge">xml</span>
+<code>&lt;navigation-rule&gt;
+    &lt;from-view-id&gt;/login.xhtml&lt;/from-view-id&gt;
+    
+    &lt;navigation-case&gt;
+        &lt;from-outcome&gt;success&lt;/from-outcome&gt;
+        &lt;to-view-id&gt;/dashboard.xhtml&lt;/to-view-id&gt;
+        &lt;redirect/&gt;
+    &lt;/navigation-case&gt;
+    
+    &lt;navigation-case&gt;
+        &lt;from-outcome&gt;failure&lt;/from-outcome&gt;
+        &lt;to-view-id&gt;/login.xhtml&lt;/to-view-id&gt;
+    &lt;/navigation-case&gt;
+    
+    &lt;navigation-case&gt;
+        &lt;from-outcome&gt;admin&lt;/from-outcome&gt;
+        &lt;to-view-id&gt;/admin/dashboard.xhtml&lt;/to-view-id&gt;
+        &lt;redirect/&gt;
+    &lt;/navigation-case&gt;
+&lt;/navigation-rule&gt;</code></pre>
+
+<span class="slide-counter">42 / 71</span>
+<div class="slide-nav">
+  <a href="#slide-41">&#8592; Previous</a>
+  <span class="slide-info">Slide 42 / 71 &nbsp;&middot;&nbsp; Lecture 2B: JavaServer Faces (JSF)</span>
+  <a href="#slide-43">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-43" class="slide">
+<h2>Implicit vs Explicit Navigation</h2>
+<h3>Implicit Navigation (Modern Approach)</h3>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>// Return direct path - no navigation rules needed
+return &quot;/views/client-list.xhtml?faces-redirect=true&quot;;</code></pre>
+<p><strong>Pros:</strong></p>
+<ul>
+<li>✅ Simpler for small applications</li>
+<li data-en="✅ No XML configuration needed" data-fr="✅ No XML Configuration needed">✅ No XML configuration needed</li>
+<li>✅ Clear and direct</li>
+</ul>
+<p><strong>Cons:</strong></p>
+<ul>
+<li>❌ Paths scattered in code</li>
+<li>❌ Harder to refactor</li>
+<li>❌ Less flexible</li>
+</ul>
+
+<span class="slide-counter">43 / 71</span>
+<div class="slide-nav">
+  <a href="#slide-42">&#8592; Previous</a>
+  <span class="slide-info">Slide 43 / 71 &nbsp;&middot;&nbsp; Lecture 2B: JavaServer Faces (JSF)</span>
+  <a href="#slide-44">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-44" class="slide">
+<h2>Implicit vs Explicit Navigation (cont.)</h2>
+<h3>Explicit Navigation (Enterprise Approach)</h3>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>// Return logical outcome - navigation rules handle the rest
+return &quot;client-list?faces-redirect=true&quot;;</code></pre>
+<pre class="dark"><span class="lang-badge">xml</span>
+<code>&lt;navigation-case&gt;
+    &lt;from-outcome&gt;client-list&lt;/from-outcome&gt;
+    &lt;to-view-id&gt;/views/client-list.xhtml&lt;/to-view-id&gt;
+    &lt;redirect/&gt;
+&lt;/navigation-case&gt;</code></pre>
+<p><strong>Pros:</strong></p>
+<ul>
+<li data-en="✅ Centralized configuration" data-fr="✅ Centralized Configuration">✅ Centralized configuration</li>
+<li>✅ Easy to refactor (change XML, not code)</li>
+<li>✅ Better for large applications</li>
+<li>✅ Supports complex navigation logic</li>
+</ul>
+<p><strong>Cons:</strong></p>
+<ul>
+<li data-en="❌ Extra XML configuration" data-fr="❌ Extra XML Configuration">❌ Extra XML configuration</li>
+<li>❌ Indirection (outcome → rule → view)</li>
+</ul>
+
+<span class="slide-counter">44 / 71</span>
+<div class="slide-nav">
+  <a href="#slide-43">&#8592; Previous</a>
+  <span class="slide-info">Slide 44 / 71 &nbsp;&middot;&nbsp; Lecture 2B: JavaServer Faces (JSF)</span>
+  <a href="#slide-45">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-45" class="slide">
+<h2 data-en="Best Practices" data-fr="Bonnes pratiques">Best Practices</h2>
+<h3>1. Use Wildcards for Global Rules</h3>
+<pre class="dark"><span class="lang-badge">xml</span>
+<code>&lt;navigation-rule&gt;
+    &lt;from-view-id&gt;*&lt;/from-view-id&gt;  
+    
+&lt;/navigation-rule&gt;</code></pre>
+<h3>2. Always Use Redirect for POST Operations</h3>
+<pre class="dark"><span class="lang-badge">xml</span>
+<code>&lt;navigation-case&gt;
+    &lt;from-outcome&gt;save-success&lt;/from-outcome&gt;
+    &lt;to-view-id&gt;/views/list.xhtml&lt;/to-view-id&gt;
+    &lt;redirect/&gt;  
+&lt;/navigation-case&gt;</code></pre>
+<h3>3. Group Related Navigation Rules</h3>
+<pre class="dark"><span class="lang-badge">xml</span>
+<code>
+&lt;navigation-rule&gt;
+    &lt;from-view-id&gt;*&lt;/from-view-id&gt;
+    &lt;navigation-case&gt;
+        &lt;from-outcome&gt;client-list&lt;/from-outcome&gt;
+        &lt;to-view-id&gt;/views/client-list.xhtml&lt;/to-view-id&gt;
+        &lt;redirect/&gt;
+    &lt;/navigation-case&gt;
+    &lt;navigation-case&gt;
+        &lt;from-outcome&gt;client-form&lt;/from-outcome&gt;
+        &lt;to-view-id&gt;/views/client-form.xhtml&lt;/to-view-id&gt;
+        &lt;redirect/&gt;
+    &lt;/navigation-case&gt;
+&lt;/navigation-rule&gt;</code></pre>
+
+<span class="slide-counter">45 / 71</span>
+<div class="slide-nav">
+  <a href="#slide-44">&#8592; Previous</a>
+  <span class="slide-info">Slide 45 / 71 &nbsp;&middot;&nbsp; Lecture 2B: JavaServer Faces (JSF)</span>
+  <a href="#slide-46">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-46" class="slide">
+
+<span class="slide-counter">46 / 71</span>
+<div class="slide-nav">
+  <a href="#slide-45">&#8592; Previous</a>
+  <span class="slide-info">Slide 46 / 71 &nbsp;&middot;&nbsp; Lecture 2B: JavaServer Faces (JSF)</span>
+  <a href="#slide-47">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-47" class="slide slide--section">
+<h1>Composite Components</h1>
+
+<span class="slide-counter">47 / 71</span>
+<div class="slide-nav">
+  <a href="#slide-46">&#8592; Previous</a>
+  <span class="slide-info">Slide 47 / 71 &nbsp;&middot;&nbsp; Lecture 2B: JavaServer Faces (JSF)</span>
+  <a href="#slide-48">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-48" class="slide">
+<h2>Creating Reusable Components</h2>
+<p><strong>Composite components</strong> allow you to create custom, reusable UI components</p>
+<h3>Benefits</h3>
+<ul>
+<li><strong>Reusability</strong>: Use across multiple pages</li>
+<li><strong>Encapsulation</strong>: Hide complexity</li>
+<li><strong>Maintainability</strong>: Change once, update everywhere</li>
+<li><strong>Consistency</strong>: Uniform look and feel</li>
+</ul>
+
+<span class="slide-counter">48 / 71</span>
+<div class="slide-nav">
+  <a href="#slide-47">&#8592; Previous</a>
+  <span class="slide-info">Slide 48 / 71 &nbsp;&middot;&nbsp; Lecture 2B: JavaServer Faces (JSF)</span>
+  <a href="#slide-49">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-49" class="slide">
+<h2 data-en="Composite Component Example" data-fr="Composite Component Exemple">Composite Component Example</h2>
+<p><strong>Component definition</strong> (<code>/resources/components/addressInput.xhtml</code>):</p>
+<pre class="dark"><span class="lang-badge">xhtml</span>
+<code>&lt;!DOCTYPE html&gt;
+&lt;html xmlns=&quot;http://www.w3.org/1999/xhtml&quot;
+      xmlns:h=&quot;jakarta.faces.html&quot;
+      xmlns:f=&quot;jakarta.faces.core&quot;
+      xmlns:composite=&quot;jakarta.faces.composite&quot;&gt;
+
+&lt;composite:interface&gt;
+    &lt;composite:attribute name=&quot;address&quot; required=&quot;true&quot; 
+                        type=&quot;com.bank.model.Address&quot;/&gt;
+    &lt;composite:attribute name=&quot;required&quot; default=&quot;false&quot;/&gt;
+&lt;/composite:interface&gt;
+
+&lt;composite:implementation&gt;
+    &lt;h:panelGrid columns=&quot;2&quot; styleClass=&quot;address-input&quot;&gt;
+        &lt;h:outputLabel value=&quot;Street:&quot;/&gt;
+        &lt;h:inputText value=&quot;#{cc.attrs.address.street}&quot; 
+                    required=&quot;#{cc.attrs.required}&quot;/&gt;
+        
+        &lt;h:outputLabel value=&quot;City:&quot;/&gt;
+        &lt;h:inputText value=&quot;#{cc.attrs.address.city}&quot; 
+                    required=&quot;#{cc.attrs.required}&quot;/&gt;
+        
+        &lt;h:outputLabel value=&quot;Postal Code:&quot;/&gt;
+        &lt;h:inputText value=&quot;#{cc.attrs.address.postalCode}&quot; 
+                    required=&quot;#{cc.attrs.required}&quot;/&gt;
+        
+        &lt;h:outputLabel value=&quot;Country:&quot;/&gt;
+        &lt;h:selectOneMenu value=&quot;#{cc.attrs.address.country}&quot;&gt;
+            &lt;f:selectItems value=&quot;#{countryBean.countries}&quot;/&gt;
+        &lt;/h:selectOneMenu&gt;
+    &lt;/h:panelGrid&gt;
+&lt;/composite:implementation&gt;
+
+&lt;/html&gt;</code></pre>
+
+<span class="slide-counter">49 / 71</span>
+<div class="slide-nav">
+  <a href="#slide-48">&#8592; Previous</a>
+  <span class="slide-info">Slide 49 / 71 &nbsp;&middot;&nbsp; Lecture 2B: JavaServer Faces (JSF)</span>
+  <a href="#slide-50">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-50" class="slide">
+<h2 data-en="Using Composite Components" data-fr="Utilisation de Composite Components">Using Composite Components</h2>
+<pre class="dark"><span class="lang-badge">xhtml</span>
+<code>&lt;!DOCTYPE html&gt;
+&lt;html xmlns=&quot;http://www.w3.org/1999/xhtml&quot;
+      xmlns:h=&quot;jakarta.faces.html&quot;
+      xmlns:comp=&quot;jakarta.faces.composite/components&quot;&gt;
+
+&lt;h:head&gt;
+    &lt;title&gt;Client Form&lt;/title&gt;
+&lt;/h:head&gt;
+&lt;h:body&gt;
+    &lt;h:form&gt;
+        &lt;h:panelGrid columns=&quot;2&quot;&gt;
+            &lt;h:outputLabel value=&quot;Name:&quot;/&gt;
+            &lt;h:inputText value=&quot;#{clientBean.client.name}&quot;/&gt;
+            
+            &lt;h:outputLabel value=&quot;Email:&quot;/&gt;
+            &lt;h:inputText value=&quot;#{clientBean.client.email}&quot;/&gt;
+        &lt;/h:panelGrid&gt;
+        
+        &lt;h3&gt;Address&lt;/h3&gt;
+        
+        &lt;comp:addressInput address=&quot;#{clientBean.client.address}&quot; 
+                          required=&quot;true&quot;/&gt;
+        
+        &lt;h:commandButton value=&quot;Save&quot; action=&quot;#{clientBean.save}&quot;/&gt;
+    &lt;/h:form&gt;
+&lt;/h:body&gt;
+&lt;/html&gt;</code></pre>
+
+<span class="slide-counter">50 / 71</span>
+<div class="slide-nav">
+  <a href="#slide-49">&#8592; Previous</a>
+  <span class="slide-info">Slide 50 / 71 &nbsp;&middot;&nbsp; Lecture 2B: JavaServer Faces (JSF)</span>
+  <a href="#slide-51">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-51" class="slide slide--section">
+<h1>JSF vs JSP</h1>
+
+<span class="slide-counter">51 / 71</span>
+<div class="slide-nav">
+  <a href="#slide-50">&#8592; Previous</a>
+  <span class="slide-info">Slide 51 / 71 &nbsp;&middot;&nbsp; Lecture 2B: JavaServer Faces (JSF)</span>
+  <a href="#slide-52">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-52" class="slide">
+<h2 data-en="Comparison" data-fr="Comparaison">Comparison</h2>
+<table class="slide-table"><thead><tr><th>Aspect</th><th>JSP</th><th>JSF</th></tr></thead><tbody>
+<tr><td><strong>Paradigm</strong></td><td>Page-centric</td><td>Component-centric</td></tr>
+<tr><td><strong>State</strong></td><td>Stateless</td><td>Stateful</td></tr>
+<tr><td><strong>Components</strong></td><td>Basic tags</td><td>Rich components</td></tr>
+<tr><td><strong>Validation</strong></td><td>Manual</td><td>Built-in</td></tr>
+<tr><td><strong>AJAX</strong></td><td>Manual</td><td>Declarative</td></tr>
+<tr><td><strong>Templating</strong></td><td>Include/tag files</td><td>Facelets</td></tr>
+<tr><td><strong>Learning</strong></td><td>Easier</td><td>Steeper</td></tr>
+<tr><td><strong>Performance</strong></td><td>Faster</td><td>More overhead</td></tr>
+<tr><td><strong>Use Case</strong></td><td>Simple pages</td><td>Complex forms</td></tr>
+</tbody></table>
+
+<span class="slide-counter">52 / 71</span>
+<div class="slide-nav">
+  <a href="#slide-51">&#8592; Previous</a>
+  <span class="slide-info">Slide 52 / 71 &nbsp;&middot;&nbsp; Lecture 2B: JavaServer Faces (JSF)</span>
+  <a href="#slide-53">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-53" class="slide">
+<h2>When to Use Each</h2>
+<h3>Use JSP when:</h3>
+<ul>
+<li>Simple, read-only pages</li>
+<li>Performance is critical</li>
+<li>Minimal user interaction</li>
+<li>Quick prototypes</li>
+<li>Team familiar with JSP</li>
+</ul>
+<h3>Use JSF when:</h3>
+<ul>
+<li>Complex forms with validation</li>
+<li>Rich user interactions</li>
+<li>Component reusability needed</li>
+<li>AJAX-heavy applications</li>
+<li>Enterprise applications</li>
+<li data-en="Rapid development required" data-fr="Rapid Développement required">Rapid development required</li>
+</ul>
+
+<span class="slide-counter">53 / 71</span>
+<div class="slide-nav">
+  <a href="#slide-52">&#8592; Previous</a>
+  <span class="slide-info">Slide 53 / 71 &nbsp;&middot;&nbsp; Lecture 2B: JavaServer Faces (JSF)</span>
+  <a href="#slide-54">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-54" class="slide slide--section">
+<h1>PrimeFaces Introduction</h1>
+
+<span class="slide-counter">54 / 71</span>
+<div class="slide-nav">
+  <a href="#slide-53">&#8592; Previous</a>
+  <span class="slide-info">Slide 54 / 71 &nbsp;&middot;&nbsp; Lecture 2B: JavaServer Faces (JSF)</span>
+  <a href="#slide-55">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-55" class="slide">
+<h2 data-en="What is PrimeFaces?" data-fr="Qu'est-ce que PrimeFaces?">What is PrimeFaces?</h2>
+<p><strong>PrimeFaces</strong> is a popular JSF component library</p>
+<h3>Features</h3>
+<ul>
+<li><strong>100+ components</strong>: DataTable, Charts, Calendar, etc.</li>
+<li><strong>Themes</strong>: 30+ built-in themes</li>
+<li><strong>AJAX</strong>: Enhanced AJAX support</li>
+<li><strong>Mobile</strong>: Touch-optimized</li>
+<li data-en="<strong>Extensions</strong>: Advanced features" data-fr="Extensions: Avancé features"><strong>Extensions</strong>: Advanced features</li>
+<li><strong>Free</strong>: Open source</li>
+</ul>
+<h3>Adding PrimeFaces</h3>
+<pre class="dark"><span class="lang-badge">xml</span>
+<code>&lt;dependency&gt;
+    &lt;groupId&gt;org.primefaces&lt;/groupId&gt;
+    &lt;artifactId&gt;primefaces&lt;/artifactId&gt;
+    &lt;version&gt;13.0.0&lt;/version&gt;
+    &lt;classifier&gt;jakarta&lt;/classifier&gt;
+&lt;/dependency&gt;</code></pre>
+
+<span class="slide-counter">55 / 71</span>
+<div class="slide-nav">
+  <a href="#slide-54">&#8592; Previous</a>
+  <span class="slide-info">Slide 55 / 71 &nbsp;&middot;&nbsp; Lecture 2B: JavaServer Faces (JSF)</span>
+  <a href="#slide-56">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-56" class="slide">
+<h2 data-en="PrimeFaces Example" data-fr="PrimeFaces Exemple">PrimeFaces Example</h2>
+<pre class="dark"><span class="lang-badge">xhtml</span>
+<code>&lt;!DOCTYPE html&gt;
+&lt;html xmlns=&quot;http://www.w3.org/1999/xhtml&quot;
+      xmlns:h=&quot;jakarta.faces.html&quot;
+      xmlns:p=&quot;http://primefaces.org/ui&quot;&gt;
+
+&lt;h:head&gt;
+    &lt;title&gt;Client Management&lt;/title&gt;
+&lt;/h:head&gt;
+&lt;h:body&gt;
+    &lt;h:form&gt;
+        
+        &lt;p:dataTable value=&quot;#{clientBean.clients}&quot; var=&quot;client&quot;
+                    paginator=&quot;true&quot; rows=&quot;10&quot;
+                    selectionMode=&quot;single&quot; 
+                    selection=&quot;#{clientBean.selectedClient}&quot;&gt;
+            
+            &lt;p:column headerText=&quot;ID&quot; sortBy=&quot;#{client.id}&quot;&gt;
+                #{client.id}
+            &lt;/p:column&gt;
+            
+            &lt;p:column headerText=&quot;Name&quot; filterBy=&quot;#{client.name}&quot;&gt;
+                #{client.name}
+            &lt;/p:column&gt;
+            
+            &lt;p:column headerText=&quot;Email&quot;&gt;
+                #{client.email}
+            &lt;/p:column&gt;
+            
+            &lt;p:column headerText=&quot;Actions&quot;&gt;
+                &lt;p:commandButton value=&quot;Edit&quot; 
+                                action=&quot;#{clientBean.edit}&quot;
+                                update=&quot;@form&quot;/&gt;
+                &lt;p:commandButton value=&quot;Delete&quot; 
+                                action=&quot;#{clientBean.delete}&quot;
+                                update=&quot;@form&quot;/&gt;
+            &lt;/p:column&gt;
+        &lt;/p:dataTable&gt;
+        
+        
+        &lt;p:dialog header=&quot;Edit Client&quot; 
+                 widgetVar=&quot;editDialog&quot;
+                 modal=&quot;true&quot;&gt;
+            &lt;h:panelGrid columns=&quot;2&quot;&gt;
+                &lt;p:outputLabel value=&quot;Name:&quot;/&gt;
+                &lt;p:inputText value=&quot;#{clientBean.selectedClient.name}&quot;/&gt;
+                
+                &lt;p:outputLabel value=&quot;Email:&quot;/&gt;
+                &lt;p:inputText value=&quot;#{clientBean.selectedClient.email}&quot;/&gt;
+            &lt;/h:panelGrid&gt;
+            
+            &lt;p:commandButton value=&quot;Save&quot; 
+                            action=&quot;#{clientBean.save}&quot;
+                            oncomplete=&quot;PF('editDialog').hide()&quot;/&gt;
+        &lt;/p:dialog&gt;
+    &lt;/h:form&gt;
+&lt;/h:body&gt;
+&lt;/html&gt;</code></pre>
+
+<span class="slide-counter">56 / 71</span>
+<div class="slide-nav">
+  <a href="#slide-55">&#8592; Previous</a>
+  <span class="slide-info">Slide 56 / 71 &nbsp;&middot;&nbsp; Lecture 2B: JavaServer Faces (JSF)</span>
+  <a href="#slide-57">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-57" class="slide slide--section">
+<h1 data-en="Best Practices" data-fr="Bonnes pratiques">Best Practices</h1>
+
+<span class="slide-counter">57 / 71</span>
+<div class="slide-nav">
+  <a href="#slide-56">&#8592; Previous</a>
+  <span class="slide-info">Slide 57 / 71 &nbsp;&middot;&nbsp; Lecture 2B: JavaServer Faces (JSF)</span>
+  <a href="#slide-58">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-58" class="slide">
+<h2 data-en="JSF Best Practices" data-fr="JSF Bonnes pratiques">JSF Best Practices</h2>
+<h3>1. <strong>Use Appropriate Scopes</strong></h3>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>// ❌ Bad: Session scope for simple form
+@Named
+@SessionScoped
+public class ClientBean { }
+
+// ✅ Good: View scope for forms with AJAX
+@Named
+@ViewScoped
+public class ClientBean implements Serializable { }</code></pre>
+<h3>2. <strong>Implement Serializable</strong></h3>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>// ✅ All non-request scoped beans must be Serializable
+@Named
+@ViewScoped
+public class ClientBean implements Serializable {
+    private static final long serialVersionUID = 1L;
+}</code></pre>
+
+<span class="slide-counter">58 / 71</span>
+<div class="slide-nav">
+  <a href="#slide-57">&#8592; Previous</a>
+  <span class="slide-info">Slide 58 / 71 &nbsp;&middot;&nbsp; Lecture 2B: JavaServer Faces (JSF)</span>
+  <a href="#slide-59">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-59" class="slide">
+<h2 data-en="Best Practices (continued)" data-fr="Bonnes pratiques (continued)">Best Practices (continued)</h2>
+<h3>3. <strong>Use CDI, not JSF Managed Beans</strong></h3>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>// ❌ Old way (deprecated)
+@ManagedBean
+@ViewScoped
+public class ClientBean { }
+
+// ✅ Modern way
+@Named
+@ViewScoped
+public class ClientBean { }</code></pre>
+<h3>4. <strong>Avoid Business Logic in Beans</strong></h3>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>// ❌ Bad: Business logic in backing bean
+@Named
+public class ClientBean {
+    public void save() {
+        // Database operations here
+    }
+}
+
+// ✅ Good: Delegate to service
+@Named
+public class ClientBean {
+    @Inject
+    private ClientService service;
+    
+    public void save() {
+        service.save(client);
+    }
+}</code></pre>
+
+<span class="slide-counter">59 / 71</span>
+<div class="slide-nav">
+  <a href="#slide-58">&#8592; Previous</a>
+  <span class="slide-info">Slide 59 / 71 &nbsp;&middot;&nbsp; Lecture 2B: JavaServer Faces (JSF)</span>
+  <a href="#slide-60">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-60" class="slide">
+<h2 data-en="Best Practices (continued)" data-fr="Bonnes pratiques (continued)">Best Practices (continued)</h2>
+<h3>5. <strong>Use Faces Redirect</strong></h3>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>// ❌ Bad: Forward (URL doesn't change)
+return &quot;client-list&quot;;
+
+// ✅ Good: Redirect (clean URL, prevents double-submit)
+return &quot;client-list?faces-redirect=true&quot;;</code></pre>
+<h3>6. <strong>Handle Exceptions Properly</strong></h3>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>public String save() {
+    try {
+        clientService.save(client);
+        addMessage(&quot;Success&quot;, &quot;Client saved&quot;);
+        return &quot;client-list?faces-redirect=true&quot;;
+    } catch (Exception e) {
+        addErrorMessage(&quot;Error&quot;, e.getMessage());
+        return null; // Stay on same page
+    }
+}
+
+private void addMessage(String summary, String detail) {
+    FacesContext.getCurrentInstance().addMessage(null,
+        new FacesMessage(FacesMessage.SEVERITY_INFO, summary, detail));
+}</code></pre>
+
+<span class="slide-counter">60 / 71</span>
+<div class="slide-nav">
+  <a href="#slide-59">&#8592; Previous</a>
+  <span class="slide-info">Slide 60 / 71 &nbsp;&middot;&nbsp; Lecture 2B: JavaServer Faces (JSF)</span>
+  <a href="#slide-61">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-61" class="slide">
+<h2 data-en="Best Practices (continued)" data-fr="Bonnes pratiques (continued)">Best Practices (continued)</h2>
+<h3>7. <strong>Use Templates</strong></h3>
+<pre class="dark"><span class="lang-badge">xhtml</span>
+<code>
+&lt;ui:composition template=&quot;/WEB-INF/templates/main.xhtml&quot;&gt;
+    &lt;ui:define name=&quot;content&quot;&gt;
+        
+    &lt;/ui:define&gt;
+&lt;/ui:composition&gt;</code></pre>
+<h3>8. <strong>Optimize AJAX</strong></h3>
+<pre class="dark"><span class="lang-badge">xhtml</span>
+<code>
+&lt;f:ajax render=&quot;@form&quot;/&gt;
+
+
+&lt;f:ajax render=&quot;resultsPanel messagesPanel&quot;/&gt;</code></pre>
+<h3>9. <strong>Use Composite Components</strong></h3>
+<ul>
+<li>Create reusable components for common patterns</li>
+<li>Encapsulate complexity</li>
+<li>Maintain consistency</li>
+</ul>
+
+<span class="slide-counter">61 / 71</span>
+<div class="slide-nav">
+  <a href="#slide-60">&#8592; Previous</a>
+  <span class="slide-info">Slide 61 / 71 &nbsp;&middot;&nbsp; Lecture 2B: JavaServer Faces (JSF)</span>
+  <a href="#slide-62">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-62" class="slide slide--section">
+<h1>Configuration</h1>
+
+<span class="slide-counter">62 / 71</span>
+<div class="slide-nav">
+  <a href="#slide-61">&#8592; Previous</a>
+  <span class="slide-info">Slide 62 / 71 &nbsp;&middot;&nbsp; Lecture 2B: JavaServer Faces (JSF)</span>
+  <a href="#slide-63">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-63" class="slide">
+<h2>web.xml Configuration</h2>
+<pre class="dark"><span class="lang-badge">xml</span>
+<code>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
+&lt;web-app xmlns=&quot;https://jakarta.ee/xml/ns/jakartaee&quot;
+         xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot;
+         xsi:schemaLocation=&quot;https://jakarta.ee/xml/ns/jakartaee 
+                             https://jakarta.ee/xml/ns/jakartaee/web-app_6_0.xsd&quot;
+         version=&quot;6.0&quot;&gt;
+    
+    &lt;display-name&gt;Banking Application&lt;/display-name&gt;
+    
+    
+    &lt;servlet&gt;
+        &lt;servlet-name&gt;Faces Servlet&lt;/servlet-name&gt;
+        &lt;servlet-class&gt;jakarta.faces.webapp.FacesServlet&lt;/servlet-class&gt;
+        &lt;load-on-startup&gt;1&lt;/load-on-startup&gt;
+    &lt;/servlet&gt;
+    
+    &lt;servlet-mapping&gt;
+        &lt;servlet-name&gt;Faces Servlet&lt;/servlet-name&gt;
+        &lt;url-pattern&gt;*.xhtml&lt;/url-pattern&gt;
+    &lt;/servlet-mapping&gt;
+    
+    
+    &lt;welcome-file-list&gt;
+        &lt;welcome-file&gt;index.xhtml&lt;/welcome-file&gt;
+    &lt;/welcome-file-list&gt;
+    
+    
+    &lt;context-param&gt;
+        &lt;param-name&gt;jakarta.faces.PROJECT_STAGE&lt;/param-name&gt;
+        &lt;param-value&gt;Development&lt;/param-value&gt;
+    &lt;/context-param&gt;
+    
+    &lt;context-param&gt;
+        &lt;param-name&gt;jakarta.faces.FACELETS_SKIP_COMMENTS&lt;/param-name&gt;
+        &lt;param-value&gt;true&lt;/param-value&gt;
+    &lt;/context-param&gt;
+&lt;/web-app&gt;</code></pre>
+
+<span class="slide-counter">63 / 71</span>
+<div class="slide-nav">
+  <a href="#slide-62">&#8592; Previous</a>
+  <span class="slide-info">Slide 63 / 71 &nbsp;&middot;&nbsp; Lecture 2B: JavaServer Faces (JSF)</span>
+  <a href="#slide-64">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-64" class="slide">
+<h2>faces-config.xml (Optional)</h2>
+<pre class="dark"><span class="lang-badge">xml</span>
+<code>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
+&lt;faces-config xmlns=&quot;https://jakarta.ee/xml/ns/jakartaee&quot;
+              xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot;
+              xsi:schemaLocation=&quot;https://jakarta.ee/xml/ns/jakartaee 
+                                  https://jakarta.ee/xml/ns/jakartaee/web-facesconfig_4_0.xsd&quot;
+              version=&quot;4.0&quot;&gt;
+    
+    
+    &lt;application&gt;
+        &lt;locale-config&gt;
+            &lt;default-locale&gt;en&lt;/default-locale&gt;
+            &lt;supported-locale&gt;fr&lt;/supported-locale&gt;
+        &lt;/locale-config&gt;
+        
+        &lt;resource-bundle&gt;
+            &lt;base-name&gt;messages&lt;/base-name&gt;
+            &lt;var&gt;msg&lt;/var&gt;
+        &lt;/resource-bundle&gt;
+    &lt;/application&gt;
+    
+    
+    &lt;navigation-rule&gt;
+        &lt;from-view-id&gt;/client-form.xhtml&lt;/from-view-id&gt;
+        &lt;navigation-case&gt;
+            &lt;from-outcome&gt;success&lt;/from-outcome&gt;
+            &lt;to-view-id&gt;/client-list.xhtml&lt;/to-view-id&gt;
+            &lt;redirect/&gt;
+        &lt;/navigation-case&gt;
+    &lt;/navigation-rule&gt;
+    
+&lt;/faces-config&gt;</code></pre>
+
+<span class="slide-counter">64 / 71</span>
+<div class="slide-nav">
+  <a href="#slide-63">&#8592; Previous</a>
+  <span class="slide-info">Slide 64 / 71 &nbsp;&middot;&nbsp; Lecture 2B: JavaServer Faces (JSF)</span>
+  <a href="#slide-65">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-65" class="slide slide--section">
+<h1 data-en="Summary" data-fr="Résumé">Summary</h1>
+
+<span class="slide-counter">65 / 71</span>
+<div class="slide-nav">
+  <a href="#slide-64">&#8592; Previous</a>
+  <span class="slide-info">Slide 65 / 71 &nbsp;&middot;&nbsp; Lecture 2B: JavaServer Faces (JSF)</span>
+  <a href="#slide-66">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-66" class="slide">
+<h2 data-en="Key Takeaways" data-fr="Points clés">Key Takeaways</h2>
+<h3>JSF Fundamentals</h3>
+<ol>
+<li data-en="<strong>Component-based</strong> framework for building web UIs" data-fr="Component-based framework for Construction web UIs"><strong>Component-based</strong> framework for building web UIs</li>
+<li data-en="<strong>Six-phase lifecycle</strong> manages request processing" data-fr="Six-phase Cycle de vie manages request processing"><strong>Six-phase lifecycle</strong> manages request processing</li>
+<li><strong>Managed beans</strong> with CDI for backing logic</li>
+<li><strong>Facelets</strong> for templating and composition</li>
+<li><strong>Built-in validation</strong> and conversion</li>
+<li><strong>Declarative AJAX</strong> support</li>
+<li><strong>Navigation</strong> with implicit and explicit rules</li>
+</ol>
+<h3>When to Use JSF</h3>
+<ul>
+<li>Complex forms with validation</li>
+<li>Rich component libraries needed</li>
+<li>AJAX-heavy applications</li>
+<li>Enterprise applications</li>
+<li data-en="Rapid development" data-fr="Rapid Développement">Rapid development</li>
+</ul>
+
+<span class="slide-counter">66 / 71</span>
+<div class="slide-nav">
+  <a href="#slide-65">&#8592; Previous</a>
+  <span class="slide-info">Slide 66 / 71 &nbsp;&middot;&nbsp; Lecture 2B: JavaServer Faces (JSF)</span>
+  <a href="#slide-67">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-67" class="slide">
+<h2>Resources</h2>
+<h3>Official Documentation</h3>
+<ul>
+<li><strong>Jakarta Faces Specification</strong>: https://jakarta.ee/specifications/faces/</li>
+<li><strong>Jakarta EE Tutorial</strong>: https://eclipse-ee4j.github.io/jakartaee-tutorial/</li>
+<li><strong>PrimeFaces</strong>: https://www.primefaces.org/</li>
+</ul>
+<h3>Books</h3>
+<ul>
+<li>"The Definitive Guide to JSF in Jakarta EE 10" by Bauke Scholtz</li>
+<li>"Jakarta EE Cookbook" by Elder Moraes</li>
+</ul>
+<h3>Community</h3>
+<ul>
+<li><strong>Stack Overflow</strong>: Tag <code>jsf</code> and <code>jakarta-ee</code></li>
+<li><strong>GitHub</strong>: Jakarta Faces project</li>
+</ul>
+
+<span class="slide-counter">67 / 71</span>
+<div class="slide-nav">
+  <a href="#slide-66">&#8592; Previous</a>
+  <span class="slide-info">Slide 67 / 71 &nbsp;&middot;&nbsp; Lecture 2B: JavaServer Faces (JSF)</span>
+  <a href="#slide-68">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-68" class="slide">
+<h1>Lab 2B Preview</h1>
+<h2>JSF Client Management</h2>
+
+<span class="slide-counter">68 / 71</span>
+<div class="slide-nav">
+  <a href="#slide-67">&#8592; Previous</a>
+  <span class="slide-info">Slide 68 / 71 &nbsp;&middot;&nbsp; Lecture 2B: JavaServer Faces (JSF)</span>
+  <a href="#slide-69">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-69" class="slide">
+<h2 data-en="Lab Objectives" data-fr="Lab Objectifs">Lab Objectives</h2>
+<p>In <strong>Lab 2B</strong>, you will:</p>
+<ol>
+<li>Create JSF pages with Facelets templating</li>
+<li>Implement managed beans with appropriate scopes</li>
+<li>Use JSF validators and converters</li>
+<li>Implement AJAX functionality for search</li>
+<li>Create reusable composite components</li>
+<li>Apply JSF navigation patterns</li>
+<li>Build a complete CRUD interface with JSF</li>
+</ol>
+<p><strong>Duration:</strong> 3 hours</p>
+
+<span class="slide-counter">69 / 71</span>
+<div class="slide-nav">
+  <a href="#slide-68">&#8592; Previous</a>
+  <span class="slide-info">Slide 69 / 71 &nbsp;&middot;&nbsp; Lecture 2B: JavaServer Faces (JSF)</span>
+  <a href="#slide-70">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-70" class="slide slide--section">
+<h1>Questions?</h1>
+<p data-en="<strong>Next Lecture:</strong> Lecture 3 - JPA &amp; Database Integration" data-fr="Prochaine leçon: Lecture 3 - JPA & Intégration base de données"><strong>Next Lecture:</strong> Lecture 3 - JPA &amp; Database Integration</p>
+
+<span class="slide-counter">70 / 71</span>
+<div class="slide-nav">
+  <a href="#slide-69">&#8592; Previous</a>
+  <span class="slide-info">Slide 70 / 71 &nbsp;&middot;&nbsp; Lecture 2B: JavaServer Faces (JSF)</span>
+  <a href="#slide-71">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-71" class="slide">
+<h2>References</h2>
+<ol>
+<li>Jakarta Faces Specification 4.0</li>
+<li>Jakarta EE 10 Tutorial - Web Tier</li>
+<li>PrimeFaces User Guide</li>
+<li>"Core JavaServer Faces" by David Geary and Cay Horstmann</li>
+<li>Baeldung JSF Tutorials</li>
+<li>Oracle JSF Documentation (historical reference)</li>
+</ol>
+
+<span class="slide-counter">71 / 71</span>
+<div class="slide-nav">
+  <a href="#slide-70">&#8592; Previous</a>
+  <span class="slide-info">Slide 71 / 71 &nbsp;&middot;&nbsp; Lecture 2B: JavaServer Faces (JSF)</span>
+  <a class="disabled">Next &#8594;</a>
+</div>
+</section>
+    </div>
+  </main>
+</div>
+<footer class="site-footer">Made with IBM Bob &nbsp;&middot;&nbsp; &copy; 2026 Olivier Planson</footer>
+<script>
+/* ── EN/FR language toggle — global scope so buttons can call it ── */
+var _lang = localStorage.getItem('slide-lang') || 'en';
+function setLang(lang) {
+  _lang = lang;
+  localStorage.setItem('slide-lang', lang);
+  document.getElementById('btn-en').classList.toggle('active', lang === 'en');
+  document.getElementById('btn-fr').classList.toggle('active', lang === 'fr');
+  document.querySelectorAll('[data-en][data-fr]').forEach(function(el) {
+    el.innerHTML = lang === 'fr' ? el.getAttribute('data-fr') : el.getAttribute('data-en');
+  });
+}
+
+(function() {
+  /* ── Sidenav hover ── */
+  var nav     = document.getElementById('sidenav');
+  var navTrig = document.getElementById('sidenav-trigger');
+  var navTimer = null;
+  function navShow() { clearTimeout(navTimer); nav.classList.add('sidenav--open'); }
+  function navHide() { navTimer = setTimeout(function(){ nav.classList.remove('sidenav--open'); }, 300); }
+  navTrig.addEventListener('mouseenter', navShow);
+  navTrig.addEventListener('mouseleave', navHide);
+  nav.addEventListener('mouseenter', navShow);
+  nav.addEventListener('mouseleave', navHide);
+
+  /* ── Progress bar hover ── */
+  var pbWrap  = document.getElementById('pb-wrap');
+  var pbTrig  = document.getElementById('pb-trigger');
+  var pbTimer = null;
+  function pbShow() { clearTimeout(pbTimer); pbWrap.classList.add('pb-open'); }
+  function pbHide() { pbTimer = setTimeout(function(){ pbWrap.classList.remove('pb-open'); }, 400); }
+  pbTrig.addEventListener('mouseenter', pbShow);
+  pbTrig.addEventListener('mouseleave', pbHide);
+  pbWrap.addEventListener('mouseenter', pbShow);
+  pbWrap.addEventListener('mouseleave', pbHide);
+
+  /* ── Wire EN/FR buttons via addEventListener (no inline onclick) ── */
+  document.getElementById('btn-en').addEventListener('click', function() { setLang('en'); });
+  document.getElementById('btn-fr').addEventListener('click', function() { setLang('fr'); });
+
+  /* Apply stored preference on page load */
+  if (_lang === 'fr') setLang('fr');
+})();
+</script>
+</body>
+</html>

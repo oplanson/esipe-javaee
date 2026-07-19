@@ -1,0 +1,1884 @@
+<!-- © Copyright 2026 Olivier Planson. All rights reserved. Reproduction prohibited. Made with IBM Bob. -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>ESIPE — Lecture 5B: JMS Enterprise Messaging — Slides</title>
+  <link rel="stylesheet" href="../assets/slide.css"/>
+  <style>
+/* suppress static .current when a slide is targeted */
+body:has(.slide:target) .progress-bar a.current { background: var(--bg); color: var(--muted); border-color: var(--border); }
+body:has(#slide-1:target) .progress-bar a[href="#slide-1"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-2:target) .progress-bar a[href="#slide-2"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-3:target) .progress-bar a[href="#slide-3"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-4:target) .progress-bar a[href="#slide-4"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-5:target) .progress-bar a[href="#slide-5"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-6:target) .progress-bar a[href="#slide-6"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-7:target) .progress-bar a[href="#slide-7"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-8:target) .progress-bar a[href="#slide-8"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-9:target) .progress-bar a[href="#slide-9"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-10:target) .progress-bar a[href="#slide-10"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-11:target) .progress-bar a[href="#slide-11"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-12:target) .progress-bar a[href="#slide-12"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-13:target) .progress-bar a[href="#slide-13"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-14:target) .progress-bar a[href="#slide-14"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-15:target) .progress-bar a[href="#slide-15"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-16:target) .progress-bar a[href="#slide-16"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-17:target) .progress-bar a[href="#slide-17"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-18:target) .progress-bar a[href="#slide-18"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-19:target) .progress-bar a[href="#slide-19"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-20:target) .progress-bar a[href="#slide-20"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-21:target) .progress-bar a[href="#slide-21"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-22:target) .progress-bar a[href="#slide-22"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-23:target) .progress-bar a[href="#slide-23"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-24:target) .progress-bar a[href="#slide-24"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-25:target) .progress-bar a[href="#slide-25"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-26:target) .progress-bar a[href="#slide-26"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-27:target) .progress-bar a[href="#slide-27"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-28:target) .progress-bar a[href="#slide-28"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-29:target) .progress-bar a[href="#slide-29"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-30:target) .progress-bar a[href="#slide-30"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-31:target) .progress-bar a[href="#slide-31"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-32:target) .progress-bar a[href="#slide-32"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-33:target) .progress-bar a[href="#slide-33"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-34:target) .progress-bar a[href="#slide-34"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-35:target) .progress-bar a[href="#slide-35"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-36:target) .progress-bar a[href="#slide-36"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-37:target) .progress-bar a[href="#slide-37"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-38:target) .progress-bar a[href="#slide-38"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-39:target) .progress-bar a[href="#slide-39"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-40:target) .progress-bar a[href="#slide-40"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-41:target) .progress-bar a[href="#slide-41"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-42:target) .progress-bar a[href="#slide-42"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-43:target) .progress-bar a[href="#slide-43"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-44:target) .progress-bar a[href="#slide-44"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-45:target) .progress-bar a[href="#slide-45"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-46:target) .progress-bar a[href="#slide-46"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-47:target) .progress-bar a[href="#slide-47"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-48:target) .progress-bar a[href="#slide-48"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-49:target) .progress-bar a[href="#slide-49"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-50:target) .progress-bar a[href="#slide-50"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-51:target) .progress-bar a[href="#slide-51"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-52:target) .progress-bar a[href="#slide-52"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-53:target) .progress-bar a[href="#slide-53"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-54:target) .progress-bar a[href="#slide-54"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-55:target) .progress-bar a[href="#slide-55"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-56:target) .progress-bar a[href="#slide-56"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-57:target) .progress-bar a[href="#slide-57"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-58:target) .progress-bar a[href="#slide-58"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-59:target) .progress-bar a[href="#slide-59"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-60:target) .progress-bar a[href="#slide-60"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-61:target) .progress-bar a[href="#slide-61"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-62:target) .progress-bar a[href="#slide-62"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-63:target) .progress-bar a[href="#slide-63"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-64:target) .progress-bar a[href="#slide-64"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+  </style>
+</head>
+<body>
+<header class="site-header">
+  <a class="brand" href="../index.html">ESIPE<span>Jakarta EE &amp; Microservices</span></a>
+  <!-- EN/FR language toggle -->
+  <div class="lang-toggle" id="lang-toggle">
+    <button id="btn-en" class="active">EN</button>
+    <span class="sep">|</span>
+    <button id="btn-fr">FR</button>
+  </div>
+  <a class="back-link" href="../index.html">&#8592; All Courses</a>
+</header>
+<!-- Thin trigger strip at top: hover to reveal progress bar -->
+<div class="progress-bar-trigger" id="pb-trigger"></div>
+<!-- Progress bar — hidden by default, revealed on hover -->
+<div class="progress-bar-wrap" id="pb-wrap">
+  <div class="progress-bar">
+    <a href="#slide-1" class="current">1</a>
+      <a href="#slide-2">2</a>
+      <a href="#slide-3">3</a>
+      <a href="#slide-4">4</a>
+      <a href="#slide-5">5</a>
+      <a href="#slide-6">6</a>
+      <a href="#slide-7">7</a>
+      <a href="#slide-8">8</a>
+      <a href="#slide-9">9</a>
+      <a href="#slide-10">10</a>
+      <a href="#slide-11">11</a>
+      <a href="#slide-12">12</a>
+      <a href="#slide-13">13</a>
+      <a href="#slide-14">14</a>
+      <a href="#slide-15">15</a>
+      <a href="#slide-16">16</a>
+      <a href="#slide-17">17</a>
+      <a href="#slide-18">18</a>
+      <a href="#slide-19">19</a>
+      <a href="#slide-20">20</a>
+      <a href="#slide-21">21</a>
+      <a href="#slide-22">22</a>
+      <a href="#slide-23">23</a>
+      <a href="#slide-24">24</a>
+      <a href="#slide-25">25</a>
+      <a href="#slide-26">26</a>
+      <a href="#slide-27">27</a>
+      <a href="#slide-28">28</a>
+      <a href="#slide-29">29</a>
+      <a href="#slide-30">30</a>
+      <a href="#slide-31">31</a>
+      <a href="#slide-32">32</a>
+      <a href="#slide-33">33</a>
+      <a href="#slide-34">34</a>
+      <a href="#slide-35">35</a>
+      <a href="#slide-36">36</a>
+      <a href="#slide-37">37</a>
+      <a href="#slide-38">38</a>
+      <a href="#slide-39">39</a>
+      <a href="#slide-40">40</a>
+      <a href="#slide-41">41</a>
+      <a href="#slide-42">42</a>
+      <a href="#slide-43">43</a>
+      <a href="#slide-44">44</a>
+      <a href="#slide-45">45</a>
+      <a href="#slide-46">46</a>
+      <a href="#slide-47">47</a>
+      <a href="#slide-48">48</a>
+      <a href="#slide-49">49</a>
+      <a href="#slide-50">50</a>
+      <a href="#slide-51">51</a>
+      <a href="#slide-52">52</a>
+      <a href="#slide-53">53</a>
+      <a href="#slide-54">54</a>
+      <a href="#slide-55">55</a>
+      <a href="#slide-56">56</a>
+      <a href="#slide-57">57</a>
+      <a href="#slide-58">58</a>
+      <a href="#slide-59">59</a>
+      <a href="#slide-60">60</a>
+      <a href="#slide-61">61</a>
+      <a href="#slide-62">62</a>
+      <a href="#slide-63">63</a>
+      <a href="#slide-64">64</a>
+  </div>
+</div>
+<!-- Thin trigger strip at left: hover to reveal sidenav -->
+<div class="sidenav-trigger" id="sidenav-trigger"></div>
+<div class="shell">
+  <nav class="sidenav" id="sidenav">
+    <div class="sidenav-section">Course outline</div>
+    <a href="#slide-2" class="active">Course Outline</a>
+    <a href="#slide-5">Messaging Concepts</a>
+    <a href="#slide-6">Use Cases for Messaging</a>
+    <a href="#slide-7">Messaging vs Direct Calls</a>
+    <a href="#slide-8">Benefits of Messaging</a>
+    <a href="#slide-9">Java Message Service (JMS)</a>
+    <a href="#slide-11">JMS Architecture Components</a>
+    <a href="#slide-12">JMS Components</a>
+    <a href="#slide-13">JMS Components (continued)</a>
+    <a href="#slide-14">JMS API Hierarchy</a>
+    <a href="#slide-15">JMS 2.0+ Simplified API</a>
+    <a href="#slide-16">JMS in Jakarta EE</a>
+    <a href="#slide-17">Messaging Models</a>
+    <a href="#slide-18">Point-to-Point (Queue)</a>
+    <a href="#slide-20">Publish-Subscribe (Topic)</a>
+    <a href="#slide-22">JMS Messages</a>
+    <a href="#slide-23">Message Structure</a>
+    <a href="#slide-24">Message Types</a>
+    <a href="#slide-26">Message Properties</a>
+    <a href="#slide-27">Message Selectors</a>
+    <a href="#slide-28">Sending and Receiving Messages</a>
+    <a href="#slide-29">Message Producer</a>
+    <a href="#slide-30">Producer Configuration</a>
+    <a href="#slide-31">Message Consumer (Asynchronous)</a>
+    <a href="#slide-32">Request-Reply Pattern</a>
+    <a href="#slide-33">Asynchronous Message Processing</a>
+    <a href="#slide-35">Basic MDB Structure</a>
+    <a href="#slide-36">MDB Activation Configuration</a>
+    <a href="#slide-39">MDB for Topic (Pub/Sub)</a>
+    <a href="#slide-40">Reliable Message Processing</a>
+    <a href="#slide-42">CMT with MDB (Default)</a>
+    <a href="#slide-43">Transaction Rollback Behavior</a>
+    <a href="#slide-44">Handling Redelivery</a>
+    <a href="#slide-45">Transactional Message Sending</a>
+    <a href="#slide-46">Handling Failed Messages</a>
+    <a href="#slide-47">Dead Letter Queue (DLQ)</a>
+    <a href="#slide-48">DLQ Handler MDB</a>
+    <a href="#slide-50">Poison Message Detection</a>
+    <a href="#slide-51">Optimizing JMS Applications</a>
+    <a href="#slide-53">Performance Optimization</a>
+    <a href="#slide-54">Monitoring and Troubleshooting</a>
+    <a href="#slide-55">Liberty JMS Configuration</a>
+    <a href="#slide-59">💡 Common Pitfalls to Avoid</a>
+    <a href="#slide-61">🙋 Questions &amp; Discussion</a>
+    <hr>
+    <div class="sidenav-section">Navigation</div>
+    <a href="index.html">&#9675; Overview</a>
+  </nav>
+  <main class="content">
+    <div class="slide-wrapper">
+<section id="slide-1" class="slide slide--title">
+<h1 data-en="Lecture 5B: JMS Enterprise Messaging" data-fr="Lecture 5B: JMS Messagerie d'entreprise">Lecture 5B: JMS Enterprise Messaging</h1>
+<p><strong>Jakarta EE 10 &amp; MicroProfile Course</strong></p>
+<p data-en="ESIPE - Advanced Java Enterprise Development" data-fr="ESIPE - Avancé Java Enterprise Développement">ESIPE - Advanced Java Enterprise Development</p>
+
+<span class="slide-counter">1 / 64</span>
+<div class="slide-nav">
+  <a class="disabled">&#8592; Previous</a>
+  <span class="slide-info">Slide 1 / 64 &nbsp;&middot;&nbsp; Lecture 5B: JMS Enterprise Messaging</span>
+  <a href="#slide-2">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-2" class="slide">
+<h2>Course Outline</h2>
+<ol>
+<li data-en="<strong>Introduction to Enterprise Messaging</strong> (15 min)" data-fr="Introduction à Messagerie d'entreprise (15 min)"><strong>Introduction to Enterprise Messaging</strong> (15 min)</li>
+<li><strong>JMS Architecture</strong> (20 min)</li>
+<li><strong>Point-to-Point vs Publish-Subscribe</strong> (25 min)</li>
+<li><strong>Message Types and Properties</strong> (20 min)</li>
+<li><strong>Message Producers and Consumers</strong> (30 min)</li>
+<li><strong>Message-Driven Beans (MDB)</strong> (30 min)</li>
+<li data-en="<strong>Transaction Management with JMS</strong> (25 min)" data-fr="Gestion des transactions with JMS (25 min)"><strong>Transaction Management with JMS</strong> (25 min)</li>
+<li data-en="<strong>Error Handling and Dead Letter Queues</strong> (20 min)" data-fr="Gestion des erreurs and Dead Letter Queues (20 min)"><strong>Error Handling and Dead Letter Queues</strong> (20 min)</li>
+<li data-en="<strong>Best Practices and Performance</strong> (15 min)" data-fr="Bonnes pratiques and Performance (15 min)"><strong>Best Practices and Performance</strong> (15 min)</li>
+</ol>
+<p><strong>Total Duration:</strong> ~3 hours 20 minutes</p>
+
+<span class="slide-counter">2 / 64</span>
+<div class="slide-nav">
+  <a href="#slide-1">&#8592; Previous</a>
+  <span class="slide-info">Slide 2 / 64 &nbsp;&middot;&nbsp; Lecture 5B: JMS Enterprise Messaging</span>
+  <a href="#slide-3">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-3" class="slide slide--section">
+<h1 data-en="Part 1: Introduction to Enterprise Messaging" data-fr="Part 1: Introduction à Messagerie d'entreprise">Part 1: Introduction to Enterprise Messaging</h1>
+<h2 data-en="What is Enterprise Messaging?" data-fr="Qu'est-ce que Messagerie d'entreprise?">What is Enterprise Messaging?</h2>
+
+<span class="slide-counter">3 / 64</span>
+<div class="slide-nav">
+  <a href="#slide-2">&#8592; Previous</a>
+  <span class="slide-info">Slide 3 / 64 &nbsp;&middot;&nbsp; Lecture 5B: JMS Enterprise Messaging</span>
+  <a href="#slide-4">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-4" class="slide">
+<h2 data-en="Why Messaging?" data-fr="Pourquoi Messaging?">Why Messaging?</h2>
+<p><strong>Traditional Synchronous Communication:</strong></p>
+<ul>
+<li>Direct method calls</li>
+<li>Tight coupling</li>
+<li>Blocking operations</li>
+<li>Immediate response required</li>
+</ul>
+<p><strong>Asynchronous Messaging:</strong></p>
+<ul>
+<li>Decoupled components</li>
+<li>Non-blocking operations</li>
+<li>Reliable delivery</li>
+<li data-en="Scalability and resilience" data-fr="Scalabilité and resilience">Scalability and resilience</li>
+</ul>
+
+<span class="slide-counter">4 / 64</span>
+<div class="slide-nav">
+  <a href="#slide-3">&#8592; Previous</a>
+  <span class="slide-info">Slide 4 / 64 &nbsp;&middot;&nbsp; Lecture 5B: JMS Enterprise Messaging</span>
+  <a href="#slide-5">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-5" class="slide">
+<h2>Messaging Concepts</h2>
+<p><strong>Key Principles:</strong></p>
+<ol>
+<li><strong>Asynchronous Communication</strong></li>
+</ol>
+<ul>
+<li>Sender doesn't wait for receiver</li>
+<li>Fire-and-forget pattern</li>
+<li>Improved responsiveness</li>
+</ul>
+<ol>
+<li><strong>Loose Coupling</strong></li>
+</ol>
+<ul>
+<li>Components don't need to know each other</li>
+<li>Location transparency</li>
+<li>Technology independence</li>
+</ul>
+<ol>
+<li><strong>Reliability</strong></li>
+</ol>
+<ul>
+<li>Guaranteed delivery</li>
+<li>Message persistence</li>
+<li>Transaction support</li>
+</ul>
+
+<span class="slide-counter">5 / 64</span>
+<div class="slide-nav">
+  <a href="#slide-4">&#8592; Previous</a>
+  <span class="slide-info">Slide 5 / 64 &nbsp;&middot;&nbsp; Lecture 5B: JMS Enterprise Messaging</span>
+  <a href="#slide-6">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-6" class="slide">
+<h2>Use Cases for Messaging</h2>
+<p><strong>Common Scenarios:</strong></p>
+<ol>
+<li><strong>Event Notification</strong></li>
+</ol>
+<ul>
+<li>Order placed → Send confirmation email</li>
+<li>User registered → Welcome message</li>
+<li>Payment received → Update inventory</li>
+</ul>
+<ol>
+<li><strong>Workload Distribution</strong></li>
+</ol>
+<ul>
+<li>Image processing</li>
+<li>Report generation</li>
+<li>Batch operations</li>
+</ul>
+<ol>
+<li><strong>System Integration</strong></li>
+</ol>
+<ul>
+<li>Connect heterogeneous systems</li>
+<li>Legacy system integration</li>
+<li>Microservices communication</li>
+</ul>
+
+<span class="slide-counter">6 / 64</span>
+<div class="slide-nav">
+  <a href="#slide-5">&#8592; Previous</a>
+  <span class="slide-info">Slide 6 / 64 &nbsp;&middot;&nbsp; Lecture 5B: JMS Enterprise Messaging</span>
+  <a href="#slide-7">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-7" class="slide">
+<h2>Messaging vs Direct Calls</h2>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>// ❌ Synchronous - Tight Coupling
+public void processOrder(Order order) {
+    emailService.sendConfirmation(order);  // Blocks if email service is slow
+    inventoryService.updateStock(order);   // Blocks if inventory service is down
+    shippingService.scheduleDelivery(order); // Blocks if shipping service is busy
+}
+
+// ✅ Asynchronous - Loose Coupling
+public void processOrder(Order order) {
+    orderQueue.send(new OrderMessage(order)); // Non-blocking
+    // Continue processing immediately
+}</code></pre>
+
+<span class="slide-counter">7 / 64</span>
+<div class="slide-nav">
+  <a href="#slide-6">&#8592; Previous</a>
+  <span class="slide-info">Slide 7 / 64 &nbsp;&middot;&nbsp; Lecture 5B: JMS Enterprise Messaging</span>
+  <a href="#slide-8">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-8" class="slide">
+<h2>Benefits of Messaging</h2>
+<p><strong>Advantages:</strong></p>
+<ul>
+<li data-en="<strong>Scalability</strong>: Add more consumers to handle load" data-fr="Scalabilité: Add more consumers to handle load"><strong>Scalability</strong>: Add more consumers to handle load</li>
+<li><strong>Reliability</strong>: Messages persist until processed</li>
+<li><strong>Flexibility</strong>: Easy to add new consumers</li>
+<li><strong>Resilience</strong>: System continues if one component fails</li>
+<li><strong>Load Leveling</strong>: Smooth out traffic spikes</li>
+<li><strong>Temporal Decoupling</strong>: Sender and receiver don't need to be available simultaneously</li>
+</ul>
+
+<span class="slide-counter">8 / 64</span>
+<div class="slide-nav">
+  <a href="#slide-7">&#8592; Previous</a>
+  <span class="slide-info">Slide 8 / 64 &nbsp;&middot;&nbsp; Lecture 5B: JMS Enterprise Messaging</span>
+  <a href="#slide-9">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-9" class="slide slide--section">
+<h1>Part 2: JMS Architecture</h1>
+<h2>Java Message Service (JMS)</h2>
+
+<span class="slide-counter">9 / 64</span>
+<div class="slide-nav">
+  <a href="#slide-8">&#8592; Previous</a>
+  <span class="slide-info">Slide 9 / 64 &nbsp;&middot;&nbsp; Lecture 5B: JMS Enterprise Messaging</span>
+  <a href="#slide-10">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-10" class="slide">
+<h2 data-en="What is JMS?" data-fr="Qu'est-ce que JMS?">What is JMS?</h2>
+<p><strong>JMS (Java Message Service):</strong></p>
+<ul>
+<li>Standard Java API for messaging</li>
+<li>Part of Jakarta EE specification</li>
+<li>Vendor-neutral interface</li>
+<li>Supports multiple messaging providers</li>
+</ul>
+<p><strong>Current Version:</strong></p>
+<ul>
+<li>JMS 3.1 (Jakarta Messaging 3.1)</li>
+<li>Part of Jakarta EE 10</li>
+</ul>
+
+<span class="slide-counter">10 / 64</span>
+<div class="slide-nav">
+  <a href="#slide-9">&#8592; Previous</a>
+  <span class="slide-info">Slide 10 / 64 &nbsp;&middot;&nbsp; Lecture 5B: JMS Enterprise Messaging</span>
+  <a href="#slide-11">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-11" class="slide">
+<h2>JMS Architecture Components</h2>
+<p><img src="../../images/05b-jms-enterprise-messaging-diagram-1.png" alt="width:70%"></p>
+
+<span class="slide-counter">11 / 64</span>
+<div class="slide-nav">
+  <a href="#slide-10">&#8592; Previous</a>
+  <span class="slide-info">Slide 11 / 64 &nbsp;&middot;&nbsp; Lecture 5B: JMS Enterprise Messaging</span>
+  <a href="#slide-12">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-12" class="slide">
+<h2>JMS Components</h2>
+<p><strong>1. JMS Provider (Message Broker)</strong></p>
+<ul>
+<li>Implements JMS specification</li>
+<li>Manages destinations</li>
+<li>Routes messages</li>
+<li data-en="Examples: Open Liberty, ActiveMQ, IBM MQ" data-fr="Exemples: Open Liberty, ActiveMQ, IBM MQ">Examples: Open Liberty, ActiveMQ, IBM MQ</li>
+</ul>
+<p><strong>2. JMS Client</strong></p>
+<ul>
+<li>Application that sends/receives messages</li>
+<li>Uses JMS API</li>
+</ul>
+<p><strong>3. Messages</strong></p>
+<ul>
+<li>Data exchanged between clients</li>
+<li>Header + Properties + Body</li>
+</ul>
+
+<span class="slide-counter">12 / 64</span>
+<div class="slide-nav">
+  <a href="#slide-11">&#8592; Previous</a>
+  <span class="slide-info">Slide 12 / 64 &nbsp;&middot;&nbsp; Lecture 5B: JMS Enterprise Messaging</span>
+  <a href="#slide-13">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-13" class="slide">
+<h2>JMS Components (continued)</h2>
+<p><strong>4. Destinations</strong></p>
+<ul>
+<li><strong>Queue</strong>: Point-to-Point</li>
+<li><strong>Topic</strong>: Publish-Subscribe</li>
+</ul>
+<p><strong>5. Connection Factory</strong></p>
+<ul>
+<li>Creates connections to JMS provider</li>
+<li>Configured via JNDI</li>
+</ul>
+<p><strong>6. Connection</strong></p>
+<ul>
+<li>Active connection to JMS provider</li>
+<li>Created from ConnectionFactory</li>
+</ul>
+<p><strong>7. Session</strong></p>
+<ul>
+<li>Single-threaded context for sending/receiving</li>
+<li>Created from Connection</li>
+</ul>
+
+<span class="slide-counter">13 / 64</span>
+<div class="slide-nav">
+  <a href="#slide-12">&#8592; Previous</a>
+  <span class="slide-info">Slide 13 / 64 &nbsp;&middot;&nbsp; Lecture 5B: JMS Enterprise Messaging</span>
+  <a href="#slide-14">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-14" class="slide">
+<h2>JMS API Hierarchy</h2>
+<p><img src="../../images/05b-jms-enterprise-messaging-diagram-2.png" alt="width:70%"></p>
+
+<span class="slide-counter">14 / 64</span>
+<div class="slide-nav">
+  <a href="#slide-13">&#8592; Previous</a>
+  <span class="slide-info">Slide 14 / 64 &nbsp;&middot;&nbsp; Lecture 5B: JMS Enterprise Messaging</span>
+  <a href="#slide-15">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-15" class="slide">
+<h2>JMS 2.0+ Simplified API</h2>
+<p><strong>Traditional API (JMS 1.1):</strong></p>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>ConnectionFactory cf = ...;
+Connection connection = cf.createConnection();
+Session session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
+MessageProducer producer = session.createProducer(queue);
+TextMessage message = session.createTextMessage(&quot;Hello&quot;);
+producer.send(message);
+connection.close();</code></pre>
+<p><strong>Simplified API (JMS 2.0+):</strong></p>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>@Inject
+@JMSConnectionFactory(&quot;jms/connectionFactory&quot;)
+private JMSContext context;
+
+context.createProducer().send(queue, &quot;Hello&quot;);</code></pre>
+
+<span class="slide-counter">15 / 64</span>
+<div class="slide-nav">
+  <a href="#slide-14">&#8592; Previous</a>
+  <span class="slide-info">Slide 15 / 64 &nbsp;&middot;&nbsp; Lecture 5B: JMS Enterprise Messaging</span>
+  <a href="#slide-16">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-16" class="slide">
+<h2>JMS in Jakarta EE</h2>
+<p><strong>Integration Points:</strong></p>
+<ol>
+<li><strong>Resource Injection</strong></li>
+</ol>
+<ul>
+<li><code>@Inject JMSContext</code></li>
+<li><code>@Resource Queue</code></li>
+<li><code>@Resource Topic</code></li>
+</ul>
+<ol>
+<li><strong>Message-Driven Beans (MDB)</strong></li>
+</ol>
+<ul>
+<li>Automatic message consumption</li>
+<li data-en="Container-managed lifecycle" data-fr="Container-managed Cycle de vie">Container-managed lifecycle</li>
+<li>Transaction support</li>
+</ul>
+<ol>
+<li><strong>CDI Integration</strong></li>
+</ol>
+<ul>
+<li data-en="Dependency injection" data-fr="Injection de dépendances">Dependency injection</li>
+<li>Interceptors and decorators</li>
+</ul>
+
+<span class="slide-counter">16 / 64</span>
+<div class="slide-nav">
+  <a href="#slide-15">&#8592; Previous</a>
+  <span class="slide-info">Slide 16 / 64 &nbsp;&middot;&nbsp; Lecture 5B: JMS Enterprise Messaging</span>
+  <a href="#slide-17">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-17" class="slide slide--section">
+<h1>Part 3: Point-to-Point vs Publish-Subscribe</h1>
+<h2>Messaging Models</h2>
+
+<span class="slide-counter">17 / 64</span>
+<div class="slide-nav">
+  <a href="#slide-16">&#8592; Previous</a>
+  <span class="slide-info">Slide 17 / 64 &nbsp;&middot;&nbsp; Lecture 5B: JMS Enterprise Messaging</span>
+  <a href="#slide-18">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-18" class="slide">
+<h2>Point-to-Point (Queue)</h2>
+<p><strong>Characteristics:</strong></p>
+<ul>
+<li>One message → One consumer</li>
+<li>Message removed after consumption</li>
+<li>Load balancing across consumers</li>
+<li>Guaranteed delivery</li>
+</ul>
+<p><img src="../../images/05b-jms-enterprise-messaging-diagram-3.png" alt="width:70%"></p>
+<p><strong>Use Cases:</strong></p>
+<ul>
+<li>Task distribution</li>
+<li>Work queues</li>
+<li>Command processing</li>
+</ul>
+
+<span class="slide-counter">18 / 64</span>
+<div class="slide-nav">
+  <a href="#slide-17">&#8592; Previous</a>
+  <span class="slide-info">Slide 18 / 64 &nbsp;&middot;&nbsp; Lecture 5B: JMS Enterprise Messaging</span>
+  <a href="#slide-19">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-19" class="slide">
+<h2 data-en="Point-to-Point Example" data-fr="Point-to-Point Exemple">Point-to-Point Example</h2>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>// Producer
+@Inject
+@JMSConnectionFactory(&quot;jms/connectionFactory&quot;)
+private JMSContext context;
+
+@Resource(lookup = &quot;jms/orderQueue&quot;)
+private Queue orderQueue;
+
+public void sendOrder(Order order) {
+    context.createProducer().send(orderQueue, order);
+}
+
+// Consumer (MDB)
+@MessageDriven(activationConfig = {
+    @ActivationConfigProperty(propertyName = &quot;destinationType&quot;,
+                             propertyValue = &quot;jakarta.jms.Queue&quot;),
+    @ActivationConfigProperty(propertyName = &quot;destination&quot;,
+                             propertyValue = &quot;jms/orderQueue&quot;)
+})
+public class OrderProcessorMDB implements MessageListener {
+    public void onMessage(Message message) {
+        // Process order
+    }
+}</code></pre>
+
+<span class="slide-counter">19 / 64</span>
+<div class="slide-nav">
+  <a href="#slide-18">&#8592; Previous</a>
+  <span class="slide-info">Slide 19 / 64 &nbsp;&middot;&nbsp; Lecture 5B: JMS Enterprise Messaging</span>
+  <a href="#slide-20">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-20" class="slide">
+<h2>Publish-Subscribe (Topic)</h2>
+<p><strong>Characteristics:</strong></p>
+<ul>
+<li>One message → Multiple subscribers</li>
+<li>Message copied to all subscribers</li>
+<li>Broadcast pattern</li>
+<li>Optional durable subscriptions</li>
+</ul>
+<p><img src="../../images/05b-jms-enterprise-messaging-diagram-4.png" alt="width:70%"></p>
+<p><strong>Use Cases:</strong></p>
+<ul>
+<li>Event notifications</li>
+<li>News feeds</li>
+<li>System monitoring</li>
+</ul>
+
+<span class="slide-counter">20 / 64</span>
+<div class="slide-nav">
+  <a href="#slide-19">&#8592; Previous</a>
+  <span class="slide-info">Slide 20 / 64 &nbsp;&middot;&nbsp; Lecture 5B: JMS Enterprise Messaging</span>
+  <a href="#slide-21">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-21" class="slide">
+<h2 data-en="Queue vs Topic Comparison" data-fr="Queue vs Topic Comparaison">Queue vs Topic Comparison</h2>
+<table class="slide-table"><thead><tr><th>Feature</th><th>Queue (P2P)</th><th>Topic (Pub/Sub)</th></tr></thead><tbody>
+<tr><td><strong>Consumers</strong></td><td>One per message</td><td>Multiple per message</td></tr>
+<tr><td><strong>Message Lifetime</strong></td><td>Until consumed</td><td>Until all subscribers receive</td></tr>
+<tr><td><strong>Load Balancing</strong></td><td>Yes</td><td>No</td></tr>
+<tr><td><strong>Guaranteed Delivery</strong></td><td>Yes</td><td>Yes (with durable subscription)</td></tr>
+<tr><td><strong>Use Case</strong></td><td>Task distribution</td><td>Event broadcasting</td></tr>
+</tbody></table>
+
+<span class="slide-counter">21 / 64</span>
+<div class="slide-nav">
+  <a href="#slide-20">&#8592; Previous</a>
+  <span class="slide-info">Slide 21 / 64 &nbsp;&middot;&nbsp; Lecture 5B: JMS Enterprise Messaging</span>
+  <a href="#slide-22">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-22" class="slide slide--section">
+<h1>Part 4: Message Types and Properties</h1>
+<h2>JMS Messages</h2>
+
+<span class="slide-counter">22 / 64</span>
+<div class="slide-nav">
+  <a href="#slide-21">&#8592; Previous</a>
+  <span class="slide-info">Slide 22 / 64 &nbsp;&middot;&nbsp; Lecture 5B: JMS Enterprise Messaging</span>
+  <a href="#slide-23">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-23" class="slide">
+<h2>Message Structure</h2>
+<p><img src="../../images/05b-jms-enterprise-messaging-diagram-5.png" alt="width:70%"></p>
+
+<span class="slide-counter">23 / 64</span>
+<div class="slide-nav">
+  <a href="#slide-22">&#8592; Previous</a>
+  <span class="slide-info">Slide 23 / 64 &nbsp;&middot;&nbsp; Lecture 5B: JMS Enterprise Messaging</span>
+  <a href="#slide-24">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-24" class="slide">
+<h2>Message Types</h2>
+<p><strong>JMS Defines 6 Message Types:</strong></p>
+<ol>
+<li><strong>TextMessage</strong> - String content (JSON, XML)</li>
+<li><strong>BytesMessage</strong> - Binary data</li>
+<li><strong>ObjectMessage</strong> - Serializable Java object</li>
+<li><strong>MapMessage</strong> - Key-value pairs</li>
+<li><strong>StreamMessage</strong> - Stream of primitive types</li>
+<li><strong>Message</strong> - Header and properties only</li>
+</ol>
+
+<span class="slide-counter">24 / 64</span>
+<div class="slide-nav">
+  <a href="#slide-23">&#8592; Previous</a>
+  <span class="slide-info">Slide 24 / 64 &nbsp;&middot;&nbsp; Lecture 5B: JMS Enterprise Messaging</span>
+  <a href="#slide-25">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-25" class="slide">
+<h2 data-en="TextMessage Example" data-fr="TextMessage Exemple">TextMessage Example</h2>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>// Sending
+TextMessage message = session.createTextMessage(&quot;Order #12345 shipped&quot;);
+producer.send(message);
+
+// Receiving
+public void onMessage(Message msg) {
+    if (msg instanceof TextMessage) {
+        TextMessage textMsg = (TextMessage) msg;
+        String text = textMsg.getText();
+        System.out.println(&quot;Received: &quot; + text);
+    }
+}</code></pre>
+
+<span class="slide-counter">25 / 64</span>
+<div class="slide-nav">
+  <a href="#slide-24">&#8592; Previous</a>
+  <span class="slide-info">Slide 25 / 64 &nbsp;&middot;&nbsp; Lecture 5B: JMS Enterprise Messaging</span>
+  <a href="#slide-26">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-26" class="slide">
+<h2>Message Properties</h2>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>// Setting properties
+Message message = session.createTextMessage(&quot;Hello&quot;);
+message.setStringProperty(&quot;orderType&quot;, &quot;PREMIUM&quot;);
+message.setIntProperty(&quot;priority&quot;, 5);
+message.setBooleanProperty(&quot;urgent&quot;, true);
+
+// Reading properties
+String orderType = message.getStringProperty(&quot;orderType&quot;);
+int priority = message.getIntProperty(&quot;priority&quot;);
+boolean urgent = message.getBooleanProperty(&quot;urgent&quot;);</code></pre>
+
+<span class="slide-counter">26 / 64</span>
+<div class="slide-nav">
+  <a href="#slide-25">&#8592; Previous</a>
+  <span class="slide-info">Slide 26 / 64 &nbsp;&middot;&nbsp; Lecture 5B: JMS Enterprise Messaging</span>
+  <a href="#slide-27">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-27" class="slide">
+<h2>Message Selectors</h2>
+<p><strong>Filter Messages at Broker:</strong></p>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>@MessageDriven(activationConfig = {
+    @ActivationConfigProperty(propertyName = &quot;destinationType&quot;,
+                             propertyValue = &quot;jakarta.jms.Queue&quot;),
+    @ActivationConfigProperty(propertyName = &quot;destination&quot;,
+                             propertyValue = &quot;jms/orderQueue&quot;),
+    @ActivationConfigProperty(propertyName = &quot;messageSelector&quot;,
+                             propertyValue = &quot;orderType = 'PREMIUM' AND amount &gt; 1000&quot;)
+})
+public class PremiumOrderMDB implements MessageListener {
+    // Only receives premium orders over $1000
+}</code></pre>
+<p><strong>Selector Syntax:</strong></p>
+<ul>
+<li>SQL-92 conditional expression</li>
+<li>Operates on message properties</li>
+<li>Evaluated at broker (efficient)</li>
+</ul>
+
+<span class="slide-counter">27 / 64</span>
+<div class="slide-nav">
+  <a href="#slide-26">&#8592; Previous</a>
+  <span class="slide-info">Slide 27 / 64 &nbsp;&middot;&nbsp; Lecture 5B: JMS Enterprise Messaging</span>
+  <a href="#slide-28">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-28" class="slide slide--section">
+<h1>Part 5: Message Producers and Consumers</h1>
+<h2>Sending and Receiving Messages</h2>
+
+<span class="slide-counter">28 / 64</span>
+<div class="slide-nav">
+  <a href="#slide-27">&#8592; Previous</a>
+  <span class="slide-info">Slide 28 / 64 &nbsp;&middot;&nbsp; Lecture 5B: JMS Enterprise Messaging</span>
+  <a href="#slide-29">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-29" class="slide">
+<h2>Message Producer</h2>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>@ApplicationScoped
+public class OrderProducer {
+    
+    @Inject
+    @JMSConnectionFactory(&quot;jms/connectionFactory&quot;)
+    private JMSContext context;
+    
+    @Resource(lookup = &quot;jms/orderQueue&quot;)
+    private Queue orderQueue;
+    
+    public void sendOrder(Order order) {
+        ObjectMessage message = context.createObjectMessage(order);
+        message.setStringProperty(&quot;orderType&quot;, order.getType());
+        
+        context.createProducer()
+               .setPriority(order.getPriority())
+               .send(orderQueue, message);
+    }
+}</code></pre>
+
+<span class="slide-counter">29 / 64</span>
+<div class="slide-nav">
+  <a href="#slide-28">&#8592; Previous</a>
+  <span class="slide-info">Slide 29 / 64 &nbsp;&middot;&nbsp; Lecture 5B: JMS Enterprise Messaging</span>
+  <a href="#slide-30">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-30" class="slide">
+<h2>Producer Configuration</h2>
+<p><strong>Delivery Mode:</strong></p>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>// Persistent (default) - survives broker restart
+context.createProducer()
+       .setDeliveryMode(DeliveryMode.PERSISTENT)
+       .send(queue, message);
+
+// Non-persistent - faster but may be lost
+context.createProducer()
+       .setDeliveryMode(DeliveryMode.NON_PERSISTENT)
+       .send(queue, message);</code></pre>
+
+<span class="slide-counter">30 / 64</span>
+<div class="slide-nav">
+  <a href="#slide-29">&#8592; Previous</a>
+  <span class="slide-info">Slide 30 / 64 &nbsp;&middot;&nbsp; Lecture 5B: JMS Enterprise Messaging</span>
+  <a href="#slide-31">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-31" class="slide">
+<h2>Message Consumer (Asynchronous)</h2>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>public class OrderListener implements MessageListener {
+    
+    @Override
+    public void onMessage(Message message) {
+        try {
+            if (message instanceof ObjectMessage) {
+                Order order = (Order) ((ObjectMessage) message).getObject();
+                processOrder(order);
+            }
+        } catch (JMSException e) {
+            logger.error(&quot;Error processing message&quot;, e);
+        }
+    }
+}</code></pre>
+
+<span class="slide-counter">31 / 64</span>
+<div class="slide-nav">
+  <a href="#slide-30">&#8592; Previous</a>
+  <span class="slide-info">Slide 31 / 64 &nbsp;&middot;&nbsp; Lecture 5B: JMS Enterprise Messaging</span>
+  <a href="#slide-32">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-32" class="slide">
+<h2>Request-Reply Pattern</h2>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>// Requester
+public String sendRequest(String request) {
+    TemporaryQueue replyQueue = context.createTemporaryQueue();
+    
+    TextMessage requestMsg = context.createTextMessage(request);
+    requestMsg.setJMSReplyTo(replyQueue);
+    requestMsg.setJMSCorrelationID(UUID.randomUUID().toString());
+    
+    context.createProducer().send(requestQueue, requestMsg);
+    
+    JMSConsumer consumer = context.createConsumer(replyQueue);
+    TextMessage replyMsg = (TextMessage) consumer.receive(5000);
+    
+    return replyMsg != null ? replyMsg.getText() : null;
+}</code></pre>
+
+<span class="slide-counter">32 / 64</span>
+<div class="slide-nav">
+  <a href="#slide-31">&#8592; Previous</a>
+  <span class="slide-info">Slide 32 / 64 &nbsp;&middot;&nbsp; Lecture 5B: JMS Enterprise Messaging</span>
+  <a href="#slide-33">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-33" class="slide slide--section">
+<h1>Part 6: Message-Driven Beans (MDB)</h1>
+<h2>Asynchronous Message Processing</h2>
+
+<span class="slide-counter">33 / 64</span>
+<div class="slide-nav">
+  <a href="#slide-32">&#8592; Previous</a>
+  <span class="slide-info">Slide 33 / 64 &nbsp;&middot;&nbsp; Lecture 5B: JMS Enterprise Messaging</span>
+  <a href="#slide-34">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-34" class="slide">
+<h2 data-en="What is a Message-Driven Bean?" data-fr="Qu'est-ce que a Message-Driven Bean?">What is a Message-Driven Bean?</h2>
+<p><strong>MDB Characteristics:</strong></p>
+<ul>
+<li>Enterprise bean that processes JMS messages asynchronously</li>
+<li data-en="Container-managed lifecycle" data-fr="Container-managed Cycle de vie">Container-managed lifecycle</li>
+<li>Automatic message consumption</li>
+<li>Transaction support</li>
+<li>Concurrency management</li>
+<li>No client interface (invoked by container)</li>
+</ul>
+<p><strong>Benefits:</strong></p>
+<ul>
+<li>Simplified asynchronous processing</li>
+<li>Automatic scaling</li>
+<li data-en="Built-in error handling" data-fr="Built-in Gestion des erreurs">Built-in error handling</li>
+<li>Transaction integration</li>
+</ul>
+
+<span class="slide-counter">34 / 64</span>
+<div class="slide-nav">
+  <a href="#slide-33">&#8592; Previous</a>
+  <span class="slide-info">Slide 34 / 64 &nbsp;&middot;&nbsp; Lecture 5B: JMS Enterprise Messaging</span>
+  <a href="#slide-35">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-35" class="slide">
+<h2>Basic MDB Structure</h2>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>@MessageDriven(
+    activationConfig = {
+        @ActivationConfigProperty(propertyName = &quot;destinationType&quot;,
+                                 propertyValue = &quot;jakarta.jms.Queue&quot;),
+        @ActivationConfigProperty(propertyName = &quot;destination&quot;,
+                                 propertyValue = &quot;jms/orderQueue&quot;)
+    }
+)
+public class OrderProcessorMDB implements MessageListener {
+    
+    @Inject
+    private Logger logger;
+    
+    @PersistenceContext
+    private EntityManager em;
+    
+    @Override
+    public void onMessage(Message message) {
+        try {
+            if (message instanceof ObjectMessage) {
+                Order order = (Order) ((ObjectMessage) message).getObject();
+                processOrder(order);
+            }
+        } catch (JMSException e) {
+            logger.error(&quot;Error processing message&quot;, e);
+        }
+    }
+    
+    private void processOrder(Order order) {
+        logger.info(&quot;Processing order: &quot; + order.getId());
+        em.persist(order);
+    }
+}</code></pre>
+
+<span class="slide-counter">35 / 64</span>
+<div class="slide-nav">
+  <a href="#slide-34">&#8592; Previous</a>
+  <span class="slide-info">Slide 35 / 64 &nbsp;&middot;&nbsp; Lecture 5B: JMS Enterprise Messaging</span>
+  <a href="#slide-36">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-36" class="slide">
+<h2>MDB Activation Configuration</h2>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>@MessageDriven(
+    activationConfig = {
+        @ActivationConfigProperty(propertyName = &quot;destinationType&quot;,
+                                 propertyValue = &quot;jakarta.jms.Queue&quot;),
+        @ActivationConfigProperty(propertyName = &quot;destination&quot;,
+                                 propertyValue = &quot;jms/orderQueue&quot;),
+        @ActivationConfigProperty(propertyName = &quot;messageSelector&quot;,
+                                 propertyValue = &quot;orderType = 'PREMIUM'&quot;),
+        @ActivationConfigProperty(propertyName = &quot;acknowledgeMode&quot;,
+                                 propertyValue = &quot;Auto-acknowledge&quot;),
+        @ActivationConfigProperty(propertyName = &quot;maxConcurrency&quot;,
+                                 propertyValue = &quot;10&quot;)
+    }
+)</code></pre>
+
+<span class="slide-counter">36 / 64</span>
+<div class="slide-nav">
+  <a href="#slide-35">&#8592; Previous</a>
+  <span class="slide-info">Slide 36 / 64 &nbsp;&middot;&nbsp; Lecture 5B: JMS Enterprise Messaging</span>
+  <a href="#slide-37">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-37" class="slide">
+<h2 data-en="MDB Lifecycle" data-fr="MDB Cycle de vie">MDB Lifecycle</h2>
+<p><img src="../../images/05b-jms-enterprise-messaging-diagram-6.png" alt="width:70%"></p>
+
+<span class="slide-counter">37 / 64</span>
+<div class="slide-nav">
+  <a href="#slide-36">&#8592; Previous</a>
+  <span class="slide-info">Slide 37 / 64 &nbsp;&middot;&nbsp; Lecture 5B: JMS Enterprise Messaging</span>
+  <a href="#slide-38">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-38" class="slide">
+<h2 data-en="MDB with Dependency Injection" data-fr="MDB with Injection de dépendances">MDB with Dependency Injection</h2>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>@MessageDriven(...)
+public class OrderProcessorMDB implements MessageListener {
+    
+    @Inject
+    private Logger logger;
+    
+    @Inject
+    private OrderService orderService;
+    
+    @Inject
+    private EmailService emailService;
+    
+    @PersistenceContext
+    private EntityManager em;
+    
+    @Override
+    public void onMessage(Message message) {
+        try {
+            Order order = extractOrder(message);
+            orderService.validate(order);
+            em.persist(order);
+            emailService.sendConfirmation(order);
+            logger.info(&quot;Order processed: &quot; + order.getId());
+        } catch (Exception e) {
+            logger.error(&quot;Error processing order&quot;, e);
+        }
+    }
+}</code></pre>
+
+<span class="slide-counter">38 / 64</span>
+<div class="slide-nav">
+  <a href="#slide-37">&#8592; Previous</a>
+  <span class="slide-info">Slide 38 / 64 &nbsp;&middot;&nbsp; Lecture 5B: JMS Enterprise Messaging</span>
+  <a href="#slide-39">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-39" class="slide">
+<h2>MDB for Topic (Pub/Sub)</h2>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>@MessageDriven(
+    activationConfig = {
+        @ActivationConfigProperty(propertyName = &quot;destinationType&quot;,
+                                 propertyValue = &quot;jakarta.jms.Topic&quot;),
+        @ActivationConfigProperty(propertyName = &quot;destination&quot;,
+                                 propertyValue = &quot;jms/orderTopic&quot;),
+        @ActivationConfigProperty(propertyName = &quot;subscriptionDurability&quot;,
+                                 propertyValue = &quot;Durable&quot;),
+        @ActivationConfigProperty(propertyName = &quot;clientId&quot;,
+                                 propertyValue = &quot;EmailNotificationClient&quot;),
+        @ActivationConfigProperty(propertyName = &quot;subscriptionName&quot;,
+                                 propertyValue = &quot;EmailSubscription&quot;)
+    }
+)
+public class EmailNotificationMDB implements MessageListener {
+    @Inject
+    private EmailService emailService;
+    
+    @Override
+    public void onMessage(Message message) {
+        emailService.sendOrderNotification(extractOrder(message));
+    }
+}</code></pre>
+
+<span class="slide-counter">39 / 64</span>
+<div class="slide-nav">
+  <a href="#slide-38">&#8592; Previous</a>
+  <span class="slide-info">Slide 39 / 64 &nbsp;&middot;&nbsp; Lecture 5B: JMS Enterprise Messaging</span>
+  <a href="#slide-40">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-40" class="slide slide--section">
+<h1 data-en="Part 7: Transaction Management with JMS" data-fr="Part 7: Gestion des transactions with JMS">Part 7: Transaction Management with JMS</h1>
+<h2>Reliable Message Processing</h2>
+
+<span class="slide-counter">40 / 64</span>
+<div class="slide-nav">
+  <a href="#slide-39">&#8592; Previous</a>
+  <span class="slide-info">Slide 40 / 64 &nbsp;&middot;&nbsp; Lecture 5B: JMS Enterprise Messaging</span>
+  <a href="#slide-41">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-41" class="slide">
+<h2 data-en="Why Transactions with JMS?" data-fr="Pourquoi Transactions with JMS?">Why Transactions with JMS?</h2>
+<p><strong>Scenarios Requiring Transactions:</strong></p>
+<ol>
+<li><strong>Atomic Operations</strong></li>
+</ol>
+<ul>
+<li>Receive message + Update database</li>
+<li>All or nothing</li>
+</ul>
+<ol>
+<li><strong>Exactly-Once Processing</strong></li>
+</ol>
+<ul>
+<li>Prevent duplicate processing</li>
+<li>Ensure message not lost</li>
+</ul>
+<ol>
+<li><strong>Consistency</strong></li>
+</ol>
+<ul>
+<li>Maintain data integrity</li>
+</ul>
+
+<span class="slide-counter">41 / 64</span>
+<div class="slide-nav">
+  <a href="#slide-40">&#8592; Previous</a>
+  <span class="slide-info">Slide 41 / 64 &nbsp;&middot;&nbsp; Lecture 5B: JMS Enterprise Messaging</span>
+  <a href="#slide-42">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-42" class="slide">
+<h2>CMT with MDB (Default)</h2>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>@MessageDriven(...)
+@TransactionAttribute(TransactionAttributeType.REQUIRED) // Default
+public class OrderProcessorMDB implements MessageListener {
+    
+    @PersistenceContext
+    private EntityManager em;
+    
+    @Override
+    public void onMessage(Message message) {
+        try {
+            Order order = extractOrder(message);
+            
+            // All in same transaction:
+            // 1. Message consumption
+            // 2. Database update
+            em.persist(order);
+            
+        } catch (Exception e) {
+            logger.error(&quot;Error processing order&quot;, e);
+            // Exception causes transaction rollback
+            // Message will be redelivered
+            throw new EJBException(e);
+        }
+    }
+}</code></pre>
+
+<span class="slide-counter">42 / 64</span>
+<div class="slide-nav">
+  <a href="#slide-41">&#8592; Previous</a>
+  <span class="slide-info">Slide 42 / 64 &nbsp;&middot;&nbsp; Lecture 5B: JMS Enterprise Messaging</span>
+  <a href="#slide-43">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-43" class="slide">
+<h2>Transaction Rollback Behavior</h2>
+<p><strong>What Happens on Rollback:</strong></p>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>@MessageDriven(...)
+public class OrderMDB implements MessageListener {
+    
+    @PersistenceContext
+    private EntityManager em;
+    
+    public void onMessage(Message message) {
+        Order order = extractOrder(message);
+        em.persist(order);
+        
+        if (order.getAmount() &gt; 10000) {
+            throw new RuntimeException(&quot;Amount too high&quot;);
+        }
+        
+        // On exception:
+        // 1. Database changes rolled back
+        // 2. Message consumption rolled back
+        // 3. Message redelivered
+    }
+}</code></pre>
+
+<span class="slide-counter">43 / 64</span>
+<div class="slide-nav">
+  <a href="#slide-42">&#8592; Previous</a>
+  <span class="slide-info">Slide 43 / 64 &nbsp;&middot;&nbsp; Lecture 5B: JMS Enterprise Messaging</span>
+  <a href="#slide-44">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-44" class="slide">
+<h2>Handling Redelivery</h2>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>@MessageDriven(...)
+public class OrderMDB implements MessageListener {
+    
+    @Resource(lookup = &quot;jms/deadLetterQueue&quot;)
+    private Queue deadLetterQueue;
+    
+    @Inject
+    @JMSConnectionFactory(&quot;jms/connectionFactory&quot;)
+    private JMSContext context;
+    
+    public void onMessage(Message message) {
+        try {
+            int deliveryCount = message.getIntProperty(&quot;JMSXDeliveryCount&quot;);
+            
+            if (deliveryCount &gt; 5) {
+                logger.warn(&quot;Max redelivery exceeded, sending to DLQ&quot;);
+                context.createProducer().send(deadLetterQueue, message);
+                return;
+            }
+            
+            processOrder(extractOrder(message));
+            
+        } catch (Exception e) {
+            throw new EJBException(e); // Trigger redelivery
+        }
+    }
+}</code></pre>
+
+<span class="slide-counter">44 / 64</span>
+<div class="slide-nav">
+  <a href="#slide-43">&#8592; Previous</a>
+  <span class="slide-info">Slide 44 / 64 &nbsp;&middot;&nbsp; Lecture 5B: JMS Enterprise Messaging</span>
+  <a href="#slide-45">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-45" class="slide">
+<h2>Transactional Message Sending</h2>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>@Stateless
+public class OrderService {
+    
+    @PersistenceContext
+    private EntityManager em;
+    
+    @Inject
+    @JMSConnectionFactory(&quot;jms/connectionFactory&quot;)
+    private JMSContext context;
+    
+    @Resource(lookup = &quot;jms/orderQueue&quot;)
+    private Queue orderQueue;
+    
+    @TransactionAttribute(TransactionAttributeType.REQUIRED)
+    public void createOrder(Order order) {
+        // Both operations in same transaction
+        em.persist(order);
+        
+        // Message only sent if transaction commits
+        context.createProducer().send(orderQueue, order);
+    }
+}</code></pre>
+
+<span class="slide-counter">45 / 64</span>
+<div class="slide-nav">
+  <a href="#slide-44">&#8592; Previous</a>
+  <span class="slide-info">Slide 45 / 64 &nbsp;&middot;&nbsp; Lecture 5B: JMS Enterprise Messaging</span>
+  <a href="#slide-46">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-46" class="slide slide--section">
+<h1 data-en="Part 8: Error Handling and Dead Letter Queues" data-fr="Part 8: Gestion des erreurs and Dead Letter Queues">Part 8: Error Handling and Dead Letter Queues</h1>
+<h2>Handling Failed Messages</h2>
+
+<span class="slide-counter">46 / 64</span>
+<div class="slide-nav">
+  <a href="#slide-45">&#8592; Previous</a>
+  <span class="slide-info">Slide 46 / 64 &nbsp;&middot;&nbsp; Lecture 5B: JMS Enterprise Messaging</span>
+  <a href="#slide-47">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-47" class="slide">
+<h2>Dead Letter Queue (DLQ)</h2>
+<p><strong>Purpose:</strong></p>
+<ul>
+<li>Store messages that cannot be processed</li>
+<li>Prevent infinite redelivery loops</li>
+<li>Allow manual inspection and reprocessing</li>
+</ul>
+<p><strong>Configuration:</strong></p>
+<pre class="dark"><span class="lang-badge">xml</span>
+<code>
+&lt;jmsQueue id=&quot;orderQueue&quot; jndiName=&quot;jms/orderQueue&quot;&gt;
+    &lt;properties.wasJms 
+        deliveryMode=&quot;Persistent&quot;
+        maxRedeliveryCount=&quot;5&quot;
+        redeliveryDelay=&quot;5000&quot;/&gt;
+&lt;/jmsQueue&gt;
+
+&lt;jmsQueue id=&quot;deadLetterQueue&quot; jndiName=&quot;jms/deadLetterQueue&quot;/&gt;</code></pre>
+
+<span class="slide-counter">47 / 64</span>
+<div class="slide-nav">
+  <a href="#slide-46">&#8592; Previous</a>
+  <span class="slide-info">Slide 47 / 64 &nbsp;&middot;&nbsp; Lecture 5B: JMS Enterprise Messaging</span>
+  <a href="#slide-48">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-48" class="slide">
+<h2>DLQ Handler MDB</h2>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>@MessageDriven(
+    activationConfig = {
+        @ActivationConfigProperty(propertyName = &quot;destinationType&quot;,
+                                 propertyValue = &quot;jakarta.jms.Queue&quot;),
+        @ActivationConfigProperty(propertyName = &quot;destination&quot;,
+                                 propertyValue = &quot;jms/deadLetterQueue&quot;)
+    }
+)
+public class DeadLetterQueueMDB implements MessageListener {
+    
+    @Inject
+    private Logger logger;
+    
+    @PersistenceContext
+    private EntityManager em;
+    
+    @Override
+    public void onMessage(Message message) {
+        try {
+            // Log failed message details
+            String messageId = message.getJMSMessageID();
+            int deliveryCount = message.getIntProperty(&quot;JMSXDeliveryCount&quot;);
+            
+            logger.error(&quot;Message failed after {} attempts: {}&quot;, 
+                        deliveryCount, messageId);
+            
+            // Store in database for manual review
+            FailedMessage failed = new FailedMessage();
+            failed.setMessageId(messageId);
+            failed.setDeliveryCount(deliveryCount);
+            failed.setContent(extractContent(message));
+            failed.setFailureTime(LocalDateTime.now());
+            
+            em.persist(failed);
+            
+            // Optionally send alert
+            sendAlert(&quot;Message failed: &quot; + messageId);
+            
+        } catch (Exception e) {
+            logger.error(&quot;Error processing DLQ message&quot;, e);
+        }
+    }
+}</code></pre>
+
+<span class="slide-counter">48 / 64</span>
+<div class="slide-nav">
+  <a href="#slide-47">&#8592; Previous</a>
+  <span class="slide-info">Slide 48 / 64 &nbsp;&middot;&nbsp; Lecture 5B: JMS Enterprise Messaging</span>
+  <a href="#slide-49">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-49" class="slide">
+<h2 data-en="Error Handling Strategies" data-fr="Gestion des erreurs Strategies">Error Handling Strategies</h2>
+<p><strong>1. Retry with Exponential Backoff</strong></p>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>public void onMessage(Message message) {
+    int deliveryCount = message.getIntProperty(&quot;JMSXDeliveryCount&quot;);
+    
+    if (deliveryCount &gt; 1) {
+        // Wait before reprocessing
+        long delay = (long) Math.pow(2, deliveryCount) * 1000;
+        Thread.sleep(delay);
+    }
+    
+    processMessage(message);
+}</code></pre>
+<p><strong>2. Selective Retry</strong></p>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>public void onMessage(Message message) {
+    try {
+        processMessage(message);
+    } catch (TransientException e) {
+        // Retry transient errors
+        throw new EJBException(e);
+    } catch (PermanentException e) {
+        // Don't retry permanent errors
+        logger.error(&quot;Permanent error&quot;, e);
+        sendToDLQ(message);
+    }
+}</code></pre>
+
+<span class="slide-counter">49 / 64</span>
+<div class="slide-nav">
+  <a href="#slide-48">&#8592; Previous</a>
+  <span class="slide-info">Slide 49 / 64 &nbsp;&middot;&nbsp; Lecture 5B: JMS Enterprise Messaging</span>
+  <a href="#slide-50">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-50" class="slide">
+<h2>Poison Message Detection</h2>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>@MessageDriven(...)
+public class OrderMDB implements MessageListener {
+    
+    private static final int MAX_RETRIES = 3;
+    
+    public void onMessage(Message message) {
+        try {
+            int deliveryCount = message.getIntProperty(&quot;JMSXDeliveryCount&quot;);
+            
+            if (deliveryCount &gt; MAX_RETRIES) {
+                // Poison message detected
+                logger.error(&quot;Poison message detected: {}&quot;, 
+                           message.getJMSMessageID());
+                
+                // Send to DLQ without retry
+                context.createProducer().send(deadLetterQueue, message);
+                return;
+            }
+            
+            processMessage(message);
+            
+        } catch (Exception e) {
+            logger.error(&quot;Error processing message&quot;, e);
+            throw new EJBException(e);
+        }
+    }
+}</code></pre>
+
+<span class="slide-counter">50 / 64</span>
+<div class="slide-nav">
+  <a href="#slide-49">&#8592; Previous</a>
+  <span class="slide-info">Slide 50 / 64 &nbsp;&middot;&nbsp; Lecture 5B: JMS Enterprise Messaging</span>
+  <a href="#slide-51">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-51" class="slide slide--section">
+<h1 data-en="Part 9: Best Practices and Performance" data-fr="Part 9: Bonnes pratiques and Performance">Part 9: Best Practices and Performance</h1>
+<h2>Optimizing JMS Applications</h2>
+
+<span class="slide-counter">51 / 64</span>
+<div class="slide-nav">
+  <a href="#slide-50">&#8592; Previous</a>
+  <span class="slide-info">Slide 51 / 64 &nbsp;&middot;&nbsp; Lecture 5B: JMS Enterprise Messaging</span>
+  <a href="#slide-52">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-52" class="slide">
+<h2 data-en="Best Practices" data-fr="Bonnes pratiques">Best Practices</h2>
+<p><strong>DO:</strong></p>
+<ul>
+<li>✅ Use MDB for asynchronous consumption</li>
+<li>✅ Keep onMessage() fast</li>
+<li>✅ Use message selectors to filter at broker</li>
+<li>✅ Handle all message types</li>
+<li>✅ Use transactions appropriately</li>
+<li data-en="✅ Implement proper error handling" data-fr="✅ Implement proper Gestion des erreurs">✅ Implement proper error handling</li>
+<li>✅ Monitor queue depths</li>
+<li>✅ Use persistent delivery for critical messages</li>
+</ul>
+<p><strong>DON'T:</strong></p>
+<ul>
+<li>❌ Block in onMessage for too long</li>
+<li>❌ Create new consumers repeatedly</li>
+<li>❌ Ignore message acknowledgment</li>
+<li>❌ Store state in MDB</li>
+<li>❌ Create threads manually</li>
+</ul>
+
+<span class="slide-counter">52 / 64</span>
+<div class="slide-nav">
+  <a href="#slide-51">&#8592; Previous</a>
+  <span class="slide-info">Slide 52 / 64 &nbsp;&middot;&nbsp; Lecture 5B: JMS Enterprise Messaging</span>
+  <a href="#slide-53">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-53" class="slide">
+<h2>Performance Optimization</h2>
+<p><strong>1. Message Batching</strong></p>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>public void sendBatch(List&lt;Order&gt; orders) {
+    for (Order order : orders) {
+        context.createProducer()
+               .setDeliveryMode(DeliveryMode.NON_PERSISTENT) // Faster
+               .send(queue, order);
+    }
+}</code></pre>
+<p><strong>2. Concurrent Processing</strong></p>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>@MessageDriven(
+    activationConfig = {
+        @ActivationConfigProperty(propertyName = &quot;maxConcurrency&quot;,
+                                 propertyValue = &quot;20&quot;)
+    }
+)
+// Container creates up to 20 instances</code></pre>
+<p><strong>3. Message Compression</strong></p>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>public void sendCompressed(String data) {
+    byte[] compressed = compress(data);
+    BytesMessage message = context.createBytesMessage();
+    message.writeBytes(compressed);
+    message.setBooleanProperty(&quot;compressed&quot;, true);
+    context.createProducer().send(queue, message);
+}</code></pre>
+
+<span class="slide-counter">53 / 64</span>
+<div class="slide-nav">
+  <a href="#slide-52">&#8592; Previous</a>
+  <span class="slide-info">Slide 53 / 64 &nbsp;&middot;&nbsp; Lecture 5B: JMS Enterprise Messaging</span>
+  <a href="#slide-54">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-54" class="slide">
+<h2>Monitoring and Troubleshooting</h2>
+<p><strong>Key Metrics to Monitor:</strong></p>
+<ul>
+<li>Queue depth</li>
+<li>Message throughput</li>
+<li>Processing time</li>
+<li>Error rate</li>
+<li>DLQ size</li>
+</ul>
+<p><strong>Tools:</strong></p>
+<ul>
+<li>JMX MBeans</li>
+<li>MicroProfile Metrics</li>
+<li>Application logs</li>
+<li>JMS provider console</li>
+</ul>
+
+<span class="slide-counter">54 / 64</span>
+<div class="slide-nav">
+  <a href="#slide-53">&#8592; Previous</a>
+  <span class="slide-info">Slide 54 / 64 &nbsp;&middot;&nbsp; Lecture 5B: JMS Enterprise Messaging</span>
+  <a href="#slide-55">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-55" class="slide">
+<h2>Liberty JMS Configuration</h2>
+<p><strong>server.xml:</strong></p>
+<pre class="dark"><span class="lang-badge">xml</span>
+<code>&lt;server&gt;
+    &lt;featureManager&gt;
+        &lt;feature&gt;messaging-3.1&lt;/feature&gt;
+        &lt;feature&gt;mdb-4.0&lt;/feature&gt;
+    &lt;/featureManager&gt;
+    
+    &lt;jmsConnectionFactory jndiName=&quot;jms/connectionFactory&quot;&gt;
+        &lt;properties.wasJms/&gt;
+    &lt;/jmsConnectionFactory&gt;
+    
+    &lt;jmsQueue id=&quot;orderQueue&quot; jndiName=&quot;jms/orderQueue&quot;&gt;
+        &lt;properties.wasJms 
+            deliveryMode=&quot;Persistent&quot;
+            maxRedeliveryCount=&quot;5&quot;/&gt;
+    &lt;/jmsQueue&gt;
+    
+    &lt;jmsTopic id=&quot;orderTopic&quot; jndiName=&quot;jms/orderTopic&quot;&gt;
+        &lt;properties.wasJms/&gt;
+    &lt;/jmsTopic&gt;
+&lt;/server&gt;</code></pre>
+
+<span class="slide-counter">55 / 64</span>
+<div class="slide-nav">
+  <a href="#slide-54">&#8592; Previous</a>
+  <span class="slide-info">Slide 55 / 64 &nbsp;&middot;&nbsp; Lecture 5B: JMS Enterprise Messaging</span>
+  <a href="#slide-56">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-56" class="slide">
+<h2 data-en="📝 Summary" data-fr="📝 Résumé">📝 Summary</h2>
+<p><strong>What We Learned Today:</strong></p>
+<table class="slide-table"><thead><tr><th>Topic</th><th>Key Concepts</th></tr></thead><tbody>
+<tr><td><strong>JMS Fundamentals</strong></td><td>Asynchronous messaging, reliable delivery</td></tr>
+<tr><td><strong>Messaging Models</strong></td><td>Point-to-Point (Queue), Publish-Subscribe (Topic)</td></tr>
+<tr><td><strong>Message-Driven Beans</strong></td><td>Container-managed, automatic consumption</td></tr>
+<tr><td><strong>Transactions</strong></td><td>CMT, reliable processing, rollback handling</td></tr>
+<tr><td><strong>Error Handling</strong></td><td>Dead Letter Queue, retry strategies</td></tr>
+<tr><td><strong>Performance</strong></td><td>Batching, concurrency, monitoring</td></tr>
+</tbody></table>
+
+<span class="slide-counter">56 / 64</span>
+<div class="slide-nav">
+  <a href="#slide-55">&#8592; Previous</a>
+  <span class="slide-info">Slide 56 / 64 &nbsp;&middot;&nbsp; Lecture 5B: JMS Enterprise Messaging</span>
+  <a href="#slide-57">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-57" class="slide">
+<h2 data-en="🎯 Key Takeaways" data-fr="🎯 Points clés">🎯 Key Takeaways</h2>
+<p><strong>Remember These Points:</strong></p>
+<ol>
+<li>✅ <strong>JMS enables asynchronous, reliable messaging</strong> between components</li>
+<li>✅ <strong>Use Queues for point-to-point</strong>, Topics for publish-subscribe</li>
+<li>✅ <strong>MDBs simplify message consumption</strong> with container management</li>
+<li>✅ <strong>Transactions ensure exactly-once processing</strong> and data consistency</li>
+<li>✅ <strong>DLQ prevents message loss</strong> and enables failure analysis</li>
+<li data-en="✅ <strong>Monitor and optimize</strong> for production performance" data-fr="✅ Monitor and optimize for production Performance">✅ <strong>Monitor and optimize</strong> for production performance</li>
+</ol>
+
+<span class="slide-counter">57 / 64</span>
+<div class="slide-nav">
+  <a href="#slide-56">&#8592; Previous</a>
+  <span class="slide-info">Slide 57 / 64 &nbsp;&middot;&nbsp; Lecture 5B: JMS Enterprise Messaging</span>
+  <a href="#slide-58">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-58" class="slide">
+<h2 data-en="📚 Additional Resources" data-fr="📚 Ressources supplémentaires">📚 Additional Resources</h2>
+<p><strong>Official Documentation:</strong></p>
+<ul>
+<li><a href="https://jakarta.ee/specifications/messaging/3.1/">Jakarta Messaging 3.1 Specification</a></li>
+<li><a href="https://openliberty.io/docs/latest/reference/feature/messaging-3.1.html">Open Liberty Messaging Feature</a></li>
+<li><a href="https://openliberty.io/docs/latest/reference/feature/mdb-4.0.html">Message-Driven Beans Guide</a></li>
+</ul>
+<p><strong>Books &amp; Patterns:</strong></p>
+<ul>
+<li><a href="https://www.enterpriseintegrationpatterns.com/">Enterprise Integration Patterns</a></li>
+<li><a href="https://www.oreilly.com/library/view/java-message-service/9781449394110/">Java Message Service, 2nd Edition</a></li>
+</ul>
+<p><strong>Community:</strong></p>
+<ul>
+<li><a href="https://jakarta.ee/community/">Jakarta EE Community</a></li>
+<li><a href="https://openliberty.io/guides/">Open Liberty Guides</a></li>
+</ul>
+
+<span class="slide-counter">58 / 64</span>
+<div class="slide-nav">
+  <a href="#slide-57">&#8592; Previous</a>
+  <span class="slide-info">Slide 58 / 64 &nbsp;&middot;&nbsp; Lecture 5B: JMS Enterprise Messaging</span>
+  <a href="#slide-59">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-59" class="slide">
+<h2>💡 Common Pitfalls to Avoid</h2>
+<p><strong>❌ Don't:</strong></p>
+<ul>
+<li>Block for too long in <code>onMessage()</code></li>
+<li>Ignore message acknowledgment</li>
+<li>Create consumers repeatedly</li>
+<li>Store state in MDB instances</li>
+<li>Forget to handle exceptions</li>
+</ul>
+<p><strong>✅ Do:</strong></p>
+<ul>
+<li>Keep message processing fast</li>
+<li>Use message selectors for filtering</li>
+<li data-en="Implement proper error handling" data-fr="Implement proper Gestion des erreurs">Implement proper error handling</li>
+<li>Monitor queue depths</li>
+<li>Test failure scenarios</li>
+</ul>
+
+<span class="slide-counter">59 / 64</span>
+<div class="slide-nav">
+  <a href="#slide-58">&#8592; Previous</a>
+  <span class="slide-info">Slide 59 / 64 &nbsp;&middot;&nbsp; Lecture 5B: JMS Enterprise Messaging</span>
+  <a href="#slide-60">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-60" class="slide">
+<h2 data-en="📝 Homework" data-fr="📝 Devoirs">📝 Homework</h2>
+<p data-en="<strong>Before Next Lecture:</strong>" data-fr="Before Prochaine leçon:"><strong>Before Next Lecture:</strong></p>
+<table class="slide-table"><thead><tr><th></th><th></th></tr></thead><tbody>
+<tr><td>✅</td><td>Complete Lab 5B: JMS Enterprise Messaging</td></tr>
+<tr><td>✅</td><td>Implement all MDBs (Email, Audit, DLQ)</td></tr>
+<tr><td>✅</td><td>Test error handling scenarios</td></tr>
+<tr><td>✅</td><td>Practice with both Queues and Topics</td></tr>
+</tbody></table>
+<p><strong>Optional:</strong></p>
+<ul>
+<li>Explore MicroProfile Reactive Messaging</li>
+<li data-en="Try implementing request-reply pattern" data-fr="Try Implémentation de request-reply pattern">Try implementing request-reply pattern</li>
+<li>Experiment with message selectors</li>
+<li>Read about AMQP and Kafka</li>
+</ul>
+
+<span class="slide-counter">60 / 64</span>
+<div class="slide-nav">
+  <a href="#slide-59">&#8592; Previous</a>
+  <span class="slide-info">Slide 60 / 64 &nbsp;&middot;&nbsp; Lecture 5B: JMS Enterprise Messaging</span>
+  <a href="#slide-61">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-61" class="slide">
+<h2>🙋 Questions &amp; Discussion</h2>
+<p><strong>Discussion Topics:</strong></p>
+<ul>
+<li>When to use JMS vs REST APIs?</li>
+<li>How does JMS compare to Kafka?</li>
+<li>What are the trade-offs of asynchronous messaging?</li>
+</ul>
+<p><strong>Office Hours:</strong></p>
+<ul>
+<li data-en="<strong>When:</strong> Monday &amp; Wednesday 14:00-16:00" data-fr="When: Lundi & Mercredi 14:00-16:00"><strong>When:</strong> Monday &amp; Wednesday 14:00-16:00</li>
+<li><strong>Where:</strong> Room B203 or Online (Teams)</li>
+<li><strong>Contact:</strong> olivier.planson@esipe.fr</li>
+</ul>
+<p><strong>Course Repository:</strong></p>
+<ul>
+<li>https://github.com/oplanson/esipe-javaee</li>
+</ul>
+
+<span class="slide-counter">61 / 64</span>
+<div class="slide-nav">
+  <a href="#slide-60">&#8592; Previous</a>
+  <span class="slide-info">Slide 61 / 64 &nbsp;&middot;&nbsp; Lecture 5B: JMS Enterprise Messaging</span>
+  <a href="#slide-62">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-62" class="slide">
+<h2 data-en="📅 Next Lecture" data-fr="📅 Prochaine leçon">📅 Next Lecture</h2>
+<h3 data-en="Lecture 6: Domain-Driven Design (DDD)" data-fr="Lecture 6: Conception pilotée par le domaine (DDD)">Lecture 6: Domain-Driven Design (DDD)</h3>
+<p><strong>Date:</strong> [Next session date]</p>
+<p><strong>Duration:</strong> 3 hours</p>
+<p><strong>Topics:</strong></p>
+<ul>
+<li>DDD principles and patterns</li>
+<li>Bounded contexts and aggregates</li>
+<li>Value objects and entities</li>
+<li>Domain events</li>
+<li data-en="Hexagonal architecture introduction" data-fr="Architecture hexagonale introduction">Hexagonal architecture introduction</li>
+</ul>
+<p><strong>Preparation:</strong> Complete Lab 5B and review DDD concepts</p>
+
+<span class="slide-counter">62 / 64</span>
+<div class="slide-nav">
+  <a href="#slide-61">&#8592; Previous</a>
+  <span class="slide-info">Slide 62 / 64 &nbsp;&middot;&nbsp; Lecture 5B: JMS Enterprise Messaging</span>
+  <a href="#slide-63">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-63" class="slide slide--section">
+<h1>🚀 Ready for Lab 5B!</h1>
+<p data-en="<strong>Lab Objectives:</strong>" data-fr="Lab Objectifs:"><strong>Lab Objectives:</strong></p>
+<ol>
+<li>Configure JMS resources (Queues, Topics, DLQ)</li>
+<li>Implement transaction event producer</li>
+<li>Create Email Notification MDB</li>
+<li>Create Audit Logging MDB</li>
+<li>Implement DLQ handler</li>
+<li>Test complete messaging flow</li>
+</ol>
+<p><strong>Estimated Time:</strong> 2 hours 20 minutes</p>
+<p data-en="<strong>See you in the lab!</strong>" data-fr="À bientôt dans the lab!"><strong>See you in the lab!</strong></p>
+
+<span class="slide-counter">63 / 64</span>
+<div class="slide-nav">
+  <a href="#slide-62">&#8592; Previous</a>
+  <span class="slide-info">Slide 63 / 64 &nbsp;&middot;&nbsp; Lecture 5B: JMS Enterprise Messaging</span>
+  <a href="#slide-64">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-64" class="slide">
+<p><strong>End of Lecture 5B</strong></p>
+<p>© 2026 - Jakarta EE &amp; MicroProfile Course</p>
+
+<span class="slide-counter">64 / 64</span>
+<div class="slide-nav">
+  <a href="#slide-63">&#8592; Previous</a>
+  <span class="slide-info">Slide 64 / 64 &nbsp;&middot;&nbsp; Lecture 5B: JMS Enterprise Messaging</span>
+  <a class="disabled">Next &#8594;</a>
+</div>
+</section>
+    </div>
+  </main>
+</div>
+<footer class="site-footer">Made with IBM Bob &nbsp;&middot;&nbsp; &copy; 2026 Olivier Planson</footer>
+<script>
+/* ── EN/FR language toggle — global scope so buttons can call it ── */
+var _lang = localStorage.getItem('slide-lang') || 'en';
+function setLang(lang) {
+  _lang = lang;
+  localStorage.setItem('slide-lang', lang);
+  document.getElementById('btn-en').classList.toggle('active', lang === 'en');
+  document.getElementById('btn-fr').classList.toggle('active', lang === 'fr');
+  document.querySelectorAll('[data-en][data-fr]').forEach(function(el) {
+    el.innerHTML = lang === 'fr' ? el.getAttribute('data-fr') : el.getAttribute('data-en');
+  });
+}
+
+(function() {
+  /* ── Sidenav hover ── */
+  var nav     = document.getElementById('sidenav');
+  var navTrig = document.getElementById('sidenav-trigger');
+  var navTimer = null;
+  function navShow() { clearTimeout(navTimer); nav.classList.add('sidenav--open'); }
+  function navHide() { navTimer = setTimeout(function(){ nav.classList.remove('sidenav--open'); }, 300); }
+  navTrig.addEventListener('mouseenter', navShow);
+  navTrig.addEventListener('mouseleave', navHide);
+  nav.addEventListener('mouseenter', navShow);
+  nav.addEventListener('mouseleave', navHide);
+
+  /* ── Progress bar hover ── */
+  var pbWrap  = document.getElementById('pb-wrap');
+  var pbTrig  = document.getElementById('pb-trigger');
+  var pbTimer = null;
+  function pbShow() { clearTimeout(pbTimer); pbWrap.classList.add('pb-open'); }
+  function pbHide() { pbTimer = setTimeout(function(){ pbWrap.classList.remove('pb-open'); }, 400); }
+  pbTrig.addEventListener('mouseenter', pbShow);
+  pbTrig.addEventListener('mouseleave', pbHide);
+  pbWrap.addEventListener('mouseenter', pbShow);
+  pbWrap.addEventListener('mouseleave', pbHide);
+
+  /* ── Wire EN/FR buttons via addEventListener (no inline onclick) ── */
+  document.getElementById('btn-en').addEventListener('click', function() { setLang('en'); });
+  document.getElementById('btn-fr').addEventListener('click', function() { setLang('fr'); });
+
+  /* Apply stored preference on page load */
+  if (_lang === 'fr') setLang('fr');
+})();
+</script>
+</body>
+</html>
