@@ -196,6 +196,7 @@ body:has(#slide-79:target) .progress-bar a[href="#slide-79"] { background: var(-
     <a href="#slide-7">JPA Architecture</a>
     <a href="#slide-8">Key JPA Concepts</a>
     <a href="#slide-10">Creating a Basic Entity</a>
+    <a href="#slide-11">Essential JPA Annotations</a>
     <a href="#slide-12">ID Generation Strategies</a>
     <a href="#slide-16">One-to-Many Relationship</a>
     <a href="#slide-17">Many-to-One Relationship</a>
@@ -209,6 +210,7 @@ body:has(#slide-79:target) .progress-bar a[href="#slide-79"] { background: var(-
     <a href="#slide-28">JPQL Update and Delete</a>
     <a href="#slide-31">Basic Criteria Query</a>
     <a href="#slide-32">Criteria Query with Conditions</a>
+    <a href="#slide-33">Dynamic Query Building</a>
     <a href="#slide-34">Criteria Query with Joins</a>
     <a href="#slide-35">Criteria Query Aggregate Functions</a>
     <a href="#slide-39">Transaction Patterns</a>
@@ -260,7 +262,7 @@ body:has(#slide-79:target) .progress-bar a[href="#slide-79"] { background: var(-
 <p data-en="By the end of this lecture, you will be able to:" data-fr="À la fin de cette leçon, vous serez en mesure de:">By the end of this lecture, you will be able to:</p>
 <ul>
 <li>Understand Object-Relational Mapping (ORM) concepts</li>
-<li data-en="Create and configure JPA entities with annotations" data-fr="Create and configure JPA entities with Annotation">Create and configure JPA entities with annotations</li>
+<li>Create and configure JPA entities with annotations</li>
 <li>Define entity relationships (One-to-One, One-to-Many, Many-to-Many)</li>
 <li data-en="Write queries using JPQL and Criteria API" data-fr="Write queries Utilisation de JPQL and Criteria API">Write queries using JPQL and Criteria API</li>
 <li>Manage transactions effectively</li>
@@ -281,7 +283,7 @@ body:has(#slide-79:target) .progress-bar a[href="#slide-79"] { background: var(-
 <h2>📚 Topics Covered</h2>
 <ol>
 <li data-en="<strong>Introduction to JPA and ORM</strong>" data-fr="Introduction à JPA and ORM"><strong>Introduction to JPA and ORM</strong></li>
-<li data-en="<strong>JPA Entities and Annotations</strong>" data-fr="JPA Entities and Annotation"><strong>JPA Entities and Annotations</strong></li>
+<li><strong>JPA Entities and Annotations</strong></li>
 <li><strong>Entity Relationships</strong></li>
 <li><strong>JPQL (Java Persistence Query Language)</strong></li>
 <li><strong>Criteria API</strong></li>
@@ -405,7 +407,7 @@ Client client = entityManager.find(
 </section>
 
 <section id="slide-9" class="slide slide--section">
-<h1 data-en="Part 2: JPA Entities and Annotations" data-fr="Part 2: JPA Entities and Annotation">Part 2: JPA Entities and Annotations</h1>
+<h1>Part 2: JPA Entities and Annotations</h1>
 
 <span class="slide-counter">9 / 79</span>
 <div class="slide-nav">
@@ -448,7 +450,7 @@ public class Client {
 </section>
 
 <section id="slide-11" class="slide">
-<h2 data-en="Essential JPA Annotations" data-fr="Essential JPA Annotation">Essential JPA Annotations</h2>
+<h2>Essential JPA Annotations</h2>
 <div class="slide-columns">
 <div class="slide-col">
 <p><strong>Class-Level:</strong></p>
@@ -1090,7 +1092,7 @@ try {
 <p><strong>Benefits:</strong></p>
 <ul>
 <li>✅ Type-safe (compile-time checking)</li>
-<li data-en="✅ Dynamic query building" data-fr="✅ Dynamic query Construction">✅ Dynamic query building</li>
+<li>✅ Dynamic query building</li>
 <li>✅ IDE auto-completion support</li>
 <li>✅ Refactoring-friendly</li>
 </ul>
@@ -1170,7 +1172,7 @@ ORDER BY c.name ASC</code></pre>
 </section>
 
 <section id="slide-33" class="slide">
-<h2 data-en="Dynamic Query Building" data-fr="Dynamic Query Construction">Dynamic Query Building</h2>
+<h2>Dynamic Query Building</h2>
 <pre class="dark"><span class="lang-badge">java</span>
 <code>public List&lt;Client&gt; searchClients(String name, String email, Integer minAccounts) {
     CriteriaBuilder cb = entityManager.getCriteriaBuilder();
@@ -2607,10 +2609,10 @@ public class JNDIDebug {
 <h2 data-en="📊 Summary" data-fr="📊 Résumé">📊 Summary</h2>
 <p><strong>What we learned:</strong></p>
 <ol>
-<li data-en="<strong>JPA Basics:</strong> ORM concepts, entity mapping, annotations" data-fr="JPA Basics: ORM concepts, entity mapping, Annotation"><strong>JPA Basics:</strong> ORM concepts, entity mapping, annotations</li>
+<li><strong>JPA Basics:</strong> ORM concepts, entity mapping, annotations</li>
 <li><strong>Relationships:</strong> One-to-Many, Many-to-One, Many-to-Many</li>
 <li><strong>Querying:</strong> JPQL for object-oriented queries</li>
-<li data-en="<strong>Criteria API:</strong> Type-safe, dynamic query building" data-fr="Criteria API: Type-safe, dynamic query Construction"><strong>Criteria API:</strong> Type-safe, dynamic query building</li>
+<li><strong>Criteria API:</strong> Type-safe, dynamic query building</li>
 <li data-en="<strong>Transactions:</strong> Manual transaction management with EntityManager" data-fr="Transactions: Manual Gestion des transactions with EntityManager"><strong>Transactions:</strong> Manual transaction management with EntityManager</li>
 <li><strong>Migrations:</strong> Flyway for version-controlled schema changes</li>
 </ol>

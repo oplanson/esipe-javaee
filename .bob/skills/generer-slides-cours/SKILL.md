@@ -754,3 +754,6 @@ traité 3-4 cours, écrire les fichiers immédiatement avant de continuer.
   - `data-fr` = texte traduit par `toFr()` — idem, uniquement `"`  échappés
   - `el.innerHTML = el.getAttribute('data-fr')` fonctionne car les attributs contiennent du HTML valide (balises `<strong>` réelles)
 - Traduction à la compilation par le dictionnaire `FR_DICT` dans `_generate.js` — partielle (termes techniques conservés en anglais)
+- **Règles d'ordre dans `FR_DICT`** : les phrases longues doivent précéder les mots courts (ex. `Development Environment Setup` avant `Development`, `Examples` avant `Example`)
+- **`Building`** : `/^Building\b/gim` (début de ligne seulement) — évite "for building REST services" → "for Construction de REST services" en milieu de phrase
+- **`Annotations`** : pas de règle — même mot en français, le no-op de `toFr()` s'applique correctement

@@ -226,13 +226,16 @@ body:has(#slide-88:target) .progress-bar a[href="#slide-88"] { background: var(-
     <a href="#slide-19">HTTP Status Codes</a>
     <a href="#slide-20">RESTful Resource Design</a>
     <a href="#slide-21">REST vs SOAP</a>
+    <a href="#slide-26">JAX-RS Key Annotations</a>
     <a href="#slide-27">Simple JAX-RS Resource</a>
     <a href="#slide-28">JAX-RS Application Configuration</a>
     <a href="#slide-30">Complete Client Resource (cont.)</a>
+    <a href="#slide-32">Response Building</a>
     <a href="#slide-33">Sub-Resources</a>
     <a href="#slide-34">Jakarta JSON Binding</a>
     <a href="#slide-36">JSON-B Features</a>
     <a href="#slide-37">Basic JSON-B Usage</a>
+    <a href="#slide-38">JSON-B Annotations</a>
     <a href="#slide-39">JSON-B Naming Strategies</a>
     <a href="#slide-40">JSON-B with JAX-RS</a>
     <a href="#slide-41">Custom JSON-B Adapters</a>
@@ -289,7 +292,7 @@ body:has(#slide-88:target) .progress-bar a[href="#slide-88"] { background: var(-
 <h2>📋 Lecture Outline</h2>
 <ol>
 <li><strong>REST Principles and Architecture</strong> (30 min)</li>
-<li data-en="<strong>JAX-RS Annotations and Resources</strong> (45 min)" data-fr="JAX-RS Annotation and Resources (45 min)"><strong>JAX-RS Annotations and Resources</strong> (45 min)</li>
+<li><strong>JAX-RS Annotations and Resources</strong> (45 min)</li>
 <li><strong>JSON-B for JSON Processing</strong> (30 min)</li>
 <li data-en="<strong>Exception Handling and Validation</strong> (30 min)" data-fr="Gestion des exceptions and Validation (30 min)"><strong>Exception Handling and Validation</strong> (30 min)</li>
 <li><strong>MicroProfile Rest Client</strong> (30 min)</li>
@@ -831,7 +834,7 @@ DELETE /api/clients/123      → 204 No Content</code></pre>
 </section>
 
 <section id="slide-24" class="slide slide--section">
-<h1 data-en="Part 2: JAX-RS Annotations and Resources" data-fr="Part 2: JAX-RS Annotation and Resources">Part 2: JAX-RS Annotations and Resources</h1>
+<h1>Part 2: JAX-RS Annotations and Resources</h1>
 <h2 data-en="Building RESTful Services with Jakarta" data-fr="Construction Services RESTful with Jakarta">Building RESTful Services with Jakarta</h2>
 
 <span class="slide-counter">24 / 88</span>
@@ -846,7 +849,7 @@ DELETE /api/clients/123      → 204 No Content</code></pre>
 <h2 data-en="What is JAX-RS?" data-fr="Qu'est-ce que JAX-RS?">What is JAX-RS?</h2>
 <p data-en="<strong>JAX-RS</strong> = <strong>J</strong>akarta RESTful Web Services" data-fr="JAX-RS = Jakarta Services RESTful"><strong>JAX-RS</strong> = <strong>J</strong>akarta RESTful Web Services</p>
 <ul>
-<li data-en="Standard API for building REST services in Java" data-fr="Standard API for Construction REST services in Java">Standard API for building REST services in Java</li>
+<li>Standard API for building REST services in Java</li>
 <li>Part of Jakarta EE specification</li>
 <li>Annotation-based programming model</li>
 <li>Supports JSON and XML</li>
@@ -863,7 +866,7 @@ DELETE /api/clients/123      → 204 No Content</code></pre>
 </section>
 
 <section id="slide-26" class="slide">
-<h2 data-en="JAX-RS Key Annotations" data-fr="JAX-RS Key Annotation">JAX-RS Key Annotations</h2>
+<h2>JAX-RS Key Annotations</h2>
 <h3>Resource Definition</h3>
 <ul>
 <li><code>@Path</code> - Defines URI path</li>
@@ -1038,7 +1041,7 @@ public List&lt;Client&gt; searchClients(
 </section>
 
 <section id="slide-32" class="slide">
-<h2 data-en="Response Building" data-fr="Response Construction">Response Building</h2>
+<h2>Response Building</h2>
 <pre class="dark"><span class="lang-badge">java</span>
 <code>@GET
 @Path(&quot;/{id}&quot;)
@@ -1188,7 +1191,7 @@ public class JsonExample {
 </section>
 
 <section id="slide-38" class="slide">
-<h2 data-en="JSON-B Annotations" data-fr="JSON-B Annotation">JSON-B Annotations</h2>
+<h2>JSON-B Annotations</h2>
 <h3>Property Customization</h3>
 <pre class="dark"><span class="lang-badge">java</span>
 <code>import jakarta.json.bind.annotation.*;
@@ -2371,7 +2374,7 @@ GET    /api/clients/{id}/accounts - Get client's accounts</code></pre>
 <li><strong>JAX-RS</strong></li>
 </ol>
 <ul>
-<li data-en="Annotations (@Path, @GET, @POST, etc.)" data-fr="Annotation (@Path, @GET, @POST, etc.)">Annotations (@Path, @GET, @POST, etc.)</li>
+<li>Annotations (@Path, @GET, @POST, etc.)</li>
 <li>Resource implementation</li>
 <li>Sub-resources and parameters</li>
 </ul>
@@ -2391,7 +2394,7 @@ GET    /api/clients/{id}/accounts - Get client's accounts</code></pre>
 </ol>
 <ul>
 <li>Automatic JSON conversion</li>
-<li data-en="Customization with annotations" data-fr="Customization with Annotation">Customization with annotations</li>
+<li>Customization with annotations</li>
 <li>Type adapters</li>
 </ul>
 <ol>

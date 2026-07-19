@@ -62,16 +62,15 @@ const FR_DICT = [
   [/\bConclusion\b/gi, 'Conclusion'],
   [/\bArchitecture\b/gi, 'Architecture'],
   [/\bConfiguration\b/gi, 'Configuration'],
-  [/\bDevelopment\b/gi, 'Développement'],
   [/\bDevelopment Environment Setup\b/gi, 'Configuration de l\'environnement'],
+  [/\bDevelopment\b/gi, 'Développement'],
   [/\bProject Structure\b/gi, 'Structure du projet'],
-  [/\bExample\b/gi, 'Exemple'],
   [/\bExamples\b/gi, 'Exemples'],
+  [/\bExample\b/gi, 'Exemple'],
   [/\bComparison\b/gi, 'Comparaison'],
   [/\bRuntime\b/gi, 'Environnement d\'exécution'],
-  [/\bAnnotations?\b/gi, 'Annotation'],
+  // Annotation — same in French; no rule needed (toFr no-op is fine)
   [/\bLifecycle\b/gi, 'Cycle de vie'],
-  [/\bBuilding\b/gi, 'Construction'],
   [/\bTesting\b/gi, 'Tests'],
   [/\bDeployment\b/gi, 'Déploiement'],
   [/\bException Handling\b/gi, 'Gestion des exceptions'],
@@ -106,6 +105,7 @@ const FR_DICT = [
   // ── Actions in headings ───────────────────────────────────────────────────
   [/\bCreating Your First\b/gi, 'Créer votre premier'],
   [/\bBuilding with\b/gi, 'Construire avec'],
+  [/^Building\b/gim, 'Construction'],  // only at start of line/heading
   [/\bUsing\b/gi, 'Utilisation de'],
   [/\bImplementing\b/gi, 'Implémentation de'],
   [/\bIntegrating\b/gi, 'Intégration de'],
@@ -156,6 +156,31 @@ function i18nWrap(tag, attrs, innerHtml) {
   }
   const attrStr = attrs ? ' ' + attrs : '';
   return `<${tag}${attrStr}>${innerHtml}</${tag}>`;
+}
+
+// ── Credential masking in code blocks ────────────────────────────────────────
+// Matches HTTP header lines of the form:  HeaderName: SCHEME <credential>
+// Replaces the credential with SCHEME_CODE.
+// Rule: any line matching  ^<word(s)>: <SCHEME> <credential>$
+//   where <credential> is a non-whitespace token of ≥4 chars (may end with …/...)
+function maskCredentials(text) {
+  // Pattern 1: Header: SCHEME credential  (two-token value, e.g. Authorization: Bearer xxx)
+  text = text.replace(
+    /^([A-Za-z][A-Za-z0-9\-]*):\s+([A-Za-z][A-Za-z0-9]*)\s+[A-Za-z0-9+/=._\-]{4,}\.{0,3}\s*$/gm,
+    function(_, header, scheme) {
+      return header + ': ' + scheme + ' ' + scheme.toUpperCase() + '_CODE';
+    }
+  );
+  // Pattern 2: Header: credential  (single-token value)
+  // Only apply when the header name itself suggests it's a credential header
+  text = text.replace(
+    /^((?:X-API-Key|X-Auth-Token|X-Secret|API-Key|Api-Key)):\s+[A-Za-z0-9+/=._\-]{4,}\.{0,3}\s*$/gim,
+    function(_, header) {
+      const slug = header.toUpperCase().replace(/-/g, '_');
+      return header + ': ' + slug + '_CODE';
+    }
+  );
+  return text;
 }
 
 // ── Parse one .md file ────────────────────────────────────────────────────────
@@ -257,7 +282,7 @@ function convertMarkdown(md, slideNum) {
     if (inPre) {
       if (line.match(/^```/)) {
         const badge = preLang ? `<span class="lang-badge">${esc(preLang)}</span>\n` : '';
-        out += `<pre class="dark">${badge}<code>${esc(preContent.trimEnd())}</code></pre>\n`;
+        out += `<pre class="dark">${badge}<code>${esc(maskCredentials(preContent.trimEnd()))}</code></pre>\n`;
         inPre = false; preLang = ''; preContent = '';
       } else {
         preContent += line + '\n';
