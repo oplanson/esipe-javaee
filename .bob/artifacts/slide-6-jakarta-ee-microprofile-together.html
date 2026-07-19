@@ -1,0 +1,51 @@
+<!-- © Copyright 2026 Olivier Planson. All rights reserved. Reproduction prohibited. Made with IBM Bob. -->
+
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'IBM Plex Sans','Helvetica Neue',Arial,sans-serif;background:#f4f4f4;color:#161616;padding:2rem;line-height:1.5}
+h2{font-size:.8rem;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:#525252;margin-bottom:.75rem}
+.slide{background:#fff;border:1px solid #e0e0e0;border-radius:4px;padding:1.75rem 2.5rem;max-width:700px;margin:0 auto 2rem;box-shadow:0 1px 3px rgba(0,0,0,.06)}
+.slide-title{font-size:1.15rem;font-weight:600;margin-bottom:1.25rem}
+.best-practice{border-left:3px solid #0f62fe;padding:.4rem .85rem;color:#525252;font-style:italic;margin-top:.85rem;font-size:.83rem}
+/* graph */
+.mermaid-graph{margin:.75rem 0;display:flex;flex-direction:column;align-items:center;gap:0}
+.mermaid-graph__row{display:flex;flex-direction:row;gap:.6rem;justify-content:center;align-items:center;flex-wrap:wrap}
+.mermaid-graph__node{padding:.4rem .9rem;border:1.5px solid #e0e0e0;border-radius:6px;font-size:.78rem;font-weight:600;text-align:center;min-width:7rem;line-height:1.3}
+.mermaid-graph__arrows{font-size:1.1rem;color:#a8a8a8;text-align:center;line-height:1;padding:.1rem 0;width:100%}
+footer{text-align:center;font-size:.7rem;color:#a8a8a8;border-top:1px solid #e0e0e0;padding-top:1rem;margin-top:3rem}
+</style>
+</head>
+<body>
+<h2>Slide 6 — 🤝 Jakarta EE + MicroProfile Together</h2>
+<div class="slide">
+  <div class="slide-title">🤝 Jakarta EE + MicroProfile Together</div>
+
+  <div class="mermaid-graph mermaid-graph--tb">
+    <div class="mermaid-graph__row">
+      <div class="mermaid-graph__node" style="background:#667eea;color:#fff;border-color:#667eea">Your Application</div>
+    </div>
+    <div class="mermaid-graph__arrows">↓</div>
+    <div class="mermaid-graph__row">
+      <div class="mermaid-graph__node" style="background:#f093fb;color:#fff;border-color:#f093fb">MicroProfile APIs</div>
+      <div class="mermaid-graph__node" style="background:#4facfe;color:#fff;border-color:#4facfe">Jakarta EE APIs</div>
+    </div>
+    <div class="mermaid-graph__arrows">↓</div>
+    <div class="mermaid-graph__row">
+      <div class="mermaid-graph__node" style="background:#f5e0c3;color:#5d3b1e;border-color:#d9a96e">Config, Health, Metrics, etc.</div>
+      <div class="mermaid-graph__node" style="background:#43e97b;color:#0e6027;border-color:#2bb55a">Open Liberty Runtime</div>
+      <div class="mermaid-graph__node" style="background:#d0e2ff;color:#0043ce;border-color:#7cb9f4">Servlet, CDI, JAX-RS, JPA</div>
+    </div>
+    <div class="mermaid-graph__arrows">↓</div>
+    <div class="mermaid-graph__row">
+      <div class="mermaid-graph__node" style="background:#defbe6;color:#0e6027;border-color:#9adcb2">Cloud/Container Platform</div>
+    </div>
+  </div>
+
+  <div class="best-practice"><strong>Best Practice:</strong> Use Jakarta EE for core enterprise features + MicroProfile for cloud-native capabilities</div>
+</div>
+<footer>Made with IBM Bob</footer>
+</body>
+</html>

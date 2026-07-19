@@ -312,6 +312,136 @@ header.site-header {
 .slide-columns.slide-columns-1-2 { grid-template-columns: 1fr 2fr; }
 .slide-col { min-width: 0; }
 
+/* ── Mermaid timeline renderer ── */
+.mermaid-timeline {
+  margin: .75rem 0;
+  font-size: .8125rem;
+}
+.mermaid-timeline__title {
+  font-size: .75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .07em;
+  color: var(--muted);
+  margin-bottom: .6rem;
+}
+.mermaid-timeline__track {
+  display: flex;
+  gap: 0;
+  overflow-x: auto;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  overflow: hidden;
+}
+.mermaid-timeline__section {
+  flex: 1;
+  min-width: 0;
+  border-right: 2px solid var(--sec-border, var(--border));
+  background: var(--sec-bg, var(--layer));
+}
+.mermaid-timeline__section:last-child { border-right: none; }
+.mermaid-timeline__section-label {
+  font-size: .65rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .06em;
+  color: var(--sec-txt, var(--muted));
+  background: var(--sec-bg, var(--layer));
+  padding: .3rem .6rem;
+  border-bottom: 1px solid var(--sec-border, var(--border));
+}
+.mermaid-timeline__entries {
+  padding: .4rem .4rem .5rem;
+  display: flex;
+  flex-direction: column;
+  gap: .45rem;
+}
+.mermaid-timeline__entry {
+  position: relative;
+  padding-left: .9rem;
+}
+.mermaid-timeline__entry--star .mermaid-timeline__label {
+  font-weight: 700;
+  color: var(--interactive);
+}
+.mermaid-timeline__year {
+  font-size: .6rem;
+  font-weight: 700;
+  color: var(--sec-txt, var(--muted));
+  line-height: 1;
+  margin-bottom: .1rem;
+}
+.mermaid-timeline__dot {
+  position: absolute;
+  left: .1rem;
+  top: .55rem;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--sec-border, var(--muted));
+}
+.mermaid-timeline__label {
+  font-size: .75rem;
+  font-weight: 600;
+  color: var(--text);
+  line-height: 1.3;
+}
+.mermaid-timeline__details {
+  display: flex;
+  flex-direction: column;
+  gap: .05rem;
+  margin-top: .1rem;
+}
+.mermaid-timeline__details span {
+  font-size: .68rem;
+  color: var(--muted);
+  line-height: 1.3;
+}
+
+/* ── Mermaid graph renderer (graph TB / LR) ── */
+.mermaid-graph {
+  margin: .75rem 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0;
+}
+.mermaid-graph--lr {
+  flex-direction: row;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: .5rem;
+}
+.mermaid-graph__row {
+  display: flex;
+  flex-direction: row;
+  gap: .6rem;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+}
+.mermaid-graph--lr .mermaid-graph__row {
+  flex-direction: column;
+}
+.mermaid-graph__node {
+  padding: .4rem .9rem;
+  border: 1.5px solid #e0e0e0;
+  border-radius: 6px;
+  font-size: .78rem;
+  font-weight: 600;
+  text-align: center;
+  min-width: 7rem;
+  line-height: 1.3;
+}
+.mermaid-graph__arrows {
+  font-size: 1.1rem;
+  color: #a8a8a8;
+  text-align: center;
+  line-height: 1;
+  padding: .1rem 0;
+  width: 100%;
+}
+
 /* ── Navigation buttons ── */
 /* Nav bars live inside each .slide section — visible when the slide is :target */
 .slide-nav {

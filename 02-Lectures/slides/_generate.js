@@ -237,6 +237,215 @@ function parseSlide(text, num) {
   return { num, cls, html };
 }
 
+// ── Mermaid timeline renderer ─────────────────────────────────────────────────
+// Parses Mermaid `timeline` DSL and produces a styled HTML timeline block.
+// Supports: title, section, year/label/details entries (colon-separated).
+// Section color palette — cycles through 5 IBM Carbon colors.
+function renderMermaidTimeline(src) {
+  const SECTION_COLORS = [
+    { bg: '#d0e2ff', border: '#0043ce', txt: '#0043ce' },  // blue
+    { bg: '#defbe6', border: '#0e6027', txt: '#0e6027' },  // green
+    { bg: '#e8daff', border: '#491d8b', txt: '#491d8b' },  // purple
+    { bg: '#d9fbfb', border: '#004144', txt: '#004144' },  // teal
+    { bg: '#ffd7d9', border: '#750e13', txt: '#750e13' },  // red
+  ];
+
+  const lines = src.split('\n');
+  let title = '';
+  const sections = [];   // [{ name, color, entries: [{year, labels:[]}] }]
+  let colorIdx = 0;
+  let currentSection = null;
+  let currentEntry   = null;
+
+  for (const raw of lines) {
+    const line = raw.trim();
+    if (!line || line === 'timeline') continue;
+
+    // title
+    const titleM = line.match(/^title\s+(.+)$/i);
+    if (titleM) { title = titleM[1].trim(); continue; }
+
+    // section
+    const sectionM = line.match(/^section\s+(.+)$/i);
+    if (sectionM) {
+      currentSection = { name: sectionM[1].trim(), color: SECTION_COLORS[colorIdx % SECTION_COLORS.length], entries: [] };
+      sections.push(currentSection);
+      colorIdx++;
+      currentEntry = null;
+      continue;
+    }
+
+    // year / label line — format:  YEAR : Label  or  : Detail
+    const colonM = line.match(/^(\d{4})?\s*:\s*(.+)$/);
+    if (colonM) {
+      const year  = colonM[1] ? colonM[1].trim() : null;
+      const label = colonM[2].trim();
+      if (year && currentSection) {
+        currentEntry = { year, labels: [label] };
+        currentSection.entries.push(currentEntry);
+      } else if (!year && currentEntry) {
+        currentEntry.labels.push(label);
+      }
+    }
+  }
+
+  // ── Build HTML ──────────────────────────────────────────────────────────────
+  let html = `<div class="mermaid-timeline">\n`;
+  if (title) html += `<div class="mermaid-timeline__title">${esc(title)}</div>\n`;
+  html += `<div class="mermaid-timeline__track">\n`;
+
+  for (const sec of sections) {
+    const { bg, border, txt } = sec.color;
+    html += `<div class="mermaid-timeline__section" style="--sec-bg:${bg};--sec-border:${border};--sec-txt:${txt}">\n`;
+    html += `  <div class="mermaid-timeline__section-label">${esc(sec.name)}</div>\n`;
+    html += `  <div class="mermaid-timeline__entries">\n`;
+    for (const entry of sec.entries) {
+      const [mainLabel, ...details] = entry.labels;
+      const star = mainLabel.includes('⭐');
+      const cls  = star ? ' mermaid-timeline__entry--star' : '';
+      html += `    <div class="mermaid-timeline__entry${cls}">\n`;
+      html += `      <div class="mermaid-timeline__year">${esc(entry.year)}</div>\n`;
+      html += `      <div class="mermaid-timeline__dot"></div>\n`;
+      html += `      <div class="mermaid-timeline__label">${esc(mainLabel)}</div>\n`;
+      if (details.length) {
+        html += `      <div class="mermaid-timeline__details">${details.map(d => `<span>${esc(d)}</span>`).join('')}</div>\n`;
+      }
+      html += `    </div>\n`;
+    }
+    html += `  </div>\n`;
+    html += `</div>\n`;
+  }
+
+  html += `</div>\n</div>\n`;
+  return html;
+}
+
+// ── Mermaid graph TB/LR renderer ─────────────────────────────────────────────
+// Parses a simplified Mermaid `graph TB` or `graph LR` and renders it as an
+// HTML SVG-free node-box diagram using CSS flexbox layers.
+// Supports: node declarations A[Label], edges A --> B, style A fill:#, color:#
+// Strategy: topo-sort nodes into layers, render each layer as a row of boxes.
+function renderMermaidGraph(src) {
+  const lines = src.split('\n').map(l => l.trim()).filter(Boolean);
+
+  // ── Parse ──────────────────────────────────────────────────────────────────
+  const dirMatch = lines[0].match(/^graph\s+(TB|LR|TD|RL|BT)/i);
+  const horizontal = dirMatch && /^(LR|RL)$/i.test(dirMatch[1]);
+
+  const nodes  = new Map();   // id → { label, style }
+  const edges  = [];          // [{from, to}]
+  const styles = new Map();   // id → {bg, color}
+
+  const nodeRe  = /^([A-Za-z_]\w*)\[["']?(.+?)["']?\]$/;
+  const nodeRe2 = /^([A-Za-z_]\w*)\(["']?(.+?)["']?\)$/;   // rounded
+  const edgeRe  = /^([A-Za-z_]\w*)\s*--[->]+\s*([A-Za-z_]\w*)$/;
+  const edgeRe2 = /^([A-Za-z_]\w*)\s*--[->]+\|[^|]*\|\s*([A-Za-z_]\w*)$/; // labelled edge
+  const styleRe = /^style\s+([A-Za-z_]\w*)\s+(.+)$/;
+
+  function ensureNode(id) {
+    if (!nodes.has(id)) nodes.set(id, { label: id, style: {} });
+  }
+
+  for (const line of lines.slice(1)) {
+    // style rule
+    const sm = line.match(styleRe);
+    if (sm) {
+      const props = {};
+      sm[2].split(',').forEach(p => {
+        const kv = p.trim().split(':');
+        const k = kv[0].trim();
+        const v = kv.slice(1).join(':').trim();
+        if (k && v) props[k] = v;
+      });
+      styles.set(sm[1], props);
+      continue;
+    }
+
+    // Universal edge parser — handles all forms:
+    //   A --> B
+    //   A[Label] --> B[Label]
+    //   A --> B[Label]
+    const universalEdge = line.match(
+      /^([A-Za-z_]\w*)(?:\[([^\]]+)\])?\s*--[->]+\s*([A-Za-z_]\w*)(?:\[([^\]]+)\])?$/
+    );
+    if (universalEdge) {
+      const [, fromId, fromLbl, toId, toLbl] = universalEdge;
+      ensureNode(fromId); ensureNode(toId);
+      if (fromLbl) nodes.get(fromId).label = fromLbl;
+      if (toLbl)   nodes.get(toId).label   = toLbl;
+      edges.push({ from: fromId, to: toId });
+      continue;
+    }
+
+    // Explicit node declaration (no edge)
+    const nm = line.match(nodeRe) || line.match(nodeRe2);
+    if (nm) {
+      ensureNode(nm[1]);
+      nodes.get(nm[1]).label = nm[2];
+    }
+  }
+
+  // Apply styles to nodes
+  for (const [id, props] of styles) {
+    if (nodes.has(id)) nodes.get(id).style = props;
+  }
+
+  // ── Topological layer assignment ───────────────────────────────────────────
+  const inDegree = new Map([...nodes.keys()].map(k => [k, 0]));
+  const children = new Map([...nodes.keys()].map(k => [k, []]));
+  for (const { from, to } of edges) {
+    inDegree.set(to, (inDegree.get(to) || 0) + 1);
+    children.get(from).push(to);
+  }
+
+  const layer = new Map();
+  const queue = [...nodes.keys()].filter(id => inDegree.get(id) === 0);
+  queue.forEach(id => layer.set(id, 0));
+
+  while (queue.length) {
+    const id = queue.shift();
+    for (const child of (children.get(id) || [])) {
+      const newLayer = (layer.get(id) || 0) + 1;
+      if (!layer.has(child) || layer.get(child) < newLayer) {
+        layer.set(child, newLayer);
+      }
+      inDegree.set(child, inDegree.get(child) - 1);
+      if (inDegree.get(child) === 0) queue.push(child);
+    }
+  }
+
+  // Group by layer
+  const maxLayer = Math.max(...layer.values(), 0);
+  const layers = Array.from({ length: maxLayer + 1 }, () => []);
+  for (const [id, l] of layer) layers[l].push(id);
+
+  // ── Build HTML ──────────────────────────────────────────────────────────────
+  const dir = horizontal ? 'mermaid-graph--lr' : 'mermaid-graph--tb';
+  let html = `<div class="mermaid-graph ${dir}">\n`;
+
+  for (const layerNodes of layers) {
+    html += `<div class="mermaid-graph__row">\n`;
+    for (const id of layerNodes) {
+      const node = nodes.get(id);
+      const s    = node.style || {};
+      const bg   = s.fill   || '#f4f4f4';
+      const fg   = s.color  || '#161616';
+      const bdr  = s['stroke'] || '#e0e0e0';
+      html += `  <div class="mermaid-graph__node" style="background:${bg};color:${fg};border-color:${bdr}">${esc(node.label)}</div>\n`;
+    }
+    html += `</div>\n`;
+    // Arrow row between layers (TB only)
+    if (!horizontal) {
+      html += `<div class="mermaid-graph__arrows">↓</div>\n`;
+    }
+  }
+
+  // Remove last arrow row
+  html = html.replace(/<div class="mermaid-graph__arrows">↓<\/div>\n$/, '');
+  html += `</div>\n`;
+  return html;
+}
+
 // ── Full Markdown → HTML converter ───────────────────────────────────────────
 function convertMarkdown(md, slideNum) {
   const lines = md.split('\n');
@@ -281,8 +490,14 @@ function convertMarkdown(md, slideNum) {
     }
     if (inPre) {
       if (line.match(/^```/)) {
-        const badge = preLang ? `<span class="lang-badge">${esc(preLang)}</span>\n` : '';
-        out += `<pre class="dark">${badge}<code>${esc(maskCredentials(preContent.trimEnd()))}</code></pre>\n`;
+        if (preLang === 'mermaid' && preContent.match(/^\s*timeline\b/m)) {
+          out += renderMermaidTimeline(preContent);
+        } else if (preLang === 'mermaid' && preContent.match(/^\s*graph\s+(TB|LR|TD|RL|BT)\b/im)) {
+          out += renderMermaidGraph(preContent);
+        } else {
+          const badge = preLang ? `<span class="lang-badge">${esc(preLang)}</span>\n` : '';
+          out += `<pre class="dark">${badge}<code>${esc(maskCredentials(preContent.trimEnd()))}</code></pre>\n`;
+        }
         inPre = false; preLang = ''; preContent = '';
       } else {
         preContent += line + '\n';

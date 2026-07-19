@@ -163,7 +163,109 @@ body:has(#slide-35:target) .progress-bar a[href="#slide-35"] { background: var(-
 <li data-en="<strong>Open-source:</strong> Community-driven development under Eclipse Foundation" data-fr="Open-source: Community-driven Développement under Eclipse Foundation"><strong>Open-source:</strong> Community-driven development under Eclipse Foundation</li>
 </ul>
 <h3>Evolution Timeline:</h3>
-<p><img src="../../images/01-intro-jakartaee-microprofile-diagram-1.png" alt="width:70%"></p>
+<blockquote><strong>⭐ This course targets Jakarta EE 10</strong> — newer versions exist but are not yet widely adopted in production.</blockquote>
+<div class="mermaid-timeline">
+<div class="mermaid-timeline__title">Jakarta EE — Evolution from J2EE to Jakarta EE 11</div>
+<div class="mermaid-timeline__track">
+<div class="mermaid-timeline__section" style="--sec-bg:#d0e2ff;--sec-border:#0043ce;--sec-txt:#0043ce">
+  <div class="mermaid-timeline__section-label">J2EE era</div>
+  <div class="mermaid-timeline__entries">
+    <div class="mermaid-timeline__entry">
+      <div class="mermaid-timeline__year">1999</div>
+      <div class="mermaid-timeline__dot"></div>
+      <div class="mermaid-timeline__label">J2EE 1.2</div>
+      <div class="mermaid-timeline__details"><span>Servlets, JSP, EJB 1.1</span></div>
+    </div>
+    <div class="mermaid-timeline__entry">
+      <div class="mermaid-timeline__year">2001</div>
+      <div class="mermaid-timeline__dot"></div>
+      <div class="mermaid-timeline__label">J2EE 1.3</div>
+      <div class="mermaid-timeline__details"><span>CMP EJB, JMS, Connectors</span></div>
+    </div>
+    <div class="mermaid-timeline__entry">
+      <div class="mermaid-timeline__year">2003</div>
+      <div class="mermaid-timeline__dot"></div>
+      <div class="mermaid-timeline__label">J2EE 1.4</div>
+      <div class="mermaid-timeline__details"><span>Web Services (JAX-RPC)</span></div>
+    </div>
+  </div>
+</div>
+<div class="mermaid-timeline__section" style="--sec-bg:#defbe6;--sec-border:#0e6027;--sec-txt:#0e6027">
+  <div class="mermaid-timeline__section-label">Java EE era</div>
+  <div class="mermaid-timeline__entries">
+    <div class="mermaid-timeline__entry">
+      <div class="mermaid-timeline__year">2006</div>
+      <div class="mermaid-timeline__dot"></div>
+      <div class="mermaid-timeline__label">Java EE 5</div>
+      <div class="mermaid-timeline__details"><span>Annotations, EJB 3.0, JPA 1.0</span></div>
+    </div>
+    <div class="mermaid-timeline__entry">
+      <div class="mermaid-timeline__year">2009</div>
+      <div class="mermaid-timeline__dot"></div>
+      <div class="mermaid-timeline__label">Java EE 6</div>
+      <div class="mermaid-timeline__details"><span>CDI, JAX-RS, Bean Validation</span></div>
+    </div>
+    <div class="mermaid-timeline__entry">
+      <div class="mermaid-timeline__year">2013</div>
+      <div class="mermaid-timeline__dot"></div>
+      <div class="mermaid-timeline__label">Java EE 7</div>
+      <div class="mermaid-timeline__details"><span>WebSocket, JSON-P, Batch</span></div>
+    </div>
+    <div class="mermaid-timeline__entry">
+      <div class="mermaid-timeline__year">2017</div>
+      <div class="mermaid-timeline__dot"></div>
+      <div class="mermaid-timeline__label">Java EE 8</div>
+      <div class="mermaid-timeline__details"><span>JSON-B, Security API, HTTP/2</span></div>
+    </div>
+  </div>
+</div>
+<div class="mermaid-timeline__section" style="--sec-bg:#e8daff;--sec-border:#491d8b;--sec-txt:#491d8b">
+  <div class="mermaid-timeline__section-label">Jakarta EE (transition)</div>
+  <div class="mermaid-timeline__entries">
+    <div class="mermaid-timeline__entry">
+      <div class="mermaid-timeline__year">2019</div>
+      <div class="mermaid-timeline__dot"></div>
+      <div class="mermaid-timeline__label">Jakarta EE 8</div>
+      <div class="mermaid-timeline__details"><span>Eclipse Foundation — same APIs</span></div>
+    </div>
+    <div class="mermaid-timeline__entry">
+      <div class="mermaid-timeline__year">2020</div>
+      <div class="mermaid-timeline__dot"></div>
+      <div class="mermaid-timeline__label">Jakarta EE 9</div>
+      <div class="mermaid-timeline__details"><span>javax.* → jakarta.* namespace</span></div>
+    </div>
+    <div class="mermaid-timeline__entry">
+      <div class="mermaid-timeline__year">2021</div>
+      <div class="mermaid-timeline__dot"></div>
+      <div class="mermaid-timeline__label">Jakarta EE 9.1</div>
+      <div class="mermaid-timeline__details"><span>Java 11 support</span></div>
+    </div>
+  </div>
+</div>
+<div class="mermaid-timeline__section" style="--sec-bg:#d9fbfb;--sec-border:#004144;--sec-txt:#004144">
+  <div class="mermaid-timeline__section-label">Jakarta EE (current)</div>
+  <div class="mermaid-timeline__entries">
+    <div class="mermaid-timeline__entry mermaid-timeline__entry--star">
+      <div class="mermaid-timeline__year">2022</div>
+      <div class="mermaid-timeline__dot"></div>
+      <div class="mermaid-timeline__label">Jakarta EE 10 ⭐</div>
+      <div class="mermaid-timeline__details"><span>CDI Lite, Core Profile, Java 11+</span></div>
+    </div>
+  </div>
+</div>
+<div class="mermaid-timeline__section" style="--sec-bg:#ffd7d9;--sec-border:#750e13;--sec-txt:#750e13">
+  <div class="mermaid-timeline__section-label">Latest</div>
+  <div class="mermaid-timeline__entries">
+    <div class="mermaid-timeline__entry">
+      <div class="mermaid-timeline__year">2024</div>
+      <div class="mermaid-timeline__dot"></div>
+      <div class="mermaid-timeline__label">Jakarta EE 11</div>
+      <div class="mermaid-timeline__details"><span>Virtual threads, Java 21+</span><span>Data API, Concurrency 3.1</span></div>
+    </div>
+  </div>
+</div>
+</div>
+</div>
 
 <span class="slide-counter">3 / 35</span>
 <div class="slide-nav">
@@ -184,7 +286,91 @@ body:has(#slide-35:target) .progress-bar a[href="#slide-35"] { background: var(-
 <li><strong>Rapid innovation:</strong> Faster release cycles than Jakarta EE</li>
 </ul>
 <h3>Timeline:</h3>
-<p><img src="../../images/01-intro-jakartaee-microprofile-diagram-2.png" alt="width:70%"></p>
+<blockquote><strong>⭐ This course targets MicroProfile 6.0</strong> — the latest stable release aligned with Jakarta EE 10 Core Profile.</blockquote>
+<div class="mermaid-timeline">
+<div class="mermaid-timeline__title">MicroProfile — Major Releases (2016–2025)</div>
+<div class="mermaid-timeline__track">
+<div class="mermaid-timeline__section" style="--sec-bg:#d0e2ff;--sec-border:#0043ce;--sec-txt:#0043ce">
+  <div class="mermaid-timeline__section-label">Origins (Java EE)</div>
+  <div class="mermaid-timeline__entries">
+    <div class="mermaid-timeline__entry">
+      <div class="mermaid-timeline__year">2016</div>
+      <div class="mermaid-timeline__dot"></div>
+      <div class="mermaid-timeline__label">MP 1.0</div>
+      <div class="mermaid-timeline__details"><span>Config, Health, Metrics</span><span>Fault Tolerance, JWT, Rest Client</span></div>
+    </div>
+  </div>
+</div>
+<div class="mermaid-timeline__section" style="--sec-bg:#defbe6;--sec-border:#0e6027;--sec-txt:#0e6027">
+  <div class="mermaid-timeline__section-label">Growth (Java EE 7/8)</div>
+  <div class="mermaid-timeline__entries">
+    <div class="mermaid-timeline__entry">
+      <div class="mermaid-timeline__year">2018</div>
+      <div class="mermaid-timeline__dot"></div>
+      <div class="mermaid-timeline__label">MP 2.0</div>
+      <div class="mermaid-timeline__details"><span>Java EE 7 alignment</span><span>OpenAPI, OpenTracing added</span></div>
+    </div>
+    <div class="mermaid-timeline__entry">
+      <div class="mermaid-timeline__year">2019</div>
+      <div class="mermaid-timeline__dot"></div>
+      <div class="mermaid-timeline__label">MP 3.0</div>
+      <div class="mermaid-timeline__details"><span>Java EE 8 alignment</span><span>Health 2.0, Metrics 2.0</span></div>
+    </div>
+  </div>
+</div>
+<div class="mermaid-timeline__section" style="--sec-bg:#e8daff;--sec-border:#491d8b;--sec-txt:#491d8b">
+  <div class="mermaid-timeline__section-label">Jakarta EE transition</div>
+  <div class="mermaid-timeline__entries">
+    <div class="mermaid-timeline__entry">
+      <div class="mermaid-timeline__year">2021</div>
+      <div class="mermaid-timeline__dot"></div>
+      <div class="mermaid-timeline__label">MP 4.0</div>
+      <div class="mermaid-timeline__details"><span>Jakarta EE 8 (javax.*)</span><span>Config 2.0, FT 3.0</span></div>
+    </div>
+    <div class="mermaid-timeline__entry">
+      <div class="mermaid-timeline__year">2021</div>
+      <div class="mermaid-timeline__dot"></div>
+      <div class="mermaid-timeline__label">MP 5.0</div>
+      <div class="mermaid-timeline__details"><span>Jakarta EE 9.1 (jakarta.*)</span><span>Breaking namespace change</span></div>
+    </div>
+  </div>
+</div>
+<div class="mermaid-timeline__section" style="--sec-bg:#d9fbfb;--sec-border:#004144;--sec-txt:#004144">
+  <div class="mermaid-timeline__section-label">Jakarta EE 10</div>
+  <div class="mermaid-timeline__entries">
+    <div class="mermaid-timeline__entry mermaid-timeline__entry--star">
+      <div class="mermaid-timeline__year">2022</div>
+      <div class="mermaid-timeline__dot"></div>
+      <div class="mermaid-timeline__label">MP 6.0 ⭐</div>
+      <div class="mermaid-timeline__details"><span>Jakarta EE 10 Core Profile</span><span>Telemetry replaces OpenTracing</span></div>
+    </div>
+    <div class="mermaid-timeline__entry">
+      <div class="mermaid-timeline__year">2023</div>
+      <div class="mermaid-timeline__dot"></div>
+      <div class="mermaid-timeline__label">MP 6.1</div>
+      <div class="mermaid-timeline__details"><span>Telemetry 1.1, OpenAPI 3.1</span></div>
+    </div>
+  </div>
+</div>
+<div class="mermaid-timeline__section" style="--sec-bg:#ffd7d9;--sec-border:#750e13;--sec-txt:#750e13">
+  <div class="mermaid-timeline__section-label">Latest</div>
+  <div class="mermaid-timeline__entries">
+    <div class="mermaid-timeline__entry">
+      <div class="mermaid-timeline__year">2024</div>
+      <div class="mermaid-timeline__dot"></div>
+      <div class="mermaid-timeline__label">MP 7.0</div>
+      <div class="mermaid-timeline__details"><span>Telemetry 2.0 replaces Metrics</span></div>
+    </div>
+    <div class="mermaid-timeline__entry">
+      <div class="mermaid-timeline__year">2025</div>
+      <div class="mermaid-timeline__dot"></div>
+      <div class="mermaid-timeline__label">MP 7.1</div>
+      <div class="mermaid-timeline__details"><span>Telemetry 2.1, OpenAPI 4.1</span></div>
+    </div>
+  </div>
+</div>
+</div>
+</div>
 
 <span class="slide-counter">4 / 35</span>
 <div class="slide-nav">
@@ -216,7 +402,26 @@ body:has(#slide-35:target) .progress-bar a[href="#slide-35"] { background: var(-
 
 <section id="slide-6" class="slide">
 <h2>🤝 Jakarta EE + MicroProfile Together</h2>
-<p><img src="../../images/01-intro-jakartaee-microprofile-diagram-1.png" alt="width:70%"></p>
+<div class="mermaid-graph mermaid-graph--tb">
+<div class="mermaid-graph__row">
+  <div class="mermaid-graph__node" style="background:#667eea;color:#fff;border-color:#e0e0e0">Your Application</div>
+</div>
+<div class="mermaid-graph__arrows">↓</div>
+<div class="mermaid-graph__row">
+  <div class="mermaid-graph__node" style="background:#f093fb;color:#fff;border-color:#e0e0e0">MicroProfile APIs</div>
+  <div class="mermaid-graph__node" style="background:#4facfe;color:#fff;border-color:#e0e0e0">Jakarta EE APIs</div>
+</div>
+<div class="mermaid-graph__arrows">↓</div>
+<div class="mermaid-graph__row">
+  <div class="mermaid-graph__node" style="background:#f5e0c3;color:#5d3b1e;border-color:#e0e0e0">Config, Health, Metrics, etc.</div>
+  <div class="mermaid-graph__node" style="background:#43e97b;color:#0e6027;border-color:#e0e0e0">Open Liberty Runtime</div>
+  <div class="mermaid-graph__node" style="background:#d0e2ff;color:#0043ce;border-color:#e0e0e0">Servlet, CDI, JAX-RS, JPA</div>
+</div>
+<div class="mermaid-graph__arrows">↓</div>
+<div class="mermaid-graph__row">
+  <div class="mermaid-graph__node" style="background:#defbe6;color:#0e6027;border-color:#e0e0e0">Cloud/Container Platform</div>
+</div>
+</div>
 <p data-en="<strong>Best Practice:</strong> Use Jakarta EE for core enterprise features + MicroProfile for cloud-native capabilities" data-fr="Bonnes pratiques: Use Jakarta EE for core enterprise features + MicroProfile for Cloud-natif capabilities"><strong>Best Practice:</strong> Use Jakarta EE for core enterprise features + MicroProfile for cloud-native capabilities</p>
 
 <span class="slide-counter">6 / 35</span>
@@ -578,6 +783,7 @@ public class TransferService {
         &lt;maven.compiler.target&gt;17&lt;/maven.compiler.target&gt;
         &lt;jakartaee.version&gt;10.0.0&lt;/jakartaee.version&gt;
         &lt;microprofile.version&gt;6.0&lt;/microprofile.version&gt;
+        &lt;liberty.version&gt;23.0.0.12&lt;/liberty.version&gt;
     &lt;/properties&gt;
     
     &lt;dependencies&gt;
@@ -589,7 +795,6 @@ public class TransferService {
             &lt;scope&gt;provided&lt;/scope&gt;
         &lt;/dependency&gt;
         
-        
         &lt;dependency&gt;
             &lt;groupId&gt;org.eclipse.microprofile&lt;/groupId&gt;
             &lt;artifactId&gt;microprofile&lt;/artifactId&gt;
@@ -598,6 +803,41 @@ public class TransferService {
             &lt;scope&gt;provided&lt;/scope&gt;
         &lt;/dependency&gt;
     &lt;/dependencies&gt;
+
+    &lt;build&gt;
+        &lt;finalName&gt;banking-app&lt;/finalName&gt;
+        &lt;plugins&gt;
+            
+            &lt;plugin&gt;
+                &lt;groupId&gt;io.openliberty.tools&lt;/groupId&gt;
+                &lt;artifactId&gt;liberty-maven-plugin&lt;/artifactId&gt;
+                &lt;version&gt;3.9&lt;/version&gt;
+                &lt;configuration&gt;
+                    &lt;serverName&gt;bankingServer&lt;/serverName&gt;
+                    &lt;runtimeArtifact&gt;
+                        &lt;groupId&gt;io.openliberty&lt;/groupId&gt;
+                        &lt;artifactId&gt;openliberty-runtime&lt;/artifactId&gt;
+                        &lt;version&gt;${liberty.version}&lt;/version&gt;
+                        &lt;type&gt;zip&lt;/type&gt;
+                    &lt;/runtimeArtifact&gt;
+                    &lt;bootstrapProperties&gt;
+                        &lt;default.http.port&gt;9080&lt;/default.http.port&gt;
+                        &lt;default.https.port&gt;9443&lt;/default.https.port&gt;
+                        &lt;app.context.root&gt;/&lt;/app.context.root&gt;
+                    &lt;/bootstrapProperties&gt;
+                &lt;/configuration&gt;
+            &lt;/plugin&gt;
+            
+            &lt;plugin&gt;
+                &lt;groupId&gt;org.apache.maven.plugins&lt;/groupId&gt;
+                &lt;artifactId&gt;maven-war-plugin&lt;/artifactId&gt;
+                &lt;version&gt;3.4.0&lt;/version&gt;
+                &lt;configuration&gt;
+                    &lt;failOnMissingWebXml&gt;false&lt;/failOnMissingWebXml&gt;
+                &lt;/configuration&gt;
+            &lt;/plugin&gt;
+        &lt;/plugins&gt;
+    &lt;/build&gt;
 &lt;/project&gt;</code></pre>
 
 <span class="slide-counter">17 / 35</span>
