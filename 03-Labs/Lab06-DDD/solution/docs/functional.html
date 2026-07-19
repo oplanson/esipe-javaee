@@ -1,0 +1,373 @@
+<!-- © Copyright 2026 Olivier Planson. All rights reserved. Reproduction prohibited. Made with IBM Bob. -->
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>Architecture Fonctionnelle — Banking DDD Application Documentation</title>
+  <link rel="stylesheet" href="assets/carbon.css"/>
+</head>
+<body>
+<header class="cds--header">
+  <a class="cds--header__name" href="index.html">Banking DDD<span>Documentation Technique</span></a>
+</header>
+<div class="cds--shell">
+  <nav class="cds--side-nav">
+    <p class="cds--side-nav__section-title">Documentation</p>
+    <a class="cds--side-nav__link" href="index.html">⊙ Vue d'ensemble</a>
+    <a class="cds--side-nav__link active" href="functional.html">⊞ Architecture Fonctionnelle</a>
+    <a class="cds--side-nav__link" href="technical.html">⊟ Architecture Technique</a>
+    <a class="cds--side-nav__link" href="sequences.html">⇄ Diagrammes de Séquences</a>
+    <a class="cds--side-nav__link" href="rules.html">≡ Règles de Gestion</a>
+  </nav>
+  <main class="cds--content">
+    <div class="breadcrumb"><a href="index.html">Banking DDD</a> / <span>Architecture Fonctionnelle</span></div>
+    <h1>Architecture Fonctionnelle</h1>
+    <p class="page-lead">L'application expose deux surfaces d'interaction : une interface web JSP pour la gestion CRUD via navigateur, et une API REST duale (v1 dépréciée / v2 courante) pour l'intégration programmatique.</p>
+
+    <h2>Carte des fonctionnalités</h2>
+    <div class="tile-grid">
+      <div class="cds--tile">
+        <h3><span class="cds--tag cds--tag--blue">F1</span> Gestion des Clients</h3>
+        <p>Créer, lire, modifier et supprimer des clients bancaires (<code>Client</code> aggregate root). Chaque client possède un nom, un email unique (Value Object <code>Email</code>), et un statut premium.</p>
+        <div class="tag-stack" style="margin-top:0.75rem;">
+          <span class="cds--tag cds--tag--teal">CRUD</span>
+          <span class="cds--tag cds--tag--green">Premium/Standard</span>
+          <span class="cds--tag cds--tag--blue">CDI Events</span>
+        </div>
+      </div>
+      <div class="cds--tile">
+        <h3><span class="cds--tag cds--tag--green">F2</span> Gestion des Comptes</h3>
+        <p>Créer des comptes bancaires (CHECKING / SAVINGS) associés à un client. Réaliser des dépôts, retraits et virements. Le solde est modélisé avec le Value Object <code>Money</code> (montant + devise EUR).</p>
+        <div class="tag-stack" style="margin-top:0.75rem;">
+          <span class="cds--tag cds--tag--teal">Dépôt / Retrait</span>
+          <span class="cds--tag cds--tag--green">Virement</span>
+          <span class="cds--tag cds--tag--blue">Overdraft CHECKING</span>
+        </div>
+      </div>
+      <div class="cds--tile">
+        <h3><span class="cds--tag cds--tag--purple">F3</span> API REST &amp; Monitoring</h3>
+        <p>API v1 (dépréciée) et v2 (courante) pour intégration. Health Check MicroProfile, métriques, OpenAPI/Swagger, et MicroProfile Rest Client pour les appels inter-services.</p>
+        <div class="tag-stack" style="margin-top:0.75rem;">
+          <span class="cds--tag cds--tag--purple">JAX-RS</span>
+          <span class="cds--tag cds--tag--teal">Health/Metrics</span>
+          <span class="cds--tag cds--tag--blue">OpenAPI</span>
+        </div>
+      </div>
+    </div>
+
+    <h2>Parcours utilisateur (Web)</h2>
+    <div class="cds--data-table-container">
+      <table class="cds--data-table">
+        <thead><tr><th>Écran courant</th><th>Action utilisateur</th><th>Destination</th><th>Mécanisme</th></tr></thead>
+        <tbody>
+          <tr><td><code>/</code> (index.html)</td><td>Cliquer « View Clients »</td><td><code>/clients</code></td><td>Lien HTML</td></tr>
+          <tr><td><code>/clients</code></td><td>Cliquer « Add New Client »</td><td><code>/client?action=new</code></td><td>Lien → doGet()</td></tr>
+          <tr><td><code>/clients</code></td><td>Cliquer « View » sur un client</td><td><code>/client?action=view&id=N</code></td><td>Lien → doGet()</td></tr>
+          <tr><td><code>/clients</code></td><td>Cliquer « Edit » sur un client</td><td><code>/client?action=edit&id=N</code></td><td>Lien → doGet()</td></tr>
+          <tr><td><code>/clients</code></td><td>Cliquer « Delete » (confirm)</td><td><code>/clients?message=deleted</code></td><td>POST /client → PRG</td></tr>
+          <tr><td><code>/client?action=new</code></td><td>Soumettre le formulaire</td><td><code>/clients?message=created</code></td><td>POST /client → PRG</td></tr>
+          <tr><td><code>/client?action=view</code></td><td>Cliquer « New Account »</td><td><code>/account?action=new&clientId=N</code></td><td>Lien → doGet()</td></tr>
+          <tr><td><code>/account?action=new</code></td><td>Soumettre le formulaire</td><td><code>/client?action=view&id=N&message=account_created</code></td><td>POST /account → PRG</td></tr>
+          <tr><td><code>/account?action=view</code></td><td>Soumettre dépôt</td><td><code>/account?action=view&id=N&message=deposit_success</code></td><td>POST /account → PRG</td></tr>
+          <tr><td><code>/account?action=view</code></td><td>Soumettre retrait</td><td><code>/account?action=view&id=N&message=withdraw_success</code></td><td>POST /account → PRG</td></tr>
+          <tr><td><code>/account?action=view</code></td><td>Soumettre virement</td><td><code>/account?action=view&id=N&message=transfer_success</code></td><td>POST /account → PRG</td></tr>
+          <tr><td>N'importe quel écran</td><td>Erreur 404</td><td><code>/error-404.html</code></td><td>web.xml error-page</td></tr>
+          <tr><td>N'importe quel écran</td><td>Erreur 500</td><td><code>/error-500.html</code></td><td>web.xml error-page</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h2>Modèle de données — Entités JPA</h2>
+    <h3>Client (Aggregate Root)</h3>
+    <div class="cds--data-table-container">
+      <table class="cds--data-table">
+        <thead><tr><th>Attribut Java</th><th>Colonne DB</th><th>Type</th><th>Contrainte HTML</th><th>Contrainte serveur</th><th>Description</th></tr></thead>
+        <tbody>
+          <tr><td><code>id</code></td><td><code>id</code></td><td><code>Long</code></td><td>—</td><td>AUTO (IDENTITY)</td><td>Identifiant auto-généré</td></tr>
+          <tr><td><code>name</code></td><td><code>name</code></td><td><code>String</code></td><td><code>required maxlength=100</code></td><td><code>@NotNull @Size(2,100)</code></td><td>Nom complet du client</td></tr>
+          <tr><td><code>email</code> (VO <code>Email</code>)</td><td><code>email</code></td><td><code>VARCHAR(100) UNIQUE</code></td><td><code>type=email required maxlength=100</code></td><td>Regex <code>^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$</code></td><td>Adresse email normalisée en minuscules</td></tr>
+          <tr><td><code>premium</code></td><td><code>is_premium</code></td><td><code>boolean</code></td><td>checkbox</td><td>—</td><td>Statut premium (notifications enrichies)</td></tr>
+          <tr><td><code>createdAt</code></td><td><code>created_at</code></td><td><code>TIMESTAMP</code></td><td>—</td><td><code>@PrePersist</code></td><td>Horodatage de création</td></tr>
+          <tr><td><code>updatedAt</code></td><td><code>updated_at</code></td><td><code>TIMESTAMP</code></td><td>—</td><td><code>@PreUpdate</code></td><td>Horodatage de dernière modification</td></tr>
+          <tr><td><code>accounts</code></td><td>—</td><td><code>List&lt;Account&gt;</code></td><td>—</td><td>Max 5 (standard) ou 10 (premium)</td><td>Collection de comptes (protégée)</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3>Account (Aggregate Root)</h3>
+    <div class="cds--data-table-container">
+      <table class="cds--data-table">
+        <thead><tr><th>Attribut Java</th><th>Colonne DB</th><th>Type</th><th>Contrainte HTML</th><th>Contrainte serveur</th><th>Description</th></tr></thead>
+        <tbody>
+          <tr><td><code>id</code></td><td><code>id</code></td><td><code>Long</code></td><td>—</td><td>AUTO (IDENTITY)</td><td>Identifiant auto-généré</td></tr>
+          <tr><td><code>accountNumber</code> (VO)</td><td><code>account_number</code></td><td><code>VARCHAR(34) UNIQUE</code></td><td><code>maxlength=34</code></td><td>Regex IBAN <code>^[A-Z]{2}[0-9]{2}[A-Z0-9]{1,30}$</code>; auto-générés : FR76 + 23 chiffres</td><td>Numéro de compte IBAN-like</td></tr>
+          <tr><td><code>balance</code> (VO <code>Money</code>)</td><td><code>balance_amount + balance_currency</code></td><td><code>DECIMAL(19,2) + VARCHAR(3)</code></td><td><code>step=0.01</code></td><td>CHECKING ≥ -500 EUR ; SAVINGS ≥ 0 EUR</td><td>Solde avec devise ISO 4217</td></tr>
+          <tr><td><code>accountType</code> (VO)</td><td><code>account_type</code></td><td><code>VARCHAR(20)</code></td><td><code>select required</code></td><td>Enum CHECKING | SAVINGS</td><td>Type de compte</td></tr>
+          <tr><td><code>createdAt</code></td><td><code>created_at</code></td><td><code>TIMESTAMP</code></td><td>—</td><td><code>@PrePersist</code></td><td>Horodatage de création</td></tr>
+          <tr><td><code>updatedAt</code></td><td><code>updated_at</code></td><td><code>TIMESTAMP</code></td><td>—</td><td><code>@PreUpdate</code></td><td>Horodatage de modification</td></tr>
+          <tr><td><code>client</code></td><td><code>client_id FK</code></td><td><code>Client</code></td><td>—</td><td><code>@ManyToOne LAZY @NotNull</code></td><td>Propriétaire du compte</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h2>Analyse du modèle de données</h2>
+    <p style="color:#525252;margin-bottom:1.25rem;">Deux niveaux de représentation sont présentés : le <strong>Modèle Conceptuel de Données (MCD)</strong> — entités métier et associations indépendantes de toute technologie — et le <strong>Modèle Physique de Données (MPD)</strong> — tables PostgreSQL réelles telles qu'elles existent après les migrations Flyway V1 à V5.</p>
+
+    <h3>MCD — Modèle Conceptuel de Données</h3>
+    <p style="color:#525252;margin-bottom:0.75rem;">Le domaine métier comporte deux entités principales, reliées par une association de possession (1,N). Les Value Objects DDD (<code>Email</code>, <code>Money</code>, <code>AccountNumber</code>, <code>AccountType</code>) sont des attributs composés sans identité propre.</p>
+    <div class="sd-wrap" style="overflow-x:auto;">
+      <svg width="100%" style="max-width:700px;" viewBox="0 0 700 320" xmlns="http://www.w3.org/2000/svg">
+        <!-- CLIENT entity -->
+        <rect x="30" y="40" width="220" height="200" rx="3" fill="#f4f4f4" stroke="#0f62fe" stroke-width="2"/>
+        <rect x="30" y="40" width="220" height="32" rx="3" fill="#0f62fe"/>
+        <text x="140" y="62" text-anchor="middle" font-size="13" font-weight="700" fill="#fff" font-family="-apple-system,'Segoe UI',system-ui,sans-serif">CLIENT</text>
+        <!-- Client attributes -->
+        <line x1="30" y1="72" x2="250" y2="72" stroke="#c6c6c6" stroke-width="1"/>
+        <text x="44" y="92" font-size="11" fill="#161616" font-family="-apple-system,'Segoe UI',system-ui,sans-serif">
+          <tspan font-weight="700">#id</tspan> : Long (PK, auto)
+        </text>
+        <text x="44" y="112" font-size="11" fill="#161616" font-family="-apple-system,'Segoe UI',system-ui,sans-serif">name : String (obligatoire, 2–100)</text>
+        <text x="44" y="132" font-size="11" fill="#161616" font-family="-apple-system,'Segoe UI',system-ui,sans-serif">email : Email VO (unique)</text>
+        <text x="44" y="152" font-size="11" fill="#161616" font-family="-apple-system,'Segoe UI',system-ui,sans-serif">is_premium : Boolean</text>
+        <text x="44" y="172" font-size="11" fill="#525252" font-style="italic" font-family="-apple-system,'Segoe UI',system-ui,sans-serif">created_at : DateTime</text>
+        <text x="44" y="192" font-size="11" fill="#525252" font-style="italic" font-family="-apple-system,'Segoe UI',system-ui,sans-serif">updated_at : DateTime</text>
+        <!-- VO annotation -->
+        <rect x="32" y="204" width="216" height="30" rx="2" fill="#edf5ff" stroke="#0043ce" stroke-width="1"/>
+        <text x="140" y="223" text-anchor="middle" font-size="10" fill="#0043ce" font-family="-apple-system,'Segoe UI',system-ui,sans-serif">VO : Email (format, normalisation)</text>
+
+        <!-- ACCOUNT entity -->
+        <rect x="450" y="40" width="220" height="230" rx="3" fill="#f4f4f4" stroke="#198038" stroke-width="2"/>
+        <rect x="450" y="40" width="220" height="32" rx="3" fill="#198038"/>
+        <text x="560" y="62" text-anchor="middle" font-size="13" font-weight="700" fill="#fff" font-family="-apple-system,'Segoe UI',system-ui,sans-serif">ACCOUNT</text>
+        <!-- Account attributes -->
+        <line x1="450" y1="72" x2="670" y2="72" stroke="#c6c6c6" stroke-width="1"/>
+        <text x="464" y="92" font-size="11" fill="#161616" font-family="-apple-system,'Segoe UI',system-ui,sans-serif">
+          <tspan font-weight="700">#id</tspan> : Long (PK, auto)
+        </text>
+        <text x="464" y="112" font-size="11" fill="#161616" font-family="-apple-system,'Segoe UI',system-ui,sans-serif">accountNumber : AccountNumber VO</text>
+        <text x="464" y="132" font-size="11" fill="#161616" font-family="-apple-system,'Segoe UI',system-ui,sans-serif">balance : Money VO (amount + ccy)</text>
+        <text x="464" y="152" font-size="11" fill="#161616" font-family="-apple-system,'Segoe UI',system-ui,sans-serif">accountType : AccountType VO</text>
+        <text x="464" y="172" font-size="11" fill="#525252" font-style="italic" font-family="-apple-system,'Segoe UI',system-ui,sans-serif">created_at : DateTime</text>
+        <text x="464" y="192" font-size="11" fill="#525252" font-style="italic" font-family="-apple-system,'Segoe UI',system-ui,sans-serif">updated_at : DateTime</text>
+        <!-- VO annotations -->
+        <rect x="452" y="204" width="216" height="30" rx="2" fill="#defbe6" stroke="#198038" stroke-width="1"/>
+        <text x="560" y="218" text-anchor="middle" font-size="10" fill="#0e6027" font-family="-apple-system,'Segoe UI',system-ui,sans-serif">VO : AccountNumber (IBAN, gen.)</text>
+        <text x="560" y="229" text-anchor="middle" font-size="10" fill="#0e6027" font-family="-apple-system,'Segoe UI',system-ui,sans-serif">VO : Money (montant+devise)  VO : AccountType</text>
+
+        <!-- Association line -->
+        <line x1="250" y1="150" x2="450" y2="150" stroke="#525252" stroke-width="2"/>
+        <!-- Cardinalities -->
+        <text x="258" y="144" font-size="11" font-weight="700" fill="#525252" font-family="-apple-system,'Segoe UI',system-ui,sans-serif">1,1</text>
+        <text x="420" y="144" font-size="11" font-weight="700" fill="#525252" font-family="-apple-system,'Segoe UI',system-ui,sans-serif">0,N</text>
+        <!-- Association label -->
+        <rect x="316" y="136" width="68" height="20" rx="10" fill="#e8daff" stroke="#491d8b" stroke-width="1"/>
+        <text x="350" y="150" text-anchor="middle" font-size="10" font-weight="600" fill="#491d8b" font-family="-apple-system,'Segoe UI',system-ui,sans-serif">POSSÈDE</text>
+        <!-- crow foot: many side at ACCOUNT -->
+        <line x1="450" y1="143" x2="438" y2="143" stroke="#525252" stroke-width="2"/>
+        <line x1="438" y1="138" x2="438" y2="162" stroke="#525252" stroke-width="2"/>
+        <line x1="438" y1="143" x2="428" y2="135" stroke="#525252" stroke-width="1.5"/>
+        <line x1="438" y1="143" x2="428" y2="151" stroke="#525252" stroke-width="1.5"/>
+        <!-- one side at CLIENT -->
+        <line x1="250" y1="143" x2="262" y2="143" stroke="#525252" stroke-width="2"/>
+        <line x1="262" y1="138" x2="262" y2="162" stroke="#525252" stroke-width="2"/>
+
+        <!-- Legend -->
+        <rect x="30" y="268" width="640" height="42" rx="2" fill="#f4f4f4" stroke="#e0e0e0" stroke-width="1"/>
+        <text x="44" y="282" font-size="10" fill="#525252" font-family="-apple-system,'Segoe UI',system-ui,sans-serif"># Attribut clé primaire</text>
+        <text x="44" y="298" font-size="10" fill="#525252" font-family="-apple-system,'Segoe UI',system-ui,sans-serif">VO = Value Object (immuable, sans identité propre)</text>
+        <text x="220" y="282" font-size="10" fill="#525252" font-family="-apple-system,'Segoe UI',system-ui,sans-serif">1,1 = exactement un client propriétaire</text>
+        <text x="220" y="298" font-size="10" fill="#525252" font-family="-apple-system,'Segoe UI',system-ui,sans-serif">0,N = zéro à N comptes par client (max 5 std / 10 premium)</text>
+        <text x="460" y="282" font-size="10" fill="#525252" font-family="-apple-system,'Segoe UI',system-ui,sans-serif">Attributs en italique = techniques</text>
+        <text x="460" y="298" font-size="10" fill="#525252" font-family="-apple-system,'Segoe UI',system-ui,sans-serif">Attributs en gras = identifiants</text>
+      </svg>
+    </div>
+
+    <h3>MPD — Modèle Physique de Données (PostgreSQL après Flyway V5)</h3>
+    <p style="color:#525252;margin-bottom:0.75rem;">Le schéma physique reflète le refactoring DDD de la migration V5 : colonnes <code>balance_amount</code>/<code>balance_currency</code> (Money VO), <code>account_number</code>, <code>account_type</code>. La colonne <code>balance</code> est maintenue pour compatibilité ascendante via trigger. Les index optimisent les recherches courantes.</p>
+    <div class="sd-wrap" style="overflow-x:auto;">
+      <svg width="100%" style="max-width:730px;" viewBox="0 0 730 370" xmlns="http://www.w3.org/2000/svg">
+        <!-- TABLE clients -->
+        <rect x="20" y="20" width="260" height="272" rx="3" fill="#f4f4f4" stroke="#0f62fe" stroke-width="2"/>
+        <rect x="20" y="20" width="260" height="28" rx="3" fill="#161616"/>
+        <text x="150" y="39" text-anchor="middle" font-size="11" font-weight="700" fill="#fff" font-family="-apple-system,'Segoe UI',system-ui,sans-serif">TABLE : clients</text>
+        <!-- clients columns -->
+        <line x1="20" y1="48" x2="280" y2="48" stroke="#c6c6c6" stroke-width="1"/>
+        <text x="34" y="66" font-size="10" fill="#161616" font-family="-apple-system,'Segoe UI',system-ui,sans-serif"><tspan font-weight="700">PK  id</tspan>  BIGSERIAL NOT NULL</text>
+        <line x1="20" y1="72" x2="280" y2="72" stroke="#e0e0e0" stroke-width="1"/>
+        <text x="34" y="88" font-size="10" fill="#161616" font-family="-apple-system,'Segoe UI',system-ui,sans-serif">name  VARCHAR(100) NOT NULL</text>
+        <line x1="20" y1="94" x2="280" y2="94" stroke="#e0e0e0" stroke-width="1"/>
+        <text x="34" y="110" font-size="10" fill="#161616" font-family="-apple-system,'Segoe UI',system-ui,sans-serif">email  VARCHAR(100) NOT NULL UNIQUE</text>
+        <line x1="20" y1="116" x2="280" y2="116" stroke="#e0e0e0" stroke-width="1"/>
+        <text x="34" y="132" font-size="10" fill="#161616" font-family="-apple-system,'Segoe UI',system-ui,sans-serif">is_premium  BOOLEAN DEFAULT FALSE NOT NULL</text>
+        <line x1="20" y1="138" x2="280" y2="138" stroke="#e0e0e0" stroke-width="1"/>
+        <text x="34" y="154" font-size="10" fill="#525252" font-family="-apple-system,'Segoe UI',system-ui,sans-serif">created_at  TIMESTAMP DEFAULT NOW()</text>
+        <line x1="20" y1="160" x2="280" y2="160" stroke="#e0e0e0" stroke-width="1"/>
+        <text x="34" y="176" font-size="10" fill="#525252" font-family="-apple-system,'Segoe UI',system-ui,sans-serif">updated_at  TIMESTAMP DEFAULT NOW()</text>
+        <!-- clients indexes -->
+        <line x1="20" y1="184" x2="280" y2="184" stroke="#c6c6c6" stroke-width="1"/>
+        <rect x="22" y="188" width="256" height="14" rx="2" fill="#edf5ff"/>
+        <text x="34" y="199" font-size="9" fill="#0043ce" font-family="-apple-system,'Segoe UI',system-ui,sans-serif">IDX idx_clients_email (email)</text>
+        <rect x="22" y="206" width="256" height="14" rx="2" fill="#edf5ff"/>
+        <text x="34" y="217" font-size="9" fill="#0043ce" font-family="-apple-system,'Segoe UI',system-ui,sans-serif">IDX idx_clients_name (name)</text>
+        <!-- flyway_schema_history note -->
+        <rect x="22" y="226" width="256" height="58" rx="2" fill="#fdf6dd" stroke="#f1c21b" stroke-width="1"/>
+        <text x="34" y="241" font-size="9" fill="#4d3800" font-family="-apple-system,'Segoe UI',system-ui,sans-serif">Flyway : flyway_schema_history</text>
+        <text x="34" y="255" font-size="9" fill="#4d3800" font-family="-apple-system,'Segoe UI',system-ui,sans-serif">V1 : création + seed (5 clients)</text>
+        <text x="34" y="269" font-size="9" fill="#4d3800" font-family="-apple-system,'Segoe UI',system-ui,sans-serif">V4 : +is_premium, 2 clients → premium</text>
+
+        <!-- TABLE accounts -->
+        <rect x="430" y="20" width="280" height="320" rx="3" fill="#f4f4f4" stroke="#198038" stroke-width="2"/>
+        <rect x="430" y="20" width="280" height="28" rx="3" fill="#161616"/>
+        <text x="570" y="39" text-anchor="middle" font-size="11" font-weight="700" fill="#fff" font-family="-apple-system,'Segoe UI',system-ui,sans-serif">TABLE : accounts</text>
+        <!-- accounts columns -->
+        <line x1="430" y1="48" x2="710" y2="48" stroke="#c6c6c6" stroke-width="1"/>
+        <text x="444" y="66" font-size="10" fill="#161616" font-family="-apple-system,'Segoe UI',system-ui,sans-serif"><tspan font-weight="700">PK  id</tspan>  BIGSERIAL NOT NULL</text>
+        <line x1="430" y1="72" x2="710" y2="72" stroke="#e0e0e0" stroke-width="1"/>
+        <text x="444" y="88" font-size="10" fill="#161616" font-family="-apple-system,'Segoe UI',system-ui,sans-serif">account_number  VARCHAR(34) NOT NULL UNIQUE</text>
+        <line x1="430" y1="94" x2="710" y2="94" stroke="#e0e0e0" stroke-width="1"/>
+        <text x="444" y="110" font-size="10" fill="#161616" font-family="-apple-system,'Segoe UI',system-ui,sans-serif">balance_amount  DECIMAL(19,2) NOT NULL</text>
+        <line x1="430" y1="116" x2="710" y2="116" stroke="#e0e0e0" stroke-width="1"/>
+        <text x="444" y="132" font-size="10" fill="#161616" font-family="-apple-system,'Segoe UI',system-ui,sans-serif">balance_currency  VARCHAR(3) NOT NULL</text>
+        <line x1="430" y1="138" x2="710" y2="138" stroke="#e0e0e0" stroke-width="1"/>
+        <text x="444" y="154" font-size="10" fill="#161616" font-family="-apple-system,'Segoe UI',system-ui,sans-serif">account_type  VARCHAR(20) NOT NULL</text>
+        <line x1="430" y1="160" x2="710" y2="160" stroke="#e0e0e0" stroke-width="1"/>
+        <text x="444" y="176" font-size="10" fill="#750e13" font-family="-apple-system,'Segoe UI',system-ui,sans-serif">balance  DECIMAL(15,2)  [DEPRECATED V6]</text>
+        <line x1="430" y1="182" x2="710" y2="182" stroke="#e0e0e0" stroke-width="1"/>
+        <text x="444" y="198" font-size="10" fill="#161616" font-family="-apple-system,'Segoe UI',system-ui,sans-serif"><tspan font-weight="700">FK  client_id</tspan>  BIGINT NOT NULL → clients(id)</text>
+        <line x1="430" y1="204" x2="710" y2="204" stroke="#e0e0e0" stroke-width="1"/>
+        <text x="444" y="220" font-size="10" fill="#525252" font-family="-apple-system,'Segoe UI',system-ui,sans-serif">created_at  TIMESTAMP DEFAULT NOW()</text>
+        <line x1="430" y1="226" x2="710" y2="226" stroke="#e0e0e0" stroke-width="1"/>
+        <text x="444" y="242" font-size="10" fill="#525252" font-family="-apple-system,'Segoe UI',system-ui,sans-serif">updated_at  TIMESTAMP DEFAULT NOW()</text>
+        <!-- accounts constraints + indexes -->
+        <line x1="430" y1="248" x2="710" y2="248" stroke="#c6c6c6" stroke-width="1"/>
+        <rect x="432" y="252" width="276" height="14" rx="2" fill="#defbe6"/>
+        <text x="444" y="263" font-size="9" fill="#0e6027" font-family="-apple-system,'Segoe UI',system-ui,sans-serif">CHECK account_type IN ('CHECKING','SAVINGS')</text>
+        <rect x="432" y="270" width="276" height="14" rx="2" fill="#defbe6"/>
+        <text x="444" y="281" font-size="9" fill="#0e6027" font-family="-apple-system,'Segoe UI',system-ui,sans-serif">CHECK balance_currency ~ '^[A-Z]{3}$'</text>
+        <rect x="432" y="288" width="276" height="14" rx="2" fill="#defbe6"/>
+        <text x="444" y="299" font-size="9" fill="#0e6027" font-family="-apple-system,'Segoe UI',system-ui,sans-serif">CHECK CHECKING≥-500 / SAVINGS≥0  (V5)</text>
+        <rect x="432" y="306" width="276" height="27" rx="2" fill="#edf5ff"/>
+        <text x="444" y="319" font-size="9" fill="#0043ce" font-family="-apple-system,'Segoe UI',system-ui,sans-serif">IDX account_number, account_type, client_id, status</text>
+        <text x="444" y="330" font-size="9" fill="#0043ce" font-family="-apple-system,'Segoe UI',system-ui,sans-serif">TRIGGER trigger_sync_account_balance (V5 compat.)</text>
+
+        <!-- FK arrow from accounts.client_id to clients.id -->
+        <line x1="430" y1="196" x2="320" y2="196" stroke="#525252" stroke-width="1.5" stroke-dasharray="5 3"/>
+        <polygon points="320,192 308,196 320,200" fill="#525252"/>
+        <text x="340" y="191" font-size="9" fill="#525252" font-family="-apple-system,'Segoe UI',system-ui,sans-serif">FK ON DELETE CASCADE</text>
+        <!-- ON DELETE CASCADE label -->
+        <line x1="280" y1="196" x2="310" y2="196" stroke="#525252" stroke-width="1.5"/>
+        <line x1="308" y1="196" x2="308" y2="152" stroke="#525252" stroke-width="1.5"/>
+        <polygon points="304,152 308,140 312,152" fill="#525252"/>
+        <text x="313" y="172" font-size="9" fill="#525252" font-family="-apple-system,'Segoe UI',system-ui,sans-serif">clients.id</text>
+      </svg>
+    </div>
+
+    <h3>Comparaison MCD ↔ MPD : décisions de conception</h3>
+    <div class="cds--data-table-container">
+      <table class="cds--data-table">
+        <thead><tr><th>Concept MCD</th><th>Réalisation MPD</th><th>Décision / Justification</th></tr></thead>
+        <tbody>
+          <tr>
+            <td>Attribut <em>email</em> (VO <code>Email</code>)</td>
+            <td>Colonne <code>email VARCHAR(100) UNIQUE</code></td>
+            <td>JPA <code>@Embedded @AttributeOverride</code> — le VO est aplati en une seule colonne. Unicité enforced en DB (index UNIQUE).</td>
+          </tr>
+          <tr>
+            <td>Attribut <em>balance</em> (VO <code>Money</code>)</td>
+            <td>Deux colonnes : <code>balance_amount DECIMAL(19,2)</code> + <code>balance_currency VARCHAR(3)</code></td>
+            <td>Migration V5 : refactoring DDD — un VO <em>Money</em> se décompose en deux colonnes via <code>@Embedded @AttributeOverrides</code>. La précision DECIMAL(19,2) couvre toutes les devises ISO 4217.</td>
+          </tr>
+          <tr>
+            <td>Attribut <em>accountNumber</em> (VO <code>AccountNumber</code>)</td>
+            <td>Colonne <code>account_number VARCHAR(34) UNIQUE</code></td>
+            <td>Renommé de <code>number</code> → <code>account_number</code> en V5 pour aligner sur le Ubiquitous Language DDD. Longueur 34 = max IBAN.</td>
+          </tr>
+          <tr>
+            <td>Attribut <em>accountType</em> (VO <code>AccountType</code> — enum)</td>
+            <td>Colonne <code>account_type VARCHAR(20)</code> + CHECK constraint</td>
+            <td>JPA <code>@Enumerated(EnumType.STRING)</code>. Stocké en String pour lisibilité et extensibilité. Renommé de <code>type</code> → <code>account_type</code> en V5.</td>
+          </tr>
+          <tr>
+            <td>Association POSSÈDE (1,N)</td>
+            <td>Clé étrangère <code>client_id BIGINT NOT NULL</code> + <code>ON DELETE CASCADE</code></td>
+            <td>JPA <code>@ManyToOne(fetch=LAZY)</code> + <code>@OneToMany(cascade=ALL, orphanRemoval=true)</code>. La cascade DB garantit l'intégrité même en dehors de JPA.</td>
+          </tr>
+          <tr>
+            <td>—</td>
+            <td>Colonne <code>balance</code> DEPRECATED</td>
+            <td>Colonne héritée de V2, conservée pour compatibilité (trigger V5). Sera supprimée en migration V6. Illustre la migration incrémentale sans downtime.</td>
+          </tr>
+          <tr>
+            <td>—</td>
+            <td>Colonne <code>status VARCHAR(20)</code> (V3)</td>
+            <td>Ajoutée en V3 avec les valeurs ACTIVE/SUSPENDED/CLOSED. Non encore exposée dans le modèle Java — évolution future prévue.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h2>Value Objects DDD</h2>
+    <div class="tile-grid">
+      <div class="cds--tile">
+        <h3>Money</h3>
+        <p>Montant (<code>BigDecimal</code>, scale 2) + devise (<code>String</code> ISO 4217). Immuable. Opérations : <code>add</code>, <code>subtract</code>, <code>multiply</code>, comparaisons. Empêche les erreurs de devise différente.</p>
+      </div>
+      <div class="cds--tile">
+        <h3>AccountNumber</h3>
+        <p>Numéro IBAN-like validé par regex <code>^[A-Z]{2}[0-9]{2}[A-Z0-9]{1,30}$</code>. Méthode <code>generate()</code> produit un numéro FR76 + 23 chiffres via UUID.</p>
+      </div>
+      <div class="cds--tile">
+        <h3>Email</h3>
+        <p>Adresse normalisée en minuscules, validée par regex. Méthodes utilitaires : <code>getLocalPart()</code>, <code>getDomain()</code>, <code>getMasked()</code>.</p>
+      </div>
+      <div class="cds--tile">
+        <h3>AccountType</h3>
+        <p>Enum CHECKING (découvert -500 EUR) / SAVINGS (min 0 EUR, intérêts calculés). Contient la logique métier : <code>canWithdraw()</code>, <code>calculateInterest()</code>.</p>
+      </div>
+    </div>
+
+    <h2>Données de démarrage (seed data)</h2>
+    <div class="cds--tile">
+      <h3>Migrations Flyway V1–V5</h3>
+      <p>Chargées automatiquement au démarrage par <code>DatabaseMigrationStartup</code> via <code>@WebListener</code>.</p>
+      <div class="cds--data-table-container" style="margin-top:1rem;">
+        <table class="cds--data-table">
+          <thead><tr><th>Client</th><th>Email</th><th>Premium</th><th>Comptes</th></tr></thead>
+          <tbody>
+            <tr><td>Jean Dupont</td><td>jean.dupont@example.com</td><td>Oui (V4)</td><td>FR7612345678901234567890123 (CHECKING 1500€), FR7698765432109876543210987 (SAVINGS 5000€)</td></tr>
+            <tr><td>Marie Martin</td><td>marie.martin@example.com</td><td>Oui (V4)</td><td>FR7611111111111111111111111 (CHECKING 2500€)</td></tr>
+            <tr><td>Pierre Durand</td><td>pierre.durand@example.com</td><td>Non</td><td>FR7622222222222222222222222 (CHECKING 3000€), FR7633333333333333333333333 (SAVINGS 10000€)</td></tr>
+            <tr><td>Sophie Bernard</td><td>sophie.bernard@example.com</td><td>Non</td><td>—</td></tr>
+            <tr><td>Luc Petit</td><td>luc.petit@example.com</td><td>Non</td><td>FR7644444444444444444444444 (CHECKING 750€)</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <h2>Acteurs</h2>
+    <div class="tile-grid">
+      <div class="cds--tile">
+        <h3>Navigateur (Client Web)</h3>
+        <p>Accède à l'interface JSP via HTTP GET/POST. Les formulaires utilisent le patron PRG (Post-Redirect-Get) pour éviter les doubles soumissions. La confirmation de suppression est gérée côté client (<code>confirm()</code> inline dans le JSP).</p>
+      </div>
+      <div class="cds--tile">
+        <h3>Client API (Programmatique)</h3>
+        <p>Consomme l'API REST v2 (<code>/api/v2/</code>) via JSON. Le <code>BankingRestClient</code> MicroProfile permet les appels inter-services typés. En-têtes de dépréciation inclus dans les réponses v1.</p>
+      </div>
+      <div class="cds--tile">
+        <h3>Serveur Open Liberty</h3>
+        <p>Exécute les servlets (<code>ClientController</code>, <code>AccountController</code>), les ressources JAX-RS (<code>ClientResource</code>, <code>AccountResourceV2</code>), les services CDI et JPA EclipseLink avec PostgreSQL.</p>
+      </div>
+    </div>
+
+    <div class="cds--inline-notification warning">
+      <strong>Limitation :</strong> Les règles de virement cross-devise ne sont pas implémentées — un virement entre comptes de devises différentes est rejeté (<code>IllegalArgumentException</code>). Toutes les données de seed sont en EUR.
+    </div>
+  </main>
+</div>
+<footer class="cds--footer">
+  Banking DDD App · Documentation Technique v1.0 · © 2026 Olivier Planson · Made with IBM Bob
+</footer>
+</body>
+</html>

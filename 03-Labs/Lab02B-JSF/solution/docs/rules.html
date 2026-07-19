@@ -1,0 +1,232 @@
+<!-- © Copyright 2026 Olivier Planson. All rights reserved. Reproduction prohibited. Made with IBM Bob. -->
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Règles de Gestion — Banking JSF Application Lab 02B</title>
+  <link rel="stylesheet" href="assets/carbon.css"/>
+</head>
+<body>
+<header class="cds--header">
+  <a class="cds--header__name" href="index.html">Banking JSF Application<span>Documentation Technique — Lab 02B</span></a>
+</header>
+<div class="cds--shell">
+  <nav class="cds--side-nav">
+    <p class="cds--side-nav__section-title">Documentation</p>
+    <a class="cds--side-nav__link" href="index.html"><i class="icon">⊙</i> Vue d'ensemble</a>
+    <a class="cds--side-nav__link" href="functional.html"><i class="icon">⊞</i> Architecture Fonctionnelle</a>
+    <a class="cds--side-nav__link" href="technical.html"><i class="icon">⊟</i> Architecture Technique</a>
+    <a class="cds--side-nav__link" href="sequences.html"><i class="icon">⇄</i> Diagrammes de Séquences</a>
+    <a class="cds--side-nav__link active" href="rules.html"><i class="icon">≡</i> Règles de Gestion</a>
+  </nav>
+  <main class="cds--content">
+
+    <nav class="cds--breadcrumb">
+      <a href="index.html">Vue d'ensemble</a>
+      <span class="sep">/</span>
+      <span class="current">Règles de Gestion</span>
+    </nav>
+
+    <h1>Règles de Gestion</h1>
+    <p class="page-lead">
+      10 règles de gestion numérotées R1–R10, couvrant la validation des données,
+      les scopes CDI, la gestion de session et les règles UX de l'application Banking JSF.
+    </p>
+
+    <div class="cds--inline-notification">
+      <span>ℹ</span>
+      <div>
+        <strong>Convention de criticité :</strong>
+        les règles <span style="color:var(--cds-support-error);font-weight:600;">critiques</span>
+        bloquent la soumission du formulaire si violées.
+        Les règles <span style="color:#8c4f00;font-weight:600;">importantes</span> affectent le comportement.
+        Les règles sans marquage sont des comportements attendus.
+      </div>
+    </div>
+
+    <h2>Validation des données client</h2>
+
+    <!-- R1 -->
+    <div class="rule-card critical">
+      <div class="rule-id">
+        <span>R1</span>
+        <span class="cds--tag cds--tag--red">Critique</span>
+      </div>
+      <div class="rule-title">Nom client obligatoire — longueur 2 à 100 caractères</div>
+      <div class="rule-desc">
+        Le champ nom est requis (<code>required="true"</code>) et sa longueur est contrainte entre
+        2 et 100 caractères via <code>&lt;f:validateLength minimum="2" maximum="100"/&gt;</code>.
+        Toute violation lève un <code>FacesMessage</code> de type <code>SEVERITY_ERROR</code>
+        et empêche la progression vers la phase <em>Update Model Values</em>.
+        <br/><strong>Source :</strong> <code>WEB-INF/views/client-form.xhtml</code> — <code>f:validateLength</code> + <code>required=true</code>
+      </div>
+    </div>
+
+    <!-- R2 -->
+    <div class="rule-card critical">
+      <div class="rule-id">
+        <span>R2</span>
+        <span class="cds--tag cds--tag--red">Critique</span>
+      </div>
+      <div class="rule-title">Format d'adresse email valide</div>
+      <div class="rule-desc">
+        L'adresse email est validée par le validateur personnalisé <code>EmailValidator</code> annoté
+        <code>@FacesValidator("emailValidator")</code>. Le regex utilisé est :
+        <code>^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$</code>.
+        En cas d'échec, un message d'erreur localisé est ajouté au contexte JSF.
+        <br/><strong>Source :</strong> <code>com/bank/validator/EmailValidator.java</code> — <code>@FacesValidator</code>
+      </div>
+    </div>
+
+    <!-- R3 -->
+    <div class="rule-card critical">
+      <div class="rule-id">
+        <span>R3</span>
+        <span class="cds--tag cds--tag--red">Critique</span>
+      </div>
+      <div class="rule-title">Email requis</div>
+      <div class="rule-desc">
+        Le champ email ne peut pas être vide. L'attribut <code>required="true"</code> sur le composant
+        <code>h:inputText</code> déclenche une validation JSF avant même l'appel au validateur personnalisé.
+        <br/><strong>Source :</strong> <code>WEB-INF/views/client-form.xhtml</code> — attribut <code>required="true"</code>
+      </div>
+    </div>
+
+    <h2>Validation de l'adresse postale</h2>
+
+    <!-- R4 -->
+    <div class="rule-card critical">
+      <div class="rule-id">
+        <span>R4</span>
+        <span class="cds--tag cds--tag--red">Critique</span>
+      </div>
+      <div class="rule-title">Adresse postale complète obligatoire</div>
+      <div class="rule-desc">
+        Les quatre champs de l'adresse sont requis : rue, ville, code postal et pays.
+        Chaque champ porte l'attribut <code>required="true"</code> dans le formulaire.
+        L'objet <code>Address</code> est un value object imbriqué dans <code>Client</code>.
+        <br/><strong>Source :</strong> <code>WEB-INF/views/client-form.xhtml</code> — quatre champs <code>required="true"</code>
+      </div>
+    </div>
+
+    <!-- R5 -->
+    <div class="rule-card">
+      <div class="rule-id"><span>R5</span></div>
+      <div class="rule-title">Code postal — longueur 4 à 10 caractères</div>
+      <div class="rule-desc">
+        Le code postal doit comporter entre 4 et 10 caractères pour accepter les formats
+        internationaux (FR 5 chiffres, UK alphanumérique, etc.).
+        Contrôlé par <code>&lt;f:validateLength minimum="4" maximum="10"/&gt;</code>.
+        <br/><strong>Source :</strong> <code>WEB-INF/views/client-form.xhtml</code> — <code>f:validateLength</code> sur le champ CP
+      </div>
+    </div>
+
+    <h2>Recherche et navigation</h2>
+
+    <!-- R6 -->
+    <div class="rule-card">
+      <div class="rule-id"><span>R6</span></div>
+      <div class="rule-title">Recherche insensible à la casse sur nom OU email</div>
+      <div class="rule-desc">
+        La méthode <code>ClientService.searchClients(String term)</code> convertit le terme de recherche
+        et les valeurs en minuscules avant comparaison (<code>toLowerCase().contains(...)</code>).
+        La recherche porte simultanément sur le nom complet et l'adresse email du client.
+        <br/><strong>Source :</strong> <code>com/bank/service/ClientService.java</code> — méthode <code>searchClients()</code>
+      </div>
+    </div>
+
+    <h2>Architecture CDI et scopes</h2>
+
+    <!-- R7 -->
+    <div class="rule-card">
+      <div class="rule-id">
+        <span>R7</span>
+        <span class="cds--tag cds--tag--green">CDI</span>
+      </div>
+      <div class="rule-title">ClientBean @SessionScoped — état maintenu entre les requêtes</div>
+      <div class="rule-desc">
+        <code>ClientBean</code> est annoté <code>@Named @SessionScoped</code> : une instance est créée
+        par session HTTP et survit à plusieurs requêtes. Cela permet de mémoriser le client en cours
+        d'édition, les résultats de recherche et les messages de confirmation entre les redirections.
+        L'instance est détruite à l'expiration ou invalidation de la session.
+        <br/><strong>Source :</strong> <code>com/bank/beans/ClientBean.java</code> — annotation CDI <code>@SessionScoped</code>
+      </div>
+    </div>
+
+    <!-- R8 -->
+    <div class="rule-card">
+      <div class="rule-id">
+        <span>R8</span>
+        <span class="cds--tag cds--tag--warm">CDI</span>
+      </div>
+      <div class="rule-title">ClientService @ApplicationScoped — singleton partagé entre toutes les sessions</div>
+      <div class="rule-desc">
+        <code>ClientService</code> est annoté <code>@ApplicationScoped</code> : une unique instance
+        existe pour toute la durée de vie de l'application. Elle est partagée entre toutes les sessions
+        et tous les threads. Le stockage <code>ArrayList&lt;Client&gt;</code> en mémoire est donc commun
+        à tous les utilisateurs connectés simultanément.
+        <br/><strong>Source :</strong> <code>com/bank/service/ClientService.java</code> — annotation CDI <code>@ApplicationScoped</code>
+      </div>
+    </div>
+
+    <h2>Expérience utilisateur</h2>
+
+    <!-- R9 -->
+    <div class="rule-card warning">
+      <div class="rule-id">
+        <span>R9</span>
+        <span class="cds--tag cds--tag--warm">UX</span>
+      </div>
+      <div class="rule-title">Confirmation obligatoire avant suppression d'un client</div>
+      <div class="rule-desc">
+        La suppression d'un client depuis la liste ne s'exécute qu'après confirmation de l'utilisateur.
+        Un dialogue de confirmation JavaScript (<code>onclick="return confirm(...)"</code>) est affiché
+        au clic du bouton Supprimer. Si l'utilisateur annule, aucune requête n'est envoyée au serveur.
+        <br/><strong>Source :</strong> <code>WEB-INF/views/client-list.xhtml</code> — attribut <code>onclick</code> sur le commandButton
+      </div>
+    </div>
+
+    <!-- R10 -->
+    <div class="rule-card">
+      <div class="rule-id">
+        <span>R10</span>
+        <span class="cds--tag cds--tag--blue">Session</span>
+      </div>
+      <div class="rule-title">Timeout de session : 30 minutes</div>
+      <div class="rule-desc">
+        La session HTTP expire automatiquement après 30 minutes d'inactivité.
+        À l'expiration, le bean <code>@SessionScoped ClientBean</code> est détruit et le contexte de
+        navigation est perdu. L'utilisateur est redirigé vers la page de démarrage.
+        <br/><strong>Source :</strong> <code>WEB-INF/web.xml</code> — balise <code>&lt;session-timeout&gt;30&lt;/session-timeout&gt;</code>
+      </div>
+    </div>
+
+    <hr class="cds--divider"/>
+
+    <h2>Récapitulatif</h2>
+    <div class="cds--data-table-container">
+      <table class="cds--data-table">
+        <thead>
+          <tr><th>Règle</th><th>Titre court</th><th>Criticité</th><th>Source technique</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>R1</td><td>Nom obligatoire, 2–100 chars</td><td><span class="cds--tag cds--tag--red">Critique</span></td><td><code>f:validateLength</code></td></tr>
+          <tr><td>R2</td><td>Format email (regex)</td><td><span class="cds--tag cds--tag--red">Critique</span></td><td><code>EmailValidator @FacesValidator</code></td></tr>
+          <tr><td>R3</td><td>Email requis</td><td><span class="cds--tag cds--tag--red">Critique</span></td><td><code>required="true"</code></td></tr>
+          <tr><td>R4</td><td>Adresse complète obligatoire</td><td><span class="cds--tag cds--tag--red">Critique</span></td><td><code>required="true"</code> × 4 champs</td></tr>
+          <tr><td>R5</td><td>Code postal 4–10 chars</td><td>Standard</td><td><code>f:validateLength</code></td></tr>
+          <tr><td>R6</td><td>Recherche insensible à la casse</td><td>Standard</td><td><code>ClientService.searchClients()</code></td></tr>
+          <tr><td>R7</td><td>ClientBean état par session</td><td>Standard</td><td><code>@SessionScoped</code></td></tr>
+          <tr><td>R8</td><td>ClientService singleton applicatif</td><td>Standard</td><td><code>@ApplicationScoped</code></td></tr>
+          <tr><td>R9</td><td>Confirmation avant suppression</td><td><span class="cds--tag cds--tag--warm">Important</span></td><td><code>onclick confirm()</code></td></tr>
+          <tr><td>R10</td><td>Session timeout 30 min</td><td>Standard</td><td><code>web.xml session-timeout</code></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+  </main>
+</div>
+<footer class="cds--footer">Made with IBM Bob — Banking JSF Application Lab 02B © 2025</footer>
+</body>
+</html>

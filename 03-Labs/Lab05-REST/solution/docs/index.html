@@ -1,0 +1,146 @@
+<!-- © Copyright 2026 Olivier Planson. All rights reserved. Reproduction prohibited. Made with IBM Bob. -->
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Banking REST App — Lab 05 — Vue d'ensemble</title>
+  <link rel="stylesheet" href="assets/carbon.css"/>
+</head>
+<body>
+
+<header class="cds--header">
+  <a class="cds--header__name" href="index.html">🏦 Banking REST Application<span>Lab 05</span></a>
+  <span class="cds--header__divider">|</span>
+  <span style="font-size:.8125rem;color:#c6c6c6;">Jakarta EE 10 · JAX-RS 3.1 · MicroProfile 6.0 · Open Liberty 23</span>
+  <a href="../../../index.html" style="margin-left:auto;font-size:.75rem;color:#c6c6c6;text-decoration:none;border:1px solid #393939;padding:.2rem .75rem;border-radius:2px;white-space:nowrap;">← Tous les Labs</a>
+</header>
+
+<div class="cds--shell">
+  <nav class="cds--side-nav" aria-label="Navigation">
+    <p class="cds--side-nav__section-title">Documentation</p>
+    <a class="cds--side-nav__link active" href="index.html"><i class="icon">🏠</i>Vue d'ensemble</a>
+    <a class="cds--side-nav__link" href="functional.html"><i class="icon">⚙️</i>Architecture Fonctionnelle</a>
+    <a class="cds--side-nav__link" href="technical.html"><i class="icon">🔧</i>Architecture Technique</a>
+    <a class="cds--side-nav__link" href="sequences.html"><i class="icon">🔄</i>Diagrammes de Séquences</a>
+    <a class="cds--side-nav__link" href="rules.html"><i class="icon">📋</i>Règles Métier</a>
+  </nav>
+
+  <main class="cds--content">
+    <nav class="cds--breadcrumb">
+      <a href="index.html">Accueil</a>
+      <span class="sep">/</span>
+      <span class="current">Vue d'ensemble</span>
+    </nav>
+
+    <h1>Banking REST Application</h1>
+    <p class="page-lead">Lab 05 — API REST complète avec JAX-RS 3.1, BeanValidation, MicroProfile OpenAPI, gestion des exceptions, audit des transactions et client REST MicroProfile.</p>
+
+    <div class="cds--inline-notification">
+      <span>ℹ️</span>
+      <div><strong>Lab 05</strong> — API REST complète avec JAX-RS 3.1, BeanValidation, MicroProfile OpenAPI, gestion des exceptions, audit des transactions et client REST MicroProfile.</div>
+    </div>
+
+    <h2>Identité du projet</h2>
+    <div class="cds--data-table-container">
+      <table class="cds--data-table">
+        <thead><tr><th>Propriété</th><th>Valeur</th></tr></thead>
+        <tbody>
+          <tr><td>Nom</td><td>Banking REST Application — Lab 05</td></tr>
+          <tr><td>ArtifactId</td><td><code>banking-rest-app</code></td></tr>
+          <tr><td>Java</td><td>17</td></tr>
+          <tr><td>Jakarta EE</td><td>10</td></tr>
+          <tr><td>MicroProfile</td><td>6.0</td></tr>
+          <tr><td>Serveur d'application</td><td>Open Liberty 23</td></tr>
+          <tr><td>Base path</td><td><code>/api</code> (<code>@ApplicationPath</code>)</td></tr>
+          <tr><td>Base de données</td><td>PostgreSQL</td></tr>
+          <tr><td>ORM</td><td>EclipseLink (JPA 3.1)</td></tr>
+          <tr><td>Migrations</td><td>Flyway</td></tr>
+          <tr><td>Architecture</td><td>DDD partiel · Hexagonale partielle</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h2>Stack technique</h2>
+    <div class="cds--data-table-container">
+      <table class="cds--data-table">
+        <thead><tr><th>Dépendance</th><th>Version</th><th>Rôle</th></tr></thead>
+        <tbody>
+          <tr><td><code>jakarta.jakartaee-api</code></td><td>10.0.0</td><td>API Jakarta EE complète (JAX-RS, JPA, CDI, BeanValidation, JSON-B…)</td></tr>
+          <tr><td><code>microprofile</code></td><td>6.0</td><td>Config, Health, Metrics, OpenAPI, RestClient</td></tr>
+          <tr><td><code>postgresql</code></td><td>42.x</td><td>Driver JDBC PostgreSQL</td></tr>
+          <tr><td><code>flyway-core</code></td><td>9.x</td><td>Migrations SQL versionnées</td></tr>
+          <tr><td><code>jstl</code></td><td>3.0</td><td>Jakarta Standard Tag Library</td></tr>
+          <tr><td><code>junit</code></td><td>5.x</td><td>Tests unitaires</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h2>Navigation</h2>
+    <div class="tile-grid">
+      <a class="cds--tile" href="functional.html" style="text-decoration:none;display:block;">
+        <h3>⚙️ Architecture Fonctionnelle</h3>
+        <p>5 domaines fonctionnels : Clients, Comptes, Transactions, Gestion des erreurs, CDI transversal.</p>
+      </a>
+      <a class="cds--tile" href="technical.html" style="text-decoration:none;display:block;">
+        <h3>🔧 Architecture Technique</h3>
+        <p>Couches JAX-RS, CDI, JPA, codes HTTP, features Liberty et configuration MicroProfile REST Client.</p>
+      </a>
+      <a class="cds--tile" href="sequences.html" style="text-decoration:none;display:block;">
+        <h3>🔄 Diagrammes de Séquences</h3>
+        <p>Création client, retrait de compte et virement entre comptes — flux complets avec CDI Events.</p>
+      </a>
+      <a class="cds--tile" href="rules.html" style="text-decoration:none;display:block;">
+        <h3>📋 Règles Métier</h3>
+        <p>12 règles de validation, contraintes d'intégrité et politiques d'audit.</p>
+      </a>
+    </div>
+
+    <h2>Concepts JAX-RS &amp; MicroProfile</h2>
+    <div class="tag-stack">
+      <span class="cds--tag cds--tag--blue">JAX-RS</span>
+      <span class="cds--tag cds--tag--blue">@Path</span>
+      <span class="cds--tag cds--tag--blue">@GET</span>
+      <span class="cds--tag cds--tag--blue">@POST</span>
+      <span class="cds--tag cds--tag--blue">@PUT</span>
+      <span class="cds--tag cds--tag--blue">@DELETE</span>
+      <span class="cds--tag cds--tag--blue">@ApplicationPath</span>
+      <span class="cds--tag cds--tag--blue">@Produces</span>
+      <span class="cds--tag cds--tag--blue">@Consumes</span>
+      <span class="cds--tag cds--tag--green">@Valid</span>
+      <span class="cds--tag cds--tag--green">ConstraintViolation</span>
+      <span class="cds--tag cds--tag--green">ExceptionMapper</span>
+      <span class="cds--tag cds--tag--green">BeanValidation</span>
+      <span class="cds--tag cds--tag--purple">OpenAPI</span>
+      <span class="cds--tag cds--tag--purple">MicroProfile REST Client</span>
+      <span class="cds--tag cds--tag--teal">@RegisterRestClient</span>
+      <span class="cds--tag cds--tag--teal">@Transactional</span>
+      <span class="cds--tag cds--tag--teal">@RequestScoped</span>
+      <span class="cds--tag cds--tag--teal">CDI Events</span>
+      <span class="cds--tag cds--tag--red">ErrorResponse</span>
+      <span class="cds--tag cds--tag--warm">EclipseLink</span>
+      <span class="cds--tag cds--tag--warm">Flyway</span>
+      <span class="cds--tag cds--tag--warm">PostgreSQL</span>
+    </div>
+
+    <h2>Ressources JAX-RS exposées</h2>
+    <div class="cds--data-table-container">
+      <table class="cds--data-table">
+        <thead><tr><th>Ressource</th><th>@Path</th><th>Rôle</th></tr></thead>
+        <tbody>
+          <tr><td><code>RootResource</code></td><td><code>/</code></td><td>Métadonnées API + découverte HATEOAS</td></tr>
+          <tr><td><code>ClientResource</code></td><td><code>/clients</code></td><td>CRUD complet + recherche + comptage</td></tr>
+          <tr><td><code>AccountResource</code></td><td><code>/accounts</code></td><td>CRUD + dépôt / retrait / virement</td></tr>
+          <tr><td><code>TransactionResource</code></td><td><code>/transactions</code></td><td>Requêtes par compte, type, plage de dates</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <hr class="cds--divider"/>
+    <p style="font-size:.8125rem;color:var(--cds-text-placeholder);">Architecture hexagonale partielle — REST = port primaire · JPA = adaptateur secondaire · CDI = couture transversale.</p>
+  </main>
+</div>
+
+<footer class="cds--footer">Banking REST Application — Lab 05 · Jakarta EE 10 · MicroProfile 6.0 · Open Liberty 23 · © 2025 Olivier Planson</footer>
+</body>
+</html>

@@ -1,0 +1,205 @@
+<!-- © Copyright 2026 Olivier Planson. All rights reserved. Reproduction prohibited. Made with IBM Bob. -->
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>Cours 01 — Contenu du cours</title>
+  <link rel="stylesheet" href="../assets/carbon.css"/>
+</head>
+<body>
+<header class="cds--header">
+  <a class="cds--header__name" href="index.html">Introduction Jakarta EE<span>Cours Jakarta EE</span></a>
+  <a class="cds--header__back" href="../index.html">← Tous les Cours</a>
+</header>
+<div class="cds--shell">
+  <nav class="cds--side-nav">
+    <p class="cds--side-nav__section-title">Cours 01</p>
+    <a class="cds--side-nav__link" href="index.html">⊙ Vue d'ensemble</a>
+    <a class="cds--side-nav__link active" href="slides.html">☰ Contenu du cours</a>
+    <a class="cds--side-nav__link" href="concepts.html">◈ Concepts clés</a>
+    <a class="cds--side-nav__link" href="code.html">⟨/⟩ Exemples de code</a>
+  </nav>
+  <main class="cds--content">
+    <div class="breadcrumb"><a href="../index.html">Cours</a> › <a href="index.html">Cours 01</a> › Contenu</div>
+    <h1>Contenu du cours</h1>
+    <p class="page-lead">Toutes les sections du cours — cliquez sur un titre pour développer son contenu.</p>
+
+    <details open>
+      <summary>📋 Objectifs d'apprentissage</summary>
+      <div class="slide-content">
+        <p>À la fin de ce cours, vous serez capable de :</p>
+        <ul>
+          <li>Comprendre les écosystèmes Jakarta EE et MicroProfile</li>
+          <li>Différencier Jakarta EE et MicroProfile</li>
+          <li>Identifier les spécifications et APIs clés</li>
+          <li>Configurer l'environnement de développement Open Liberty</li>
+          <li>Créer et déployer une première application avec Podman</li>
+          <li>Comprendre le rôle des serveurs d'applications</li>
+        </ul>
+      </div>
+    </details>
+
+    <details>
+      <summary>🎯 Qu'est-ce que Jakarta EE ?</summary>
+      <div class="slide-content">
+        <p><strong>Jakarta EE</strong> (anciennement Java EE) est un ensemble de spécifications pour la construction d'applications d'entreprise en Java.</p>
+        <h3>Caractéristiques clés :</h3>
+        <ul>
+          <li><strong>Basé sur des standards :</strong> Spécifications industrielles</li>
+          <li><strong>Indépendant des fournisseurs :</strong> Plusieurs implémentations disponibles</li>
+          <li><strong>Enterprise-ready :</strong> Conçu pour la scalabilité et la fiabilité</li>
+          <li><strong>Open-source :</strong> Développement communautaire sous Eclipse Foundation</li>
+        </ul>
+        <h3>Ligne du temps :</h3>
+        <img src="../../images/01-intro-jakartaee-microprofile-diagram-1.png" alt="Evolution Jakarta EE"/>
+      </div>
+    </details>
+
+    <details>
+      <summary>🚀 Qu'est-ce que MicroProfile ?</summary>
+      <div class="slide-content">
+        <p><strong>Eclipse MicroProfile</strong> est un ensemble de spécifications optimisées pour l'architecture microservices.</p>
+        <h3>Caractéristiques clés :</h3>
+        <ul>
+          <li><strong>Cloud-native :</strong> Conçu pour le cloud et les conteneurs</li>
+          <li><strong>Orienté microservices :</strong> Léger et modulaire</li>
+          <li><strong>Complémentaire à Jakarta EE :</strong> Étend les capacités Jakarta EE</li>
+          <li><strong>Innovation rapide :</strong> Cycles de release plus courts que Jakarta EE</li>
+        </ul>
+        <img src="../../images/01-intro-jakartaee-microprofile-diagram-2.png" alt="MicroProfile Timeline"/>
+      </div>
+    </details>
+
+    <details>
+      <summary>🔄 Jakarta EE vs MicroProfile</summary>
+      <div class="slide-content">
+        <div class="cds--data-table-container">
+          <table class="cds--data-table">
+            <thead><tr><th>Aspect</th><th>Jakarta EE</th><th>MicroProfile</th></tr></thead>
+            <tbody>
+              <tr><td><strong>Focus</strong></td><td>Applications enterprise</td><td>Microservices</td></tr>
+              <tr><td><strong>Scope</strong></td><td>Plateforme complète</td><td>Spécifications ciblées</td></tr>
+              <tr><td><strong>Cycle de release</strong></td><td>Lent, stable</td><td>Rapide, innovant</td></tr>
+              <tr><td><strong>Taille</strong></td><td>Full-featured</td><td>Léger</td></tr>
+              <tr><td><strong>Cas d'usage</strong></td><td>Monolithes et services</td><td>Apps cloud-native</td></tr>
+              <tr><td><strong>Gouvernance</strong></td><td>Eclipse Foundation</td><td>Eclipse Foundation</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </details>
+
+    <details>
+      <summary>📦 Spécifications Jakarta EE</summary>
+      <div class="slide-content">
+        <h3>Technologies Web</h3>
+        <ul>
+          <li><strong>Jakarta Servlet</strong> — Gestion des requêtes/réponses HTTP</li>
+          <li><strong>Jakarta Server Pages (JSP)</strong> — Pages web dynamiques</li>
+          <li><strong>Jakarta Server Faces (JSF)</strong> — Framework UI orienté composants</li>
+        </ul>
+        <h3>Logique métier</h3>
+        <ul>
+          <li><strong>Jakarta CDI</strong> — Injection de dépendances</li>
+          <li><strong>Jakarta EJB</strong> — Composants métier</li>
+        </ul>
+        <h3>Persistance des données</h3>
+        <ul>
+          <li><strong>Jakarta JPA</strong> — Mapping objet-relationnel</li>
+          <li><strong>Jakarta JTA</strong> — Gestion des transactions</li>
+        </ul>
+      </div>
+    </details>
+
+    <details>
+      <summary>⚡ Spécifications MicroProfile</summary>
+      <div class="slide-content">
+        <h3>Configuration</h3>
+        <ul>
+          <li><strong>MP Config</strong> — Configuration externalisée, mise à jour dynamique</li>
+        </ul>
+        <h3>Observabilité</h3>
+        <ul>
+          <li><strong>MP Health</strong> — Endpoints de santé</li>
+          <li><strong>MP Metrics</strong> — Métriques de l'application</li>
+          <li><strong>MP OpenTracing</strong> — Tracing distribué</li>
+        </ul>
+        <h3>Résilience</h3>
+        <ul>
+          <li><strong>MP Fault Tolerance</strong> — Circuit breakers, retries, timeouts</li>
+          <li><strong>MP Rest Client</strong> — Clients REST type-safe</li>
+        </ul>
+      </div>
+    </details>
+
+    <details>
+      <summary>🦅 Open Liberty — Le Runtime</summary>
+      <div class="slide-content">
+        <p><strong>Open Liberty</strong> est le runtime open-source d'IBM pour Jakarta EE et MicroProfile.</p>
+        <div class="cds--data-table-container">
+          <table class="cds--data-table">
+            <thead><tr><th>Fonctionnalité</th><th>Open Liberty</th><th>WildFly</th><th>Payara</th></tr></thead>
+            <tbody>
+              <tr><td><strong>Démarrage</strong></td><td>⚡ Très rapide</td><td>Rapide</td><td>Moyen</td></tr>
+              <tr><td><strong>Mémoire</strong></td><td>💚 Faible</td><td>Moyen</td><td>Moyen</td></tr>
+              <tr><td><strong>MicroProfile</strong></td><td>✅ Complet</td><td>Partiel</td><td>Complet</td></tr>
+              <tr><td><strong>Container-ready</strong></td><td>✅ Excellent</td><td>Bon</td><td>Bon</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </details>
+
+    <details>
+      <summary>🐳 Podman vs Docker</summary>
+      <div class="slide-content">
+        <div class="cds--data-table-container">
+          <table class="cds--data-table">
+            <thead><tr><th>Fonctionnalité</th><th>Podman</th><th>Docker</th></tr></thead>
+            <tbody>
+              <tr><td><strong>Daemon</strong></td><td>❌ Non</td><td>✅ Oui</td></tr>
+              <tr><td><strong>Root requis</strong></td><td>❌ Non</td><td>⚠️ Souvent</td></tr>
+              <tr><td><strong>Compatibilité CLI</strong></td><td>✅ Compatible Docker</td><td>N/A</td></tr>
+              <tr><td><strong>Systemd</strong></td><td>✅ Natif</td><td>⚠️ Limité</td></tr>
+              <tr><td><strong>Sécurité</strong></td><td>✅ Meilleure</td><td>Bonne</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p><strong>Note :</strong> <code>alias docker=podman</code> rend la transition transparente !</p>
+      </div>
+    </details>
+
+    <details>
+      <summary>🏦 Architecture de l'Application Bancaire</summary>
+      <div class="slide-content">
+        <img src="../../images/01-intro-jakartaee-microprofile-diagram-2.png" alt="Architecture bancaire"/>
+        <p>Architecture en couches avec MicroProfile — Client → JAX-RS → CDI Services → JPA → PostgreSQL, avec MP Config, Health et Metrics en couche transverse.</p>
+      </div>
+    </details>
+
+    <details>
+      <summary>📊 Feuille de route du cours</summary>
+      <div class="slide-content">
+        <h3>Semaine 1 : Fondations</h3>
+        <ol>
+          <li><strong>Aujourd'hui :</strong> Jakarta EE, MicroProfile &amp; Open Liberty ✅</li>
+          <li><strong>Suivant :</strong> Servlets et JSP (3h)</li>
+          <li><strong>Puis :</strong> JPA et Base de données (4h)</li>
+          <li><strong>Enfin :</strong> CDI et couche service (3h)</li>
+        </ol>
+        <h3>Semaine 2 : Cloud-Native &amp; Microservices</h3>
+        <ol start="5">
+          <li>JAX-RS et APIs REST + MP Rest Client (3h)</li>
+          <li>Domain-Driven Design (3h)</li>
+          <li>Architecture Hexagonale + MP Config (2h)</li>
+          <li>Microservices avec MP Health, Metrics, Fault Tolerance (4h)</li>
+        </ol>
+      </div>
+    </details>
+
+  </main>
+</div>
+<footer class="cds--footer">Made with IBM Bob &nbsp;·&nbsp; © 2026 Olivier Planson &nbsp;·&nbsp; ESIPE — Jakarta EE &amp; Microservices</footer>
+</body>
+</html>

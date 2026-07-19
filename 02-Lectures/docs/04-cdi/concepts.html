@@ -1,0 +1,109 @@
+<!-- © Copyright 2026 Olivier Planson. All rights reserved. Reproduction prohibited. Made with IBM Bob. -->
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>Cours 04 — Concepts clés</title>
+  <link rel="stylesheet" href="../assets/carbon.css"/>
+</head>
+<body>
+<header class="cds--header">
+  <a class="cds--header__name" href="index.html">CDI — Injection de Dépendances<span>Cours Jakarta EE</span></a>
+  <a class="cds--header__back" href="../index.html">← Tous les Cours</a>
+</header>
+<div class="cds--shell">
+  <nav class="cds--side-nav">
+    <p class="cds--side-nav__section-title">Cours 04</p>
+    <a class="cds--side-nav__link" href="index.html">⊙ Vue d'ensemble</a>
+    <a class="cds--side-nav__link" href="slides.html">☰ Contenu du cours</a>
+    <a class="cds--side-nav__link active" href="concepts.html">◈ Concepts clés</a>
+    <a class="cds--side-nav__link" href="code.html">⟨/⟩ Exemples de code</a>
+  </nav>
+  <main class="cds--content">
+    <div class="breadcrumb"><a href="../index.html">Cours</a> › <a href="index.html">Cours 04</a> › Concepts clés</div>
+    <h1>Concepts clés</h1>
+    <p class="page-lead">Comparatifs, tableaux de référence et glossaire pour CDI et la gestion des transactions.</p>
+
+    <h2>CDI vs EJB</h2>
+    <div class="cds--data-table-container">
+      <table class="cds--data-table">
+        <thead><tr><th>Fonctionnalité</th><th>CDI Bean</th><th>EJB (Session Bean)</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Gestion des transactions</strong></td><td>Via <code>@Transactional</code> (CDI Interceptor)</td><td>Nativement intégrée (CMT)</td></tr>
+          <tr><td><strong>Sécurité déclarative</strong></td><td>Via intercepteur personnalisé</td><td><code>@RolesAllowed</code>, <code>@DenyAll</code> intégrés</td></tr>
+          <tr><td><strong>Clustering &amp; passivation</strong></td><td>❌ Non supporté nativement</td><td>✅ Stateful beans passivables</td></tr>
+          <tr><td><strong>Accès distant (Remote)</strong></td><td>❌ Non</td><td>✅ Via <code>@Remote</code></td></tr>
+          <tr><td><strong>Complexité</strong></td><td>✅ Légère, POJO</td><td>⚠️ Plus lourde, spécification dédiée</td></tr>
+          <tr><td><strong>Usage recommandé</strong></td><td>Services applicatifs modernes, microservices</td><td>Applications legacy, transactions distribuées</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h2>Scopes CDI comparés</h2>
+    <div class="cds--data-table-container">
+      <table class="cds--data-table">
+        <thead><tr><th>Scope</th><th>Annotation</th><th>Durée de vie</th><th>Cas d'usage typique</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Application</strong></td><td><code>@ApplicationScoped</code></td><td>Durée de vie de l'application</td><td>Services stateless, caches, configuration</td></tr>
+          <tr><td><strong>Session</strong></td><td><code>@SessionScoped</code></td><td>Durée de la session HTTP utilisateur</td><td>Panier, préférences, état de connexion</td></tr>
+          <tr><td><strong>Request</strong></td><td><code>@RequestScoped</code></td><td>Durée d'une requête HTTP</td><td>Traitement de formulaire, opérations unitaires</td></tr>
+          <tr><td><strong>Conversation</strong></td><td><code>@ConversationScoped</code></td><td>Conversation explicitement gérée</td><td>Wizards multi-étapes, formulaires longs</td></tr>
+          <tr><td><strong>Dependent</strong></td><td><code>@Dependent</code> (défaut)</td><td>Liée au bean injecteur</td><td>Value objects, helpers, beans légers</td></tr>
+          <tr><td><strong>Singleton</strong></td><td><code>@Singleton</code> (Jakarta Concurrency)</td><td>Durée de vie de l'application (thread-safe)</td><td>Ressources partagées avec accès concurrent</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h2>Types de Transaction @Transactional</h2>
+    <div class="cds--data-table-container">
+      <table class="cds--data-table">
+        <thead><tr><th>Type</th><th>Appelé AVEC transaction existante</th><th>Appelé SANS transaction existante</th></tr></thead>
+        <tbody>
+          <tr><td><strong>REQUIRED</strong></td><td>Participe à la transaction existante</td><td>Crée une nouvelle transaction</td></tr>
+          <tr><td><strong>REQUIRES_NEW</strong></td><td>Suspend l'existante, crée une nouvelle transaction indépendante</td><td>Crée une nouvelle transaction</td></tr>
+          <tr><td><strong>MANDATORY</strong></td><td>Participe à la transaction existante</td><td>⛔ Lance <code>TransactionRequiredException</code></td></tr>
+          <tr><td><strong>SUPPORTS</strong></td><td>Participe à la transaction existante</td><td>S'exécute sans transaction</td></tr>
+          <tr><td><strong>NOT_SUPPORTED</strong></td><td>Suspend l'existante, s'exécute sans transaction</td><td>S'exécute sans transaction</td></tr>
+          <tr><td><strong>NEVER</strong></td><td>⛔ Lance <code>InvalidTransactionException</code></td><td>S'exécute sans transaction</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h2>CMT vs BMT</h2>
+    <div class="cds--data-table-container">
+      <table class="cds--data-table">
+        <thead><tr><th>Aspect</th><th>CMT — Container-Managed Transactions</th><th>BMT — Bean-Managed Transactions</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Gestion</strong></td><td>Déléguée au conteneur via <code>@Transactional</code></td><td>Manuelle via <code>UserTransaction</code></td></tr>
+          <tr><td><strong>Code transactionnel</strong></td><td>Absent du code métier (déclaratif)</td><td>Présent dans le code (begin/commit/rollback)</td></tr>
+          <tr><td><strong>Complexité</strong></td><td>✅ Faible — annotations uniquement</td><td>⚠️ Élevée — gestion explicite des erreurs</td></tr>
+          <tr><td><strong>Flexibilité</strong></td><td>Limitée aux types de propagation standard</td><td>✅ Totale — logique transactionnelle sur mesure</td></tr>
+          <tr><td><strong>Recommandé pour</strong></td><td>La grande majorité des cas d'usage</td><td>Cas avancés : saga, transactions longues</td></tr>
+          <tr><td><strong>Rollback</strong></td><td>Automatique sur <code>RuntimeException</code></td><td>Explicite : <code>tx.rollback()</code> dans le catch</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h2>Glossaire</h2>
+    <div class="cds--data-table-container">
+      <table class="cds--data-table">
+        <thead><tr><th>Terme</th><th>Définition</th></tr></thead>
+        <tbody>
+          <tr><td><strong>CDI</strong></td><td>Contexts and Dependency Injection — spécification Jakarta EE pour l'injection de dépendances et la gestion du cycle de vie des beans</td></tr>
+          <tr><td><strong>@Inject</strong></td><td>Annotation standard (Jakarta Inject) demandant au conteneur CDI d'injecter une dépendance dans un champ, constructeur ou méthode</td></tr>
+          <tr><td><strong>@Qualifier</strong></td><td>Méta-annotation permettant de créer des qualificateurs personnalisés pour lever l'ambiguïté lors de l'injection de plusieurs implémentations</td></tr>
+          <tr><td><strong>@Produces</strong></td><td>Annotation déclarant une méthode ou un champ comme source d'un bean CDI — utile pour les objets nécessitant une logique de création complexe</td></tr>
+          <tr><td><strong>@Interceptor</strong></td><td>Annotation marquant une classe comme intercepteur CDI — s'intercale dans l'invocation des méthodes pour ajouter un comportement transversal</td></tr>
+          <tr><td><strong>@Decorator</strong></td><td>Annotation marquant un bean comme décorateur — enveloppe un bean existant pour enrichir son comportement, contrairement aux intercepteurs qui sont agnostiques du type</td></tr>
+          <tr><td><strong>@Observes</strong></td><td>Annotation placée sur un paramètre de méthode pour s'abonner à un type d'événement CDI — la méthode est appelée automatiquement lors du déclenchement</td></tr>
+          <tr><td><strong>UserTransaction</strong></td><td>Interface Jakarta Transactions permettant la gestion programmatique (BMT) des transactions — begin(), commit(), rollback(), setRollbackOnly()</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+  </main>
+</div>
+<footer class="cds--footer">Made with IBM Bob &nbsp;·&nbsp; © 2026 Olivier Planson &nbsp;·&nbsp; ESIPE — Jakarta EE &amp; Microservices</footer>
+</body>
+</html>

@@ -1,0 +1,765 @@
+<!-- © Copyright 2026 Olivier Planson. All rights reserved. Reproduction prohibited. Made with IBM Bob. -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>ESIPE — 🔐 Lecture 9: Jakarta EE Security — Slides</title>
+  <link rel="stylesheet" href="../assets/slide.css"/>
+  <style>
+/* suppress static .current when a slide is targeted */
+body:has(.slide:target) .progress-bar a.current { background: var(--bg); color: var(--muted); border-color: var(--border); }
+body:has(#slide-1:target) .progress-bar a[href="#slide-1"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-2:target) .progress-bar a[href="#slide-2"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-3:target) .progress-bar a[href="#slide-3"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-4:target) .progress-bar a[href="#slide-4"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-5:target) .progress-bar a[href="#slide-5"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-6:target) .progress-bar a[href="#slide-6"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-7:target) .progress-bar a[href="#slide-7"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-8:target) .progress-bar a[href="#slide-8"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-9:target) .progress-bar a[href="#slide-9"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-10:target) .progress-bar a[href="#slide-10"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-11:target) .progress-bar a[href="#slide-11"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-12:target) .progress-bar a[href="#slide-12"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-13:target) .progress-bar a[href="#slide-13"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-14:target) .progress-bar a[href="#slide-14"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-15:target) .progress-bar a[href="#slide-15"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-16:target) .progress-bar a[href="#slide-16"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-17:target) .progress-bar a[href="#slide-17"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-18:target) .progress-bar a[href="#slide-18"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-19:target) .progress-bar a[href="#slide-19"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-20:target) .progress-bar a[href="#slide-20"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-21:target) .progress-bar a[href="#slide-21"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-22:target) .progress-bar a[href="#slide-22"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-23:target) .progress-bar a[href="#slide-23"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-24:target) .progress-bar a[href="#slide-24"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+  </style>
+</head>
+<body>
+<header class="site-header">
+  <a class="brand" href="../index.html">ESIPE<span>Jakarta EE &amp; Microservices</span></a>
+  <!-- EN/FR language toggle -->
+  <div class="lang-toggle" id="lang-toggle">
+    <button id="btn-en" class="active">EN</button>
+    <span class="sep">|</span>
+    <button id="btn-fr">FR</button>
+  </div>
+  <a class="back-link" href="../index.html">&#8592; All Courses</a>
+</header>
+<!-- Thin trigger strip at top: hover to reveal progress bar -->
+<div class="progress-bar-trigger" id="pb-trigger"></div>
+<!-- Progress bar — hidden by default, revealed on hover -->
+<div class="progress-bar-wrap" id="pb-wrap">
+  <div class="progress-bar">
+    <a href="#slide-1" class="current">1</a>
+      <a href="#slide-2">2</a>
+      <a href="#slide-3">3</a>
+      <a href="#slide-4">4</a>
+      <a href="#slide-5">5</a>
+      <a href="#slide-6">6</a>
+      <a href="#slide-7">7</a>
+      <a href="#slide-8">8</a>
+      <a href="#slide-9">9</a>
+      <a href="#slide-10">10</a>
+      <a href="#slide-11">11</a>
+      <a href="#slide-12">12</a>
+      <a href="#slide-13">13</a>
+      <a href="#slide-14">14</a>
+      <a href="#slide-15">15</a>
+      <a href="#slide-16">16</a>
+      <a href="#slide-17">17</a>
+      <a href="#slide-18">18</a>
+      <a href="#slide-19">19</a>
+      <a href="#slide-20">20</a>
+      <a href="#slide-21">21</a>
+      <a href="#slide-22">22</a>
+      <a href="#slide-23">23</a>
+      <a href="#slide-24">24</a>
+  </div>
+</div>
+<!-- Thin trigger strip at left: hover to reveal sidenav -->
+<div class="sidenav-trigger" id="sidenav-trigger"></div>
+<div class="shell">
+  <nav class="sidenav" id="sidenav">
+    <div class="sidenav-section">Course outline</div>
+    <a href="#slide-6" class="active">15 minutes</a>
+    <a href="#slide-11">OWASP Top 10 (2021)</a>
+    <a href="#slide-12">20 minutes</a>
+    <a href="#slide-13">Authentication vs Authorization</a>
+    <a href="#slide-14">Authentication Flow</a>
+    <a href="#slide-15">Authentication Methods</a>
+    <a href="#slide-16">Authentication Methods (continued)</a>
+    <a href="#slide-17">Multi-Factor Authentication (MFA)</a>
+    <a href="#slide-18">Authorization Models</a>
+    <a href="#slide-19">Authorization Models (continued)</a>
+    <a href="#slide-21">Resources</a>
+    <a href="#slide-23">Questions?</a>
+    <hr>
+    <div class="sidenav-section">Navigation</div>
+    <a href="index.html">&#9675; Overview</a>
+  </nav>
+  <main class="content">
+    <div class="slide-wrapper">
+<section id="slide-1" class="slide">
+
+<span class="slide-counter">1 / 24</span>
+<div class="slide-nav">
+  <a class="disabled">&#8592; Previous</a>
+  <span class="slide-info">Slide 1 / 24 &nbsp;&middot;&nbsp; 🔐 Lecture 9: Jakarta EE Security</span>
+  <a href="#slide-2">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-2" class="slide">
+<p>marp: true</p>
+<p>theme: default</p>
+<p>paginate: true</p>
+<p>backgroundColor: #fff</p>
+<p>header: 'Jakarta EE &amp; MicroProfile Course'</p>
+<p data-en="footer: 'Lecture 9: Jakarta EE Security | © 2026 Olivier Planson - All rights reserved. Reproduction prohibited.'" data-fr="footer: 'Lecture 9: Jakarta EE Sécurité | © 2026 Olivier Planson - All rights reserved. Reproduction prohibited.'">footer: 'Lecture 9: Jakarta EE Security | © 2026 Olivier Planson - All rights reserved. Reproduction prohibited.'</p>
+<p>style: |</p>
+<p>section {</p>
+<p>font-size: 22px;</p>
+<p>padding: 40px 60px;</p>
+<p>}</p>
+<p>img {</p>
+<p>max-width: 85%;</p>
+<p>max-height: 380px;</p>
+<p>display: block;</p>
+<p>margin: 10px auto;</p>
+<p>}</p>
+<p>pre {</p>
+<p>font-size: 0.65em;</p>
+<p>margin: 10px 0;</p>
+<p>padding: 10px;</p>
+<p>}</p>
+<p>code {</p>
+<p>font-size: 0.7em;</p>
+<p>}</p>
+<p>ul, ol {</p>
+<p>font-size: 0.85em;</p>
+<p>line-height: 1.8;</p>
+<p>margin: 8px 0;</p>
+<p>}</p>
+<p>li {</p>
+<p>margin: 6px 0;</p>
+<p>line-height: 1.8;</p>
+<p>}</p>
+<p>li::marker {</p>
+<p>flex-shrink: 0;</p>
+<p>}</p>
+<p>h1 {</p>
+<p>font-size: 1.8em;</p>
+<p>margin-bottom: 20px;</p>
+<p>line-height: 1.3;</p>
+<p>display: flex;</p>
+<p>align-items: center;</p>
+<p>gap: 10px;</p>
+<p>flex-wrap: nowrap;</p>
+<p>white-space: nowrap;</p>
+<p>}</p>
+<p>h2 {</p>
+<p>font-size: 1.3em;</p>
+<p>margin-bottom: 15px;</p>
+<p>line-height: 1.3;</p>
+<p>}</p>
+<p>h3 {</p>
+<p>font-size: 1.1em;</p>
+<p>margin-bottom: 10px;</p>
+<p>}</p>
+<p>table {</p>
+<p>font-size: 0.75em;</p>
+<p>margin: 10px auto;</p>
+<p>}</p>
+<p>.columns {</p>
+<p>display: grid;</p>
+<p>grid-template-columns: repeat(2, 1fr);</p>
+<p>gap: 20px;</p>
+<p>}</p>
+<p>.columns-3 {</p>
+<p>display: grid;</p>
+<p>grid-template-columns: repeat(3, 1fr);</p>
+<p>gap: 15px;</p>
+<p>}</p>
+<p>.small-text {</p>
+<p>font-size: 0.75em;</p>
+<p>}</p>
+<p>.highlight {</p>
+<p>background-color: #fff3cd;</p>
+<p>padding: 2px 6px;</p>
+<p>border-radius: 3px;</p>
+<p>}</p>
+<p>.success {</p>
+<p>color: #28a745;</p>
+<p>font-weight: bold;</p>
+<p>}</p>
+<p>.warning {</p>
+<p>color: #ffc107;</p>
+<p>font-weight: bold;</p>
+<p>}</p>
+<p>.danger {</p>
+<p>color: #dc3545;</p>
+<p>font-weight: bold;</p>
+<p>}</p>
+<p>.info {</p>
+<p>color: #17a2b8;</p>
+<p>font-weight: bold;</p>
+<p>}</p>
+<p>blockquote {</p>
+<p>border-left: 4px solid #007bff;</p>
+<p>padding-left: 15px;</p>
+<p>margin: 15px 0;</p>
+<p>font-style: italic;</p>
+<p>background-color: #f8f9fa;</p>
+<p>padding: 10px 15px;</p>
+<p>}</p>
+<p>.center {</p>
+<p>text-align: center;</p>
+<p>}</p>
+<p>.emoji {</p>
+<p>font-size: 1.5em;</p>
+<p>}</p>
+<p>footer {</p>
+<p>font-size: 0.7em;</p>
+<p>}</p>
+<p>.columns-2-1 {</p>
+<p>display: grid;</p>
+<p>grid-template-columns: 2fr 1fr;</p>
+<p>gap: 20px;</p>
+<p>}</p>
+<p>.columns-1-2 {</p>
+<p>display: grid;</p>
+<p>grid-template-columns: 1fr 2fr;</p>
+<p>gap: 20px;</p>
+<p>}</p>
+
+<span class="slide-counter">2 / 24</span>
+<div class="slide-nav">
+  <a href="#slide-1">&#8592; Previous</a>
+  <span class="slide-info">Slide 2 / 24 &nbsp;&middot;&nbsp; 🔐 Lecture 9: Jakarta EE Security</span>
+  <a href="#slide-3">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-3" class="slide slide--section">
+<h1 data-en="🔐 Lecture 9: Jakarta EE Security" data-fr="🔐 Lecture 9: Jakarta EE Sécurité">🔐 Lecture 9: Jakarta EE Security</h1>
+<p data-en="<strong>Enterprise Application Security</strong>" data-fr="Enterprise Application Sécurité"><strong>Enterprise Application Security</strong></p>
+
+<span class="slide-counter">3 / 24</span>
+<div class="slide-nav">
+  <a href="#slide-2">&#8592; Previous</a>
+  <span class="slide-info">Slide 3 / 24 &nbsp;&middot;&nbsp; 🔐 Lecture 9: Jakarta EE Security</span>
+  <a href="#slide-4">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-4" class="slide">
+<h2 data-en="📋 Lecture Overview" data-fr="📋 Lecture Vue d'ensemble">📋 Lecture Overview</h2>
+<p><strong>Duration:</strong> 3 hours 20 minutes (200 minutes)</p>
+<p><strong>Topics Covered:</strong></p>
+<ul>
+<li data-en="Introduction to Security (15 min)" data-fr="Introduction à Sécurité (15 min)">Introduction to Security (15 min)</li>
+<li>Authentication vs Authorization (20 min)</li>
+<li data-en="Jakarta Security API (30 min)" data-fr="Jakarta Sécurité API (30 min)">Jakarta Security API (30 min)</li>
+<li data-en="Declarative Security (25 min)" data-fr="Declarative Sécurité (25 min)">Declarative Security (25 min)</li>
+<li data-en="Programmatic Security (20 min)" data-fr="Programmatic Sécurité (20 min)">Programmatic Security (20 min)</li>
+<li>JWT and Token-Based Auth (30 min)</li>
+<li>OAuth2 and OpenID Connect (25 min)</li>
+<li data-en="Security Best Practices (20 min)" data-fr="Sécurité Bonnes pratiques (20 min)">Security Best Practices (20 min)</li>
+<li data-en="Microservices Security (15 min)" data-fr="Microservices Sécurité (15 min)">Microservices Security (15 min)</li>
+</ul>
+
+<span class="slide-counter">4 / 24</span>
+<div class="slide-nav">
+  <a href="#slide-3">&#8592; Previous</a>
+  <span class="slide-info">Slide 4 / 24 &nbsp;&middot;&nbsp; 🔐 Lecture 9: Jakarta EE Security</span>
+  <a href="#slide-5">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-5" class="slide">
+<h2 data-en="🎯 Learning Objectives" data-fr="🎯 Objectifs pédagogiques">🎯 Learning Objectives</h2>
+<p data-en="By the end of this lecture, you will be able to:" data-fr="À la fin de cette leçon, vous serez en mesure de:">By the end of this lecture, you will be able to:</p>
+<ol>
+<li data-en="<strong>Understand</strong> security fundamentals (authentication, authorization, encryption)" data-fr="Understand Sécurité fundamentals (authentication, authorization, encryption)"><strong>Understand</strong> security fundamentals (authentication, authorization, encryption)</li>
+<li data-en="<strong>Implement</strong> Jakarta Security API in enterprise applications" data-fr="Implement Jakarta Sécurité API in enterprise applications"><strong>Implement</strong> Jakarta Security API in enterprise applications</li>
+<li data-en="<strong>Apply</strong> declarative and programmatic security" data-fr="Apply declarative and programmatic Sécurité"><strong>Apply</strong> declarative and programmatic security</li>
+<li><strong>Secure</strong> REST APIs with JWT tokens</li>
+<li><strong>Integrate</strong> OAuth2 and OpenID Connect</li>
+<li data-en="<strong>Follow</strong> security best practices" data-fr="Follow Sécurité Bonnes pratiques"><strong>Follow</strong> security best practices</li>
+<li><strong>Secure</strong> microservices architectures</li>
+</ol>
+
+<span class="slide-counter">5 / 24</span>
+<div class="slide-nav">
+  <a href="#slide-4">&#8592; Previous</a>
+  <span class="slide-info">Slide 5 / 24 &nbsp;&middot;&nbsp; 🔐 Lecture 9: Jakarta EE Security</span>
+  <a href="#slide-6">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-6" class="slide slide--section">
+<h1 data-en="Part 1: Introduction to Security" data-fr="Part 1: Introduction à Sécurité">Part 1: Introduction to Security</h1>
+<h2>15 minutes</h2>
+
+<span class="slide-counter">6 / 24</span>
+<div class="slide-nav">
+  <a href="#slide-5">&#8592; Previous</a>
+  <span class="slide-info">Slide 6 / 24 &nbsp;&middot;&nbsp; 🔐 Lecture 9: Jakarta EE Security</span>
+  <a href="#slide-7">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-7" class="slide">
+<h2 data-en="Why Security Matters" data-fr="Pourquoi Sécurité Matters">Why Security Matters</h2>
+<p data-en="<strong>Security is NOT optional</strong> in enterprise applications:" data-fr="Sécurité is NOT optional in enterprise applications:"><strong>Security is NOT optional</strong> in enterprise applications:</p>
+<ul>
+<li><strong>Data Protection</strong>: Customer data, financial information, PII</li>
+<li><strong>Compliance</strong>: GDPR, HIPAA, PCI-DSS, SOX</li>
+<li><strong>Business Continuity</strong>: Prevent data breaches and downtime</li>
+<li><strong>Trust</strong>: Customer confidence and brand reputation</li>
+<li><strong>Legal</strong>: Avoid lawsuits and penalties</li>
+</ul>
+<blockquote data-en="&quot;Security should be built in, not bolted on&quot;" data-fr="&quot;Sécurité should be built in, not bolted on&quot;">"Security should be built in, not bolted on"</blockquote>
+
+<span class="slide-counter">7 / 24</span>
+<div class="slide-nav">
+  <a href="#slide-6">&#8592; Previous</a>
+  <span class="slide-info">Slide 7 / 24 &nbsp;&middot;&nbsp; 🔐 Lecture 9: Jakarta EE Security</span>
+  <a href="#slide-8">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-8" class="slide">
+<h2 data-en="Security Principles (CIA Triad)" data-fr="Sécurité Principles (CIA Triad)">Security Principles (CIA Triad)</h2>
+<div class="slide-columns slide-columns-3">
+<div class="slide-col">
+<h3>🔒 Confidentiality</h3>
+<ul>
+<li>Data accessible only to authorized users</li>
+<li>Encryption at rest and in transit</li>
+<li>Access controls</li>
+</ul>
+</div>
+<div class="slide-col">
+<h3>✅ Integrity</h3>
+<ul>
+<li>Data accuracy and consistency</li>
+<li>Prevent unauthorized modifications</li>
+<li>Digital signatures</li>
+</ul>
+</div>
+<div class="slide-col">
+<h3>🌐 Availability</h3>
+<ul>
+<li>Systems accessible when needed</li>
+<li>DDoS protection</li>
+<li>Redundancy and failover</li>
+</ul>
+</div>
+</div>
+
+<span class="slide-counter">8 / 24</span>
+<div class="slide-nav">
+  <a href="#slide-7">&#8592; Previous</a>
+  <span class="slide-info">Slide 8 / 24 &nbsp;&middot;&nbsp; 🔐 Lecture 9: Jakarta EE Security</span>
+  <a href="#slide-9">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-9" class="slide">
+<h2 data-en="Security Layers" data-fr="Sécurité Layers">Security Layers</h2>
+<p><img src="../../images/09-jakarta-ee-security-diagram-1.png" alt="width:70%"></p>
+
+<span class="slide-counter">9 / 24</span>
+<div class="slide-nav">
+  <a href="#slide-8">&#8592; Previous</a>
+  <span class="slide-info">Slide 9 / 24 &nbsp;&middot;&nbsp; 🔐 Lecture 9: Jakarta EE Security</span>
+  <a href="#slide-10">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-10" class="slide">
+<h2 data-en="Common Security Threats" data-fr="Common Sécurité Threats">Common Security Threats</h2>
+<table class="slide-table"><thead><tr><th>Threat</th><th>Description</th><th>Mitigation</th></tr></thead><tbody>
+<tr><td><strong>SQL Injection</strong></td><td>Malicious SQL in user input</td><td>Prepared statements, ORM</td></tr>
+<tr><td><strong>XSS</strong></td><td>Inject malicious scripts</td><td>Input sanitization, CSP</td></tr>
+<tr><td><strong>CSRF</strong></td><td>Unauthorized commands</td><td>CSRF tokens, SameSite cookies</td></tr>
+<tr><td><strong>Session Hijacking</strong></td><td>Steal session tokens</td><td>Secure cookies, HTTPS</td></tr>
+<tr><td><strong>Brute Force</strong></td><td>Password guessing</td><td>Rate limiting, account lockout</td></tr>
+<tr><td><strong>Man-in-the-Middle</strong></td><td>Intercept communications</td><td>TLS/SSL, certificate pinning</td></tr>
+</tbody></table>
+
+<span class="slide-counter">10 / 24</span>
+<div class="slide-nav">
+  <a href="#slide-9">&#8592; Previous</a>
+  <span class="slide-info">Slide 10 / 24 &nbsp;&middot;&nbsp; 🔐 Lecture 9: Jakarta EE Security</span>
+  <a href="#slide-11">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-11" class="slide">
+<h2>OWASP Top 10 (2021)</h2>
+<ol>
+<li><strong>Broken Access Control</strong></li>
+<li><strong>Cryptographic Failures</strong></li>
+<li><strong>Injection</strong></li>
+<li><strong>Insecure Design</strong></li>
+<li data-en="<strong>Security Misconfiguration</strong>" data-fr="Sécurité Misconfiguration"><strong>Security Misconfiguration</strong></li>
+<li><strong>Vulnerable Components</strong></li>
+<li><strong>Authentication Failures</strong></li>
+<li><strong>Software and Data Integrity Failures</strong></li>
+<li data-en="<strong>Security Logging Failures</strong>" data-fr="Sécurité Logging Failures"><strong>Security Logging Failures</strong></li>
+<li><strong>Server-Side Request Forgery (SSRF)</strong></li>
+</ol>
+
+<span class="slide-counter">11 / 24</span>
+<div class="slide-nav">
+  <a href="#slide-10">&#8592; Previous</a>
+  <span class="slide-info">Slide 11 / 24 &nbsp;&middot;&nbsp; 🔐 Lecture 9: Jakarta EE Security</span>
+  <a href="#slide-12">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-12" class="slide slide--section">
+<h1>Part 2: Authentication vs Authorization</h1>
+<h2>20 minutes</h2>
+
+<span class="slide-counter">12 / 24</span>
+<div class="slide-nav">
+  <a href="#slide-11">&#8592; Previous</a>
+  <span class="slide-info">Slide 12 / 24 &nbsp;&middot;&nbsp; 🔐 Lecture 9: Jakarta EE Security</span>
+  <a href="#slide-13">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-13" class="slide">
+<h2>Authentication vs Authorization</h2>
+<div class="slide-columns">
+<div class="slide-col">
+<h3>🔑 Authentication</h3>
+<p><strong>"Who are you?"</strong></p>
+<ul>
+<li>Verify user identity</li>
+<li>Credentials validation</li>
+<li>Multi-factor authentication</li>
+<li>Session management</li>
+</ul>
+<p data-en="<strong>Example:</strong>" data-fr="Exemple:"><strong>Example:</strong></p>
+<p>Login with username/password</p>
+</div>
+<div class="slide-col">
+<h3>🛡️ Authorization</h3>
+<p><strong>"What can you do?"</strong></p>
+<ul>
+<li>Access control</li>
+<li>Role-based permissions</li>
+<li>Resource protection</li>
+<li>Policy enforcement</li>
+</ul>
+<p data-en="<strong>Example:</strong>" data-fr="Exemple:"><strong>Example:</strong></p>
+<p>Admin can delete users</p>
+</div>
+</div>
+
+<span class="slide-counter">13 / 24</span>
+<div class="slide-nav">
+  <a href="#slide-12">&#8592; Previous</a>
+  <span class="slide-info">Slide 13 / 24 &nbsp;&middot;&nbsp; 🔐 Lecture 9: Jakarta EE Security</span>
+  <a href="#slide-14">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-14" class="slide">
+<h2>Authentication Flow</h2>
+<p><img src="../../images/09-jakarta-ee-security-diagram-2.png" alt="width:70%"></p>
+
+<span class="slide-counter">14 / 24</span>
+<div class="slide-nav">
+  <a href="#slide-13">&#8592; Previous</a>
+  <span class="slide-info">Slide 14 / 24 &nbsp;&middot;&nbsp; 🔐 Lecture 9: Jakarta EE Security</span>
+  <a href="#slide-15">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-15" class="slide">
+<h2>Authentication Methods</h2>
+<h3>1. <strong>Basic Authentication</strong></h3>
+<pre class="dark"><span class="lang-badge">http</span>
+<code>Authorization: Basic BASIC_CODE</code></pre>
+<ul>
+<li>Simple but insecure (Base64 encoding)</li>
+<li>Must use HTTPS</li>
+<li>No logout mechanism</li>
+</ul>
+<h3>2. <strong>Form-Based Authentication</strong></h3>
+<ul>
+<li>HTML form with username/password</li>
+<li>Server-side session management</li>
+<li>Cookie-based sessions</li>
+</ul>
+
+<span class="slide-counter">15 / 24</span>
+<div class="slide-nav">
+  <a href="#slide-14">&#8592; Previous</a>
+  <span class="slide-info">Slide 15 / 24 &nbsp;&middot;&nbsp; 🔐 Lecture 9: Jakarta EE Security</span>
+  <a href="#slide-16">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-16" class="slide">
+<h2>Authentication Methods (continued)</h2>
+<h3>3. <strong>Token-Based Authentication</strong></h3>
+<pre class="dark"><span class="lang-badge">http</span>
+<code>Authorization: Bearer BEARER_CODE</code></pre>
+<ul>
+<li>Stateless (no server-side sessions)</li>
+<li>JWT (JSON Web Tokens)</li>
+<li>Scalable for microservices</li>
+</ul>
+<h3>4. <strong>Certificate-Based Authentication</strong></h3>
+<ul>
+<li>Client SSL/TLS certificates</li>
+<li>Mutual TLS (mTLS)</li>
+<li>Strong authentication</li>
+</ul>
+
+<span class="slide-counter">16 / 24</span>
+<div class="slide-nav">
+  <a href="#slide-15">&#8592; Previous</a>
+  <span class="slide-info">Slide 16 / 24 &nbsp;&middot;&nbsp; 🔐 Lecture 9: Jakarta EE Security</span>
+  <a href="#slide-17">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-17" class="slide">
+<h2>Multi-Factor Authentication (MFA)</h2>
+<p><strong>Something you know</strong> + <strong>Something you have</strong> + <strong>Something you are</strong></p>
+<div class="slide-columns slide-columns-3">
+<div class="slide-col">
+<h3>Knowledge</h3>
+<ul>
+<li>Password</li>
+<li>PIN</li>
+<li data-en="Security questions" data-fr="Sécurité Questions">Security questions</li>
+</ul>
+</div>
+<div class="slide-col">
+<h3>Possession</h3>
+<ul>
+<li>SMS code</li>
+<li>Authenticator app</li>
+<li>Hardware token</li>
+</ul>
+</div>
+<div class="slide-col">
+<h3>Inherence</h3>
+<ul>
+<li>Fingerprint</li>
+<li>Face recognition</li>
+<li>Iris scan</li>
+</ul>
+</div>
+</div>
+
+<span class="slide-counter">17 / 24</span>
+<div class="slide-nav">
+  <a href="#slide-16">&#8592; Previous</a>
+  <span class="slide-info">Slide 17 / 24 &nbsp;&middot;&nbsp; 🔐 Lecture 9: Jakarta EE Security</span>
+  <a href="#slide-18">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-18" class="slide">
+<h2>Authorization Models</h2>
+<h3>1. <strong>Role-Based Access Control (RBAC)</strong></h3>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>@RolesAllowed({&quot;ADMIN&quot;, &quot;MANAGER&quot;})
+public void deleteUser(Long userId) { }</code></pre>
+<h3>2. <strong>Attribute-Based Access Control (ABAC)</strong></h3>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>if (user.getDepartment().equals(&quot;HR&quot;) &amp;&amp; 
+    user.getLevel() &gt;= 3) {
+    // Allow access
+}</code></pre>
+
+<span class="slide-counter">18 / 24</span>
+<div class="slide-nav">
+  <a href="#slide-17">&#8592; Previous</a>
+  <span class="slide-info">Slide 18 / 24 &nbsp;&middot;&nbsp; 🔐 Lecture 9: Jakarta EE Security</span>
+  <a href="#slide-19">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-19" class="slide">
+<h2>Authorization Models (continued)</h2>
+<h3>3. <strong>Permission-Based Access Control</strong></h3>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>@RequiresPermissions(&quot;user:delete&quot;)
+public void deleteUser(Long userId) { }</code></pre>
+<h3>4. <strong>Policy-Based Access Control</strong></h3>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>@PreAuthorize(&quot;hasRole('ADMIN') or 
+              (hasRole('MANAGER') and #userId == principal.id)&quot;)
+public void updateUser(Long userId) { }</code></pre>
+
+<span class="slide-counter">19 / 24</span>
+<div class="slide-nav">
+  <a href="#slide-18">&#8592; Previous</a>
+  <span class="slide-info">Slide 19 / 24 &nbsp;&middot;&nbsp; 🔐 Lecture 9: Jakarta EE Security</span>
+  <a href="#slide-20">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-20" class="slide">
+<h2 data-en="Summary" data-fr="Résumé">Summary</h2>
+<h3 data-en="Key Takeaways" data-fr="Points clés">Key Takeaways</h3>
+<ol>
+<li><strong>Authentication</strong> verifies identity, <strong>Authorization</strong> controls access</li>
+<li data-en="Use <strong>Jakarta Security API</strong> for modern, portable security" data-fr="Use Jakarta Sécurité API for modern, portable Sécurité">Use <strong>Jakarta Security API</strong> for modern, portable security</li>
+<li><strong>Never store plain-text passwords</strong> - use strong hashing</li>
+<li><strong>IdentityStore</strong> validates credentials and retrieves roles</li>
+<li><strong>JWT</strong> provides stateless authentication for APIs</li>
+<li><strong>Always validate input</strong> and encode output</li>
+<li><strong>Use HTTPS</strong> for all production traffic</li>
+<li data-en="<strong>Implement audit logging</strong> for security events" data-fr="Implement audit logging for Sécurité events"><strong>Implement audit logging</strong> for security events</li>
+<li><strong>Follow OWASP guidelines</strong> to prevent vulnerabilities</li>
+<li data-en="<strong>Regular security testing</strong> is essential" data-fr="Regular Sécurité Tests is essential"><strong>Regular security testing</strong> is essential</li>
+</ol>
+
+<span class="slide-counter">20 / 24</span>
+<div class="slide-nav">
+  <a href="#slide-19">&#8592; Previous</a>
+  <span class="slide-info">Slide 20 / 24 &nbsp;&middot;&nbsp; 🔐 Lecture 9: Jakarta EE Security</span>
+  <a href="#slide-21">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-21" class="slide">
+<h2>Resources</h2>
+<h3>Official Documentation</h3>
+<ul>
+<li data-en="<strong>Jakarta Security Specification</strong>" data-fr="Jakarta Sécurité Specification"><strong>Jakarta Security Specification</strong></li>
+</ul>
+<p data-en="https://jakarta.ee/specifications/security/" data-fr="https://jakarta.ee/specifications/Sécurité/">https://jakarta.ee/specifications/security/</p>
+<ul>
+<li data-en="<strong>Jakarta EE Tutorial - Security</strong>" data-fr="Jakarta EE Tutorial - Sécurité"><strong>Jakarta EE Tutorial - Security</strong></li>
+</ul>
+<p>https://eclipse-ee4j.github.io/jakartaee-tutorial/</p>
+<ul>
+<li data-en="<strong>Open Liberty Security</strong>" data-fr="Open Liberty Sécurité"><strong>Open Liberty Security</strong></li>
+</ul>
+<p data-en="https://openliberty.io/docs/latest/security.html" data-fr="https://openliberty.io/docs/latest/Sécurité.html">https://openliberty.io/docs/latest/security.html</p>
+<h3 data-en="Security Resources" data-fr="Sécurité Resources">Security Resources</h3>
+<ul>
+<li><strong>OWASP Top 10</strong></li>
+</ul>
+<p>https://owasp.org/www-project-top-ten/</p>
+<ul>
+<li><strong>OWASP Cheat Sheet Series</strong></li>
+</ul>
+<p>https://cheatsheetseries.owasp.org/</p>
+
+<span class="slide-counter">21 / 24</span>
+<div class="slide-nav">
+  <a href="#slide-20">&#8592; Previous</a>
+  <span class="slide-info">Slide 21 / 24 &nbsp;&middot;&nbsp; 🔐 Lecture 9: Jakarta EE Security</span>
+  <a href="#slide-22">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-22" class="slide">
+<h2 data-en="Next Steps" data-fr="Prochaines étapes">Next Steps</h2>
+<h3>Lab 9: Secure Banking Application</h3>
+<p>In the next lab, you will:</p>
+<ol>
+<li>Implement database-backed authentication</li>
+<li>Create custom IdentityStore</li>
+<li>Configure role-based authorization</li>
+<li>Implement JWT authentication</li>
+<li>Secure REST endpoints</li>
+<li data-en="Add security audit logging" data-fr="Add Sécurité audit logging">Add security audit logging</li>
+<li data-en="Test security features" data-fr="Test Sécurité features">Test security features</li>
+</ol>
+<p data-en="<strong>Get ready to build a production-ready secure application!</strong>" data-fr="Get Prêt à build a production-ready secure application!"><strong>Get ready to build a production-ready secure application!</strong></p>
+
+<span class="slide-counter">22 / 24</span>
+<div class="slide-nav">
+  <a href="#slide-21">&#8592; Previous</a>
+  <span class="slide-info">Slide 22 / 24 &nbsp;&middot;&nbsp; 🔐 Lecture 9: Jakarta EE Security</span>
+  <a href="#slide-23">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-23" class="slide">
+<h2>Questions?</h2>
+<p data-en="<strong>Thank you for your attention!</strong>" data-fr="Merci ! for your attention!"><strong>Thank you for your attention!</strong></p>
+<p>Contact: olivier.planson@univ-eiffel.fr</p>
+
+<span class="slide-counter">23 / 24</span>
+<div class="slide-nav">
+  <a href="#slide-22">&#8592; Previous</a>
+  <span class="slide-info">Slide 23 / 24 &nbsp;&middot;&nbsp; 🔐 Lecture 9: Jakarta EE Security</span>
+  <a href="#slide-24">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-24" class="slide">
+
+<span class="slide-counter">24 / 24</span>
+<div class="slide-nav">
+  <a href="#slide-23">&#8592; Previous</a>
+  <span class="slide-info">Slide 24 / 24 &nbsp;&middot;&nbsp; 🔐 Lecture 9: Jakarta EE Security</span>
+  <a class="disabled">Next &#8594;</a>
+</div>
+</section>
+    </div>
+  </main>
+</div>
+<footer class="site-footer">Made with IBM Bob &nbsp;&middot;&nbsp; &copy; 2026 Olivier Planson</footer>
+<script>
+/* ── EN/FR language toggle — global scope so buttons can call it ── */
+var _lang = localStorage.getItem('slide-lang') || 'en';
+function setLang(lang) {
+  _lang = lang;
+  localStorage.setItem('slide-lang', lang);
+  document.getElementById('btn-en').classList.toggle('active', lang === 'en');
+  document.getElementById('btn-fr').classList.toggle('active', lang === 'fr');
+  document.querySelectorAll('[data-en][data-fr]').forEach(function(el) {
+    el.innerHTML = lang === 'fr' ? el.getAttribute('data-fr') : el.getAttribute('data-en');
+  });
+}
+
+(function() {
+  /* ── Sidenav hover ── */
+  var nav     = document.getElementById('sidenav');
+  var navTrig = document.getElementById('sidenav-trigger');
+  var navTimer = null;
+  function navShow() { clearTimeout(navTimer); nav.classList.add('sidenav--open'); }
+  function navHide() { navTimer = setTimeout(function(){ nav.classList.remove('sidenav--open'); }, 300); }
+  navTrig.addEventListener('mouseenter', navShow);
+  navTrig.addEventListener('mouseleave', navHide);
+  nav.addEventListener('mouseenter', navShow);
+  nav.addEventListener('mouseleave', navHide);
+
+  /* ── Progress bar hover ── */
+  var pbWrap  = document.getElementById('pb-wrap');
+  var pbTrig  = document.getElementById('pb-trigger');
+  var pbTimer = null;
+  function pbShow() { clearTimeout(pbTimer); pbWrap.classList.add('pb-open'); }
+  function pbHide() { pbTimer = setTimeout(function(){ pbWrap.classList.remove('pb-open'); }, 400); }
+  pbTrig.addEventListener('mouseenter', pbShow);
+  pbTrig.addEventListener('mouseleave', pbHide);
+  pbWrap.addEventListener('mouseenter', pbShow);
+  pbWrap.addEventListener('mouseleave', pbHide);
+
+  /* ── Wire EN/FR buttons via addEventListener (no inline onclick) ── */
+  document.getElementById('btn-en').addEventListener('click', function() { setLang('en'); });
+  document.getElementById('btn-fr').addEventListener('click', function() { setLang('fr'); });
+
+  /* Apply stored preference on page load */
+  if (_lang === 'fr') setLang('fr');
+})();
+</script>
+</body>
+</html>

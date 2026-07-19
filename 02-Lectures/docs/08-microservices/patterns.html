@@ -1,0 +1,504 @@
+<!-- © Copyright 2026 Olivier Planson. All rights reserved. Reproduction prohibited. Made with IBM Bob. -->
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>Cours 08 — Patterns Microservices</title>
+  <link rel="stylesheet" href="../assets/carbon.css"/>
+</head>
+<body>
+<header class="cds--header">
+  <a class="cds--header__name" href="index.html">Microservices<span>Cours Jakarta EE</span></a>
+  <a class="cds--header__back" href="../index.html">← Tous les Cours</a>
+</header>
+<div class="cds--shell">
+  <nav class="cds--side-nav">
+    <p class="cds--side-nav__section-title">Cours 08</p>
+    <a class="cds--side-nav__link" href="index.html">⊙ Vue d'ensemble</a>
+    <a class="cds--side-nav__link" href="slides.html">☰ Contenu du cours</a>
+    <a class="cds--side-nav__link" href="concepts.html">◈ Concepts clés</a>
+    <a class="cds--side-nav__link" href="code.html">⟨/⟩ Exemples de code</a>
+    <a class="cds--side-nav__link active" href="patterns.html">⧫ Patterns Microservices</a>
+  </nav>
+  <main class="cds--content">
+    <div class="breadcrumb"><a href="../index.html">Cours</a> › <a href="index.html">Cours 08</a> › Patterns</div>
+    <h1>Patterns Microservices</h1>
+    <p class="page-lead">Patterns architecturaux essentiels pour systèmes distribués.</p>
+
+    <!-- ═══════════════════════════════════════════════════════ -->
+    <!-- PATTERN 1 — API GATEWAY                                 -->
+    <!-- ═══════════════════════════════════════════════════════ -->
+    <h2>API Gateway</h2>
+    <p>
+      L'<strong>API Gateway</strong> est le point d'entrée unique (single entry point) pour tous les clients externes.
+      Elle masque la complexité interne de l'architecture microservices : les clients ne connaissent ni l'adresse,
+      ni l'existence des services individuels.
+    </p>
+    <p><strong>Cas d'usage :</strong> Toute architecture microservices exposée à des clients externes (web, mobile, tiers).
+      La Gateway est systématiquement présente en production.</p>
+
+    <svg viewBox="0 0 640 240" xmlns="http://www.w3.org/2000/svg"
+         style="width:100%;max-width:640px;display:block;margin:1.5rem 0;font-family:IBM Plex Mono,monospace;">
+      <!-- Client -->
+      <rect x="20" y="90" width="100" height="60" rx="6" fill="#0f62fe" stroke="none"/>
+      <text x="70" y="116" text-anchor="middle" font-size="12" fill="#fff" font-weight="600">Client</text>
+      <text x="70" y="132" text-anchor="middle" font-size="10" fill="#c6e2ff">Web / Mobile</text>
+      <!-- Arrow: Client → Gateway -->
+      <line x1="120" y1="120" x2="188" y2="120" stroke="#8d8d8d" stroke-width="2" marker-end="url(#arr)"/>
+      <text x="154" y="113" text-anchor="middle" font-size="10" fill="#6f6f6f">HTTPS</text>
+      <!-- Gateway -->
+      <rect x="188" y="74" width="120" height="92" rx="6" fill="#393939" stroke="none"/>
+      <text x="248" y="100" text-anchor="middle" font-size="12" fill="#f4f4f4" font-weight="700">API Gateway</text>
+      <text x="248" y="116" text-anchor="middle" font-size="9" fill="#a8a8a8">routing</text>
+      <text x="248" y="129" text-anchor="middle" font-size="9" fill="#a8a8a8">auth / rate limit</text>
+      <text x="248" y="142" text-anchor="middle" font-size="9" fill="#a8a8a8">SSL termination</text>
+      <text x="248" y="155" text-anchor="middle" font-size="9" fill="#a8a8a8">aggregation</text>
+      <!-- Arrow: Gateway → Service A -->
+      <line x1="308" y1="95" x2="398" y2="60" stroke="#8d8d8d" stroke-width="1.5" marker-end="url(#arr)"/>
+      <!-- Arrow: Gateway → Service B -->
+      <line x1="308" y1="120" x2="398" y2="120" stroke="#8d8d8d" stroke-width="1.5" marker-end="url(#arr)"/>
+      <!-- Arrow: Gateway → Service C -->
+      <line x1="308" y1="145" x2="398" y2="180" stroke="#8d8d8d" stroke-width="1.5" marker-end="url(#arr)"/>
+      <!-- Service A -->
+      <rect x="398" y="30" width="110" height="50" rx="6" fill="#0043ce" stroke="none"/>
+      <text x="453" y="52" text-anchor="middle" font-size="11" fill="#fff" font-weight="600">client-service</text>
+      <text x="453" y="67" text-anchor="middle" font-size="9" fill="#c6e2ff">:8080</text>
+      <!-- Service B -->
+      <rect x="398" y="95" width="110" height="50" rx="6" fill="#005d5d" stroke="none"/>
+      <text x="453" y="117" text-anchor="middle" font-size="11" fill="#fff" font-weight="600">account-service</text>
+      <text x="453" y="132" text-anchor="middle" font-size="9" fill="#9ef0f0">:8081</text>
+      <!-- Service C -->
+      <rect x="398" y="160" width="110" height="50" rx="6" fill="#6929c4" stroke="none"/>
+      <text x="453" y="182" text-anchor="middle" font-size="11" fill="#fff" font-weight="600">transfer-service</text>
+      <text x="453" y="197" text-anchor="middle" font-size="9" fill="#d4bbff">:8082</text>
+      <!-- Arrow marker -->
+      <defs>
+        <marker id="arr" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+          <path d="M0,0 L0,6 L8,3 z" fill="#8d8d8d"/>
+        </marker>
+      </defs>
+    </svg>
+
+    <p><strong>Responsabilités :</strong> routing, authentification &amp; autorisation JWT/OAuth2, rate limiting, SSL termination, logging centralisé, agrégation de réponses (BFF).</p>
+    <p><strong>Bénéfices :</strong> les clients n'ont qu'une seule URL à connaître ; les services internes peuvent évoluer librement sans impact sur les clients.</p>
+    <p><strong>Risques :</strong> single point of failure si non répliqué ; bottleneck potentiel sous forte charge si l'agrégation est lourde.</p>
+
+    <div class="code-block-wrap">
+      <span class="code-lang">java</span>
+      <pre><code>// Routing dans la Gateway — annotation JAX-RS standard
+@Path("/api")
+@ApplicationScoped
+public class GatewayResource {
+
+    @Inject @RestClient AccountServiceClient accountClient;
+
+    @GET @Path("/accounts/{id}")
+    public Response routeToAccountService(@PathParam("id") Long id) {
+        return Response.ok(accountClient.getAccount(id)).build();
+    }
+}</code></pre>
+    </div>
+
+    <!-- ═══════════════════════════════════════════════════════ -->
+    <!-- PATTERN 2 — CIRCUIT BREAKER                             -->
+    <!-- ═══════════════════════════════════════════════════════ -->
+    <h2>Circuit Breaker</h2>
+    <p>
+      Le <strong>Circuit Breaker</strong> est un pattern de résilience inspiré des disjoncteurs électriques.
+      Lorsqu'un service distant tombe en panne ou répond trop lentement, le Circuit Breaker détecte la défaillance
+      et interrompt les appels pour éviter l'effet de cascade (cascading failure) qui pourrait paralyser tout le système.
+    </p>
+    <p><strong>Cas d'usage :</strong> Tout appel synchrone inter-services en production, particulièrement sur les chemins critiques.</p>
+
+    <svg viewBox="0 0 580 210" xmlns="http://www.w3.org/2000/svg"
+         style="width:100%;max-width:580px;display:block;margin:1.5rem 0;font-family:IBM Plex Mono,monospace;">
+      <defs>
+        <marker id="arr2" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+          <path d="M0,0 L0,6 L8,3 z" fill="#6f6f6f"/>
+        </marker>
+        <marker id="arr2r" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+          <path d="M0,0 L0,6 L8,3 z" fill="#da1e28"/>
+        </marker>
+        <marker id="arr2g" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+          <path d="M0,0 L0,6 L8,3 z" fill="#24a148"/>
+        </marker>
+        <marker id="arr2o" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+          <path d="M0,0 L0,6 L8,3 z" fill="#ff832b"/>
+        </marker>
+      </defs>
+      <!-- CLOSED state -->
+      <circle cx="110" cy="105" r="52" fill="#24a148" stroke="none"/>
+      <text x="110" y="99" text-anchor="middle" font-size="13" fill="#fff" font-weight="700">CLOSED</text>
+      <text x="110" y="116" text-anchor="middle" font-size="10" fill="#defbe6">Les requêtes</text>
+      <text x="110" y="129" text-anchor="middle" font-size="10" fill="#defbe6">passent</text>
+      <!-- OPEN state -->
+      <circle cx="470" cy="105" r="52" fill="#da1e28" stroke="none"/>
+      <text x="470" y="99" text-anchor="middle" font-size="13" fill="#fff" font-weight="700">OPEN</text>
+      <text x="470" y="116" text-anchor="middle" font-size="10" fill="#ffd7d9">Echec immédiat</text>
+      <text x="470" y="129" text-anchor="middle" font-size="10" fill="#ffd7d9">sans appel réseau</text>
+      <!-- HALF-OPEN state -->
+      <circle cx="290" cy="185" r="45" fill="#ff832b" stroke="none"/>
+      <text x="290" y="179" text-anchor="middle" font-size="11" fill="#fff" font-weight="700">HALF-OPEN</text>
+      <text x="290" y="194" text-anchor="middle" font-size="10" fill="#fff2e8">Requêtes tests</text>
+      <!-- CLOSED → OPEN -->
+      <path d="M160,85 Q290,18 418,85" fill="none" stroke="#da1e28" stroke-width="2" marker-end="url(#arr2r)"/>
+      <text x="290" y="46" text-anchor="middle" font-size="10" fill="#da1e28">seuil d'échecs dépassé</text>
+      <!-- OPEN → HALF-OPEN -->
+      <path d="M456,155 Q400,195 337,190" fill="none" stroke="#ff832b" stroke-width="2" marker-end="url(#arr2o)"/>
+      <text x="430" y="188" text-anchor="middle" font-size="10" fill="#ff832b">timeout écoulé</text>
+      <!-- HALF-OPEN → CLOSED (success) -->
+      <path d="M246,177 Q160,195 125,158" fill="none" stroke="#24a148" stroke-width="2" marker-end="url(#arr2g)"/>
+      <text x="166" y="205" text-anchor="middle" font-size="10" fill="#24a148">succès</text>
+      <!-- HALF-OPEN → OPEN (failure) -->
+      <path d="M333,175 Q430,185 447,157" fill="none" stroke="#da1e28" stroke-width="1.5" stroke-dasharray="4,3" marker-end="url(#arr2r)"/>
+      <text x="415" y="165" text-anchor="middle" font-size="10" fill="#da1e28">échec</text>
+    </svg>
+
+    <div class="cds--data-table-container">
+      <table class="cds--data-table">
+        <thead><tr><th>Annotation / Paramètre</th><th>Description</th><th>Valeur par défaut</th></tr></thead>
+        <tbody>
+          <tr><td><code>@CircuitBreaker</code></td><td>Active le circuit breaker sur la méthode</td><td>—</td></tr>
+          <tr><td><code>requestVolumeThreshold</code></td><td>Nombre minimum de requêtes avant évaluation du taux d'échec</td><td>20</td></tr>
+          <tr><td><code>failureRatio</code></td><td>Taux d'échec déclenchant l'ouverture du circuit (0.0 à 1.0)</td><td>0.5</td></tr>
+          <tr><td><code>delay</code></td><td>Durée (ms) pendant laquelle le circuit reste OPEN avant de passer en HALF-OPEN</td><td>5000</td></tr>
+          <tr><td><code>successThreshold</code></td><td>Nombre de succès consécutifs en HALF-OPEN avant retour à CLOSED</td><td>1</td></tr>
+          <tr><td><code>skipOn</code></td><td>Exceptions ne comptant pas comme des échecs pour le circuit breaker</td><td>—</td></tr>
+          <tr><td><code>failOn</code></td><td>Exceptions comptant comme des échecs (par défaut : toutes les Throwable)</td><td>Throwable.class</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="code-block-wrap">
+      <span class="code-lang">java</span>
+      <pre><code>@CircuitBreaker(
+    requestVolumeThreshold = 4,     // évalue après 4 requêtes min
+    failureRatio           = 0.75,  // ouvre si 75% d'échecs
+    delay                  = 2000,  // reste OPEN 2 secondes
+    successThreshold       = 2      // 2 succès en HALF-OPEN pour refermer
+)
+@Fallback(fallbackMethod = "getAccountFallback")
+public Account getAccount(Long id) {
+    return accountClient.getAccount(id);
+}</code></pre>
+    </div>
+
+    <!-- ═══════════════════════════════════════════════════════ -->
+    <!-- PATTERN 3 — DATABASE PER SERVICE                        -->
+    <!-- ═══════════════════════════════════════════════════════ -->
+    <h2>Database par Service</h2>
+    <p>
+      Le pattern <strong>Database per Service</strong> stipule que chaque microservice est seul propriétaire de sa base de données.
+      Aucun autre service ne peut accéder directement aux données d'un autre — uniquement via son API exposée.
+      Ce pattern est un prérequis de l'indépendance réelle des services.
+    </p>
+    <p><strong>Cas d'usage :</strong> Systématiquement dans une architecture microservices correctement conçue. Sans ce pattern,
+      une base partagée recrée du couplage structurel entre les services.</p>
+
+    <svg viewBox="0 0 620 230" xmlns="http://www.w3.org/2000/svg"
+         style="width:100%;max-width:620px;display:block;margin:1.5rem 0;font-family:IBM Plex Mono,monospace;">
+      <defs>
+        <marker id="arr3" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+          <path d="M0,0 L0,6 L8,3 z" fill="#8d8d8d"/>
+        </marker>
+      </defs>
+      <!-- client-service -->
+      <rect x="20" y="20" width="150" height="55" rx="6" fill="#0043ce"/>
+      <text x="95" y="44" text-anchor="middle" font-size="12" fill="#fff" font-weight="600">client-service</text>
+      <text x="95" y="60" text-anchor="middle" font-size="10" fill="#c6e2ff">Jakarta EE / Quarkus</text>
+      <!-- Arrow down to client-db -->
+      <line x1="95" y1="75" x2="95" y2="115" stroke="#8d8d8d" stroke-width="1.5" marker-end="url(#arr3)"/>
+      <text x="108" y="100" font-size="9" fill="#6f6f6f">owns</text>
+      <!-- client-db -->
+      <rect x="20" y="115" width="150" height="45" rx="6" fill="#525252"/>
+      <text x="95" y="135" text-anchor="middle" font-size="11" fill="#f4f4f4" font-weight="600">clients_db</text>
+      <text x="95" y="151" text-anchor="middle" font-size="9" fill="#a8a8a8">PostgreSQL :5432</text>
+
+      <!-- account-service -->
+      <rect x="230" y="20" width="160" height="55" rx="6" fill="#005d5d"/>
+      <text x="310" y="44" text-anchor="middle" font-size="12" fill="#fff" font-weight="600">account-service</text>
+      <text x="310" y="60" text-anchor="middle" font-size="10" fill="#9ef0f0">Jakarta EE / Quarkus</text>
+      <!-- Arrow down to account-db -->
+      <line x1="310" y1="75" x2="310" y2="115" stroke="#8d8d8d" stroke-width="1.5" marker-end="url(#arr3)"/>
+      <text x="323" y="100" font-size="9" fill="#6f6f6f">owns</text>
+      <!-- account-db -->
+      <rect x="230" y="115" width="160" height="45" rx="6" fill="#525252"/>
+      <text x="310" y="135" text-anchor="middle" font-size="11" fill="#f4f4f4" font-weight="600">accounts_db</text>
+      <text x="310" y="151" text-anchor="middle" font-size="9" fill="#a8a8a8">PostgreSQL :5433</text>
+
+      <!-- transfer-service -->
+      <rect x="450" y="20" width="150" height="55" rx="6" fill="#6929c4"/>
+      <text x="525" y="44" text-anchor="middle" font-size="12" fill="#fff" font-weight="600">transfer-service</text>
+      <text x="525" y="60" text-anchor="middle" font-size="10" fill="#d4bbff">Jakarta EE / Quarkus</text>
+      <!-- Arrow down to transfer-db -->
+      <line x1="525" y1="75" x2="525" y2="115" stroke="#8d8d8d" stroke-width="1.5" marker-end="url(#arr3)"/>
+      <text x="538" y="100" font-size="9" fill="#6f6f6f">owns</text>
+      <!-- transfer-db -->
+      <rect x="450" y="115" width="150" height="45" rx="6" fill="#525252"/>
+      <text x="525" y="135" text-anchor="middle" font-size="11" fill="#f4f4f4" font-weight="600">transfers_db</text>
+      <text x="525" y="151" text-anchor="middle" font-size="9" fill="#a8a8a8">MongoDB :27017</text>
+
+      <!-- Cross-access forbidden line -->
+      <line x1="170" y1="137" x2="230" y2="137" stroke="#da1e28" stroke-width="2" stroke-dasharray="5,4"/>
+      <text x="200" y="128" text-anchor="middle" font-size="14" fill="#da1e28" font-weight="700">✕</text>
+      <line x1="390" y1="137" x2="450" y2="137" stroke="#da1e28" stroke-width="2" stroke-dasharray="5,4"/>
+      <text x="420" y="128" text-anchor="middle" font-size="14" fill="#da1e28" font-weight="700">✕</text>
+
+      <!-- API communication arrows -->
+      <line x1="170" y1="48" x2="228" y2="48" stroke="#6f6f6f" stroke-width="1.5" stroke-dasharray="5,3" marker-end="url(#arr3)"/>
+      <text x="199" y="42" text-anchor="middle" font-size="9" fill="#6f6f6f">API</text>
+      <line x1="390" y1="48" x2="448" y2="48" stroke="#6f6f6f" stroke-width="1.5" stroke-dasharray="5,3" marker-end="url(#arr3)"/>
+      <text x="419" y="42" text-anchor="middle" font-size="9" fill="#6f6f6f">API</text>
+
+      <!-- Legend -->
+      <text x="200" y="205" text-anchor="middle" font-size="10" fill="#da1e28">✕ Accès direct inter-base interdit</text>
+      <text x="430" y="205" text-anchor="middle" font-size="10" fill="#6f6f6f">-- Communication uniquement via API</text>
+    </svg>
+
+    <div class="cds--data-table-container">
+      <table class="cds--data-table">
+        <thead><tr><th>Avantages</th><th>Inconvénients</th></tr></thead>
+        <tbody>
+          <tr><td>✅ Indépendance totale — chaque service choisit sa technologie de stockage</td><td>⚠️ Pas de JOIN SQL natif entre services — requêtes croisées via API</td></tr>
+          <tr><td>✅ Schéma de données évolutif sans coordination avec les autres équipes</td><td>⚠️ Eventual consistency — données potentiellement divergentes entre services</td></tr>
+          <tr><td>✅ Scalabilité indépendante de la couche données</td><td>⚠️ Duplication partielle des données dans les read models (CQRS)</td></tr>
+          <tr><td>✅ Isolation des pannes — panne d'une DB n'impacte qu'un service</td><td>⚠️ Saga nécessaire pour les transactions distribuées multi-services</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p>L'<strong>eventual consistency</strong> est le corollaire inévitable de ce pattern : entre deux services, la cohérence
+    n'est pas immédiate mais garantie à terme via la propagation d'événements.</p>
+
+    <!-- ═══════════════════════════════════════════════════════ -->
+    <!-- PATTERN 4 — SAGA                                        -->
+    <!-- ═══════════════════════════════════════════════════════ -->
+    <h2>Pattern Saga</h2>
+    <p>
+      Le <strong>Pattern Saga</strong> résout le problème des transactions distribuées dans une architecture microservices.
+      Puisqu'il n'y a pas de transaction ACID globale possible à travers plusieurs bases de données, la Saga découpe
+      l'opération en une séquence de transactions locales. Si une étape échoue, des <em>transactions compensatoires</em>
+      annulent les étapes déjà validées.
+    </p>
+    <p><strong>Variantes :</strong> <strong>Choreography</strong> — pas de coordinateur, les services réagissent aux événements
+      des autres ; <strong>Orchestration</strong> — un coordinateur central pilote les étapes et les compensations.</p>
+    <p><strong>Cas d'usage :</strong> Toute opération métier touchant plusieurs services (ex. virement bancaire : débit + crédit + notification).</p>
+
+    <svg viewBox="0 0 620 270" xmlns="http://www.w3.org/2000/svg"
+         style="width:100%;max-width:620px;display:block;margin:1.5rem 0;font-family:IBM Plex Mono,monospace;">
+      <defs>
+        <marker id="arr4" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+          <path d="M0,0 L0,6 L8,3 z" fill="#8d8d8d"/>
+        </marker>
+        <marker id="arr4r" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+          <path d="M0,0 L0,6 L8,3 z" fill="#da1e28"/>
+        </marker>
+      </defs>
+      <!-- Title -->
+      <text x="310" y="18" text-anchor="middle" font-size="11" fill="#6f6f6f" font-style="italic">Saga Choreography — Virement bancaire</text>
+
+      <!-- Step 1 — Transfer Service -->
+      <rect x="10" y="30" width="140" height="50" rx="6" fill="#6929c4"/>
+      <text x="80" y="52" text-anchor="middle" font-size="11" fill="#fff" font-weight="600">transfer-service</text>
+      <text x="80" y="67" text-anchor="middle" font-size="9" fill="#d4bbff">① initiate transfer</text>
+      <!-- Arrow → event bus -->
+      <line x1="150" y1="55" x2="200" y2="55" stroke="#8d8d8d" stroke-width="1.5" marker-end="url(#arr4)"/>
+      <!-- Event: TransferInitiated -->
+      <rect x="200" y="38" width="150" height="34" rx="4" fill="#f4f4f4" stroke="#8d8d8d" stroke-width="1"/>
+      <text x="275" y="54" text-anchor="middle" font-size="10" fill="#161616">TransferInitiatedEvent</text>
+      <text x="275" y="66" text-anchor="middle" font-size="9" fill="#6f6f6f">from / to / amount</text>
+      <!-- Arrow event → account-service -->
+      <line x1="350" y1="55" x2="400" y2="55" stroke="#8d8d8d" stroke-width="1.5" marker-end="url(#arr4)"/>
+
+      <!-- Step 2 — Account Service (debit) -->
+      <rect x="400" y="30" width="140" height="50" rx="6" fill="#005d5d"/>
+      <text x="470" y="52" text-anchor="middle" font-size="11" fill="#fff" font-weight="600">account-service</text>
+      <text x="470" y="67" text-anchor="middle" font-size="9" fill="#9ef0f0">② debit source</text>
+
+      <!-- Arrow → event bus -->
+      <line x1="470" y1="80" x2="470" y2="118" stroke="#8d8d8d" stroke-width="1.5" marker-end="url(#arr4)"/>
+      <!-- Event: AccountDebited -->
+      <rect x="370" y="118" width="200" height="34" rx="4" fill="#f4f4f4" stroke="#8d8d8d" stroke-width="1"/>
+      <text x="470" y="132" text-anchor="middle" font-size="10" fill="#161616">AccountDebitedEvent</text>
+      <text x="470" y="146" text-anchor="middle" font-size="9" fill="#6f6f6f">transferId / amount</text>
+      <!-- Arrow → Step 3 -->
+      <line x1="470" y1="152" x2="470" y2="185" stroke="#8d8d8d" stroke-width="1.5" marker-end="url(#arr4)"/>
+
+      <!-- Step 3 — Account Service (credit) -->
+      <rect x="400" y="185" width="140" height="50" rx="6" fill="#005d5d"/>
+      <text x="470" y="207" text-anchor="middle" font-size="11" fill="#fff" font-weight="600">account-service</text>
+      <text x="470" y="222" text-anchor="middle" font-size="9" fill="#9ef0f0">③ credit target</text>
+
+      <!-- Arrow → TransferCompleted -->
+      <line x1="400" y1="210" x2="350" y2="210" stroke="#24a148" stroke-width="1.5" marker-end="url(#arr4)"/>
+      <!-- Event: TransferCompleted -->
+      <rect x="200" y="193" width="150" height="34" rx="4" fill="#defbe6" stroke="#24a148" stroke-width="1"/>
+      <text x="275" y="207" text-anchor="middle" font-size="10" fill="#0e6027">TransferCompletedEvent</text>
+      <text x="275" y="221" text-anchor="middle" font-size="9" fill="#0e6027">✓ saga terminé</text>
+
+      <!-- Compensation path -->
+      <text x="310" y="255" text-anchor="middle" font-size="9" fill="#da1e28">↺ Compensation si crédit échoue : DebitCompensatedEvent → annulation du débit (step ②)</text>
+    </svg>
+
+    <p><strong>Transactions compensatoires :</strong> chaque étape validée doit disposer d'une opération inverse.
+      Exemple : si le crédit du compte destinataire échoue après que le débit ait été réalisé,
+      le service émet un <code>DebitCompensatedEvent</code> qui déclenche le remboursement du montant débité.</p>
+
+    <div class="code-block-wrap">
+      <span class="code-lang">java</span>
+      <pre><code>// Déclenchement du Saga — Transfer Service
+public void initiateTransfer(String id, String from, String to, double amount) {
+    transferRepository.save(new Transfer(id, from, to, amount, "INITIATED"));
+    // Choreography : on publie un événement et on laisse les services réagir
+    debitEvent.fire(new AccountDebitedEvent(id, from, amount));
+}
+
+// Transaction compensatoire — Account Service
+public void onDebitFailed(@Observes DebitFailedEvent event) {
+    // Annule le débit si le crédit a échoué
+    accountRepository.credit(event.fromAccount(), event.amount()); // remboursement
+    compensatedEvent.fire(new DebitCompensatedEvent(event.transferId()));
+}</code></pre>
+    </div>
+
+    <!-- ═══════════════════════════════════════════════════════ -->
+    <!-- PATTERN 5 — CQRS + EVENT SOURCING                       -->
+    <!-- ═══════════════════════════════════════════════════════ -->
+    <h2>CQRS et Event Sourcing</h2>
+    <p>
+      <strong>CQRS</strong> (Command Query Responsibility Segregation) sépare le modèle d'écriture (Commands) du modèle de lecture (Queries).
+      Le modèle de commandes garantit la cohérence transactionnelle ; le modèle de requêtes est optimisé pour les lectures
+      complexes et les performances. Les deux modèles sont synchronisés de façon asynchrone via des événements.
+    </p>
+    <p>
+      <strong>Event Sourcing</strong> pousse ce principe plus loin : l'état d'une entité n'est jamais stocké directement.
+      Au lieu de cela, chaque changement d'état est persisé comme un événement immuable dans un <em>Event Store</em>.
+      L'état courant est recalculé en rejouant tous les événements depuis le début.
+    </p>
+    <p><strong>Cas d'usage :</strong> Domaines avec besoin d'audit trail complet (finance, santé), scalabilité en lecture,
+      besoins de vues multiples sur les mêmes données.</p>
+
+    <svg viewBox="0 0 640 240" xmlns="http://www.w3.org/2000/svg"
+         style="width:100%;max-width:640px;display:block;margin:1.5rem 0;font-family:IBM Plex Mono,monospace;">
+      <defs>
+        <marker id="arr5" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+          <path d="M0,0 L0,6 L8,3 z" fill="#8d8d8d"/>
+        </marker>
+        <marker id="arr5g" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+          <path d="M0,0 L0,6 L8,3 z" fill="#24a148"/>
+        </marker>
+      </defs>
+
+      <!-- COMMAND SIDE -->
+      <rect x="10" y="60" width="130" height="50" rx="6" fill="#0043ce"/>
+      <text x="75" y="82" text-anchor="middle" font-size="11" fill="#fff" font-weight="600">Command Side</text>
+      <text x="75" y="97" text-anchor="middle" font-size="9" fill="#c6e2ff">Write Model</text>
+      <!-- Client sends command -->
+      <rect x="10" y="10" width="130" height="38" rx="4" fill="#393939"/>
+      <text x="75" y="26" text-anchor="middle" font-size="10" fill="#f4f4f4">Client</text>
+      <text x="75" y="41" text-anchor="middle" font-size="9" fill="#a8a8a8">TransferCommand</text>
+      <line x1="75" y1="48" x2="75" y2="58" stroke="#8d8d8d" stroke-width="1.5" marker-end="url(#arr5)"/>
+
+      <!-- Arrow: Command → Event Store -->
+      <line x1="140" y1="85" x2="218" y2="85" stroke="#8d8d8d" stroke-width="2" marker-end="url(#arr5)"/>
+      <text x="179" y="78" text-anchor="middle" font-size="9" fill="#6f6f6f">events</text>
+
+      <!-- EVENT STORE -->
+      <rect x="218" y="55" width="200" height="120" rx="6" fill="#1c1c1c" stroke="#f4f4f4" stroke-width="1"/>
+      <text x="318" y="78" text-anchor="middle" font-size="12" fill="#f4f4f4" font-weight="700">Event Store</text>
+      <text x="318" y="95" text-anchor="middle" font-size="9" fill="#6f6f6f">immuable · append-only</text>
+      <rect x="232" y="102" width="172" height="18" rx="3" fill="#393939"/>
+      <text x="318" y="115" text-anchor="middle" font-size="9" fill="#a8a8a8">AccountOpenedEvent  t=0</text>
+      <rect x="232" y="123" width="172" height="18" rx="3" fill="#393939"/>
+      <text x="318" y="136" text-anchor="middle" font-size="9" fill="#a8a8a8">MoneyDepositedEvent t=1</text>
+      <rect x="232" y="144" width="172" height="18" rx="3" fill="#393939"/>
+      <text x="318" y="157" text-anchor="middle" font-size="9" fill="#a8a8a8">MoneyDebitedEvent   t=2</text>
+
+      <!-- Arrow: Event Store → Projection -->
+      <line x1="418" y1="105" x2="490" y2="85" stroke="#24a148" stroke-width="1.5" marker-end="url(#arr5g)"/>
+      <line x1="418" y1="115" x2="490" y2="140" stroke="#24a148" stroke-width="1.5" marker-end="url(#arr5g)"/>
+      <text x="458" y="108" text-anchor="middle" font-size="9" fill="#24a148">project</text>
+
+      <!-- QUERY SIDE — Read Model A -->
+      <rect x="490" y="55" width="140" height="50" rx="6" fill="#005d5d"/>
+      <text x="560" y="77" text-anchor="middle" font-size="11" fill="#fff" font-weight="600">Read Model A</text>
+      <text x="560" y="92" text-anchor="middle" font-size="9" fill="#9ef0f0">Account Summary View</text>
+      <!-- Read Model B -->
+      <rect x="490" y="120" width="140" height="50" rx="6" fill="#6929c4"/>
+      <text x="560" y="142" text-anchor="middle" font-size="11" fill="#fff" font-weight="600">Read Model B</text>
+      <text x="560" y="157" text-anchor="middle" font-size="9" fill="#d4bbff">Transaction History</text>
+
+      <!-- Legend -->
+      <text x="318" y="200" text-anchor="middle" font-size="10" fill="#6f6f6f">État courant = rejouer tous les événements depuis t=0</text>
+      <text x="318" y="216" text-anchor="middle" font-size="10" fill="#24a148">Projections : vues optimisées pour la lecture, mises à jour async</text>
+    </svg>
+
+    <p><strong>Avantages combinés CQRS + Event Sourcing :</strong></p>
+    <ul>
+      <li>✅ <strong>Audit trail complet</strong> — chaque changement d'état est enregistré avec son contexte et sa date</li>
+      <li>✅ <strong>Replay des événements</strong> — possibilité de reconstruire l'état à n'importe quel instant passé</li>
+      <li>✅ <strong>Vues multiples</strong> — plusieurs projections (read models) peuvent être créées depuis le même flux d'événements</li>
+      <li>✅ <strong>Scalabilité en lecture</strong> — les read models peuvent être répliqués et mis en cache indépendamment</li>
+      <li>⚠️ <strong>Complexité accrue</strong> — eventual consistency entre write et read model, schema evolution des événements</li>
+    </ul>
+
+    <div class="code-block-wrap">
+      <span class="code-lang">java</span>
+      <pre><code>// Command — intention métier (écriture)
+public record DebitAccountCommand(String accountId, double amount, String transferId) {}
+
+// Event — fait passé immuable
+public record MoneyDebitedEvent(String accountId, double amount,
+                                String transferId, Instant occurredAt) {}
+
+// Aggregate — reconstruit l'état depuis les événements
+@ApplicationScoped
+public class AccountAggregate {
+
+    // Applique un événement au write model
+    public Account applyDebit(Account current, MoneyDebitedEvent event) {
+        return new Account(
+            current.id(),
+            current.iban(),
+            current.balance() - event.amount(), // déduction
+            current.ownerId()
+        );
+    }
+
+    // Rejoue tous les événements pour reconstruire l'état courant
+    public Account rebuildFromHistory(List&lt;Object&gt; events) {
+        Account account = new Account(null, null, 0.0, null);
+        for (Object event : events) {
+            account = switch (event) {
+                case AccountOpenedEvent e -&gt; applyOpen(account, e);
+                case MoneyDepositedEvent e -&gt; applyDeposit(account, e);
+                case MoneyDebitedEvent e   -&gt; applyDebit(account, e);
+                default -&gt; account;
+            };
+        }
+        return account;
+    }
+}
+
+// Projection — read model optimisé pour les requêtes
+@ApplicationScoped
+public class AccountSummaryProjection {
+
+    @Inject
+    private AccountSummaryRepository readRepository;
+
+    // Mise à jour asynchrone du read model quand un événement arrive
+    public void on(@Observes MoneyDebitedEvent event) {
+        AccountSummary summary = readRepository.findById(event.accountId());
+        summary.setBalance(summary.getBalance() - event.amount());
+        summary.setLastTransactionAt(event.occurredAt());
+        readRepository.save(summary);
+    }
+}</code></pre>
+    </div>
+
+  </main>
+</div>
+<footer class="cds--footer">Made with IBM Bob &nbsp;·&nbsp; © 2026 Olivier Planson &nbsp;·&nbsp; ESIPE — Jakarta EE &amp; Microservices</footer>
+</body>
+</html>

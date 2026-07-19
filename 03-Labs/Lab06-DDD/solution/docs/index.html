@@ -1,0 +1,137 @@
+<!-- © Copyright 2026 Olivier Planson. All rights reserved. Reproduction prohibited. Made with IBM Bob. -->
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>Vue d'ensemble — Banking DDD Application Documentation</title>
+  <link rel="stylesheet" href="assets/carbon.css"/>
+</head>
+<body>
+<header class="cds--header">
+  <a class="cds--header__name" href="index.html">Banking DDD<span>Documentation Technique</span></a>
+  <a href="../../../index.html" style="margin-left:auto;font-size:.75rem;color:#c6c6c6;text-decoration:none;border:1px solid #393939;padding:.2rem .75rem;border-radius:2px;white-space:nowrap;">← Tous les Labs</a>
+</header>
+<div class="cds--shell">
+  <nav class="cds--side-nav">
+    <p class="cds--side-nav__section-title">Documentation</p>
+    <a class="cds--side-nav__link active" href="index.html">⊙ Vue d'ensemble</a>
+    <a class="cds--side-nav__link" href="functional.html">⊞ Architecture Fonctionnelle</a>
+    <a class="cds--side-nav__link" href="technical.html">⊟ Architecture Technique</a>
+    <a class="cds--side-nav__link" href="sequences.html">⇄ Diagrammes de Séquences</a>
+    <a class="cds--side-nav__link" href="rules.html">≡ Règles de Gestion</a>
+  </nav>
+  <main class="cds--content">
+    <div class="breadcrumb"><span>Vue d'ensemble</span></div>
+    <h1>Banking DDD Application</h1>
+    <p class="page-lead">Application bancaire de gestion de clients et de comptes, construite avec Jakarta EE 10, MicroProfile 6 et le patron <strong>Domain-Driven Design</strong>, déployée sur Open Liberty avec PostgreSQL.</p>
+
+    <div class="tag-stack">
+      <span class="cds--tag cds--tag--blue">Java 17</span>
+      <span class="cds--tag cds--tag--blue">Jakarta EE 10</span>
+      <span class="cds--tag cds--tag--blue">MicroProfile 6</span>
+      <span class="cds--tag cds--tag--green">Open Liberty 23.0.0.12</span>
+      <span class="cds--tag cds--tag--purple">PostgreSQL 15</span>
+      <span class="cds--tag cds--tag--teal">JAX-RS 3.1</span>
+      <span class="cds--tag cds--tag--teal">CDI 4.0</span>
+      <span class="cds--tag cds--tag--teal">JPA 3.2</span>
+      <span class="cds--tag cds--tag--teal">Flyway 10.4.1</span>
+      <span class="cds--tag cds--tag--warm">Lab 06 — DDD</span>
+    </div>
+
+    <div class="tile-grid">
+      <div class="cds--tile">
+        <h3>Objectif</h3>
+        <p>Application de référence pédagogique illustrant les patrons DDD (Value Objects, Aggregate Roots, Domain Services, Domain Events) au sein d'un écosystème Jakarta EE complet.</p>
+      </div>
+      <div class="cds--tile">
+        <h3>Auteur / Version</h3>
+        <p><strong>Auteur :</strong> Olivier Planson<br/>
+        <strong>Version :</strong> 1.0-SNAPSHOT<br/>
+        <strong>Artifact :</strong> <code>banking-ddd-app.war</code><br/>
+        <strong>Package :</strong> <code>com.bank</code></p>
+      </div>
+      <div class="cds--tile">
+        <h3>Points d'accès</h3>
+        <p><strong>HTTP :</strong> <code>http://localhost:9080</code><br/>
+        <strong>HTTPS :</strong> <code>https://localhost:9443</code><br/>
+        <strong>REST v1 :</strong> <code>/api/</code><br/>
+        <strong>REST v2 :</strong> <code>/api/v2/</code><br/>
+        <strong>Health :</strong> <code>/health</code><br/>
+        <strong>Metrics :</strong> <code>/metrics</code><br/>
+        <strong>OpenAPI :</strong> <code>/openapi/ui</code></p>
+      </div>
+    </div>
+
+    <h2>Endpoints REST</h2>
+    <div class="cds--data-table-container">
+      <table class="cds--data-table">
+        <thead><tr><th>URL</th><th>Méthode</th><th>Handler</th><th>Description</th><th>Version</th></tr></thead>
+        <tbody>
+          <tr><td><code>GET /api/clients</code></td><td><span class="cds--tag cds--tag--teal">GET</span></td><td><code>ClientResource#getAllClients()</code></td><td>Liste tous les clients</td><td><span class="cds--tag cds--tag--red">v1 Déprécié</span></td></tr>
+          <tr><td><code>GET /api/clients/{id}</code></td><td><span class="cds--tag cds--tag--teal">GET</span></td><td><code>ClientResource#getClient()</code></td><td>Détail d'un client</td><td><span class="cds--tag cds--tag--red">v1 Déprécié</span></td></tr>
+          <tr><td><code>POST /api/clients</code></td><td><span class="cds--tag cds--tag--green">POST</span></td><td><code>ClientResource#createClient()</code></td><td>Créer un client</td><td><span class="cds--tag cds--tag--red">v1 Déprécié</span></td></tr>
+          <tr><td><code>PUT /api/clients/{id}</code></td><td><span class="cds--tag cds--tag--warm">PUT</span></td><td><code>ClientResource#updateClient()</code></td><td>Modifier un client</td><td><span class="cds--tag cds--tag--red">v1 Déprécié</span></td></tr>
+          <tr><td><code>DELETE /api/clients/{id}</code></td><td><span class="cds--tag cds--tag--red">DEL</span></td><td><code>ClientResource#deleteClient()</code></td><td>Supprimer un client</td><td><span class="cds--tag cds--tag--red">v1 Déprécié</span></td></tr>
+          <tr><td><code>GET /api/accounts</code></td><td><span class="cds--tag cds--tag--teal">GET</span></td><td><code>AccountResource#getAllAccounts()</code></td><td>Liste tous les comptes</td><td><span class="cds--tag cds--tag--red">v1 Déprécié</span></td></tr>
+          <tr><td><code>GET /api/accounts/{id}</code></td><td><span class="cds--tag cds--tag--teal">GET</span></td><td><code>AccountResource#getAccount()</code></td><td>Détail d'un compte</td><td><span class="cds--tag cds--tag--red">v1 Déprécié</span></td></tr>
+          <tr><td><code>POST /api/accounts</code></td><td><span class="cds--tag cds--tag--green">POST</span></td><td><code>AccountResource#createAccount()</code></td><td>Créer un compte</td><td><span class="cds--tag cds--tag--red">v1 Déprécié</span></td></tr>
+          <tr><td><code>DELETE /api/accounts/{id}</code></td><td><span class="cds--tag cds--tag--red">DEL</span></td><td><code>AccountResource#deleteAccount()</code></td><td>Supprimer un compte</td><td><span class="cds--tag cds--tag--red">v1 Déprécié</span></td></tr>
+          <tr><td><code>POST /api/accounts/{id}/deposit</code></td><td><span class="cds--tag cds--tag--green">POST</span></td><td><code>AccountResource#deposit()</code></td><td>Dépôt (amount en query)</td><td><span class="cds--tag cds--tag--red">v1 Déprécié</span></td></tr>
+          <tr><td><code>POST /api/accounts/{id}/withdraw</code></td><td><span class="cds--tag cds--tag--green">POST</span></td><td><code>AccountResource#withdraw()</code></td><td>Retrait (amount en query)</td><td><span class="cds--tag cds--tag--red">v1 Déprécié</span></td></tr>
+          <tr><td><code>POST /api/accounts/{id}/transfer</code></td><td><span class="cds--tag cds--tag--green">POST</span></td><td><code>AccountResource#transfer()</code></td><td>Virement entre comptes</td><td><span class="cds--tag cds--tag--red">v1 Déprécié</span></td></tr>
+          <tr><td><code>GET /api/v2/accounts</code></td><td><span class="cds--tag cds--tag--teal">GET</span></td><td><code>AccountResourceV2#getAllAccounts()</code></td><td>Liste comptes (format Money VO)</td><td><span class="cds--tag cds--tag--green">v2 Actuel</span></td></tr>
+          <tr><td><code>GET /api/v2/accounts/{id}</code></td><td><span class="cds--tag cds--tag--teal">GET</span></td><td><code>AccountResourceV2#getAccount()</code></td><td>Détail compte (format Money VO)</td><td><span class="cds--tag cds--tag--green">v2 Actuel</span></td></tr>
+          <tr><td><code>POST /api/v2/accounts/{id}/deposit</code></td><td><span class="cds--tag cds--tag--green">POST</span></td><td><code>AccountResourceV2#deposit()</code></td><td>Dépôt (body JSON {amount, currency})</td><td><span class="cds--tag cds--tag--green">v2 Actuel</span></td></tr>
+          <tr><td><code>POST /api/v2/accounts/{id}/withdraw</code></td><td><span class="cds--tag cds--tag--green">POST</span></td><td><code>AccountResourceV2#withdraw()</code></td><td>Retrait (body JSON {amount, currency})</td><td><span class="cds--tag cds--tag--green">v2 Actuel</span></td></tr>
+          <tr><td><code>POST /api/v2/accounts/{id}/transfer</code></td><td><span class="cds--tag cds--tag--green">POST</span></td><td><code>AccountResourceV2#transfer()</code></td><td>Virement (body JSON {toAccountId, amount, currency})</td><td><span class="cds--tag cds--tag--green">v2 Actuel</span></td></tr>
+          <tr><td><code>GET /clients</code></td><td><span class="cds--tag cds--tag--teal">GET</span></td><td><code>ClientController</code></td><td>Vue web — liste clients</td><td><span class="cds--tag cds--tag--blue">Web</span></td></tr>
+          <tr><td><code>GET /client?action=view&amp;id={id}</code></td><td><span class="cds--tag cds--tag--teal">GET</span></td><td><code>ClientController</code></td><td>Vue web — détail client</td><td><span class="cds--tag cds--tag--blue">Web</span></td></tr>
+          <tr><td><code>POST /client</code></td><td><span class="cds--tag cds--tag--green">POST</span></td><td><code>ClientController</code></td><td>Create/Update/Delete client (action param)</td><td><span class="cds--tag cds--tag--blue">Web</span></td></tr>
+          <tr><td><code>GET /accounts</code></td><td><span class="cds--tag cds--tag--teal">GET</span></td><td><code>AccountController</code></td><td>Vue web — liste comptes</td><td><span class="cds--tag cds--tag--blue">Web</span></td></tr>
+          <tr><td><code>POST /account</code></td><td><span class="cds--tag cds--tag--green">POST</span></td><td><code>AccountController</code></td><td>Create/Update/Delete/Deposit/Withdraw/Transfer</td><td><span class="cds--tag cds--tag--blue">Web</span></td></tr>
+          <tr><td><code>GET /health</code></td><td><span class="cds--tag cds--tag--teal">GET</span></td><td><code>DatabaseHealthCheck</code></td><td>MicroProfile Health Check</td><td><span class="cds--tag cds--tag--purple">MP</span></td></tr>
+          <tr><td><code>GET /metrics</code></td><td><span class="cds--tag cds--tag--teal">GET</span></td><td>mpMetrics-5.0</td><td>MicroProfile Metrics</td><td><span class="cds--tag cds--tag--purple">MP</span></td></tr>
+          <tr><td><code>GET /openapi</code></td><td><span class="cds--tag cds--tag--teal">GET</span></td><td>mpOpenAPI-3.1</td><td>Spec OpenAPI YAML</td><td><span class="cds--tag cds--tag--purple">MP</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="cds--inline-notification info">
+      <strong>Note :</strong> L'API v1 (<code>/api/</code>) est dépréciée (sunset 2026-06-01) et sera supprimée. L'API v2 (<code>/api/v2/</code>) est la version courante utilisant le Value Object <code>Money</code> dans les réponses JSON.
+    </div>
+
+    <h2>Accès rapide</h2>
+    <div class="tile-grid">
+      <a href="functional.html" style="display:block;text-decoration:none;">
+        <div class="cds--tile">
+          <h3>⊞ Architecture Fonctionnelle</h3>
+          <p>Parcours utilisateur, modèle de données, carte des fonctionnalités.</p>
+        </div>
+      </a>
+      <a href="technical.html" style="display:block;text-decoration:none;">
+        <div class="cds--tile">
+          <h3>⊟ Architecture Technique</h3>
+          <p>Couches applicatives, stack technique, structure des sources, déploiement.</p>
+        </div>
+      </a>
+      <a href="sequences.html" style="display:block;text-decoration:none;">
+        <div class="cds--tile">
+          <h3>⇄ Diagrammes de Séquences</h3>
+          <p>5 diagrammes SVG inline : lecture, écriture, démarrage, erreurs HTTP.</p>
+        </div>
+      </a>
+      <a href="rules.html" style="display:block;text-decoration:none;">
+        <div class="cds--tile">
+          <h3>≡ Règles de Gestion</h3>
+          <p>20 règles numérotées R1–R20 : validation, stockage, navigation, sécurité, observabilité.</p>
+        </div>
+      </a>
+    </div>
+  </main>
+</div>
+<footer class="cds--footer">
+  Banking DDD App · Documentation Technique v1.0 · © 2026 Olivier Planson · Made with IBM Bob
+</footer>
+</body>
+</html>

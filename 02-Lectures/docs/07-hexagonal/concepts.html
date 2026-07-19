@@ -1,0 +1,253 @@
+<!-- © Copyright 2026 Olivier Planson. All rights reserved. Reproduction prohibited. Made with IBM Bob. -->
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>Cours 07 — Concepts clés</title>
+  <link rel="stylesheet" href="../assets/carbon.css"/>
+</head>
+<body>
+<header class="cds--header">
+  <a class="cds--header__name" href="index.html">Architecture Hexagonale<span>Cours Jakarta EE</span></a>
+  <a class="cds--header__back" href="../index.html">← Tous les Cours</a>
+</header>
+<div class="cds--shell">
+  <nav class="cds--side-nav">
+    <p class="cds--side-nav__section-title">Cours 07</p>
+    <a class="cds--side-nav__link" href="index.html">⊙ Vue d'ensemble</a>
+    <a class="cds--side-nav__link" href="slides.html">☰ Contenu du cours</a>
+    <a class="cds--side-nav__link active" href="concepts.html">◈ Concepts clés</a>
+    <a class="cds--side-nav__link" href="code.html">⟨/⟩ Exemples de code</a>
+    <a class="cds--side-nav__link" href="architecture.html">⬡ Architecture Hexagonale</a>
+  </nav>
+  <main class="cds--content">
+    <div class="breadcrumb"><a href="../index.html">Cours</a> › <a href="index.html">Cours 07</a> › Concepts clés</div>
+    <h1>Concepts clés</h1>
+    <p class="page-lead">Comparatifs, tableaux de référence et glossaire pour l'Architecture Hexagonale — Ports &amp; Adapters.</p>
+
+    <h2>Architecture Hexagonale vs Autres Architectures</h2>
+    <div class="cds--data-table-container">
+      <table class="cds--data-table">
+        <thead><tr><th>Aspect</th><th>Monolithe Classique</th><th>DDD</th><th>Hexagonale</th></tr></thead>
+        <tbody>
+          <tr>
+            <td><strong>Direction des dépendances</strong></td>
+            <td>UI → Service → DAO — vers le bas, couplage fort</td>
+            <td>Vers le domaine, mais peut dériver selon l'implémentation</td>
+            <td>Toujours vers le centre — domaine sans dépendance externe</td>
+          </tr>
+          <tr>
+            <td><strong>Testabilité</strong></td>
+            <td>⚠️ Difficile — tests d'intégration nécessaires, serveur requis</td>
+            <td>✅ Bonne si le domaine est pur, mais les repos peuvent coupler</td>
+            <td>✅✅ Excellente — domaine et use cases testables en POJO pur</td>
+          </tr>
+          <tr>
+            <td><strong>Couplage infrastructure/domaine</strong></td>
+            <td>❌ Fort — entités JPA dans le domaine, SQL dans les services</td>
+            <td>⚠️ Moyen — risque d'annotations JPA dans les entités domaine</td>
+            <td>✅ Nul — entités domaine pures, mapping dans l'adapter</td>
+          </tr>
+          <tr>
+            <td><strong>Isolation du domaine</strong></td>
+            <td>❌ Faible — la logique fuite dans les couches techniques</td>
+            <td>✅ Bonne si les patterns tactiques sont respectés</td>
+            <td>✅✅ Maximale — le domaine ignore tout de l'infrastructure</td>
+          </tr>
+          <tr>
+            <td><strong>Remplacement d'un composant technique</strong></td>
+            <td>❌ Risqué — propagation dans tout le code</td>
+            <td>⚠️ Partiel — dépend de l'abstraction des repositories</td>
+            <td>✅ Simple — remplacer un adapter sans toucher au domaine</td>
+          </tr>
+          <tr>
+            <td><strong>Complexité de mise en place</strong></td>
+            <td>✅ Faible — structure simple, apprentissage rapide</td>
+            <td>⚠️ Élevée — nombreux patterns à maîtriser</td>
+            <td>⚠️ Moyenne — plus de classes, mais structure claire</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h2>Ports Primaires vs Secondaires</h2>
+    <div class="cds--data-table-container">
+      <table class="cds--data-table">
+        <thead><tr><th>Type</th><th>Direction</th><th>Qui appelle qui</th><th>Exemples</th><th>Annotation Jakarta EE</th></tr></thead>
+        <tbody>
+          <tr>
+            <td><strong>Port Primaire</strong><br/>(Driving)</td>
+            <td>Entrant — vers le domaine</td>
+            <td>Adapter primaire → appelle → Port primaire</td>
+            <td><code>MoneyTransferUseCase</code>, <code>AccountQueryUseCase</code>, <code>CreateAccountUseCase</code></td>
+            <td>Aucune — interface Java pure dans le domaine</td>
+          </tr>
+          <tr>
+            <td><strong>Adapter Primaire</strong><br/>(Driving)</td>
+            <td>Entrant — reçoit du monde externe</td>
+            <td>Monde externe → appelle → Adapter → Port</td>
+            <td>REST Resource (<code>@Path</code>), Servlet, CLI, Test Driver</td>
+            <td><code>@Path</code>, <code>@ApplicationScoped</code>, <code>@WebServlet</code></td>
+          </tr>
+          <tr>
+            <td><strong>Port Secondaire</strong><br/>(Driven)</td>
+            <td>Sortant — le domaine sort vers l'extérieur</td>
+            <td>Use case → appelle → Port secondaire</td>
+            <td><code>AccountPort</code>, <code>NotificationPort</code>, <code>AuditPort</code></td>
+            <td>Aucune — interface Java pure dans le domaine</td>
+          </tr>
+          <tr>
+            <td><strong>Adapter Secondaire</strong><br/>(Driven)</td>
+            <td>Sortant — reçoit des appels du domaine</td>
+            <td>Port → délégué → Adapter → Infrastructure</td>
+            <td>JPA Adapter, JMS Adapter, REST Client Adapter</td>
+            <td><code>@ApplicationScoped</code>, <code>@PersistenceContext</code>, <code>@Inject</code></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h2>Règles de Dépendance</h2>
+    <div class="cds--data-table-container">
+      <table class="cds--data-table">
+        <thead><tr><th>Couche</th><th>Peut dépendre de</th><th>Ne peut PAS dépendre de</th></tr></thead>
+        <tbody>
+          <tr>
+            <td><strong>Domaine</strong><br/><code>com.bank.domain</code></td>
+            <td>Lui-même uniquement — Java standard (JDK) seulement</td>
+            <td>Application, Infrastructure, Jakarta EE (<code>jakarta.*</code>), JPA, JAX-RS, JMS</td>
+          </tr>
+          <tr>
+            <td><strong>Application</strong><br/><code>com.bank.application</code></td>
+            <td>Domaine — peut aussi utiliser des annotations CDI (<code>@ApplicationScoped</code>, <code>@Inject</code>)</td>
+            <td>Infrastructure — ne connaît pas les adapters concrets</td>
+          </tr>
+          <tr>
+            <td><strong>Infrastructure</strong><br/><code>com.bank.infrastructure</code></td>
+            <td>Domaine, Application, et toutes les APIs Jakarta EE (JPA, JAX-RS, JMS, CDI)</td>
+            <td>Pas de contrainte supplémentaire — c'est la couche technique</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h2>Bénéfices Architecture Hexagonale</h2>
+    <div class="cds--data-table-container">
+      <table class="cds--data-table">
+        <thead><tr><th>Bénéfice</th><th>Description</th><th>Impact</th></tr></thead>
+        <tbody>
+          <tr>
+            <td><strong>Testabilité maximale</strong></td>
+            <td>Le domaine et les use cases sont testables en Java pur, sans serveur ni base de données</td>
+            <td>Tests unitaires 100× plus rapides qu'avec Arquillian</td>
+          </tr>
+          <tr>
+            <td><strong>Isolation du domaine</strong></td>
+            <td>La logique métier ne connaît aucune technologie — elle exprime purement les règles métier</td>
+            <td>Code lisible par les experts métier, bugs métier facilement localisables</td>
+          </tr>
+          <tr>
+            <td><strong>Remplacement d'infrastructure</strong></td>
+            <td>Remplacer JPA par MongoDB, ou REST par GraphQL, ne touche que les adapters</td>
+            <td>Migration technologique sans risque de régression sur les règles métier</td>
+          </tr>
+          <tr>
+            <td><strong>Multi-entrée</strong></td>
+            <td>La même logique métier accessible depuis REST, JMS, CLI, tests — via des adapters différents</td>
+            <td>Pas de duplication de la logique pour chaque point d'entrée</td>
+          </tr>
+          <tr>
+            <td><strong>Maintenabilité</strong></td>
+            <td>Structure explicite — chaque développeur sait exactement où placer un nouveau code</td>
+            <td>Onboarding plus rapide, revues de code facilitées</td>
+          </tr>
+          <tr>
+            <td><strong>Évolutivité vers microservices</strong></td>
+            <td>Un bounded context hexagonal est naturellement extractible en microservice</td>
+            <td>Migration monolithe → microservices moins risquée</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h2>Quand Utiliser l'Architecture Hexagonale</h2>
+    <div class="cds--data-table-container">
+      <table class="cds--data-table">
+        <thead><tr><th>Critère</th><th>Favorable ✅</th><th>Défavorable ⚠️</th></tr></thead>
+        <tbody>
+          <tr>
+            <td><strong>Complexité du domaine</strong></td>
+            <td>Domaine métier riche avec de nombreuses règles — secteur financier, e-commerce, santé</td>
+            <td>Application CRUD simple — formulaire → base de données → affichage</td>
+          </tr>
+          <tr>
+            <td><strong>Durée de vie du projet</strong></td>
+            <td>Application maintenue sur plusieurs années, avec évolutions fréquentes des règles métier</td>
+            <td>Prototype ou POC court terme — overhead de structure non justifié</td>
+          </tr>
+          <tr>
+            <td><strong>Tests automatisés</strong></td>
+            <td>Équipe avec une culture de tests unitaires — bénéfice immédiat de la testabilité</td>
+            <td>Pas de culture test — la structure hexagonale sans tests n'apporte pas grand chose</td>
+          </tr>
+          <tr>
+            <td><strong>Évolution de l'infrastructure</strong></td>
+            <td>Plusieurs sources de données, migration prévue, multiples clients (REST + JMS + CLI)</td>
+            <td>Infrastructure fixe, une seule source de données, un seul type d'API</td>
+          </tr>
+          <tr>
+            <td><strong>Taille de l'équipe</strong></td>
+            <td>Équipe de développeurs ayant besoin d'une structure commune et de frontières claires</td>
+            <td>Développeur solo sur un petit projet — overhead de communication pas nécessaire</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h2>Glossaire</h2>
+    <div class="cds--data-table-container">
+      <table class="cds--data-table">
+        <thead><tr><th>Terme</th><th>Définition</th></tr></thead>
+        <tbody>
+          <tr>
+            <td><strong>Port Primaire</strong></td>
+            <td>Interface Java déclarée dans le domaine, exposant un use case de l'application au monde extérieur. Exemple : <code>MoneyTransferUseCase</code>.</td>
+          </tr>
+          <tr>
+            <td><strong>Port Secondaire</strong></td>
+            <td>Interface Java déclarée dans le domaine, que le domaine utilise pour accéder à des ressources externes (BDD, messagerie). Exemple : <code>AccountPort</code>.</td>
+          </tr>
+          <tr>
+            <td><strong>Adapter Primaire</strong></td>
+            <td>Composant d'infrastructure qui reçoit les entrées du monde externe et les traduit en appels vers un port primaire. Exemple : <code>TransferRestAdapter</code> (ressource JAX-RS).</td>
+          </tr>
+          <tr>
+            <td><strong>Adapter Secondaire</strong></td>
+            <td>Composant d'infrastructure qui implémente un port secondaire. Traduit les appels du domaine en appels techniques. Exemple : <code>JpaAccountAdapter implements AccountPort</code>.</td>
+          </tr>
+          <tr>
+            <td><strong>Use Case</strong></td>
+            <td>Cas d'utilisation de l'application — une action que l'utilisateur ou un système peut déclencher. Implémenté par un service applicatif qui implémente un port primaire.</td>
+          </tr>
+          <tr>
+            <td><strong>Domaine</strong></td>
+            <td>Cœur de l'application contenant toute la logique métier pure. Entités, Value Objects, Services de domaine, interfaces des ports. Aucune dépendance technique.</td>
+          </tr>
+          <tr>
+            <td><strong>DIP</strong></td>
+            <td>Dependency Inversion Principle — les modules de haut niveau (domaine) ne dépendent pas des modules de bas niveau (infrastructure). Les deux dépendent d'abstractions (interfaces/ports).</td>
+          </tr>
+          <tr>
+            <td><strong>Clean Architecture</strong></td>
+            <td>Architecture proposée par Robert C. Martin (Uncle Bob) partageant les mêmes principes que l'hexagonale : règle de dépendance vers l'intérieur, isolation du domaine, testabilité.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+  </main>
+</div>
+<footer class="cds--footer">Made with IBM Bob &nbsp;·&nbsp; © 2026 Olivier Planson &nbsp;·&nbsp; ESIPE — Jakarta EE &amp; Microservices</footer>
+</body>
+</html>

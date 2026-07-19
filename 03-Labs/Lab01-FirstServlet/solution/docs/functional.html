@@ -1,0 +1,236 @@
+<!-- © Copyright 2026 Olivier Planson. All rights reserved. Reproduction prohibited. Made with IBM Bob. -->
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>Architecture Fonctionnelle — Banking Application Documentation</title>
+  <link rel="stylesheet" href="assets/carbon.css"/>
+</head>
+<body>
+<header class="cds--header">
+  <a class="cds--header__name" href="index.html">Banking Application<span>Documentation Technique</span></a>
+</header>
+<div class="cds--shell">
+  <nav class="cds--side-nav">
+    <p class="cds--side-nav__section-title">Documentation</p>
+    <a class="cds--side-nav__link" href="index.html">&#x2299; Vue d'ensemble</a>
+    <a class="cds--side-nav__link active" href="functional.html">&#x229E; Architecture Fonctionnelle</a>
+    <a class="cds--side-nav__link" href="technical.html">&#x229F; Architecture Technique</a>
+    <a class="cds--side-nav__link" href="sequences.html">&#x21C4; Diagrammes de Séquences</a>
+    <a class="cds--side-nav__link" href="rules.html">&#x2261; Règles de Gestion</a>
+  </nav>
+  <main class="cds--content">
+    <div class="breadcrumb"><a href="index.html">Accueil</a> <span>/</span> Architecture Fonctionnelle</div>
+
+    <h1>Architecture Fonctionnelle</h1>
+    <p class="page-lead">Description des fonctionnalités exposées aux utilisateurs, des parcours de navigation et du modèle de données géré par l'application.</p>
+
+    <!-- ─ Feature Map ─ -->
+    <h2>Carte des fonctionnalités</h2>
+    <div class="tile-grid">
+      <div class="cds--tile">
+        <span class="cds--tag cds--tag--blue">F1</span>
+        <h3>Page de bienvenue</h3>
+        <p>Le servlet <code>WelcomeServlet</code> répond aux requêtes <code>GET /welcome</code> en générant dynamiquement une page HTML affichant la date et l'heure courante (Java <code>LocalDateTime</code>, formatée via <code>DateTimeFormatter</code>) ainsi que des liens de navigation vers l'accueil, la liste des clients et le formulaire d'ajout.</p>
+      </div>
+      <div class="cds--tile">
+        <span class="cds--tag cds--tag--green">F2</span>
+        <h3>Liste des clients</h3>
+        <p>Le servlet <code>ClientListServlet</code> répond aux requêtes <code>GET /clients</code> en affichant une table HTML de tous les clients stockés en mémoire. Si le paramètre d'URL <code>?message=success</code> est présent, une bannière de confirmation verte est affichée. Un lien permet d'accéder au formulaire d'ajout.</p>
+      </div>
+      <div class="cds--tile">
+        <span class="cds--tag cds--tag--purple">F3</span>
+        <h3>Ajout d'un client</h3>
+        <p>La page statique <code>add-client.html</code> propose un formulaire HTML avec validation JavaScript côté client. La soumission effectue un <code>POST /clients</code>. Le servlet valide les champs côté serveur, génère un nouvel ID, ajoute le client en mémoire et redirige (PRG) vers <code>/clients?message=success</code>. En cas d'erreur, il redirige vers <code>/add-client.html?error=missing</code>.</p>
+      </div>
+    </div>
+
+    <!-- ─ User Journey ─ -->
+    <h2>Parcours utilisateur (navigation)</h2>
+    <div class="cds--data-table-container">
+      <table class="cds--data-table">
+        <thead><tr>
+          <th>Écran / URL</th><th>Action utilisateur</th><th>Destination</th><th>Mécanisme</th>
+        </tr></thead>
+        <tbody>
+          <tr>
+            <td><code>/</code> — Accueil</td>
+            <td>Clic sur "Welcome Page"</td>
+            <td><code>/welcome</code></td>
+            <td>Lien <code>&lt;a href="welcome"&gt;</code> vers servlet</td>
+          </tr>
+          <tr>
+            <td><code>/</code> — Accueil</td>
+            <td>Clic sur "View Clients"</td>
+            <td><code>/clients</code></td>
+            <td>Lien <code>&lt;a href="clients"&gt;</code> vers servlet</td>
+          </tr>
+          <tr>
+            <td><code>/</code> — Accueil</td>
+            <td>Clic sur "Add New Client"</td>
+            <td><code>/add-client.html</code></td>
+            <td>Lien vers page HTML statique</td>
+          </tr>
+          <tr>
+            <td><code>/welcome</code> — Bienvenue</td>
+            <td>Clic sur "Home Page"</td>
+            <td><code>/</code> (<code>index.html</code>)</td>
+            <td>Lien HTML statique</td>
+          </tr>
+          <tr>
+            <td><code>/welcome</code> — Bienvenue</td>
+            <td>Clic sur "View All Clients"</td>
+            <td><code>/clients</code></td>
+            <td>Lien vers servlet</td>
+          </tr>
+          <tr>
+            <td><code>/welcome</code> — Bienvenue</td>
+            <td>Clic sur "Add New Client"</td>
+            <td><code>/add-client.html</code></td>
+            <td>Lien vers page HTML statique</td>
+          </tr>
+          <tr>
+            <td><code>/add-client.html</code> — Formulaire</td>
+            <td>Soumission du formulaire (valide)</td>
+            <td><code>POST /clients</code> → redirect <code>/clients?message=success</code></td>
+            <td>Servlet POST + <code>sendRedirect()</code> (pattern PRG)</td>
+          </tr>
+          <tr>
+            <td><code>/add-client.html</code> — Formulaire</td>
+            <td>Soumission avec champ manquant (JS désactivé)</td>
+            <td><code>/add-client.html?error=missing</code></td>
+            <td>Validation serveur + <code>sendRedirect()</code></td>
+          </tr>
+          <tr>
+            <td><code>/add-client.html</code> — Formulaire</td>
+            <td>Champ vide ou invalide (JS activé)</td>
+            <td>Même page — alerte navigateur</td>
+            <td>Validation JavaScript <code>validateForm()</code> — retourne <code>false</code></td>
+          </tr>
+          <tr>
+            <td><code>/add-client.html</code> — Formulaire</td>
+            <td>Clic sur "Cancel"</td>
+            <td><code>/clients</code></td>
+            <td>Lien <code>&lt;a href="clients"&gt;</code></td>
+          </tr>
+          <tr>
+            <td><code>/clients</code> — Liste</td>
+            <td>Clic sur "Add New Client"</td>
+            <td><code>/add-client.html</code></td>
+            <td>Lien <code>&lt;a href="add-client.html"&gt;</code></td>
+          </tr>
+          <tr>
+            <td><code>/clients</code> — Liste</td>
+            <td>Clic sur "Back to Home"</td>
+            <td><code>/</code> (<code>index.html</code>)</td>
+            <td>Lien HTML statique</td>
+          </tr>
+          <tr>
+            <td>Toute URL inconnue</td>
+            <td>Navigation directe</td>
+            <td><code>/error-404.html</code></td>
+            <td>Gestionnaire d'erreur déclaré dans <code>web.xml</code></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- ─ Data Model ─ -->
+    <h2>Modèle de données — Entité Client</h2>
+    <div class="cds--data-table-container">
+      <table class="cds--data-table">
+        <thead><tr>
+          <th>Attribut</th><th>Type Java</th><th>Contrainte HTML</th><th>Contrainte serveur</th><th>Description</th>
+        </tr></thead>
+        <tbody>
+          <tr>
+            <td><code>id</code></td>
+            <td><code>Long</code></td>
+            <td>—</td>
+            <td>Généré automatiquement : <code>max(existants) + 1</code></td>
+            <td>Identifiant unique du client. Non soumis par l'utilisateur.</td>
+          </tr>
+          <tr>
+            <td><code>name</code></td>
+            <td><code>String</code></td>
+            <td><code>required</code>, <code>minlength="2"</code>, <code>maxlength="100"</code></td>
+            <td>Non null, non vide après <code>trim()</code></td>
+            <td>Nom complet du client. Valeur stockée après <code>trim()</code>.</td>
+          </tr>
+          <tr>
+            <td><code>email</code></td>
+            <td><code>String</code></td>
+            <td><code>type="email"</code>, <code>required</code>, <code>maxlength="100"</code></td>
+            <td>Non null, non vide après <code>trim()</code></td>
+            <td>Adresse email. Validée par regex JS (<code>/^[^\s@]+@[^\s@]+\.[^\s@]+$/</code>) côté client.</td>
+          </tr>
+          <tr>
+            <td><code>phone</code></td>
+            <td><code>String</code></td>
+            <td><code>type="tel"</code>, <code>required</code>, <code>maxlength="20"</code></td>
+            <td>Non null, non vide après <code>trim()</code></td>
+            <td>Numéro de téléphone. Validé par regex JS (<code>/^[\d\s\-\+\(\)]+$/</code>) côté client.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <p style="font-size:0.8rem;color:var(--cds-text-secondary)">La classe <code>Client</code> implémente <code>Serializable</code> (serialVersionUID = 1L), redéfinit <code>equals()</code> et <code>hashCode()</code> basés sur le champ <code>id</code>.</p>
+
+    <!-- ─ Bootstrap Data ─ -->
+    <h2>Données de démarrage (Bootstrap)</h2>
+    <div class="cds--tile">
+      <p>Au démarrage du servlet (<code>ClientListServlet.init()</code>), 5 clients sont pré-chargés dans la liste <code>CopyOnWriteArrayList</code> :</p>
+      <div class="cds--data-table-container">
+        <table class="cds--data-table">
+          <thead><tr><th>ID</th><th>Nom</th><th>Email</th><th>Téléphone</th></tr></thead>
+          <tbody>
+            <tr><td>1</td><td>John Smith</td><td>john.smith@email.com</td><td>+1-555-0101</td></tr>
+            <tr><td>2</td><td>Emma Johnson</td><td>emma.j@email.com</td><td>+1-555-0102</td></tr>
+            <tr><td>3</td><td>Michael Brown</td><td>m.brown@email.com</td><td>+1-555-0103</td></tr>
+            <tr><td>4</td><td>Sarah Davis</td><td>sarah.davis@email.com</td><td>+1-555-0104</td></tr>
+            <tr><td>5</td><td>James Wilson</td><td>james.w@email.com</td><td>+1-555-0105</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p>Ces données sont déclarées dans la méthode <code>init()</code> et ne persistent pas au-delà du cycle de vie du servlet.</p>
+    </div>
+
+    <!-- ─ Actors ─ -->
+    <h2>Acteurs du système</h2>
+    <div class="tile-grid">
+      <div class="cds--tile">
+        <h3>Navigateur utilisateur</h3>
+        <p>Envoie des requêtes HTTP <code>GET</code> et <code>POST</code>. Exécute la validation JavaScript côté client sur le formulaire <code>add-client.html</code>. Affiche les réponses HTML générées par les servlets.</p>
+        <div class="tag-stack">
+          <span class="cds--tag cds--tag--blue">HTML5</span>
+          <span class="cds--tag cds--tag--blue">JavaScript (ES6)</span>
+          <span class="cds--tag cds--tag--blue">CSS3</span>
+        </div>
+      </div>
+      <div class="cds--tile">
+        <h3>Serveur Open Liberty</h3>
+        <p>Reçoit les requêtes HTTP, route vers <code>WelcomeServlet</code> ou <code>ClientListServlet</code> selon la configuration <code>@WebServlet</code>. Gère le cycle de vie des servlets, les erreurs HTTP et les sessions.</p>
+        <div class="tag-stack">
+          <span class="cds--tag cds--tag--green">Open Liberty</span>
+          <span class="cds--tag cds--tag--green">Servlet 6.0</span>
+          <span class="cds--tag cds--tag--green">Jakarta EE 10</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- ─ Limitations ─ -->
+    <div class="cds--inline-notification warning">
+      <span class="notif-icon">&#9888;</span>
+      <p><strong>Pas de persistance :</strong> Les données sont stockées uniquement en mémoire dans l'instance du servlet. Tout redémarrage ou rechargement de l'application efface les clients ajoutés. Aucune base de données n'est utilisée dans ce Lab 01.</p>
+    </div>
+    <div class="cds--inline-notification info">
+      <span class="notif-icon">ℹ</span>
+      <p><strong>Absence de JSP/Thymeleaf :</strong> Les réponses HTML sont générées directement dans les servlets via <code>PrintWriter</code>. Les pages statiques (<code>index.html</code>, <code>add-client.html</code>) sont des fichiers servis directement par Open Liberty.</p>
+    </div>
+  </main>
+</div>
+<footer class="cds--footer">Banking Application &middot; Documentation Technique v1.0 &middot; &copy; 2025 Olivier Planson &middot; Made with IBM Bob</footer>
+</body>
+</html>

@@ -1,0 +1,322 @@
+<!-- © Copyright 2026 Olivier Planson. All rights reserved. Reproduction prohibited. Made with IBM Bob. -->
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Banking EJB App — Architecture Fonctionnelle</title>
+  <link rel="stylesheet" href="assets/carbon.css"/>
+</head>
+<body>
+
+<header class="cds--header">
+  <a class="cds--header__name" href="index.html">
+    🏦 Banking EJB Application <span>Lab 04B</span>
+  </a>
+  <span class="cds--header__divider">|</span>
+  <span style="font-size:.8125rem;color:#c6c6c6;">Jakarta EE 10 · Open Liberty 23 · EJB 4.0</span>
+</header>
+
+<div class="cds--shell">
+  <nav class="cds--side-nav">
+    <p class="cds--side-nav__section-title">Documentation</p>
+    <a class="cds--side-nav__link" href="index.html"><i class="icon">⊞</i> Vue d'ensemble</a>
+    <a class="cds--side-nav__link active" href="functional.html"><i class="icon">⬡</i> Architecture Fonctionnelle</a>
+    <a class="cds--side-nav__link" href="technical.html"><i class="icon">⚙</i> Architecture Technique</a>
+    <a class="cds--side-nav__link" href="sequences.html"><i class="icon">⇄</i> Diagrammes de Séquence</a>
+    <a class="cds--side-nav__link" href="rules.html"><i class="icon">§</i> Règles Métier</a>
+  </nav>
+
+  <main class="cds--content">
+
+    <nav class="cds--breadcrumb">
+      <a href="index.html">Vue d'ensemble</a>
+      <span class="sep">/</span>
+      <span class="current">Architecture Fonctionnelle</span>
+    </nav>
+
+    <h1>Architecture Fonctionnelle</h1>
+    <p class="page-lead">
+      Cinq domaines fonctionnels organisés autour des types d'EJB Jakarta EE 4.0 :
+      beans sans état poolés, bean avec état conversationnel, singletons de démarrage,
+      listener de messages asynchrones (MDB) et sécurité déclarative RBAC.
+    </p>
+
+    <!-- ─── SVG Architecture Diagram ─── -->
+    <h2>Diagramme d'architecture</h2>
+    <div class="arch-box">
+      <svg viewBox="0 0 860 420" xmlns="http://www.w3.org/2000/svg"
+           style="width:100%;max-width:860px;font-family:'IBM Plex Sans',sans-serif;font-size:11px;">
+        <!-- Background zones -->
+        <!-- Browser -->
+        <rect x="10" y="160" width="110" height="60" rx="3" fill="#d0e2ff" stroke="#0043ce" stroke-width="1.5"/>
+        <text x="65" y="183" text-anchor="middle" font-weight="600" fill="#0043ce">Client HTTP</text>
+        <text x="65" y="198" text-anchor="middle" fill="#0043ce">BASIC Auth</text>
+        <text x="65" y="212" text-anchor="middle" font-size="9" fill="#0043ce">/banking servlet</text>
+
+        <!-- Servlet -->
+        <rect x="160" y="145" width="130" height="90" rx="3" fill="#e8daff" stroke="#491d8b" stroke-width="1.5"/>
+        <text x="225" y="168" text-anchor="middle" font-weight="600" fill="#491d8b">BankingServlet</text>
+        <text x="225" y="184" text-anchor="middle" fill="#491d8b" font-size="9">Servlet 6.0</text>
+        <text x="225" y="200" text-anchor="middle" fill="#491d8b" font-size="9">@EJB injection</text>
+        <text x="225" y="215" text-anchor="middle" fill="#491d8b" font-size="9">@DeclareRoles</text>
+
+        <!-- EJB Container box -->
+        <rect x="335" y="20" width="380" height="370" rx="4" fill="#f4f4f4" stroke="#8d8d8d" stroke-width="1.5" stroke-dasharray="6,3"/>
+        <text x="525" y="40" text-anchor="middle" font-weight="700" fill="#525252" font-size="12">EJB Container</text>
+
+        <!-- Stateless pool -->
+        <rect x="350" y="55" width="160" height="90" rx="3" fill="#defbe6" stroke="#198038" stroke-width="1.5"/>
+        <text x="430" y="73" text-anchor="middle" font-weight="600" fill="#0e6027">@Stateless (pool)</text>
+        <text x="430" y="90" text-anchor="middle" fill="#0e6027" font-size="9">AccountServiceBean</text>
+        <text x="430" y="104" text-anchor="middle" fill="#0e6027" font-size="9">ClientServiceBean</text>
+        <text x="430" y="118" text-anchor="middle" fill="#0e6027" font-size="9">CMT · @RolesAllowed</text>
+        <text x="430" y="132" text-anchor="middle" fill="#0e6027" font-size="9">@Version optimiste</text>
+
+        <!-- Stateful -->
+        <rect x="530" y="55" width="160" height="90" rx="3" fill="#ffd7d9" stroke="#750e13" stroke-width="1.5"/>
+        <text x="610" y="73" text-anchor="middle" font-weight="600" fill="#750e13">@Stateful (session)</text>
+        <text x="610" y="90" text-anchor="middle" fill="#750e13" font-size="9">TransactionBatchBean</text>
+        <text x="610" y="104" text-anchor="middle" fill="#750e13" font-size="9">timeout 30 min</text>
+        <text x="610" y="118" text-anchor="middle" fill="#750e13" font-size="9">pendingList</text>
+        <text x="610" y="132" text-anchor="middle" fill="#750e13" font-size="9">@Remove · REQUIRES_NEW</text>
+
+        <!-- Singleton -->
+        <rect x="350" y="170" width="160" height="100" rx="3" fill="#f5e0c3" stroke="#5d3b1e" stroke-width="1.5"/>
+        <text x="430" y="188" text-anchor="middle" font-weight="600" fill="#5d3b1e">@Singleton</text>
+        <text x="430" y="204" text-anchor="middle" fill="#5d3b1e" font-size="9">ConfigServiceBean</text>
+        <text x="430" y="218" text-anchor="middle" fill="#5d3b1e" font-size="9">@Startup · @Lock</text>
+        <text x="430" y="232" text-anchor="middle" fill="#5d3b1e" font-size="9">DatabaseMigrationStartup</text>
+        <text x="430" y="246" text-anchor="middle" fill="#5d3b1e" font-size="9">BMT + Flyway</text>
+        <text x="430" y="260" text-anchor="middle" fill="#5d3b1e" font-size="9">ReportGeneratorBean</text>
+
+        <!-- MDB -->
+        <rect x="530" y="170" width="160" height="80" rx="3" fill="#d9fbfb" stroke="#004144" stroke-width="1.5"/>
+        <text x="610" y="188" text-anchor="middle" font-weight="600" fill="#004144">@MessageDriven</text>
+        <text x="610" y="204" text-anchor="middle" fill="#004144" font-size="9">NotificationMDB</text>
+        <text x="610" y="218" text-anchor="middle" fill="#004144" font-size="9">jms/notificationQueue</text>
+        <text x="610" y="232" text-anchor="middle" fill="#004144" font-size="9">EMAIL/SMS/PUSH/ALERT</text>
+
+        <!-- Timer -->
+        <rect x="350" y="295" width="340" height="60" rx="3" fill="#e0e0e0" stroke="#8d8d8d" stroke-width="1.5"/>
+        <text x="520" y="316" text-anchor="middle" font-weight="600" fill="#161616">Timer Service</text>
+        <text x="520" y="332" text-anchor="middle" fill="#525252" font-size="9">@Schedule daily/hourly/weekly · programmatic timers · @Timeout</text>
+        <text x="520" y="346" text-anchor="middle" fill="#525252" font-size="9">ReportGeneratorBean — non-persistent</text>
+
+        <!-- JMS Queue (outside container) -->
+        <rect x="735" y="160" width="110" height="60" rx="3" fill="#d9fbfb" stroke="#004144" stroke-width="1.5"/>
+        <text x="790" y="182" text-anchor="middle" font-weight="600" fill="#004144">JMS Queue</text>
+        <text x="790" y="197" text-anchor="middle" fill="#004144" font-size="9">notificationQueue</text>
+        <text x="790" y="211" text-anchor="middle" fill="#004144" font-size="9">messaging-3.1</text>
+
+        <!-- Arrows -->
+        <!-- Client → Servlet -->
+        <line x1="120" y1="190" x2="158" y2="190" stroke="#0043ce" stroke-width="1.5" marker-end="url(#arrow-blue)"/>
+        <!-- Servlet → Stateless -->
+        <line x1="290" y1="175" x2="348" y2="120" stroke="#198038" stroke-width="1.5" marker-end="url(#arrow-green)"/>
+        <!-- Servlet → Stateful -->
+        <line x1="290" y1="200" x2="528" y2="130" stroke="#750e13" stroke-width="1.5" marker-end="url(#arrow-red)"/>
+        <!-- Servlet → Singleton -->
+        <line x1="290" y1="210" x2="348" y2="220" stroke="#5d3b1e" stroke-width="1.5" marker-end="url(#arrow-warm)"/>
+        <!-- MDB → Queue (recv) -->
+        <line x1="692" y1="200" x2="733" y2="195" stroke="#004144" stroke-width="1.5" stroke-dasharray="4,2" marker-end="url(#arrow-teal)"/>
+        <!-- Timer → ReportGenerator -->
+        <line x1="520" y1="293" x2="520" y2="273" stroke="#8d8d8d" stroke-width="1.5" marker-end="url(#arrow-gray)"/>
+
+        <!-- Arrow markers -->
+        <defs>
+          <marker id="arrow-blue"  markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L0,6 L8,3 z" fill="#0043ce"/></marker>
+          <marker id="arrow-green" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L0,6 L8,3 z" fill="#198038"/></marker>
+          <marker id="arrow-red"   markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L0,6 L8,3 z" fill="#750e13"/></marker>
+          <marker id="arrow-warm"  markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L0,6 L8,3 z" fill="#5d3b1e"/></marker>
+          <marker id="arrow-teal"  markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L0,6 L8,3 z" fill="#004144"/></marker>
+          <marker id="arrow-gray"  markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L0,6 L8,3 z" fill="#8d8d8d"/></marker>
+        </defs>
+      </svg>
+    </div>
+
+    <!-- ─── Domain 1 ─── -->
+    <h2 id="stateless">1 · EJBs Stateless — poolés, sans état</h2>
+    <div class="tag-stack">
+      <span class="cds--tag cds--tag--blue">@Stateless</span>
+      <span class="cds--tag cds--tag--green">CMT</span>
+      <span class="cds--tag cds--tag--red">@RolesAllowed</span>
+      <span class="cds--tag cds--tag--green">@Version</span>
+    </div>
+
+    <h3>AccountServiceBean</h3>
+    <p>Bean <code>@Stateless</code> géré par CMT. Fournit les opérations financières sur les comptes avec verrouillage optimiste (<code>@Version</code>) pour la gestion de la concurrence.</p>
+    <div class="cds--data-table-container">
+      <table class="cds--data-table">
+        <thead><tr><th>Méthode</th><th>Rôles autorisés</th><th>Transaction</th><th>Description</th></tr></thead>
+        <tbody>
+          <tr><td><code>deposit(accountId, amount)</code></td><td><code>admin, teller</code></td><td>REQUIRED</td><td>Crédit d'un compte, vérifie le statut ACTIVE</td></tr>
+          <tr><td><code>withdraw(accountId, amount)</code></td><td><code>admin, teller</code></td><td>REQUIRED</td><td>Débit avec vérification du solde suffisant</td></tr>
+          <tr><td><code>transfer(from, to, amount)</code></td><td><code>admin, teller</code></td><td>REQUIRED</td><td>Transfert atomique dans la même transaction CMT</td></tr>
+          <tr><td><code>getAccount(id)</code></td><td><code>@PermitAll</code></td><td>SUPPORTS</td><td>Lecture du compte, pas de transaction requise</td></tr>
+          <tr><td><code>closeAccount(id)</code></td><td><code>admin</code></td><td>REQUIRED</td><td>Clôture : solde = 0 et statut ACTIVE obligatoires</td></tr>
+          <tr><td><code>suspendAccount(id)</code></td><td><code>admin</code></td><td>REQUIRED</td><td>Suspension du compte, bloque toute opération</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3>ClientServiceBean</h3>
+    <p>Bean <code>@Stateless</code> CMT dédié à la gestion des clients. CRUD complet avec fonctionnalité de recherche.</p>
+    <div class="cds--data-table-container">
+      <table class="cds--data-table">
+        <thead><tr><th>Méthode</th><th>Rôles autorisés</th><th>Transaction</th><th>Description</th></tr></thead>
+        <tbody>
+          <tr><td><code>createClient(dto)</code></td><td><code>admin, teller</code></td><td>REQUIRED</td><td>Création d'un nouveau client</td></tr>
+          <tr><td><code>updateClient(id, dto)</code></td><td><code>admin, teller</code></td><td>REQUIRED</td><td>Mise à jour des informations client</td></tr>
+          <tr><td><code>deleteClient(id)</code></td><td><code>admin</code></td><td>REQUIRED</td><td>Suppression (admin uniquement)</td></tr>
+          <tr><td><code>findClientByName(name)</code></td><td><code>@PermitAll</code></td><td>SUPPORTS</td><td>Recherche par nom, lecture seule</td></tr>
+          <tr><td><code>getAllClients()</code></td><td><code>admin, teller</code></td><td>SUPPORTS</td><td>Liste paginée de tous les clients</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- ─── Domain 2 ─── -->
+    <h2 id="stateful">2 · EJB Stateful — conversationnel</h2>
+    <div class="tag-stack">
+      <span class="cds--tag cds--tag--green">@Stateful</span>
+      <span class="cds--tag cds--tag--warm">@TransactionAttribute</span>
+      <span class="cds--tag cds--tag--blue">@Remove</span>
+    </div>
+
+    <h3>TransactionBatchBean</h3>
+    <p>
+      Bean <code>@Stateful</code> maintenant une liste de transferts en attente (<code>pendingList</code>) au niveau de la session client.
+      Timeout de session : <strong>30 minutes</strong>. Chaque transfert commis dans sa propre transaction
+      <code>REQUIRES_NEW</code> pour une isolation indépendante.
+    </p>
+    <div class="cds--data-table-container">
+      <table class="cds--data-table">
+        <thead><tr><th>Méthode</th><th>Annotation</th><th>Description</th></tr></thead>
+        <tbody>
+          <tr><td><code>addToQueue(transfer)</code></td><td><code>NOT_SUPPORTED</code></td><td>Ajoute un transfert à la liste d'attente sans démarrer de transaction</td></tr>
+          <tr><td><code>commitBatch()</code></td><td><code>REQUIRES_NEW</code></td><td>Exécute chaque transfert dans sa propre transaction indépendante</td></tr>
+          <tr><td><code>rollbackBatch()</code></td><td><code>NOT_SUPPORTED</code></td><td>Vide la liste sans exécution</td></tr>
+          <tr><td><code>getPendingCount()</code></td><td><code>NOT_SUPPORTED</code></td><td>Retourne le nombre de transferts en attente</td></tr>
+          <tr><td><code>destroy()</code></td><td><code>@Remove</code></td><td>Libère l'instance stateful du conteneur EJB</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- ─── Domain 3 ─── -->
+    <h2>3 · EJBs Singleton — démarrage et planification</h2>
+    <div class="tag-stack">
+      <span class="cds--tag cds--tag--purple">@Singleton</span>
+      <span class="cds--tag cds--tag--purple">@Startup</span>
+      <span class="cds--tag cds--tag--purple">@Lock</span>
+      <span class="cds--tag cds--tag--teal">@Schedule</span>
+      <span class="cds--tag cds--tag--teal">@Timeout</span>
+      <span class="cds--tag cds--tag--warm">BMT</span>
+    </div>
+
+    <h3>ConfigServiceBean</h3>
+    <p>Unique instance (<code>@Singleton @Startup</code>) chargée au démarrage de l'application. Maintient les limites transactionnelles et les feature flags en mémoire. Accès concurrent contrôlé par <code>@Lock(READ/WRITE)</code>.</p>
+    <div class="cds--data-table-container">
+      <table class="cds--data-table">
+        <thead><tr><th>Propriété / Méthode</th><th>Lock</th><th>Valeur par défaut</th></tr></thead>
+        <tbody>
+          <tr><td><code>maxWithdrawalPerDay</code></td><td>READ</td><td>5 000 €</td></tr>
+          <tr><td><code>maxTransferAmount</code></td><td>READ</td><td>10 000 €</td></tr>
+          <tr><td><code>maxTransactionAmount</code></td><td>READ</td><td>10 000 €</td></tr>
+          <tr><td><code>transfersEnabled</code></td><td>READ/WRITE</td><td><code>true</code></td></tr>
+          <tr><td><code>batchEnabled</code></td><td>READ/WRITE</td><td><code>true</code></td></tr>
+          <tr><td><code>notificationsEnabled</code></td><td>READ/WRITE</td><td><code>true</code></td></tr>
+          <tr><td><code>updateLimits(limits)</code></td><td>WRITE</td><td>Mise à jour atomique des plafonds</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3>DatabaseMigrationStartup</h3>
+    <p>Bean <code>@Singleton @Startup</code> avec gestion <strong>BMT</strong> (Bean-Managed Transactions). Exécute Flyway 10.4.1 au démarrage via <code>UserTransaction</code>, garantissant que le schéma est à jour avant toute opération.</p>
+
+    <h3 id="timer">ReportGeneratorBean</h3>
+    <p>Bean <code>@Singleton</code> gérant les rapports planifiés via le <strong>Timer Service</strong>. Utilise des timers non-persistants (ils ne survivent pas à un redémarrage du serveur).</p>
+    <div class="cds--data-table-container">
+      <table class="cds--data-table">
+        <thead><tr><th>Timer</th><th>Planification</th><th>Description</th></tr></thead>
+        <tbody>
+          <tr><td><code>generateDailyReport()</code></td><td><code>@Schedule(hour="0", minute="0")</code></td><td>Rapport quotidien à minuit</td></tr>
+          <tr><td><code>generateHourlyStats()</code></td><td><code>@Schedule(minute="0")</code></td><td>Statistiques horaires</td></tr>
+          <tr><td><code>generateWeeklyReport()</code></td><td><code>@Schedule(dayOfWeek="1", hour="6")</code></td><td>Rapport hebdomadaire le lundi à 6h</td></tr>
+          <tr><td><code>onTimeout(Timer t)</code></td><td><code>@Timeout</code></td><td>Handler pour les timers programmatiques</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- ─── Domain 4 ─── -->
+    <h2>4 · MDB JMS — traitement asynchrone</h2>
+    <div class="tag-stack">
+      <span class="cds--tag cds--tag--teal">@MessageDriven</span>
+      <span class="cds--tag cds--tag--teal">JMS 3.1</span>
+    </div>
+
+    <h3>NotificationMDB</h3>
+    <p>
+      Message-Driven Bean écoutant la queue <code>jms/notificationQueue</code>. Traite les notifications
+      bancaires de façon asynchrone et découplée du flux transactionnel principal.
+      Format de message pipe-delimited : <code>TYPE|DESTINATAIRE|SUJET|CORPS</code>.
+    </p>
+    <div class="cds--data-table-container">
+      <table class="cds--data-table">
+        <thead><tr><th>Type</th><th>Format message</th><th>Description</th></tr></thead>
+        <tbody>
+          <tr><td><span class="cds--tag cds--tag--blue">EMAIL</span></td><td><code>EMAIL|user@example.com|Sujet|Corps</code></td><td>Confirmation de virement, alerte de débit</td></tr>
+          <tr><td><span class="cds--tag cds--tag--green">SMS</span></td><td><code>SMS|+33601020304|Sujet|Corps</code></td><td>OTP, alertes instantanées</td></tr>
+          <tr><td><span class="cds--tag cds--tag--purple">PUSH</span></td><td><code>PUSH|deviceToken|Titre|Corps</code></td><td>Notification push mobile</td></tr>
+          <tr><td><span class="cds--tag cds--tag--red">ALERT</span></td><td><code>ALERT|adminGroup|Titre|Corps</code></td><td>Alerte de sécurité interne</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- ─── Domain 5 ─── -->
+    <h2 id="security">5 · Sécurité déclarative — RBAC</h2>
+    <div class="tag-stack">
+      <span class="cds--tag cds--tag--red">@DeclareRoles</span>
+      <span class="cds--tag cds--tag--red">@RolesAllowed</span>
+      <span class="cds--tag cds--tag--green">@PermitAll</span>
+    </div>
+
+    <div class="cds--inline-notification">
+      <span>🔒</span>
+      <div>
+        <strong>Authentification :</strong> BASIC auth sur le servlet <code>/banking</code>.
+        Rôles déclarés via <code>@DeclareRoles({"admin", "teller", "customer"})</code> sur le servlet.
+      </div>
+    </div>
+
+    <div class="cds--data-table-container">
+      <table class="cds--data-table">
+        <thead><tr><th>Rôle</th><th>Opérations autorisées</th></tr></thead>
+        <tbody>
+          <tr>
+            <td><span class="cds--tag cds--tag--red">admin</span></td>
+            <td>Toutes les opérations : dépôt, retrait, virement, liste clients, suppression client, clôture compte, suspension compte, mise à jour configuration</td>
+          </tr>
+          <tr>
+            <td><span class="cds--tag cds--tag--warm">teller</span></td>
+            <td>Dépôt, retrait, virement, liste clients, création/modification client. Interdit : suppression client, clôture/suspension compte</td>
+          </tr>
+          <tr>
+            <td><span class="cds--tag cds--tag--blue">customer</span></td>
+            <td>Lecture de son propre compte (<code>@PermitAll</code>). Aucune opération d'écriture</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <hr class="cds--divider"/>
+    <p style="font-size:.75rem;color:#a8a8a8;">Jakarta EE 10 · EJB 4.0 · Open Liberty 23 · Lab 04B — ESIPE</p>
+
+  </main>
+</div>
+
+<footer class="cds--footer">
+  Banking EJB Application · Lab 04B · Jakarta EE 10 · Open Liberty 23 · © 2025 ESIPE
+</footer>
+
+</body>
+</html>

@@ -1,0 +1,336 @@
+<!-- © Copyright 2026 Olivier Planson. All rights reserved. Reproduction prohibited. Made with IBM Bob. -->
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>Cours 05 — Exemples de code</title>
+  <link rel="stylesheet" href="../assets/carbon.css"/>
+</head>
+<body>
+<header class="cds--header">
+  <a class="cds--header__name" href="index.html">JAX-RS — Services RESTful<span>Cours Jakarta EE</span></a>
+  <a class="cds--header__back" href="../index.html">← Tous les Cours</a>
+</header>
+<div class="cds--shell">
+  <nav class="cds--side-nav">
+    <p class="cds--side-nav__section-title">Cours 05</p>
+    <a class="cds--side-nav__link" href="index.html">⊙ Vue d'ensemble</a>
+    <a class="cds--side-nav__link" href="slides.html">☰ Contenu du cours</a>
+    <a class="cds--side-nav__link" href="concepts.html">◈ Concepts clés</a>
+    <a class="cds--side-nav__link active" href="code.html">⟨/⟩ Exemples de code</a>
+  </nav>
+  <main class="cds--content">
+    <div class="breadcrumb"><a href="../index.html">Cours</a> › <a href="index.html">Cours 05</a> › Code</div>
+    <h1>Exemples de code</h1>
+    <p class="page-lead">Extraits de code Java du cours 05 — JAX-RS, JSON-B, ExceptionMapper, Bean Validation, MicroProfile Rest Client et Fault Tolerance.</p>
+
+    <h2>Ressource JAX-RS complète</h2>
+    <div class="code-block-wrap">
+      <span class="code-lang">java</span>
+      <pre><code>import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
+import jakarta.validation.Valid;
+import jakarta.ws.rs.*;
+import jakarta.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.Response;
+import jakarta.ws.rs.core.UriBuilder;
+import java.util.List;
+
+@Path("/clients")
+@ApplicationScoped
+@Produces(MediaType.APPLICATION_JSON)
+@Consumes(MediaType.APPLICATION_JSON)
+public class ClientResource {
+
+    @Inject
+    private ClientService clientService;
+
+    // GET /clients — liste tous les clients
+    @GET
+    public List&lt;Client&gt; listAll() {
+        return clientService.findAll();
+    }
+
+    // GET /clients/{id} — récupère un client par son identifiant
+    @GET
+    @Path("/{id}")
+    public Client getById(@PathParam("id") Long id) {
+        return clientService.findById(id)
+            .orElseThrow(() -&gt; new ClientNotFoundException(id));
+    }
+
+    // POST /clients — crée un nouveau client
+    @POST
+    public Response create(@Valid ClientDTO dto) {
+        Client created = clientService.create(dto);
+        return Response
+            .status(Response.Status.CREATED)
+            .location(UriBuilder.fromResource(ClientResource.class)
+                .path("/{id}").build(created.getId()))
+            .entity(created)
+            .build();
+    }
+
+    // PUT /clients/{id} — remplace complètement un client existant
+    @PUT
+    @Path("/{id}")
+    public Response update(@PathParam("id") Long id, @Valid ClientDTO dto) {
+        Client updated = clientService.update(id, dto);
+        return Response.ok(updated).build();
+    }
+
+    // DELETE /clients/{id} — supprime un client
+    @DELETE
+    @Path("/{id}")
+    public Response delete(@PathParam("id") Long id) {
+        clientService.delete(id);
+        return Response.noContent().build();
+    }
+}</code></pre>
+    </div>
+
+    <h2>DTO avec JSON-B</h2>
+    <div class="code-block-wrap">
+      <span class="code-lang">java</span>
+      <pre><code>import jakarta.json.bind.annotation.*;
+import jakarta.validation.constraints.*;
+import java.time.LocalDate;
+
+public class ClientDTO {
+
+    // Renommage snake_case pour l'API JSON
+    @JsonbProperty("full_name")
+    @NotNull(message = "Le nom complet est obligatoire")
+    @Size(min = 2, max = 100, message = "Le nom doit contenir entre 2 et 100 caractères")
+    private String fullName;
+
+    @NotNull(message = "L'email est obligatoire")
+    @Email(message = "L'adresse email n'est pas valide")
+    private String email;
+
+    // Exclusion totale de la sérialisation JSON (champ sensible)
+    @JsonbTransient
+    private String passwordHash;
+
+    // Format de date ISO pour l'API
+    @JsonbDateFormat("yyyy-MM-dd")
+    @JsonbProperty("birth_date")
+    private LocalDate birthDate;
+
+    @JsonbProperty("phone_number")
+    @Size(max = 20, message = "Le numéro de téléphone ne peut pas dépasser 20 caractères")
+    private String phoneNumber;
+
+    // Getters &amp; setters
+    public String getFullName()    { return fullName; }
+    public void setFullName(String fullName) { this.fullName = fullName; }
+    public String getEmail()       { return email; }
+    public void setEmail(String email) { this.email = email; }
+    public LocalDate getBirthDate() { return birthDate; }
+    public void setBirthDate(LocalDate birthDate) { this.birthDate = birthDate; }
+    public String getPhoneNumber() { return phoneNumber; }
+    public void setPhoneNumber(String phoneNumber) { this.phoneNumber = phoneNumber; }
+}</code></pre>
+    </div>
+
+    <h2>ExceptionMapper personnalisé</h2>
+    <div class="code-block-wrap">
+      <span class="code-lang">java</span>
+      <pre><code>import jakarta.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.Response;
+import jakarta.ws.rs.ext.ExceptionMapper;
+import jakarta.ws.rs.ext.Provider;
+
+// Exception métier — sans dépendance à JAX-RS
+public class ClientNotFoundException extends RuntimeException {
+    private final Long clientId;
+
+    public ClientNotFoundException(Long clientId) {
+        super("Client introuvable — id : " + clientId);
+        this.clientId = clientId;
+    }
+
+    public Long getClientId() { return clientId; }
+}
+
+
+// Mapper JAX-RS — transforme l'exception en réponse HTTP 404 JSON
+@Provider
+public class ClientNotFoundExceptionMapper
+        implements ExceptionMapper&lt;ClientNotFoundException&gt; {
+
+    @Override
+    public Response toResponse(ClientNotFoundException exception) {
+        ErrorResponse body = new ErrorResponse(
+            "CLIENT_NOT_FOUND",
+            exception.getMessage(),
+            "id",
+            404
+        );
+        return Response
+            .status(Response.Status.NOT_FOUND)
+            .type(MediaType.APPLICATION_JSON)
+            .entity(body)
+            .build();
+    }
+}</code></pre>
+    </div>
+
+    <h2>Validation avec Bean Validation</h2>
+    <div class="code-block-wrap">
+      <span class="code-lang">java</span>
+      <pre><code>import jakarta.validation.ConstraintViolation;
+import jakarta.validation.ConstraintViolationException;
+import jakarta.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.Response;
+import jakarta.ws.rs.ext.ExceptionMapper;
+import jakarta.ws.rs.ext.Provider;
+import java.util.List;
+import java.util.stream.Collectors;
+
+// Enregistrement de l'erreur structuré — peut être un record Java 16+
+public record ErrorResponse(
+    String code,
+    String message,
+    String field,
+    int status
+) {}
+
+
+// Mapper pour les violations de contraintes Bean Validation
+@Provider
+public class ValidationExceptionMapper
+        implements ExceptionMapper&lt;ConstraintViolationException&gt; {
+
+    @Override
+    public Response toResponse(ConstraintViolationException exception) {
+        // Collecte toutes les violations en messages lisibles
+        List&lt;ErrorResponse&gt; errors = exception.getConstraintViolations()
+            .stream()
+            .map(cv -&gt; new ErrorResponse(
+                "VALIDATION_ERROR",
+                cv.getMessage(),
+                extractFieldName(cv),
+                400
+            ))
+            .collect(Collectors.toList());
+
+        return Response
+            .status(Response.Status.BAD_REQUEST)
+            .type(MediaType.APPLICATION_JSON)
+            .entity(errors)
+            .build();
+    }
+
+    private String extractFieldName(ConstraintViolation&lt;?&gt; cv) {
+        String path = cv.getPropertyPath().toString();
+        // Extrait le dernier segment du chemin (ex. "create.dto.email" → "email")
+        int lastDot = path.lastIndexOf('.');
+        return lastDot &gt;= 0 ? path.substring(lastDot + 1) : path;
+    }
+}</code></pre>
+    </div>
+
+    <h2>MicroProfile Rest Client</h2>
+    <div class="code-block-wrap">
+      <span class="code-lang">java</span>
+      <pre><code>import jakarta.ws.rs.*;
+import jakarta.ws.rs.core.MediaType;
+import org.eclipse.microprofile.rest.client.inject.RegisterRestClient;
+
+// Interface cliente type-safe — aucune implémentation à écrire
+@RegisterRestClient(configKey = "currency-api")
+@Path("/rates")
+@Produces(MediaType.APPLICATION_JSON)
+public interface CurrencyApiClient {
+
+    @GET
+    @Path("/{currency}")
+    Exchange getRate(@PathParam("currency") String currency);
+
+    @GET
+    List&lt;Exchange&gt; getAllRates();
+}
+
+
+// Modèle de réponse
+public record Exchange(String currency, double rate, String date) {}
+
+
+// Configuration dans src/main/resources/META-INF/microprofile-config.properties :
+//   currency-api/mp-rest/url=https://api.exchangerate.host
+//   currency-api/mp-rest/connectTimeout=3000
+//   currency-api/mp-rest/readTimeout=5000
+//   currency-api/mp-rest/scope=jakarta.enterprise.context.ApplicationScoped
+
+
+// Injection et utilisation dans un service CDI
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
+import org.eclipse.microprofile.rest.client.inject.RestClient;
+
+@ApplicationScoped
+public class ExchangeService {
+
+    @Inject
+    @RestClient
+    private CurrencyApiClient currencyApiClient;
+
+    public double getEuroRate(String targetCurrency) {
+        Exchange exchange = currencyApiClient.getRate(targetCurrency);
+        return exchange.rate();
+    }
+}</code></pre>
+    </div>
+
+    <h2>Circuit Breaker + Retry</h2>
+    <div class="code-block-wrap">
+      <span class="code-lang">java</span>
+      <pre><code>import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
+import org.eclipse.microprofile.faulttolerance.CircuitBreaker;
+import org.eclipse.microprofile.faulttolerance.Fallback;
+import org.eclipse.microprofile.faulttolerance.Retry;
+import org.eclipse.microprofile.rest.client.inject.RestClient;
+
+@ApplicationScoped
+public class ResilientExchangeService {
+
+    @Inject
+    @RestClient
+    private CurrencyApiClient currencyApiClient;
+
+    // Retry : 3 tentatives supplémentaires avec délai de 500 ms entre chaque
+    // CircuitBreaker : ouvre le circuit si 75 % d'échecs parmi les 4 dernières requêtes
+    //                  circuit ouvert pendant 1 000 ms avant de retenter (half-open)
+    @Retry(maxRetries = 3, delay = 500)
+    @CircuitBreaker(
+        requestVolumeThreshold = 4,
+        failureRatio           = 0.75,
+        delay                  = 1000
+    )
+    @Fallback(fallbackMethod = "getDefaultRate")
+    public double getEuroRate(String targetCurrency) {
+        Exchange exchange = currencyApiClient.getRate(targetCurrency);
+        return exchange.rate();
+    }
+
+    // Méthode de fallback — même signature que la méthode principale
+    public double getDefaultRate(String targetCurrency) {
+        // Retourne un taux par défaut depuis le cache ou une valeur statique
+        System.out.println("Fallback activé pour : " + targetCurrency);
+        return switch (targetCurrency.toUpperCase()) {
+            case "USD" -&gt; 1.08;
+            case "GBP" -&gt; 0.86;
+            default    -&gt; 1.0;
+        };
+    }
+}</code></pre>
+    </div>
+
+  </main>
+</div>
+<footer class="cds--footer">Made with IBM Bob &nbsp;·&nbsp; © 2026 Olivier Planson &nbsp;·&nbsp; ESIPE — Jakarta EE &amp; Microservices</footer>
+</body>
+</html>

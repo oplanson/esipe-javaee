@@ -1,0 +1,231 @@
+<!-- © Copyright 2026 Olivier Planson. All rights reserved. Reproduction prohibited. Made with IBM Bob. -->
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Architecture Technique — Banking Hexagonal App · Lab 07</title>
+  <link rel="stylesheet" href="assets/carbon.css"/>
+</head>
+<body>
+
+<header class="cds--header">
+  <a class="cds--header__name" href="index.html">⬡ Banking App<span>Lab 07 — Architecture Hexagonale</span></a>
+</header>
+
+<div class="cds--shell">
+  <nav class="cds--side-nav" aria-label="Navigation">
+    <p class="cds--side-nav__section-title">Documentation</p>
+    <a class="cds--side-nav__link" href="index.html"><i class="icon">⌂</i>Vue d'ensemble</a>
+    <a class="cds--side-nav__link" href="functional.html"><i class="icon">⚙</i>Architecture Fonctionnelle</a>
+    <a class="cds--side-nav__link active" href="technical.html"><i class="icon">⬡</i>Architecture Technique</a>
+    <a class="cds--side-nav__link" href="hexagonal.html"><i class="icon">◎</i>Architecture Hexagonale</a>
+    <a class="cds--side-nav__link" href="ddd.html"><i class="icon">◈</i>Bounded Contexts DDD</a>
+    <a class="cds--side-nav__link" href="sequences.html"><i class="icon">↔</i>Diagrammes de Séquence</a>
+    <a class="cds--side-nav__link" href="rules.html"><i class="icon">✦</i>Règles Métier</a>
+  </nav>
+
+  <main class="cds--content">
+    <div class="cds--breadcrumb">
+      <a href="index.html">Vue d'ensemble</a><span class="sep">/</span>
+      <span class="current">Architecture Technique</span>
+    </div>
+
+    <h1>Architecture Technique</h1>
+    <p class="page-lead">Organisation technique des couches, règles de dépendances, objets-valeurs, commandes, versionnement API et configuration Open Liberty.</p>
+
+    <!-- Layers SVG -->
+    <h2>Schéma des Couches Techniques</h2>
+    <div class="arch-box" style="text-align:center;">
+      <svg viewBox="0 0 760 520" width="100%" style="max-width:760px;font-family:'IBM Plex Sans',sans-serif;font-size:12px;">
+        <!-- Layer boxes top to bottom -->
+        <!-- L1: REST/Web Adapters -->
+        <rect x="20" y="20" width="720" height="64" rx="3" fill="#ffd7d9" stroke="#da1e28" stroke-width="1.5"/>
+        <text x="380" y="46" text-anchor="middle" font-weight="700" font-size="13" fill="#750e13">Adaptateurs Primaires (Driving)</text>
+        <text x="380" y="65" text-anchor="middle" fill="#750e13">AccountRestAdapterV2  ·  ClientRestAdapterV2  ·  AccountRestAdapter v1 ⚠  ·  ClientRestAdapter v1 ⚠  ·  ClientWebAdapter  ·  AccountWebAdapter</text>
+
+        <!-- Arrow down -->
+        <line x1="380" y1="84" x2="380" y2="110" stroke="#8d8d8d" stroke-width="2" marker-end="url(#arrd)"/>
+
+        <!-- L2: Primary Ports -->
+        <rect x="120" y="114" width="520" height="56" rx="3" fill="#d0e2ff" stroke="#0043ce" stroke-width="1.5"/>
+        <text x="380" y="136" text-anchor="middle" font-weight="700" font-size="13" fill="#0043ce">Ports Primaires (Use Case Interfaces)</text>
+        <text x="380" y="155" text-anchor="middle" fill="#0043ce">AccountManagementUseCase  ·  ClientManagementUseCase  ·  MoneyOperationsUseCase</text>
+
+        <!-- Arrow down -->
+        <line x1="380" y1="170" x2="380" y2="196" stroke="#8d8d8d" stroke-width="2" marker-end="url(#arrd)"/>
+
+        <!-- L3: Application Services -->
+        <rect x="80" y="200" width="600" height="56" rx="3" fill="#edf5ff" stroke="#0f62fe" stroke-width="1.5"/>
+        <text x="380" y="222" text-anchor="middle" font-weight="700" font-size="13" fill="#0f62fe">Services Applicatifs</text>
+        <text x="380" y="241" text-anchor="middle" fill="#0f62fe">AccountManagementService  ·  ClientManagementService  ·  MoneyOperationsService</text>
+
+        <!-- Arrow down left -->
+        <line x1="250" y1="256" x2="250" y2="282" stroke="#8d8d8d" stroke-width="2" marker-end="url(#arrd)"/>
+        <!-- Arrow down right -->
+        <line x1="510" y1="256" x2="510" y2="282" stroke="#8d8d8d" stroke-width="2" marker-end="url(#arrd)"/>
+
+        <!-- L4a: Domain -->
+        <rect x="20" y="286" width="420" height="64" rx="3" fill="#defbe6" stroke="#198038" stroke-width="2"/>
+        <text x="230" y="310" text-anchor="middle" font-weight="700" font-size="13" fill="#0e6027">Domaine Pur (aucune dépendance externe)</text>
+        <text x="230" y="330" text-anchor="middle" fill="#0e6027">Account  ·  Client  ·  TransferService  ·  Money  ·  AccountNumber  ·  Email  ·  AccountType</text>
+
+        <!-- L4b: Secondary Ports -->
+        <rect x="460" y="286" width="280" height="64" rx="3" fill="#e8daff" stroke="#491d8b" stroke-width="1.5"/>
+        <text x="600" y="310" text-anchor="middle" font-weight="700" font-size="13" fill="#491d8b">Ports Secondaires</text>
+        <text x="600" y="330" text-anchor="middle" fill="#491d8b">AccountRepository  ·  ClientRepository  ·  EventPublisher</text>
+
+        <!-- Arrow down right -->
+        <line x1="600" y1="350" x2="600" y2="376" stroke="#8d8d8d" stroke-width="2" marker-end="url(#arrd)"/>
+
+        <!-- L5: Secondary Adapters -->
+        <rect x="300" y="380" width="440" height="56" rx="3" fill="#d9fbfb" stroke="#004144" stroke-width="1.5"/>
+        <text x="520" y="402" text-anchor="middle" font-weight="700" font-size="13" fill="#004144">Adaptateurs Secondaires (Driven)</text>
+        <text x="520" y="421" text-anchor="middle" fill="#004144">JpaClientAdapter  ·  JpaAccountAdapter  ·  CDIEventPublisherAdapter</text>
+
+        <!-- Arrow down -->
+        <line x1="520" y1="436" x2="520" y2="462" stroke="#8d8d8d" stroke-width="2" marker-end="url(#arrd)"/>
+
+        <!-- L6: Infrastructure -->
+        <rect x="300" y="466" width="440" height="40" rx="3" fill="#f5e0c3" stroke="#5d3b1e" stroke-width="1.5"/>
+        <text x="520" y="491" text-anchor="middle" font-weight="700" font-size="12" fill="#5d3b1e">PostgreSQL  ·  CDI Event Bus  ·  EclipseLink  ·  Flyway</text>
+
+        <!-- Defs -->
+        <defs>
+          <marker id="arrd" markerWidth="8" markerHeight="6" refX="6" refY="3" orient="auto">
+            <polygon points="0 0, 8 3, 0 6" fill="#8d8d8d"/>
+          </marker>
+        </defs>
+      </svg>
+    </div>
+
+    <!-- Dependency direction table -->
+    <h2>Direction des Dépendances</h2>
+    <div class="cds--inline-notification">
+      <span>ℹ</span>
+      <div><strong>Principe de dépendance inversée :</strong> Le domaine ne dépend de rien. Les adaptateurs secondaires <em>implémentent</em> les ports définis dans la couche application — la dépendance pointe vers l'intérieur.</div>
+    </div>
+    <div class="cds--data-table-container">
+      <table class="cds--data-table">
+        <thead><tr><th>Couche source</th><th>Direction</th><th>Couche cible</th><th>Mécanisme</th></tr></thead>
+        <tbody>
+          <tr><td>REST / Web Adapters</td><td>→ dépend de</td><td>Ports Primaires (interfaces use case)</td><td>Injection CDI de l'interface</td></tr>
+          <tr><td>Services Applicatifs</td><td>→ dépend de</td><td>Couche Domaine + Ports Secondaires</td><td>Appel direct domaine ; injection port secondaire</td></tr>
+          <tr><td>Adaptateurs Secondaires</td><td>← implémentent</td><td>Ports Secondaires</td><td>Inversion de dépendance (DIP)</td></tr>
+          <tr><td>Domaine Pur</td><td>✘ aucune dépendance</td><td>—</td><td>Java pur, pas de framework</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Value Objects -->
+    <h2>Objets-Valeurs (Value Objects)</h2>
+    <div class="cds--data-table-container">
+      <table class="cds--data-table">
+        <thead><tr><th>Value Object</th><th>Caractéristiques</th><th>Invariants clés</th></tr></thead>
+        <tbody>
+          <tr>
+            <td><code>Money</code></td>
+            <td>Immutable · <code>BigDecimal</code> amount · <code>String</code> currency</td>
+            <td>Arithmétique retourne une nouvelle instance (R8) · Devises identiques pour opérations (R4)</td>
+          </tr>
+          <tr>
+            <td><code>AccountNumber</code></td>
+            <td>Format IBAN-like · <code>generate()</code> · <code>getMasked()</code></td>
+            <td>Format obligatoire : <code>FR</code> + 27 chiffres (R6)</td>
+          </tr>
+          <tr>
+            <td><code>Email</code></td>
+            <td>RFC 5322 simplifié · stocké en minuscules · <code>getMasked()</code> · extraction domaine</td>
+            <td>Max 254 caractères · validation regex RFC 5322 (R7)</td>
+          </tr>
+          <tr>
+            <td><code>AccountType</code></td>
+            <td>Enum : <code>CHECKING</code> · <code>SAVINGS</code></td>
+            <td>CHECKING : pas d'intérêts, découvert ≤ −500€ (R9) · SAVINGS : intérêts quotidiens, pas de découvert (R9)</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Commands -->
+    <h2>Commandes CQRS</h2>
+    <p>Chaque cas d'utilisation reçoit une commande immutable décrivant l'intention métier.</p>
+    <div class="cds--data-table-container">
+      <table class="cds--data-table">
+        <thead><tr><th>Commande</th><th>Champs</th><th>Use Case cible</th></tr></thead>
+        <tbody>
+          <tr><td><code>OpenAccountCommand</code></td><td>clientId, accountType, initialDeposit, currency</td><td>AccountManagementUseCase.openAccount()</td></tr>
+          <tr><td><code>DepositCommand</code></td><td>accountId, amount, currency</td><td>MoneyOperationsUseCase.deposit()</td></tr>
+          <tr><td><code>WithdrawCommand</code></td><td>accountId, amount, currency</td><td>MoneyOperationsUseCase.withdraw()</td></tr>
+          <tr><td><code>TransferCommand</code></td><td>fromAccountId, toAccountId, amount, currency</td><td>MoneyOperationsUseCase.transfer()</td></tr>
+          <tr><td><code>CreateClientCommand</code></td><td>firstName, lastName, email</td><td>ClientManagementUseCase.createClient()</td></tr>
+          <tr><td><code>UpdateClientCommand</code></td><td>clientId, firstName, lastName, email</td><td>ClientManagementUseCase.updateClient()</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- API Versioning -->
+    <h2>Versionnement API</h2>
+    <div class="cds--data-table-container">
+      <table class="cds--data-table">
+        <thead><tr><th>Version</th><th>Classes</th><th>Statut</th><th>Notes</th></tr></thead>
+        <tbody>
+          <tr>
+            <td><span class="cds--tag cds--tag--warm">V1</span></td>
+            <td><code>AccountRestAdapter</code> · <code>ClientRestAdapter</code></td>
+            <td>@Deprecated — maintenu pour rétrocompatibilité</td>
+            <td>Fonctionnalités de base uniquement</td>
+          </tr>
+          <tr>
+            <td><span class="cds--tag cds--tag--green">V2</span></td>
+            <td><code>AccountRestAdapterV2</code> · <code>ClientRestAdapterV2</code></td>
+            <td>Courant — version recommandée</td>
+            <td>Support premium, endpoints enrichis, meilleure validation</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="cds--inline-notification success">
+      <span>✓</span>
+      <div><strong>Bénéfice hexagonal :</strong> V1 et V2 utilisent les <em>mêmes ports</em> et les <em>mêmes services applicatifs</em>. Seuls les adaptateurs changent. La migration vers V3 ne toucherait pas au domaine (R10).</div>
+    </div>
+
+    <!-- Mappers -->
+    <h2>Mappers</h2>
+    <div class="cds--data-table-container">
+      <table class="cds--data-table">
+        <thead><tr><th>Mapper</th><th>Transformations</th></tr></thead>
+        <tbody>
+          <tr><td><code>ClientMapper</code></td><td>Domain Client ↔ JPA ClientEntity · Domain Client → ClientDTO</td></tr>
+          <tr><td><code>AccountMapper</code></td><td>Domain Account ↔ JPA AccountEntity · Domain Account → AccountDTO</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p>Les mappers garantissent que les entités JPA (avec annotations <code>@Entity</code>, <code>@Column</code>…) ne contaminent jamais le modèle de domaine pur.</p>
+
+    <!-- Liberty features -->
+    <h2>Open Liberty — Features Activées</h2>
+    <div class="cds--data-table-container">
+      <table class="cds--data-table">
+        <thead><tr><th>Feature</th><th>Description</th></tr></thead>
+        <tbody>
+          <tr><td><code>webProfile-10.0</code></td><td>Jakarta EE 10 Web Profile (Servlet, JSP, CDI, JPA, Bean Validation, JAX-RS…)</td></tr>
+          <tr><td><code>restfulWS-3.1</code></td><td>JAX-RS 3.1 — REST adapters v1 et v2</td></tr>
+          <tr><td><code>jsonb-3.0</code></td><td>JSON-B 3.0 — Sérialisation automatique DTO ↔ JSON</td></tr>
+          <tr><td><code>beanValidation-3.0</code></td><td>Bean Validation 3.0 — validation commandes et DTOs</td></tr>
+          <tr><td><code>mpConfig-3.0</code></td><td>MicroProfile Config 3.0 — configuration externalisée</td></tr>
+          <tr><td><code>mpHealth-4.0</code></td><td>MicroProfile Health 4.0 — endpoint <code>/health</code></td></tr>
+          <tr><td><code>mpMetrics-5.0</code></td><td>MicroProfile Metrics 5.0 — métriques Prometheus</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <hr class="cds--divider"/>
+  </main>
+</div>
+
+<footer class="cds--footer">
+  Banking Hexagonal Architecture Application — Lab 07 · Jakarta EE 10 · Java 17 · Open Liberty 23 · © 2025 Olivier Planson
+</footer>
+</body>
+</html>

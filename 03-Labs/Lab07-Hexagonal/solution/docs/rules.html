@@ -1,0 +1,195 @@
+<!-- © Copyright 2026 Olivier Planson. All rights reserved. Reproduction prohibited. Made with IBM Bob. -->
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Règles Métier — Banking Hexagonal App · Lab 07</title>
+  <link rel="stylesheet" href="assets/carbon.css"/>
+</head>
+<body>
+<header class="cds--header">
+  <a class="cds--header__name" href="index.html">🏦 Banking App<span>Lab 07 — Hexagonal</span></a>
+</header>
+<div class="cds--shell">
+  <nav class="cds--side-nav">
+    <p class="cds--side-nav__section-title">Navigation</p>
+    <a class="cds--side-nav__link" href="index.html"><i class="icon">⊞</i> Vue d'ensemble</a>
+    <a class="cds--side-nav__link" href="functional.html"><i class="icon">⚙</i> Architecture Fonctionnelle</a>
+    <a class="cds--side-nav__link" href="technical.html"><i class="icon">🔧</i> Architecture Technique</a>
+    <a class="cds--side-nav__link" href="hexagonal.html"><i class="icon">⬡</i> Architecture Hexagonale</a>
+    <a class="cds--side-nav__link" href="ddd.html"><i class="icon">◈</i> Bounded Contexts DDD</a>
+    <a class="cds--side-nav__link" href="sequences.html"><i class="icon">↔</i> Diagrammes de Séquence</a>
+    <a class="cds--side-nav__link active" href="rules.html"><i class="icon">📋</i> Règles Métier</a>
+  </nav>
+  <main class="cds--content">
+    <div class="cds--breadcrumb">
+      <a href="index.html">Vue d'ensemble</a><span class="sep">/</span>
+      <span class="current">Règles Métier</span>
+    </div>
+    <h1>Règles Métier</h1>
+    <p class="page-lead">12 règles métier implémentées directement dans le domaine, les objets-valeurs et les services applicatifs. Elles constituent les invariants inviolables de l'application bancaire.</p>
+
+    <div class="tag-stack">
+      <span class="cds--tag cds--tag--red">4 critiques</span>
+      <span class="cds--tag cds--tag--warm">2 avertissements</span>
+      <span class="cds--tag cds--tag--blue">6 standards</span>
+    </div>
+
+    <!-- Résumé table -->
+    <h2>Tableau Récapitulatif</h2>
+    <div class="cds--data-table-container">
+      <table class="cds--data-table">
+        <thead><tr><th>Règle</th><th>Titre</th><th>Priorité</th><th>Source</th></tr></thead>
+        <tbody>
+          <tr><td>R1</td><td>Compte inactif — aucune opération</td><td><span class="cds--tag cds--tag--red">Critique</span></td><td><code>Account.deposit() / withdraw() / close()</code></td></tr>
+          <tr><td>R2</td><td>Solde insuffisant</td><td><span class="cds--tag cds--tag--red">Critique</span></td><td><code>Account.withdraw()</code></td></tr>
+          <tr><td>R3</td><td>Solde non nul — clôture refusée</td><td><span class="cds--tag cds--tag--red">Critique</span></td><td><code>Account.close()</code></td></tr>
+          <tr><td>R4</td><td>Devise incohérente</td><td><span class="cds--tag cds--tag--red">Critique</span></td><td><code>Money.add() / subtract()</code></td></tr>
+          <tr><td>R5</td><td>Frais de transfert</td><td><span class="cds--tag cds--tag--warm">Avertissement</span></td><td><code>TransferService</code></td></tr>
+          <tr><td>R6</td><td>Format AccountNumber IBAN-like</td><td><span class="cds--tag cds--tag--blue">Standard</span></td><td><code>AccountNumber</code></td></tr>
+          <tr><td>R7</td><td>Format Email RFC 5322</td><td><span class="cds--tag cds--tag--blue">Standard</span></td><td><code>Email</code></td></tr>
+          <tr><td>R8</td><td>Money immutable</td><td><span class="cds--tag cds--tag--blue">Standard</span></td><td><code>Money</code></td></tr>
+          <tr><td>R9</td><td>Règles par type de compte</td><td><span class="cds--tag cds--tag--blue">Standard</span></td><td><code>AccountType</code></td></tr>
+          <tr><td>R10</td><td>Versionnement API</td><td><span class="cds--tag cds--tag--warm">Avertissement</span></td><td>REST adapters v1/v2</td></tr>
+          <tr><td>R11</td><td>Événements de domaine — publication différée</td><td><span class="cds--tag cds--tag--blue">Standard</span></td><td><code>Account / Client + services applicatifs</code></td></tr>
+          <tr><td>R12</td><td>Email unique — vérification avant création</td><td><span class="cds--tag cds--tag--blue">Standard</span></td><td><code>ClientManagementService</code></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Individual rule cards -->
+    <h2>Détail des Règles</h2>
+
+    <div class="rule-card critical">
+      <div class="rule-id">⛔ R1 — Critique</div>
+      <div class="rule-title">Compte inactif — aucune opération financière permise</div>
+      <div class="rule-desc">
+        Tout compte dont le statut <code>active = false</code> refuse absolument toute opération financière (dépôt, retrait, clôture). La garde est vérifiée en tout premier dans <code>Account.deposit()</code>, <code>Account.withdraw()</code> et <code>Account.close()</code>.
+        Une exception de domaine est levée immédiatement si le compte est inactif.
+      </div>
+    </div>
+
+    <div class="rule-card critical">
+      <div class="rule-id">⛔ R2 — Critique</div>
+      <div class="rule-title">Solde insuffisant — retrait et transfert refusés</div>
+      <div class="rule-desc">
+        Un retrait ne peut aboutir si le solde résultant est inférieur au découvert autorisé selon le type de compte.
+        <code>CHECKING</code> : solde minimum = −500€. <code>SAVINGS</code> : pas de découvert, solde minimum = 0€.
+        Source : <code>Account.withdraw(Money)</code> combiné aux règles de <code>AccountType</code>.
+      </div>
+    </div>
+
+    <div class="rule-card critical">
+      <div class="rule-id">⛔ R3 — Critique</div>
+      <div class="rule-title">Solde non nul — clôture de compte refusée</div>
+      <div class="rule-desc">
+        Un compte ne peut être clôturé que si son solde est strictement égal à zéro.
+        La tentative de clôture d'un compte avec solde positif ou négatif lève une exception de domaine.
+        Source : <code>Account.close()</code>.
+      </div>
+    </div>
+
+    <div class="rule-card critical">
+      <div class="rule-id">⛔ R4 — Critique</div>
+      <div class="rule-title">Devise incohérente — impossible d'opérer sur deux devises différentes</div>
+      <div class="rule-desc">
+        L'objet-valeur <code>Money</code> refuse toute opération arithmétique entre deux montants de devises différentes.
+        La garde est vérifiée dans <code>Money.add()</code> et <code>Money.subtract()</code>. Le domaine n'effectue pas de conversion de change.
+      </div>
+    </div>
+
+    <div class="rule-card warning">
+      <div class="rule-id">⚠ R5 — Avertissement</div>
+      <div class="rule-title">Frais de transfert — différenciés par statut client</div>
+      <div class="rule-desc">
+        Le service de domaine <code>TransferService</code> applique une politique de frais :
+        <ul style="margin-top:.5rem;">
+          <li><strong>Client premium :</strong> frais = 0€ (transfert gratuit)</li>
+          <li><strong>Client standard :</strong> frais = max(1€, min(50€, montant × 1%))</li>
+        </ul>
+        Les frais sont déduits du compte émetteur en plus du montant transféré.
+        Le destinataire reçoit le montant exact sans frais.
+      </div>
+    </div>
+
+    <div class="rule-card">
+      <div class="rule-id">ℹ R6 — Standard</div>
+      <div class="rule-title">Format AccountNumber — IBAN-like FR+27 chiffres</div>
+      <div class="rule-desc">
+        Tout numéro de compte doit respecter le format : préfixe <code>FR</code> suivi de 27 chiffres exactement (total 29 caractères).
+        La méthode <code>AccountNumber.generate()</code> produit des numéros conformes.
+        La méthode <code>AccountNumber.getMasked()</code> retourne une version masquée pour l'affichage.
+        Source : <code>AccountNumber</code> value object.
+      </div>
+    </div>
+
+    <div class="rule-card">
+      <div class="rule-id">ℹ R7 — Standard</div>
+      <div class="rule-title">Format Email — RFC 5322 simplifié, stocké en minuscules</div>
+      <div class="rule-desc">
+        Toute adresse email doit passer la validation RFC 5322 (simplifiée), être convertie en minuscules et ne pas dépasser 254 caractères.
+        La méthode <code>Email.of(String)</code> valide et normalise l'email. <code>getMasked()</code> retourne la partie locale masquée.
+        Source : <code>Email</code> value object.
+      </div>
+    </div>
+
+    <div class="rule-card">
+      <div class="rule-id">ℹ R8 — Standard</div>
+      <div class="rule-title">Money immutable — toutes les opérations retournent une nouvelle instance</div>
+      <div class="rule-desc">
+        L'objet-valeur <code>Money</code> est immuable. Toute opération arithmétique (<code>add()</code>, <code>subtract()</code>, <code>multiply()</code>)
+        retourne une <strong>nouvelle instance</strong> de <code>Money</code>. L'état du compte est mis à jour en réaffectant la référence au solde.
+        Ce pattern garantit la thread-safety et prévient les effets de bord.
+      </div>
+    </div>
+
+    <div class="rule-card">
+      <div class="rule-id">ℹ R9 — Standard</div>
+      <div class="rule-title">Règles différenciées par type de compte</div>
+      <div class="rule-desc">
+        L'enum <code>AccountType</code> définit deux comportements distincts :
+        <ul style="margin-top:.5rem;">
+          <li><strong>CHECKING (Courant) :</strong> Pas d'intérêts. Découvert autorisé jusqu'à −500€.</li>
+          <li><strong>SAVINGS (Épargne) :</strong> Intérêts quotidiens calculés sur le solde positif. Pas de découvert (solde ≥ 0€).</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="rule-card warning">
+      <div class="rule-id">⚠ R10 — Avertissement</div>
+      <div class="rule-title">Versionnement API — V1 @Deprecated maintenu pour compatibilité</div>
+      <div class="rule-desc">
+        Les adaptateurs REST V1 (<code>AccountRestAdapter</code>, <code>ClientRestAdapter</code>) sont annotés <code>@Deprecated</code>
+        mais restent déployés et fonctionnels pour assurer la rétrocompatibilité des clients existants.
+        La V2 est la version courante et recommandée. Les deux versions ciblent les mêmes ports applicatifs — seul l'adaptateur change.
+      </div>
+    </div>
+
+    <div class="rule-card">
+      <div class="rule-id">ℹ R11 — Standard</div>
+      <div class="rule-title">Événements de domaine — accumulation dans l'agrégat, publication après persistance</div>
+      <div class="rule-desc">
+        Les agrégats (<code>Account</code>, <code>Client</code>) accumulent leurs événements de domaine dans une liste interne durant le traitement métier.
+        Les services applicatifs (<code>AccountManagementService</code>, <code>MoneyOperationsService</code>) publient ces événements
+        <strong>après</strong> la persistance réussie via le port secondaire <code>EventPublisher</code>.
+        Cela garantit la cohérence : on ne publie que si la transaction est commise.
+      </div>
+    </div>
+
+    <div class="rule-card">
+      <div class="rule-id">ℹ R12 — Standard</div>
+      <div class="rule-title">Email unique — vérification d'unicité avant création et mise à jour</div>
+      <div class="rule-desc">
+        Avant la création d'un client (<code>createClient</code>) et lors d'une mise à jour d'email (<code>updateClient</code>),
+        le service applicatif <code>ClientManagementService</code> vérifie l'unicité via <code>ClientRepository.existsByEmail(email)</code>.
+        Une exception métier est levée si l'email est déjà utilisé par un autre client.
+      </div>
+    </div>
+
+    <hr class="cds--divider"/>
+  </main>
+</div>
+<footer class="cds--footer">Banking Hexagonal Architecture Application — Lab 07 · Jakarta EE 10 · Java 17 · © 2025 Olivier Planson</footer>
+</body>
+</html>

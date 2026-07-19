@@ -1,0 +1,162 @@
+<!-- © Copyright 2026 Olivier Planson. All rights reserved. Reproduction prohibited. Made with IBM Bob. -->
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Vue d'ensemble — Banking JPA App</title>
+  <link rel="stylesheet" href="assets/carbon.css"/>
+</head>
+<body>
+
+<header class="cds--header">
+  <a class="cds--header__name" href="index.html">
+    ☁ IBM Carbon <span>/ Banking JPA Application — Lab 03</span>
+  </a>
+  <a href="../../../index.html" style="margin-left:auto;font-size:.75rem;color:#c6c6c6;text-decoration:none;border:1px solid #393939;padding:.2rem .75rem;border-radius:2px;white-space:nowrap;">← Tous les Labs</a>
+</header>
+
+<div class="cds--shell">
+  <nav class="cds--side-nav" aria-label="Navigation principale">
+    <p class="cds--side-nav__section-title">Documentation</p>
+    <a class="cds--side-nav__link active" href="index.html"><i class="icon">⊞</i> Vue d'ensemble</a>
+    <a class="cds--side-nav__link" href="functional.html"><i class="icon">⬡</i> Architecture Fonctionnelle</a>
+    <a class="cds--side-nav__link" href="technical.html"><i class="icon">⚙</i> Architecture Technique</a>
+    <a class="cds--side-nav__link" href="sequences.html"><i class="icon">↔</i> Diagrammes de Séquence</a>
+    <a class="cds--side-nav__link" href="rules.html"><i class="icon">✔</i> Règles Métier</a>
+  </nav>
+
+  <main class="cds--content">
+    <nav class="cds--breadcrumb">
+      <a href="index.html">Accueil</a>
+      <span class="sep">/</span>
+      <span class="current">Vue d'ensemble</span>
+    </nav>
+
+    <h1>Banking JPA Application — Lab 03</h1>
+    <p class="page-lead">
+      Introduction à JPA/EclipseLink avec PostgreSQL, gestion des migrations Flyway
+      et transactions <code>RESOURCE_LOCAL</code> sur Open Liberty 23.
+    </p>
+
+    <div class="cds--inline-notification" role="status">
+      <span>ℹ</span>
+      <div>
+        <strong>Lab 03 —</strong> Introduce JPA/EclipseLink with PostgreSQL, Flyway migrations
+        and RESOURCE_LOCAL transaction management.
+      </div>
+    </div>
+
+    <!-- Identité du projet -->
+    <h2>Identité du projet</h2>
+    <div class="cds--data-table-container">
+      <table class="cds--data-table">
+        <thead>
+          <tr>
+            <th>Propriété</th>
+            <th>Valeur</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>Nom</td><td>Banking JPA Application — Lab 03</td></tr>
+          <tr><td>ArtifactId</td><td><code>banking-jpa-app</code></td></tr>
+          <tr><td>Java</td><td>17</td></tr>
+          <tr><td>Jakarta EE</td><td>10</td></tr>
+          <tr><td>MicroProfile</td><td>6.0</td></tr>
+          <tr><td>Serveur d'application</td><td>Open Liberty 23</td></tr>
+          <tr><td>Base de données</td><td>PostgreSQL 42.7.1</td></tr>
+          <tr><td>ORM</td><td>EclipseLink</td></tr>
+          <tr><td>Migrations</td><td>Flyway 10.4.1</td></tr>
+          <tr><td>Packaging</td><td>WAR</td></tr>
+          <tr><td>Port HTTP</td><td>9080</td></tr>
+          <tr><td>Port HTTPS</td><td>9443</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Stack technique -->
+    <h2>Stack technique</h2>
+    <div class="tag-stack">
+      <span class="cds--tag cds--tag--blue">Jakarta EE 10</span>
+      <span class="cds--tag cds--tag--blue">MicroProfile 6.0</span>
+      <span class="cds--tag cds--tag--green">Java 17</span>
+      <span class="cds--tag cds--tag--teal">Open Liberty 23</span>
+      <span class="cds--tag cds--tag--purple">EclipseLink JPA</span>
+      <span class="cds--tag cds--tag--warm">PostgreSQL</span>
+      <span class="cds--tag cds--tag--red">Flyway 10</span>
+    </div>
+
+    <div class="cds--data-table-container">
+      <table class="cds--data-table">
+        <thead>
+          <tr>
+            <th>Dépendance</th>
+            <th>Version</th>
+            <th>Rôle</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>jakarta.jakartaee-api</code></td>
+            <td>10</td>
+            <td>API Jakarta EE (Servlet, JPA, CDI, Validation…)</td>
+          </tr>
+          <tr>
+            <td><code>microprofile</code></td>
+            <td>6.0</td>
+            <td>Health, Config, Metrics, OpenAPI</td>
+          </tr>
+          <tr>
+            <td><code>postgresql</code></td>
+            <td>42.7.1</td>
+            <td>Driver JDBC PostgreSQL</td>
+          </tr>
+          <tr>
+            <td><code>flyway-core</code></td>
+            <td>10.4.1</td>
+            <td>Migrations de schéma automatiques</td>
+          </tr>
+          <tr>
+            <td><code>jakarta.servlet.jsp.jstl-api</code></td>
+            <td>3.0.1</td>
+            <td>JSTL — rendu des vues JSP</td>
+          </tr>
+          <tr>
+            <td><code>junit-jupiter</code></td>
+            <td>5.10.1</td>
+            <td>Tests unitaires JUnit 5</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Navigation rapide -->
+    <h2>Navigation</h2>
+    <div class="tile-grid">
+      <a class="cds--tile" href="functional.html" style="display:block;text-decoration:none;">
+        <h3>⬡ Architecture Fonctionnelle</h3>
+        <p>Domaines métier, composants Jakarta EE, entités JPA et flux applicatifs.</p>
+      </a>
+      <a class="cds--tile" href="technical.html" style="display:block;text-decoration:none;">
+        <h3>⚙ Architecture Technique</h3>
+        <p>Couches techniques, persistence unit, server.xml, datasources et JNDI.</p>
+      </a>
+      <a class="cds--tile" href="sequences.html" style="display:block;text-decoration:none;">
+        <h3>↔ Diagrammes de Séquence</h3>
+        <p>Flux détaillés : liste clients, création, validation de transaction.</p>
+      </a>
+      <a class="cds--tile" href="rules.html" style="display:block;text-decoration:none;">
+        <h3>✔ Règles Métier</h3>
+        <p>12 règles : validation, transactions, cascade, PRG, Flyway, content negotiation.</p>
+      </a>
+    </div>
+
+    <hr class="cds--divider"/>
+  </main>
+</div>
+
+<footer class="cds--footer">
+  Banking JPA Application — Lab 03 &nbsp;·&nbsp; Jakarta EE 10 / Open Liberty 23 &nbsp;·&nbsp; © 2025 Olivier Planson
+</footer>
+</body>
+</html>

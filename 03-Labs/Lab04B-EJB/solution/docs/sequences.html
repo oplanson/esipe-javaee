@@ -1,0 +1,404 @@
+<!-- © Copyright 2026 Olivier Planson. All rights reserved. Reproduction prohibited. Made with IBM Bob. -->
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Banking EJB App — Diagrammes de Séquence</title>
+  <link rel="stylesheet" href="assets/carbon.css"/>
+</head>
+<body>
+
+<header class="cds--header">
+  <a class="cds--header__name" href="index.html">☕ Jakarta EE 10 <span>/ Banking EJB Application — Lab 04B</span></a>
+</header>
+
+<div class="cds--shell">
+  <nav class="cds--side-nav">
+    <p class="cds--side-nav__section-title">Navigation</p>
+    <a class="cds--side-nav__link" href="index.html"><i class="icon">⌂</i> Vue d'ensemble</a>
+    <a class="cds--side-nav__link" href="functional.html"><i class="icon">⬡</i> Architecture Fonctionnelle</a>
+    <a class="cds--side-nav__link" href="technical.html"><i class="icon">⚙</i> Architecture Technique</a>
+    <a class="cds--side-nav__link active" href="sequences.html"><i class="icon">⇄</i> Diagrammes de séquence</a>
+    <a class="cds--side-nav__link" href="rules.html"><i class="icon">⚑</i> Règles métier</a>
+    <p class="cds--side-nav__section-title" style="margin-top:1.5rem">Scénarios</p>
+    <a class="cds--side-nav__link" href="#sd1"><i class="icon">①</i> Transfert atomique</a>
+    <a class="cds--side-nav__link" href="#sd2"><i class="icon">②</i> Lot Stateful</a>
+    <a class="cds--side-nav__link" href="#sd3"><i class="icon">③</i> Rapport planifié</a>
+  </nav>
+
+  <main class="cds--content">
+
+    <div class="cds--breadcrumb">
+      <a href="index.html">Vue d'ensemble</a>
+      <span class="sep">/</span>
+      <span class="current">Diagrammes de séquence</span>
+    </div>
+
+    <h1>Diagrammes de séquence</h1>
+    <p class="page-lead">
+      Trois scénarios clés illustrant le comportement transactionnel des EJBs :
+      transfert atomique CMT, traitement en lot avec bean Stateful et REQUIRES_NEW,
+      et rapport planifié déclenché par le Timer Service.
+    </p>
+
+    <!-- ═══════════════════════════════════════════════ -->
+    <!-- SD1 – Transfert atomique                        -->
+    <!-- ═══════════════════════════════════════════════ -->
+    <h2 id="sd1">SD1 — Transfert atomique entre comptes</h2>
+    <div class="cds--inline-notification">
+      <span>ℹ️</span>
+      <div>
+        <strong>Principe CMT REQUIRED :</strong> le débit et le crédit s'exécutent dans la
+        <em>même</em> transaction gérée par le container. Toute exception provoque un rollback automatique des deux opérations.
+      </div>
+    </div>
+
+    <div class="arch-box" style="overflow-x:auto;">
+      <svg viewBox="0 0 820 440" xmlns="http://www.w3.org/2000/svg"
+           style="width:100%;min-width:640px;max-width:820px;font-family:'IBM Plex Sans',sans-serif;font-size:11px;">
+        <defs>
+          <marker id="ah" markerWidth="8" markerHeight="8" refX="7" refY="3" orient="auto"><path d="M0,0 L0,6 L8,3 z" fill="#161616"/></marker>
+          <marker id="ah-ret" markerWidth="8" markerHeight="8" refX="7" refY="3" orient="auto"><path d="M0,0 L0,6 L8,3 z" fill="#525252"/></marker>
+          <marker id="ah-err" markerWidth="8" markerHeight="8" refX="7" refY="3" orient="auto"><path d="M0,0 L0,6 L8,3 z" fill="#da1e28"/></marker>
+        </defs>
+
+        <!-- Lifeline labels -->
+        <rect x="20"  y="10" width="130" height="36" rx="2" fill="#e8daff" stroke="#491d8b"/>
+        <text x="85"  y="25" text-anchor="middle" font-weight="600" fill="#491d8b" font-size="10">BankingServlet</text>
+        <text x="85"  y="40" text-anchor="middle" fill="#491d8b" font-size="9">Servlet 6.0</text>
+
+        <rect x="200" y="10" width="150" height="36" rx="2" fill="#defbe6" stroke="#198038"/>
+        <text x="275" y="25" text-anchor="middle" font-weight="600" fill="#0e6027" font-size="10">AccountServiceBean</text>
+        <text x="275" y="40" text-anchor="middle" fill="#0e6027" font-size="9">@Stateless CMT</text>
+
+        <rect x="400" y="10" width="130" height="36" rx="2" fill="#defbe6" stroke="#198038"/>
+        <text x="465" y="25" text-anchor="middle" font-weight="600" fill="#0e6027" font-size="10">Account (entité)</text>
+        <text x="465" y="40" text-anchor="middle" fill="#0e6027" font-size="9">JPA @Version</text>
+
+        <rect x="580" y="10" width="130" height="36" rx="2" fill="#e0e0e0" stroke="#8d8d8d"/>
+        <text x="645" y="25" text-anchor="middle" font-weight="600" fill="#161616" font-size="10">PostgreSQL</text>
+        <text x="645" y="40" text-anchor="middle" fill="#525252" font-size="9">EclipseLink JTA</text>
+
+        <!-- Lifelines -->
+        <line x1="85"  y1="46" x2="85"  y2="430" stroke="#c6c6c6" stroke-width="1" stroke-dasharray="4,3"/>
+        <line x1="275" y1="46" x2="275" y2="430" stroke="#c6c6c6" stroke-width="1" stroke-dasharray="4,3"/>
+        <line x1="465" y1="46" x2="465" y2="430" stroke="#c6c6c6" stroke-width="1" stroke-dasharray="4,3"/>
+        <line x1="645" y1="46" x2="645" y2="430" stroke="#c6c6c6" stroke-width="1" stroke-dasharray="4,3"/>
+
+        <!-- TX begin box -->
+        <rect x="255" y="60" width="40" height="330" rx="2" fill="#edf5ff" stroke="#0043ce" stroke-width="1" opacity=".6"/>
+        <text x="275" y="56" text-anchor="middle" fill="#0043ce" font-size="9" font-weight="600">CMT Tx</text>
+
+        <!-- Step 1: client call -->
+        <text x="10" y="82" fill="#525252" font-size="9">1</text>
+        <line x1="85" y1="78" x2="253" y2="78" stroke="#161616" stroke-width="1.5" marker-end="url(#ah)"/>
+        <text x="165" y="74" text-anchor="middle" fill="#161616" font-size="10">transfer(from, to, amount)</text>
+
+        <!-- Step 2: container opens tx -->
+        <text x="10" y="102" fill="#525252" font-size="9">2</text>
+        <rect x="255" y="88" width="40" height="14" rx="1" fill="#0043ce" opacity=".15"/>
+        <text x="275" y="99" text-anchor="middle" fill="#0043ce" font-size="9" font-weight="600">BEGIN TX</text>
+
+        <!-- Step 3: account1.withdraw -->
+        <text x="10" y="128" fill="#525252" font-size="9">3</text>
+        <line x1="275" y1="122" x2="443" y2="122" stroke="#161616" stroke-width="1.5" marker-end="url(#ah)"/>
+        <text x="360" y="118" text-anchor="middle" fill="#161616" font-size="10">account1.withdraw(amount)</text>
+
+        <!-- Step 4: check balance -->
+        <text x="10" y="148" fill="#525252" font-size="9">4</text>
+        <line x1="465" y1="142" x2="465" y2="158" stroke="#161616" stroke-width="1" stroke-dasharray="3,2"/>
+        <text x="480" y="152" fill="#525252" font-size="9">solde suffisant?</text>
+
+        <!-- Step 5: em.merge account1 -->
+        <text x="10" y="178" fill="#525252" font-size="9">5</text>
+        <line x1="465" y1="172" x2="623" y2="172" stroke="#161616" stroke-width="1.5" marker-end="url(#ah)"/>
+        <text x="540" y="168" text-anchor="middle" fill="#161616" font-size="10">em.merge(account1)</text>
+
+        <!-- Step 6: account2.deposit -->
+        <text x="10" y="208" fill="#525252" font-size="9">6</text>
+        <line x1="275" y1="200" x2="443" y2="200" stroke="#161616" stroke-width="1.5" marker-end="url(#ah)"/>
+        <text x="360" y="196" text-anchor="middle" fill="#161616" font-size="10">account2.deposit(amount)</text>
+
+        <!-- Step 7: em.merge account2 -->
+        <text x="10" y="228" fill="#525252" font-size="9">7</text>
+        <line x1="465" y1="222" x2="623" y2="222" stroke="#161616" stroke-width="1.5" marker-end="url(#ah)"/>
+        <text x="540" y="218" text-anchor="middle" fill="#161616" font-size="10">em.merge(account2)</text>
+
+        <!-- Step 8: commit -->
+        <text x="10" y="258" fill="#525252" font-size="9">8</text>
+        <rect x="255" y="242" width="40" height="14" rx="1" fill="#198038" opacity=".2"/>
+        <text x="275" y="253" text-anchor="middle" fill="#198038" font-size="9" font-weight="600">COMMIT</text>
+        <line x1="275" y1="258" x2="623" y2="258" stroke="#198038" stroke-width="1.5" marker-end="url(#ah)"/>
+        <text x="540" y="254" text-anchor="middle" fill="#198038" font-size="9">flush + commit</text>
+
+        <!-- Step 9: response -->
+        <text x="10" y="288" fill="#525252" font-size="9">9</text>
+        <line x1="275" y1="282" x2="87" y2="282" stroke="#525252" stroke-width="1" stroke-dasharray="5,2" marker-end="url(#ah-ret)"/>
+        <text x="175" y="278" text-anchor="middle" fill="#525252" font-size="10">TransferResult OK</text>
+
+        <!-- Error path separator -->
+        <line x1="20" y1="305" x2="800" y2="305" stroke="#da1e28" stroke-width="1" stroke-dasharray="6,3" opacity=".5"/>
+        <text x="410" y="300" text-anchor="middle" fill="#da1e28" font-size="9">ALT — en cas d'erreur (solde insuffisant / exception JPA)</text>
+
+        <!-- Step E1: exception -->
+        <text x="10" y="328" fill="#da1e28" font-size="9">E1</text>
+        <line x1="465" y1="322" x2="277" y2="322" stroke="#da1e28" stroke-width="1.5" stroke-dasharray="5,2" marker-end="url(#ah-err)"/>
+        <text x="365" y="318" text-anchor="middle" fill="#da1e28" font-size="9">InsufficientFundsException</text>
+
+        <!-- Step E2: automatic rollback -->
+        <text x="10" y="352" fill="#da1e28" font-size="9">E2</text>
+        <rect x="255" y="340" width="40" height="14" rx="1" fill="#da1e28" opacity=".2"/>
+        <text x="275" y="351" text-anchor="middle" fill="#da1e28" font-size="9" font-weight="600">ROLLBACK</text>
+        <text x="340" y="351" fill="#da1e28" font-size="9">rollback automatique (CMT)</text>
+
+        <!-- Step E3: error response -->
+        <text x="10" y="380" fill="#da1e28" font-size="9">E3</text>
+        <line x1="275" y1="372" x2="87" y2="372" stroke="#da1e28" stroke-width="1" stroke-dasharray="5,2" marker-end="url(#ah-err)"/>
+        <text x="175" y="368" text-anchor="middle" fill="#da1e28" font-size="9">HTTP 400 — transfert annulé</text>
+
+        <text x="30" y="420" fill="#0043ce" font-size="9">Note : @TransactionAttribute(REQUIRED) — les deux opérations partagent la même transaction CMT. Rollback = rollback total.</text>
+      </svg>
+    </div>
+
+    <!-- ═══════════════════════════════════════════════ -->
+    <!-- SD2 – Lot Stateful                             -->
+    <!-- ═══════════════════════════════════════════════ -->
+    <h2 id="sd2">SD2 — Traitement en lot (Bean Stateful)</h2>
+    <div class="cds--inline-notification">
+      <span>ℹ️</span>
+      <div>
+        <strong>Principe @Stateful + REQUIRES_NEW :</strong> chaque transfert du lot s'exécute dans
+        sa propre transaction indépendante. Un transfert peut échouer sans annuler les autres.
+        Le bean est détruit après <code>@Remove</code>.
+      </div>
+    </div>
+
+    <div class="arch-box" style="overflow-x:auto;">
+      <svg viewBox="0 0 820 500" xmlns="http://www.w3.org/2000/svg"
+           style="width:100%;min-width:640px;max-width:820px;font-family:'IBM Plex Sans',sans-serif;font-size:11px;">
+        <defs>
+          <marker id="bh" markerWidth="8" markerHeight="8" refX="7" refY="3" orient="auto"><path d="M0,0 L0,6 L8,3 z" fill="#161616"/></marker>
+          <marker id="bh-ret" markerWidth="8" markerHeight="8" refX="7" refY="3" orient="auto"><path d="M0,0 L0,6 L8,3 z" fill="#525252"/></marker>
+          <marker id="bh-ok" markerWidth="8" markerHeight="8" refX="7" refY="3" orient="auto"><path d="M0,0 L0,6 L8,3 z" fill="#198038"/></marker>
+        </defs>
+
+        <!-- Lifeline headers -->
+        <rect x="10"  y="10" width="100" height="36" rx="2" fill="#d0e2ff" stroke="#0043ce"/>
+        <text x="60"  y="25" text-anchor="middle" font-weight="600" fill="#0043ce" font-size="10">Client</text>
+        <text x="60"  y="40" text-anchor="middle" fill="#0043ce" font-size="9">HTTP</text>
+
+        <rect x="150" y="10" width="120" height="36" rx="2" fill="#e8daff" stroke="#491d8b"/>
+        <text x="210" y="25" text-anchor="middle" font-weight="600" fill="#491d8b" font-size="10">BankingServlet</text>
+        <text x="210" y="40" text-anchor="middle" fill="#491d8b" font-size="9">Servlet 6.0</text>
+
+        <rect x="310" y="10" width="160" height="36" rx="2" fill="#ffd7d9" stroke="#750e13"/>
+        <text x="390" y="25" text-anchor="middle" font-weight="600" fill="#750e13" font-size="10">TransactionBatchBean</text>
+        <text x="390" y="40" text-anchor="middle" fill="#750e13" font-size="9">@Stateful · pendingList</text>
+
+        <rect x="510" y="10" width="150" height="36" rx="2" fill="#defbe6" stroke="#198038"/>
+        <text x="585" y="25" text-anchor="middle" font-weight="600" fill="#0e6027" font-size="10">AccountServiceBean</text>
+        <text x="585" y="40" text-anchor="middle" fill="#0e6027" font-size="9">@Stateless CMT</text>
+
+        <rect x="690" y="10" width="110" height="36" rx="2" fill="#e0e0e0" stroke="#8d8d8d"/>
+        <text x="745" y="25" text-anchor="middle" font-weight="600" fill="#161616" font-size="10">PostgreSQL</text>
+        <text x="745" y="40" text-anchor="middle" fill="#525252" font-size="9">JTA</text>
+
+        <!-- Lifelines -->
+        <line x1="60"  y1="46" x2="60"  y2="490" stroke="#c6c6c6" stroke-width="1" stroke-dasharray="4,3"/>
+        <line x1="210" y1="46" x2="210" y2="490" stroke="#c6c6c6" stroke-width="1" stroke-dasharray="4,3"/>
+        <line x1="390" y1="46" x2="390" y2="490" stroke="#c6c6c6" stroke-width="1" stroke-dasharray="4,3"/>
+        <line x1="585" y1="46" x2="585" y2="490" stroke="#c6c6c6" stroke-width="1" stroke-dasharray="4,3"/>
+        <line x1="745" y1="46" x2="745" y2="490" stroke="#c6c6c6" stroke-width="1" stroke-dasharray="4,3"/>
+
+        <!-- Step 1 -->
+        <text x="5" y="78" fill="#525252" font-size="8">1</text>
+        <line x1="60" y1="73" x2="208" y2="73" stroke="#161616" stroke-width="1.5" marker-end="url(#bh)"/>
+        <text x="135" y="69" text-anchor="middle" fill="#161616" font-size="10">POST /banking/batch/start</text>
+
+        <!-- Step 2: get stateful -->
+        <text x="5" y="98" fill="#525252" font-size="8">2</text>
+        <line x1="210" y1="93" x2="370" y2="93" stroke="#161616" stroke-width="1.5" marker-end="url(#bh)"/>
+        <text x="290" y="89" text-anchor="middle" fill="#161616" font-size="10">@EJB → get stateful instance</text>
+
+        <!-- Step 3: addToQueue 1 -->
+        <text x="5" y="120" fill="#525252" font-size="8">3</text>
+        <line x1="210" y1="115" x2="370" y2="115" stroke="#161616" stroke-width="1.5" marker-end="url(#bh)"/>
+        <text x="290" y="111" text-anchor="middle" fill="#161616" font-size="10">addToQueue(transfer1)</text>
+
+        <!-- Step 4: addToQueue 2 -->
+        <text x="5" y="140" fill="#525252" font-size="8">4</text>
+        <line x1="210" y1="135" x2="370" y2="135" stroke="#161616" stroke-width="1.5" marker-end="url(#bh)"/>
+        <text x="290" y="131" text-anchor="middle" fill="#161616" font-size="10">addToQueue(transfer2)</text>
+        <text x="430" y="138" fill="#525252" font-size="9">pendingList.add() · NOT_SUPPORTED</text>
+
+        <!-- Step 5: commitBatch -->
+        <text x="5" y="165" fill="#525252" font-size="8">5</text>
+        <line x1="210" y1="160" x2="370" y2="160" stroke="#161616" stroke-width="1.5" marker-end="url(#bh)"/>
+        <text x="290" y="156" text-anchor="middle" fill="#161616" font-size="10">commitBatch()</text>
+
+        <!-- TX1 box -->
+        <rect x="572" y="170" width="22" height="60" rx="1" fill="#edf5ff" stroke="#0043ce" stroke-width="1" opacity=".7"/>
+        <text x="583" y="185" text-anchor="middle" fill="#0043ce" font-size="8" font-weight="600" transform="rotate(-90,583,200)">Tx 1 REQUIRES_NEW</text>
+
+        <!-- Step 6: transfer 1 REQUIRES_NEW -->
+        <text x="5" y="190" fill="#525252" font-size="8">6</text>
+        <rect x="372" y="176" width="30" height="14" rx="1" fill="#0043ce" opacity=".15"/>
+        <text x="390" y="187" text-anchor="middle" fill="#0043ce" font-size="8" font-weight="600">BEGIN Tx1</text>
+        <line x1="390" y1="194" x2="563" y2="194" stroke="#161616" stroke-width="1.5" marker-end="url(#bh)"/>
+        <text x="480" y="190" text-anchor="middle" fill="#161616" font-size="10">AccountServiceBean.transfer(t1)</text>
+
+        <line x1="585" y1="204" x2="723" y2="204" stroke="#161616" stroke-width="1.5" marker-end="url(#bh)"/>
+        <text x="650" y="200" text-anchor="middle" fill="#161616" font-size="9">em.merge() × 2</text>
+
+        <!-- Commit Tx1 -->
+        <text x="5" y="228" fill="#525252" font-size="8">7</text>
+        <rect x="572" y="214" width="22" height="14" rx="1" fill="#198038" opacity=".2"/>
+        <text x="583" y="224" text-anchor="middle" fill="#198038" font-size="8" font-weight="600">COMMIT</text>
+        <line x1="563" y1="229" x2="393" y2="229" stroke="#198038" stroke-width="1" stroke-dasharray="4,2" marker-end="url(#bh-ok)"/>
+        <text x="478" y="225" text-anchor="middle" fill="#198038" font-size="9">commit Tx1 ✓</text>
+
+        <!-- TX2 box -->
+        <rect x="572" y="244" width="22" height="60" rx="1" fill="#edf5ff" stroke="#0043ce" stroke-width="1" opacity=".7"/>
+
+        <!-- Step 8: transfer 2 REQUIRES_NEW -->
+        <text x="5" y="264" fill="#525252" font-size="8">8</text>
+        <rect x="372" y="248" width="30" height="14" rx="1" fill="#0043ce" opacity=".15"/>
+        <text x="390" y="259" text-anchor="middle" fill="#0043ce" font-size="8" font-weight="600">BEGIN Tx2</text>
+        <line x1="390" y1="267" x2="563" y2="267" stroke="#161616" stroke-width="1.5" marker-end="url(#bh)"/>
+        <text x="480" y="263" text-anchor="middle" fill="#161616" font-size="10">AccountServiceBean.transfer(t2)</text>
+
+        <line x1="585" y1="277" x2="723" y2="277" stroke="#161616" stroke-width="1.5" marker-end="url(#bh)"/>
+        <text x="650" y="273" text-anchor="middle" fill="#161616" font-size="9">em.merge() × 2</text>
+
+        <!-- Commit Tx2 -->
+        <text x="5" y="301" fill="#525252" font-size="8">9</text>
+        <rect x="572" y="290" width="22" height="14" rx="1" fill="#198038" opacity=".2"/>
+        <text x="583" y="300" text-anchor="middle" fill="#198038" font-size="8" font-weight="600">COMMIT</text>
+        <line x1="563" y1="306" x2="393" y2="306" stroke="#198038" stroke-width="1" stroke-dasharray="4,2" marker-end="url(#bh-ok)"/>
+        <text x="478" y="302" text-anchor="middle" fill="#198038" font-size="9">commit Tx2 ✓</text>
+
+        <!-- Step 10: @Remove -->
+        <text x="5" y="335" fill="#525252" font-size="8">10</text>
+        <line x1="210" y1="330" x2="370" y2="330" stroke="#750e13" stroke-width="1.5" marker-end="url(#bh)"/>
+        <text x="290" y="326" text-anchor="middle" fill="#750e13" font-size="10">destroy() — @Remove</text>
+        <text x="400" y="333" fill="#525252" font-size="9">instance Stateful détruite</text>
+
+        <!-- Step 11: response -->
+        <text x="5" y="360" fill="#525252" font-size="8">11</text>
+        <line x1="210" y1="354" x2="62" y2="354" stroke="#525252" stroke-width="1" stroke-dasharray="5,2" marker-end="url(#bh-ret)"/>
+        <text x="135" y="350" text-anchor="middle" fill="#525252" font-size="10">BatchResult [OK, OK]</text>
+
+        <text x="10" y="488" fill="#0043ce" font-size="9">Note : chaque transfert = REQUIRES_NEW → transactions indépendantes → l'échec d'un lot n'annule pas les autres.</text>
+      </svg>
+    </div>
+
+    <!-- ═══════════════════════════════════════════════ -->
+    <!-- SD3 – Rapport planifié                         -->
+    <!-- ═══════════════════════════════════════════════ -->
+    <h2 id="sd3">SD3 — Rapport quotidien planifié (@Schedule)</h2>
+    <div class="cds--inline-notification">
+      <span>ℹ️</span>
+      <div>
+        <strong>Timer Service non-persistant :</strong> le timer <code>@Schedule(hour="0", minute="0")</code>
+        se déclenche chaque jour à minuit. Il ne survit pas à un redémarrage du serveur (non-persistent).
+      </div>
+    </div>
+
+    <div class="arch-box" style="overflow-x:auto;">
+      <svg viewBox="0 0 820 380" xmlns="http://www.w3.org/2000/svg"
+           style="width:100%;min-width:600px;max-width:820px;font-family:'IBM Plex Sans',sans-serif;font-size:11px;">
+        <defs>
+          <marker id="ch" markerWidth="8" markerHeight="8" refX="7" refY="3" orient="auto"><path d="M0,0 L0,6 L8,3 z" fill="#161616"/></marker>
+          <marker id="ch-ret" markerWidth="8" markerHeight="8" refX="7" refY="3" orient="auto"><path d="M0,0 L0,6 L8,3 z" fill="#525252"/></marker>
+        </defs>
+
+        <!-- Lifeline headers -->
+        <rect x="10"  y="10" width="120" height="36" rx="2" fill="#e0e0e0" stroke="#8d8d8d"/>
+        <text x="70"  y="25" text-anchor="middle" font-weight="600" fill="#161616" font-size="10">Timer Service</text>
+        <text x="70"  y="40" text-anchor="middle" fill="#525252" font-size="9">EJB Container</text>
+
+        <rect x="170" y="10" width="160" height="36" rx="2" fill="#f5e0c3" stroke="#5d3b1e"/>
+        <text x="250" y="25" text-anchor="middle" font-weight="600" fill="#5d3b1e" font-size="10">ReportGeneratorBean</text>
+        <text x="250" y="40" text-anchor="middle" fill="#5d3b1e" font-size="9">@Singleton · @Schedule</text>
+
+        <rect x="370" y="10" width="130" height="36" rx="2" fill="#defbe6" stroke="#198038"/>
+        <text x="435" y="25" text-anchor="middle" font-weight="600" fill="#0e6027" font-size="10">EntityManager</text>
+        <text x="435" y="40" text-anchor="middle" fill="#0e6027" font-size="9">JPA / EclipseLink</text>
+
+        <rect x="540" y="10" width="130" height="36" rx="2" fill="#e0e0e0" stroke="#8d8d8d"/>
+        <text x="605" y="25" text-anchor="middle" font-weight="600" fill="#161616" font-size="10">PostgreSQL</text>
+        <text x="605" y="40" text-anchor="middle" fill="#525252" font-size="9">transactions</text>
+
+        <rect x="700" y="10" width="110" height="36" rx="2" fill="#edf5ff" stroke="#0043ce"/>
+        <text x="755" y="25" text-anchor="middle" font-weight="600" fill="#0043ce" font-size="10">Logger / Rapport</text>
+        <text x="755" y="40" text-anchor="middle" fill="#0043ce" font-size="9">fichier / console</text>
+
+        <!-- Lifelines -->
+        <line x1="70"  y1="46" x2="70"  y2="365" stroke="#c6c6c6" stroke-width="1" stroke-dasharray="4,3"/>
+        <line x1="250" y1="46" x2="250" y2="365" stroke="#c6c6c6" stroke-width="1" stroke-dasharray="4,3"/>
+        <line x1="435" y1="46" x2="435" y2="365" stroke="#c6c6c6" stroke-width="1" stroke-dasharray="4,3"/>
+        <line x1="605" y1="46" x2="605" y2="365" stroke="#c6c6c6" stroke-width="1" stroke-dasharray="4,3"/>
+        <line x1="755" y1="46" x2="755" y2="365" stroke="#c6c6c6" stroke-width="1" stroke-dasharray="4,3"/>
+
+        <!-- Step 1: timer fires -->
+        <text x="4" y="80" fill="#525252" font-size="8">1</text>
+        <text x="70" y="68" text-anchor="middle" fill="#5d3b1e" font-size="9" font-weight="600">⏱ 00:00 — @Schedule fire</text>
+        <line x1="70" y1="74" x2="228" y2="74" stroke="#5d3b1e" stroke-width="1.5" marker-end="url(#ch)"/>
+        <text x="150" y="70" text-anchor="middle" fill="#5d3b1e" font-size="10">@Timeout → generateDailyReport()</text>
+
+        <!-- Step 2: begin tx -->
+        <text x="4" y="102" fill="#525252" font-size="8">2</text>
+        <rect x="233" y="88" width="34" height="14" rx="1" fill="#0043ce" opacity=".15"/>
+        <text x="250" y="99" text-anchor="middle" fill="#0043ce" font-size="8" font-weight="600">BEGIN TX</text>
+
+        <!-- Step 3: query transactions last 24h -->
+        <text x="4" y="130" fill="#525252" font-size="8">3</text>
+        <line x1="250" y1="124" x2="413" y2="124" stroke="#161616" stroke-width="1.5" marker-end="url(#ch)"/>
+        <text x="332" y="120" text-anchor="middle" fill="#161616" font-size="10">JPQL: transactions last 24h</text>
+
+        <line x1="435" y1="134" x2="583" y2="134" stroke="#161616" stroke-width="1.5" marker-end="url(#ch)"/>
+        <text x="505" y="130" text-anchor="middle" fill="#161616" font-size="9">SELECT … WHERE date &gt; now()-24h</text>
+
+        <!-- Step 4: result -->
+        <text x="4" y="162" fill="#525252" font-size="8">4</text>
+        <line x1="583" y1="156" x2="437" y2="156" stroke="#525252" stroke-width="1" stroke-dasharray="4,2" marker-end="url(#ch-ret)"/>
+        <text x="505" y="152" text-anchor="middle" fill="#525252" font-size="9">List&lt;Transaction&gt;</text>
+
+        <line x1="413" y1="166" x2="252" y2="166" stroke="#525252" stroke-width="1" stroke-dasharray="4,2" marker-end="url(#ch-ret)"/>
+        <text x="332" y="162" text-anchor="middle" fill="#525252" font-size="9">résultats JPA</text>
+
+        <!-- Step 5: compute stats -->
+        <text x="4" y="196" fill="#525252" font-size="8">5</text>
+        <line x1="250" y1="190" x2="250" y2="206" stroke="#161616" stroke-width="1"/>
+        <text x="270" y="200" fill="#161616" font-size="9">calcul statistiques internes</text>
+        <text x="270" y="213" fill="#525252" font-size="9">(dépôts totaux, retraits, soldes, nb opérations)</text>
+
+        <!-- Step 6: commit -->
+        <text x="4" y="240" fill="#525252" font-size="8">6</text>
+        <rect x="233" y="226" width="34" height="14" rx="1" fill="#198038" opacity=".2"/>
+        <text x="250" y="237" text-anchor="middle" fill="#198038" font-size="8" font-weight="600">COMMIT</text>
+
+        <!-- Step 7: log report -->
+        <text x="4" y="268" fill="#525252" font-size="8">7</text>
+        <line x1="250" y1="260" x2="733" y2="260" stroke="#161616" stroke-width="1.5" marker-end="url(#ch)"/>
+        <text x="490" y="256" text-anchor="middle" fill="#161616" font-size="10">écriture rapport (log + fichier)</text>
+
+        <!-- Step 8: reschedule -->
+        <text x="4" y="300" fill="#525252" font-size="8">8</text>
+        <line x1="250" y1="292" x2="72" y2="292" stroke="#525252" stroke-width="1" stroke-dasharray="4,2" marker-end="url(#ch-ret)"/>
+        <text x="155" y="288" text-anchor="middle" fill="#525252" font-size="9">timer re-planifié → J+1 00:00</text>
+
+        <text x="10" y="370" fill="#0043ce" font-size="9">Note : timer @Schedule non-persistant → redémarrage du serveur = perte du timer. Recréé au prochain @PostConstruct.</text>
+      </svg>
+    </div>
+
+    <hr class="cds--divider"/>
+    <p style="font-size:.75rem;color:#a8a8a8;">Jakarta EE 10 · EJB 4.0 · Open Liberty 23 · Lab 04B — ESIPE</p>
+
+  </main>
+</div>
+
+<footer class="cds--footer">Banking EJB Application — Lab 04B · Jakarta EE 10 · Open Liberty 23 · © 2025 Olivier Planson</footer>
+</body>
+</html>

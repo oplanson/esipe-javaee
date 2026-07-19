@@ -1,0 +1,218 @@
+<!-- © Copyright 2026 Olivier Planson. All rights reserved. Reproduction prohibited. Made with IBM Bob. -->
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>Architecture Technique — Banking DDD Application Documentation</title>
+  <link rel="stylesheet" href="assets/carbon.css"/>
+</head>
+<body>
+<header class="cds--header">
+  <a class="cds--header__name" href="index.html">Banking DDD<span>Documentation Technique</span></a>
+</header>
+<div class="cds--shell">
+  <nav class="cds--side-nav">
+    <p class="cds--side-nav__section-title">Documentation</p>
+    <a class="cds--side-nav__link" href="index.html">⊙ Vue d'ensemble</a>
+    <a class="cds--side-nav__link" href="functional.html">⊞ Architecture Fonctionnelle</a>
+    <a class="cds--side-nav__link active" href="technical.html">⊟ Architecture Technique</a>
+    <a class="cds--side-nav__link" href="sequences.html">⇄ Diagrammes de Séquences</a>
+    <a class="cds--side-nav__link" href="rules.html">≡ Règles de Gestion</a>
+  </nav>
+  <main class="cds--content">
+    <div class="breadcrumb"><a href="index.html">Banking DDD</a> / <span>Architecture Technique</span></div>
+    <h1>Architecture Technique</h1>
+    <p class="page-lead">Architecture en couches DDD sur Jakarta EE 10 avec Open Liberty 23. La couche domaine est indépendante de l'infrastructure — les Value Objects, Aggregates et Domain Services ne dépendent d'aucun framework.</p>
+
+    <h2>Diagramme en couches</h2>
+    <div class="arch-box">
+      <table class="arch-table">
+        <tr>
+          <td style="background:#ddeeff;color:#003366;width:16%;">CLIENT<br/><small>Navigateur / API consumer</small></td>
+          <td colspan="3" style="background:#ddeeff;color:#003366;">HTTP/HTTPS · 9080/9443 · JSON / HTML Forms</td>
+        </tr>
+        <tr>
+          <td style="background:#ddffdd;color:#003300;">WEB / REST<br/><small>Routing &amp; Controllers</small></td>
+          <td style="background:#ddffdd;color:#003300;"><code>ClientController</code> (@WebServlet /clients, /client)</td>
+          <td style="background:#ddffdd;color:#003300;"><code>AccountController</code> (@WebServlet /accounts, /account)</td>
+          <td style="background:#ddffdd;color:#003300;"><code>ClientResource</code> /api — <code>AccountResourceV2</code> /api/v2</td>
+        </tr>
+        <tr>
+          <td style="background:#eeddff;color:#220044;">APPLICATION<br/><small>Services CDI</small></td>
+          <td style="background:#eeddff;color:#220044;"><code>ClientService</code> @ApplicationScoped</td>
+          <td style="background:#eeddff;color:#220044;"><code>AccountService</code> @ApplicationScoped</td>
+          <td style="background:#eeddff;color:#220044;"><code>NotificationService</code> @Standard / @Premium</td>
+        </tr>
+        <tr>
+          <td style="background:#fff0dd;color:#5d3b1e;">DOMAIN<br/><small>DDD Core</small></td>
+          <td style="background:#fff0dd;color:#5d3b1e;"><code>Client</code> · <code>Account</code> (Aggregates)</td>
+          <td style="background:#fff0dd;color:#5d3b1e;"><code>Money · Email · AccountNumber · AccountType</code> (VOs)</td>
+          <td style="background:#fff0dd;color:#5d3b1e;"><code>TransferService</code> (Domain Service) · Events</td>
+        </tr>
+        <tr>
+          <td style="background:#f0f0f0;color:#444;">INFRASTRUCTURE<br/><small>JPA / JNDI</small></td>
+          <td style="background:#f0f0f0;color:#444;"><code>EntityManagerProducer</code> @PersistenceContext</td>
+          <td style="background:#f0f0f0;color:#444;"><code>DatabaseMigrationStartup</code> Flyway V1→V5</td>
+          <td style="background:#f0f0f0;color:#444;">JNDI DataSource <code>jdbc/bankingDS</code></td>
+        </tr>
+        <tr>
+          <td style="background:#333;color:#f4f4f4;">DÉPLOIEMENT<br/><small>Container / DB</small></td>
+          <td colspan="3" style="background:#333;color:#f4f4f4;">Open Liberty 23.0.0.12 · PostgreSQL 15 · Docker / Podman · docker-compose</td>
+        </tr>
+      </table>
+    </div>
+
+    <h2>Stack technique</h2>
+    <div class="cds--data-table-container">
+      <table class="cds--data-table">
+        <thead><tr><th>Couche</th><th>Technologie</th><th>Version</th><th>Rôle</th></tr></thead>
+        <tbody>
+          <tr><td>Langage</td><td>Java</td><td>17 (OpenJ9)</td><td>LTS, Records (AccountDTO), pattern matching</td></tr>
+          <tr><td>Runtime</td><td>Open Liberty</td><td>23.0.0.12</td><td>Serveur d'application Jakarta EE 10 + MicroProfile 6</td></tr>
+          <tr><td>API Web</td><td>Jakarta Servlet</td><td>6.0</td><td>Servlets (ClientController, AccountController)</td></tr>
+          <tr><td>Vues</td><td>JSP / JSTL 3.0</td><td>3.0.1</td><td>Rendu des vues HTML côté serveur</td></tr>
+          <tr><td>REST</td><td>JAX-RS</td><td>3.1 (restfulWS-3.1)</td><td>API REST v1 (dép.) et v2 via @Path</td></tr>
+          <tr><td>JSON</td><td>JSON-B / JSON-P</td><td>3.0 / 2.1</td><td>Sérialisation automatique des entités et DTOs</td></tr>
+          <tr><td>DI</td><td>CDI</td><td>4.0 (webProfile-10.0)</td><td>Injection, intercepteurs, events, qualifiers</td></tr>
+          <tr><td>Persistance</td><td>JPA / EclipseLink</td><td>3.2</td><td>ORM, NamedQueries, @Embedded Value Objects</td></tr>
+          <tr><td>Transactions</td><td>JTA (Jakarta TX)</td><td>—</td><td>@Transactional déclaratif</td></tr>
+          <tr><td>Validation</td><td>Bean Validation</td><td>3.0</td><td>@NotNull, @Size, @Pattern, @Valid sur entités et DTOs</td></tr>
+          <tr><td>Migration DB</td><td>Flyway</td><td>10.4.1</td><td>Migrations SQL versionnées V1→V5</td></tr>
+          <tr><td>Base de données</td><td>PostgreSQL</td><td>42.7.1 (driver)</td><td>Stockage persistant via JDBC DataSource JNDI</td></tr>
+          <tr><td>Config</td><td>MicroProfile Config</td><td>3.0</td><td>Injection @ConfigProperty depuis microprofile-config.properties</td></tr>
+          <tr><td>Health</td><td>MicroProfile Health</td><td>4.0</td><td>Liveness check @DatabaseHealthCheck</td></tr>
+          <tr><td>Métriques</td><td>MicroProfile Metrics</td><td>5.0</td><td>Endpoint /metrics (auth désactivé en dev)</td></tr>
+          <tr><td>API Doc</td><td>MicroProfile OpenAPI</td><td>3.1</td><td>Spec YAML auto-générée, UI Swagger</td></tr>
+          <tr><td>REST Client</td><td>MicroProfile Rest Client</td><td>3.0</td><td>BankingRestClient @RegisterRestClient</td></tr>
+          <tr><td>Container</td><td>OCI (Podman/Docker)</td><td>—</td><td>Image base icr.io/appcafe/open-liberty:full-java17-openj9-ubi</td></tr>
+          <tr><td>Build</td><td>Maven</td><td>3.x</td><td>Compilation, packaging WAR, liberty-maven-plugin</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h2>Structure des sources</h2>
+    <div class="cds--data-table-container">
+      <table class="cds--data-table">
+        <thead><tr><th>Chemin</th><th>Type</th><th>Description</th></tr></thead>
+        <tbody>
+          <tr><td><code>src/main/java/com/bank/model/</code></td><td><span class="cds--tag cds--tag--warm">Domain</span></td><td>Aggregate Roots JPA : <code>Client</code>, <code>Account</code></td></tr>
+          <tr><td><code>src/main/java/com/bank/domain/valueobject/</code></td><td><span class="cds--tag cds--tag--warm">Domain</span></td><td>Value Objects : <code>Money</code>, <code>Email</code>, <code>AccountNumber</code>, <code>AccountType</code></td></tr>
+          <tr><td><code>src/main/java/com/bank/domain/service/</code></td><td><span class="cds--tag cds--tag--warm">Domain</span></td><td>Domain Service : <code>TransferService</code> (virement avec frais)</td></tr>
+          <tr><td><code>src/main/java/com/bank/domain/repository/</code></td><td><span class="cds--tag cds--tag--warm">Domain</span></td><td>Interfaces de dépôts : <code>AccountRepository</code>, <code>ClientRepository</code></td></tr>
+          <tr><td><code>src/main/java/com/bank/domain/event/</code></td><td><span class="cds--tag cds--tag--warm">Domain</span></td><td>Domain Events : <code>MoneyDepositedEvent</code>, <code>MoneyWithdrawnEvent</code>, <code>MoneyTransferredEvent</code></td></tr>
+          <tr><td><code>src/main/java/com/bank/service/</code></td><td><span class="cds--tag cds--tag--purple">Application</span></td><td>Services CDI : <code>AccountService</code>, <code>ClientService</code>, <code>NotificationService</code></td></tr>
+          <tr><td><code>src/main/java/com/bank/api/</code></td><td><span class="cds--tag cds--tag--green">REST v1</span></td><td>Resources JAX-RS dépréciées : <code>AccountResource</code>, <code>ClientResource</code>, <code>RestApplication</code></td></tr>
+          <tr><td><code>src/main/java/com/bank/api/v2/</code></td><td><span class="cds--tag cds--tag--green">REST v2</span></td><td>Resources JAX-RS v2 : <code>AccountResourceV2</code>, <code>RestApplicationV2</code> (@ApplicationPath /api/v2)</td></tr>
+          <tr><td><code>src/main/java/com/bank/application/dto/</code></td><td><span class="cds--tag cds--tag--blue">DTO</span></td><td>Records Java 17 : <code>AccountDTO</code>, <code>ClientDTO</code></td></tr>
+          <tr><td><code>src/main/java/com/bank/web/</code></td><td><span class="cds--tag cds--tag--teal">Web</span></td><td>Servlets MVC : <code>ClientController</code>, <code>AccountController</code> (@WebServlet)</td></tr>
+          <tr><td><code>src/main/java/com/bank/config/</code></td><td><span class="cds--tag cds--tag--teal">Config</span></td><td><code>EntityManagerProducer</code>, <code>DatabaseMigrationStartup</code>, <code>LoggingInterceptor</code>, qualifiers <code>@Premium</code>/<code>@Standard</code>, <code>@Logged</code></td></tr>
+          <tr><td><code>src/main/java/com/bank/event/</code></td><td><span class="cds--tag cds--tag--blue">Events CDI</span></td><td><code>BankingEventObserver</code>, <code>AccountCreatedEvent</code>, <code>ClientCreatedEvent</code>, <code>TransactionEvent</code></td></tr>
+          <tr><td><code>src/main/java/com/bank/exception/</code></td><td><span class="cds--tag cds--tag--red">Exceptions</span></td><td>Exceptions et mappers JAX-RS : <code>NotFoundException</code>, <code>ValidationException</code>, <code>NotFoundExceptionMapper</code>, <code>GenericExceptionMapper</code></td></tr>
+          <tr><td><code>src/main/java/com/bank/health/</code></td><td><span class="cds--tag cds--tag--purple">MP Health</span></td><td><code>DatabaseHealthCheck</code> (@Liveness), <code>WebAppReadinessCheck</code></td></tr>
+          <tr><td><code>src/main/java/com/bank/client/</code></td><td><span class="cds--tag cds--tag--teal">MP Rest Client</span></td><td><code>BankingRestClient</code> (@RegisterRestClient configKey=banking-api)</td></tr>
+          <tr><td><code>src/main/resources/META-INF/persistence.xml</code></td><td><span class="cds--tag cds--tag--blue">Config JPA</span></td><td>Persistence Unit <code>bankingPU</code>, JTA, EclipseLink, ddl-generation=none</td></tr>
+          <tr><td><code>src/main/resources/META-INF/microprofile-config.properties</code></td><td><span class="cds--tag cds--tag--blue">Config MP</span></td><td>Feature flags, pagination, URLs MP Rest Client</td></tr>
+          <tr><td><code>src/main/resources/db/migration/V1–V5.sql</code></td><td><span class="cds--tag cds--tag--purple">DB Migrations</span></td><td>Flyway : création tables, seed data, ajout colonnes, refactoring DDD</td></tr>
+          <tr><td><code>src/main/liberty/config/server.xml</code></td><td><span class="cds--tag cds--tag--green">Liberty Config</span></td><td>Features, DataSource JNDI, logging, transaction timeout, ports</td></tr>
+          <tr><td><code>src/main/liberty/config/bootstrap.properties</code></td><td><span class="cds--tag cds--tag--green">Liberty Config</span></td><td>Ports (9080/9443), DB host/port/name/user/password</td></tr>
+          <tr><td><code>src/main/webapp/WEB-INF/views/*.jsp</code></td><td><span class="cds--tag cds--tag--teal">Vues JSP</span></td><td>client-list, client-form, client-details, account-list, account-form, account-details, error</td></tr>
+          <tr><td><code>src/main/webapp/WEB-INF/web.xml</code></td><td><span class="cds--tag cds--tag--teal">Web Config</span></td><td>Session (30min, HttpOnly), welcome-file, error-pages 404/500, context-params</td></tr>
+          <tr><td><code>src/main/webapp/WEB-INF/beans.xml</code></td><td><span class="cds--tag cds--tag--blue">CDI Config</span></td><td>bean-discovery-mode=all, CDI 4.0</td></tr>
+          <tr><td><code>src/main/webapp/index.html</code></td><td><span class="cds--tag cds--tag--teal">Web</span></td><td>Page d'accueil statique avec liens vers Web UI et APIs</td></tr>
+          <tr><td><code>src/main/webapp/error-404.html</code></td><td><span class="cds--tag cds--tag--red">Erreur</span></td><td>Page d'erreur HTTP 404 statique</td></tr>
+          <tr><td><code>src/main/webapp/error-500.html</code></td><td><span class="cds--tag cds--tag--red">Erreur</span></td><td>Page d'erreur HTTP 500 statique</td></tr>
+          <tr><td><code>Containerfile</code></td><td><span class="cds--tag cds--tag--green">Container</span></td><td>Image OCI basée sur <code>icr.io/appcafe/open-liberty:full-java17-openj9-ubi</code></td></tr>
+          <tr><td><code>docker-compose.yml</code></td><td><span class="cds--tag cds--tag--green">Container</span></td><td>Service PostgreSQL 15 (lab06-postgres), réseau bank-network, volume postgres_data</td></tr>
+          <tr><td><code>pom.xml</code></td><td><span class="cds--tag cds--tag--blue">Build</span></td><td>Maven, liberty-maven-plugin 3.9, Flyway plugin, copyLibsDirectory=postgresql</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h2>Composants principaux</h2>
+    <div class="tile-grid">
+      <div class="cds--tile">
+        <h3>EntityManagerProducer</h3>
+        <p>CDI Producer <code>@ApplicationScoped</code>. Expose l'<code>EntityManager</code> (<code>@RequestScoped</code>) depuis le <code>@PersistenceContext(bankingPU)</code> et produit des <code>Logger</code> contextuels via <code>InjectionPoint</code>.</p>
+      </div>
+      <div class="cds--tile">
+        <h3>LoggingInterceptor</h3>
+        <p>Intercepteur CDI activé par l'annotation <code>@Logged</code>. Loggue l'entrée/sortie de méthode avec paramètres, durée d'exécution et exceptions. Priorité <code>APPLICATION</code>.</p>
+      </div>
+      <div class="cds--tile">
+        <h3>BankingEventObserver</h3>
+        <p>Observer CDI <code>@ApplicationScoped</code> écoutant <code>ClientCreatedEvent</code>, <code>AccountCreatedEvent</code> et <code>TransactionEvent</code>. Sélectionne <code>PremiumNotificationService</code> ou <code>StandardNotificationService</code> via les qualifiers <code>@Premium</code>/<code>@Standard</code>.</p>
+      </div>
+      <div class="cds--tile">
+        <h3>TransferService (Domain Service)</h3>
+        <p>Service domaine <code>@ApplicationScoped @Transactional</code> coordonnant le virement entre deux aggregates <code>Account</code>. Calcule les frais (standard 1%, min 1€, max 50€ ; premium gratuit).</p>
+      </div>
+      <div class="cds--tile">
+        <h3>RestApplicationV2</h3>
+        <p><code>@ApplicationPath("/api/v2")</code>. Enregistrement explicite de <code>AccountResourceV2</code> uniquement, évitant l'autodécouverte des ressources v1. Pattern recommandé pour le versioning d'API.</p>
+      </div>
+      <div class="cds--tile">
+        <h3>Exception Mappers</h3>
+        <p><code>NotFoundExceptionMapper</code> → HTTP 404, <code>ValidationExceptionMapper</code> → HTTP 400, <code>ConstraintViolationExceptionMapper</code> → HTTP 400, <code>GenericExceptionMapper</code> → HTTP 500. Tous produisent un <code>ErrorResponse</code> JSON.</p>
+      </div>
+    </div>
+
+    <h2>Configuration Sécurité / Session</h2>
+    <div class="cds--tile">
+      <h3>web.xml — session-config</h3>
+      <p>Timeout de session : <strong>30 minutes</strong>. Cookie <code>HttpOnly: true</code>, <code>Secure: false</code> (HTTP en dev). Pas d'authentification configurée (application pédagogique). La suppression de clients et comptes est contrôlée par les feature flags <code>feature.client.deletion.enabled</code> et <code>feature.account.deletion.enabled</code> injectés via <code>@ConfigProperty</code>.</p>
+    </div>
+
+    <h2>Étapes Containerfile</h2>
+    <div class="cds--data-table-container">
+      <table class="cds--data-table">
+        <thead><tr><th>Étape</th><th>Instruction</th><th>Description</th></tr></thead>
+        <tbody>
+          <tr><td>Base</td><td><code>FROM icr.io/appcafe/open-liberty:full-java17-openj9-ubi</code></td><td>Image Open Liberty officielle IBM, Java 17 OpenJ9, base UBI Red Hat</td></tr>
+          <tr><td>WAR</td><td><code>COPY target/banking-ddd-app.war /config/apps/</code></td><td>Déploiement du WAR compilé</td></tr>
+          <tr><td>Config</td><td><code>COPY src/main/liberty/config/server.xml /config/</code></td><td>Configuration Liberty (features, datasource, logs)</td></tr>
+          <tr><td>Bootstrap</td><td><code>COPY src/main/liberty/config/bootstrap.properties /config/</code></td><td>Ports et variables DB (à surcharger avec env vars)</td></tr>
+          <tr><td>MP Config</td><td><code>COPY src/main/resources/META-INF/microprofile-config.properties /config/</code></td><td>Feature flags et config MicroProfile</td></tr>
+          <tr><td>JDBC</td><td><code>COPY target/liberty/wlp/usr/servers/bankingServer/postgresql/*.jar /opt/ol/.../postgresql/</code></td><td>Driver PostgreSQL et ses dépendances dans les shared resources</td></tr>
+          <tr><td>Configure</td><td><code>RUN configure.sh</code></td><td>Script Liberty de configuration post-copy</td></tr>
+          <tr><td>Ports</td><td><code>EXPOSE 9080 9443</code></td><td>HTTP et HTTPS</td></tr>
+          <tr><td>CMD</td><td><code>CMD ["/opt/ol/wlp/bin/server", "run", "defaultServer"]</code></td><td>Démarrage du serveur Liberty en foreground</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h2>Commandes de déploiement</h2>
+    <div class="tile-grid">
+      <div class="cds--tile">
+        <h3>Démarrage local (dev)</h3>
+        <pre># Démarrer PostgreSQL
+docker-compose up -d postgres
+
+# Dev mode Liberty (hot reload)
+mvn liberty:dev</pre>
+      </div>
+      <div class="cds--tile">
+        <h3>Build image container</h3>
+        <pre># Compiler + packager
+mvn clean package
+
+# Construire l'image OCI
+podman build -t banking-ddd-app:lab06 .</pre>
+      </div>
+      <div class="cds--tile">
+        <h3>Lancer le container</h3>
+        <pre>podman run -d \
+  -p 9080:9080 \
+  -e db_host=host.containers.internal \
+  -e db_password=bankpass \
+  --name banking-lab06 \
+  banking-ddd-app:lab06</pre>
+      </div>
+    </div>
+  </main>
+</div>
+<footer class="cds--footer">
+  Banking DDD App · Documentation Technique v1.0 · © 2026 Olivier Planson · Made with IBM Bob
+</footer>
+</body>
+</html>

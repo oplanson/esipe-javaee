@@ -172,6 +172,9 @@ ESIPE - Advanced Java Enterprise Development
 
 ## JSF Architecture
 
+<details>
+<summary>📝 Original Mermaid Code (click to expand)</summary>
+
 ```mermaid
 graph TB
     subgraph Browser["Browser (Client)"]
@@ -206,6 +209,11 @@ graph TB
     style Beans fill:#4facfe
     style Logic fill:#43e97b
 ```
+
+</details>
+
+![width:70%](images/02b-jsf-javaserver-faces-diagram-1.png)
+
 
 ---
 
@@ -255,6 +263,9 @@ graph TB
 
 ## Lifecycle Diagram
 
+<details>
+<summary>📝 Original Mermaid Code (click to expand)</summary>
+
 ```mermaid
 stateDiagram-v2
     [*] --> RestoreView: Request
@@ -273,6 +284,11 @@ stateDiagram-v2
     InvokeApplication: 5. Invoke Application
     RenderResponse: 6. Render Response
 ```
+
+</details>
+
+![width:70%](images/02b-jsf-javaserver-faces-diagram-2.png)
+
 
 **Short-circuit scenarios:**
 - Validation errors → skip to Render Response

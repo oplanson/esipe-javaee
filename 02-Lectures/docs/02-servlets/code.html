@@ -1,0 +1,230 @@
+<!-- © Copyright 2026 Olivier Planson. All rights reserved. Reproduction prohibited. Made with IBM Bob. -->
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>Cours 02 — Exemples de code</title>
+  <link rel="stylesheet" href="../assets/carbon.css"/>
+</head>
+<body>
+<header class="cds--header">
+  <a class="cds--header__name" href="index.html">Servlets &amp; JSP<span>Cours Jakarta EE</span></a>
+  <a class="cds--header__back" href="../index.html">← Tous les Cours</a>
+</header>
+<div class="cds--shell">
+  <nav class="cds--side-nav">
+    <p class="cds--side-nav__section-title">Cours 02</p>
+    <a class="cds--side-nav__link" href="index.html">⊙ Vue d'ensemble</a>
+    <a class="cds--side-nav__link" href="slides.html">☰ Contenu du cours</a>
+    <a class="cds--side-nav__link" href="concepts.html">◈ Concepts clés</a>
+    <a class="cds--side-nav__link active" href="code.html">⟨/⟩ Exemples de code</a>
+  </nav>
+  <main class="cds--content">
+    <div class="breadcrumb"><a href="../index.html">Cours</a> › <a href="index.html">Cours 02</a> › Code</div>
+    <h1>Exemples de code</h1>
+    <p class="page-lead">Extraits de code Java et JSP du cours 02 — Servlets, JSP, Filtres et Health Checks.</p>
+
+    <h2>Cycle de vie complet d'un Servlet</h2>
+    <div class="code-block-wrap">
+      <span class="code-lang">java</span>
+      <pre><code>@WebServlet(
+    name = "ClientServlet",
+    urlPatterns = {"/clients", "/client"},
+    loadOnStartup = 1
+)
+public class ClientServlet extends HttpServlet {
+    
+    private BankService bankService;
+    private int requestCount = 0;
+    
+    @Override
+    public void init() throws ServletException {
+        log("=== INIT: ClientServlet initializing ===");
+        bankService = new BankService();
+    }
+    
+    @Override
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp)
+            throws ServletException, IOException {
+        requestCount++;
+        List&lt;Client&gt; clients = bankService.findAllClients();
+        req.setAttribute("clients", clients);
+        req.getRequestDispatcher("/WEB-INF/views/clients.jsp").forward(req, resp);
+    }
+    
+    @Override
+    public void destroy() {
+        log("=== DESTROY: after " + requestCount + " requests ===");
+        bankService.close();
+    }
+}</code></pre>
+    </div>
+
+    <h2>doPost avec validation et PRG</h2>
+    <div class="code-block-wrap">
+      <span class="code-lang">java</span>
+      <pre><code>@Override
+protected void doPost(HttpServletRequest req, HttpServletResponse resp)
+        throws ServletException, IOException {
+    
+    String name = req.getParameter("name");
+    String email = req.getParameter("email");
+    
+    // Validation
+    List&lt;String&gt; errors = new ArrayList&lt;&gt;();
+    if (name == null || name.trim().isEmpty()) errors.add("Name is required");
+    if (email == null || !email.matches("^[A-Za-z0-9+_.-]+@(.+)$")) 
+        errors.add("Valid email is required");
+    
+    if (!errors.isEmpty()) {
+        req.setAttribute("errors", errors);
+        req.getRequestDispatcher("/WEB-INF/views/client-form.jsp").forward(req, resp);
+        return;
+    }
+    
+    // Create client
+    Client client = new Client(name, email);
+    clientService.create(client);
+    
+    // PRG pattern — redirect after POST
+    resp.sendRedirect(req.getContextPath() + "/clients");
+}</code></pre>
+    </div>
+
+    <h2>JSP avec JSTL — Liste de clients</h2>
+    <div class="code-block-wrap">
+      <span class="code-lang">jsp</span>
+      <pre><code>&lt;%@ page contentType="text/html; charset=UTF-8" %&gt;
+&lt;%@ taglib prefix="c" uri="jakarta.tags.core" %&gt;
+&lt;%@ taglib prefix="fmt" uri="jakarta.tags.fmt" %&gt;
+
+&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+&lt;body&gt;
+    &lt;c:if test="${not empty message}"&gt;
+        &lt;div class="alert-success"&gt;${message}&lt;/div&gt;
+    &lt;/c:if&gt;
+    
+    &lt;table&gt;
+        &lt;c:forEach var="client" items="${clients}" varStatus="status"&gt;
+            &lt;tr class="${status.index % 2 == 0 ? 'even' : 'odd'}"&gt;
+                &lt;td&gt;${status.count}&lt;/td&gt;
+                &lt;td&gt;&lt;c:out value="${client.name}" /&gt;&lt;/td&gt;
+                &lt;td&gt;${client.email}&lt;/td&gt;
+                &lt;td&gt;&lt;fmt:formatNumber value="${client.balance}" type="currency" /&gt;&lt;/td&gt;
+            &lt;/tr&gt;
+        &lt;/c:forEach&gt;
+    &lt;/table&gt;
+&lt;/body&gt;
+&lt;/html&gt;</code></pre>
+    </div>
+
+    <h2>Filtre d'Authentification</h2>
+    <div class="code-block-wrap">
+      <span class="code-lang">java</span>
+      <pre><code>@WebFilter(urlPatterns = {"/dashboard/*", "/account/*", "/admin/*"})
+public class AuthenticationFilter implements Filter {
+    
+    @Override
+    public void doFilter(ServletRequest request, ServletResponse response,
+                        FilterChain chain) throws IOException, ServletException {
+        
+        HttpServletRequest req = (HttpServletRequest) request;
+        HttpServletResponse resp = (HttpServletResponse) response;
+        
+        HttpSession session = req.getSession(false);
+        boolean isAuthenticated = (session != null &amp;&amp; 
+                                  session.getAttribute("username") != null);
+        
+        if (!isAuthenticated) {
+            resp.sendRedirect(req.getContextPath() + "/login");
+            return;
+        }
+        
+        chain.doFilter(request, response);
+    }
+}</code></pre>
+    </div>
+
+    <h2>Health Check — Readiness</h2>
+    <div class="code-block-wrap">
+      <span class="code-lang">java</span>
+      <pre><code>@Readiness
+@ApplicationScoped
+public class WebAppReadinessCheck implements HealthCheck {
+    
+    @Inject
+    @ConfigProperty(name = "app.environment")
+    private String environment;
+    
+    @Inject
+    private ClientService clientService;
+    
+    @Override
+    public HealthCheckResponse call() {
+        boolean servicesReady = clientService != null;
+        boolean configReady = environment != null &amp;&amp; !environment.isEmpty();
+        
+        if (servicesReady &amp;&amp; configReady) {
+            return HealthCheckResponse.named("web-application-readiness")
+                .up()
+                .withData("services", "initialized")
+                .withData("environment", environment)
+                .build();
+        }
+        return HealthCheckResponse.named("web-application-readiness")
+            .down().build();
+    }
+}</code></pre>
+    </div>
+
+    <h2>Gestion de la Session HTTP</h2>
+    <div class="code-block-wrap">
+      <span class="code-lang">java</span>
+      <pre><code>// Connexion : créer une nouvelle session (prévention session fixation)
+HttpSession oldSession = req.getSession(false);
+if (oldSession != null) oldSession.invalidate();
+
+HttpSession newSession = req.getSession(true);
+newSession.setAttribute("username", username);
+newSession.setAttribute("authenticated", true);
+newSession.setMaxInactiveInterval(30 * 60); // 30 minutes
+req.changeSessionId(); // régénération de l'ID
+
+// Déconnexion
+HttpSession session = req.getSession(false);
+if (session != null) session.invalidate();
+resp.sendRedirect(req.getContextPath() + "/login");</code></pre>
+    </div>
+
+    <h2>Listener de Cycle de vie</h2>
+    <div class="code-block-wrap">
+      <span class="code-lang">java</span>
+      <pre><code>@WebListener
+public class ApplicationLifecycleListener implements ServletContextListener {
+    
+    private static final Logger logger = 
+        Logger.getLogger(ApplicationLifecycleListener.class.getName());
+    
+    @Override
+    public void contextInitialized(ServletContextEvent sce) {
+        logger.info("=== Application started ===");
+        // Initialiser les ressources partagées
+        sce.getServletContext().setAttribute("startTime", 
+            System.currentTimeMillis());
+    }
+    
+    @Override
+    public void contextDestroyed(ServletContextEvent sce) {
+        logger.info("=== Application stopped ===");
+        // Libérer les ressources
+    }
+}</code></pre>
+    </div>
+
+  </main>
+</div>
+<footer class="cds--footer">Made with IBM Bob &nbsp;·&nbsp; © 2026 Olivier Planson &nbsp;·&nbsp; ESIPE — Jakarta EE &amp; Microservices</footer>
+</body>
+</html>

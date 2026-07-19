@@ -1,0 +1,199 @@
+<!-- © Copyright 2026 Olivier Planson. All rights reserved. Reproduction prohibited. Made with IBM Bob. -->
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>Cours 03 — Contenu du cours</title>
+  <link rel="stylesheet" href="../assets/carbon.css"/>
+</head>
+<body>
+<header class="cds--header">
+  <a class="cds--header__name" href="index.html">JPA &amp; Base de données<span>Cours Jakarta EE</span></a>
+  <a class="cds--header__back" href="../index.html">← Tous les Cours</a>
+</header>
+<div class="cds--shell">
+  <nav class="cds--side-nav">
+    <p class="cds--side-nav__section-title">Cours 03</p>
+    <a class="cds--side-nav__link" href="index.html">⊙ Vue d'ensemble</a>
+    <a class="cds--side-nav__link active" href="slides.html">☰ Contenu du cours</a>
+    <a class="cds--side-nav__link" href="concepts.html">◈ Concepts clés</a>
+    <a class="cds--side-nav__link" href="code.html">⟨/⟩ Exemples de code</a>
+  </nav>
+  <main class="cds--content">
+    <div class="breadcrumb"><a href="../index.html">Cours</a> › <a href="index.html">Cours 03</a> › Contenu</div>
+    <h1>Contenu du cours</h1>
+    <p class="page-lead">Toutes les sections — cliquez sur un titre pour développer.</p>
+
+    <details open>
+      <summary>🗄️ Qu'est-ce que JPA / ORM ?</summary>
+      <div class="slide-content">
+        <p><strong>ORM (Object-Relational Mapping)</strong> mappe automatiquement les objets Java en tables SQL, éliminant le code JDBC répétitif et les conversions manuelles.</p>
+        <img src="../../images/03-jpa-database-integration-diagram-1.png" alt="JPA / ORM Architecture"/>
+        <h3>Avantages de l'ORM avec JPA :</h3>
+        <ul>
+          <li><strong>Portabilité</strong> — changer de base de données sans modifier le code métier</li>
+          <li><strong>Productivité</strong> — moins de code boilerplate, focus sur la logique</li>
+          <li><strong>Maintenabilité</strong> — modèle objet cohérent, pas de duplication SQL/Java</li>
+          <li><strong>Sécurité</strong> — requêtes paramétrées par défaut, protection contre les injections SQL</li>
+          <li><strong>Cache</strong> — cache de premier et second niveau pour les performances</li>
+        </ul>
+        <p><strong>JPA (Jakarta Persistence API)</strong> est la spécification standard — Hibernate, EclipseLink et OpenJPA en sont les implémentations.</p>
+      </div>
+    </details>
+
+    <details>
+      <summary>🏷️ Annotations JPA de base</summary>
+      <div class="slide-content">
+        <h3>Annotations essentielles :</h3>
+        <ul>
+          <li><strong><code>@Entity</code></strong> — déclare la classe comme entité persistante JPA</li>
+          <li><strong><code>@Table(name="...")</code></strong> — spécifie le nom de la table SQL correspondante</li>
+          <li><strong><code>@Id</code></strong> — désigne le champ clé primaire</li>
+          <li><strong><code>@GeneratedValue</code></strong> — stratégie de génération de la clé primaire :
+            <ul>
+              <li><code>AUTO</code> — le provider choisit la stratégie</li>
+              <li><code>IDENTITY</code> — colonne auto-increment (PostgreSQL, MySQL)</li>
+              <li><code>SEQUENCE</code> — séquence base de données (PostgreSQL, Oracle)</li>
+              <li><code>TABLE</code> — table dédiée à la génération d'ID (portable)</li>
+            </ul>
+          </li>
+          <li><strong><code>@Column</code></strong> — personnalise la colonne (name, nullable, length, unique)</li>
+          <li><strong><code>@Temporal</code></strong> — précise le type temporel (DATE, TIME, TIMESTAMP)</li>
+          <li><strong><code>@Transient</code></strong> — champ exclu de la persistance</li>
+          <li><strong><code>@Lob</code></strong> — champ de grande taille (CLOB / BLOB)</li>
+        </ul>
+      </div>
+    </details>
+
+    <details>
+      <summary>🔗 Relations entre Entités</summary>
+      <div class="slide-content">
+        <img src="../../images/03-jpa-database-integration-diagram-2.png" alt="JPA Entity Relations"/>
+        <h3>Types de relations :</h3>
+        <ul>
+          <li><strong><code>@OneToMany</code> / <code>@ManyToOne</code></strong> — relation bidirectionnelle (ex. Client → Comptes)</li>
+          <li><strong><code>@ManyToMany</code></strong> avec <code>@JoinTable</code> — table d'association (ex. Utilisateurs ↔ Rôles)</li>
+          <li><strong><code>@OneToOne</code></strong> — relation exclusive (ex. Client ↔ Profil)</li>
+        </ul>
+        <h3>Fetch types :</h3>
+        <ul>
+          <li><strong>LAZY</strong> (par défaut pour <code>@OneToMany</code>, <code>@ManyToMany</code>) — chargement à la demande</li>
+          <li><strong>EAGER</strong> (par défaut pour <code>@ManyToOne</code>, <code>@OneToOne</code>) — chargement immédiat</li>
+        </ul>
+        <h3>Types de cascade :</h3>
+        <ul>
+          <li><code>PERSIST</code>, <code>MERGE</code>, <code>REMOVE</code>, <code>REFRESH</code>, <code>DETACH</code>, <code>ALL</code></li>
+        </ul>
+        <p><strong>Attention :</strong> le problème N+1 — utiliser <code>JOIN FETCH</code> en JPQL pour les associations LAZY.</p>
+      </div>
+    </details>
+
+    <details>
+      <summary>🔍 JPQL — Requêtes Orientées Objet</summary>
+      <div class="slide-content">
+        <p><strong>JPQL (Jakarta Persistence Query Language)</strong> opère sur les entités Java, pas sur les tables SQL.</p>
+        <h3>Syntaxe clé :</h3>
+        <ul>
+          <li><code>SELECT c FROM Client c WHERE c.email = :email</code></li>
+          <li><code>SELECT c FROM Client c JOIN FETCH c.accounts WHERE c.id = :id</code></li>
+          <li><strong>Paramètres nommés</strong> — <code>:param</code> via <code>query.setParameter("param", value)</code></li>
+          <li><strong>Requêtes nommées</strong> — <code>@NamedQuery</code> sur l'entité, compilées au démarrage</li>
+        </ul>
+        <h3>Fonctions d'agrégation :</h3>
+        <ul>
+          <li><code>COUNT(c)</code>, <code>SUM(a.balance)</code>, <code>AVG(a.balance)</code>, <code>MIN</code>, <code>MAX</code></li>
+          <li><code>GROUP BY</code>, <code>HAVING</code>, <code>ORDER BY</code></li>
+        </ul>
+      </div>
+    </details>
+
+    <details>
+      <summary>⚙️ Criteria API</summary>
+      <div class="slide-content">
+        <p>La <strong>Criteria API</strong> permet de construire des requêtes dynamiques type-safe en Java, sans concaténation de chaînes.</p>
+        <h3>Éléments principaux :</h3>
+        <ul>
+          <li><strong><code>CriteriaBuilder</code></strong> — fabrique d'éléments de requête (obtenu via <code>em.getCriteriaBuilder()</code>)</li>
+          <li><strong><code>CriteriaQuery&lt;T&gt;</code></strong> — définit le type du résultat</li>
+          <li><strong><code>Root&lt;T&gt;</code></strong> — point de départ de la requête (représente l'entité)</li>
+          <li><strong><code>Predicate</code></strong> — condition (<code>cb.equal</code>, <code>cb.like</code>, <code>cb.between</code>...)</li>
+          <li><strong><code>Join&lt;T, V&gt;</code></strong> — jointure entre entités</li>
+        </ul>
+        <p><strong>Avantage :</strong> idéal pour les recherches filtrées dynamiquement (formulaires de recherche avancée).</p>
+      </div>
+    </details>
+
+    <details>
+      <summary>🔄 Gestion des Transactions</summary>
+      <div class="slide-content">
+        <img src="../../images/03-jpa-database-integration-diagram-3.png" alt="JPA Entity Lifecycle"/>
+        <h3>États d'une entité JPA :</h3>
+        <ul>
+          <li><strong>New / Transient</strong> — objet créé, non connu du contexte de persistance</li>
+          <li><strong>Managed</strong> — entité sous contrôle de l'EntityManager (contexte actif)</li>
+          <li><strong>Detached</strong> — entité déconnectée du contexte (après fermeture ou <code>detach()</code>)</li>
+          <li><strong>Removed</strong> — entité marquée pour suppression</li>
+        </ul>
+        <h3>Opérations EntityManager :</h3>
+        <ul>
+          <li><code>em.persist(entity)</code> — New → Managed</li>
+          <li><code>em.merge(entity)</code> — Detached → Managed (copie)</li>
+          <li><code>em.remove(entity)</code> — Managed → Removed</li>
+          <li><code>em.find(Class, id)</code> — récupération par clé primaire</li>
+          <li><code>em.flush()</code> — synchronisation immédiate avec la BD</li>
+        </ul>
+        <h3>CMT vs BMT :</h3>
+        <ul>
+          <li><strong>CMT (Container-Managed Transactions)</strong> — <code>@Transactional</code>, le conteneur gère les limites</li>
+          <li><strong>BMT (Bean-Managed Transactions)</strong> — <code>UserTransaction</code> injecté, contrôle manuel</li>
+        </ul>
+      </div>
+    </details>
+
+    <details>
+      <summary>🚀 Migrations avec Flyway</summary>
+      <div class="slide-content">
+        <p><strong>Flyway</strong> gère le versioning du schéma de base de données via des scripts SQL versionnés et traçables.</p>
+        <h3>Convention de nommage :</h3>
+        <ul>
+          <li><code>V1__init.sql</code> — version initiale du schéma</li>
+          <li><code>V2__add_accounts.sql</code> — ajout de la table accounts</li>
+          <li><code>V3__add_index_email.sql</code> — ajout d'index</li>
+        </ul>
+        <h3>Ordre d'exécution :</h3>
+        <ul>
+          <li>Les migrations sont exécutées dans l'ordre numérique croissant</li>
+          <li>Chaque migration exécutée est enregistrée dans la table <code>flyway_schema_history</code></li>
+          <li>Une migration déjà appliquée ne sera jamais ré-exécutée</li>
+          <li>Toute modification d'un fichier déjà appliqué provoque une erreur de checksum</li>
+        </ul>
+        <p><strong>Bonne pratique :</strong> Toujours créer un nouveau fichier de migration, ne jamais modifier l'existant.</p>
+      </div>
+    </details>
+
+    <details>
+      <summary>🔌 JNDI et DataSource</summary>
+      <div class="slide-content">
+        <p><strong>JNDI (Java Naming and Directory Interface)</strong> permet de localiser les ressources (DataSource, queues JMS) par leur nom logique.</p>
+        <h3>Lookup JNDI :</h3>
+        <ul>
+          <li>Nom standard : <code>java:comp/env/jdbc/bankDB</code></li>
+          <li>Lookup programmatique : <code>InitialContext ctx = new InitialContext(); DataSource ds = (DataSource) ctx.lookup("java:comp/env/jdbc/bankDB");</code></li>
+          <li>Injection : <code>@Resource(name="jdbc/bankDB") private DataSource ds;</code></li>
+        </ul>
+        <h3>Configuration Liberty server.xml :</h3>
+        <ul>
+          <li><code>&lt;dataSource jndiName="jdbc/bankDB"&gt;</code> — déclare la DataSource</li>
+          <li><code>&lt;jdbcDriver libraryRef="PostgreSQLLib"/&gt;</code> — driver JDBC</li>
+          <li><code>&lt;properties.postgresql serverName="..." portNumber="5432" databaseName="..."/&gt;</code></li>
+          <li>Pool de connexions configurable : <code>minPoolSize</code>, <code>maxPoolSize</code>, <code>connectionTimeout</code></li>
+        </ul>
+      </div>
+    </details>
+
+  </main>
+</div>
+<footer class="cds--footer">Made with IBM Bob &nbsp;·&nbsp; © 2026 Olivier Planson &nbsp;·&nbsp; ESIPE — Jakarta EE &amp; Microservices</footer>
+</body>
+</html>

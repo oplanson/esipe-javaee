@@ -263,19 +263,30 @@ public void processOrder(Order order) {
 
 ## JMS Architecture Components
 
+<details>
+<summary>📝 Original Mermaid Code (click to expand)</summary>
+
+```mermaid
+graph LR
+    Producer["Producer"]
+    Provider["JMS Provider"]
+    Consumer["Consumer"]
+    Destination["Destination<br/>(Queue / Topic)"]
+
+    Producer --> Provider
+    Provider --> Consumer
+    Provider --> Destination
+
+    style Producer fill:#667eea
+    style Provider fill:#4facfe
+    style Consumer fill:#43e97b
+    style Destination fill:#fff3e0
 ```
-┌─────────────┐         ┌──────────────┐         ┌─────────────┐
-│   Producer  │────────>│   JMS        │────────>│  Consumer   │
-│             │         │   Provider   │         │             │
-└─────────────┘         └──────────────┘         └─────────────┘
-                              │
-                              │
-                        ┌─────▼──────┐
-                        │ Destination│
-                        │ (Queue/    │
-                        │  Topic)    │
-                        └────────────┘
-```
+
+</details>
+
+![width:70%](images/05b-jms-enterprise-messaging-diagram-1.png)
+
 
 ---
 
@@ -319,17 +330,37 @@ public void processOrder(Order order) {
 
 ## JMS API Hierarchy
 
+<details>
+<summary>📝 Original Mermaid Code (click to expand)</summary>
+
+```mermaid
+graph TB
+    CF["ConnectionFactory"]
+    Conn["Connection"]
+    Sess["Session"]
+    Prod["MessageProducer"]
+    Cons["MessageConsumer"]
+    Dest["Destination<br/>(Queue / Topic)"]
+
+    CF --> Conn
+    Conn --> Sess
+    Sess --> Prod
+    Sess --> Cons
+    Prod --> Dest
+    Dest -.-> Cons
+
+    style CF fill:#667eea
+    style Conn fill:#4facfe
+    style Sess fill:#f093fb
+    style Prod fill:#43e97b
+    style Cons fill:#43e97b
+    style Dest fill:#fff3e0
 ```
-ConnectionFactory
-    │
-    └──> Connection
-            │
-            └──> Session
-                    │
-                    ├──> MessageProducer ──> Destination (Queue/Topic)
-                    │
-                    └──> MessageConsumer <── Destination (Queue/Topic)
-```
+
+</details>
+
+![width:70%](images/05b-jms-enterprise-messaging-diagram-2.png)
+
 
 ---
 
@@ -391,11 +422,33 @@ context.createProducer().send(queue, "Hello");
 - Load balancing across consumers
 - Guaranteed delivery
 
+<details>
+<summary>📝 Original Mermaid Code (click to expand)</summary>
+
+```mermaid
+graph LR
+    Producer["Producer"]
+    Queue["Queue"]
+    C1["Consumer 1"]
+    C2["Consumer 2"]
+    C3["Consumer 3"]
+
+    Producer --> Queue
+    Queue --> C1
+    Queue --> C2
+    Queue --> C3
+
+    style Producer fill:#667eea
+    style Queue fill:#fff3e0
+    style C1 fill:#43e97b
+    style C2 fill:#43e97b
+    style C3 fill:#43e97b
 ```
-Producer ──> [Queue] ──> Consumer 1
-                    ──> Consumer 2
-                    ──> Consumer 3
-```
+
+</details>
+
+![width:70%](images/05b-jms-enterprise-messaging-diagram-3.png)
+
 
 **Use Cases:**
 - Task distribution
@@ -443,11 +496,33 @@ public class OrderProcessorMDB implements MessageListener {
 - Broadcast pattern
 - Optional durable subscriptions
 
+<details>
+<summary>📝 Original Mermaid Code (click to expand)</summary>
+
+```mermaid
+graph LR
+    Producer["Producer"]
+    Topic["Topic"]
+    S1["Subscriber 1"]
+    S2["Subscriber 2"]
+    S3["Subscriber 3"]
+
+    Producer --> Topic
+    Topic --> S1
+    Topic --> S2
+    Topic --> S3
+
+    style Producer fill:#667eea
+    style Topic fill:#f093fb
+    style S1 fill:#43e97b
+    style S2 fill:#43e97b
+    style S3 fill:#43e97b
 ```
-                    ┌──> Subscriber 1
-Producer ──> [Topic]├──> Subscriber 2
-                    └──> Subscriber 3
-```
+
+</details>
+
+![width:70%](images/05b-jms-enterprise-messaging-diagram-4.png)
+
 
 **Use Cases:**
 - Event notifications
@@ -476,18 +551,27 @@ Producer ──> [Topic]├──> Subscriber 2
 
 ## Message Structure
 
+<details>
+<summary>📝 Original Mermaid Code (click to expand)</summary>
+
+```mermaid
+graph TB
+    Header["Message Header<br/>(Destination, MessageID, etc.)"]
+    Properties["Message Properties<br/>(Custom key-value pairs)"]
+    Body["Message Body<br/>(Payload - various types)"]
+
+    Header --> Properties
+    Properties --> Body
+
+    style Header fill:#667eea
+    style Properties fill:#fff3e0
+    style Body fill:#e8f5e9
 ```
-┌─────────────────────────────────────┐
-│           Message Header            │
-│  (Destination, MessageID, etc.)     │
-├─────────────────────────────────────┤
-│        Message Properties           │
-│  (Custom key-value pairs)           │
-├─────────────────────────────────────┤
-│          Message Body               │
-│  (Payload - various types)          │
-└─────────────────────────────────────┘
-```
+
+</details>
+
+![width:70%](images/05b-jms-enterprise-messaging-diagram-5.png)
+
 
 ---
 
@@ -546,6 +630,8 @@ boolean urgent = message.getBooleanProperty("urgent");
 
 ```java
 @MessageDriven(activationConfig = {
+    @ActivationConfigProperty(propertyName = "destinationType",
+                             propertyValue = "jakarta.jms.Queue"),
     @ActivationConfigProperty(propertyName = "destination",
                              propertyValue = "jms/orderQueue"),
     @ActivationConfigProperty(propertyName = "messageSelector",
@@ -743,32 +829,31 @@ public class OrderProcessorMDB implements MessageListener {
 
 ## MDB Lifecycle
 
+<details>
+<summary>📝 Original Mermaid Code (click to expand)</summary>
+
+```mermaid
+graph TB
+    Start["Does Not Exist"]
+    Ready["Ready (Pooled)"]
+    Processing["Processing<br/>onMessage()"]
+    End["Does Not Exist"]
+
+    Start -->|"Container creates instance<br/>@PostConstruct"| Ready
+    Ready -->|"Message arrives"| Processing
+    Processing -->|"Done"| Ready
+    Processing -->|"@PreDestroy"| End
+
+    style Start fill:#e1f5ff
+    style Ready fill:#667eea
+    style Processing fill:#43e97b
+    style End fill:#e1f5ff
 ```
-┌──────────────┐
-│ Does Not     │
-│ Exist        │
-└──────┬───────┘
-       │ Container creates instance
-       │ @PostConstruct
-       ▼
-┌──────────────┐
-│ Ready        │◄──────┐
-│ (Pooled)     │       │
-└──────┬───────┘       │
-       │ Message       │
-       │ arrives       │
-       ▼               │
-┌──────────────┐       │
-│ Processing   │───────┘
-│ onMessage()  │
-└──────┬───────┘
-       │ @PreDestroy
-       ▼
-┌──────────────┐
-│ Does Not     │
-│ Exist        │
-└──────────────┘
-```
+
+</details>
+
+![width:70%](images/05b-jms-enterprise-messaging-diagram-6.png)
+
 
 ---
 
@@ -1017,6 +1102,8 @@ public class OrderService {
 ```java
 @MessageDriven(
     activationConfig = {
+        @ActivationConfigProperty(propertyName = "destinationType",
+                                 propertyValue = "jakarta.jms.Queue"),
         @ActivationConfigProperty(propertyName = "destination",
                                  propertyValue = "jms/deadLetterQueue")
     }

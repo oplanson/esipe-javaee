@@ -1,0 +1,167 @@
+<!-- © Copyright 2026 Olivier Planson. All rights reserved. Reproduction prohibited. Made with IBM Bob. -->
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>Cours 02 — Contenu du cours</title>
+  <link rel="stylesheet" href="../assets/carbon.css"/>
+</head>
+<body>
+<header class="cds--header">
+  <a class="cds--header__name" href="index.html">Servlets &amp; JSP<span>Cours Jakarta EE</span></a>
+  <a class="cds--header__back" href="../index.html">← Tous les Cours</a>
+</header>
+<div class="cds--shell">
+  <nav class="cds--side-nav">
+    <p class="cds--side-nav__section-title">Cours 02</p>
+    <a class="cds--side-nav__link" href="index.html">⊙ Vue d'ensemble</a>
+    <a class="cds--side-nav__link active" href="slides.html">☰ Contenu du cours</a>
+    <a class="cds--side-nav__link" href="concepts.html">◈ Concepts clés</a>
+    <a class="cds--side-nav__link" href="code.html">⟨/⟩ Exemples de code</a>
+  </nav>
+  <main class="cds--content">
+    <div class="breadcrumb"><a href="../index.html">Cours</a> › <a href="index.html">Cours 02</a> › Contenu</div>
+    <h1>Contenu du cours</h1>
+    <p class="page-lead">Toutes les sections — cliquez sur un titre pour développer.</p>
+
+    <details open>
+      <summary>📋 Objectifs d'apprentissage</summary>
+      <div class="slide-content">
+        <ul>
+          <li>Comprendre le cycle de vie complet d'un servlet</li>
+          <li>Créer des pages web dynamiques avec JSP et JSTL</li>
+          <li>Implémenter le pattern MVC dans les applications web</li>
+          <li>Utiliser MicroProfile Config dans la couche web</li>
+          <li>Ajouter des health checks pour les composants web</li>
+          <li>Construire une interface web bancaire complète</li>
+        </ul>
+      </div>
+    </details>
+
+    <details>
+      <summary>🔄 Cycle de vie d'un Servlet</summary>
+      <div class="slide-content">
+        <p>Un <strong>servlet</strong> est une classe Java qui gère les requêtes HTTP et génère des réponses dynamiques.</p>
+        <img src="../../images/02-servlets-jsp-microprofile-diagram-1.png" alt="Servlet Lifecycle"/>
+        <h3>Phases du cycle de vie :</h3>
+        <ul>
+          <li><strong>Loading &amp; Instantiation</strong> — chargement de la classe par le conteneur</li>
+          <li><strong>init()</strong> — initialisation des ressources (appelé une seule fois)</li>
+          <li><strong>service()</strong> — traitement de chaque requête HTTP</li>
+          <li><strong>destroy()</strong> — libération des ressources (appelé une seule fois)</li>
+        </ul>
+      </div>
+    </details>
+
+    <details>
+      <summary>🔄 Méthodes HTTP — doGet, doPost</summary>
+      <div class="slide-content">
+        <ul>
+          <li><strong>doGet()</strong> — récupération de données, recherche, liste de ressources</li>
+          <li><strong>doPost()</strong> — soumission de formulaire, création de ressources</li>
+          <li><strong>doPut()</strong> — mise à jour complète d'une ressource</li>
+          <li><strong>doDelete()</strong> — suppression d'une ressource</li>
+        </ul>
+        <p><strong>Pattern PRG (Post-Redirect-Get) :</strong> après un POST réussi, rediriger vers un GET pour éviter les doubles soumissions.</p>
+      </div>
+    </details>
+
+    <details>
+      <summary>🎨 JavaServer Pages (JSP)</summary>
+      <div class="slide-content">
+        <p><strong>JSP</strong> est une technologie pour créer des pages web dynamiques avec du HTML embarqué Java.</p>
+        <h3>Éléments de syntaxe JSP :</h3>
+        <ul>
+          <li><strong>Directives</strong> <code>&lt;%@ page ... %&gt;</code> — configuration de la page</li>
+          <li><strong>Scriptlets</strong> <code>&lt;% ... %&gt;</code> — blocs Java (à éviter)</li>
+          <li><strong>Expressions</strong> <code>&lt;%= ... %&gt;</code> — affichage de valeurs</li>
+          <li><strong>EL (Expression Language)</strong> <code>${...}</code> — accès simplifié aux données</li>
+          <li><strong>JSTL</strong> — tags standards pour itération, conditions, formatage</li>
+        </ul>
+        <p><strong>Bonne pratique :</strong> Éviter les scriptlets — utiliser JSTL et EL !</p>
+      </div>
+    </details>
+
+    <details>
+      <summary>🏗️ Pattern MVC</summary>
+      <div class="slide-content">
+        <img src="../../images/02-servlets-jsp-microprofile-diagram-2.png" alt="MVC Pattern"/>
+        <h3>Responsabilités :</h3>
+        <ul>
+          <li><strong>Model</strong> — logique métier, accès aux données (classes Java, entités JPA)</li>
+          <li><strong>View</strong> — couche présentation (JSP, HTML, CSS)</li>
+          <li><strong>Controller</strong> — gestion des requêtes, contrôle du flux (Servlets)</li>
+        </ul>
+      </div>
+    </details>
+
+    <details>
+      <summary>⚙️ MicroProfile Config dans la couche Web</summary>
+      <div class="slide-content">
+        <img src="../../images/02-servlets-jsp-microprofile-diagram-3.png" alt="MP Config"/>
+        <ul>
+          <li>Externaliser la configuration (URLs, limites, feature flags)</li>
+          <li>Paramètres spécifiques à l'environnement (dev, test, prod)</li>
+          <li>Sources de configuration (priorité décroissante) : system properties → env vars → microprofile-config.properties</li>
+        </ul>
+      </div>
+    </details>
+
+    <details>
+      <summary>💊 Health Checks — Liveness et Readiness</summary>
+      <div class="slide-content">
+        <ul>
+          <li><strong>Liveness</strong> — l'application est-elle en cours d'exécution ?</li>
+          <li><strong>Readiness</strong> — l'application est-elle prête à traiter des requêtes ?</li>
+          <li><strong>Startup</strong> — l'application a-t-elle démarré avec succès ?</li>
+        </ul>
+        <p>Endpoints : <code>/health</code> · <code>/health/live</code> · <code>/health/ready</code> · <code>/health/started</code></p>
+      </div>
+    </details>
+
+    <details>
+      <summary>🔐 Session HTTP</summary>
+      <div class="slide-content">
+        <ul>
+          <li>Maintient l'état utilisateur dans le protocole HTTP sans état</li>
+          <li>Identification par ID de session (cookie JSESSIONID)</li>
+          <li>Prévention session fixation : invalider l'ancienne session avant la nouvelle</li>
+          <li>Protection : HttpOnly + Secure flags sur les cookies, timeout configuré</li>
+        </ul>
+      </div>
+    </details>
+
+    <details>
+      <summary>🔍 Filtres Servlet</summary>
+      <div class="slide-content">
+        <img src="../../images/02-servlets-jsp-microprofile-diagram-5.png" alt="Filter Chain"/>
+        <p>Les <strong>filtres</strong> interceptent les requêtes/réponses pour les préoccupations transverses :</p>
+        <ul>
+          <li>Authentification et autorisation</li>
+          <li>Journalisation et audit</li>
+          <li>Modification requête/réponse</li>
+          <li>Compression et chiffrement</li>
+          <li>Gestion CORS</li>
+        </ul>
+      </div>
+    </details>
+
+    <details>
+      <summary>👂 Listeners Servlet</summary>
+      <div class="slide-content">
+        <img src="../../images/02-servlets-jsp-microprofile-diagram-6.png" alt="Listeners"/>
+        <p>Les <strong>listeners</strong> réagissent aux événements du cycle de vie :</p>
+        <ul>
+          <li><strong>ServletContextListener</strong> — démarrage/arrêt de l'application</li>
+          <li><strong>HttpSessionListener</strong> — création/destruction des sessions</li>
+          <li><strong>ServletRequestListener</strong> — début/fin de chaque requête</li>
+        </ul>
+      </div>
+    </details>
+
+  </main>
+</div>
+<footer class="cds--footer">Made with IBM Bob &nbsp;·&nbsp; © 2026 Olivier Planson &nbsp;·&nbsp; ESIPE — Jakarta EE &amp; Microservices</footer>
+</body>
+</html>

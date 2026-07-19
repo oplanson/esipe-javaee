@@ -201,47 +201,59 @@ By the end of this lecture, you will be able to:
 <div class="columns">
 
 ### Monolithic Architecture
-```
-┌─────────────────────────────┐
-│     Banking Application     │
-│                             │
-│  ┌─────────────────────┐   │
-│  │   Presentation      │   │
-│  └─────────────────────┘   │
-│  ┌─────────────────────┐   │
-│  │   Business Logic    │   │
-│  │  - Client Mgmt      │   │
-│  │  - Account Mgmt     │   │
-│  │  - Transactions     │   │
-│  └─────────────────────┘   │
-│  ┌─────────────────────┐   │
-│  │   Data Access       │   │
-│  └─────────────────────┘   │
-│                             │
-└──────────┬──────────────────┘
-           │
-    ┌──────▼──────┐
-    │  Database   │
-    └─────────────┘
+<details>
+<summary>📝 Original Mermaid Code (click to expand)</summary>
+
+```mermaid
+graph TB
+    subgraph App["Banking Application"]
+        Pres["Presentation"]
+        Logic["Business Logic<br/>- Client Mgmt<br/>- Account Mgmt<br/>- Transactions"]
+        Data["Data Access"]
+    end
+    Pres --> Logic
+    Logic --> Data
+    Data --> DB[("Database")]
+
+    style App fill:#fff3e0
+    style Pres fill:#e1f5ff
+    style Logic fill:#667eea
+    style Data fill:#4facfe
+    style DB fill:#43e97b
 ```
 
+</details>
+
+![width:70%](images/08-microservices-architecture-diagram-1.png)
+
+
 ### Microservices Architecture
+<details>
+<summary>📝 Original Mermaid Code (click to expand)</summary>
+
+```mermaid
+graph TB
+    GW["API Gateway"]
+    GW --> Client["Client Svc"]
+    GW --> Acct["Account Svc"]
+    GW --> Trans["Transaction Svc"]
+    Client --> DB1[("DB 1")]
+    Acct --> DB2[("DB 2")]
+    Trans --> DB3[("DB 3")]
+
+    style GW fill:#667eea
+    style Client fill:#4facfe
+    style Acct fill:#4facfe
+    style Trans fill:#4facfe
+    style DB1 fill:#43e97b
+    style DB2 fill:#43e97b
+    style DB3 fill:#43e97b
 ```
-┌──────────────┐
-│ API Gateway  │
-└──────┬───────┘
-       │
-   ┌───┴────┬────────┐
-   │        │        │
-┌──▼──┐  ┌─▼──┐  ┌──▼───┐
-│Client│  │Acct│  │Trans │
-│Svc   │  │Svc │  │Svc   │
-└──┬───┘  └─┬──┘  └──┬───┘
-   │        │        │
-┌──▼──┐  ┌─▼──┐  ┌──▼───┐
-│DB 1 │  │DB 2│  │DB 3  │
-└─────┘  └────┘  └──────┘
-```
+
+</details>
+
+![width:70%](images/08-microservices-architecture-diagram-2.png)
+
 
 </div>
 
@@ -418,33 +430,31 @@ Banking Application
 
 ## Proposed Microservices (Lab 08)
 
+<details>
+<summary>📝 Original Mermaid Code (click to expand)</summary>
+
+```mermaid
+graph TB
+    GW["API Gateway (Port 9080)<br/>- Request routing<br/>- Response aggregation<br/>- Authentication"]
+    GW -->|REST| Client
+    GW -->|REST| Account
+    Client["Client Service (Port 9081)<br/>- Client CRUD<br/>- Client Query"]
+    Account["Account Service (Port 9082)<br/>- Account CRUD<br/>- Transactions<br/>- Balance Ops"]
+    Account -->|REST| Client
+    Client --> ClientDB[("PostgreSQL<br/>banking_client_db")]
+    Account --> AccountDB[("PostgreSQL<br/>banking_account_db")]
+
+    style GW fill:#667eea
+    style Client fill:#4facfe
+    style Account fill:#4facfe
+    style ClientDB fill:#43e97b
+    style AccountDB fill:#43e97b
 ```
-┌─────────────────────────────────────────────────────────┐
-│                      API Gateway                         │
-│                    (Port 9080)                          │
-│  - Request routing                                       │
-│  - Response aggregation                                  │
-│  - Authentication                                        │
-└────────────┬──────────────────────────┬─────────────────┘
-             │                          │
-             │ REST                     │ REST
-             │                          │
-    ┌────────▼────────┐        ┌───────▼────────┐
-    │ Client Service  │        │ Account Service │
-    │   (Port 9081)   │◄───────│   (Port 9082)   │
-    │                 │  REST  │                  │
-    │ - Client CRUD   │        │ - Account CRUD   │
-    │ - Client Query  │        │ - Transactions   │
-    │                 │        │ - Balance Ops    │
-    └────────┬────────┘        └────────┬─────────┘
-             │                          │
-             │                          │
-    ┌────────▼────────┐        ┌───────▼─────────┐
-    │  PostgreSQL     │        │   PostgreSQL    │
-    │ banking_client  │        │ banking_account │
-    │      _db        │        │      _db        │
-    └─────────────────┘        └─────────────────┘
-```
+
+</details>
+
+![width:70%](images/08-microservices-architecture-diagram-3.png)
+
 
 ---
 
@@ -516,18 +526,25 @@ Banking Application
 ## Shared Database Anti-Pattern
 
 ### Why to Avoid
+<details>
+<summary>📝 Original Mermaid Code (click to expand)</summary>
+
+```mermaid
+graph TB
+    A["Service A"] --> DB[("Shared Database")]
+    B["Service B"] --> DB
+    C["Service C"] --> DB
+
+    style A fill:#4facfe
+    style B fill:#4facfe
+    style C fill:#4facfe
+    style DB fill:#fce4ec
 ```
-┌──────────┐     ┌──────────┐     ┌──────────┐
-│ Service  │     │ Service  │     │ Service  │
-│    A     │     │    B     │     │    C     │
-└────┬─────┘     └────┬─────┘     └────┬─────┘
-     │                │                │
-     └────────────────┼────────────────┘
-                      │
-              ┌───────▼────────┐
-              │ Shared Database│
-              └────────────────┘
-```
+
+</details>
+
+![width:70%](images/08-microservices-architecture-diagram-4.png)
+
 
 ### Problems
 - ❌ Tight coupling through database schema
@@ -584,22 +601,20 @@ Banking Application
 ### MicroProfile Rest Client
 
 ```java
-@RegisterRestClient(baseUri = "http://client-service:9080")
-@Path("/api/clients")
+@Path("/clients")
+@Produces(MediaType.APPLICATION_JSON)
+@RegisterRestClient(configKey = "com.bank.account.infrastructure.client.ClientServiceClient")
 public interface ClientServiceClient {
     
     @GET
     @Path("/{id}")
-    @Produces(MediaType.APPLICATION_JSON)
-    ClientDTO getClient(@PathParam("id") Long id);
+    ClientDTO getClientById(@PathParam("id") Long id);
     
     @GET
-    @Produces(MediaType.APPLICATION_JSON)
     List<ClientDTO> getAllClients();
     
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
-    @Produces(MediaType.APPLICATION_JSON)
     ClientDTO createClient(ClientDTO client);
 }
 ```
@@ -616,27 +631,24 @@ public class AccountService {
     
     @Inject
     @RestClient
-    ClientServiceClient clientService;
+    ClientServiceClient clientServiceClient;
     
-    public Account createAccount(CreateAccountCommand command) {
+    public AccountDTO createAccount(AccountDTO accountDTO) {
         // Verify client exists by calling Client Service
         try {
-            ClientDTO client = clientService.getClient(command.clientId());
-            if (client == null) {
-                throw new ValidationException("Client not found");
+            ClientDTO client = clientServiceClient.getClientById(accountDTO.getClientId());
+            if (client == null || client.getId() == null) {
+                throw new IllegalArgumentException("Client not found");
             }
-        } catch (WebApplicationException e) {
-            if (e.getResponse().getStatus() == 404) {
-                throw new ValidationException("Client not found");
-            }
-            throw new ServiceUnavailableException("Client service unavailable");
+        } catch (Exception e) {
+            throw new IllegalArgumentException(
+                "Unable to verify client with ID: " + accountDTO.getClientId());
         }
         
-        // Create account
-        Account account = new Account(command.clientId(), 
-                                     command.accountType());
-        accountRepository.save(account);
-        return account;
+        // Create and persist the account
+        Account account = accountMapper.toDomain(accountDTO);
+        Account savedAccount = accountRepository.save(account);
+        return accountMapper.toDTO(savedAccount);
     }
 }
 ```
@@ -648,13 +660,13 @@ public class AccountService {
 ### microprofile-config.properties
 
 ```properties
-# Client Service URL
-com.bank.client.ClientServiceClient/mp-rest/url=http://client-service:9080
-com.bank.client.ClientServiceClient/mp-rest/scope=jakarta.inject.Singleton
+# Client Service URL (env var with default; /api base path appended)
+com.bank.account.infrastructure.client.ClientServiceClient/mp-rest/url=${CLIENT_SERVICE_URL:http://localhost:9081}/api
+com.bank.account.infrastructure.client.ClientServiceClient/mp-rest/scope=jakarta.inject.Singleton
 
 # Timeouts
-com.bank.client.ClientServiceClient/mp-rest/connectTimeout=2000
-com.bank.client.ClientServiceClient/mp-rest/readTimeout=5000
+com.bank.account.infrastructure.client.ClientServiceClient/mp-rest/connectTimeout=2000
+com.bank.account.infrastructure.client.ClientServiceClient/mp-rest/readTimeout=5000
 ```
 
 ### Environment Variables (Docker Compose)
@@ -671,28 +683,31 @@ environment:
 ### Circuit Breaker Pattern
 
 ```java
-@ApplicationScoped
-public class AccountService {
+@Path("/clients")
+@Produces(MediaType.APPLICATION_JSON)
+@RegisterRestClient(configKey = "com.bank.account.infrastructure.client.ClientServiceClient")
+public interface ClientServiceClient {
     
-    @Inject
-    @RestClient
-    ClientServiceClient clientService;
-    
+    @GET
+    @Path("/{id}")
     @CircuitBreaker(
         requestVolumeThreshold = 4,
         failureRatio = 0.5,
         delay = 5000,
         successThreshold = 2
     )
-    @Fallback(fallbackMethod = "getClientFallback")
+    @Fallback(fallbackMethod = "getClientByIdFallback")
     @Timeout(2000)
-    public ClientDTO getClient(Long clientId) {
-        return clientService.getClient(clientId);
-    }
+    ClientDTO getClientById(@PathParam("id") Long id);
     
-    public ClientDTO getClientFallback(Long clientId) {
-        // Return cached data or default response
-        return new ClientDTO(clientId, "Unknown", "unknown@example.com");
+    default ClientDTO getClientByIdFallback(Long id) {
+        // Return a default response when Client Service is unavailable
+        ClientDTO fallback = new ClientDTO();
+        fallback.setId(id);
+        fallback.setFirstName("Unknown");
+        fallback.setLastName("Client");
+        fallback.setEmail("unavailable@bank.com");
+        return fallback;
     }
 }
 ```
@@ -701,35 +716,36 @@ public class AccountService {
 
 ## Circuit Breaker States
 
+<details>
+<summary>📝 Original Mermaid Code (click to expand)</summary>
+
+```mermaid
+graph TB
+    Closed["CLOSED<br/>(Normal operation)"]
+    Open["OPEN<br/>(Reject requests)"]
+    Half["HALF-OPEN<br/>(Test if recovered)"]
+    Closed -->|Failures exceed threshold| Open
+    Open -->|After delay| Half
+    Half -->|Success| Closed
+    Half -->|Failure| Open
+
+    style Closed fill:#43e97b
+    style Open fill:#fce4ec
+    style Half fill:#fff3e0
 ```
-                    ┌─────────┐
-                    │ CLOSED  │ (Normal operation)
-                    └────┬────┘
-                         │ Failures exceed threshold
-                         │
-                    ┌────▼────┐
-                    │  OPEN   │ (Reject requests)
-                    └────┬────┘
-                         │ After delay
-                         │
-                    ┌────▼────┐
-                    │HALF-OPEN│ (Test if recovered)
-                    └────┬────┘
-                         │
-              ┌──────────┴──────────┐
-              │                     │
-         Success                 Failure
-              │                     │
-         ┌────▼────┐           ┌───▼────┐
-         │ CLOSED  │           │  OPEN  │
-         └─────────┘           └────────┘
-```
+
+</details>
+
+![width:70%](images/08-microservices-architecture-diagram-5.png)
+
 
 ---
 
 ## Retry Strategy
 
 ```java
+@GET
+@Path("/{id}")
 @Retry(
     maxRetries = 3,
     delay = 1000,
@@ -739,9 +755,7 @@ public class AccountService {
     retryOn = {ServiceUnavailableException.class, TimeoutException.class}
 )
 @Timeout(2000)
-public ClientDTO getClient(Long clientId) {
-    return clientService.getClient(clientId);
-}
+ClientDTO getClientById(@PathParam("id") Long id);
 ```
 
 ### Retry Behavior
@@ -758,9 +772,11 @@ public ClientDTO getClient(Long clientId) {
 ### Isolate Resources
 
 ```java
-@Bulkhead(value = 5, waitingTaskQueue = 10)
-public ClientDTO getClient(Long clientId) {
-    return clientService.getClient(clientId);
+@Bulkhead(value = 10, waitingTaskQueue = 10)
+public ClientWithAccountsDTO getClientWithAccounts(Long clientId) {
+    ClientDTO client = clientServiceClient.getClientById(clientId);
+    List<AccountDTO> accounts = accountServiceClient.getAccountsByClientId(clientId);
+    return new ClientWithAccountsDTO(client, accounts);
 }
 ```
 
@@ -795,24 +811,37 @@ public ClientDTO getClient(Long clientId) {
 
 ## API Gateway Architecture
 
+<details>
+<summary>📝 Original Mermaid Code (click to expand)</summary>
+
+```mermaid
+graph TB
+    subgraph GW["API Gateway"]
+        Routing["Routing"]
+        Aggregation["Aggregation"]
+        Auth["Auth"]
+        RateLimit["Rate Limit"]
+        Caching["Caching"]
+        Monitoring["Monitoring"]
+    end
+    GW --> Client["Client Service"]
+    GW --> Account["Account Service"]
+
+    style GW fill:#fff3e0
+    style Routing fill:#e1f5ff
+    style Aggregation fill:#e1f5ff
+    style Auth fill:#e1f5ff
+    style RateLimit fill:#e1f5ff
+    style Caching fill:#e1f5ff
+    style Monitoring fill:#e1f5ff
+    style Client fill:#4facfe
+    style Account fill:#4facfe
 ```
-┌─────────────────────────────────────────────────────────┐
-│                      API Gateway                         │
-│                                                          │
-│  ┌────────────┐  ┌────────────┐  ┌────────────┐       │
-│  │   Routing  │  │Aggregation │  │    Auth    │       │
-│  └────────────┘  └────────────┘  └────────────┘       │
-│                                                          │
-│  ┌────────────┐  ┌────────────┐  ┌────────────┐       │
-│  │Rate Limit  │  │  Caching   │  │ Monitoring │       │
-│  └────────────┘  └────────────┘  └────────────┘       │
-└────────────┬──────────────────────────┬─────────────────┘
-             │                          │
-             │                          │
-    ┌────────▼────────┐        ┌───────▼────────┐
-    │ Client Service  │        │ Account Service │
-    └─────────────────┘        └─────────────────┘
-```
+
+</details>
+
+![width:70%](images/08-microservices-architecture-diagram-6.png)
+
 
 ---
 
@@ -865,21 +894,16 @@ public class ApiGateway {
 @Produces(MediaType.APPLICATION_JSON)
 public Response getClientWithAccounts(@PathParam("id") Long clientId) {
     // Call Client Service
-    ClientDTO client = clientService.getClient(clientId);
-    if (client == null) {
+    ClientDTO client = clientService.getClientById(clientId);
+    if (client == null || client.getId() == null) {
         return Response.status(404).build();
     }
     
     // Call Account Service
-    List<AccountDTO> accounts = accountService.getAccountsByClient(clientId);
+    List<AccountDTO> accounts = accountService.getAccountsByClientId(clientId);
     
-    // Aggregate response
-    ClientWithAccountsDTO response = new ClientWithAccountsDTO(
-        client.id(),
-        client.name(),
-        client.email(),
-        accounts
-    );
+    // Aggregate response (totals computed by the DTO)
+    ClientWithAccountsDTO response = new ClientWithAccountsDTO(client, accounts);
     
     return Response.ok(response).build();
 }
@@ -890,35 +914,47 @@ public Response getClientWithAccounts(@PathParam("id") Long clientId) {
 ## Response Aggregation DTO
 
 ```java
-public record ClientWithAccountsDTO(
-    Long id,
-    String name,
-    String email,
-    List<AccountDTO> accounts
-) {}
+public class ClientWithAccountsDTO {
+    private ClientDTO client;
+    private List<AccountDTO> accounts;
+    private BigDecimal totalBalance;
+    private int accountCount;
+
+    public ClientWithAccountsDTO(ClientDTO client, List<AccountDTO> accounts) {
+        this.client = client;
+        this.accounts = accounts != null ? accounts : new ArrayList<>();
+        // totalBalance and accountCount are computed from accounts
+    }
+    // getters ...
+}
 ```
 
 ### Response Example
 
 ```json
 {
-  "id": 1,
-  "name": "John Doe",
-  "email": "john.doe@example.com",
+  "client": {
+    "id": 1,
+    "firstName": "John",
+    "lastName": "Doe",
+    "email": "john.doe@example.com"
+  },
   "accounts": [
     {
       "id": 101,
       "accountNumber": "ACC-001",
       "balance": 1000.00,
-      "type": "CHECKING"
+      "accountType": "CHECKING"
     },
     {
       "id": 102,
       "accountNumber": "ACC-002",
       "balance": 5000.00,
-      "type": "SAVINGS"
+      "accountType": "SAVINGS"
     }
-  ]
+  ],
+  "totalBalance": 6000.00,
+  "accountCount": 2
 }
 ```
 
@@ -1025,38 +1061,42 @@ public class RateLimitFilter implements ContainerRequestFilter {
 ## Service Discovery Patterns
 
 ### 1. **Client-Side Discovery**
-```
-┌────────┐
-│ Client │
-└───┬────┘
-    │ 1. Query
-    │
-┌───▼────────┐
-│  Registry  │
-└───┬────────┘
-    │ 2. Return addresses
-    │
-┌───▼────┐
-│Service │
-└────────┘
+<details>
+<summary>📝 Original Mermaid Code (click to expand)</summary>
+
+```mermaid
+graph TB
+    Client["Client"] -->|1. Query| Registry["Registry"]
+    Registry -->|2. Return addresses| Service["Service"]
+
+    style Client fill:#667eea
+    style Registry fill:#fff3e0
+    style Service fill:#4facfe
 ```
 
+</details>
+
+![width:70%](images/08-microservices-architecture-diagram-7.png)
+
+
 ### 2. **Server-Side Discovery**
+<details>
+<summary>📝 Original Mermaid Code (click to expand)</summary>
+
+```mermaid
+graph TB
+    Client["Client"] -->|1. Request| LB["Load Balancer"]
+    LB -->|2. Query registry<br/>3. Forward| Service["Service"]
+
+    style Client fill:#667eea
+    style LB fill:#fff3e0
+    style Service fill:#4facfe
 ```
-┌────────┐
-│ Client │
-└───┬────┘
-    │ 1. Request
-    │
-┌───▼────────┐
-│Load Balance│
-└───┬────────┘
-    │ 2. Query registry
-    │ 3. Forward
-┌───▼────┐
-│Service │
-└────────┘
-```
+
+</details>
+
+![width:70%](images/08-microservices-architecture-diagram-8.png)
+
 
 ---
 
@@ -1206,11 +1246,27 @@ data:
 ## Distributed Tracing
 
 ### Problem
+<details>
+<summary>📝 Original Mermaid Code (click to expand)</summary>
+
+```mermaid
+graph LR
+    Client["Client"] --> Gateway["Gateway"]
+    Gateway --> Account["Account Service"]
+    Account --> ClientSvc["Client Service"]
+    Account --> DB[("Database")]
+
+    style Client fill:#667eea
+    style Gateway fill:#fff3e0
+    style Account fill:#4facfe
+    style ClientSvc fill:#4facfe
+    style DB fill:#43e97b
 ```
-Client → Gateway → Account Service → Client Service
-                         ↓
-                    Database
-```
+
+</details>
+
+![width:70%](images/08-microservices-architecture-diagram-9.png)
+
 
 **Question**: Where is the slowness?
 
@@ -1521,18 +1577,24 @@ application_account_transaction_duration_seconds_sum 5.234
 - **A**vailability: Every request gets a response
 - **P**artition Tolerance: System works despite network failures
 
+<details>
+<summary>📝 Original Mermaid Code (click to expand)</summary>
+
+```mermaid
+graph TB
+    C["Consistency"] --- A["Availability"]
+    A --- P["Partition Tolerance"]
+    P --- C
+
+    style C fill:#667eea
+    style A fill:#4facfe
+    style P fill:#43e97b
 ```
-        Consistency
-            /\
-           /  \
-          /    \
-         /  CA  \
-        /        \
-       /          \
-      /____________\
-Availability    Partition
-                Tolerance
-```
+
+</details>
+
+![width:70%](images/08-microservices-architecture-diagram-10.png)
+
 
 ### In Practice
 - Network partitions will happen (P is required)
@@ -1582,33 +1644,26 @@ Availability    Partition
 
 ### Event-Driven Approach
 
+<details>
+<summary>📝 Original Mermaid Code (click to expand)</summary>
+
+```mermaid
+sequenceDiagram
+    participant Account as Account Service
+    participant Client as Client Service
+
+    Account->>Client: 1. Create Account
+    Client-->>Account: 2. AccountCreated Event
+    Account->>Client: 3. Verify Client
+    Client-->>Account: 4a. ClientVerified Event (Success)
+    Client-->>Account: 4b. ClientNotFound Event (Failure)
+    Note over Account: 5. Delete Account<br/>(Compensating Transaction)
 ```
-┌─────────────┐                    ┌─────────────┐
-│   Account   │                    │   Client    │
-│   Service   │                    │   Service   │
-└──────┬──────┘                    └──────┬──────┘
-       │                                  │
-       │ 1. Create Account                │
-       │────────────────────────────────► │
-       │                                  │
-       │ 2. AccountCreated Event          │
-       │◄──────────────────────────────── │
-       │                                  │
-       │ 3. Verify Client                 │
-       │────────────────────────────────► │
-       │                                  │
-       │ 4a. ClientVerified Event         │
-       │◄──────────────────────────────── │
-       │    (Success)                     │
-       │                                  │
-       │ 4b. ClientNotFound Event         │
-       │◄──────────────────────────────── │
-       │    (Failure)                     │
-       │                                  │
-       │ 5. Delete Account                │
-       │    (Compensating Transaction)    │
-       │                                  │
-```
+
+</details>
+
+![width:70%](images/08-microservices-architecture-diagram-11.png)
+
 
 ---
 
@@ -1616,25 +1671,25 @@ Availability    Partition
 
 ### Centralized Coordinator
 
+<details>
+<summary>📝 Original Mermaid Code (click to expand)</summary>
+
+```mermaid
+sequenceDiagram
+    participant Saga as Saga Coordinator
+    participant Account as Account Service
+    participant Client as Client Service
+
+    Saga->>Account: 1. Create Account
+    Saga->>Client: 2. Verify Client
+    Saga->>Account: 3a. Success: Confirm Account
+    Saga->>Account: 3b. Failure: Delete Account
 ```
-┌─────────────┐
-│    Saga     │
-│ Coordinator │
-└──────┬──────┘
-       │
-       │ 1. Create Account
-       ├────────────────────► Account Service
-       │
-       │ 2. Verify Client
-       ├────────────────────► Client Service
-       │
-       │ 3a. Success: Confirm Account
-       ├────────────────────► Account Service
-       │
-       │ 3b. Failure: Delete Account
-       ├────────────────────► Account Service
-       │
-```
+
+</details>
+
+![width:70%](images/08-microservices-architecture-diagram-12.png)
+
 
 ---
 
@@ -1671,19 +1726,25 @@ VALUES (1, 'MoneyDeposited', '{"amount": 500}', NOW());
 
 ### Command Query Responsibility Segregation
 
+<details>
+<summary>📝 Original Mermaid Code (click to expand)</summary>
+
+```mermaid
+graph TB
+    App["Application"]
+    App -->|Commands| Write["Write Model<br/>(Normalized)"]
+    App -->|Queries| Read["Read Model<br/>(Denormalized)"]
+    Write -->|Events| Read
+
+    style App fill:#667eea
+    style Write fill:#4facfe
+    style Read fill:#43e97b
 ```
-┌─────────────────────────────────────────────────┐
-│                  Application                     │
-└────────┬────────────────────────────┬───────────┘
-         │                            │
-    Commands                      Queries
-         │                            │
-┌────────▼────────┐         ┌────────▼────────┐
-│  Write Model    │         │   Read Model    │
-│  (Normalized)   │────────►│  (Denormalized) │
-│                 │ Events  │                 │
-└─────────────────┘         └─────────────────┘
-```
+
+</details>
+
+![width:70%](images/08-microservices-architecture-diagram-13.png)
+
 
 ### Benefits
 - Optimize read and write models separately
@@ -1991,17 +2052,25 @@ spec:
 
 ### Continuous Integration/Continuous Deployment
 
+<details>
+<summary>📝 Original Mermaid Code (click to expand)</summary>
+
+```mermaid
+graph LR
+    Code["Code Commit<br/>(GitHub)"] --> Build["Build<br/>(Maven)"]
+    Build --> Test["Test<br/>(JUnit Integration Tests)"]
+    Test --> Deploy["Deploy<br/>(Kubernetes)"]
+
+    style Code fill:#667eea
+    style Build fill:#4facfe
+    style Test fill:#fff3e0
+    style Deploy fill:#43e97b
 ```
-┌──────────┐     ┌──────────┐     ┌──────────┐     ┌──────────┐
-│   Code   │────►│  Build   │────►│   Test   │────►│  Deploy  │
-│  Commit  │     │          │     │          │     │          │
-└──────────┘     └──────────┘     └──────────┘     └──────────┘
-     │                │                │                │
-     │                │                │                │
-   GitHub          Maven           JUnit          Kubernetes
-                                  Integration
-                                    Tests
-```
+
+</details>
+
+![width:70%](images/08-microservices-architecture-diagram-14.png)
+
 
 ### Pipeline Stages
 
@@ -2018,19 +2087,24 @@ spec:
 
 ### 1. **Blue-Green Deployment**
 
+<details>
+<summary>📝 Original Mermaid Code (click to expand)</summary>
+
+```mermaid
+graph TB
+    LB["Load Balancer"]
+    LB -->|Switch traffic| Blue["Blue (v1.0)<br/>Active"]
+    Blue -->|Switch| Green["Green (v2.0)<br/>Standby"]
+
+    style LB fill:#667eea
+    style Blue fill:#4facfe
+    style Green fill:#43e97b
 ```
-┌─────────────┐
-│Load Balancer│
-└──────┬──────┘
-       │
-       │ Switch traffic
-       │
-   ┌───▼────┐        ┌─────────┐
-   │ Blue   │        │ Green   │
-   │(v1.0)  │        │ (v2.0)  │
-   │Active  │───────►│ Standby │
-   └────────┘        └─────────┘
-```
+
+</details>
+
+![width:70%](images/08-microservices-architecture-diagram-15.png)
+
 
 **Benefits**: Instant rollback, zero downtime
 **Drawbacks**: Requires double resources
@@ -2041,18 +2115,24 @@ spec:
 
 ### 2. **Canary Deployment**
 
+<details>
+<summary>📝 Original Mermaid Code (click to expand)</summary>
+
+```mermaid
+graph TB
+    LB["Load Balancer"]
+    LB -->|90%| V1["v1.0"]
+    LB -->|10%| V2["v2.0"]
+
+    style LB fill:#667eea
+    style V1 fill:#4facfe
+    style V2 fill:#43e97b
 ```
-┌─────────────┐
-│Load Balancer│
-└──────┬──────┘
-       │
-       ├─────────────┐
-       │             │
-   ┌───▼────┐    ┌──▼─────┐
-   │ v1.0   │    │ v2.0   │
-   │  90%   │    │  10%   │
-   └────────┘    └────────┘
-```
+
+</details>
+
+![width:70%](images/08-microservices-architecture-diagram-16.png)
+
 
 **Benefits**: Gradual rollout, early problem detection
 **Drawbacks**: Complex routing, longer deployment time
@@ -2100,49 +2180,60 @@ Step 5: [v2] [v2] [v2] [v2]
 
 ### Common Tools
 
+<details>
+<summary>📝 Original Mermaid Code (click to expand)</summary>
+
+```mermaid
+graph TB
+    Grafana["Grafana (Visualization)"]
+    Prometheus["Prometheus (Metrics Storage)"]
+    MPMetrics["MicroProfile Metrics (Exporters)"]
+    Services["Microservices"]
+    Services --> MPMetrics
+    MPMetrics --> Prometheus
+    Prometheus --> Grafana
+
+    style Grafana fill:#667eea
+    style Prometheus fill:#4facfe
+    style MPMetrics fill:#fff3e0
+    style Services fill:#43e97b
 ```
-┌─────────────────────────────────────────────┐
-│              Grafana (Visualization)         │
-└────────────────┬────────────────────────────┘
-                 │
-┌────────────────▼────────────────────────────┐
-│         Prometheus (Metrics Storage)         │
-└────────────────┬────────────────────────────┘
-                 │
-┌────────────────▼────────────────────────────┐
-│     MicroProfile Metrics (Exporters)         │
-└────────────────┬────────────────────────────┘
-                 │
-┌────────────────▼────────────────────────────┐
-│           Microservices                      │
-└──────────────────────────────────────────────┘
-```
+
+</details>
+
+![width:70%](images/08-microservices-architecture-diagram-17.png)
+
 
 ---
 
 ## Logging Stack (ELK)
 
+<details>
+<summary>📝 Original Mermaid Code (click to expand)</summary>
+
+```mermaid
+graph TB
+    Kibana["Kibana (Visualization)"]
+    Elasticsearch["Elasticsearch (Storage & Search)"]
+    Logstash["Logstash (Processing)"]
+    Filebeat["Filebeat (Log Shipping)"]
+    Services["Microservices"]
+    Services --> Filebeat
+    Filebeat --> Logstash
+    Logstash --> Elasticsearch
+    Elasticsearch --> Kibana
+
+    style Kibana fill:#667eea
+    style Elasticsearch fill:#4facfe
+    style Logstash fill:#f093fb
+    style Filebeat fill:#fff3e0
+    style Services fill:#43e97b
 ```
-┌─────────────────────────────────────────────┐
-│         Kibana (Visualization)               │
-└────────────────┬────────────────────────────┘
-                 │
-┌────────────────▼────────────────────────────┐
-│      Elasticsearch (Storage & Search)        │
-└────────────────┬────────────────────────────┘
-                 │
-┌────────────────▼────────────────────────────┐
-│       Logstash (Processing)                  │
-└────────────────┬────────────────────────────┘
-                 │
-┌────────────────▼────────────────────────────┐
-│     Filebeat (Log Shipping)                  │
-└────────────────┬────────────────────────────┘
-                 │
-┌────────────────▼────────────────────────────┐
-│           Microservices                      │
-└──────────────────────────────────────────────┘
-```
+
+</details>
+
+![width:70%](images/08-microservices-architecture-diagram-18.png)
+
 
 ---
 

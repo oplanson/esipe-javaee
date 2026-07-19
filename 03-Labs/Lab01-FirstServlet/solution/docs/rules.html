@@ -1,0 +1,244 @@
+<!-- © Copyright 2026 Olivier Planson. All rights reserved. Reproduction prohibited. Made with IBM Bob. -->
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>Règles de Gestion — Banking Application Documentation</title>
+  <link rel="stylesheet" href="assets/carbon.css"/>
+</head>
+<body>
+<header class="cds--header">
+  <a class="cds--header__name" href="index.html">Banking Application<span>Documentation Technique</span></a>
+</header>
+<div class="cds--shell">
+  <nav class="cds--side-nav">
+    <p class="cds--side-nav__section-title">Documentation</p>
+    <a class="cds--side-nav__link" href="index.html">&#x2299; Vue d'ensemble</a>
+    <a class="cds--side-nav__link" href="functional.html">&#x229E; Architecture Fonctionnelle</a>
+    <a class="cds--side-nav__link" href="technical.html">&#x229F; Architecture Technique</a>
+    <a class="cds--side-nav__link" href="sequences.html">&#x21C4; Diagrammes de Séquences</a>
+    <a class="cds--side-nav__link active" href="rules.html">&#x2261; Règles de Gestion</a>
+  </nav>
+  <main class="cds--content">
+    <div class="breadcrumb"><a href="index.html">Accueil</a> <span>/</span> Règles de Gestion</div>
+
+    <h1>Règles de Gestion</h1>
+    <p class="page-lead">20 règles numérotées R1–R20 extraites du code source — validation des données, stockage, navigation, sécurité et observabilité.</p>
+
+    <!-- ─ Légende ─ -->
+    <h2>Légende</h2>
+    <div class="tile-grid">
+      <div class="cds--tile">
+        <span class="cds--tag cds--tag--blue">Standard</span>
+        <h3>Règle standard</h3>
+        <p>Comportement fonctionnel normal de l'application — validation courante, navigation, affichage.</p>
+      </div>
+      <div class="cds--tile" style="border-left:4px solid var(--cds-support-error)">
+        <span class="cds--tag cds--tag--red">Critique</span>
+        <h3>Règle critique</h3>
+        <p>Sécurité ou intégrité des données — violation possible en cas de non-respect, avec impact direct sur la sécurité ou la cohérence.</p>
+      </div>
+      <div class="cds--tile" style="border-left:4px solid var(--cds-support-warning)">
+        <span class="cds--tag cds--tag--warm">Avertissement</span>
+        <h3>Règle avertissement</h3>
+        <p>Limitation connue ou comportement inhabituel à connaître (pas de persistance, données volatiles, etc.).</p>
+      </div>
+    </div>
+
+    <!-- ─ Index rapide ─ -->
+    <h2>Accès rapide</h2>
+    <div class="rules-index">
+      <a href="#r1">R1</a>
+      <a href="#r2">R2</a>
+      <a href="#r3">R3</a>
+      <a href="#r4">R4</a>
+      <a href="#r5">R5</a>
+      <a href="#r6" class="crit">R6</a>
+      <a href="#r7">R7</a>
+      <a href="#r8" class="warn">R8</a>
+      <a href="#r9" class="warn">R9</a>
+      <a href="#r10" class="warn">R10</a>
+      <a href="#r11">R11</a>
+      <a href="#r12">R12</a>
+      <a href="#r13">R13</a>
+      <a href="#r14" class="crit">R14</a>
+      <a href="#r15" class="crit">R15</a>
+      <a href="#r16">R16</a>
+      <a href="#r17" class="crit">R17</a>
+      <a href="#r18">R18</a>
+      <a href="#r19">R19</a>
+      <a href="#r20">R20</a>
+    </div>
+
+    <!-- ─ Cat 1: Validation des données ─ -->
+    <div class="rule-category">1. Validation des données</div>
+
+    <div class="rule-card" id="r1">
+      <div class="rule-id">R1 <span class="cds--tag cds--tag--blue">Client-side</span></div>
+      <div class="rule-title">Champs obligatoires — alerte JavaScript</div>
+      <div class="rule-desc">La fonction <code>validateForm()</code> dans <code>add-client.html</code> vérifie que les trois champs <code>name</code>, <code>email</code> et <code>phone</code> sont non vides après <code>trim()</code>. Si l'un est vide, une <code>alert()</code> est affichée et <code>return false</code> empêche la soumission du formulaire.</div>
+    </div>
+
+    <div class="rule-card" id="r2">
+      <div class="rule-id">R2 <span class="cds--tag cds--tag--blue">Client-side</span></div>
+      <div class="rule-title">Longueur minimale du nom — 2 caractères</div>
+      <div class="rule-desc">JavaScript vérifie que <code>name.length &lt; 2</code> après trim. Si la condition est vraie, une alerte <em>"Name must be at least 2 characters long!"</em> est affichée et la soumission est bloquée. L'attribut HTML <code>minlength="2"</code> fournit la même contrainte au niveau du navigateur.</div>
+    </div>
+
+    <div class="rule-card" id="r3">
+      <div class="rule-id">R3 <span class="cds--tag cds--tag--blue">Client-side</span></div>
+      <div class="rule-title">Validation du format email par regex</div>
+      <div class="rule-desc">JavaScript applique la regex <code>/^[^\s@]+@[^\s@]+\.[^\s@]+$/</code> à la valeur du champ email. En cas d'échec, une alerte <em>"Please enter a valid email address!"</em> est affichée. L'attribut HTML <code>type="email"</code> fournit une validation complémentaire native.</div>
+    </div>
+
+    <div class="rule-card" id="r4">
+      <div class="rule-id">R4 <span class="cds--tag cds--tag--blue">Client-side</span></div>
+      <div class="rule-title">Validation du format téléphone par regex</div>
+      <div class="rule-desc">JavaScript applique la regex <code>/^[\d\s\-\+\(\)]+$/</code> à la valeur du champ phone. En cas d'échec, une alerte <em>"Please enter a valid phone number!"</em> est affichée. L'attribut HTML <code>type="tel"</code> est utilisé sur le champ.</div>
+    </div>
+
+    <div class="rule-card" id="r5">
+      <div class="rule-id">R5 <span class="cds--tag cds--tag--green">Server-side</span></div>
+      <div class="rule-title">Validation serveur — champs non vides</div>
+      <div class="rule-desc">Dans <code>ClientListServlet.doPost()</code>, les paramètres <code>name</code>, <code>email</code> et <code>phone</code> sont relus depuis la requête via <code>request.getParameter()</code>. Si l'un est <code>null</code> ou vide après <code>trim()</code>, le servlet appelle <code>response.sendRedirect("add-client.html?error=missing")</code> et sort immédiatement avec <code>return</code>.</div>
+    </div>
+
+    <div class="rule-card critical" id="r6">
+      <div class="rule-id">R6 <span class="cds--tag cds--tag--red">Critique</span> <span class="cds--tag cds--tag--green">Server-side</span></div>
+      <div class="rule-title">Échappement XSS — escapeHtml() obligatoire</div>
+      <div class="rule-desc">Avant toute insertion d'une valeur client dans le HTML de réponse, la méthode <code>escapeHtml()</code> est appelée. Elle remplace <code>&amp;</code> → <code>&amp;amp;</code>, <code>&lt;</code> → <code>&amp;lt;</code>, <code>&gt;</code> → <code>&amp;gt;</code>, <code>"</code> → <code>&amp;quot;</code>, <code>'</code> → <code>&amp;#39;</code>. Sans cet échappement, une injection XSS serait possible via les champs name, email, phone.</div>
+    </div>
+
+    <div class="rule-card" id="r7">
+      <div class="rule-id">R7 <span class="cds--tag cds--tag--green">Server-side</span></div>
+      <div class="rule-title">Trim des valeurs avant stockage</div>
+      <div class="rule-desc">Dans <code>doPost()</code>, les trois champs sont stockés après <code>trim()</code> explicite : <code>name.trim()</code>, <code>email.trim()</code>, <code>phone.trim()</code>. Ainsi, les espaces en début et fin de chaîne ne sont pas conservés en base mémoire.</div>
+    </div>
+
+    <div class="rule-card" id="r8">
+      <div class="rule-id">R8 <span class="cds--tag cds--tag--warm">Limitation</span></div>
+      <div class="rule-title">Longueurs maximales — contraintes HTML uniquement</div>
+      <div class="rule-desc">Les attributs HTML <code>maxlength="100"</code> (name, email) et <code>maxlength="20"</code> (phone) limitent la longueur côté navigateur. Aucune vérification de longueur maximale n'est effectuée côté serveur dans <code>doPost()</code>. Un client HTTP sans navigateur pourrait soumettre des valeurs plus longues.</div>
+    </div>
+
+    <!-- ─ Cat 2: Stockage des données ─ -->
+    <div class="rule-category">2. Stockage des données</div>
+
+    <div class="rule-card warning" id="r9">
+      <div class="rule-id">R9 <span class="cds--tag cds--tag--warm">Avertissement</span></div>
+      <div class="rule-title">Stockage en mémoire uniquement — données volatiles</div>
+      <div class="rule-desc">Tous les clients sont stockés dans une <code>CopyOnWriteArrayList&lt;Client&gt;</code> champ d'instance du servlet <code>ClientListServlet</code>. Toutes les données sont perdues à chaque redémarrage du serveur, rechargement du WAR ou arrêt du conteneur. Aucune base de données n'est utilisée dans ce Lab 01.</div>
+    </div>
+
+    <div class="rule-card" id="r10">
+      <div class="rule-id">R10 <span class="cds--tag cds--tag--warn">Thread-Safety</span></div>
+      <div class="rule-title">Concurrence — CopyOnWriteArrayList</div>
+      <div class="rule-desc">Le servlet étant un singleton partagé entre tous les threads de requête, la liste <code>clients</code> est déclarée <code>final</code> et de type <code>CopyOnWriteArrayList</code>. Les itérations dans <code>doGet()</code> et les ajouts dans <code>doPost()</code> sont ainsi thread-safe sans synchronisation explicite.</div>
+    </div>
+
+    <div class="rule-card warning" id="r11">
+      <div class="rule-id">R11 <span class="cds--tag cds--tag--blue">Bootstrap</span></div>
+      <div class="rule-title">Données de démarrage — 5 clients pré-chargés</div>
+      <div class="rule-desc">La méthode <code>init()</code> de <code>ClientListServlet</code> charge 5 clients hardcodés (IDs 1 à 5) à chaque démarrage du servlet : John Smith, Emma Johnson, Michael Brown, Sarah Davis, James Wilson. Ces données sont toujours présentes après un redémarrage.</div>
+    </div>
+
+    <div class="rule-card" id="r12">
+      <div class="rule-id">R12 <span class="cds--tag cds--tag--green">ID</span></div>
+      <div class="rule-title">Génération d'identifiant — max + 1</div>
+      <div class="rule-desc">L'ID d'un nouveau client est calculé par <code>clients.stream().mapToLong(Client::getId).max().orElse(0L) + 1</code>. En l'absence de clients, l'ID commence à 1. Cette génération n'est pas atomique mais est suffisante dans un contexte mono-instance en mémoire.</div>
+    </div>
+
+    <!-- ─ Cat 3: Navigation et interface ─ -->
+    <div class="rule-category">3. Navigation et interface</div>
+
+    <div class="rule-card" id="r13">
+      <div class="rule-id">R13 <span class="cds--tag cds--tag--blue">PRG</span></div>
+      <div class="rule-title">Pattern Post-Redirect-Get après création réussie</div>
+      <div class="rule-desc">Après un <code>POST /clients</code> réussi, le servlet appelle <code>response.sendRedirect("clients?message=success")</code>. Le navigateur reçoit un HTTP 302, puis effectue un <code>GET /clients?message=success</code>. Ce pattern PRG empêche la double-soumission lors d'un rechargement de page.</div>
+    </div>
+
+    <div class="rule-card" id="r14">
+      <div class="rule-id">R14 <span class="cds--tag cds--tag--green">UX</span></div>
+      <div class="rule-title">Bannière de succès — paramètre URL message=success</div>
+      <div class="rule-desc">Dans <code>ClientListServlet.doGet()</code>, si <code>request.getParameter("message")</code> retourne <code>"success"</code> (comparaison avec <code>.equals()</code>), une div <code>&lt;div class='message success'&gt;Client added successfully!&lt;/div&gt;</code> est injectée en haut de la liste. La bannière disparaît lors de tout rechargement sans ce paramètre.</div>
+    </div>
+
+    <div class="rule-card" id="r15">
+      <div class="rule-id">R15 <span class="cds--tag cds--tag--blue">UX</span></div>
+      <div class="rule-title">Message d'erreur côté client — paramètre URL error=missing</div>
+      <div class="rule-desc">Dans <code>add-client.html</code>, le JavaScript <code>window.onload</code> lit <code>URLSearchParams</code> et, si le paramètre <code>error=missing</code> est présent, insère dynamiquement une div d'erreur rouge avant le formulaire : <em>"⚠ All fields are required. Please fill in all information."</em></div>
+    </div>
+
+    <div class="rule-card" id="r16">
+      <div class="rule-id">R16 <span class="cds--tag cds--tag--blue">Navigation</span></div>
+      <div class="rule-title">Welcome file — redirection vers index.html</div>
+      <div class="rule-desc">Le fichier <code>web.xml</code> déclare <code>index.html</code> comme <code>welcome-file</code>. Toute requête <code>GET /</code> sans chemin explicite est redirigée vers <code>index.html</code> par Open Liberty.</div>
+    </div>
+
+    <!-- ─ Cat 4: Sécurité et session ─ -->
+    <div class="rule-category">4. Sécurité et session</div>
+
+    <div class="rule-card critical" id="r17">
+      <div class="rule-id">R17 <span class="cds--tag cds--tag--red">Critique</span></div>
+      <div class="rule-title">Cookie de session HttpOnly</div>
+      <div class="rule-desc">La configuration <code>web.xml</code> impose <code>&lt;http-only&gt;true&lt;/http-only&gt;</code> sur les cookies de session. Cela empêche l'accès au cookie JSESSIONID via JavaScript (<code>document.cookie</code>), réduisant le risque de vol de session par injection XSS.</div>
+    </div>
+
+    <div class="rule-card" id="r18">
+      <div class="rule-id">R18 <span class="cds--tag cds--tag--blue">Session</span></div>
+      <div class="rule-title">Timeout de session — 30 minutes</div>
+      <div class="rule-desc">Le fichier <code>web.xml</code> configure <code>&lt;session-timeout&gt;30&lt;/session-timeout&gt;</code>. Les sessions HTTP inactives depuis plus de 30 minutes sont invalidées automatiquement par le conteneur Open Liberty.</div>
+    </div>
+
+    <div class="rule-card critical" id="r19">
+      <div class="rule-id">R19 <span class="cds--tag cds--tag--red">Critique</span></div>
+      <div class="rule-title">Encodage UTF-8 des réponses</div>
+      <div class="rule-desc">Les deux servlets appellent <code>response.setContentType("text/html;charset=UTF-8")</code> avant d'écrire la réponse. Cela garantit l'encodage correct des caractères spéciaux dans toutes les réponses dynamiques.</div>
+    </div>
+
+    <!-- ─ Cat 5: Observabilité et opérations ─ -->
+    <div class="rule-category">5. Observabilité et opérations</div>
+
+    <div class="rule-card" id="r20">
+      <div class="rule-id">R20 <span class="cds--tag cds--tag--teal">Log</span></div>
+      <div class="rule-title">Log des opérations significatives</div>
+      <div class="rule-desc"><code>ClientListServlet</code> utilise la méthode <code>log()</code> héritée de <code>GenericServlet</code> pour deux événements : (1) à l'initialisation : <em>"ClientListServlet initialized with 5 sample clients"</em>, (2) à chaque ajout : <em>"New client added: Client{id=N, name='...', email='...', phone='...'}"</em> via le <code>toString()</code> du POJO. Les logs apparaissent dans les traces Open Liberty (spec <code>*=info</code>).</div>
+    </div>
+
+    <hr class="cds--divider"/>
+
+    <!-- ─ Table récapitulative ─ -->
+    <h2>Tableau récapitulatif</h2>
+    <div class="cds--data-table-container">
+      <table class="cds--data-table">
+        <thead><tr><th>ID</th><th>Titre</th><th>Catégorie</th><th>Niveau</th></tr></thead>
+        <tbody>
+          <tr><td><a href="#r1">R1</a></td><td>Champs obligatoires — alerte JavaScript</td><td>Validation des données</td><td><span class="cds--tag cds--tag--blue">Standard</span></td></tr>
+          <tr><td><a href="#r2">R2</a></td><td>Longueur minimale du nom — 2 caractères</td><td>Validation des données</td><td><span class="cds--tag cds--tag--blue">Standard</span></td></tr>
+          <tr><td><a href="#r3">R3</a></td><td>Validation du format email par regex</td><td>Validation des données</td><td><span class="cds--tag cds--tag--blue">Standard</span></td></tr>
+          <tr><td><a href="#r4">R4</a></td><td>Validation du format téléphone par regex</td><td>Validation des données</td><td><span class="cds--tag cds--tag--blue">Standard</span></td></tr>
+          <tr><td><a href="#r5">R5</a></td><td>Validation serveur — champs non vides</td><td>Validation des données</td><td><span class="cds--tag cds--tag--blue">Standard</span></td></tr>
+          <tr><td><a href="#r6">R6</a></td><td>Échappement XSS — escapeHtml()</td><td>Validation des données</td><td><span class="cds--tag cds--tag--red">Critique</span></td></tr>
+          <tr><td><a href="#r7">R7</a></td><td>Trim des valeurs avant stockage</td><td>Validation des données</td><td><span class="cds--tag cds--tag--blue">Standard</span></td></tr>
+          <tr><td><a href="#r8">R8</a></td><td>Longueurs maximales — HTML uniquement</td><td>Validation des données</td><td><span class="cds--tag cds--tag--warm">Avertissement</span></td></tr>
+          <tr><td><a href="#r9">R9</a></td><td>Stockage en mémoire uniquement</td><td>Stockage des données</td><td><span class="cds--tag cds--tag--warm">Avertissement</span></td></tr>
+          <tr><td><a href="#r10">R10</a></td><td>Concurrence — CopyOnWriteArrayList</td><td>Stockage des données</td><td><span class="cds--tag cds--tag--warm">Avertissement</span></td></tr>
+          <tr><td><a href="#r11">R11</a></td><td>Données de démarrage — 5 clients</td><td>Stockage des données</td><td><span class="cds--tag cds--tag--blue">Standard</span></td></tr>
+          <tr><td><a href="#r12">R12</a></td><td>Génération d'identifiant — max + 1</td><td>Stockage des données</td><td><span class="cds--tag cds--tag--blue">Standard</span></td></tr>
+          <tr><td><a href="#r13">R13</a></td><td>Pattern Post-Redirect-Get</td><td>Navigation et interface</td><td><span class="cds--tag cds--tag--blue">Standard</span></td></tr>
+          <tr><td><a href="#r14">R14</a></td><td>Bannière de succès</td><td>Navigation et interface</td><td><span class="cds--tag cds--tag--blue">Standard</span></td></tr>
+          <tr><td><a href="#r15">R15</a></td><td>Message d'erreur client</td><td>Navigation et interface</td><td><span class="cds--tag cds--tag--blue">Standard</span></td></tr>
+          <tr><td><a href="#r16">R16</a></td><td>Welcome file — index.html</td><td>Navigation et interface</td><td><span class="cds--tag cds--tag--blue">Standard</span></td></tr>
+          <tr><td><a href="#r17">R17</a></td><td>Cookie de session HttpOnly</td><td>Sécurité et session</td><td><span class="cds--tag cds--tag--red">Critique</span></td></tr>
+          <tr><td><a href="#r18">R18</a></td><td>Timeout de session 30 min</td><td>Sécurité et session</td><td><span class="cds--tag cds--tag--blue">Standard</span></td></tr>
+          <tr><td><a href="#r19">R19</a></td><td>Encodage UTF-8 des réponses</td><td>Sécurité et session</td><td><span class="cds--tag cds--tag--red">Critique</span></td></tr>
+          <tr><td><a href="#r20">R20</a></td><td>Log des opérations significatives</td><td>Observabilité et opérations</td><td><span class="cds--tag cds--tag--blue">Standard</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </main>
+</div>
+<footer class="cds--footer">Banking Application &middot; Documentation Technique v1.0 &middot; &copy; 2025 Olivier Planson &middot; Made with IBM Bob</footer>
+</body>
+</html>

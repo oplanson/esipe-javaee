@@ -1,0 +1,144 @@
+<!-- © Copyright 2026 Olivier Planson. All rights reserved. Reproduction prohibited. Made with IBM Bob. -->
+
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<style>
+:root{--bg:#fff;--layer:#f4f4f4;--border:#e0e0e0;--text:#161616;--muted:#525252;--interactive:#0f62fe}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'IBM Plex Sans','Helvetica Neue',Arial,sans-serif;background:#f4f4f4;color:#161616;padding:2rem;line-height:1.5}
+h2{font-size:.8rem;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:#525252;margin-bottom:.5rem;margin-top:2rem}
+.slide{background:#fff;border:1px solid #e0e0e0;border-radius:4px;padding:1.75rem 2rem;max-width:860px;margin:0 auto 2rem;box-shadow:0 1px 3px rgba(0,0,0,.06)}
+.slide h1{font-size:1.35rem;font-weight:300;margin-bottom:.3rem}
+.slide h3{font-size:.9rem;font-weight:600;margin:.6rem 0 .25rem;color:#525252}
+.note{border-left:3px solid #0f62fe;padding:.4rem .85rem;color:#525252;font-style:italic;margin:.6rem 0;font-size:.83rem}
+.note strong{color:#0f62fe;font-style:normal}
+/* timeline */
+.mermaid-timeline{margin:.75rem 0;font-size:.8125rem}
+.mermaid-timeline__title{font-size:.68rem;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:#525252;margin-bottom:.5rem}
+.mermaid-timeline__track{display:flex;gap:0;border:1px solid #e0e0e0;border-radius:4px;overflow:hidden}
+.mermaid-timeline__section{flex:1;min-width:0;border-right:2px solid var(--sec-border,#e0e0e0);background:var(--sec-bg,#f4f4f4)}
+.mermaid-timeline__section:last-child{border-right:none}
+.mermaid-timeline__section-label{font-size:.6rem;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--sec-txt,#525252);background:var(--sec-bg);padding:.3rem .5rem;border-bottom:1px solid var(--sec-border,#e0e0e0)}
+.mermaid-timeline__entries{padding:.35rem .35rem .45rem;display:flex;flex-direction:column;gap:.38rem}
+.mermaid-timeline__entry{position:relative;padding-left:.85rem}
+.mermaid-timeline__entry--star .mermaid-timeline__label{font-weight:700;color:#0f62fe}
+.mermaid-timeline__year{font-size:.57rem;font-weight:700;color:var(--sec-txt,#525252);line-height:1;margin-bottom:.07rem}
+.mermaid-timeline__dot{position:absolute;left:.1rem;top:.5rem;width:6px;height:6px;border-radius:50%;background:var(--sec-border,#525252)}
+.mermaid-timeline__entry--star .mermaid-timeline__dot{background:#0f62fe;width:8px;height:8px;left:.05rem;top:.45rem}
+.mermaid-timeline__label{font-size:.73rem;font-weight:600;color:#161616;line-height:1.25}
+.mermaid-timeline__details{display:flex;flex-direction:column;gap:.02rem;margin-top:.07rem}
+.mermaid-timeline__details span{font-size:.64rem;color:#525252;line-height:1.25}
+footer{text-align:center;font-size:.7rem;color:#a8a8a8;border-top:1px solid #e0e0e0;padding-top:1rem;margin-top:3rem}
+</style>
+</head>
+<body>
+
+<h2>Slide 3 — What is Jakarta EE? › Evolution Timeline</h2>
+<div class="slide">
+  <h1>🎯 What is Jakarta EE?</h1>
+  <h3>Evolution Timeline:</h3>
+
+  <div class="note"><strong>⭐ This course targets Jakarta EE 10</strong> — newer versions exist but are not yet widely adopted in production.</div>
+
+  <div class="mermaid-timeline">
+    <div class="mermaid-timeline__title">Jakarta EE — Evolution from J2EE to Jakarta EE 11</div>
+    <div class="mermaid-timeline__track">
+
+      <div class="mermaid-timeline__section" style="--sec-bg:#d0e2ff;--sec-border:#0043ce;--sec-txt:#0043ce">
+        <div class="mermaid-timeline__section-label">J2EE era</div>
+        <div class="mermaid-timeline__entries">
+          <div class="mermaid-timeline__entry">
+            <div class="mermaid-timeline__year">1999</div><div class="mermaid-timeline__dot"></div>
+            <div class="mermaid-timeline__label">J2EE 1.2</div>
+            <div class="mermaid-timeline__details"><span>Servlets, JSP, EJB 1.1</span></div>
+          </div>
+          <div class="mermaid-timeline__entry">
+            <div class="mermaid-timeline__year">2001</div><div class="mermaid-timeline__dot"></div>
+            <div class="mermaid-timeline__label">J2EE 1.3</div>
+            <div class="mermaid-timeline__details"><span>CMP EJB, JMS, Connectors</span></div>
+          </div>
+          <div class="mermaid-timeline__entry">
+            <div class="mermaid-timeline__year">2003</div><div class="mermaid-timeline__dot"></div>
+            <div class="mermaid-timeline__label">J2EE 1.4</div>
+            <div class="mermaid-timeline__details"><span>Web Services (JAX-RPC)</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="mermaid-timeline__section" style="--sec-bg:#defbe6;--sec-border:#0e6027;--sec-txt:#0e6027">
+        <div class="mermaid-timeline__section-label">Java EE era</div>
+        <div class="mermaid-timeline__entries">
+          <div class="mermaid-timeline__entry">
+            <div class="mermaid-timeline__year">2006</div><div class="mermaid-timeline__dot"></div>
+            <div class="mermaid-timeline__label">Java EE 5</div>
+            <div class="mermaid-timeline__details"><span>Annotations, EJB 3.0, JPA 1.0</span></div>
+          </div>
+          <div class="mermaid-timeline__entry">
+            <div class="mermaid-timeline__year">2009</div><div class="mermaid-timeline__dot"></div>
+            <div class="mermaid-timeline__label">Java EE 6</div>
+            <div class="mermaid-timeline__details"><span>CDI, JAX-RS, Bean Validation</span></div>
+          </div>
+          <div class="mermaid-timeline__entry">
+            <div class="mermaid-timeline__year">2013</div><div class="mermaid-timeline__dot"></div>
+            <div class="mermaid-timeline__label">Java EE 7</div>
+            <div class="mermaid-timeline__details"><span>WebSocket, JSON-P, Batch</span></div>
+          </div>
+          <div class="mermaid-timeline__entry">
+            <div class="mermaid-timeline__year">2017</div><div class="mermaid-timeline__dot"></div>
+            <div class="mermaid-timeline__label">Java EE 8</div>
+            <div class="mermaid-timeline__details"><span>JSON-B, Security API, HTTP/2</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="mermaid-timeline__section" style="--sec-bg:#e8daff;--sec-border:#491d8b;--sec-txt:#491d8b">
+        <div class="mermaid-timeline__section-label">Jakarta EE (transition)</div>
+        <div class="mermaid-timeline__entries">
+          <div class="mermaid-timeline__entry">
+            <div class="mermaid-timeline__year">2019</div><div class="mermaid-timeline__dot"></div>
+            <div class="mermaid-timeline__label">Jakarta EE 8</div>
+            <div class="mermaid-timeline__details"><span>Eclipse Foundation — same APIs</span></div>
+          </div>
+          <div class="mermaid-timeline__entry">
+            <div class="mermaid-timeline__year">2020</div><div class="mermaid-timeline__dot"></div>
+            <div class="mermaid-timeline__label">Jakarta EE 9</div>
+            <div class="mermaid-timeline__details"><span>javax.* → jakarta.* namespace</span></div>
+          </div>
+          <div class="mermaid-timeline__entry">
+            <div class="mermaid-timeline__year">2021</div><div class="mermaid-timeline__dot"></div>
+            <div class="mermaid-timeline__label">Jakarta EE 9.1</div>
+            <div class="mermaid-timeline__details"><span>Java 11 support</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="mermaid-timeline__section" style="--sec-bg:#d9fbfb;--sec-border:#004144;--sec-txt:#004144">
+        <div class="mermaid-timeline__section-label">Jakarta EE (current)</div>
+        <div class="mermaid-timeline__entries">
+          <div class="mermaid-timeline__entry mermaid-timeline__entry--star">
+            <div class="mermaid-timeline__year">2022</div><div class="mermaid-timeline__dot"></div>
+            <div class="mermaid-timeline__label">Jakarta EE 10 ⭐</div>
+            <div class="mermaid-timeline__details"><span>CDI Lite, Core Profile, Java 11+</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="mermaid-timeline__section" style="--sec-bg:#ffd7d9;--sec-border:#750e13;--sec-txt:#750e13">
+        <div class="mermaid-timeline__section-label">Latest</div>
+        <div class="mermaid-timeline__entries">
+          <div class="mermaid-timeline__entry">
+            <div class="mermaid-timeline__year">2024</div><div class="mermaid-timeline__dot"></div>
+            <div class="mermaid-timeline__label">Jakarta EE 11</div>
+            <div class="mermaid-timeline__details"><span>Virtual threads, Java 21+</span><span>Data API, Concurrency 3.1</span></div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<footer>Made with IBM Bob</footer>
+</body>
+</html>

@@ -1,0 +1,160 @@
+<!-- © Copyright 2026 Olivier Planson. All rights reserved. Reproduction prohibited. Made with IBM Bob. -->
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>Règles de Gestion — Banking JMS App</title>
+  <link rel="stylesheet" href="assets/carbon.css"/>
+</head>
+<body>
+<header class="cds--header">
+  <a class="cds--header__name" href="index.html">Banking JMS Application<span>Documentation Technique — Lab 05B</span></a>
+</header>
+<div class="cds--shell">
+  <nav class="cds--side-nav" aria-label="Navigation principale">
+    <p class="cds--side-nav__section-title">Documentation</p>
+    <a class="cds--side-nav__link" href="index.html"><i class="icon">⊙</i> Vue d'ensemble</a>
+    <a class="cds--side-nav__link" href="functional.html"><i class="icon">⊞</i> Architecture Fonctionnelle</a>
+    <a class="cds--side-nav__link" href="technical.html"><i class="icon">⊟</i> Architecture Technique</a>
+    <a class="cds--side-nav__link" href="sequences.html"><i class="icon">⇄</i> Diagrammes de Séquences</a>
+    <a class="cds--side-nav__link active" href="rules.html"><i class="icon">≡</i> Règles de Gestion</a>
+  </nav>
+  <main class="cds--content">
+    <nav class="cds--breadcrumb"><a href="index.html">Accueil</a><span class="sep">/</span><span class="current">Règles de Gestion</span></nav>
+    <h1>Règles de Gestion</h1>
+    <p class="page-lead">11 règles extraites du code source, couvrant la sécurité de désérialisation, la livraison garantie, les priorités de messages, le routage par sélecteur, l'acquittement et la concurrence des MDBs.</p>
+
+    <h2>Sécurité des messages</h2>
+
+    <div class="rule-card critical">
+      <div class="rule-id">R1 &nbsp;—&nbsp; TextMessage JSON obligatoire — ObjectMessage rejeté</div>
+      <div class="rule-title">Seuls les <code>TextMessage</code> avec payload JSON sont acceptés ; les <code>ObjectMessage</code> sont rejetés</div>
+      <div class="rule-desc">
+        Tous les MDBs vérifient que le message reçu est un <code>TextMessage</code>. <code>DeadLetterQueueMDB</code> rejette explicitement les <code>ObjectMessage</code> dès réception pour contrer la vulnérabilité de désérialisation Java (CVE-2015-7501). Un message de type invalide est journalisé en erreur et abandonné sans persistance.
+        <br/><strong>Source :</strong> Tous les MDBs + <code>DeadLetterQueueMDB.onMessage()</code>
+      </div>
+    </div>
+
+    <div class="rule-card critical">
+      <div class="rule-id">R2 &nbsp;—&nbsp; Propriété <code>messageFormat='JSON'</code> obligatoire</div>
+      <div class="rule-title">Chaque MDB vérifie la propriété <code>messageFormat</code> avant tout traitement</div>
+      <div class="rule-desc">
+        Avant de désérialiser le payload, chaque MDB appelle <code>msg.getStringProperty("messageFormat")</code> et vérifie que la valeur est <code>"JSON"</code>. Si la propriété est absente ou différente, le message est rejeté sans traitement et une erreur est journalisée. Cela garantit un contrat de format explicite entre le producteur et les consommateurs.
+        <br/><strong>Source :</strong> Méthodes <code>onMessage()</code> de tous les MDBs
+      </div>
+    </div>
+
+    <h2>Livraison et fiabilité</h2>
+
+    <div class="rule-card">
+      <div class="rule-id">R3 &nbsp;—&nbsp; Livraison PERSISTENT</div>
+      <div class="rule-title">Les messages sont envoyés en mode <code>PERSISTENT</code> — livraison garantie même après redémarrage</div>
+      <div class="rule-desc">
+        Le producteur configure <code>DeliveryMode.PERSISTENT</code> pour tous les envois. Le broker JMS (Liberty Messaging) persiste les messages sur disque avant d'accuser réception. En cas de redémarrage du serveur, les messages non encore consommés sont restaurés et redelivrés aux MDBs.
+        <br/><strong>Source :</strong> <code>TransactionEventProducer</code> — configuration JMS <code>deliveryMode</code>
+      </div>
+    </div>
+
+    <div class="rule-card">
+      <div class="rule-id">R4 &nbsp;—&nbsp; Priorité différenciée par type de transaction</div>
+      <div class="rule-title">TRANSFER=7 (haute priorité) &gt; WITHDRAWAL=6 &gt; DEPOSIT=5 &gt; default=4</div>
+      <div class="rule-desc">
+        <code>TransactionEventProducer</code> attribue une priorité JMS à chaque message selon le type de transaction. Les virements (TRANSFER) sont traités en premier par le broker car leur impact est le plus critique. Le broker respecte l'ordre de priorité lors de la distribution aux instances MDB disponibles.
+        <br/><strong>Source :</strong> <code>TransactionEventProducer.sendTransactionEvent()</code>
+      </div>
+    </div>
+
+    <div class="rule-card">
+      <div class="rule-id">R5 &nbsp;—&nbsp; Message selector sur <code>emailQueue</code></div>
+      <div class="rule-title">Seuls les messages portant <code>notificationType='EMAIL'</code> sont consommés par <code>EmailNotificationMDB</code></div>
+      <div class="rule-desc">
+        L'annotation <code>@ActivationConfigProperty(propertyName="messageSelector", propertyValue="notificationType='EMAIL'")</code> configure le filtre au niveau du broker. Les messages sans cette propriété ne sont jamais livrés à ce MDB, ce qui évite des traitements inutiles et garantit l'isolation des canaux.
+        <br/><strong>Source :</strong> <code>EmailNotificationMDB</code> — <code>@ActivationConfigProperty</code>
+      </div>
+    </div>
+
+    <div class="rule-card success">
+      <div class="rule-id">R6 &nbsp;—&nbsp; Souscription durable sur <code>auditTopic</code></div>
+      <div class="rule-title">Les messages du topic d'audit sont conservés si <code>AuditLoggingMDB</code> est temporairement indisponible</div>
+      <div class="rule-desc">
+        <code>AuditLoggingMDB</code> utilise un abonnement durable (<code>clientId=AuditClient</code>, <code>subscriptionName=AuditSubscription</code>). Contrairement à un abonnement non-durable, le broker retient les messages publiés pendant l'indisponibilité du MDB et les délivre à sa reconnexion. Aucun événement d'audit n'est perdu.
+        <br/><strong>Source :</strong> <code>AuditLoggingMDB</code> — <code>@ActivationConfigProperty(subscriptionDurability="Durable")</code>
+      </div>
+    </div>
+
+    <div class="rule-card">
+      <div class="rule-id">R7 &nbsp;—&nbsp; Auto-acknowledge géré par le conteneur</div>
+      <div class="rule-title">L'acquittement est automatique après traitement sans exception</div>
+      <div class="rule-desc">
+        Le mode <code>AUTO_ACKNOWLEDGE</code> est configuré via <code>@ActivationConfigProperty(propertyName="acknowledgeMode", propertyValue="Auto-acknowledge")</code>. Le conteneur EJB acquitte automatiquement le message auprès du broker à la fin de <code>onMessage()</code> si aucune exception n'est levée. Si une exception est levée, le message est remis en attente pour relivraison (puis DLQ).
+        <br/><strong>Source :</strong> <code>activationConfig</code> de chaque MDB
+      </div>
+    </div>
+
+    <h2>Résilience et erreurs</h2>
+
+    <div class="rule-card warning">
+      <div class="rule-id">R8 &nbsp;—&nbsp; Dead Letter Queue — capture des messages non traitables</div>
+      <div class="rule-title">Les messages échouant après épuisement des tentatives sont capturés et persistés</div>
+      <div class="rule-desc">
+        Après le nombre maximum de tentatives de relivraison configuré dans Liberty, le broker route le message vers <code>deadLetterQueue</code>. <code>DeadLetterQueueMDB</code> capture le message, crée une entité <code>FailedMessage</code> (payload, cause, horodatage, nombre de tentatives) et la persiste en base de données PostgreSQL pour analyse ultérieure.
+        <br/><strong>Source :</strong> <code>DeadLetterQueueMDB.onMessage()</code>
+      </div>
+    </div>
+
+    <h2>Persistance</h2>
+
+    <div class="rule-card success">
+      <div class="rule-id">R9 &nbsp;—&nbsp; Immutabilité de <code>AuditLog.createdAt</code></div>
+      <div class="rule-title">Le champ <code>createdAt</code> est défini une seule fois à la création et ne peut plus être modifié</div>
+      <div class="rule-desc">
+        La méthode annotée <code>@PrePersist</code> de l'entité <code>AuditLog</code> initialise <code>createdAt = LocalDateTime.now()</code> avant le premier <code>INSERT</code>. L'absence de setter public sur ce champ garantit son immutabilité après persistance. Cette règle assure l'intégrité de la piste d'audit.
+        <br/><strong>Source :</strong> <code>AuditLog</code> — méthode <code>@PrePersist</code>
+      </div>
+    </div>
+
+    <h2>Tests de charge</h2>
+
+    <div class="rule-card">
+      <div class="rule-id">R10 &nbsp;—&nbsp; Mode batch : 10 messages en séquence</div>
+      <div class="rule-title">L'endpoint <code>/batch</code> envoie 10 messages en séquence pour tester la charge et la concurrence des MDBs</div>
+      <div class="rule-desc">
+        <code>MessagingTestServlet</code> expose le chemin <code>/test-messaging/batch</code> qui déclenche une boucle d'envoi de 10 <code>TransactionEvent</code> vers <code>transactionQueue</code>. Ce mode permet de vérifier le comportement sous charge des 10 instances MDB concurrentes et d'observer l'ordonnancement par priorité.
+        <br/><strong>Source :</strong> <code>MessagingTestServlet</code> — endpoint <code>/batch</code>
+      </div>
+    </div>
+
+    <div class="rule-card">
+      <div class="rule-id">R11 &nbsp;—&nbsp; Concurrence configurée par destination</div>
+      <div class="rule-title">Chaque destination JMS a un niveau de concurrence adapté à son volume attendu</div>
+      <div class="rule-desc">
+        La configuration <code>server.xml</code> définit <code>maxConcurrency</code> par MDB : <strong>transactionQueue=10</strong> instances (volume élevé), <strong>emailQueue=5</strong> (volume moyen), <strong>auditTopic=3</strong> (écritures JPA), <strong>deadLetterQueue=2</strong> (cas exceptionnels). Le pool de connexions JMS supporte jusqu'à 20 connexions simultanées (<code>maxPoolSize=20</code>).
+        <br/><strong>Source :</strong> <code>server.xml</code> — <code>maxConcurrency</code> par MDB
+      </div>
+    </div>
+
+    <hr class="cds--divider"/>
+    <div class="cds--data-table-container">
+      <table class="cds--data-table">
+        <thead><tr><th>Règle</th><th>Catégorie</th><th>Niveau</th><th>Mécanisme JMS / Jakarta EE</th></tr></thead>
+        <tbody>
+          <tr><td>R1</td><td>Sécurité</td><td><span class="cds--tag cds--tag--red">Critique</span></td><td>Vérification type <code>instanceof ObjectMessage</code> — rejet CVE-2015-7501</td></tr>
+          <tr><td>R2</td><td>Sécurité</td><td><span class="cds--tag cds--tag--red">Critique</span></td><td>Propriété JMS <code>messageFormat='JSON'</code> — vérifiée dans <code>onMessage()</code></td></tr>
+          <tr><td>R3</td><td>Fiabilité</td><td><span class="cds--tag cds--tag--blue">Standard</span></td><td><code>DeliveryMode.PERSISTENT</code> — stockage broker sur disque</td></tr>
+          <tr><td>R4</td><td>Routage</td><td><span class="cds--tag cds--tag--blue">Standard</span></td><td>Priorité JMS 4–7 dans <code>producer.send()</code></td></tr>
+          <tr><td>R5</td><td>Routage</td><td><span class="cds--tag cds--tag--blue">Standard</span></td><td><code>@ActivationConfigProperty messageSelector</code> sur <code>emailQueue</code></td></tr>
+          <tr><td>R6</td><td>Fiabilité</td><td><span class="cds--tag cds--tag--green">Succès</span></td><td>Abonnement durable — <code>subscriptionDurability=Durable</code> + <code>clientId</code></td></tr>
+          <tr><td>R7</td><td>Fiabilité</td><td><span class="cds--tag cds--tag--blue">Standard</span></td><td><code>AUTO_ACKNOWLEDGE</code> — conteneur EJB après <code>onMessage()</code></td></tr>
+          <tr><td>R8</td><td>Résilience</td><td><span class="cds--tag cds--tag--warm">Avertissement</span></td><td>Dead Letter Queue + <code>FailedMessage</code> entity JPA</td></tr>
+          <tr><td>R9</td><td>Persistance</td><td><span class="cds--tag cds--tag--green">Succès</span></td><td><code>@PrePersist</code> immutabilité <code>createdAt</code> — EclipseLink</td></tr>
+          <tr><td>R10</td><td>Tests</td><td><span class="cds--tag cds--tag--blue">Standard</span></td><td>Boucle 10 messages — <code>MessagingTestServlet /batch</code></td></tr>
+          <tr><td>R11</td><td>Performance</td><td><span class="cds--tag cds--tag--blue">Standard</span></td><td><code>maxConcurrency</code> par MDB dans <code>server.xml</code></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </main>
+</div>
+<footer class="cds--footer">Made with IBM Bob &nbsp;|&nbsp; Banking JMS Application — Lab 05B &nbsp;|&nbsp; Jakarta EE 10 &amp; JMS 3.1</footer>
+</body>
+</html>

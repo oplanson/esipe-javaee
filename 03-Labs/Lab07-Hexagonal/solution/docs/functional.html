@@ -1,0 +1,227 @@
+<!-- © Copyright 2026 Olivier Planson. All rights reserved. Reproduction prohibited. Made with IBM Bob. -->
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Architecture Fonctionnelle — Banking Hexagonal App · Lab 07</title>
+  <link rel="stylesheet" href="assets/carbon.css"/>
+</head>
+<body>
+
+<header class="cds--header">
+  <a class="cds--header__name" href="index.html">⬡ Banking App<span>Lab 07 — Architecture Hexagonale</span></a>
+</header>
+
+<div class="cds--shell">
+  <nav class="cds--side-nav" aria-label="Navigation">
+    <p class="cds--side-nav__section-title">Documentation</p>
+    <a class="cds--side-nav__link" href="index.html"><i class="icon">⌂</i>Vue d'ensemble</a>
+    <a class="cds--side-nav__link active" href="functional.html"><i class="icon">⚙</i>Architecture Fonctionnelle</a>
+    <a class="cds--side-nav__link" href="technical.html"><i class="icon">⬡</i>Architecture Technique</a>
+    <a class="cds--side-nav__link" href="hexagonal.html"><i class="icon">◎</i>Architecture Hexagonale</a>
+    <a class="cds--side-nav__link" href="ddd.html"><i class="icon">◈</i>Bounded Contexts DDD</a>
+    <a class="cds--side-nav__link" href="sequences.html"><i class="icon">↔</i>Diagrammes de Séquence</a>
+    <a class="cds--side-nav__link" href="rules.html"><i class="icon">✦</i>Règles Métier</a>
+  </nav>
+
+  <main class="cds--content">
+    <div class="cds--breadcrumb">
+      <a href="index.html">Vue d'ensemble</a><span class="sep">/</span>
+      <span class="current">Architecture Fonctionnelle</span>
+    </div>
+
+    <h1>Architecture Fonctionnelle</h1>
+    <p class="page-lead">Organisation fonctionnelle de l'application selon le pattern Ports &amp; Adapters : couche domaine pure, couche application (use cases), adaptateurs primaires (driving) et secondaires (driven).</p>
+
+    <!-- Hexagon SVG overview -->
+    <h2>Vue Hexagonale — Couches</h2>
+    <div class="arch-box" style="text-align:center;">
+      <svg viewBox="0 0 700 420" width="100%" style="max-width:700px;font-family:'IBM Plex Sans',sans-serif;">
+        <!-- Outer ring: adapters -->
+        <ellipse cx="350" cy="210" rx="330" ry="195" fill="#f4f4f4" stroke="#c6c6c6" stroke-width="1.5"/>
+        <!-- Middle ring: application ports + services -->
+        <ellipse cx="350" cy="210" rx="230" ry="140" fill="#edf5ff" stroke="#0f62fe" stroke-width="1.5"/>
+        <!-- Inner: domain -->
+        <ellipse cx="350" cy="210" rx="120" ry="78" fill="#defbe6" stroke="#198038" stroke-width="2"/>
+
+        <!-- Domain label -->
+        <text x="350" y="200" text-anchor="middle" font-size="14" font-weight="700" fill="#0e6027">Domaine Pur</text>
+        <text x="350" y="218" text-anchor="middle" font-size="11" fill="#198038">Account · Client</text>
+        <text x="350" y="234" text-anchor="middle" font-size="11" fill="#198038">TransferService · Money</text>
+
+        <!-- Application layer label -->
+        <text x="350" y="100" text-anchor="middle" font-size="12" font-weight="600" fill="#0043ce">Couche Application (Ports + Services)</text>
+        <text x="350" y="116" text-anchor="middle" font-size="10" fill="#0043ce">AccountManagementService · ClientManagementService · MoneyOperationsService</text>
+
+        <!-- Adapters: primary left -->
+        <text x="62" y="155" text-anchor="middle" font-size="11" font-weight="600" fill="#525252">Adaptateurs</text>
+        <text x="62" y="170" text-anchor="middle" font-size="11" font-weight="600" fill="#525252">Primaires</text>
+        <text x="62" y="190" text-anchor="middle" font-size="10" fill="#525252">REST v2</text>
+        <text x="62" y="205" text-anchor="middle" font-size="10" fill="#525252">REST v1 ⚠</text>
+        <text x="62" y="220" text-anchor="middle" font-size="10" fill="#525252">Web/Servlet</text>
+
+        <!-- Adapters: secondary right -->
+        <text x="638" y="155" text-anchor="middle" font-size="11" font-weight="600" fill="#525252">Adaptateurs</text>
+        <text x="638" y="170" text-anchor="middle" font-size="11" font-weight="600" fill="#525252">Secondaires</text>
+        <text x="638" y="190" text-anchor="middle" font-size="10" fill="#525252">JpaClientAdapter</text>
+        <text x="638" y="205" text-anchor="middle" font-size="10" fill="#525252">JpaAccountAdapter</text>
+        <text x="638" y="220" text-anchor="middle" font-size="10" fill="#525252">CDIEventPublisher</text>
+
+        <!-- Dependency arrows -->
+        <defs>
+          <marker id="arr" markerWidth="8" markerHeight="6" refX="6" refY="3" orient="auto">
+            <polygon points="0 0, 8 3, 0 6" fill="#0f62fe"/>
+          </marker>
+        </defs>
+        <line x1="150" y1="210" x2="212" y2="210" stroke="#0f62fe" stroke-width="1.5" marker-end="url(#arr)"/>
+        <line x1="488" y1="210" x2="555" y2="210" stroke="#0f62fe" stroke-width="1.5" marker-end="url(#arr)"/>
+
+        <!-- Domain events label -->
+        <text x="350" y="385" text-anchor="middle" font-size="11" fill="#491d8b" font-weight="600">Domain Events : MoneyDepositedEvent · MoneyWithdrawnEvent · MoneyTransferredEvent</text>
+      </svg>
+    </div>
+
+    <!-- 1. Application layer use cases -->
+    <h2>1 · Couche Application — Cas d'Utilisation</h2>
+
+    <h3>AccountManagementService</h3>
+    <p>Implémente <code>AccountManagementUseCase</code>. Orchestre les opérations de gestion des comptes bancaires.</p>
+    <div class="cds--data-table-container">
+      <table class="cds--data-table">
+        <thead><tr><th>Méthode</th><th>Description</th></tr></thead>
+        <tbody>
+          <tr><td><code>openAccount(OpenAccountCommand)</code></td><td>Crée un nouveau compte pour un client existant.</td></tr>
+          <tr><td><code>closeAccount(accountId)</code></td><td>Clôture un compte (solde 0 requis — R3).</td></tr>
+          <tr><td><code>reactivateAccount(accountId)</code></td><td>Réactive un compte précédemment clôturé.</td></tr>
+          <tr><td><code>getAccount(accountId)</code></td><td>Récupère un compte par identifiant → AccountDTO.</td></tr>
+          <tr><td><code>listAccounts(clientId)</code></td><td>Liste tous les comptes d'un client → List&lt;AccountDTO&gt;.</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3>ClientManagementService</h3>
+    <p>Implémente <code>ClientManagementUseCase</code>. Gestion du cycle de vie client et statut premium.</p>
+    <div class="cds--data-table-container">
+      <table class="cds--data-table">
+        <thead><tr><th>Méthode</th><th>Description</th></tr></thead>
+        <tbody>
+          <tr><td><code>createClient(CreateClientCommand)</code></td><td>Crée un client après vérification unicité email (R12).</td></tr>
+          <tr><td><code>updateClient(UpdateClientCommand)</code></td><td>Met à jour les informations client.</td></tr>
+          <tr><td><code>deleteClient(clientId)</code></td><td>Supprime un client du système.</td></tr>
+          <tr><td><code>getClient(clientId)</code></td><td>Récupère un client par identifiant → ClientDTO.</td></tr>
+          <tr><td><code>listClients()</code></td><td>Liste tous les clients → List&lt;ClientDTO&gt;.</td></tr>
+          <tr><td><code>upgradeToPremium(clientId)</code></td><td>Passe un client en statut premium (frais transfert = 0).</td></tr>
+          <tr><td><code>downgradeFromPremium(clientId)</code></td><td>Rétrograde un client premium au statut standard.</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3>MoneyOperationsService</h3>
+    <p>Implémente <code>MoneyOperationsUseCase</code>. Opérations financières sur les comptes.</p>
+    <div class="cds--data-table-container">
+      <table class="cds--data-table">
+        <thead><tr><th>Méthode</th><th>Description</th></tr></thead>
+        <tbody>
+          <tr><td><code>deposit(DepositCommand)</code></td><td>Crédite un montant sur un compte actif → génère MoneyDepositedEvent.</td></tr>
+          <tr><td><code>withdraw(WithdrawCommand)</code></td><td>Débite un compte actif si solde suffisant → génère MoneyWithdrawnEvent.</td></tr>
+          <tr><td><code>transfer(TransferCommand)</code></td><td>Virement avec calcul de frais via TransferService → génère MoneyTransferredEvent.</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- 2. Domain -->
+    <h2>2 · Domaine Pur</h2>
+
+    <h3>Agrégat Account</h3>
+    <div class="cds--tile">
+      <p>Racine d'agrégat principale. Encapsule l'état financier d'un compte bancaire et les invariants associés.</p>
+      <ul>
+        <li><code>deposit(Money)</code> — Crédite si compte actif (R1), devise cohérente (R4) → émet MoneyDepositedEvent</li>
+        <li><code>withdraw(Money)</code> — Débite si compte actif (R1), solde suffisant (R2), devise cohérente (R4) → émet MoneyWithdrawnEvent</li>
+        <li><code>close()</code> — Clôture si solde = 0 (R3) et compte actif (R1)</li>
+        <li><code>reactivate()</code> — Réactive un compte clôturé</li>
+        <li>Accumule les événements de domaine pour publication différée (R11)</li>
+        <li>Garde <code>active</code> comme invariant central : toute opération financière vérifie ce flag</li>
+      </ul>
+    </div>
+
+    <h3>Agrégat Client</h3>
+    <div class="cds--tile">
+      <p>Racine d'agrégat client. Gère les informations personnelles, la liste des comptes et le statut premium.</p>
+      <ul>
+        <li><code>updateInfo(name, Email)</code> — Met à jour les informations personnelles</li>
+        <li><code>upgradeToPremium()</code> — Valide que le client n'est pas déjà premium</li>
+        <li><code>downgradeFromPremium()</code> — Valide que le client est bien premium</li>
+        <li><code>addAccount(accountId)</code> — Associe un compte au client</li>
+        <li>Contient un <code>Email</code> value object (RFC 5322, unique — R7, R12)</li>
+      </ul>
+    </div>
+
+    <h3>TransferService (Service de Domaine)</h3>
+    <div class="cds--tile">
+      <p>Service de domaine coordonnant le transfert entre deux comptes. La logique de frais implique deux agrégats → justifie un service de domaine distinct.</p>
+      <ul>
+        <li>Vérification même compte source/destination (garde-fou)</li>
+        <li>Vérification cohérence de devise (R4)</li>
+        <li>Calcul frais : client <strong>premium</strong> = gratuit ; client <strong>standard</strong> = 1% du montant, min 1€, max 50€ (R5)</li>
+        <li>Appelle <code>from.withdraw(amount + fee)</code> puis <code>to.deposit(amount)</code></li>
+      </ul>
+    </div>
+
+    <!-- 3. Primary adapters -->
+    <h2>3 · Adaptateurs Primaires (Driving)</h2>
+    <div class="cds--data-table-container">
+      <table class="cds--data-table">
+        <thead><tr><th>Classe</th><th>Type</th><th>Path / URL</th><th>Statut</th></tr></thead>
+        <tbody>
+          <tr><td><code>AccountRestAdapterV2</code></td><td>JAX-RS Resource</td><td><code>@Path /api/v2/accounts</code></td><td><span class="cds--tag cds--tag--green">Courant</span></td></tr>
+          <tr><td><code>ClientRestAdapterV2</code></td><td>JAX-RS Resource</td><td><code>@Path /api/v2/clients</code></td><td><span class="cds--tag cds--tag--green">Courant</span></td></tr>
+          <tr><td><code>AccountRestAdapter</code></td><td>JAX-RS Resource</td><td><code>@Path /api/v1/accounts</code></td><td><span class="cds--tag cds--tag--warm">@Deprecated v1</span></td></tr>
+          <tr><td><code>ClientRestAdapter</code></td><td>JAX-RS Resource</td><td><code>@Path /api/v1/clients</code></td><td><span class="cds--tag cds--tag--warm">@Deprecated v1</span></td></tr>
+          <tr><td><code>ClientWebAdapter</code></td><td>Servlet Jakarta</td><td><code>/clients</code></td><td><span class="cds--tag cds--tag--blue">Web UI</span></td></tr>
+          <tr><td><code>AccountWebAdapter</code></td><td>Servlet Jakarta</td><td><code>/accounts</code></td><td><span class="cds--tag cds--tag--blue">Web UI</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- 4. Secondary adapters -->
+    <h2>4 · Adaptateurs Secondaires (Driven)</h2>
+    <div class="cds--data-table-container">
+      <table class="cds--data-table">
+        <thead><tr><th>Classe</th><th>Port implémenté</th><th>Technologie</th></tr></thead>
+        <tbody>
+          <tr><td><code>JpaClientAdapter</code></td><td><code>ClientRepository</code></td><td>EclipseLink JPA + <code>ClientEntity</code> + <code>ClientMapper</code></td></tr>
+          <tr><td><code>JpaAccountAdapter</code></td><td><code>AccountRepository</code></td><td>EclipseLink JPA + <code>AccountEntity</code> + <code>AccountMapper</code></td></tr>
+          <tr><td><code>CDIEventPublisherAdapter</code></td><td><code>EventPublisher</code></td><td>CDI Event Bus — <code>jakarta.enterprise.event.Event</code></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- 5. Domain events -->
+    <h2>5 · Événements de Domaine</h2>
+    <div class="cds--inline-notification">
+      <span>ℹ</span>
+      <div><strong>Pattern :</strong> Les agrégats accumulent leurs événements en mémoire lors du traitement métier. Les services applicatifs publient ces événements après persistance via le port <code>EventPublisher</code> (R11).</div>
+    </div>
+    <div class="cds--data-table-container">
+      <table class="cds--data-table">
+        <thead><tr><th>Événement</th><th>Émetteur</th><th>Données</th></tr></thead>
+        <tbody>
+          <tr><td><code>MoneyDepositedEvent</code></td><td><code>Account.deposit()</code></td><td>accountId, amount, currency, timestamp</td></tr>
+          <tr><td><code>MoneyWithdrawnEvent</code></td><td><code>Account.withdraw()</code></td><td>accountId, amount, currency, timestamp</td></tr>
+          <tr><td><code>MoneyTransferredEvent</code></td><td><code>Account.withdraw() + Account.deposit()</code></td><td>fromAccountId, toAccountId, amount, fee, currency, timestamp</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p>La publication se fait via <code>CDIEventPublisherAdapter</code> qui implémente le port <code>EventPublisher</code>. Les observateurs CDI (<code>@Observes</code>) peuvent réagir aux événements sans couplage direct.</p>
+
+    <hr class="cds--divider"/>
+  </main>
+</div>
+
+<footer class="cds--footer">
+  Banking Hexagonal Architecture Application — Lab 07 · Jakarta EE 10 · Java 17 · Open Liberty 23 · © 2025 Olivier Planson
+</footer>
+</body>
+</html>

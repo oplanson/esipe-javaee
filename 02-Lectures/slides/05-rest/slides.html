@@ -1,0 +1,2615 @@
+<!-- © Copyright 2026 Olivier Planson. All rights reserved. Reproduction prohibited. Made with IBM Bob. -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>ESIPE — Lecture 5: JAX-RS and RESTful Web Services — Slides</title>
+  <link rel="stylesheet" href="../assets/slide.css"/>
+  <style>
+/* suppress static .current when a slide is targeted */
+body:has(.slide:target) .progress-bar a.current { background: var(--bg); color: var(--muted); border-color: var(--border); }
+body:has(#slide-1:target) .progress-bar a[href="#slide-1"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-2:target) .progress-bar a[href="#slide-2"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-3:target) .progress-bar a[href="#slide-3"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-4:target) .progress-bar a[href="#slide-4"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-5:target) .progress-bar a[href="#slide-5"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-6:target) .progress-bar a[href="#slide-6"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-7:target) .progress-bar a[href="#slide-7"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-8:target) .progress-bar a[href="#slide-8"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-9:target) .progress-bar a[href="#slide-9"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-10:target) .progress-bar a[href="#slide-10"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-11:target) .progress-bar a[href="#slide-11"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-12:target) .progress-bar a[href="#slide-12"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-13:target) .progress-bar a[href="#slide-13"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-14:target) .progress-bar a[href="#slide-14"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-15:target) .progress-bar a[href="#slide-15"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-16:target) .progress-bar a[href="#slide-16"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-17:target) .progress-bar a[href="#slide-17"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-18:target) .progress-bar a[href="#slide-18"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-19:target) .progress-bar a[href="#slide-19"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-20:target) .progress-bar a[href="#slide-20"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-21:target) .progress-bar a[href="#slide-21"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-22:target) .progress-bar a[href="#slide-22"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-23:target) .progress-bar a[href="#slide-23"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-24:target) .progress-bar a[href="#slide-24"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-25:target) .progress-bar a[href="#slide-25"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-26:target) .progress-bar a[href="#slide-26"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-27:target) .progress-bar a[href="#slide-27"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-28:target) .progress-bar a[href="#slide-28"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-29:target) .progress-bar a[href="#slide-29"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-30:target) .progress-bar a[href="#slide-30"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-31:target) .progress-bar a[href="#slide-31"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-32:target) .progress-bar a[href="#slide-32"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-33:target) .progress-bar a[href="#slide-33"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-34:target) .progress-bar a[href="#slide-34"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-35:target) .progress-bar a[href="#slide-35"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-36:target) .progress-bar a[href="#slide-36"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-37:target) .progress-bar a[href="#slide-37"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-38:target) .progress-bar a[href="#slide-38"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-39:target) .progress-bar a[href="#slide-39"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-40:target) .progress-bar a[href="#slide-40"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-41:target) .progress-bar a[href="#slide-41"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-42:target) .progress-bar a[href="#slide-42"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-43:target) .progress-bar a[href="#slide-43"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-44:target) .progress-bar a[href="#slide-44"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-45:target) .progress-bar a[href="#slide-45"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-46:target) .progress-bar a[href="#slide-46"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-47:target) .progress-bar a[href="#slide-47"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-48:target) .progress-bar a[href="#slide-48"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-49:target) .progress-bar a[href="#slide-49"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-50:target) .progress-bar a[href="#slide-50"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-51:target) .progress-bar a[href="#slide-51"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-52:target) .progress-bar a[href="#slide-52"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-53:target) .progress-bar a[href="#slide-53"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-54:target) .progress-bar a[href="#slide-54"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-55:target) .progress-bar a[href="#slide-55"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-56:target) .progress-bar a[href="#slide-56"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-57:target) .progress-bar a[href="#slide-57"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-58:target) .progress-bar a[href="#slide-58"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-59:target) .progress-bar a[href="#slide-59"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-60:target) .progress-bar a[href="#slide-60"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-61:target) .progress-bar a[href="#slide-61"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-62:target) .progress-bar a[href="#slide-62"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-63:target) .progress-bar a[href="#slide-63"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-64:target) .progress-bar a[href="#slide-64"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-65:target) .progress-bar a[href="#slide-65"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-66:target) .progress-bar a[href="#slide-66"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-67:target) .progress-bar a[href="#slide-67"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-68:target) .progress-bar a[href="#slide-68"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-69:target) .progress-bar a[href="#slide-69"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-70:target) .progress-bar a[href="#slide-70"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-71:target) .progress-bar a[href="#slide-71"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-72:target) .progress-bar a[href="#slide-72"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-73:target) .progress-bar a[href="#slide-73"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-74:target) .progress-bar a[href="#slide-74"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-75:target) .progress-bar a[href="#slide-75"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-76:target) .progress-bar a[href="#slide-76"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-77:target) .progress-bar a[href="#slide-77"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-78:target) .progress-bar a[href="#slide-78"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-79:target) .progress-bar a[href="#slide-79"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-80:target) .progress-bar a[href="#slide-80"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-81:target) .progress-bar a[href="#slide-81"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-82:target) .progress-bar a[href="#slide-82"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-83:target) .progress-bar a[href="#slide-83"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-84:target) .progress-bar a[href="#slide-84"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-85:target) .progress-bar a[href="#slide-85"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-86:target) .progress-bar a[href="#slide-86"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-87:target) .progress-bar a[href="#slide-87"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-88:target) .progress-bar a[href="#slide-88"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+  </style>
+</head>
+<body>
+<header class="site-header">
+  <a class="brand" href="../index.html">ESIPE<span>Jakarta EE &amp; Microservices</span></a>
+  <!-- EN/FR language toggle -->
+  <div class="lang-toggle" id="lang-toggle">
+    <button id="btn-en" class="active">EN</button>
+    <span class="sep">|</span>
+    <button id="btn-fr">FR</button>
+  </div>
+  <a class="back-link" href="../index.html">&#8592; All Courses</a>
+</header>
+<!-- Thin trigger strip at top: hover to reveal progress bar -->
+<div class="progress-bar-trigger" id="pb-trigger"></div>
+<!-- Progress bar — hidden by default, revealed on hover -->
+<div class="progress-bar-wrap" id="pb-wrap">
+  <div class="progress-bar">
+    <a href="#slide-1" class="current">1</a>
+      <a href="#slide-2">2</a>
+      <a href="#slide-3">3</a>
+      <a href="#slide-4">4</a>
+      <a href="#slide-5">5</a>
+      <a href="#slide-6">6</a>
+      <a href="#slide-7">7</a>
+      <a href="#slide-8">8</a>
+      <a href="#slide-9">9</a>
+      <a href="#slide-10">10</a>
+      <a href="#slide-11">11</a>
+      <a href="#slide-12">12</a>
+      <a href="#slide-13">13</a>
+      <a href="#slide-14">14</a>
+      <a href="#slide-15">15</a>
+      <a href="#slide-16">16</a>
+      <a href="#slide-17">17</a>
+      <a href="#slide-18">18</a>
+      <a href="#slide-19">19</a>
+      <a href="#slide-20">20</a>
+      <a href="#slide-21">21</a>
+      <a href="#slide-22">22</a>
+      <a href="#slide-23">23</a>
+      <a href="#slide-24">24</a>
+      <a href="#slide-25">25</a>
+      <a href="#slide-26">26</a>
+      <a href="#slide-27">27</a>
+      <a href="#slide-28">28</a>
+      <a href="#slide-29">29</a>
+      <a href="#slide-30">30</a>
+      <a href="#slide-31">31</a>
+      <a href="#slide-32">32</a>
+      <a href="#slide-33">33</a>
+      <a href="#slide-34">34</a>
+      <a href="#slide-35">35</a>
+      <a href="#slide-36">36</a>
+      <a href="#slide-37">37</a>
+      <a href="#slide-38">38</a>
+      <a href="#slide-39">39</a>
+      <a href="#slide-40">40</a>
+      <a href="#slide-41">41</a>
+      <a href="#slide-42">42</a>
+      <a href="#slide-43">43</a>
+      <a href="#slide-44">44</a>
+      <a href="#slide-45">45</a>
+      <a href="#slide-46">46</a>
+      <a href="#slide-47">47</a>
+      <a href="#slide-48">48</a>
+      <a href="#slide-49">49</a>
+      <a href="#slide-50">50</a>
+      <a href="#slide-51">51</a>
+      <a href="#slide-52">52</a>
+      <a href="#slide-53">53</a>
+      <a href="#slide-54">54</a>
+      <a href="#slide-55">55</a>
+      <a href="#slide-56">56</a>
+      <a href="#slide-57">57</a>
+      <a href="#slide-58">58</a>
+      <a href="#slide-59">59</a>
+      <a href="#slide-60">60</a>
+      <a href="#slide-61">61</a>
+      <a href="#slide-62">62</a>
+      <a href="#slide-63">63</a>
+      <a href="#slide-64">64</a>
+      <a href="#slide-65">65</a>
+      <a href="#slide-66">66</a>
+      <a href="#slide-67">67</a>
+      <a href="#slide-68">68</a>
+      <a href="#slide-69">69</a>
+      <a href="#slide-70">70</a>
+      <a href="#slide-71">71</a>
+      <a href="#slide-72">72</a>
+      <a href="#slide-73">73</a>
+      <a href="#slide-74">74</a>
+      <a href="#slide-75">75</a>
+      <a href="#slide-76">76</a>
+      <a href="#slide-77">77</a>
+      <a href="#slide-78">78</a>
+      <a href="#slide-79">79</a>
+      <a href="#slide-80">80</a>
+      <a href="#slide-81">81</a>
+      <a href="#slide-82">82</a>
+      <a href="#slide-83">83</a>
+      <a href="#slide-84">84</a>
+      <a href="#slide-85">85</a>
+      <a href="#slide-86">86</a>
+      <a href="#slide-87">87</a>
+      <a href="#slide-88">88</a>
+  </div>
+</div>
+<!-- Thin trigger strip at left: hover to reveal sidenav -->
+<div class="sidenav-trigger" id="sidenav-trigger"></div>
+<div class="shell">
+  <nav class="sidenav" id="sidenav">
+    <div class="sidenav-section">Course outline</div>
+    <a href="#slide-1" class="active">Jakarta EE and Microservices Course</a>
+    <a href="#slide-2">📋 Lecture Outline</a>
+    <a href="#slide-4">📚 Prerequisites</a>
+    <a href="#slide-7">REST Architectural Constraints</a>
+    <a href="#slide-8">REST Architectural Constraints (cont.)</a>
+    <a href="#slide-9">Richardson Maturity Model</a>
+    <a href="#slide-10">Level 0: The Swamp of POX</a>
+    <a href="#slide-11">Level 1: Resources</a>
+    <a href="#slide-12">Level 2: HTTP Verbs</a>
+    <a href="#slide-13">Level 3: Hypermedia Controls (HATEOAS)</a>
+    <a href="#slide-16">Which Level Should You Target?</a>
+    <a href="#slide-17">REST Architectural Constraints (cont.)</a>
+    <a href="#slide-18">HTTP Methods and CRUD</a>
+    <a href="#slide-19">HTTP Status Codes</a>
+    <a href="#slide-20">RESTful Resource Design</a>
+    <a href="#slide-21">REST vs SOAP</a>
+    <a href="#slide-26">JAX-RS Key Annotations</a>
+    <a href="#slide-27">Simple JAX-RS Resource</a>
+    <a href="#slide-28">JAX-RS Application Configuration</a>
+    <a href="#slide-30">Complete Client Resource (cont.)</a>
+    <a href="#slide-32">Response Building</a>
+    <a href="#slide-33">Sub-Resources</a>
+    <a href="#slide-34">Jakarta JSON Binding</a>
+    <a href="#slide-36">JSON-B Features</a>
+    <a href="#slide-37">Basic JSON-B Usage</a>
+    <a href="#slide-38">JSON-B Annotations</a>
+    <a href="#slide-39">JSON-B Naming Strategies</a>
+    <a href="#slide-40">JSON-B with JAX-RS</a>
+    <a href="#slide-41">Custom JSON-B Adapters</a>
+    <a href="#slide-42">JSON-B Collections</a>
+    <a href="#slide-43">Handling Circular References with JSON-B</a>
+    <a href="#slide-44">Circular Reference Solutions</a>
+    <a href="#slide-45">Circular Reference Solutions (cont.)</a>
+    <a href="#slide-46">Circular Reference Solutions (cont.)</a>
+    <a href="#slide-48">Robust REST APIs</a>
+    <a href="#slide-50">Custom Exception Classes</a>
+    <a href="#slide-51">Error Response DTO</a>
+    <a href="#slide-53">Bean Validation (Jakarta Validation)</a>
+    <a href="#slide-54">Validation in JAX-RS</a>
+    <a href="#slide-55">Validation Exception Mapper</a>
+    <a href="#slide-56">Global Exception Mapper</a>
+    <a href="#slide-57">Type-Safe REST Client</a>
+    <a href="#slide-59">Rest Client Interface</a>
+    <a href="#slide-60">Rest Client Configuration</a>
+    <a href="#slide-63">Rest Client with Headers</a>
+    <a href="#slide-64">Rest Client Programmatic Creation</a>
+    <a href="#slide-65">Combining Technologies</a>
+    <a href="#slide-66">CDI Producers for Rest Clients</a>
+    <a href="#slide-67">CDI Interceptors with REST</a>
+    <a href="#slide-68">CDI Events with REST</a>
+    <a href="#slide-69">CDI Qualifiers with REST Clients</a>
+    <a href="#slide-74">Lab 5 Architecture</a>
+    <a href="#slide-75">Lab 5 REST Endpoints</a>
+    <a href="#slide-76">Lab 5 REST Endpoints (cont.)</a>
+    <a href="#slide-78">Lab 5 Deliverables</a>
+    <a href="#slide-80">What We Learned Today</a>
+    <a href="#slide-81">What We Learned Today (cont.)</a>
+    <a href="#slide-83">Common Pitfalls to Avoid</a>
+    <a href="#slide-86">Questions?</a>
+    <hr>
+    <div class="sidenav-section">Navigation</div>
+    <a href="index.html">&#9675; Overview</a>
+  </nav>
+  <main class="content">
+    <div class="slide-wrapper">
+<section id="slide-1" class="slide slide--title">
+<h1 data-en="Lecture 5: JAX-RS and RESTful Web Services" data-fr="Lecture 5: JAX-RS and Services RESTful">Lecture 5: JAX-RS and RESTful Web Services</h1>
+<h2>Jakarta EE and Microservices Course</h2>
+<p><strong>Session 5 of 8</strong></p>
+
+<span class="slide-counter">1 / 88</span>
+<div class="slide-nav">
+  <a class="disabled">&#8592; Previous</a>
+  <span class="slide-info">Slide 1 / 88 &nbsp;&middot;&nbsp; Lecture 5: JAX-RS and RESTful Web Services</span>
+  <a href="#slide-2">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-2" class="slide">
+<h2>📋 Lecture Outline</h2>
+<ol>
+<li><strong>REST Principles and Architecture</strong> (30 min)</li>
+<li><strong>JAX-RS Annotations and Resources</strong> (45 min)</li>
+<li><strong>JSON-B for JSON Processing</strong> (30 min)</li>
+<li data-en="<strong>Exception Handling and Validation</strong> (30 min)" data-fr="Gestion des exceptions and Validation (30 min)"><strong>Exception Handling and Validation</strong> (30 min)</li>
+<li><strong>MicroProfile Rest Client</strong> (30 min)</li>
+<li><strong>CDI and REST Client Integration</strong> (15 min)</li>
+<li><strong>Lab 5 Preview</strong> (10 min)</li>
+</ol>
+<p><strong>Total Duration:</strong> 3 hours</p>
+
+<span class="slide-counter">2 / 88</span>
+<div class="slide-nav">
+  <a href="#slide-1">&#8592; Previous</a>
+  <span class="slide-info">Slide 2 / 88 &nbsp;&middot;&nbsp; Lecture 5: JAX-RS and RESTful Web Services</span>
+  <a href="#slide-3">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-3" class="slide">
+<h2 data-en="🎯 Learning Objectives" data-fr="🎯 Objectifs pédagogiques">🎯 Learning Objectives</h2>
+<p data-en="By the end of this lecture, you will be able to:" data-fr="À la fin de cette leçon, vous serez en mesure de:">By the end of this lecture, you will be able to:</p>
+<ul>
+<li>✅ Understand REST architectural principles</li>
+<li>✅ Create RESTful resources with JAX-RS</li>
+<li>✅ Handle JSON with JSON-B</li>
+<li data-en="✅ Implement exception handling and validation" data-fr="✅ Implement Gestion des exceptions and validation">✅ Implement exception handling and validation</li>
+<li>✅ Use MicroProfile Rest Client</li>
+<li>✅ Integrate REST with CDI</li>
+</ul>
+
+<span class="slide-counter">3 / 88</span>
+<div class="slide-nav">
+  <a href="#slide-2">&#8592; Previous</a>
+  <span class="slide-info">Slide 3 / 88 &nbsp;&middot;&nbsp; Lecture 5: JAX-RS and RESTful Web Services</span>
+  <a href="#slide-4">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-4" class="slide">
+<h2>📚 Prerequisites</h2>
+<p>Before starting this lecture, you should:</p>
+<ul>
+<li>✅ Understand HTTP protocol basics</li>
+<li>✅ Be familiar with CDI (Lecture 4)</li>
+<li>✅ Know JPA and database operations (Lecture 3)</li>
+<li>✅ Have completed Labs 1-4</li>
+</ul>
+
+<span class="slide-counter">4 / 88</span>
+<div class="slide-nav">
+  <a href="#slide-3">&#8592; Previous</a>
+  <span class="slide-info">Slide 4 / 88 &nbsp;&middot;&nbsp; Lecture 5: JAX-RS and RESTful Web Services</span>
+  <a href="#slide-5">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-5" class="slide slide--section">
+<h1>Part 1: REST Principles and Architecture</h1>
+<h2 data-en="Understanding RESTful Services" data-fr="Understanding Services RESTful">Understanding RESTful Services</h2>
+
+<span class="slide-counter">5 / 88</span>
+<div class="slide-nav">
+  <a href="#slide-4">&#8592; Previous</a>
+  <span class="slide-info">Slide 5 / 88 &nbsp;&middot;&nbsp; Lecture 5: JAX-RS and RESTful Web Services</span>
+  <a href="#slide-6">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-6" class="slide">
+<h2 data-en="What is REST?" data-fr="Qu'est-ce que REST?">What is REST?</h2>
+<p><strong>REST</strong> = <strong>RE</strong>presentational <strong>S</strong>tate <strong>T</strong>ransfer</p>
+<ul>
+<li>Architectural style for distributed systems</li>
+<li>Introduced by Roy Fielding in 2000</li>
+<li>Based on HTTP protocol</li>
+<li>Stateless client-server communication</li>
+<li data-en="Resource-oriented architecture" data-fr="Resource-oriented Architecture">Resource-oriented architecture</li>
+</ul>
+<p><strong>Key Concept:</strong> Everything is a resource with a unique identifier (URI)</p>
+
+<span class="slide-counter">6 / 88</span>
+<div class="slide-nav">
+  <a href="#slide-5">&#8592; Previous</a>
+  <span class="slide-info">Slide 6 / 88 &nbsp;&middot;&nbsp; Lecture 5: JAX-RS and RESTful Web Services</span>
+  <a href="#slide-7">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-7" class="slide">
+<h2>REST Architectural Constraints</h2>
+<ol>
+<li><strong>Client-Server Architecture</strong></li>
+</ol>
+<ul>
+<li>Separation of concerns</li>
+<li>Independent evolution</li>
+</ul>
+<ol>
+<li><strong>Stateless</strong></li>
+</ol>
+<ul>
+<li>Each request contains all necessary information</li>
+<li>No session state on server</li>
+</ul>
+<ol>
+<li><strong>Cacheable</strong></li>
+</ol>
+<ul>
+<li>Responses must define themselves as cacheable or not</li>
+</ul>
+
+<span class="slide-counter">7 / 88</span>
+<div class="slide-nav">
+  <a href="#slide-6">&#8592; Previous</a>
+  <span class="slide-info">Slide 7 / 88 &nbsp;&middot;&nbsp; Lecture 5: JAX-RS and RESTful Web Services</span>
+  <a href="#slide-8">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-8" class="slide">
+<h2>REST Architectural Constraints (cont.)</h2>
+
+<span class="slide-counter">8 / 88</span>
+<div class="slide-nav">
+  <a href="#slide-7">&#8592; Previous</a>
+  <span class="slide-info">Slide 8 / 88 &nbsp;&middot;&nbsp; Lecture 5: JAX-RS and RESTful Web Services</span>
+  <a href="#slide-9">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-9" class="slide">
+<h2>Richardson Maturity Model</h2>
+<p><strong>Leonard Richardson's REST Maturity Model</strong> (2008)</p>
+<p>A model to evaluate how RESTful an API is, with 4 levels:</p>
+<ul>
+<li><strong>Level 0:</strong> The Swamp of POX (Plain Old XML)</li>
+<li><strong>Level 1:</strong> Resources</li>
+<li><strong>Level 2:</strong> HTTP Verbs</li>
+<li><strong>Level 3:</strong> Hypermedia Controls (HATEOAS)</li>
+</ul>
+<p><strong>Goal:</strong> Understand the progression toward true REST</p>
+
+<span class="slide-counter">9 / 88</span>
+<div class="slide-nav">
+  <a href="#slide-8">&#8592; Previous</a>
+  <span class="slide-info">Slide 9 / 88 &nbsp;&middot;&nbsp; Lecture 5: JAX-RS and RESTful Web Services</span>
+  <a href="#slide-10">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-10" class="slide">
+<h2>Level 0: The Swamp of POX</h2>
+<p><strong>Single endpoint, single HTTP method (usually POST)</strong></p>
+<pre class="dark"><code>POST /api/service
+{
+  &quot;action&quot;: &quot;getClient&quot;,
+  &quot;id&quot;: 123
+}
+
+POST /api/service
+{
+  &quot;action&quot;: &quot;createClient&quot;,
+  &quot;name&quot;: &quot;John Doe&quot;
+}</code></pre>
+<p><strong>Problems:</strong></p>
+<ul>
+<li>❌ No resource identification</li>
+<li>❌ No HTTP semantics</li>
+<li>❌ RPC-style (Remote Procedure Call)</li>
+<li>❌ Not RESTful at all</li>
+</ul>
+
+<span class="slide-counter">10 / 88</span>
+<div class="slide-nav">
+  <a href="#slide-9">&#8592; Previous</a>
+  <span class="slide-info">Slide 10 / 88 &nbsp;&middot;&nbsp; Lecture 5: JAX-RS and RESTful Web Services</span>
+  <a href="#slide-11">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-11" class="slide">
+<h2>Level 1: Resources</h2>
+<p><strong>Multiple endpoints, but still single HTTP method</strong></p>
+<pre class="dark"><code>POST /api/clients/123
+{
+  &quot;action&quot;: &quot;get&quot;
+}
+
+POST /api/clients
+{
+  &quot;action&quot;: &quot;create&quot;,
+  &quot;name&quot;: &quot;John Doe&quot;
+}</code></pre>
+<p><strong>Improvements:</strong></p>
+<ul>
+<li>✅ Resources identified by URIs</li>
+<li>✅ Better organization</li>
+</ul>
+<p><strong>Still Missing:</strong></p>
+<ul>
+<li>❌ Proper HTTP verb usage</li>
+<li>❌ HTTP status codes</li>
+</ul>
+
+<span class="slide-counter">11 / 88</span>
+<div class="slide-nav">
+  <a href="#slide-10">&#8592; Previous</a>
+  <span class="slide-info">Slide 11 / 88 &nbsp;&middot;&nbsp; Lecture 5: JAX-RS and RESTful Web Services</span>
+  <a href="#slide-12">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-12" class="slide">
+<h2>Level 2: HTTP Verbs</h2>
+<p><strong>Multiple endpoints + proper HTTP methods</strong></p>
+<pre class="dark"><code>GET    /api/clients/123      → 200 OK
+POST   /api/clients          → 201 Created
+PUT    /api/clients/123      → 200 OK
+DELETE /api/clients/123      → 204 No Content</code></pre>
+<p><strong>Improvements:</strong></p>
+<ul>
+<li>✅ Proper HTTP verbs (GET, POST, PUT, DELETE)</li>
+<li>✅ Meaningful HTTP status codes</li>
+<li>✅ Idempotency and safety properties</li>
+<li>✅ <strong>This is what most call "RESTful"</strong></li>
+</ul>
+<p><strong>Still Missing:</strong></p>
+<ul>
+<li>❌ Hypermedia controls (HATEOAS)</li>
+</ul>
+
+<span class="slide-counter">12 / 88</span>
+<div class="slide-nav">
+  <a href="#slide-11">&#8592; Previous</a>
+  <span class="slide-info">Slide 12 / 88 &nbsp;&middot;&nbsp; Lecture 5: JAX-RS and RESTful Web Services</span>
+  <a href="#slide-13">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-13" class="slide">
+<h2>Level 3: Hypermedia Controls (HATEOAS)</h2>
+<p><strong>HATEOAS</strong> = <strong>H</strong>ypermedia <strong>A</strong>s <strong>T</strong>he <strong>E</strong>ngine <strong>O</strong>f <strong>A</strong>pplication <strong>S</strong>tate</p>
+<pre class="dark"><span class="lang-badge">json</span>
+<code>GET /api/clients/123
+
+{
+  &quot;id&quot;: 123,
+  &quot;name&quot;: &quot;John Doe&quot;,
+  &quot;email&quot;: &quot;john@example.com&quot;,
+  &quot;_links&quot;: {
+    &quot;self&quot;: { &quot;href&quot;: &quot;/api/clients/123&quot; },
+    &quot;accounts&quot;: { &quot;href&quot;: &quot;/api/clients/123/accounts&quot; },
+    &quot;update&quot;: { &quot;href&quot;: &quot;/api/clients/123&quot;, &quot;method&quot;: &quot;PUT&quot; },
+    &quot;delete&quot;: { &quot;href&quot;: &quot;/api/clients/123&quot;, &quot;method&quot;: &quot;DELETE&quot; }
+  }
+}</code></pre>
+<p><strong>Benefits:</strong></p>
+<ul>
+<li>✅ Self-documenting API</li>
+<li>✅ Client discovers available actions</li>
+<li>✅ Loose coupling</li>
+<li>✅ <strong>True REST according to Roy Fielding</strong></li>
+</ul>
+
+<span class="slide-counter">13 / 88</span>
+<div class="slide-nav">
+  <a href="#slide-12">&#8592; Previous</a>
+  <span class="slide-info">Slide 13 / 88 &nbsp;&middot;&nbsp; Lecture 5: JAX-RS and RESTful Web Services</span>
+  <a href="#slide-14">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-14" class="slide">
+<h2 data-en="Richardson Model: Visual Summary" data-fr="Richardson Model: Visual Résumé">Richardson Model: Visual Summary</h2>
+<p><img src="../../images/05-jaxrs-restful-services-diagram-1.png" alt="width:70%"></p>
+<p><strong>Most production APIs:</strong> Level 2</p>
+<p><strong>True REST:</strong> Level 3</p>
+
+<span class="slide-counter">14 / 88</span>
+<div class="slide-nav">
+  <a href="#slide-13">&#8592; Previous</a>
+  <span class="slide-info">Slide 14 / 88 &nbsp;&middot;&nbsp; Lecture 5: JAX-RS and RESTful Web Services</span>
+  <a href="#slide-15">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-15" class="slide">
+<h2 data-en="Richardson Model: Banking Example" data-fr="Richardson Model: Banking Exemple">Richardson Model: Banking Example</h2>
+<p><strong>Level 0 (POX):</strong></p>
+<pre class="dark"><code>POST /api/service
+{ &quot;action&quot;: &quot;getClient&quot;, &quot;id&quot;: 1 }</code></pre>
+<p><strong>Level 1 (Resources):</strong></p>
+<pre class="dark"><code>POST /api/clients/1
+{ &quot;action&quot;: &quot;get&quot; }</code></pre>
+<p><strong>Level 2 (HTTP Verbs):</strong></p>
+<pre class="dark"><code>GET /api/clients/1
+→ 200 OK</code></pre>
+<p><strong>Level 3 (HATEOAS):</strong></p>
+<pre class="dark"><span class="lang-badge">json</span>
+<code>GET /api/clients/1
+{
+  &quot;id&quot;: 1,
+  &quot;name&quot;: &quot;John&quot;,
+  &quot;_links&quot;: {
+    &quot;accounts&quot;: &quot;/api/clients/1/accounts&quot;
+  }
+}</code></pre>
+
+<span class="slide-counter">15 / 88</span>
+<div class="slide-nav">
+  <a href="#slide-14">&#8592; Previous</a>
+  <span class="slide-info">Slide 15 / 88 &nbsp;&middot;&nbsp; Lecture 5: JAX-RS and RESTful Web Services</span>
+  <a href="#slide-16">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-16" class="slide">
+<h2>Which Level Should You Target?</h2>
+<p><strong>Level 2 (HTTP Verbs)</strong> is the <strong>practical standard</strong>:</p>
+<ul>
+<li>✅ Good enough for most applications</li>
+<li>✅ Easy to implement and understand</li>
+<li>✅ Widely adopted</li>
+<li>✅ What JAX-RS naturally supports</li>
+</ul>
+<p><strong>Level 3 (HATEOAS)</strong> is <strong>ideal but complex</strong>:</p>
+<ul>
+<li>✅ True REST</li>
+<li>❌ More complex to implement</li>
+<li>❌ Requires client sophistication</li>
+<li>❌ Less common in practice</li>
+</ul>
+<p><strong>Our Lab 5:</strong> We'll implement <strong>Level 2</strong> (standard RESTful API)</p>
+
+<span class="slide-counter">16 / 88</span>
+<div class="slide-nav">
+  <a href="#slide-15">&#8592; Previous</a>
+  <span class="slide-info">Slide 16 / 88 &nbsp;&middot;&nbsp; Lecture 5: JAX-RS and RESTful Web Services</span>
+  <a href="#slide-17">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-17" class="slide">
+<h2>REST Architectural Constraints (cont.)</h2>
+<ol>
+<li><strong>Uniform Interface</strong></li>
+<li><strong>Uniform Interface</strong></li>
+</ol>
+<ul>
+<li>Resource identification (URIs)</li>
+<li>Resource manipulation through representations</li>
+<li>Self-descriptive messages</li>
+<li>HATEOAS (Hypermedia as the Engine of Application State)</li>
+</ul>
+<ol>
+<li><strong>Layered System</strong></li>
+</ol>
+<ul>
+<li>Client cannot tell if connected directly to end server</li>
+</ul>
+<ol>
+<li><strong>Code on Demand</strong> (optional)</li>
+</ol>
+<ul>
+<li>Server can extend client functionality</li>
+</ul>
+
+<span class="slide-counter">17 / 88</span>
+<div class="slide-nav">
+  <a href="#slide-16">&#8592; Previous</a>
+  <span class="slide-info">Slide 17 / 88 &nbsp;&middot;&nbsp; Lecture 5: JAX-RS and RESTful Web Services</span>
+  <a href="#slide-18">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-18" class="slide">
+<h2>HTTP Methods and CRUD</h2>
+<table class="slide-table"><thead><tr><th>HTTP Method</th><th>CRUD Operation</th><th>Idempotent</th><th>Safe</th></tr></thead><tbody>
+<tr><td>GET</td><td>Read</td><td>✅ Yes</td><td>✅ Yes</td></tr>
+<tr><td>POST</td><td>Create</td><td>❌ No</td><td>❌ No</td></tr>
+<tr><td>PUT</td><td>Update/Replace</td><td>✅ Yes</td><td>❌ No</td></tr>
+<tr><td>PATCH</td><td>Update/Modify</td><td>❌ No</td><td>❌ No</td></tr>
+<tr><td>DELETE</td><td>Delete</td><td>✅ Yes</td><td>❌ No</td></tr>
+</tbody></table>
+<p><strong>Idempotent:</strong> Multiple identical requests have the same effect as a single request</p>
+<p><strong>Safe:</strong> Does not modify resource state</p>
+
+<span class="slide-counter">18 / 88</span>
+<div class="slide-nav">
+  <a href="#slide-17">&#8592; Previous</a>
+  <span class="slide-info">Slide 18 / 88 &nbsp;&middot;&nbsp; Lecture 5: JAX-RS and RESTful Web Services</span>
+  <a href="#slide-19">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-19" class="slide">
+<h2>HTTP Status Codes</h2>
+<h3>Success (2xx)</h3>
+<ul>
+<li><strong>200 OK</strong> - Request succeeded</li>
+<li><strong>201 Created</strong> - Resource created</li>
+<li><strong>204 No Content</strong> - Success, no response body</li>
+</ul>
+<h3>Client Errors (4xx)</h3>
+<ul>
+<li><strong>400 Bad Request</strong> - Invalid request</li>
+<li><strong>404 Not Found</strong> - Resource not found</li>
+<li><strong>409 Conflict</strong> - Conflict with current state</li>
+</ul>
+<h3>Server Errors (5xx)</h3>
+<ul>
+<li><strong>500 Internal Server Error</strong> - Server error</li>
+<li><strong>503 Service Unavailable</strong> - Server temporarily unavailable</li>
+</ul>
+
+<span class="slide-counter">19 / 88</span>
+<div class="slide-nav">
+  <a href="#slide-18">&#8592; Previous</a>
+  <span class="slide-info">Slide 19 / 88 &nbsp;&middot;&nbsp; Lecture 5: JAX-RS and RESTful Web Services</span>
+  <a href="#slide-20">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-20" class="slide">
+<h2>RESTful Resource Design</h2>
+<p><strong>Good URI Design:</strong></p>
+<pre class="dark"><code>✅ GET    /api/clients           - List all clients
+✅ GET    /api/clients/123       - Get client 123
+✅ POST   /api/clients           - Create new client
+✅ PUT    /api/clients/123       - Update client 123
+✅ DELETE /api/clients/123       - Delete client 123
+✅ GET    /api/clients/123/accounts - Get accounts for client 123</code></pre>
+<p><strong>Bad URI Design:</strong></p>
+<pre class="dark"><code>❌ GET /api/getClients
+❌ POST /api/createClient
+❌ GET /api/client?action=delete&amp;id=123</code></pre>
+
+<span class="slide-counter">20 / 88</span>
+<div class="slide-nav">
+  <a href="#slide-19">&#8592; Previous</a>
+  <span class="slide-info">Slide 20 / 88 &nbsp;&middot;&nbsp; Lecture 5: JAX-RS and RESTful Web Services</span>
+  <a href="#slide-21">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-21" class="slide">
+<h2>REST vs SOAP</h2>
+<table class="slide-table"><thead><tr><th>Aspect</th><th>REST</th><th>SOAP</th></tr></thead><tbody>
+<tr><td>Protocol</td><td>HTTP</td><td>HTTP, SMTP, etc.</td></tr>
+<tr><td>Message Format</td><td>JSON, XML</td><td>XML only</td></tr>
+<tr><td>Complexity</td><td>Simple</td><td>Complex</td></tr>
+<tr><td>Performance</td><td>Faster</td><td>Slower</td></tr>
+<tr><td>Caching</td><td>Yes</td><td>No</td></tr>
+<tr><td>State</td><td>Stateless</td><td>Can be stateful</td></tr>
+<tr><td>Use Case</td><td>Web/Mobile APIs</td><td>Enterprise integration</td></tr>
+</tbody></table>
+
+<span class="slide-counter">21 / 88</span>
+<div class="slide-nav">
+  <a href="#slide-20">&#8592; Previous</a>
+  <span class="slide-info">Slide 21 / 88 &nbsp;&middot;&nbsp; Lecture 5: JAX-RS and RESTful Web Services</span>
+  <a href="#slide-22">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-22" class="slide">
+<h2 data-en="REST Best Practices" data-fr="REST Bonnes pratiques">REST Best Practices</h2>
+<ol>
+<li><strong>Use nouns, not verbs</strong> in URIs</li>
+</ol>
+<ul>
+<li>✅ <code>/clients</code> not <code>/getClients</code></li>
+</ul>
+<ol>
+<li><strong>Use plural nouns</strong> for collections</li>
+</ol>
+<ul>
+<li>✅ <code>/clients</code> not <code>/client</code></li>
+</ul>
+<ol>
+<li><strong>Use HTTP methods</strong> correctly</li>
+</ol>
+<ul>
+<li>GET for reading, POST for creating, etc.</li>
+</ul>
+<ol>
+<li><strong>Version your API</strong></li>
+</ol>
+<ul>
+<li><code>/api/v1/clients</code></li>
+</ul>
+<ol>
+<li><strong>Use proper status codes</strong></li>
+</ol>
+<ul>
+<li>200, 201, 404, 500, etc.</li>
+</ul>
+
+<span class="slide-counter">22 / 88</span>
+<div class="slide-nav">
+  <a href="#slide-21">&#8592; Previous</a>
+  <span class="slide-info">Slide 22 / 88 &nbsp;&middot;&nbsp; Lecture 5: JAX-RS and RESTful Web Services</span>
+  <a href="#slide-23">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-23" class="slide">
+<h2 data-en="REST Best Practices (cont.)" data-fr="REST Bonnes pratiques (cont.)">REST Best Practices (cont.)</h2>
+<ol>
+<li><strong>Provide filtering, sorting, pagination</strong></li>
+</ol>
+<p>```</p>
+<p>GET /api/clients?status=active&amp;sort=name&amp;page=2&amp;size=20</p>
+<p>```</p>
+<ol>
+<li><strong>Use HATEOAS</strong> for discoverability</li>
+</ol>
+<p>```json</p>
+<p>{</p>
+<p>"id": 123,</p>
+<p>"name": "John Doe",</p>
+<p>"_links": {</p>
+<p>"self": "/api/clients/123",</p>
+<p>"accounts": "/api/clients/123/accounts"</p>
+<p>}</p>
+<p>}</p>
+<p>```</p>
+<ol>
+<li><strong>Handle errors consistently</strong></li>
+</ol>
+<ul>
+<li>Use standard error response format</li>
+</ul>
+
+<span class="slide-counter">23 / 88</span>
+<div class="slide-nav">
+  <a href="#slide-22">&#8592; Previous</a>
+  <span class="slide-info">Slide 23 / 88 &nbsp;&middot;&nbsp; Lecture 5: JAX-RS and RESTful Web Services</span>
+  <a href="#slide-24">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-24" class="slide slide--section">
+<h1>Part 2: JAX-RS Annotations and Resources</h1>
+<h2 data-en="Building RESTful Services with Jakarta" data-fr="Construction Services RESTful with Jakarta">Building RESTful Services with Jakarta</h2>
+
+<span class="slide-counter">24 / 88</span>
+<div class="slide-nav">
+  <a href="#slide-23">&#8592; Previous</a>
+  <span class="slide-info">Slide 24 / 88 &nbsp;&middot;&nbsp; Lecture 5: JAX-RS and RESTful Web Services</span>
+  <a href="#slide-25">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-25" class="slide">
+<h2 data-en="What is JAX-RS?" data-fr="Qu'est-ce que JAX-RS?">What is JAX-RS?</h2>
+<p data-en="<strong>JAX-RS</strong> = <strong>J</strong>akarta RESTful Web Services" data-fr="JAX-RS = Jakarta Services RESTful"><strong>JAX-RS</strong> = <strong>J</strong>akarta RESTful Web Services</p>
+<ul>
+<li>Standard API for building REST services in Java</li>
+<li>Part of Jakarta EE specification</li>
+<li>Annotation-based programming model</li>
+<li>Supports JSON and XML</li>
+<li>Integrated with CDI</li>
+</ul>
+<p><strong>Current Version:</strong> JAX-RS 3.1 (Jakarta EE 10)</p>
+
+<span class="slide-counter">25 / 88</span>
+<div class="slide-nav">
+  <a href="#slide-24">&#8592; Previous</a>
+  <span class="slide-info">Slide 25 / 88 &nbsp;&middot;&nbsp; Lecture 5: JAX-RS and RESTful Web Services</span>
+  <a href="#slide-26">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-26" class="slide">
+<h2>JAX-RS Key Annotations</h2>
+<h3>Resource Definition</h3>
+<ul>
+<li><code>@Path</code> - Defines URI path</li>
+<li><code>@GET</code>, <code>@POST</code>, <code>@PUT</code>, <code>@DELETE</code> - HTTP methods</li>
+<li><code>@Produces</code> - Response media type</li>
+<li><code>@Consumes</code> - Request media type</li>
+</ul>
+<h3>Parameters</h3>
+<ul>
+<li><code>@PathParam</code> - URI path parameter</li>
+<li><code>@QueryParam</code> - Query string parameter</li>
+<li><code>@HeaderParam</code> - HTTP header parameter</li>
+<li><code>@FormParam</code> - Form parameter</li>
+</ul>
+
+<span class="slide-counter">26 / 88</span>
+<div class="slide-nav">
+  <a href="#slide-25">&#8592; Previous</a>
+  <span class="slide-info">Slide 26 / 88 &nbsp;&middot;&nbsp; Lecture 5: JAX-RS and RESTful Web Services</span>
+  <a href="#slide-27">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-27" class="slide">
+<h2>Simple JAX-RS Resource</h2>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>import jakarta.ws.rs.*;
+import jakarta.ws.rs.core.MediaType;
+
+@Path(&quot;/hello&quot;)
+public class HelloResource {
+    
+    @GET
+    @Produces(MediaType.TEXT_PLAIN)
+    public String sayHello() {
+        return &quot;Hello, REST!&quot;;
+    }
+    
+    @GET
+    @Path(&quot;/{name}&quot;)
+    @Produces(MediaType.TEXT_PLAIN)
+    public String sayHelloTo(@PathParam(&quot;name&quot;) String name) {
+        return &quot;Hello, &quot; + name + &quot;!&quot;;
+    }
+}</code></pre>
+<p><strong>Access:</strong> <code>GET http://localhost:9080/api/hello/John</code></p>
+
+<span class="slide-counter">27 / 88</span>
+<div class="slide-nav">
+  <a href="#slide-26">&#8592; Previous</a>
+  <span class="slide-info">Slide 27 / 88 &nbsp;&middot;&nbsp; Lecture 5: JAX-RS and RESTful Web Services</span>
+  <a href="#slide-28">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-28" class="slide">
+<h2>JAX-RS Application Configuration</h2>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>import jakarta.ws.rs.ApplicationPath;
+import jakarta.ws.rs.core.Application;
+
+@ApplicationPath(&quot;/api&quot;)
+public class RestApplication extends Application {
+    // No need to override methods
+    // JAX-RS will auto-discover @Path annotated classes
+}</code></pre>
+<p><strong>Result:</strong> All resources will be available under <code>/api</code> prefix</p>
+
+<span class="slide-counter">28 / 88</span>
+<div class="slide-nav">
+  <a href="#slide-27">&#8592; Previous</a>
+  <span class="slide-info">Slide 28 / 88 &nbsp;&middot;&nbsp; Lecture 5: JAX-RS and RESTful Web Services</span>
+  <a href="#slide-29">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-29" class="slide">
+<h2 data-en="Complete Client Resource Example" data-fr="Complete Client Resource Exemple">Complete Client Resource Example</h2>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>@Path(&quot;/clients&quot;)
+@Produces(MediaType.APPLICATION_JSON)
+@Consumes(MediaType.APPLICATION_JSON)
+public class ClientResource {
+    
+    @Inject
+    private ClientService clientService;
+    
+    @GET
+    public List&lt;Client&gt; getAllClients() {
+        return clientService.findAll();
+    }
+    
+    @GET
+    @Path(&quot;/{id}&quot;)
+    public Client getClient(@PathParam(&quot;id&quot;) Long id) {
+        return clientService.findById(id);
+    }
+}</code></pre>
+
+<span class="slide-counter">29 / 88</span>
+<div class="slide-nav">
+  <a href="#slide-28">&#8592; Previous</a>
+  <span class="slide-info">Slide 29 / 88 &nbsp;&middot;&nbsp; Lecture 5: JAX-RS and RESTful Web Services</span>
+  <a href="#slide-30">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-30" class="slide">
+<h2>Complete Client Resource (cont.)</h2>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>    @POST
+    public Response createClient(Client client) {
+        Client created = clientService.create(client);
+        return Response
+            .status(Response.Status.CREATED)
+            .entity(created)
+            .build();
+    }
+    
+    @PUT
+    @Path(&quot;/{id}&quot;)
+    public Client updateClient(@PathParam(&quot;id&quot;) Long id, 
+                               Client client) {
+        client.setId(id);
+        return clientService.update(client);
+    }
+    
+    @DELETE
+    @Path(&quot;/{id}&quot;)
+    public Response deleteClient(@PathParam(&quot;id&quot;) Long id) {
+        clientService.delete(id);
+        return Response.noContent().build();
+    }</code></pre>
+
+<span class="slide-counter">30 / 88</span>
+<div class="slide-nav">
+  <a href="#slide-29">&#8592; Previous</a>
+  <span class="slide-info">Slide 30 / 88 &nbsp;&middot;&nbsp; Lecture 5: JAX-RS and RESTful Web Services</span>
+  <a href="#slide-31">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-31" class="slide">
+<h2 data-en="Query Parameters Example" data-fr="Query Parameters Exemple">Query Parameters Example</h2>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>@GET
+@Path(&quot;/search&quot;)
+public List&lt;Client&gt; searchClients(
+    @QueryParam(&quot;name&quot;) String name,
+    @QueryParam(&quot;email&quot;) String email,
+    @QueryParam(&quot;premium&quot;) @DefaultValue(&quot;false&quot;) boolean premium) {
+    
+    if (name != null) {
+        return clientService.findByName(name);
+    }
+    if (email != null) {
+        return clientService.findByEmail(email);
+    }
+    if (premium) {
+        return clientService.findPremiumClients();
+    }
+    return clientService.findAll();
+}</code></pre>
+<p><strong>Usage:</strong> <code>GET /api/clients/search?name=John&amp;premium=true</code></p>
+
+<span class="slide-counter">31 / 88</span>
+<div class="slide-nav">
+  <a href="#slide-30">&#8592; Previous</a>
+  <span class="slide-info">Slide 31 / 88 &nbsp;&middot;&nbsp; Lecture 5: JAX-RS and RESTful Web Services</span>
+  <a href="#slide-32">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-32" class="slide">
+<h2>Response Building</h2>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>@GET
+@Path(&quot;/{id}&quot;)
+public Response getClient(@PathParam(&quot;id&quot;) Long id) {
+    Client client = clientService.findById(id);
+    
+    if (client == null) {
+        return Response
+            .status(Response.Status.NOT_FOUND)
+            .entity(&quot;Client not found&quot;)
+            .build();
+    }
+    
+    return Response
+        .ok(client)
+        .header(&quot;X-Custom-Header&quot;, &quot;value&quot;)
+        .build();
+}</code></pre>
+
+<span class="slide-counter">32 / 88</span>
+<div class="slide-nav">
+  <a href="#slide-31">&#8592; Previous</a>
+  <span class="slide-info">Slide 32 / 88 &nbsp;&middot;&nbsp; Lecture 5: JAX-RS and RESTful Web Services</span>
+  <a href="#slide-33">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-33" class="slide">
+<h2>Sub-Resources</h2>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>@Path(&quot;/clients&quot;)
+public class ClientResource {
+    
+    @Inject
+    private AccountService accountService;
+    
+    @GET
+    @Path(&quot;/{clientId}/accounts&quot;)
+    @Produces(MediaType.APPLICATION_JSON)
+    public List&lt;Account&gt; getClientAccounts(
+        @PathParam(&quot;clientId&quot;) Long clientId) {
+        
+        return accountService.findByClientId(clientId);
+    }
+    
+    @POST
+    @Path(&quot;/{clientId}/accounts&quot;)
+    @Consumes(MediaType.APPLICATION_JSON)
+    public Response createAccount(
+        @PathParam(&quot;clientId&quot;) Long clientId, 
+        Account account) {
+        
+        account.setClientId(clientId);
+        Account created = accountService.create(account);
+        return Response.status(201).entity(created).build();
+    }
+}</code></pre>
+
+<span class="slide-counter">33 / 88</span>
+<div class="slide-nav">
+  <a href="#slide-32">&#8592; Previous</a>
+  <span class="slide-info">Slide 33 / 88 &nbsp;&middot;&nbsp; Lecture 5: JAX-RS and RESTful Web Services</span>
+  <a href="#slide-34">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-34" class="slide slide--section">
+<h1>Part 3: JSON-B for JSON Processing</h1>
+<h2>Jakarta JSON Binding</h2>
+
+<span class="slide-counter">34 / 88</span>
+<div class="slide-nav">
+  <a href="#slide-33">&#8592; Previous</a>
+  <span class="slide-info">Slide 34 / 88 &nbsp;&middot;&nbsp; Lecture 5: JAX-RS and RESTful Web Services</span>
+  <a href="#slide-35">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-35" class="slide">
+<h2 data-en="What is JSON-B?" data-fr="Qu'est-ce que JSON-B?">What is JSON-B?</h2>
+<p><strong>JSON-B</strong> = <strong>JSON</strong> <strong>B</strong>inding</p>
+<ul>
+<li>Standard API for JSON processing in Java</li>
+<li>Part of Jakarta EE specification</li>
+<li>Automatic Java ↔ JSON conversion</li>
+<li>Annotation-based customization</li>
+<li>Works seamlessly with JAX-RS</li>
+</ul>
+<p><strong>Current Version:</strong> JSON-B 3.0 (Jakarta EE 10)</p>
+
+<span class="slide-counter">35 / 88</span>
+<div class="slide-nav">
+  <a href="#slide-34">&#8592; Previous</a>
+  <span class="slide-info">Slide 35 / 88 &nbsp;&middot;&nbsp; Lecture 5: JAX-RS and RESTful Web Services</span>
+  <a href="#slide-36">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-36" class="slide">
+<h2>JSON-B Features</h2>
+<ol>
+<li><strong>Serialization</strong> - Java object → JSON</li>
+<li><strong>Deserialization</strong> - JSON → Java object</li>
+<li><strong>Customization</strong> - Control JSON format</li>
+<li><strong>Type Adapters</strong> - Custom conversions</li>
+<li><strong>Property Naming</strong> - Naming strategies</li>
+<li><strong>Date/Time Handling</strong> - Built-in support</li>
+</ol>
+
+<span class="slide-counter">36 / 88</span>
+<div class="slide-nav">
+  <a href="#slide-35">&#8592; Previous</a>
+  <span class="slide-info">Slide 36 / 88 &nbsp;&middot;&nbsp; Lecture 5: JAX-RS and RESTful Web Services</span>
+  <a href="#slide-37">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-37" class="slide">
+<h2>Basic JSON-B Usage</h2>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>import jakarta.json.bind.Jsonb;
+import jakarta.json.bind.JsonbBuilder;
+
+public class JsonExample {
+    
+    public static void main(String[] args) {
+        Jsonb jsonb = JsonbBuilder.create();
+        
+        // Java to JSON (Serialization)
+        Client client = new Client(&quot;John Doe&quot;, &quot;john@example.com&quot;);
+        String json = jsonb.toJson(client);
+        System.out.println(json);
+        // {&quot;id&quot;:null,&quot;name&quot;:&quot;John Doe&quot;,&quot;email&quot;:&quot;john@example.com&quot;}
+        
+        // JSON to Java (Deserialization)
+        Client fromJson = jsonb.fromJson(json, Client.class);
+        System.out.println(fromJson.getName()); // John Doe
+    }
+}</code></pre>
+
+<span class="slide-counter">37 / 88</span>
+<div class="slide-nav">
+  <a href="#slide-36">&#8592; Previous</a>
+  <span class="slide-info">Slide 37 / 88 &nbsp;&middot;&nbsp; Lecture 5: JAX-RS and RESTful Web Services</span>
+  <a href="#slide-38">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-38" class="slide">
+<h2>JSON-B Annotations</h2>
+<h3>Property Customization</h3>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>import jakarta.json.bind.annotation.*;
+
+public class Client {
+    
+    @JsonbProperty(&quot;client_id&quot;)
+    private Long id;
+    
+    @JsonbProperty(&quot;full_name&quot;)
+    private String name;
+    
+    @JsonbTransient  // Exclude from JSON
+    private String password;
+    
+    @JsonbDateFormat(&quot;yyyy-MM-dd&quot;)
+    private LocalDate birthDate;
+    
+    // getters/setters
+}</code></pre>
+
+<span class="slide-counter">38 / 88</span>
+<div class="slide-nav">
+  <a href="#slide-37">&#8592; Previous</a>
+  <span class="slide-info">Slide 38 / 88 &nbsp;&middot;&nbsp; Lecture 5: JAX-RS and RESTful Web Services</span>
+  <a href="#slide-39">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-39" class="slide">
+<h2>JSON-B Naming Strategies</h2>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>import jakarta.json.bind.config.PropertyNamingStrategy;
+
+// Configure globally
+JsonbConfig config = new JsonbConfig()
+    .withPropertyNamingStrategy(
+        PropertyNamingStrategy.LOWER_CASE_WITH_UNDERSCORES
+    );
+Jsonb jsonb = JsonbBuilder.create(config);
+
+// Result: &quot;full_name&quot; instead of &quot;fullName&quot;</code></pre>
+<p><strong>Available Strategies:</strong></p>
+<ul>
+<li><code>IDENTITY</code> - Keep as is</li>
+<li><code>LOWER_CASE_WITH_DASHES</code> - <code>full-name</code></li>
+<li><code>LOWER_CASE_WITH_UNDERSCORES</code> - <code>full_name</code></li>
+<li><code>UPPER_CAMEL_CASE</code> - <code>FullName</code></li>
+<li><code>CASE_INSENSITIVE</code> - Case insensitive</li>
+</ul>
+
+<span class="slide-counter">39 / 88</span>
+<div class="slide-nav">
+  <a href="#slide-38">&#8592; Previous</a>
+  <span class="slide-info">Slide 39 / 88 &nbsp;&middot;&nbsp; Lecture 5: JAX-RS and RESTful Web Services</span>
+  <a href="#slide-40">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-40" class="slide">
+<h2>JSON-B with JAX-RS</h2>
+<p><strong>Automatic Integration:</strong></p>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>@Path(&quot;/clients&quot;)
+@Produces(MediaType.APPLICATION_JSON)
+@Consumes(MediaType.APPLICATION_JSON)
+public class ClientResource {
+    
+    @POST
+    public Client createClient(Client client) {
+        // JSON automatically converted to Client object
+        // Return value automatically converted to JSON
+        return clientService.create(client);
+    }
+}</code></pre>
+<p><strong>Request:</strong></p>
+<pre class="dark"><span class="lang-badge">json</span>
+<code>POST /api/clients
+Content-Type: application/json
+
+{&quot;name&quot;: &quot;John Doe&quot;, &quot;email&quot;: &quot;john@example.com&quot;}</code></pre>
+
+<span class="slide-counter">40 / 88</span>
+<div class="slide-nav">
+  <a href="#slide-39">&#8592; Previous</a>
+  <span class="slide-info">Slide 40 / 88 &nbsp;&middot;&nbsp; Lecture 5: JAX-RS and RESTful Web Services</span>
+  <a href="#slide-41">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-41" class="slide">
+<h2>Custom JSON-B Adapters</h2>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>import jakarta.json.bind.adapter.JsonbAdapter;
+
+public class MoneyAdapter implements JsonbAdapter&lt;BigDecimal, String&gt; {
+    
+    @Override
+    public String adaptToJson(BigDecimal money) {
+        return &quot;$&quot; + money.setScale(2, RoundingMode.HALF_UP);
+    }
+    
+    @Override
+    public BigDecimal adaptFromJson(String json) {
+        return new BigDecimal(json.replace(&quot;$&quot;, &quot;&quot;));
+    }
+}
+
+// Usage in entity
+public class Account {
+    @JsonbTypeAdapter(MoneyAdapter.class)
+    private BigDecimal balance;
+}</code></pre>
+
+<span class="slide-counter">41 / 88</span>
+<div class="slide-nav">
+  <a href="#slide-40">&#8592; Previous</a>
+  <span class="slide-info">Slide 41 / 88 &nbsp;&middot;&nbsp; Lecture 5: JAX-RS and RESTful Web Services</span>
+  <a href="#slide-42">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-42" class="slide">
+<h2>JSON-B Collections</h2>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>// List serialization
+List&lt;Client&gt; clients = clientService.findAll();
+String json = jsonb.toJson(clients);
+
+// List deserialization
+Type listType = new ArrayList&lt;Client&gt;(){}.getClass()
+    .getGenericSuperclass();
+List&lt;Client&gt; fromJson = jsonb.fromJson(json, listType);
+
+// Map serialization
+Map&lt;String, Client&gt; clientMap = new HashMap&lt;&gt;();
+String mapJson = jsonb.toJson(clientMap);</code></pre>
+
+<span class="slide-counter">42 / 88</span>
+<div class="slide-nav">
+  <a href="#slide-41">&#8592; Previous</a>
+  <span class="slide-info">Slide 42 / 88 &nbsp;&middot;&nbsp; Lecture 5: JAX-RS and RESTful Web Services</span>
+  <a href="#slide-43">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-43" class="slide">
+<h2>Handling Circular References with JSON-B</h2>
+<p><strong>Common Problem:</strong> JPA entities with bidirectional relationships</p>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>@Entity
+public class Client {
+    @OneToMany(mappedBy = &quot;client&quot;)
+    private List&lt;Account&gt; accounts;  // Client → Account
+}
+
+@Entity
+public class Account {
+    @ManyToOne
+    private Client client;  // Account → Client
+}</code></pre>
+<p><strong>Issue:</strong> Infinite loop during JSON serialization</p>
+<ul>
+<li>Client → Accounts → Client → Accounts → ...</li>
+</ul>
+
+<span class="slide-counter">43 / 88</span>
+<div class="slide-nav">
+  <a href="#slide-42">&#8592; Previous</a>
+  <span class="slide-info">Slide 43 / 88 &nbsp;&middot;&nbsp; Lecture 5: JAX-RS and RESTful Web Services</span>
+  <a href="#slide-44">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-44" class="slide">
+<h2>Circular Reference Solutions</h2>
+<h3>Solution 1: Use <code>@JsonbTransient</code> (Recommended)</h3>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>@Entity
+public class Account {
+    
+    @JsonbTransient  // Exclude from JSON serialization
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = &quot;client_id&quot;)
+    private Client client;
+    
+    // Helper method for JSON (returns ID only)
+    public Long getClientId() {
+        return client != null ? client.getId() : null;
+    }
+}</code></pre>
+<p><strong>Result:</strong> Account JSON includes <code>clientId</code> but not full <code>client</code> object</p>
+
+<span class="slide-counter">44 / 88</span>
+<div class="slide-nav">
+  <a href="#slide-43">&#8592; Previous</a>
+  <span class="slide-info">Slide 44 / 88 &nbsp;&middot;&nbsp; Lecture 5: JAX-RS and RESTful Web Services</span>
+  <a href="#slide-45">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-45" class="slide">
+<h2>Circular Reference Solutions (cont.)</h2>
+<h3>Solution 2: Use DTOs (Data Transfer Objects)</h3>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>public class AccountDTO {
+    private Long id;
+    private String number;
+    private double balance;
+    private Long clientId;  // Only ID, not full object
+    
+    public static AccountDTO fromEntity(Account account) {
+        AccountDTO dto = new AccountDTO();
+        dto.setId(account.getId());
+        dto.setNumber(account.getNumber());
+        dto.setBalance(account.getBalance());
+        dto.setClientId(account.getClientId());
+        return dto;
+    }
+}</code></pre>
+
+<span class="slide-counter">45 / 88</span>
+<div class="slide-nav">
+  <a href="#slide-44">&#8592; Previous</a>
+  <span class="slide-info">Slide 45 / 88 &nbsp;&middot;&nbsp; Lecture 5: JAX-RS and RESTful Web Services</span>
+  <a href="#slide-46">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-46" class="slide">
+<h2>Circular Reference Solutions (cont.)</h2>
+<h3>Solution 3: Use <code>@JsonbPropertyOrder</code> with lazy loading</h3>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>@Entity
+public class Client {
+    
+    @JsonbPropertyOrder({&quot;id&quot;, &quot;name&quot;, &quot;email&quot;})
+    @OneToMany(mappedBy = &quot;client&quot;, fetch = FetchType.LAZY)
+    private List&lt;Account&gt; accounts;
+}</code></pre>
+<p><strong>Note:</strong> Only works if accounts are not loaded when serializing</p>
+
+<span class="slide-counter">46 / 88</span>
+<div class="slide-nav">
+  <a href="#slide-45">&#8592; Previous</a>
+  <span class="slide-info">Slide 46 / 88 &nbsp;&middot;&nbsp; Lecture 5: JAX-RS and RESTful Web Services</span>
+  <a href="#slide-47">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-47" class="slide">
+<h2 data-en="Best Practices for Entity Serialization" data-fr="Bonnes pratiques for Entity Serialization">Best Practices for Entity Serialization</h2>
+<ol>
+<li><strong>Use <code>@JsonbTransient</code></strong> on the "many" side of relationships</li>
+</ol>
+<ul>
+<li>Mark <code>Account.client</code> as transient</li>
+<li>Keep <code>Client.accounts</code> serializable</li>
+</ul>
+<ol>
+<li><strong>Provide helper methods</strong> for IDs</li>
+</ol>
+<p>```java</p>
+<p>public Long getClientId() {</p>
+<p>return client != null ? client.getId() : null;</p>
+<p>}</p>
+<p>```</p>
+<ol>
+<li><strong>Use DTOs</strong> for complex scenarios</li>
+</ol>
+<ul>
+<li>Separate API models from database entities</li>
+<li>Better control over JSON structure</li>
+</ul>
+<ol>
+<li><strong>Configure fetch type</strong> appropriately</li>
+</ol>
+<ul>
+<li>Use <code>FetchType.LAZY</code> to avoid loading unnecessary data</li>
+</ul>
+
+<span class="slide-counter">47 / 88</span>
+<div class="slide-nav">
+  <a href="#slide-46">&#8592; Previous</a>
+  <span class="slide-info">Slide 47 / 88 &nbsp;&middot;&nbsp; Lecture 5: JAX-RS and RESTful Web Services</span>
+  <a href="#slide-48">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-48" class="slide slide--section">
+<h1 data-en="Part 4: Exception Handling and Validation" data-fr="Part 4: Gestion des exceptions and Validation">Part 4: Exception Handling and Validation</h1>
+<h2>Robust REST APIs</h2>
+
+<span class="slide-counter">48 / 88</span>
+<div class="slide-nav">
+  <a href="#slide-47">&#8592; Previous</a>
+  <span class="slide-info">Slide 48 / 88 &nbsp;&middot;&nbsp; Lecture 5: JAX-RS and RESTful Web Services</span>
+  <a href="#slide-49">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-49" class="slide">
+<h2 data-en="Exception Handling in JAX-RS" data-fr="Gestion des exceptions in JAX-RS">Exception Handling in JAX-RS</h2>
+<p><strong>Problem:</strong> Unhandled exceptions return generic 500 errors</p>
+<p><strong>Solution:</strong> Custom exception mappers</p>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>import jakarta.ws.rs.core.Response;
+import jakarta.ws.rs.ext.ExceptionMapper;
+import jakarta.ws.rs.ext.Provider;
+
+@Provider
+public class NotFoundExceptionMapper 
+    implements ExceptionMapper&lt;NotFoundException&gt; {
+    
+    @Override
+    public Response toResponse(NotFoundException exception) {
+        ErrorResponse error = new ErrorResponse(
+            404,
+            &quot;Not Found&quot;,
+            exception.getMessage()
+        );
+        return Response.status(Response.Status.NOT_FOUND).entity(error).build();
+    }
+}</code></pre>
+
+<span class="slide-counter">49 / 88</span>
+<div class="slide-nav">
+  <a href="#slide-48">&#8592; Previous</a>
+  <span class="slide-info">Slide 49 / 88 &nbsp;&middot;&nbsp; Lecture 5: JAX-RS and RESTful Web Services</span>
+  <a href="#slide-50">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-50" class="slide">
+<h2>Custom Exception Classes</h2>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>public class NotFoundException extends RuntimeException {
+    public NotFoundException(String message) {
+        super(message);
+    }
+}
+
+public class ValidationException extends RuntimeException {
+    private List&lt;String&gt; errors;
+    
+    public ValidationException(String message) {
+        super(message);
+    }
+    
+    public ValidationException(String message, List&lt;String&gt; errors) {
+        super(message);
+        this.errors = errors;
+    }
+    
+    public List&lt;String&gt; getErrors() {
+        return errors;
+    }
+}</code></pre>
+
+<span class="slide-counter">50 / 88</span>
+<div class="slide-nav">
+  <a href="#slide-49">&#8592; Previous</a>
+  <span class="slide-info">Slide 50 / 88 &nbsp;&middot;&nbsp; Lecture 5: JAX-RS and RESTful Web Services</span>
+  <a href="#slide-51">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-51" class="slide">
+<h2>Error Response DTO</h2>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>public class ErrorResponse {
+    private int status;
+    private String error;
+    private String message;
+    private LocalDateTime timestamp;
+    private List&lt;String&gt; details;
+    
+    public ErrorResponse(int status, String error, String message) {
+        this.status = status;
+        this.error = error;
+        this.message = message;
+        this.timestamp = LocalDateTime.now();
+    }
+    
+    public ErrorResponse(int status, String error, String message, 
+                         List&lt;String&gt; details) {
+        this(status, error, message);
+        this.details = details;
+    }
+    
+    // getters/setters
+}</code></pre>
+<p><strong>JSON Output:</strong></p>
+<pre class="dark"><span class="lang-badge">json</span>
+<code>{
+  &quot;status&quot;: 404,
+  &quot;error&quot;: &quot;Not Found&quot;,
+  &quot;message&quot;: &quot;Client with ID 999 not found&quot;,
+  &quot;timestamp&quot;: &quot;2025-01-01T10:30:00&quot;
+}</code></pre>
+
+<span class="slide-counter">51 / 88</span>
+<div class="slide-nav">
+  <a href="#slide-50">&#8592; Previous</a>
+  <span class="slide-info">Slide 51 / 88 &nbsp;&middot;&nbsp; Lecture 5: JAX-RS and RESTful Web Services</span>
+  <a href="#slide-52">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-52" class="slide">
+<h2 data-en="Using Custom Exceptions" data-fr="Utilisation de Custom Exceptions">Using Custom Exceptions</h2>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>@Path(&quot;/clients&quot;)
+public class ClientResource {
+    
+    @GET
+    @Path(&quot;/{id}&quot;)
+    public Client getClient(@PathParam(&quot;id&quot;) Long id) {
+        Client client = clientService.findById(id);
+        
+        if (client == null) {
+            throw new NotFoundException(
+                &quot;Client with ID &quot; + id + &quot; not found&quot;
+            );
+        }
+        
+        return client;
+    }
+}</code></pre>
+<p><strong>Result:</strong> Automatic conversion to proper error response</p>
+
+<span class="slide-counter">52 / 88</span>
+<div class="slide-nav">
+  <a href="#slide-51">&#8592; Previous</a>
+  <span class="slide-info">Slide 52 / 88 &nbsp;&middot;&nbsp; Lecture 5: JAX-RS and RESTful Web Services</span>
+  <a href="#slide-53">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-53" class="slide">
+<h2>Bean Validation (Jakarta Validation)</h2>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>import jakarta.validation.constraints.*;
+
+public class Client {
+    
+    @NotNull(message = &quot;Name is required&quot;)
+    @Size(min = 2, max = 100, message = &quot;Name must be 2-100 characters&quot;)
+    private String name;
+    
+    @NotNull(message = &quot;Email is required&quot;)
+    @Email(message = &quot;Invalid email format&quot;)
+    private String email;
+    
+    @Min(value = 18, message = &quot;Age must be at least 18&quot;)
+    private Integer age;
+    
+    @Pattern(regexp = &quot;^\\+?[0-9]{10,15}$&quot;, 
+             message = &quot;Invalid phone number&quot;)
+    private String phone;
+    
+    // getters/setters
+}</code></pre>
+
+<span class="slide-counter">53 / 88</span>
+<div class="slide-nav">
+  <a href="#slide-52">&#8592; Previous</a>
+  <span class="slide-info">Slide 53 / 88 &nbsp;&middot;&nbsp; Lecture 5: JAX-RS and RESTful Web Services</span>
+  <a href="#slide-54">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-54" class="slide">
+<h2>Validation in JAX-RS</h2>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
+
+@Path(&quot;/clients&quot;)
+public class ClientResource {
+    
+    @POST
+    @Consumes(MediaType.APPLICATION_JSON)
+    public Response createClient(@Valid Client client) {
+        // If validation fails, ConstraintViolationException is thrown
+        Client created = clientService.create(client);
+        return Response.status(201).entity(created).build();
+    }
+    
+    @GET
+    @Path(&quot;/{id}&quot;)
+    public Client getClient(
+        @PathParam(&quot;id&quot;) 
+        @NotNull(message = &quot;ID is required&quot;)
+        @Min(value = 1, message = &quot;ID must be positive&quot;)
+        Long id) {
+        
+        return clientService.findById(id);
+    }
+}</code></pre>
+
+<span class="slide-counter">54 / 88</span>
+<div class="slide-nav">
+  <a href="#slide-53">&#8592; Previous</a>
+  <span class="slide-info">Slide 54 / 88 &nbsp;&middot;&nbsp; Lecture 5: JAX-RS and RESTful Web Services</span>
+  <a href="#slide-55">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-55" class="slide">
+<h2>Validation Exception Mapper</h2>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>@Provider
+public class ValidationExceptionMapper 
+    implements ExceptionMapper&lt;ConstraintViolationException&gt; {
+    
+    @Override
+    public Response toResponse(ConstraintViolationException ex) {
+        List&lt;String&gt; errors = ex.getConstraintViolations()
+            .stream()
+            .map(violation -&gt; violation.getPropertyPath() + &quot;: &quot; 
+                            + violation.getMessage())
+            .collect(Collectors.toList());
+        
+        ErrorResponse error = new ErrorResponse(
+            400,
+            &quot;Validation Failed&quot;,
+            &quot;Input validation failed&quot;,
+            errors
+        );
+        
+        return Response.status(Response.Status.BAD_REQUEST).entity(error).build();
+    }
+}</code></pre>
+
+<span class="slide-counter">55 / 88</span>
+<div class="slide-nav">
+  <a href="#slide-54">&#8592; Previous</a>
+  <span class="slide-info">Slide 55 / 88 &nbsp;&middot;&nbsp; Lecture 5: JAX-RS and RESTful Web Services</span>
+  <a href="#slide-56">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-56" class="slide">
+<h2>Global Exception Mapper</h2>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>@Provider
+public class GenericExceptionMapper 
+    implements ExceptionMapper&lt;Exception&gt; {
+    
+    @Inject
+    private Logger logger;
+    
+    @Override
+    public Response toResponse(Exception exception) {
+        logger.severe(&quot;Unexpected error: &quot; + exception.getMessage());
+        
+        ErrorResponse error = new ErrorResponse(
+            500,
+            &quot;Internal Server Error&quot;,
+            &quot;An unexpected error occurred. Please contact support.&quot;
+        );
+        
+        return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
+            .entity(error).build();
+    }
+}</code></pre>
+
+<span class="slide-counter">56 / 88</span>
+<div class="slide-nav">
+  <a href="#slide-55">&#8592; Previous</a>
+  <span class="slide-info">Slide 56 / 88 &nbsp;&middot;&nbsp; Lecture 5: JAX-RS and RESTful Web Services</span>
+  <a href="#slide-57">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-57" class="slide slide--section">
+<h1>Part 5: MicroProfile Rest Client</h1>
+<h2>Type-Safe REST Client</h2>
+
+<span class="slide-counter">57 / 88</span>
+<div class="slide-nav">
+  <a href="#slide-56">&#8592; Previous</a>
+  <span class="slide-info">Slide 57 / 88 &nbsp;&middot;&nbsp; Lecture 5: JAX-RS and RESTful Web Services</span>
+  <a href="#slide-58">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-58" class="slide">
+<h2 data-en="What is MicroProfile Rest Client?" data-fr="Qu'est-ce que MicroProfile Rest Client?">What is MicroProfile Rest Client?</h2>
+<p><strong>MicroProfile Rest Client</strong> provides:</p>
+<ul>
+<li>Type-safe REST client interface</li>
+<li>Automatic implementation generation</li>
+<li>CDI integration</li>
+<li>Fault tolerance support</li>
+<li>Configuration externalization</li>
+</ul>
+<p><strong>Benefits:</strong></p>
+<ul>
+<li>No manual HTTP client code</li>
+<li>Compile-time type safety</li>
+<li>Easy to test and mock</li>
+<li data-en="Consistent error handling" data-fr="Consistent Gestion des erreurs">Consistent error handling</li>
+</ul>
+
+<span class="slide-counter">58 / 88</span>
+<div class="slide-nav">
+  <a href="#slide-57">&#8592; Previous</a>
+  <span class="slide-info">Slide 58 / 88 &nbsp;&middot;&nbsp; Lecture 5: JAX-RS and RESTful Web Services</span>
+  <a href="#slide-59">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-59" class="slide">
+<h2>Rest Client Interface</h2>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>import org.eclipse.microprofile.rest.client.inject.RegisterRestClient;
+import jakarta.ws.rs.*;
+import jakarta.ws.rs.core.MediaType;
+
+@Path(&quot;/clients&quot;)
+@RegisterRestClient(configKey = &quot;client-api&quot;)
+@Produces(MediaType.APPLICATION_JSON)
+@Consumes(MediaType.APPLICATION_JSON)
+public interface ClientRestClient {
+    
+    @GET
+    List&lt;Client&gt; getAllClients();
+    
+    @GET
+    @Path(&quot;/{id}&quot;)
+    Client getClient(@PathParam(&quot;id&quot;) Long id);
+    
+    @POST
+    Client createClient(Client client);
+    
+    @PUT
+    @Path(&quot;/{id}&quot;)
+    Client updateClient(@PathParam(&quot;id&quot;) Long id, Client client);
+    
+    @DELETE
+    @Path(&quot;/{id}&quot;)
+    void deleteClient(@PathParam(&quot;id&quot;) Long id);
+}</code></pre>
+
+<span class="slide-counter">59 / 88</span>
+<div class="slide-nav">
+  <a href="#slide-58">&#8592; Previous</a>
+  <span class="slide-info">Slide 59 / 88 &nbsp;&middot;&nbsp; Lecture 5: JAX-RS and RESTful Web Services</span>
+  <a href="#slide-60">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-60" class="slide">
+<h2>Rest Client Configuration</h2>
+<p><strong>microprofile-config.properties:</strong></p>
+<pre class="dark"><span class="lang-badge">properties</span>
+<code># Base URL for the client API
+client-api/mp-rest/url=http://localhost:9080/api
+
+# Connection timeout (milliseconds)
+client-api/mp-rest/connectTimeout=5000
+
+# Read timeout (milliseconds)
+client-api/mp-rest/readTimeout=10000
+
+# Scope (default is @Dependent)
+client-api/mp-rest/scope=jakarta.inject.Singleton</code></pre>
+
+<span class="slide-counter">60 / 88</span>
+<div class="slide-nav">
+  <a href="#slide-59">&#8592; Previous</a>
+  <span class="slide-info">Slide 60 / 88 &nbsp;&middot;&nbsp; Lecture 5: JAX-RS and RESTful Web Services</span>
+  <a href="#slide-61">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-61" class="slide">
+<h2 data-en="Using Rest Client with CDI" data-fr="Utilisation de Rest Client with CDI">Using Rest Client with CDI</h2>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>import org.eclipse.microprofile.rest.client.inject.RestClient;
+import jakarta.inject.Inject;
+
+@ApplicationScoped
+public class ClientFacade {
+    
+    @Inject
+    @RestClient
+    private ClientRestClient clientRestClient;
+    
+    public List&lt;Client&gt; getAllClients() {
+        return clientRestClient.getAllClients();
+    }
+    
+    public Client getClient(Long id) {
+        return clientRestClient.getClient(id);
+    }
+    
+    public Client createClient(Client client) {
+        return clientRestClient.createClient(client);
+    }
+}</code></pre>
+
+<span class="slide-counter">61 / 88</span>
+<div class="slide-nav">
+  <a href="#slide-60">&#8592; Previous</a>
+  <span class="slide-info">Slide 61 / 88 &nbsp;&middot;&nbsp; Lecture 5: JAX-RS and RESTful Web Services</span>
+  <a href="#slide-62">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-62" class="slide">
+<h2 data-en="Rest Client Exception Handling" data-fr="Rest Client Gestion des exceptions">Rest Client Exception Handling</h2>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>import org.eclipse.microprofile.rest.client.ext.ResponseExceptionMapper;
+
+@Provider
+public class ClientRestClientExceptionMapper 
+    implements ResponseExceptionMapper&lt;RuntimeException&gt; {
+    
+    @Override
+    public RuntimeException toThrowable(Response response) {
+        int status = response.getStatus();
+        
+        if (status == 404) {
+            return new NotFoundException(&quot;Client not found&quot;);
+        }
+        if (status &gt;= 400 &amp;&amp; status &lt; 500) {
+            return new ClientException(&quot;Client error: &quot; + status);
+        }
+        if (status &gt;= 500) {
+            return new ServerException(&quot;Server error: &quot; + status);
+        }
+        
+        return null; // No exception
+    }
+}</code></pre>
+
+<span class="slide-counter">62 / 88</span>
+<div class="slide-nav">
+  <a href="#slide-61">&#8592; Previous</a>
+  <span class="slide-info">Slide 62 / 88 &nbsp;&middot;&nbsp; Lecture 5: JAX-RS and RESTful Web Services</span>
+  <a href="#slide-63">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-63" class="slide">
+<h2>Rest Client with Headers</h2>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>@Path(&quot;/clients&quot;)
+@RegisterRestClient
+public interface ClientRestClient {
+    
+    @GET
+    @Path(&quot;/{id}&quot;)
+    Client getClient(
+        @PathParam(&quot;id&quot;) Long id,
+        @HeaderParam(&quot;Authorization&quot;) String authToken
+    );
+    
+    @POST
+    @ClientHeaderParam(name = &quot;X-API-Key&quot;, value = &quot;${api.key}&quot;)
+    Client createClient(Client client);
+}</code></pre>
+<p><strong>Configuration:</strong></p>
+<pre class="dark"><span class="lang-badge">properties</span>
+<code>api.key=my-secret-api-key</code></pre>
+
+<span class="slide-counter">63 / 88</span>
+<div class="slide-nav">
+  <a href="#slide-62">&#8592; Previous</a>
+  <span class="slide-info">Slide 63 / 88 &nbsp;&middot;&nbsp; Lecture 5: JAX-RS and RESTful Web Services</span>
+  <a href="#slide-64">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-64" class="slide">
+<h2>Rest Client Programmatic Creation</h2>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>import org.eclipse.microprofile.rest.client.RestClientBuilder;
+
+public class ClientExample {
+    
+    public void example() {
+        ClientRestClient client = RestClientBuilder
+            .newBuilder()
+            .baseUrl(new URL(&quot;http://localhost:9080/api&quot;))
+            .connectTimeout(5, TimeUnit.SECONDS)
+            .readTimeout(10, TimeUnit.SECONDS)
+            .build(ClientRestClient.class);
+        
+        List&lt;Client&gt; clients = client.getAllClients();
+    }
+}</code></pre>
+
+<span class="slide-counter">64 / 88</span>
+<div class="slide-nav">
+  <a href="#slide-63">&#8592; Previous</a>
+  <span class="slide-info">Slide 64 / 88 &nbsp;&middot;&nbsp; Lecture 5: JAX-RS and RESTful Web Services</span>
+  <a href="#slide-65">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-65" class="slide slide--section">
+<h1>Part 6: CDI and REST Client Integration</h1>
+<h2>Combining Technologies</h2>
+
+<span class="slide-counter">65 / 88</span>
+<div class="slide-nav">
+  <a href="#slide-64">&#8592; Previous</a>
+  <span class="slide-info">Slide 65 / 88 &nbsp;&middot;&nbsp; Lecture 5: JAX-RS and RESTful Web Services</span>
+  <a href="#slide-66">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-66" class="slide">
+<h2>CDI Producers for Rest Clients</h2>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.enterprise.inject.Produces;
+import org.eclipse.microprofile.rest.client.RestClientBuilder;
+
+@ApplicationScoped
+public class RestClientProducer {
+    
+    @Produces
+    @ApplicationScoped
+    public ClientRestClient produceClientRestClient() {
+        return RestClientBuilder
+            .newBuilder()
+            .baseUrl(new URL(&quot;http://localhost:9080/api&quot;))
+            .build(ClientRestClient.class);
+    }
+}</code></pre>
+<p><strong>Usage:</strong></p>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>@Inject
+private ClientRestClient clientRestClient;</code></pre>
+
+<span class="slide-counter">66 / 88</span>
+<div class="slide-nav">
+  <a href="#slide-65">&#8592; Previous</a>
+  <span class="slide-info">Slide 66 / 88 &nbsp;&middot;&nbsp; Lecture 5: JAX-RS and RESTful Web Services</span>
+  <a href="#slide-67">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-67" class="slide">
+<h2>CDI Interceptors with REST</h2>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>@Logged
+@Path(&quot;/clients&quot;)
+public class ClientResource {
+    
+    @GET
+    public List&lt;Client&gt; getAllClients() {
+        // Method execution will be logged by interceptor
+        return clientService.findAll();
+    }
+}</code></pre>
+<p><strong>Interceptor from Lecture 4:</strong></p>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>@Interceptor
+@Logged
+@Priority(Interceptor.Priority.APPLICATION)
+public class LoggingInterceptor {
+    @AroundInvoke
+    public Object logMethod(InvocationContext context) throws Exception {
+        // Logging logic
+    }
+}</code></pre>
+
+<span class="slide-counter">67 / 88</span>
+<div class="slide-nav">
+  <a href="#slide-66">&#8592; Previous</a>
+  <span class="slide-info">Slide 67 / 88 &nbsp;&middot;&nbsp; Lecture 5: JAX-RS and RESTful Web Services</span>
+  <a href="#slide-68">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-68" class="slide">
+<h2>CDI Events with REST</h2>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>@Path(&quot;/clients&quot;)
+public class ClientResource {
+    
+    @Inject
+    private Event&lt;ClientCreatedEvent&gt; clientCreatedEvent;
+    
+    @POST
+    public Response createClient(Client client) {
+        Client created = clientService.create(client);
+        
+        // Fire CDI event
+        clientCreatedEvent.fire(
+            new ClientCreatedEvent(created, &quot;REST API&quot;)
+        );
+        
+        return Response.status(201).entity(created).build();
+    }
+}</code></pre>
+
+<span class="slide-counter">68 / 88</span>
+<div class="slide-nav">
+  <a href="#slide-67">&#8592; Previous</a>
+  <span class="slide-info">Slide 68 / 88 &nbsp;&middot;&nbsp; Lecture 5: JAX-RS and RESTful Web Services</span>
+  <a href="#slide-69">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-69" class="slide">
+<h2>CDI Qualifiers with REST Clients</h2>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>@Qualifier
+@Retention(RetentionPolicy.RUNTIME)
+@Target({ElementType.FIELD, ElementType.METHOD, ElementType.PARAMETER})
+public @interface Internal {}
+
+@Qualifier
+@Retention(RetentionPolicy.RUNTIME)
+@Target({ElementType.FIELD, ElementType.METHOD, ElementType.PARAMETER})
+public @interface External {}
+
+// Producer
+@Produces
+@Internal
+public ClientRestClient produceInternalClient() {
+    return RestClientBuilder.newBuilder()
+        .baseUrl(new URL(&quot;http://internal-api:9080/api&quot;))
+        .build(ClientRestClient.class);
+}
+
+// Usage
+@Inject @Internal
+private ClientRestClient internalClient;</code></pre>
+
+<span class="slide-counter">69 / 88</span>
+<div class="slide-nav">
+  <a href="#slide-68">&#8592; Previous</a>
+  <span class="slide-info">Slide 69 / 88 &nbsp;&middot;&nbsp; Lecture 5: JAX-RS and RESTful Web Services</span>
+  <a href="#slide-70">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-70" class="slide">
+<h2 data-en="Complete REST + CDI Example" data-fr="Complete REST + CDI Exemple">Complete REST + CDI Example</h2>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>@Path(&quot;/clients&quot;)
+@ApplicationScoped
+@Produces(MediaType.APPLICATION_JSON)
+@Consumes(MediaType.APPLICATION_JSON)
+public class ClientResource {
+    
+    @Inject
+    private ClientService clientService;
+    
+    @Inject
+    private Event&lt;ClientCreatedEvent&gt; clientCreatedEvent;
+    
+    @Inject
+    private Logger logger;
+    
+    @POST
+    @Logged
+    @Transactional
+    public Response createClient(@Valid Client client) {
+        logger.info(&quot;Creating client: &quot; + client.getName());
+        
+        Client created = clientService.create(client);
+        clientCreatedEvent.fire(new ClientCreatedEvent(created, &quot;REST&quot;));
+        
+        return Response.status(201).entity(created).build();
+    }
+}</code></pre>
+
+<span class="slide-counter">70 / 88</span>
+<div class="slide-nav">
+  <a href="#slide-69">&#8592; Previous</a>
+  <span class="slide-info">Slide 70 / 88 &nbsp;&middot;&nbsp; Lecture 5: JAX-RS and RESTful Web Services</span>
+  <a href="#slide-71">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-71" class="slide">
+<h1>Lab 5 Preview</h1>
+<h2 data-en="Building a Complete REST API" data-fr="Construction a Complete REST API">Building a Complete REST API</h2>
+
+<span class="slide-counter">71 / 88</span>
+<div class="slide-nav">
+  <a href="#slide-70">&#8592; Previous</a>
+  <span class="slide-info">Slide 71 / 88 &nbsp;&middot;&nbsp; Lecture 5: JAX-RS and RESTful Web Services</span>
+  <a href="#slide-72">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-72" class="slide">
+<h2 data-en="Lab 5 Objectives" data-fr="Lab 5 Objectifs">Lab 5 Objectives</h2>
+<p>In Lab 5, you will:</p>
+<ol>
+<li><strong>Create REST API</strong> for banking application</li>
+</ol>
+<ul>
+<li>Client CRUD operations</li>
+<li>Account CRUD operations</li>
+<li>Transfer operations</li>
+</ul>
+<ol>
+<li><strong>Implement JSON-B</strong> customization</li>
+</ol>
+<ul>
+<li>Custom date formats</li>
+<li>Property naming strategies</li>
+</ul>
+<ol>
+<li data-en="<strong>Add Exception Handling</strong>" data-fr="Add Gestion des exceptions"><strong>Add Exception Handling</strong></li>
+</ol>
+<ul>
+<li>Custom exception mappers</li>
+<li>Validation</li>
+</ul>
+
+<span class="slide-counter">72 / 88</span>
+<div class="slide-nav">
+  <a href="#slide-71">&#8592; Previous</a>
+  <span class="slide-info">Slide 72 / 88 &nbsp;&middot;&nbsp; Lecture 5: JAX-RS and RESTful Web Services</span>
+  <a href="#slide-73">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-73" class="slide">
+<h2 data-en="Lab 5 Objectives (cont.)" data-fr="Lab 5 Objectifs (cont.)">Lab 5 Objectives (cont.)</h2>
+<ol>
+<li><strong>Use MicroProfile Rest Client</strong></li>
+</ol>
+<ul>
+<li>Create client interfaces</li>
+<li>Configure endpoints</li>
+<li>Test with CDI</li>
+</ul>
+<ol>
+<li><strong>Integrate with existing code</strong></li>
+</ol>
+<ul>
+<li>Keep web UI (JSP)</li>
+<li>Add REST API alongside</li>
+<li>Share services and repositories</li>
+</ul>
+
+<span class="slide-counter">73 / 88</span>
+<div class="slide-nav">
+  <a href="#slide-72">&#8592; Previous</a>
+  <span class="slide-info">Slide 73 / 88 &nbsp;&middot;&nbsp; Lecture 5: JAX-RS and RESTful Web Services</span>
+  <a href="#slide-74">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-74" class="slide">
+<h2>Lab 5 Architecture</h2>
+<p><img src="../../images/05-jaxrs-restful-services-diagram-2.png" alt="width:70%"></p>
+
+<span class="slide-counter">74 / 88</span>
+<div class="slide-nav">
+  <a href="#slide-73">&#8592; Previous</a>
+  <span class="slide-info">Slide 74 / 88 &nbsp;&middot;&nbsp; Lecture 5: JAX-RS and RESTful Web Services</span>
+  <a href="#slide-75">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-75" class="slide">
+<h2>Lab 5 REST Endpoints</h2>
+<p><strong>Client Endpoints:</strong></p>
+<pre class="dark"><code>GET    /api/clients           - List all clients
+GET    /api/clients/{id}      - Get client by ID
+POST   /api/clients           - Create client
+PUT    /api/clients/{id}      - Update client
+DELETE /api/clients/{id}      - Delete client
+GET    /api/clients/search    - Search clients</code></pre>
+<p><strong>Account Endpoints:</strong></p>
+<pre class="dark"><code>GET    /api/accounts          - List all accounts
+GET    /api/accounts/{id}     - Get account by ID
+POST   /api/accounts          - Create account
+PUT    /api/accounts/{id}     - Update account
+DELETE /api/accounts/{id}     - Delete account
+GET    /api/clients/{id}/accounts - Get client's accounts</code></pre>
+
+<span class="slide-counter">75 / 88</span>
+<div class="slide-nav">
+  <a href="#slide-74">&#8592; Previous</a>
+  <span class="slide-info">Slide 75 / 88 &nbsp;&middot;&nbsp; Lecture 5: JAX-RS and RESTful Web Services</span>
+  <a href="#slide-76">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-76" class="slide">
+<h2>Lab 5 REST Endpoints (cont.)</h2>
+<p><strong>Transfer Endpoint:</strong></p>
+<pre class="dark"><code>POST   /api/transfers         - Transfer between accounts</code></pre>
+<p><strong>Request Body:</strong></p>
+<pre class="dark"><span class="lang-badge">json</span>
+<code>{
+  &quot;fromAccountId&quot;: 1,
+  &quot;toAccountId&quot;: 2,
+  &quot;amount&quot;: 100.00,
+  &quot;description&quot;: &quot;Payment&quot;
+}</code></pre>
+
+<span class="slide-counter">76 / 88</span>
+<div class="slide-nav">
+  <a href="#slide-75">&#8592; Previous</a>
+  <span class="slide-info">Slide 76 / 88 &nbsp;&middot;&nbsp; Lecture 5: JAX-RS and RESTful Web Services</span>
+  <a href="#slide-77">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-77" class="slide">
+<h2 data-en="Lab 5 Testing" data-fr="Lab 5 Tests">Lab 5 Testing</h2>
+<p><strong>Tools you'll use:</strong></p>
+<ul>
+<li><code>curl</code> - Command-line HTTP client</li>
+<li>Postman - GUI REST client</li>
+<li>REST Client VS Code extension</li>
+<li>Automated test scripts</li>
+</ul>
+<p data-en="<strong>Example curl command:</strong>" data-fr="Exemple curl command:"><strong>Example curl command:</strong></p>
+<pre class="dark"><span class="lang-badge">bash</span>
+<code>curl -X POST http://localhost:9080/api/clients \
+  -H &quot;Content-Type: application/json&quot; \
+  -d '{&quot;name&quot;:&quot;John Doe&quot;,&quot;email&quot;:&quot;john@example.com&quot;}'</code></pre>
+
+<span class="slide-counter">77 / 88</span>
+<div class="slide-nav">
+  <a href="#slide-76">&#8592; Previous</a>
+  <span class="slide-info">Slide 77 / 88 &nbsp;&middot;&nbsp; Lecture 5: JAX-RS and RESTful Web Services</span>
+  <a href="#slide-78">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-78" class="slide">
+<h2>Lab 5 Deliverables</h2>
+<ol>
+<li><strong>Complete REST API</strong> implementation</li>
+<li><strong>Exception handlers</strong> for all error cases</li>
+<li><strong>Validation</strong> on all inputs</li>
+<li><strong>Rest Client</strong> interface and tests</li>
+<li><strong>Documentation</strong> of all endpoints</li>
+<li data-en="<strong>Test scripts</strong> for automated testing" data-fr="Test scripts for automated Tests"><strong>Test scripts</strong> for automated testing</li>
+</ol>
+
+<span class="slide-counter">78 / 88</span>
+<div class="slide-nav">
+  <a href="#slide-77">&#8592; Previous</a>
+  <span class="slide-info">Slide 78 / 88 &nbsp;&middot;&nbsp; Lecture 5: JAX-RS and RESTful Web Services</span>
+  <a href="#slide-79">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-79" class="slide slide--section">
+<h1 data-en="Summary and Key Takeaways" data-fr="Résumé and Points clés">Summary and Key Takeaways</h1>
+
+<span class="slide-counter">79 / 88</span>
+<div class="slide-nav">
+  <a href="#slide-78">&#8592; Previous</a>
+  <span class="slide-info">Slide 79 / 88 &nbsp;&middot;&nbsp; Lecture 5: JAX-RS and RESTful Web Services</span>
+  <a href="#slide-80">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-80" class="slide">
+<h2>What We Learned Today</h2>
+<ol>
+<li><strong>REST Principles</strong></li>
+</ol>
+<ul>
+<li>Architectural constraints</li>
+<li>HTTP methods and status codes</li>
+<li data-en="Resource design best practices" data-fr="Resource design Bonnes pratiques">Resource design best practices</li>
+</ul>
+<ol>
+<li><strong>JAX-RS</strong></li>
+</ol>
+<ul>
+<li>Annotations (@Path, @GET, @POST, etc.)</li>
+<li>Resource implementation</li>
+<li>Sub-resources and parameters</li>
+</ul>
+
+<span class="slide-counter">80 / 88</span>
+<div class="slide-nav">
+  <a href="#slide-79">&#8592; Previous</a>
+  <span class="slide-info">Slide 80 / 88 &nbsp;&middot;&nbsp; Lecture 5: JAX-RS and RESTful Web Services</span>
+  <a href="#slide-81">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-81" class="slide">
+<h2>What We Learned Today (cont.)</h2>
+<ol>
+<li><strong>JSON-B</strong></li>
+</ol>
+<ul>
+<li>Automatic JSON conversion</li>
+<li>Customization with annotations</li>
+<li>Type adapters</li>
+</ul>
+<ol>
+<li data-en="<strong>Exception Handling</strong>" data-fr="Gestion des exceptions"><strong>Exception Handling</strong></li>
+</ol>
+<ul>
+<li>Custom exception mappers</li>
+<li>Error response DTOs</li>
+<li>Bean validation</li>
+</ul>
+<ol>
+<li><strong>MicroProfile Rest Client</strong></li>
+</ol>
+<ul>
+<li>Type-safe client interfaces</li>
+<li>CDI integration</li>
+<li>Configuration</li>
+</ul>
+
+<span class="slide-counter">81 / 88</span>
+<div class="slide-nav">
+  <a href="#slide-80">&#8592; Previous</a>
+  <span class="slide-info">Slide 81 / 88 &nbsp;&middot;&nbsp; Lecture 5: JAX-RS and RESTful Web Services</span>
+  <a href="#slide-82">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-82" class="slide">
+<h2 data-en="Best Practices Recap" data-fr="Bonnes pratiques Recap">Best Practices Recap</h2>
+<p>✅ <strong>Design RESTful URIs</strong> - Use nouns, not verbs</p>
+<p>✅ <strong>Use HTTP methods correctly</strong> - GET, POST, PUT, DELETE</p>
+<p>✅ <strong>Return proper status codes</strong> - 200, 201, 404, 500, etc.</p>
+<p>✅ <strong>Handle exceptions gracefully</strong> - Custom mappers</p>
+<p>✅ <strong>Validate inputs</strong> - Bean Validation</p>
+<p>✅ <strong>Use JSON-B</strong> - Automatic conversion</p>
+<p>✅ <strong>Leverage CDI</strong> - Inject services and clients</p>
+<p>✅ <strong>Document your API</strong> - Clear endpoint descriptions</p>
+
+<span class="slide-counter">82 / 88</span>
+<div class="slide-nav">
+  <a href="#slide-81">&#8592; Previous</a>
+  <span class="slide-info">Slide 82 / 88 &nbsp;&middot;&nbsp; Lecture 5: JAX-RS and RESTful Web Services</span>
+  <a href="#slide-83">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-83" class="slide">
+<h2>Common Pitfalls to Avoid</h2>
+<p data-en="❌ <strong>Using verbs in URIs</strong> - <code>/getClient</code> instead of <code>/clients</code>" data-fr="❌ Utilisation de verbs in URIs - /getClient instead of /clients">❌ <strong>Using verbs in URIs</strong> - <code>/getClient</code> instead of <code>/clients</code></p>
+<p data-en="❌ <strong>Ignoring HTTP methods</strong> - Using only GET and POST" data-fr="❌ Ignoring HTTP methods - Utilisation de only GET and POST">❌ <strong>Ignoring HTTP methods</strong> - Using only GET and POST</p>
+<p>❌ <strong>Generic error responses</strong> - Always return 500</p>
+<p>❌ <strong>No input validation</strong> - Accepting invalid data</p>
+<p>❌ <strong>Exposing internal errors</strong> - Leaking stack traces</p>
+<p>❌ <strong>Stateful REST services</strong> - Storing session data</p>
+<p>❌ <strong>Not versioning API</strong> - Breaking changes without notice</p>
+
+<span class="slide-counter">83 / 88</span>
+<div class="slide-nav">
+  <a href="#slide-82">&#8592; Previous</a>
+  <span class="slide-info">Slide 83 / 88 &nbsp;&middot;&nbsp; Lecture 5: JAX-RS and RESTful Web Services</span>
+  <a href="#slide-84">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-84" class="slide">
+<h2 data-en="Next Steps" data-fr="Prochaines étapes">Next Steps</h2>
+<h3 data-en="Lecture 6: Microservices Architecture" data-fr="Lecture 6: Architecture microservices">Lecture 6: Microservices Architecture</h3>
+<ul>
+<li>Microservices principles</li>
+<li>Service decomposition</li>
+<li>Inter-service communication</li>
+<li>API Gateway pattern</li>
+</ul>
+<h3>Lab 6: Microservices Implementation</h3>
+<ul>
+<li>Split monolith into microservices</li>
+<li>Implement service discovery</li>
+<li>Add API gateway</li>
+<li>Handle distributed transactions</li>
+</ul>
+
+<span class="slide-counter">84 / 88</span>
+<div class="slide-nav">
+  <a href="#slide-83">&#8592; Previous</a>
+  <span class="slide-info">Slide 84 / 88 &nbsp;&middot;&nbsp; Lecture 5: JAX-RS and RESTful Web Services</span>
+  <a href="#slide-85">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-85" class="slide">
+<h2 data-en="Additional Resources" data-fr="Ressources supplémentaires">Additional Resources</h2>
+<h3>Documentation</h3>
+<ul>
+<li data-en="<a href=&quot;https://jakarta.ee/specifications/restful-ws/&quot;>Jakarta RESTful Web Services Specification</a>" data-fr="Jakarta Services RESTful Specification"><a href="https://jakarta.ee/specifications/restful-ws/">Jakarta RESTful Web Services Specification</a></li>
+<li><a href="https://jakarta.ee/specifications/jsonb/">Jakarta JSON Binding Specification</a></li>
+<li><a href="https://microprofile.io/project/eclipse/microprofile-rest-client">MicroProfile Rest Client</a></li>
+</ul>
+<h3>Books</h3>
+<ul>
+<li data-en="&quot;RESTful Web Services&quot; by Leonard Richardson" data-fr="&quot;Services RESTful&quot; by Leonard Richardson">"RESTful Web Services" by Leonard Richardson</li>
+<li>"REST API Design Rulebook" by Mark Masse</li>
+</ul>
+<h3>Online</h3>
+<ul>
+<li><a href="https://restfulapi.net/">REST API Tutorial</a></li>
+<li><a href="https://www.baeldung.com/jax-rs-spec-and-implementations">JAX-RS Tutorial</a></li>
+</ul>
+
+<span class="slide-counter">85 / 88</span>
+<div class="slide-nav">
+  <a href="#slide-84">&#8592; Previous</a>
+  <span class="slide-info">Slide 85 / 88 &nbsp;&middot;&nbsp; Lecture 5: JAX-RS and RESTful Web Services</span>
+  <a href="#slide-86">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-86" class="slide">
+<h2>Questions?</h2>
+<p><strong>Contact Information:</strong></p>
+<ul>
+<li>Email: instructor@esipe.fr</li>
+<li data-en="Office Hours: Monday/Wednesday 2-4 PM" data-fr="Office Hours: Lundi/Mercredi 2-4 PM">Office Hours: Monday/Wednesday 2-4 PM</li>
+<li>Discussion Forum: [course-forum-link]</li>
+</ul>
+<p><strong>Lab 5 Materials:</strong></p>
+<ul>
+<li>Lab Guide: <code>03-Labs/Lab05-REST/README.md</code></li>
+<li>Starter Code: <code>03-Labs/Lab05-REST/starter/</code></li>
+<li>Solution: <code>03-Labs/Lab05-REST/solution/</code></li>
+</ul>
+
+<span class="slide-counter">86 / 88</span>
+<div class="slide-nav">
+  <a href="#slide-85">&#8592; Previous</a>
+  <span class="slide-info">Slide 86 / 88 &nbsp;&middot;&nbsp; Lecture 5: JAX-RS and RESTful Web Services</span>
+  <a href="#slide-87">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-87" class="slide">
+<h2 data-en="Thank You!" data-fr="Merci !!">Thank You!</h2>
+<h3 data-en="See you in Lab 5!" data-fr="À bientôt dans Lab 5!">See you in Lab 5!</h3>
+<p><strong>Remember:</strong></p>
+<ul>
+<li>Complete Lab 5 before next session</li>
+<li>Review REST principles</li>
+<li>Practice with curl and Postman</li>
+<li data-en="Ask questions on the forum" data-fr="Ask Questions on the forum">Ask questions on the forum</li>
+</ul>
+<p data-en="<strong>Next Session:</strong> Microservices Architecture" data-fr="Next Session: Architecture microservices"><strong>Next Session:</strong> Microservices Architecture</p>
+
+<span class="slide-counter">87 / 88</span>
+<div class="slide-nav">
+  <a href="#slide-86">&#8592; Previous</a>
+  <span class="slide-info">Slide 87 / 88 &nbsp;&middot;&nbsp; Lecture 5: JAX-RS and RESTful Web Services</span>
+  <a href="#slide-88">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-88" class="slide">
+
+<span class="slide-counter">88 / 88</span>
+<div class="slide-nav">
+  <a href="#slide-87">&#8592; Previous</a>
+  <span class="slide-info">Slide 88 / 88 &nbsp;&middot;&nbsp; Lecture 5: JAX-RS and RESTful Web Services</span>
+  <a class="disabled">Next &#8594;</a>
+</div>
+</section>
+    </div>
+  </main>
+</div>
+<footer class="site-footer">Made with IBM Bob &nbsp;&middot;&nbsp; &copy; 2026 Olivier Planson</footer>
+<script>
+/* ── EN/FR language toggle — global scope so buttons can call it ── */
+var _lang = localStorage.getItem('slide-lang') || 'en';
+function setLang(lang) {
+  _lang = lang;
+  localStorage.setItem('slide-lang', lang);
+  document.getElementById('btn-en').classList.toggle('active', lang === 'en');
+  document.getElementById('btn-fr').classList.toggle('active', lang === 'fr');
+  document.querySelectorAll('[data-en][data-fr]').forEach(function(el) {
+    el.innerHTML = lang === 'fr' ? el.getAttribute('data-fr') : el.getAttribute('data-en');
+  });
+}
+
+(function() {
+  /* ── Sidenav hover ── */
+  var nav     = document.getElementById('sidenav');
+  var navTrig = document.getElementById('sidenav-trigger');
+  var navTimer = null;
+  function navShow() { clearTimeout(navTimer); nav.classList.add('sidenav--open'); }
+  function navHide() { navTimer = setTimeout(function(){ nav.classList.remove('sidenav--open'); }, 300); }
+  navTrig.addEventListener('mouseenter', navShow);
+  navTrig.addEventListener('mouseleave', navHide);
+  nav.addEventListener('mouseenter', navShow);
+  nav.addEventListener('mouseleave', navHide);
+
+  /* ── Progress bar hover ── */
+  var pbWrap  = document.getElementById('pb-wrap');
+  var pbTrig  = document.getElementById('pb-trigger');
+  var pbTimer = null;
+  function pbShow() { clearTimeout(pbTimer); pbWrap.classList.add('pb-open'); }
+  function pbHide() { pbTimer = setTimeout(function(){ pbWrap.classList.remove('pb-open'); }, 400); }
+  pbTrig.addEventListener('mouseenter', pbShow);
+  pbTrig.addEventListener('mouseleave', pbHide);
+  pbWrap.addEventListener('mouseenter', pbShow);
+  pbWrap.addEventListener('mouseleave', pbHide);
+
+  /* ── Wire EN/FR buttons via addEventListener (no inline onclick) ── */
+  document.getElementById('btn-en').addEventListener('click', function() { setLang('en'); });
+  document.getElementById('btn-fr').addEventListener('click', function() { setLang('fr'); });
+
+  /* Apply stored preference on page load */
+  if (_lang === 'fr') setLang('fr');
+})();
+</script>
+</body>
+</html>

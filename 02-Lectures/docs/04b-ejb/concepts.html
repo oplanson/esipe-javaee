@@ -1,0 +1,120 @@
+<!-- © Copyright 2026 Olivier Planson. All rights reserved. Reproduction prohibited. Made with IBM Bob. -->
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>Cours 04b — Concepts clés</title>
+  <link rel="stylesheet" href="../assets/carbon.css"/>
+</head>
+<body>
+<header class="cds--header">
+  <a class="cds--header__name" href="index.html">EJB — Enterprise Java Beans<span>Cours Jakarta EE</span></a>
+  <a class="cds--header__back" href="../index.html">← Tous les Cours</a>
+</header>
+<div class="cds--shell">
+  <nav class="cds--side-nav">
+    <p class="cds--side-nav__section-title">Cours 04b</p>
+    <a class="cds--side-nav__link" href="index.html">⊙ Vue d'ensemble</a>
+    <a class="cds--side-nav__link" href="slides.html">☰ Contenu du cours</a>
+    <a class="cds--side-nav__link active" href="concepts.html">◈ Concepts clés</a>
+    <a class="cds--side-nav__link" href="code.html">⟨/⟩ Exemples de code</a>
+  </nav>
+  <main class="cds--content">
+    <div class="breadcrumb"><a href="../index.html">Cours</a> › <a href="index.html">Cours 04b</a> › Concepts clés</div>
+    <h1>Concepts clés</h1>
+    <p class="page-lead">Comparatifs, tableaux de référence, patterns courants et glossaire EJB.</p>
+
+    <h2>EJB vs CDI — Quand utiliser quoi ?</h2>
+    <div class="cds--data-table-container">
+      <table class="cds--data-table">
+        <thead><tr><th>Fonctionnalité</th><th>EJB (Session Bean)</th><th>CDI Bean</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Transactions déclaratives</strong></td><td>✅ Nativement intégrées (CMT)</td><td>Via <code>@Transactional</code> (intercepteur CDI)</td></tr>
+          <tr><td><strong>Clustering &amp; passivation</strong></td><td>✅ Stateful beans passivables, clustering natif</td><td>❌ Non supporté nativement</td></tr>
+          <tr><td><strong>Accès distant (Remote)</strong></td><td>✅ Via interface <code>@Remote</code></td><td>❌ Local uniquement</td></tr>
+          <tr><td><strong>Sécurité <code>@RolesAllowed</code></strong></td><td>✅ Intégrée au conteneur</td><td>Via intercepteur personnalisé</td></tr>
+          <tr><td><strong>Timer Service</strong></td><td>✅ <code>@Schedule</code>, <code>@Timeout</code> natifs</td><td>❌ Non disponible</td></tr>
+          <tr><td><strong>Message-Driven</strong></td><td>✅ <code>@MessageDriven</code> intégré</td><td>❌ Non supporté</td></tr>
+          <tr><td><strong>Complexité</strong></td><td>⚠️ Plus lourde — spécification dédiée</td><td>✅ Légère, POJO orienté</td></tr>
+          <tr><td><strong>Recommandé quand</strong></td><td>Transactions distribuées, clustering, remote, MDB, timers</td><td>Services modernes, microservices, couplage faible</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h2>Types de Session Beans</h2>
+    <div class="cds--data-table-container">
+      <table class="cds--data-table">
+        <thead><tr><th>Type</th><th>Annotation</th><th>État conservé</th><th>Pooling</th><th>Cas d'usage typique</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Stateless</strong></td><td><code>@Stateless</code></td><td>❌ Aucun état entre appels</td><td>✅ Pool d'instances géré par le conteneur</td><td>Services métier sans état, façades DAO, REST backends</td></tr>
+          <tr><td><strong>Stateful</strong></td><td><code>@Stateful</code></td><td>✅ État par client, par conversation</td><td>❌ Instance dédiée par client</td><td>Panier d'achat, wizards multi-étapes, édition collaborative</td></tr>
+          <tr><td><strong>Singleton</strong></td><td><code>@Singleton</code></td><td>✅ État global partagé</td><td>❌ Instance unique</td><td>Cache applicatif, configuration globale, compteurs partagés</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h2>Attributs de Transaction @TransactionAttribute</h2>
+    <div class="cds--data-table-container">
+      <table class="cds--data-table">
+        <thead><tr><th>Attribut</th><th>Appelé AVEC transaction existante</th><th>Appelé SANS transaction existante</th></tr></thead>
+        <tbody>
+          <tr><td><strong>REQUIRED</strong> (défaut)</td><td>Participe à la transaction existante</td><td>Crée une nouvelle transaction</td></tr>
+          <tr><td><strong>REQUIRES_NEW</strong></td><td>Suspend l'existante, crée une nouvelle transaction indépendante</td><td>Crée une nouvelle transaction</td></tr>
+          <tr><td><strong>MANDATORY</strong></td><td>Participe à la transaction existante</td><td>⛔ Lance <code>EJBTransactionRequiredException</code></td></tr>
+          <tr><td><strong>SUPPORTS</strong></td><td>Participe à la transaction existante</td><td>S'exécute sans transaction</td></tr>
+          <tr><td><strong>NOT_SUPPORTED</strong></td><td>Suspend l'existante, s'exécute sans transaction</td><td>S'exécute sans transaction</td></tr>
+          <tr><td><strong>NEVER</strong></td><td>⛔ Lance <code>EJBException</code></td><td>S'exécute sans transaction</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h2>Sécurité Déclarative EJB</h2>
+    <div class="cds--data-table-container">
+      <table class="cds--data-table">
+        <thead><tr><th>Annotation</th><th>Portée</th><th>Description</th></tr></thead>
+        <tbody>
+          <tr><td><code>@RolesAllowed({"ROLE1","ROLE2"})</code></td><td>Classe ou méthode</td><td>Autorise uniquement les appelants possédant l'un des rôles listés</td></tr>
+          <tr><td><code>@PermitAll</code></td><td>Classe ou méthode</td><td>Autorise tous les appelants sans restriction de rôle</td></tr>
+          <tr><td><code>@DenyAll</code></td><td>Classe ou méthode</td><td>Interdit tous les appels — méthode inaccessible quel que soit le rôle</td></tr>
+          <tr><td><code>@RunAs("ROLE")</code></td><td>Classe uniquement</td><td>Exécute le bean sous un rôle de sécurité différent (élévation de privilège)</td></tr>
+          <tr><td><code>@DeclareRoles({"R1","R2"})</code></td><td>Classe uniquement</td><td>Déclare les rôles connus du bean pour usage dans <code>isCallerInRole()</code></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h2>Patterns EJB courants</h2>
+    <div class="cds--data-table-container">
+      <table class="cds--data-table">
+        <thead><tr><th>Nom du pattern</th><th>Description</th><th>Quand l'utiliser</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Service Facade</strong></td><td>Un EJB Stateless expose une API simplifiée masquant la complexité des sous-systèmes internes (JPA, JMS, autres EJBs)</td><td>Quand les clients (REST, JSF) ne doivent pas connaître le détail des opérations internes</td></tr>
+          <tr><td><strong>Session Facade</strong></td><td>Un Stateful EJB orchestre plusieurs opérations sur plusieurs appels pour un même client, maintenant l'état intermédiaire</td><td>Workflows en plusieurs étapes nécessitant un contexte conservé entre les requêtes</td></tr>
+          <tr><td><strong>DAO Pattern</strong></td><td>Un EJB Stateless encapsule toutes les opérations CRUD sur une entité JPA, séparant la logique d'accès aux données de la logique métier</td><td>Toujours — pour isoler la couche de persistance et faciliter les tests unitaires</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h2>Glossaire</h2>
+    <div class="cds--data-table-container">
+      <table class="cds--data-table">
+        <thead><tr><th>Terme</th><th>Définition</th></tr></thead>
+        <tbody>
+          <tr><td><strong>EJB</strong></td><td>Enterprise Java Beans — composants serveur Java gérés par le conteneur Jakarta EE, encapsulant la logique métier et délégant les services transversaux (transactions, sécurité, timers) au conteneur</td></tr>
+          <tr><td><strong>@Stateless</strong></td><td>Annotation déclarant un Session Bean sans état conversationnel — poolé par le conteneur, idéal pour les services métier haute performance</td></tr>
+          <tr><td><strong>@Stateful</strong></td><td>Annotation déclarant un Session Bean conservant l'état par client — une instance dédiée par conversation, passivable par le conteneur</td></tr>
+          <tr><td><strong>@Singleton</strong></td><td>Annotation déclarant un Session Bean dont une seule instance existe dans toute l'application — nécessite une gestion explicite de la concurrence</td></tr>
+          <tr><td><strong>@MessageDriven</strong></td><td>Annotation déclarant un Message-Driven Bean — composant asynchrone déclenché par l'arrivée de messages JMS dans une queue ou un topic</td></tr>
+          <tr><td><strong>CMT / BMT</strong></td><td>Container-Managed Transactions / Bean-Managed Transactions — deux modes de gestion des transactions EJB. CMT délègue au conteneur (via <code>@TransactionAttribute</code>), BMT gère manuellement via <code>UserTransaction</code></td></tr>
+          <tr><td><strong>@EJB</strong></td><td>Annotation d'injection permettant d'injecter une référence vers un autre EJB dans un composant Jakarta EE — analogue à <code>@Inject</code> mais spécifique aux EJBs</td></tr>
+          <tr><td><strong>Timer Service</strong></td><td>Service EJB permettant de planifier l'exécution de méthodes à des moments définis — via <code>@Schedule</code> (automatique, style cron) ou via l'API programmatique <code>TimerService</code></td></tr>
+          <tr><td><strong>Activation Configuration</strong></td><td>Ensemble de propriétés <code>@ActivationConfigProperty</code> configurant un MDB — type de destination, nom JNDI, filtre de messages, mode d'acquittement</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+  </main>
+</div>
+<footer class="cds--footer">Made with IBM Bob &nbsp;·&nbsp; © 2026 Olivier Planson &nbsp;·&nbsp; ESIPE — Jakarta EE &amp; Microservices</footer>
+</body>
+</html>

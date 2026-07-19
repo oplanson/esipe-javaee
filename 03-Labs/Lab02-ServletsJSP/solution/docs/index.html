@@ -1,0 +1,90 @@
+<!-- © Copyright 2026 Olivier Planson. All rights reserved. Reproduction prohibited. Made with IBM Bob. -->
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>Banking Web App — Documentation</title>
+  <link rel="stylesheet" href="assets/carbon.css"/>
+</head>
+<body>
+<header class="cds--header">
+  <a class="cds--header__name" href="index.html">Banking Web Application<span>Documentation Technique — Lab 02</span></a>
+  <a href="../../../index.html" style="margin-left:auto;font-size:.75rem;color:#c6c6c6;text-decoration:none;border:1px solid #393939;padding:.2rem .75rem;border-radius:2px;white-space:nowrap;">← Tous les Labs</a>
+</header>
+<div class="cds--shell">
+  <nav class="cds--side-nav" aria-label="Navigation principale">
+    <p class="cds--side-nav__section-title">Documentation</p>
+    <a class="cds--side-nav__link active" href="index.html"><i class="icon">⊙</i> Vue d'ensemble</a>
+    <a class="cds--side-nav__link" href="functional.html"><i class="icon">⊞</i> Architecture Fonctionnelle</a>
+    <a class="cds--side-nav__link" href="technical.html"><i class="icon">⊟</i> Architecture Technique</a>
+    <a class="cds--side-nav__link" href="sequences.html"><i class="icon">⇄</i> Diagrammes de Séquences</a>
+    <a class="cds--side-nav__link" href="rules.html"><i class="icon">≡</i> Règles de Gestion</a>
+  </nav>
+  <main class="cds--content">
+    <nav class="cds--breadcrumb"><a href="index.html">Accueil</a><span class="sep">/</span><span class="current">Vue d'ensemble</span></nav>
+    <h1>Banking Web Application</h1>
+    <p class="page-lead">Application web bancaire construite avec Jakarta EE 10 et MicroProfile 6.0, déployée sur Open Liberty. Elle gère les clients et leurs comptes via un pattern MVC Servlet/JSP avec des filtres transversaux et des health checks.</p>
+
+    <h2>Informations du projet</h2>
+    <div class="tile-grid">
+      <div class="cds--tile">
+        <h3>Identité</h3>
+        <div class="cds--data-table-container">
+          <table class="cds--data-table">
+            <tbody>
+              <tr><td><strong>Nom</strong></td><td>Banking Web Application</td></tr>
+              <tr><td><strong>GroupId</strong></td><td><code>com.bank</code></td></tr>
+              <tr><td><strong>ArtifactId</strong></td><td><code>banking-web-app</code></td></tr>
+              <tr><td><strong>Version</strong></td><td>1.0-SNAPSHOT</td></tr>
+              <tr><td><strong>Packaging</strong></td><td>WAR</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div class="cds--tile">
+        <h3>Environnement d'exécution</h3>
+        <div class="cds--data-table-container">
+          <table class="cds--data-table">
+            <tbody>
+              <tr><td><strong>Java</strong></td><td>17</td></tr>
+              <tr><td><strong>Jakarta EE</strong></td><td>10.0.0</td></tr>
+              <tr><td><strong>MicroProfile</strong></td><td>6.0</td></tr>
+              <tr><td><strong>Serveur</strong></td><td>Open Liberty 23.0.0.12</td></tr>
+              <tr><td><strong>Port HTTP</strong></td><td>9080</td></tr>
+              <tr><td><strong>Port HTTPS</strong></td><td>9443</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <h2>Stack technologique</h2>
+    <div class="cds--data-table-container">
+      <table class="cds--data-table">
+        <thead><tr><th>Dépendance</th><th>Version</th><th>Rôle</th></tr></thead>
+        <tbody>
+          <tr><td><code>jakarta.jakartaee-api</code></td><td>10.0.0</td><td>APIs Jakarta EE (Servlet, JSP, JSTL, CDI…) — scope provided</td></tr>
+          <tr><td><code>microprofile</code></td><td>6.0</td><td>APIs MicroProfile (Config, Health, Metrics) — scope provided</td></tr>
+          <tr><td><code>jakarta.servlet.jsp.jstl-api</code></td><td>3.0.0</td><td>JSTL API pour les vues JSP</td></tr>
+          <tr><td><code>jakarta.servlet.jsp.jstl</code> (GlassFish)</td><td>3.0.1</td><td>Implémentation JSTL runtime</td></tr>
+          <tr><td><code>junit-jupiter</code></td><td>5.10.1</td><td>Tests unitaires — scope test</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h2>Navigation rapide</h2>
+    <div class="tile-grid">
+      <div class="cds--tile"><h3><a href="functional.html">Architecture Fonctionnelle</a></h3><p>Domaines métier, composants et leur responsabilité, diagramme de groupement.</p></div>
+      <div class="cds--tile"><h3><a href="technical.html">Architecture Technique</a></h3><p>Couches Jakarta EE, APIs utilisées, structure WAR et infrastructure Liberty.</p></div>
+      <div class="cds--tile"><h3><a href="sequences.html">Diagrammes de Séquences</a></h3><p>Flux HTTP détaillés : liste clients, création, consultation, mise à jour, suppression.</p></div>
+      <div class="cds--tile"><h3><a href="rules.html">Règles de Gestion</a></h3><p>R1–R14 : validation, sécurité, routing, PRG pattern, feature flags.</p></div>
+    </div>
+
+    <hr class="cds--divider"/>
+    <div class="cds--inline-notification"><div><strong>Lab 02</strong> — Ce projet illustre le pattern MVC avec Servlets, JSP et JSTL, enrichi de filtres transversaux (authentification, logging, CORS, compression) et de sondes de santé MicroProfile Health.</div></div>
+  </main>
+</div>
+<footer class="cds--footer">Made with IBM Bob</footer>
+</body>
+</html>

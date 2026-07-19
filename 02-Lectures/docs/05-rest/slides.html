@@ -1,0 +1,329 @@
+<!-- © Copyright 2026 Olivier Planson. All rights reserved. Reproduction prohibited. Made with IBM Bob. -->
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>Cours 05 — Contenu du cours</title>
+  <link rel="stylesheet" href="../assets/carbon.css"/>
+</head>
+<body>
+<header class="cds--header">
+  <a class="cds--header__name" href="index.html">JAX-RS — Services RESTful<span>Cours Jakarta EE</span></a>
+  <a class="cds--header__back" href="../index.html">← Tous les Cours</a>
+</header>
+<div class="cds--shell">
+  <nav class="cds--side-nav">
+    <p class="cds--side-nav__section-title">Cours 05</p>
+    <a class="cds--side-nav__link" href="index.html">⊙ Vue d'ensemble</a>
+    <a class="cds--side-nav__link active" href="slides.html">☰ Contenu du cours</a>
+    <a class="cds--side-nav__link" href="concepts.html">◈ Concepts clés</a>
+    <a class="cds--side-nav__link" href="code.html">⟨/⟩ Exemples de code</a>
+  </nav>
+  <main class="cds--content">
+    <div class="breadcrumb"><a href="../index.html">Cours</a> › <a href="index.html">Cours 05</a> › Contenu</div>
+    <h1>Contenu du cours</h1>
+    <p class="page-lead">Toutes les sections — cliquez sur un titre pour développer.</p>
+
+    <details open>
+      <summary>🌐 Principes REST et Richardson Maturity Model</summary>
+      <div class="slide-content">
+        <h3>Qu'est-ce que REST ?</h3>
+        <p><strong>REST</strong> (Representational State Transfer) est un style architectural défini par Roy Fielding en 2000. Il repose sur les ressources, les représentations et le protocole HTTP comme moteur d'état applicatif.</p>
+        <h3>Level 0 — Plain Old XML / POX</h3>
+        <ul>
+          <li>HTTP utilisé comme simple protocole de transport</li>
+          <li>Un seul endpoint pour toutes les opérations — ex. <code>POST /api</code></li>
+          <li>L'opération est décrite dans le corps de la requête</li>
+          <li>Pas de distinction de ressources — comparable à du RPC sur HTTP</li>
+        </ul>
+        <h3>Level 1 — Ressources</h3>
+        <ul>
+          <li>Les ressources sont identifiées par des URIs distinctes</li>
+          <li>Ex. <code>POST /clients</code>, <code>POST /clients/42</code></li>
+          <li>HTTP toujours utilisé comme simple tunnel — verbes non respectés</li>
+          <li>Amélioration : chaque ressource possède son propre endpoint</li>
+        </ul>
+        <h3>Level 2 — Verbes HTTP</h3>
+        <ul>
+          <li>Utilisation sémantique correcte des verbes HTTP : <code>GET</code>, <code>POST</code>, <code>PUT</code>, <code>DELETE</code>, <code>PATCH</code></li>
+          <li>Codes de statut HTTP significatifs : 200, 201, 204, 400, 404, 409…</li>
+          <li>Ex. <code>GET /clients</code>, <code>POST /clients</code>, <code>PUT /clients/42</code>, <code>DELETE /clients/42</code></li>
+          <li>La grande majorité des APIs REST modernes se situent à ce niveau</li>
+        </ul>
+        <h3>Level 3 — HATEOAS</h3>
+        <ul>
+          <li><strong>HATEOAS</strong> (Hypermedia As The Engine Of Application State)</li>
+          <li>Les réponses contiennent des liens vers les actions possibles suivantes</li>
+          <li>Le client découvre l'API dynamiquement à travers les hyperliens</li>
+          <li>Ex. : une réponse <code>GET /clients/42</code> inclut des liens <code>self</code>, <code>update</code>, <code>delete</code>, <code>orders</code></li>
+          <li>Niveau rarement atteint en pratique — surtout pertinent pour les APIs publiques évolutives</li>
+        </ul>
+        <img src="../../images/05-jaxrs-restful-services-diagram-1.png" alt="Richardson Maturity Model — Levels 0 to 3"/>
+      </div>
+    </details>
+
+    <details>
+      <summary>📌 Annotations JAX-RS</summary>
+      <div class="slide-content">
+        <h3>@Path — Identification des ressources</h3>
+        <ul>
+          <li><code>@Path("/clients")</code> sur la classe — chemin racine de la ressource</li>
+          <li><code>@Path("/{id}")</code> sur la méthode — sous-chemin avec paramètre de chemin</li>
+          <li>Les paths se composent : <code>/clients/{id}</code></li>
+        </ul>
+        <h3>Verbes HTTP — @GET @POST @PUT @DELETE @PATCH</h3>
+        <ul>
+          <li><code>@GET</code> — lecture d'une ressource ou liste (idempotent, sans corps)</li>
+          <li><code>@POST</code> — création d'une nouvelle ressource (non idempotent)</li>
+          <li><code>@PUT</code> — remplacement complet d'une ressource existante (idempotent)</li>
+          <li><code>@DELETE</code> — suppression d'une ressource (idempotent)</li>
+          <li><code>@PATCH</code> — mise à jour partielle d'une ressource</li>
+        </ul>
+        <h3>Paramètres de la requête</h3>
+        <ul>
+          <li><code>@PathParam("id")</code> — extrait un segment de l'URI : <code>/clients/{id}</code></li>
+          <li><code>@QueryParam("page")</code> — paramètre de requête URL : <code>?page=2&amp;size=10</code></li>
+          <li><code>@HeaderParam("Authorization")</code> — valeur d'un en-tête HTTP</li>
+          <li><code>@BeanParam</code> — regroupe plusieurs paramètres dans un objet</li>
+        </ul>
+        <h3>Négociation de contenu</h3>
+        <ul>
+          <li><code>@Produces(MediaType.APPLICATION_JSON)</code> — type MIME de la réponse</li>
+          <li><code>@Consumes(MediaType.APPLICATION_JSON)</code> — type MIME attendu du corps de requête</li>
+          <li>Valeurs courantes : <code>APPLICATION_JSON</code>, <code>APPLICATION_XML</code>, <code>TEXT_PLAIN</code></li>
+        </ul>
+        <h3>@ApplicationPath — Point d'entrée de l'application</h3>
+        <ul>
+          <li>Classe étendant <code>jakarta.ws.rs.core.Application</code> annotée <code>@ApplicationPath("/api")</code></li>
+          <li>Définit le préfixe global de toutes les ressources JAX-RS</li>
+          <li>Peut être vide pour déléguer la configuration au serveur</li>
+        </ul>
+        <img src="../../images/05-jaxrs-restful-services-diagram-2.png" alt="JAX-RS Annotations Overview"/>
+      </div>
+    </details>
+
+    <details>
+      <summary>📦 JSON-B — Sérialisation JSON</summary>
+      <div class="slide-content">
+        <p><strong>JSON-B</strong> (Jakarta JSON Binding) est la spécification standard Jakarta EE pour la conversion bidirectionnelle entre objets Java et JSON.</p>
+        <h3>@JsonbProperty — Renommage des champs</h3>
+        <ul>
+          <li><code>@JsonbProperty("full_name")</code> sur un champ — le JSON utilisera <code>full_name</code> au lieu du nom Java</li>
+          <li>Utile pour respecter les conventions snake_case des APIs REST</li>
+        </ul>
+        <h3>@JsonbTransient — Exclusion de champs</h3>
+        <ul>
+          <li><code>@JsonbTransient</code> sur un champ — exclu de la sérialisation et désérialisation JSON</li>
+          <li>Idéal pour les mots de passe, tokens, champs sensibles</li>
+        </ul>
+        <h3>@JsonbDateFormat — Format des dates</h3>
+        <ul>
+          <li><code>@JsonbDateFormat("yyyy-MM-dd")</code> — contrôle le format de sérialisation des dates</li>
+          <li>Applicable aux champs <code>LocalDate</code>, <code>LocalDateTime</code>, <code>ZonedDateTime</code></li>
+        </ul>
+        <h3>Naming Strategies</h3>
+        <ul>
+          <li><code>PropertyNamingStrategy.LOWER_CASE_WITH_UNDERSCORES</code> — conversion automatique camelCase → snake_case</li>
+          <li><code>PropertyNamingStrategy.UPPER_CAMEL_CASE</code> — PascalCase pour tous les champs</li>
+          <li>Configurable via <code>JsonbConfig</code> ou <code>@JsonbNillable</code>, <code>@JsonbPropertyOrder</code></li>
+        </ul>
+        <h3>Custom Adapters</h3>
+        <ul>
+          <li>Implémenter <code>JsonbAdapter&lt;Original, Adapted&gt;</code> pour une conversion sur mesure</li>
+          <li>Méthodes <code>adaptToJson()</code> et <code>adaptFromJson()</code></li>
+          <li>Enregistrement via <code>@JsonbTypeAdapter</code> sur le champ ou via <code>JsonbConfig</code></li>
+        </ul>
+        <h3>Références circulaires</h3>
+        <ul>
+          <li>Problème courant avec les entités JPA bidirectionnelles (ex. <code>Client</code> ↔ <code>Order</code>)</li>
+          <li>Solution 1 : <code>@JsonbTransient</code> sur le côté propriétaire inverse</li>
+          <li>Solution 2 : utiliser des DTOs sans cycles au lieu des entités directement</li>
+          <li>Solution 3 : adapter personnalisé qui interrompt la récursion</li>
+        </ul>
+      </div>
+    </details>
+
+    <details>
+      <summary>⚠️ Gestion des Exceptions</summary>
+      <div class="slide-content">
+        <p>JAX-RS fournit un mécanisme élégant pour intercepter les exceptions et les convertir en réponses HTTP structurées.</p>
+        <h3>ExceptionMapper&lt;T&gt;</h3>
+        <ul>
+          <li>Interface JAX-RS à implémenter : <code>ExceptionMapper&lt;MonException&gt;</code></li>
+          <li>Méthode unique : <code>Response toResponse(MonException exception)</code></li>
+          <li>Permet de retourner un corps JSON avec le message d'erreur, le code, le champ concerné</li>
+        </ul>
+        <h3>@Provider</h3>
+        <ul>
+          <li>Annotation JAX-RS indiquant au runtime que cette classe est un composant de l'infrastructure</li>
+          <li>Enregistrement automatique des ExceptionMapper, MessageBodyWriter, ContainerFilter…</li>
+        </ul>
+        <h3>WebApplicationException</h3>
+        <ul>
+          <li>Exception JAX-RS de base — encapsule un <code>Response</code> directement</li>
+          <li>Sous-classes prêtes à l'emploi : <code>NotFoundException</code> (404), <code>BadRequestException</code> (400), <code>NotAuthorizedException</code> (401), <code>ForbiddenException</code> (403)</li>
+          <li>Peut être lancée directement depuis une méthode de ressource</li>
+        </ul>
+        <h3>Exceptions personnalisées</h3>
+        <ul>
+          <li>Créer une exception métier <code>ClientNotFoundException extends RuntimeException</code></li>
+          <li>Créer le mapper correspondant <code>@Provider ClientNotFoundExceptionMapper</code></li>
+          <li>Découplage total entre logique métier et protocole HTTP</li>
+        </ul>
+        <h3>Validation avec Bean Validation</h3>
+        <ul>
+          <li><code>@NotNull</code> — le champ ne peut pas être null</li>
+          <li><code>@Size(min=2, max=100)</code> — contrainte de longueur sur une chaîne ou collection</li>
+          <li><code>@Email</code> — format d'adresse email valide</li>
+          <li><code>@Valid</code> sur le paramètre de la méthode JAX-RS pour déclencher la validation</li>
+          <li>Les violations sont reportées via <code>ConstraintViolationException</code> interceptable par un mapper</li>
+        </ul>
+      </div>
+    </details>
+
+    <details>
+      <summary>🔌 MicroProfile Rest Client</summary>
+      <div class="slide-content">
+        <p><strong>MicroProfile Rest Client</strong> permet de consommer des APIs REST distantes à travers une interface Java typée — sans code HTTP boilerplate.</p>
+        <h3>@RegisterRestClient</h3>
+        <ul>
+          <li>Annotation placée sur l'interface — enregistre le client auprès du runtime MicroProfile</li>
+          <li><code>configKey</code> — clé de configuration pour l'URL de base dans <code>microprofile-config.properties</code></li>
+          <li>Ex. : <code>@RegisterRestClient(configKey="currency-api")</code></li>
+        </ul>
+        <h3>Interface @Path annotée</h3>
+        <ul>
+          <li>L'interface utilise les mêmes annotations JAX-RS que les ressources serveur : <code>@Path</code>, <code>@GET</code>, <code>@POST</code>, <code>@PathParam</code>, <code>@QueryParam</code>, <code>@Produces</code>, <code>@Consumes</code></li>
+          <li>Aucune implémentation à écrire — le runtime génère le proxy automatiquement</li>
+        </ul>
+        <h3>@Inject @RestClient</h3>
+        <ul>
+          <li>Injection CDI du client avec le qualificateur <code>@RestClient</code></li>
+          <li>Le runtime injecte le proxy généré — utilisation identique à une dépendance locale</li>
+        </ul>
+        <h3>Configuration dans microprofile-config.properties</h3>
+        <ul>
+          <li><code>currency-api/mp-rest/url=https://api.exchangerate.host</code></li>
+          <li><code>currency-api/mp-rest/connectTimeout=3000</code></li>
+          <li><code>currency-api/mp-rest/readTimeout=5000</code></li>
+          <li><code>currency-api/mp-rest/scope=jakarta.enterprise.context.ApplicationScoped</code></li>
+        </ul>
+        <h3>ResponseExceptionMapper — Gestion des erreurs distantes</h3>
+        <ul>
+          <li>Implémenter <code>ResponseExceptionMapper&lt;RuntimeException&gt;</code> pour transformer les réponses erreur en exceptions Java</li>
+          <li>Méthode <code>toThrowable(Response response)</code> — inspekte le statut et retourne l'exception appropriée</li>
+          <li>Enregistrement avec <code>@RegisterProvider(MonExceptionMapper.class)</code> sur l'interface cliente</li>
+        </ul>
+      </div>
+    </details>
+
+    <details>
+      <summary>🔗 Intégration REST + CDI</summary>
+      <div class="slide-content">
+        <p>JAX-RS et CDI s'intègrent nativement dans Jakarta EE — les ressources JAX-RS sont des beans CDI à part entière.</p>
+        <h3>Service CDI @ApplicationScoped dans une ressource REST</h3>
+        <ul>
+          <li>Injection directe par <code>@Inject</code> dans la classe ressource JAX-RS</li>
+          <li>La ressource peut elle-même porter un scope CDI (<code>@RequestScoped</code>, <code>@ApplicationScoped</code>)</li>
+          <li>Meilleure pratique : scope <code>@RequestScoped</code> pour les ressources JAX-RS</li>
+        </ul>
+        <h3>Intercepteur CDI sur les ressources REST</h3>
+        <ul>
+          <li>Les intercepteurs CDI (<code>@Logged</code>, <code>@Audited</code>…) s'appliquent aussi sur les méthodes JAX-RS</li>
+          <li>Permet d'ajouter du logging, de la sécurité ou du métriques sans modifier le code de ressource</li>
+        </ul>
+        <h3>CDI Events déclenchés par des opérations REST</h3>
+        <ul>
+          <li>Injecter <code>Event&lt;ClientCreatedEvent&gt;</code> dans la ressource JAX-RS</li>
+          <li>Déclencher l'événement après une opération réussie (création, mise à jour, suppression)</li>
+          <li>Les observateurs CDI réagissent de façon découplée : notifications, audit, cache invalidation</li>
+        </ul>
+        <h3>CDI Qualifiers avec Rest Clients</h3>
+        <ul>
+          <li>Plusieurs implémentations de la même interface cliente peuvent être distinguées par des qualificateurs CDI</li>
+          <li>Ex. : <code>@Production</code> et <code>@Staging</code> clients configurés sur des URLs différentes</li>
+          <li>Combinaison de <code>@RegisterRestClient</code> + qualificateur CDI sur l'interface</li>
+        </ul>
+      </div>
+    </details>
+
+    <details>
+      <summary>📖 OpenAPI et Documentation</summary>
+      <div class="slide-content">
+        <p><strong>MicroProfile OpenAPI</strong> génère automatiquement une documentation <code>/openapi</code> (format YAML/JSON) à partir des annotations Java.</p>
+        <h3>@OpenAPIDefinition — Métadonnées globales</h3>
+        <ul>
+          <li>Placée sur la classe <code>Application</code> ou une classe de configuration</li>
+          <li>Définit <code>info</code> (titre, version, description), <code>servers</code>, <code>tags</code>, <code>security</code></li>
+        </ul>
+        <h3>@Operation — Documentation d'un endpoint</h3>
+        <ul>
+          <li><code>summary</code> — résumé court de l'opération</li>
+          <li><code>description</code> — description longue détaillée</li>
+          <li><code>operationId</code> — identifiant unique utilisé par les générateurs de clients</li>
+          <li><code>tags</code> — regroupement logique dans l'UI Swagger</li>
+        </ul>
+        <h3>@APIResponse — Documentation des réponses</h3>
+        <ul>
+          <li><code>responseCode</code> — code HTTP de la réponse documentée</li>
+          <li><code>description</code> — explication du cas de réponse</li>
+          <li><code>content</code> — schéma du corps de réponse avec <code>@Content</code> et <code>@Schema</code></li>
+        </ul>
+        <h3>@Schema — Structure des DTOs</h3>
+        <ul>
+          <li>Placé sur les classes DTO et leurs champs</li>
+          <li><code>description</code>, <code>example</code>, <code>required</code>, <code>minimum</code>, <code>maximum</code></li>
+          <li>Enrichit la documentation générée avec des exemples concrets</li>
+        </ul>
+        <h3>@Parameter — Documentation des paramètres</h3>
+        <ul>
+          <li>Documente les <code>@PathParam</code>, <code>@QueryParam</code>, <code>@HeaderParam</code></li>
+          <li><code>in</code> (path/query/header), <code>required</code>, <code>description</code>, <code>schema</code></li>
+        </ul>
+        <h3>Endpoint /openapi</h3>
+        <ul>
+          <li>Disponible automatiquement sur <code>GET /openapi</code> (YAML) ou <code>GET /openapi?format=JSON</code></li>
+          <li>Interface Swagger UI souvent accessible sur <code>/swagger-ui</code> selon le runtime</li>
+        </ul>
+      </div>
+    </details>
+
+    <details>
+      <summary>🔢 Codes HTTP et bonnes pratiques</summary>
+      <div class="slide-content">
+        <p>Le choix du code de statut HTTP est fondamental pour une API REST sémantiquement correcte et prévisible.</p>
+        <h3>Codes de succès</h3>
+        <ul>
+          <li><strong>200 OK</strong> — succès générique pour GET, PUT, PATCH avec corps de réponse</li>
+          <li><strong>201 Created</strong> — ressource créée avec succès (POST) — inclure l'en-tête <code>Location</code> avec l'URI de la ressource créée</li>
+          <li><strong>204 No Content</strong> — succès sans corps de réponse (DELETE, PUT sans retour)</li>
+        </ul>
+        <h3>Codes d'erreur client (4xx)</h3>
+        <ul>
+          <li><strong>400 Bad Request</strong> — requête malformée, validation échouée, données invalides</li>
+          <li><strong>401 Unauthorized</strong> — authentification requise ou token invalide/expiré</li>
+          <li><strong>403 Forbidden</strong> — authentifié mais sans les droits nécessaires</li>
+          <li><strong>404 Not Found</strong> — ressource demandée inexistante</li>
+          <li><strong>409 Conflict</strong> — conflit d'état : doublon, version obsolète (optimistic lock), état incompatible</li>
+        </ul>
+        <h3>Codes d'erreur serveur (5xx)</h3>
+        <ul>
+          <li><strong>500 Internal Server Error</strong> — erreur interne non gérée — ne jamais exposer les stack traces</li>
+        </ul>
+        <h3>Bonnes pratiques REST</h3>
+        <ul>
+          <li>✅ Utiliser des noms de ressources au pluriel : <code>/clients</code> et non <code>/client</code></li>
+          <li>✅ Toujours retourner l'en-tête <code>Location</code> après un POST 201</li>
+          <li>✅ Inclure un corps d'erreur JSON structuré pour les 4xx et 5xx</li>
+          <li>✅ Versionner les APIs : <code>/api/v1/clients</code> ou via Accept Header</li>
+          <li>✅ Ne jamais retourner 200 avec un corps d'erreur — antipattern courant</li>
+        </ul>
+      </div>
+    </details>
+
+  </main>
+</div>
+<footer class="cds--footer">Made with IBM Bob &nbsp;·&nbsp; © 2026 Olivier Planson &nbsp;·&nbsp; ESIPE — Jakarta EE &amp; Microservices</footer>
+</body>
+</html>

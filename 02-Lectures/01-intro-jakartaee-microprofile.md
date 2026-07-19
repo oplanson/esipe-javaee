@@ -158,17 +158,52 @@ By the end of this lecture, you will be able to:
 - **Open-source:** Community-driven development under Eclipse Foundation
 
 ### Evolution Timeline:
-```mermaid
-graph LR
-    A["J2EE (1999)"] --> B["Java EE (2006)"]
-    B --> C["Jakarta EE (2019)"]
-    C --> D["Jakarta EE 10 (2022)"]
 
-    style A fill:#e1f5ff
-    style B fill:#4facfe
-    style C fill:#667eea
-    style D fill:#43e97b
+> **⭐ This course targets Jakarta EE 10** — newer versions exist but are not yet widely adopted in production.
+
+<details>
+<summary>📝 Original Mermaid Code (click to expand)</summary>
+
+```mermaid
+timeline
+    title Jakarta EE — Evolution from J2EE to Jakarta EE 11
+    section J2EE era
+        1999 : J2EE 1.2
+             : Servlets, JSP, EJB 1.1
+        2001 : J2EE 1.3
+             : CMP EJB, JMS, Connectors
+        2003 : J2EE 1.4
+             : Web Services (JAX-RPC)
+    section Java EE era
+        2006 : Java EE 5
+             : Annotations, EJB 3.0, JPA 1.0
+        2009 : Java EE 6
+             : CDI, JAX-RS, Bean Validation
+        2013 : Java EE 7
+             : WebSocket, JSON-P, Batch
+        2017 : Java EE 8
+             : JSON-B, Security API, HTTP/2
+    section Jakarta EE (transition)
+        2019 : Jakarta EE 8
+             : Eclipse Foundation — same APIs
+        2020 : Jakarta EE 9
+             : javax.* → jakarta.* namespace
+        2021 : Jakarta EE 9.1
+             : Java 11 support
+    section Jakarta EE (current)
+        2022 : Jakarta EE 10 ⭐
+             : CDI Lite, Core Profile, Java 11+
+    section Latest
+        2024 : Jakarta EE 11
+             : Virtual threads, Java 21+
+             : Data API, Concurrency 3.1
 ```
+
+</details>
+
+![width:70%](images/01-intro-jakartaee-microprofile-diagram-1.png)
+
+
 
 ---
 
@@ -183,13 +218,51 @@ graph LR
 - **Rapid innovation:** Faster release cycles than Jakarta EE
 
 ### Timeline:
-```mermaid
-graph LR
-    A["MicroProfile 1.0 (2016)"] --> B["MicroProfile 6.0 (2023)"]
 
-    style A fill:#f093fb
-    style B fill:#43e97b
+> **⭐ This course targets MicroProfile 6.0** — the latest stable release aligned with Jakarta EE 10 Core Profile.
+
+<details>
+<summary>📝 Original Mermaid Code (click to expand)</summary>
+
+```mermaid
+timeline
+    title MicroProfile — Major Releases (2016–2025)
+    section Origins (Java EE)
+        2016 : MP 1.0
+             : Config, Health, Metrics
+             : Fault Tolerance, JWT, Rest Client
+    section Growth (Java EE 7/8)
+        2018 : MP 2.0
+             : Java EE 7 alignment
+             : OpenAPI, OpenTracing added
+        2019 : MP 3.0
+             : Java EE 8 alignment
+             : Health 2.0, Metrics 2.0
+    section Jakarta EE transition
+        2021 : MP 4.0
+             : Jakarta EE 8 (javax.*)
+             : Config 2.0, FT 3.0
+        2021 : MP 5.0
+             : Jakarta EE 9.1 (jakarta.*)
+             : Breaking namespace change
+    section Jakarta EE 10
+        2022 : MP 6.0 ⭐
+             : Jakarta EE 10 Core Profile
+             : Telemetry replaces OpenTracing
+        2023 : MP 6.1
+             : Telemetry 1.1, OpenAPI 3.1
+    section Latest
+        2024 : MP 7.0
+             : Telemetry 2.0 replaces Metrics
+        2025 : MP 7.1
+             : Telemetry 2.1, OpenAPI 4.1
 ```
+
+</details>
+
+![width:70%](images/01-intro-jakartaee-microprofile-diagram-2.png)
+
+
 
 ---
 
@@ -222,16 +295,19 @@ graph TB
     B --> F[Open Liberty Runtime]
     C --> F
     F --> G[Cloud/Container Platform]
-    
-    style A fill:#667eea
-    style B fill:#f093fb
-    style C fill:#4facfe
-    style F fill:#43e97b
+
+    style A fill:#667eea,color:#fff
+    style B fill:#f093fb,color:#fff
+    style C fill:#4facfe,color:#fff
+    style D fill:#f5e0c3,color:#5d3b1e
+    style E fill:#d0e2ff,color:#0043ce
+    style F fill:#43e97b,color:#0e6027
+    style G fill:#defbe6,color:#0e6027
 ```
 
 </details>
 
-![width:70%](images/01-intro-jakartaee-microprofile-diagram-1.png)
+![width:70%](images/01-intro-jakartaee-microprofile-diagram-3.png)
 
 
 **Best Practice:** Use Jakarta EE for core enterprise features + MicroProfile for cloud-native capabilities
@@ -539,6 +615,7 @@ banking-app/
         <maven.compiler.target>17</maven.compiler.target>
         <jakartaee.version>10.0.0</jakartaee.version>
         <microprofile.version>6.0</microprofile.version>
+        <liberty.version>23.0.0.12</liberty.version>
     </properties>
     
     <dependencies>
@@ -549,7 +626,6 @@ banking-app/
             <version>${jakartaee.version}</version>
             <scope>provided</scope>
         </dependency>
-        
         <!-- MicroProfile API -->
         <dependency>
             <groupId>org.eclipse.microprofile</groupId>
@@ -559,6 +635,41 @@ banking-app/
             <scope>provided</scope>
         </dependency>
     </dependencies>
+
+    <build>
+        <finalName>banking-app</finalName>
+        <plugins>
+            <!-- Liberty Maven Plugin — enables mvn liberty:dev -->
+            <plugin>
+                <groupId>io.openliberty.tools</groupId>
+                <artifactId>liberty-maven-plugin</artifactId>
+                <version>3.9</version>
+                <configuration>
+                    <serverName>bankingServer</serverName>
+                    <runtimeArtifact>
+                        <groupId>io.openliberty</groupId>
+                        <artifactId>openliberty-runtime</artifactId>
+                        <version>${liberty.version}</version>
+                        <type>zip</type>
+                    </runtimeArtifact>
+                    <bootstrapProperties>
+                        <default.http.port>9080</default.http.port>
+                        <default.https.port>9443</default.https.port>
+                        <app.context.root>/</app.context.root>
+                    </bootstrapProperties>
+                </configuration>
+            </plugin>
+            <!-- WAR plugin — no web.xml required -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-war-plugin</artifactId>
+                <version>3.4.0</version>
+                <configuration>
+                    <failOnMissingWebXml>false</failOnMissingWebXml>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 </project>
 ```
 
@@ -730,34 +841,27 @@ OpenAPI:      http://localhost:9080/openapi
 
 ### Layered Architecture with MicroProfile:
 
-<details>
-<summary>📝 Original Mermaid Code (click to expand)</summary>
-
 ```mermaid
 graph TB
     A[Client Browser/API] --> B[JAX-RS Resources]
     B --> C[CDI Services]
     C --> D[JPA Repositories]
     D --> E[PostgreSQL Database]
-    
+
     F[MP Config] -.-> C
     G[MP Health] -.-> C
     H[MP Metrics] -.-> B
     H -.-> C
-    
-    style A fill:#e1f5ff
-    style B fill:#fff3e0
-    style C fill:#f3e5f5
-    style D fill:#e8f5e9
-    style E fill:#fce4ec
-    style F fill:#fff9c4
-    style G fill:#c8e6c9
-    style H fill:#b3e5fc
+
+    style A fill:#e1f5ff,color:#0043ce
+    style B fill:#fff3e0,color:#5d3b1e
+    style C fill:#f3e5f5,color:#491d8b
+    style D fill:#e8f5e9,color:#0e6027
+    style E fill:#fce4ec,color:#750e13
+    style F fill:#fff9c4,color:#5d4a00
+    style G fill:#c8e6c9,color:#0e6027
+    style H fill:#b3e5fc,color:#0043ce
 ```
-
-</details>
-
-![width:70%](images/01-intro-jakartaee-microprofile-diagram-2.png)
 
 
 ---

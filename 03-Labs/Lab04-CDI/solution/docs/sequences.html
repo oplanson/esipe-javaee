@@ -1,0 +1,377 @@
+<!-- © Copyright 2026 Olivier Planson. All rights reserved. Reproduction prohibited. Made with IBM Bob. -->
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Diagrammes de Séquence — Banking CDI Lab 04</title>
+  <link rel="stylesheet" href="assets/carbon.css"/>
+</head>
+<body>
+
+<header class="cds--header">
+  <a class="cds--header__name" href="index.html">⬡ IBM Carbon <span>/ Banking CDI Application — Lab 04</span></a>
+</header>
+
+<div class="cds--shell">
+  <nav class="cds--side-nav">
+    <p class="cds--side-nav__section-title">Documentation</p>
+    <a class="cds--side-nav__link" href="index.html"><i class="icon">⊞</i> Vue d'ensemble</a>
+    <a class="cds--side-nav__link" href="functional.html"><i class="icon">◈</i> Architecture Fonctionnelle</a>
+    <a class="cds--side-nav__link" href="technical.html"><i class="icon">⚙</i> Architecture Technique</a>
+    <a class="cds--side-nav__link active" href="sequences.html"><i class="icon">↔</i> Diagrammes de Séquence</a>
+    <a class="cds--side-nav__link" href="rules.html"><i class="icon">✓</i> Règles Métier</a>
+    <p class="cds--side-nav__section-title" style="margin-top:1.5rem">Scénarios</p>
+    <a class="cds--side-nav__link" href="#sd1"><i class="icon">1</i> Création Client</a>
+    <a class="cds--side-nav__link" href="#sd2"><i class="icon">2</i> Transaction + Alerte</a>
+    <a class="cds--side-nav__link" href="#sd3"><i class="icon">3</i> Batch BMT</a>
+  </nav>
+
+  <main class="cds--content">
+    <nav class="cds--breadcrumb">
+      <a href="index.html">Lab 04</a>
+      <span class="sep">/</span>
+      <span class="current">Diagrammes de Séquence</span>
+    </nav>
+
+    <h1>Diagrammes de Séquence</h1>
+    <p class="page-lead">Trois scénarios clés illustrant les mécanismes CDI en action : événements, intercepteurs, transactions CMT et BMT.</p>
+
+    <!-- ══════════════════════════════════════════════════
+         SD1 — Création client + événement CDI
+    ══════════════════════════════════════════════════ -->
+    <h2 id="sd1">SD1 — Création d'un client avec événement CDI</h2>
+    <p>
+      Ce scénario montre le flux complet d'une requête POST de création de client, depuis le navigateur
+      jusqu'à l'envoi de notification via l'événement CDI <code>ClientCreatedEvent</code>.
+      Le <code>LoggingInterceptor</code> trace chaque appel de méthode marquée <code>@Logged</code>.
+    </p>
+
+    <div class="arch-box">
+      <svg viewBox="0 0 860 480" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:auto;font-family:'IBM Plex Sans',Arial,sans-serif;font-size:11px">
+        <defs>
+          <marker id="a1" markerWidth="7" markerHeight="7" refX="5" refY="3" orient="auto"><path d="M0,0 L0,6 L7,3 z" fill="#161616"/></marker>
+          <marker id="a2" markerWidth="7" markerHeight="7" refX="5" refY="3" orient="auto"><path d="M0,0 L0,6 L7,3 z" fill="#525252"/></marker>
+          <marker id="a3" markerWidth="7" markerHeight="7" refX="5" refY="3" orient="auto"><path d="M0,0 L0,6 L7,3 z" fill="#8a3ffc"/></marker>
+          <marker id="a4" markerWidth="7" markerHeight="7" refX="5" refY="3" orient="auto"><path d="M0,0 L0,6 L7,3 z" fill="#198038"/></marker>
+        </defs>
+
+        <!-- Lifeline headers -->
+        <rect x="10" y="10" width="90" height="36" fill="#161616" rx="2"/>
+        <text x="55" y="25" fill="#f4f4f4" text-anchor="middle" font-weight="600">Browser</text>
+        <text x="55" y="40" fill="#c6c6c6" text-anchor="middle" font-size="9">HTTP</text>
+
+        <rect x="130" y="10" width="115" height="36" fill="#0f62fe" rx="2"/>
+        <text x="188" y="25" fill="#fff" text-anchor="middle" font-weight="600">ClientController</text>
+        <text x="188" y="40" fill="#d0e2ff" text-anchor="middle" font-size="9">@WebServlet @Inject</text>
+
+        <rect x="275" y="10" width="110" height="36" fill="#0f62fe" rx="2"/>
+        <text x="330" y="25" fill="#fff" text-anchor="middle" font-weight="600">ClientService</text>
+        <text x="330" y="40" fill="#d0e2ff" text-anchor="middle" font-size="9">@ApplicationScoped</text>
+
+        <rect x="415" y="10" width="105" height="36" fill="#491d8b" rx="2"/>
+        <text x="468" y="25" fill="#fff" text-anchor="middle" font-weight="600">EntityManager</text>
+        <text x="468" y="40" fill="#e8daff" text-anchor="middle" font-size="9">@RequestScoped</text>
+
+        <rect x="550" y="10" width="120" height="36" fill="#da1e28" rx="2"/>
+        <text x="610" y="25" fill="#fff" text-anchor="middle" font-weight="600">BankingEvent</text>
+        <text x="610" y="40" fill="#ffd7d9" text-anchor="middle" font-size="9">Observer @Observes</text>
+
+        <rect x="700" y="10" width="140" height="36" fill="#198038" rx="2"/>
+        <text x="770" y="25" fill="#fff" text-anchor="middle" font-weight="600">NotificationService</text>
+        <text x="770" y="40" fill="#defbe6" text-anchor="middle" font-size="9">@Premium / @Standard</text>
+
+        <!-- Lifelines -->
+        <line x1="55"  y1="46" x2="55"  y2="470" stroke="#c6c6c6" stroke-width="1" stroke-dasharray="4,3"/>
+        <line x1="188" y1="46" x2="188" y2="470" stroke="#c6c6c6" stroke-width="1" stroke-dasharray="4,3"/>
+        <line x1="330" y1="46" x2="330" y2="470" stroke="#c6c6c6" stroke-width="1" stroke-dasharray="4,3"/>
+        <line x1="468" y1="46" x2="468" y2="470" stroke="#c6c6c6" stroke-width="1" stroke-dasharray="4,3"/>
+        <line x1="610" y1="46" x2="610" y2="470" stroke="#c6c6c6" stroke-width="1" stroke-dasharray="4,3"/>
+        <line x1="770" y1="46" x2="770" y2="470" stroke="#c6c6c6" stroke-width="1" stroke-dasharray="4,3"/>
+
+        <!-- Step 1: POST /clients -->
+        <line x1="55" y1="80" x2="183" y2="80" stroke="#161616" stroke-width="1.5" marker-end="url(#a1)"/>
+        <text x="115" y="74" fill="#161616" text-anchor="middle">POST /clients</text>
+
+        <!-- Step 2: @Inject ClientService.create() -->
+        <line x1="188" y1="105" x2="325" y2="105" stroke="#0f62fe" stroke-width="1.5" marker-end="url(#a1)"/>
+        <text x="255" y="99" fill="#0f62fe" text-anchor="middle">createClient(data)</text>
+
+        <!-- LoggingInterceptor note -->
+        <rect x="200" y="112" width="170" height="20" fill="#fdf6dd" rx="2" stroke="#f1c21b" stroke-width="1"/>
+        <text x="285" y="125" fill="#8c4f00" text-anchor="middle" font-size="9">⊛ LoggingInterceptor.before()</text>
+
+        <!-- Step 3: em.persist(client) -->
+        <line x1="330" y1="145" x2="463" y2="145" stroke="#491d8b" stroke-width="1.5" marker-end="url(#a1)"/>
+        <text x="395" y="139" fill="#491d8b" text-anchor="middle">em.persist(client)</text>
+
+        <!-- Step 4: commit -->
+        <rect x="290" y="155" width="220" height="18" fill="#defbe6" rx="2" stroke="#198038" stroke-width="1"/>
+        <text x="400" y="167" fill="#0e6027" text-anchor="middle" font-size="9">@Transactional — commit automatique (CMT)</text>
+
+        <!-- Step 5: Fire ClientCreatedEvent -->
+        <line x1="330" y1="188" x2="605" y2="188" stroke="#8a3ffc" stroke-width="1.5" stroke-dasharray="5,3" marker-end="url(#a3)"/>
+        <text x="465" y="182" fill="#8a3ffc" text-anchor="middle">fire(ClientCreatedEvent)</text>
+
+        <!-- Step 6: onClientCreated(@Observes) -->
+        <rect x="570" y="195" width="80" height="50" fill="#fff1f1" rx="2" stroke="#da1e28" stroke-width="1"/>
+        <text x="610" y="210" fill="#750e13" text-anchor="middle" font-size="9">onClient</text>
+        <text x="610" y="223" fill="#750e13" text-anchor="middle" font-size="9">Created()</text>
+        <text x="610" y="236" fill="#750e13" text-anchor="middle" font-size="9">resolve NS</text>
+
+        <!-- Step 7: select @Premium or @Standard -->
+        <line x1="650" y1="215" x2="765" y2="215" stroke="#198038" stroke-width="1.5" stroke-dasharray="3,2" marker-end="url(#a4)"/>
+        <text x="705" y="209" fill="#198038" text-anchor="middle" font-size="9">@Premium ou @Standard</text>
+
+        <!-- Step 8: notify() -->
+        <rect x="735" y="222" width="70" height="30" fill="#defbe6" rx="2" stroke="#198038" stroke-width="1"/>
+        <text x="770" y="237" fill="#0e6027" text-anchor="middle" font-size="9">notify(client)</text>
+        <text x="770" y="247" fill="#0e6027" text-anchor="middle" font-size="9">sent ✓</text>
+
+        <!-- Step 9: return from ClientService -->
+        <line x1="325" y1="270" x2="193" y2="270" stroke="#525252" stroke-width="1" stroke-dasharray="4,2" marker-end="url(#a2)"/>
+        <text x="255" y="264" fill="#525252" text-anchor="middle">client created</text>
+
+        <!-- LoggingInterceptor after note -->
+        <rect x="200" y="277" width="165" height="20" fill="#fdf6dd" rx="2" stroke="#f1c21b" stroke-width="1"/>
+        <text x="283" y="290" fill="#8c4f00" text-anchor="middle" font-size="9">⊛ LoggingInterceptor.after() — Xms</text>
+
+        <!-- Step 10: 302 redirect -->
+        <line x1="188" y1="315" x2="60" y2="315" stroke="#525252" stroke-width="1" stroke-dasharray="4,2" marker-end="url(#a2)"/>
+        <text x="122" y="309" fill="#525252" text-anchor="middle">302 redirect /clients</text>
+
+        <!-- Legend -->
+        <text x="10" y="345" fill="#161616" font-weight="600" font-size="10">Légende :</text>
+        <line x1="10" y1="360" x2="50" y2="360" stroke="#161616" stroke-width="1.5" marker-end="url(#a1)"/>
+        <text x="55" y="364" fill="#525252" font-size="9">Appel synchrone</text>
+        <line x1="140" y1="360" x2="180" y2="360" stroke="#525252" stroke-width="1" stroke-dasharray="4,2" marker-end="url(#a2)"/>
+        <text x="185" y="364" fill="#525252" font-size="9">Retour</text>
+        <line x1="240" y1="360" x2="280" y2="360" stroke="#8a3ffc" stroke-width="1.5" stroke-dasharray="5,3" marker-end="url(#a3)"/>
+        <text x="285" y="364" fill="#525252" font-size="9">Événement CDI (async)</text>
+        <rect x="400" y="352" width="100" height="16" fill="#fdf6dd" rx="2" stroke="#f1c21b" stroke-width="1"/>
+        <text x="450" y="363" fill="#8c4f00" text-anchor="middle" font-size="9">⊛ Intercepteur</text>
+      </svg>
+    </div>
+
+    <!-- ══════════════════════════════════════════════════
+         SD2 — Transaction + alerte montant élevé
+    ══════════════════════════════════════════════════ -->
+    <h2 id="sd2">SD2 — Transaction bancaire avec alerte montant élevé</h2>
+    <p>
+      Dépôt ou retrait sur un compte. Si le montant dépasse 10 000 €, un événement supplémentaire
+      <code>onLargeTransaction()</code> est déclenché par <code>BankingEventObserver</code>
+      pour générer une alerte de conformité.
+    </p>
+
+    <div class="arch-box">
+      <svg viewBox="0 0 820 430" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:auto;font-family:'IBM Plex Sans',Arial,sans-serif;font-size:11px">
+        <defs>
+          <marker id="b1" markerWidth="7" markerHeight="7" refX="5" refY="3" orient="auto"><path d="M0,0 L0,6 L7,3 z" fill="#161616"/></marker>
+          <marker id="b2" markerWidth="7" markerHeight="7" refX="5" refY="3" orient="auto"><path d="M0,0 L0,6 L7,3 z" fill="#525252"/></marker>
+          <marker id="b3" markerWidth="7" markerHeight="7" refX="5" refY="3" orient="auto"><path d="M0,0 L0,6 L7,3 z" fill="#8a3ffc"/></marker>
+          <marker id="b4" markerWidth="7" markerHeight="7" refX="5" refY="3" orient="auto"><path d="M0,0 L0,6 L7,3 z" fill="#da1e28"/></marker>
+        </defs>
+
+        <!-- Lifeline headers -->
+        <rect x="10" y="10" width="105" height="36" fill="#161616" rx="2"/>
+        <text x="63" y="25" fill="#f4f4f4" text-anchor="middle" font-weight="600">AccountController</text>
+        <text x="63" y="40" fill="#c6c6c6" text-anchor="middle" font-size="9">@WebServlet</text>
+
+        <rect x="140" y="10" width="110" height="36" fill="#0f62fe" rx="2"/>
+        <text x="195" y="25" fill="#fff" text-anchor="middle" font-weight="600">AccountService</text>
+        <text x="195" y="40" fill="#d0e2ff" text-anchor="middle" font-size="9">@Logged @Transactional</text>
+
+        <rect x="275" y="10" width="100" height="36" fill="#491d8b" rx="2"/>
+        <text x="325" y="25" fill="#fff" text-anchor="middle" font-weight="600">Account</text>
+        <text x="325" y="40" fill="#e8daff" text-anchor="middle" font-size="9">@Entity (domaine)</text>
+
+        <rect x="400" y="10" width="100" height="36" fill="#491d8b" rx="2"/>
+        <text x="450" y="25" fill="#fff" text-anchor="middle" font-weight="600">EntityManager</text>
+        <text x="450" y="40" fill="#e8daff" text-anchor="middle" font-size="9">@RequestScoped</text>
+
+        <rect x="525" y="10" width="115" height="36" fill="#da1e28" rx="2"/>
+        <text x="583" y="25" fill="#fff" text-anchor="middle" font-weight="600">BankingEvent</text>
+        <text x="583" y="40" fill="#ffd7d9" text-anchor="middle" font-size="9">Observer</text>
+
+        <rect x="665" y="10" width="130" height="36" fill="#198038" rx="2"/>
+        <text x="730" y="25" fill="#fff" text-anchor="middle" font-weight="600">Notification</text>
+        <text x="730" y="40" fill="#defbe6" text-anchor="middle" font-size="9">Service @Premium/@Standard</text>
+
+        <!-- Lifelines -->
+        <line x1="63"  y1="46" x2="63"  y2="420" stroke="#c6c6c6" stroke-width="1" stroke-dasharray="4,3"/>
+        <line x1="195" y1="46" x2="195" y2="420" stroke="#c6c6c6" stroke-width="1" stroke-dasharray="4,3"/>
+        <line x1="325" y1="46" x2="325" y2="420" stroke="#c6c6c6" stroke-width="1" stroke-dasharray="4,3"/>
+        <line x1="450" y1="46" x2="450" y2="420" stroke="#c6c6c6" stroke-width="1" stroke-dasharray="4,3"/>
+        <line x1="583" y1="46" x2="583" y2="420" stroke="#c6c6c6" stroke-width="1" stroke-dasharray="4,3"/>
+        <line x1="730" y1="46" x2="730" y2="420" stroke="#c6c6c6" stroke-width="1" stroke-dasharray="4,3"/>
+
+        <!-- deposit() call -->
+        <line x1="63" y1="80" x2="190" y2="80" stroke="#161616" stroke-width="1.5" marker-end="url(#b1)"/>
+        <text x="128" y="74" fill="#161616" text-anchor="middle">deposit(id, amount)</text>
+
+        <!-- @Logged interceptor -->
+        <rect x="118" y="86" width="155" height="18" fill="#fdf6dd" rx="2" stroke="#f1c21b" stroke-width="1"/>
+        <text x="196" y="98" fill="#8c4f00" text-anchor="middle" font-size="9">⊛ LoggingInterceptor — entrée</text>
+
+        <!-- account.deposit() -->
+        <line x1="195" y1="118" x2="320" y2="118" stroke="#491d8b" stroke-width="1.5" marker-end="url(#b1)"/>
+        <text x="258" y="112" fill="#491d8b" text-anchor="middle">account.deposit(amount)</text>
+
+        <!-- validation -->
+        <rect x="280" y="124" width="100" height="30" fill="#defbe6" rx="2" stroke="#198038" stroke-width="1"/>
+        <text x="330" y="136" fill="#0e6027" text-anchor="middle" font-size="9">validation</text>
+        <text x="330" y="148" fill="#0e6027" text-anchor="middle" font-size="9">amount &gt; 0 ✓</text>
+
+        <!-- em.persist -->
+        <line x1="195" y1="170" x2="445" y2="170" stroke="#491d8b" stroke-width="1.5" marker-end="url(#b1)"/>
+        <text x="318" y="164" fill="#491d8b" text-anchor="middle">em.persist(account)</text>
+
+        <!-- CMT commit -->
+        <rect x="160" y="177" width="310" height="18" fill="#defbe6" rx="2" stroke="#198038" stroke-width="1"/>
+        <text x="315" y="189" fill="#0e6027" text-anchor="middle" font-size="9">@Transactional — commit automatique (CMT)</text>
+
+        <!-- Fire TransactionEvent -->
+        <line x1="195" y1="212" x2="578" y2="212" stroke="#8a3ffc" stroke-width="1.5" stroke-dasharray="5,3" marker-end="url(#b3)"/>
+        <text x="385" y="206" fill="#8a3ffc" text-anchor="middle">fire(TransactionEvent.DEPOSIT, amount)</text>
+
+        <!-- onTransaction -->
+        <line x1="583" y1="230" x2="725" y2="230" stroke="#198038" stroke-width="1.5" marker-end="url(#b1)"/>
+        <text x="652" y="224" fill="#198038" text-anchor="middle">notify()</text>
+
+        <!-- Notification sent -->
+        <rect x="700" y="237" width="80" height="22" fill="#defbe6" rx="2" stroke="#198038" stroke-width="1"/>
+        <text x="740" y="251" fill="#0e6027" text-anchor="middle" font-size="9">notification sent ✓</text>
+
+        <!-- IF amount > 10000 box -->
+        <rect x="530" y="273" width="270" height="80" fill="#fdf6dd" rx="3" stroke="#f1c21b" stroke-width="1.5"/>
+        <text x="665" y="290" fill="#8c4f00" text-anchor="middle" font-weight="600" font-size="10">[si montant &gt; 10 000 €]</text>
+        <text x="665" y="306" fill="#8c4f00" text-anchor="middle" font-size="9">onLargeTransaction(@Observes)</text>
+        <text x="665" y="320" fill="#8c4f00" text-anchor="middle" font-size="9">→ WARNING log (conformité)</text>
+        <text x="665" y="334" fill="#8c4f00" text-anchor="middle" font-size="9">→ alerte compliance générée</text>
+
+        <!-- @Logged after -->
+        <rect x="118" y="375" width="155" height="18" fill="#fdf6dd" rx="2" stroke="#f1c21b" stroke-width="1"/>
+        <text x="196" y="387" fill="#8c4f00" text-anchor="middle" font-size="9">⊛ LoggingInterceptor — sortie Xms</text>
+
+        <!-- return -->
+        <line x1="190" y1="400" x2="68" y2="400" stroke="#525252" stroke-width="1" stroke-dasharray="4,2" marker-end="url(#b2)"/>
+        <text x="127" y="394" fill="#525252" text-anchor="middle">200 OK / redirect</text>
+      </svg>
+    </div>
+
+    <!-- ══════════════════════════════════════════════════
+         SD3 — Batch transfer (BMT)
+    ══════════════════════════════════════════════════ -->
+    <h2 id="sd3">SD3 — Traitement par lots de virements (BMT)</h2>
+    <p>
+      <code>BatchTransferService</code> utilise <code>UserTransaction</code> (Bean-Managed Transaction) pour un
+      contrôle programmatique fin. Chaque opération individuelle de virement peut utiliser
+      <code>REQUIRES_NEW</code> pour s'isoler. En cas d'erreur, <code>utx.rollback()</code> annule le lot entier.
+    </p>
+
+    <div class="arch-box">
+      <svg viewBox="0 0 800 420" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:auto;font-family:'IBM Plex Sans',Arial,sans-serif;font-size:11px">
+        <defs>
+          <marker id="c1" markerWidth="7" markerHeight="7" refX="5" refY="3" orient="auto"><path d="M0,0 L0,6 L7,3 z" fill="#161616"/></marker>
+          <marker id="c2" markerWidth="7" markerHeight="7" refX="5" refY="3" orient="auto"><path d="M0,0 L0,6 L7,3 z" fill="#525252"/></marker>
+          <marker id="c3" markerWidth="7" markerHeight="7" refX="5" refY="3" orient="auto"><path d="M0,0 L0,6 L7,3 z" fill="#da1e28"/></marker>
+          <marker id="c4" markerWidth="7" markerHeight="7" refX="5" refY="3" orient="auto"><path d="M0,0 L0,6 L7,3 z" fill="#198038"/></marker>
+        </defs>
+
+        <!-- Lifeline headers -->
+        <rect x="10" y="10" width="135" height="36" fill="#161616" rx="2"/>
+        <text x="78" y="25" fill="#f4f4f4" text-anchor="middle" font-weight="600">TransactionTestServlet</text>
+        <text x="78" y="40" fill="#c6c6c6" text-anchor="middle" font-size="9">@WebServlet</text>
+
+        <rect x="175" y="10" width="135" height="36" fill="#0f62fe" rx="2"/>
+        <text x="243" y="25" fill="#fff" text-anchor="middle" font-weight="600">BatchTransferService</text>
+        <text x="243" y="40" fill="#d0e2ff" text-anchor="middle" font-size="9">@ApplicationScoped BMT</text>
+
+        <rect x="340" y="10" width="130" height="36" fill="#f5e0c3" rx="2" stroke="#8c4f00" stroke-width="1"/>
+        <text x="405" y="25" fill="#5d3b1e" text-anchor="middle" font-weight="600">UserTransaction</text>
+        <text x="405" y="40" fill="#5d3b1e" text-anchor="middle" font-size="9">JTA BMT</text>
+
+        <rect x="500" y="10" width="110" height="36" fill="#491d8b" rx="2"/>
+        <text x="555" y="25" fill="#fff" text-anchor="middle" font-weight="600">AccountService</text>
+        <text x="555" y="40" fill="#e8daff" text-anchor="middle" font-size="9">withdraw/deposit</text>
+
+        <rect x="635" y="10" width="130" height="36" fill="#161616" rx="2"/>
+        <text x="700" y="25" fill="#f4f4f4" text-anchor="middle" font-weight="600">PostgreSQL</text>
+        <text x="700" y="40" fill="#c6c6c6" text-anchor="middle" font-size="9">EclipseLink JPA</text>
+
+        <!-- Lifelines -->
+        <line x1="78"  y1="46" x2="78"  y2="410" stroke="#c6c6c6" stroke-width="1" stroke-dasharray="4,3"/>
+        <line x1="243" y1="46" x2="243" y2="410" stroke="#c6c6c6" stroke-width="1" stroke-dasharray="4,3"/>
+        <line x1="405" y1="46" x2="405" y2="410" stroke="#c6c6c6" stroke-width="1" stroke-dasharray="4,3"/>
+        <line x1="555" y1="46" x2="555" y2="410" stroke="#c6c6c6" stroke-width="1" stroke-dasharray="4,3"/>
+        <line x1="700" y1="46" x2="700" y2="410" stroke="#c6c6c6" stroke-width="1" stroke-dasharray="4,3"/>
+
+        <!-- processBatch() -->
+        <line x1="78" y1="80" x2="238" y2="80" stroke="#161616" stroke-width="1.5" marker-end="url(#c1)"/>
+        <text x="160" y="74" fill="#161616" text-anchor="middle">processBatch(transfers)</text>
+
+        <!-- setTransactionTimeout -->
+        <line x1="243" y1="100" x2="400" y2="100" stroke="#5d3b1e" stroke-width="1.5" marker-end="url(#c1)"/>
+        <text x="322" y="94" fill="#5d3b1e" text-anchor="middle" font-size="9">utx.setTransactionTimeout(30)</text>
+
+        <!-- utx.begin() -->
+        <line x1="243" y1="120" x2="400" y2="120" stroke="#5d3b1e" stroke-width="1.5" marker-end="url(#c1)"/>
+        <text x="322" y="114" fill="#5d3b1e" text-anchor="middle" font-size="10" font-weight="600">utx.begin()</text>
+        <rect x="365" y="125" width="80" height="16" fill="#f5e0c3" rx="2" stroke="#8c4f00" stroke-width="1"/>
+        <text x="405" y="136" fill="#5d3b1e" text-anchor="middle" font-size="8">TX démarrée ✓</text>
+
+        <!-- Loop box -->
+        <rect x="180" y="150" width="510" height="150" fill="none" stroke="#0f62fe" stroke-width="1" stroke-dasharray="6,3" rx="3"/>
+        <text x="195" y="165" fill="#0f62fe" font-weight="600" font-size="9">loop [pour chaque transfert]</text>
+
+        <!-- withdraw -->
+        <line x1="243" y1="178" x2="550" y2="178" stroke="#161616" stroke-width="1.5" marker-end="url(#c1)"/>
+        <text x="395" y="172" fill="#161616" text-anchor="middle">withdraw(source, amount)</text>
+
+        <line x1="555" y1="193" x2="695" y2="193" stroke="#491d8b" stroke-width="1.5" marker-end="url(#c1)"/>
+        <text x="624" y="187" fill="#491d8b" text-anchor="middle" font-size="9">UPDATE accounts</text>
+
+        <!-- deposit -->
+        <line x1="243" y1="215" x2="550" y2="215" stroke="#161616" stroke-width="1.5" marker-end="url(#c1)"/>
+        <text x="395" y="209" fill="#161616" text-anchor="middle">deposit(dest, amount)</text>
+
+        <line x1="555" y1="230" x2="695" y2="230" stroke="#491d8b" stroke-width="1.5" marker-end="url(#c1)"/>
+        <text x="624" y="224" fill="#491d8b" text-anchor="middle" font-size="9">UPDATE accounts</text>
+
+        <!-- transfert OK -->
+        <text x="395" y="283" fill="#198038" text-anchor="middle" font-size="9">✓ Transfert traité — continuer boucle</text>
+
+        <!-- Success / Failure fork -->
+        <rect x="180" y="312" width="230" height="60" fill="#defbe6" rx="3" stroke="#198038" stroke-width="1.5"/>
+        <text x="295" y="330" fill="#0e6027" text-anchor="middle" font-weight="600" font-size="9">[Succès complet]</text>
+        <line x1="243" y1="340" x2="400" y2="340" stroke="#198038" stroke-width="1.5" marker-end="url(#c4)"/>
+        <text x="322" y="334" fill="#198038" text-anchor="middle" font-size="10" font-weight="600">utx.commit()</text>
+        <text x="295" y="360" fill="#0e6027" text-anchor="middle" font-size="9">Tous les virements persistés ✓</text>
+
+        <rect x="430" y="312" width="250" height="60" fill="#fff1f1" rx="3" stroke="#da1e28" stroke-width="1.5"/>
+        <text x="555" y="330" fill="#750e13" text-anchor="middle" font-weight="600" font-size="9">[Erreur sur un transfert]</text>
+        <line x1="460" y1="340" x2="400" y2="340" stroke="#da1e28" stroke-width="1.5" marker-end="url(#c3)"/>
+        <text x="510" y="334" fill="#da1e28" text-anchor="middle" font-size="10" font-weight="600">utx.rollback()</text>
+        <text x="555" y="360" fill="#750e13" text-anchor="middle" font-size="9">Annulation complète du lot ✗</text>
+
+        <!-- Return -->
+        <line x1="238" y1="390" x2="83" y2="390" stroke="#525252" stroke-width="1" stroke-dasharray="4,2" marker-end="url(#c2)"/>
+        <text x="163" y="384" fill="#525252" text-anchor="middle">BatchResult (success/failure)</text>
+      </svg>
+    </div>
+
+    <div class="cds--inline-notification warning">
+      <span>⚠</span>
+      <div><strong>BMT vs CMT</strong> — Le contrôle BMT via <code>UserTransaction</code> offre une flexibilité maximale mais exige une gestion rigoureuse des cas d'erreur. Pour la majorité des cas, préférer <code>@Transactional</code> (CMT).</div>
+    </div>
+
+    <hr class="cds--divider"/>
+    <p style="font-size:.75rem;color:var(--cds-text-placeholder)">Diagrammes de séquence — Lab 04 · CDI 4.0 / Jakarta EE 10</p>
+  </main>
+</div>
+
+<footer class="cds--footer">
+  Banking CDI Application — Lab 04 · Jakarta EE 10 · CDI 4.0 · © 2025 Olivier Planson
+</footer>
+</body>
+</html>

@@ -1,0 +1,254 @@
+<!-- © Copyright 2026 Olivier Planson. All rights reserved. Reproduction prohibited. Made with IBM Bob. -->
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>Cours 04b — Contenu du cours</title>
+  <link rel="stylesheet" href="../assets/carbon.css"/>
+</head>
+<body>
+<header class="cds--header">
+  <a class="cds--header__name" href="index.html">EJB — Enterprise Java Beans<span>Cours Jakarta EE</span></a>
+  <a class="cds--header__back" href="../index.html">← Tous les Cours</a>
+</header>
+<div class="cds--shell">
+  <nav class="cds--side-nav">
+    <p class="cds--side-nav__section-title">Cours 04b</p>
+    <a class="cds--side-nav__link" href="index.html">⊙ Vue d'ensemble</a>
+    <a class="cds--side-nav__link active" href="slides.html">☰ Contenu du cours</a>
+    <a class="cds--side-nav__link" href="concepts.html">◈ Concepts clés</a>
+    <a class="cds--side-nav__link" href="code.html">⟨/⟩ Exemples de code</a>
+  </nav>
+  <main class="cds--content">
+    <div class="breadcrumb"><a href="../index.html">Cours</a> › <a href="index.html">Cours 04b</a> › Contenu</div>
+    <h1>Contenu du cours</h1>
+    <p class="page-lead">Toutes les sections — cliquez sur un titre pour développer.</p>
+
+    <details open>
+      <summary>🏗️ Architecture EJB et Services du Conteneur</summary>
+      <div class="slide-content">
+        <h3>Qu'est-ce qu'un EJB ?</h3>
+        <p>Les <strong>Enterprise Java Beans</strong> sont des composants serveur gérés par le <strong>conteneur EJB</strong> du serveur d'applications Jakarta EE. Ils encapsulent la logique métier et délèguent les préoccupations transversales (transactions, sécurité, cycle de vie) au conteneur.</p>
+        <h3>Types de beans EJB</h3>
+        <ul>
+          <li><strong>Session Stateless</strong> — pas d'état entre les appels, pooling automatique, haute performance</li>
+          <li><strong>Session Stateful</strong> — conserve l'état conversationnel par client, passivation possible</li>
+          <li><strong>Session Singleton</strong> — une seule instance partagée dans toute l'application</li>
+          <li><strong>Message-Driven Bean (MDB)</strong> — traitement asynchrone de messages JMS</li>
+        </ul>
+        <h3>Services fournis par le conteneur</h3>
+        <ul>
+          <li>✅ <strong>Pooling</strong> — gestion automatique d'un pool d'instances pour les beans Stateless</li>
+          <li>✅ <strong>Sécurité</strong> — contrôle d'accès déclaratif via annotations (<code>@RolesAllowed</code>, <code>@DenyAll</code>)</li>
+          <li>✅ <strong>Transactions</strong> — gestion automatique CMT ou programmatique BMT</li>
+          <li>✅ <strong>Timers</strong> — planification de tâches avec le Timer Service</li>
+          <li>✅ <strong>Interception</strong> — intercepteurs autour des invocations de méthodes</li>
+          <li>✅ <strong>Injection</strong> — injection de dépendances via <code>@EJB</code> et <code>@Inject</code></li>
+          <li>✅ <strong>Accès distant</strong> — interfaces <code>@Remote</code> pour appels inter-JVM</li>
+        </ul>
+        <img src="../../images/04b-ejb-enterprise-java-beans-diagram-1.png" alt="Architecture EJB et Services du Conteneur"/>
+      </div>
+    </details>
+
+    <details>
+      <summary>🔵 Stateless Session Beans</summary>
+      <div class="slide-content">
+        <h3>Caractéristiques</h3>
+        <p>Un <strong>Stateless Session Bean</strong> annoté <code>@Stateless</code> ne conserve <strong>aucun état conversationnel</strong> entre deux appels clients. Chaque méthode est une opération autonome et indépendante.</p>
+        <ul>
+          <li>Le conteneur maintient un <strong>pool d'instances</strong> — réutilisées entre les requêtes</li>
+          <li>Très haute performance et scalabilité — bean le plus utilisé en pratique</li>
+          <li>Thread-safe par nature — le conteneur garantit qu'une instance n'est utilisée que par un seul thread à la fois</li>
+          <li>Injection de dépendances via <code>@EJB</code> pour d'autres EJBs ou <code>@Inject</code> pour les beans CDI</li>
+        </ul>
+        <h3>Cas d'usage typiques</h3>
+        <ul>
+          <li>Services métier sans état : paiement, validation, calcul</li>
+          <li>Façades vers la couche de persistance (DAO Pattern)</li>
+          <li>Services d'envoi de notifications, d'emails</li>
+          <li>Services REST backends (injection dans les ressources JAX-RS)</li>
+        </ul>
+        <h3>Cycle de vie</h3>
+        <ul>
+          <li><code>@PostConstruct</code> — appelé après l'injection, lors de l'entrée dans le pool</li>
+          <li><code>@PreDestroy</code> — appelé lors du retrait du pool et de la destruction de l'instance</li>
+        </ul>
+        <img src="../../images/04b-ejb-enterprise-java-beans-diagram-2.png" alt="Stateless Session Bean — pooling et cycle de vie"/>
+      </div>
+    </details>
+
+    <details>
+      <summary>🔶 Stateful Session Beans</summary>
+      <div class="slide-content">
+        <h3>Caractéristiques</h3>
+        <p>Un <strong>Stateful Session Bean</strong> annoté <code>@Stateful</code> maintient un <strong>état conversationnel</strong> propre à chaque client. L'instance est dédiée à un seul client pendant toute la durée de la conversation.</p>
+        <ul>
+          <li>L'état (champs de l'instance) est conservé entre les appels successifs du même client</li>
+          <li>Pas de pool — une instance par conversation client active</li>
+          <li>Doit implémenter <code>java.io.Serializable</code> pour permettre la passivation</li>
+        </ul>
+        <h3>Gestion du cycle de vie étendu</h3>
+        <ul>
+          <li><code>@Remove</code> — marque une méthode qui libère l'instance après son appel (fin de conversation)</li>
+          <li><code>@PrePassivate</code> — appelé avant la passivation (sauvegarde sur disque) par le conteneur</li>
+          <li><code>@PostActivate</code> — appelé après la réactivation (rechargement depuis disque)</li>
+          <li>La passivation permet au conteneur de libérer de la mémoire RAM en sérialisant les beans inactifs</li>
+        </ul>
+        <h3>Cas d'usage typiques</h3>
+        <ul>
+          <li>Panier d'achat e-commerce — accumulation d'articles sur plusieurs requêtes</li>
+          <li>Wizards multi-étapes — formulaires en plusieurs étapes avec état intermédiaire</li>
+          <li>Sessions de travail collaboratif — état d'édition d'un document</li>
+        </ul>
+        <img src="../../images/04b-ejb-enterprise-java-beans-diagram-3.png" alt="Stateful Session Bean — état conversationnel et passivation"/>
+      </div>
+    </details>
+
+    <details>
+      <summary>⬛ Singleton Session Beans</summary>
+      <div class="slide-content">
+        <h3>Caractéristiques</h3>
+        <p>Un <strong>Singleton Session Bean</strong> annoté <code>@Singleton</code> garantit qu'il n'existe qu'<strong>une seule instance</strong> de ce bean dans toute l'application. Partagée par tous les clients, elle nécessite une gestion explicite de la concurrence.</p>
+        <ul>
+          <li>Une seule instance créée et partagée par tout le conteneur</li>
+          <li>Initialisée au démarrage de l'application si annotée <code>@Startup</code></li>
+          <li>Persistance de l'état pendant toute la durée de vie de l'application</li>
+        </ul>
+        <h3>Gestion de la concurrence</h3>
+        <ul>
+          <li><code>@ConcurrencyManagement(CONTAINER)</code> — le conteneur gère les verrous automatiquement (défaut)</li>
+          <li><code>@ConcurrencyManagement(BEAN)</code> — le développeur gère la synchronisation manuellement</li>
+          <li><code>@Lock(READ)</code> — accès concurrent en lecture autorisé pour plusieurs threads simultanés</li>
+          <li><code>@Lock(WRITE)</code> — accès exclusif, un seul thread à la fois (défaut sur les méthodes)</li>
+          <li><code>@AccessTimeout</code> — durée maximale d'attente pour l'obtention d'un verrou</li>
+        </ul>
+        <h3>Initialisation au démarrage</h3>
+        <ul>
+          <li><code>@Startup</code> — force l'initialisation du Singleton au démarrage du serveur</li>
+          <li><code>@DependsOn("AutreBean")</code> — déclare une dépendance d'initialisation ordonnée</li>
+          <li>Utile pour pré-charger des caches, lire des configurations, initialiser des connexions</li>
+        </ul>
+        <img src="../../images/04b-ejb-enterprise-java-beans-diagram-4.png" alt="Singleton Session Bean — instance unique et gestion de la concurrence"/>
+      </div>
+    </details>
+
+    <details>
+      <summary>📨 Message-Driven Beans</summary>
+      <div class="slide-content">
+        <h3>Caractéristiques</h3>
+        <p>Un <strong>Message-Driven Bean (MDB)</strong> annoté <code>@MessageDriven</code> permet le <strong>traitement asynchrone</strong> de messages JMS (Jakarta Messaging). Il est déclenché par l'arrivée d'un message dans une queue ou un topic.</p>
+        <ul>
+          <li>Implémente l'interface <code>jakarta.jms.MessageListener</code> avec la méthode <code>onMessage(Message)</code></li>
+          <li>Entièrement asynchrone — le client émetteur n'attend pas la réponse</li>
+          <li>Pooling automatique d'instances géré par le conteneur</li>
+          <li>Transactions CMT applicables sur la méthode <code>onMessage()</code></li>
+        </ul>
+        <h3>Configuration via @ActivationConfigProperty</h3>
+        <ul>
+          <li><code>destinationType</code> — <code>jakarta.jms.Queue</code> ou <code>jakarta.jms.Topic</code></li>
+          <li><code>destinationLookup</code> — nom JNDI de la destination JMS</li>
+          <li><code>messageSelector</code> — filtre SQL-like sur les propriétés du message</li>
+          <li><code>acknowledgeMode</code> — mode d'acquittement (<code>Auto-acknowledge</code>, <code>Dups-ok-acknowledge</code>)</li>
+        </ul>
+        <h3>Cas d'usage typiques</h3>
+        <ul>
+          <li>Traitement de demandes bancaires asynchrones (virements, paiements)</li>
+          <li>Envoi de notifications (email, SMS) en arrière-plan</li>
+          <li>Intégration de systèmes hétérogènes via message broker</li>
+          <li>Traitement batch découplé de l'interface utilisateur</li>
+        </ul>
+        <img src="../../images/04b-ejb-enterprise-java-beans-diagram-5.png" alt="Message-Driven Bean — traitement asynchrone JMS"/>
+      </div>
+    </details>
+
+    <details>
+      <summary>💳 Transactions CMT et BMT</summary>
+      <div class="slide-content">
+        <h3>CMT — Container-Managed Transactions (défaut)</h3>
+        <p>Avec <strong>CMT</strong>, le conteneur gère automatiquement le cycle de vie des transactions. Le développeur déclare le comportement via <code>@TransactionAttribute</code>.</p>
+        <ul>
+          <li><strong>REQUIRED</strong> — participe à la transaction existante ou en crée une nouvelle (défaut)</li>
+          <li><strong>REQUIRES_NEW</strong> — suspend la transaction courante, crée une transaction indépendante</li>
+          <li><strong>MANDATORY</strong> — exige une transaction active, lance une exception sinon</li>
+          <li><strong>NOT_SUPPORTED</strong> — suspend toute transaction active, s'exécute sans transaction</li>
+          <li><strong>SUPPORTS</strong> — utilise la transaction courante si elle existe, sinon sans transaction</li>
+          <li><strong>NEVER</strong> — lève une exception si une transaction est active</li>
+        </ul>
+        <h3>Rollback en CMT</h3>
+        <ul>
+          <li>Automatique sur toute <code>RuntimeException</code> non catchée</li>
+          <li>Programmatique via <code>EJBContext.setRollbackOnly()</code></li>
+          <li>Contrôle fin via <code>@ApplicationException(rollback=true)</code> pour les checked exceptions</li>
+        </ul>
+        <h3>BMT — Bean-Managed Transactions</h3>
+        <p>Avec <strong>BMT</strong> (<code>@TransactionManagement(BEAN)</code>), le développeur gère manuellement les transactions via l'API <code>UserTransaction</code>.</p>
+        <ul>
+          <li>Injecter <code>@Resource UserTransaction utx</code> ou obtenir via <code>EJBContext</code></li>
+          <li>Appeler explicitement <code>utx.begin()</code>, <code>utx.commit()</code>, <code>utx.rollback()</code></li>
+          <li>Contrôle total — adapté aux patterns saga, transactions longues, logique conditionnelle</li>
+        </ul>
+        <img src="../../images/04b-ejb-enterprise-java-beans-diagram-6.png" alt="Transactions EJB — CMT vs BMT"/>
+      </div>
+    </details>
+
+    <details>
+      <summary>🔐 Sécurité EJB</summary>
+      <div class="slide-content">
+        <h3>Sécurité déclarative</h3>
+        <p>Le conteneur EJB applique des contrôles d'accès basés sur les rôles avant d'invoquer les méthodes du bean.</p>
+        <ul>
+          <li><code>@RolesAllowed({"ADMIN", "EMPLOYEE"})</code> — autorise uniquement les rôles listés</li>
+          <li><code>@PermitAll</code> — autorise tous les appelants authentifiés ou anonymes</li>
+          <li><code>@DenyAll</code> — refuse tous les appels (méthode inaccessible en production)</li>
+          <li><code>@RunAs("SYSTEM")</code> — exécute le bean sous un rôle différent (élévation de privilèges)</li>
+        </ul>
+        <h3>Application des annotations</h3>
+        <ul>
+          <li>Sur la <strong>classe</strong> — s'applique à toutes les méthodes de la classe</li>
+          <li>Sur la <strong>méthode</strong> — surcharge la déclaration de classe pour cette méthode précise</li>
+          <li>Combinaison possible : classe avec <code>@RolesAllowed("EMPLOYEE")</code>, méthode avec <code>@RolesAllowed("ADMIN")</code></li>
+        </ul>
+        <h3>Sécurité programmatique</h3>
+        <ul>
+          <li><code>EJBContext.isCallerInRole("ADMIN")</code> — vérifie dynamiquement si l'appelant possède un rôle</li>
+          <li><code>EJBContext.getCallerPrincipal()</code> — obtient le <code>Principal</code> représentant l'utilisateur courant</li>
+          <li>Utile pour des logiques conditionnelles fines selon l'identité de l'appelant</li>
+        </ul>
+      </div>
+    </details>
+
+    <details>
+      <summary>⏰ Timer Service et Méthodes Asynchrones</summary>
+      <div class="slide-content">
+        <h3>Timer Service — tâches planifiées</h3>
+        <p>Le <strong>Timer Service EJB</strong> permet de déclencher des méthodes à intervalles réguliers ou à des moments précis, géré entièrement par le conteneur.</p>
+        <ul>
+          <li><code>@Schedule(hour="0", minute="0", second="0", persistent=true)</code> — déclenchement automatique selon une expression cron</li>
+          <li><code>@Schedules({@Schedule(...), @Schedule(...)})</code> — plusieurs planifications sur une même méthode</li>
+          <li><code>@Timeout</code> — méthode callback appelée lors de l'expiration d'un timer programmatique</li>
+          <li>Attributs de <code>@Schedule</code> : <code>second</code>, <code>minute</code>, <code>hour</code>, <code>dayOfWeek</code>, <code>dayOfMonth</code>, <code>month</code>, <code>year</code></li>
+          <li><code>persistent=true</code> — le timer survit aux redémarrages du serveur (stocké en base)</li>
+        </ul>
+        <h3>Timers programmatiques</h3>
+        <ul>
+          <li>Injecter <code>@Resource TimerService timerService</code></li>
+          <li><code>timerService.createTimer(delay, interval, info)</code> — timer à intervalles répétitifs</li>
+          <li><code>timerService.createSingleActionTimer(delay, config)</code> — timer à déclenchement unique</li>
+          <li>La méthode <code>@Timeout</code> reçoit un objet <code>Timer</code> avec les métadonnées</li>
+        </ul>
+        <h3>@Asynchronous — méthodes non bloquantes</h3>
+        <ul>
+          <li><code>@Asynchronous</code> sur une méthode EJB — l'appel retourne immédiatement au client</li>
+          <li>Type de retour <code>void</code> ou <code>Future&lt;T&gt;</code> / <code>CompletableFuture&lt;T&gt;</code></li>
+          <li>Le conteneur exécute la méthode dans un thread séparé du pool</li>
+          <li>Idéal pour les traitements longs découplés : envoi email, génération de rapports, import de données</li>
+        </ul>
+      </div>
+    </details>
+
+  </main>
+</div>
+<footer class="cds--footer">Made with IBM Bob &nbsp;·&nbsp; © 2026 Olivier Planson &nbsp;·&nbsp; ESIPE — Jakarta EE &amp; Microservices</footer>
+</body>
+</html>

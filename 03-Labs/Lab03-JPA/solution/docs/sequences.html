@@ -1,0 +1,338 @@
+<!-- © Copyright 2026 Olivier Planson. All rights reserved. Reproduction prohibited. Made with IBM Bob. -->
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Diagrammes de Séquence — Banking JPA App</title>
+  <link rel="stylesheet" href="assets/carbon.css"/>
+</head>
+<body>
+
+<header class="cds--header">
+  <a class="cds--header__name" href="index.html">
+    ☁ IBM Carbon <span>/ Banking JPA Application — Lab 03</span>
+  </a>
+</header>
+
+<div class="cds--shell">
+  <nav class="cds--side-nav" aria-label="Navigation principale">
+    <p class="cds--side-nav__section-title">Documentation</p>
+    <a class="cds--side-nav__link" href="index.html"><i class="icon">⊞</i> Vue d'ensemble</a>
+    <a class="cds--side-nav__link" href="functional.html"><i class="icon">⬡</i> Architecture Fonctionnelle</a>
+    <a class="cds--side-nav__link" href="technical.html"><i class="icon">⚙</i> Architecture Technique</a>
+    <a class="cds--side-nav__link active" href="sequences.html"><i class="icon">↔</i> Diagrammes de Séquence</a>
+    <a class="cds--side-nav__link" href="rules.html"><i class="icon">✔</i> Règles Métier</a>
+  </nav>
+
+  <main class="cds--content">
+    <nav class="cds--breadcrumb">
+      <a href="index.html">Lab 03</a>
+      <span class="sep">/</span>
+      <span class="current">Diagrammes de Séquence</span>
+    </nav>
+
+    <h1>Diagrammes de Séquence</h1>
+    <p class="page-lead">
+      Trois flux de séquence détaillant les interactions entre le navigateur, les servlets,
+      les services métier, le contexte de persistance JPA/EclipseLink et la base de données PostgreSQL.
+    </p>
+
+    <!-- ════════════════════════════════════════
+         SD1 — Liste des clients (GET /clients)
+         ════════════════════════════════════════ -->
+    <h2>SD1 — Lister les clients (GET /clients)</h2>
+    <div class="arch-box" role="img" aria-label="SD1 Lister les clients">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 820 370" width="100%"
+           style="max-width:820px;font-family:'IBM Plex Sans',Arial,sans-serif;font-size:11px;">
+        <defs>
+          <marker id="sd1arr" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+            <path d="M0,0 L0,6 L8,3 z" fill="#0f62fe"/>
+          </marker>
+          <marker id="sd1ret" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+            <path d="M0,0 L0,6 L8,3 z" fill="#525252"/>
+          </marker>
+        </defs>
+
+        <!-- Participants -->
+        <!-- Browser x=60 -->
+        <rect x="10" y="10" width="100" height="36" rx="3" fill="#e0e0e0" stroke="#8d8d8d"/>
+        <text x="60" y="33" text-anchor="middle" font-weight="600" fill="#161616">Browser</text>
+
+        <!-- ClientController x=210 -->
+        <rect x="155" y="10" width="110" height="36" rx="3" fill="#d0e2ff" stroke="#0043ce"/>
+        <text x="210" y="24" text-anchor="middle" font-weight="600" fill="#0043ce">Client</text>
+        <text x="210" y="38" text-anchor="middle" fill="#0043ce">Controller</text>
+
+        <!-- ClientService x=360 -->
+        <rect x="305" y="10" width="110" height="36" rx="3" fill="#defbe6" stroke="#0e6027"/>
+        <text x="360" y="24" text-anchor="middle" font-weight="600" fill="#0e6027">Client</text>
+        <text x="360" y="38" text-anchor="middle" fill="#0e6027">Service</text>
+
+        <!-- EntityManager x=510 -->
+        <rect x="455" y="10" width="110" height="36" rx="3" fill="#e8daff" stroke="#491d8b"/>
+        <text x="510" y="24" text-anchor="middle" font-weight="600" fill="#491d8b">Entity</text>
+        <text x="510" y="38" text-anchor="middle" fill="#491d8b">Manager</text>
+
+        <!-- PostgreSQL x=670 -->
+        <rect x="615" y="10" width="110" height="36" rx="3" fill="#f4f4f4" stroke="#8d8d8d"/>
+        <text x="670" y="24" text-anchor="middle" font-weight="600" fill="#161616">Post</text>
+        <text x="670" y="38" text-anchor="middle" fill="#161616">greSQL</text>
+
+        <!-- Lifelines -->
+        <line x1="60"  y1="46" x2="60"  y2="360" stroke="#c6c6c6" stroke-width="1" stroke-dasharray="4,3"/>
+        <line x1="210" y1="46" x2="210" y2="360" stroke="#c6c6c6" stroke-width="1" stroke-dasharray="4,3"/>
+        <line x1="360" y1="46" x2="360" y2="360" stroke="#c6c6c6" stroke-width="1" stroke-dasharray="4,3"/>
+        <line x1="510" y1="46" x2="510" y2="360" stroke="#c6c6c6" stroke-width="1" stroke-dasharray="4,3"/>
+        <line x1="670" y1="46" x2="670" y2="360" stroke="#c6c6c6" stroke-width="1" stroke-dasharray="4,3"/>
+
+        <!-- Step 1: GET /clients -->
+        <line x1="60" y1="80" x2="205" y2="80" stroke="#0f62fe" stroke-width="1.5" marker-end="url(#sd1arr)"/>
+        <text x="130" y="75" text-anchor="middle" fill="#161616">GET /clients</text>
+
+        <!-- Step 2: doGet() -->
+        <rect x="203" y="82" width="14" height="140" fill="#d0e2ff" stroke="#0043ce" stroke-width="0.5"/>
+        <line x1="210" y1="100" x2="355" y2="100" stroke="#0f62fe" stroke-width="1.5" marker-end="url(#sd1arr)"/>
+        <text x="282" y="95" text-anchor="middle" fill="#161616">findAll()</text>
+
+        <!-- Step 3: createNamedQuery -->
+        <rect x="353" y="102" width="14" height="110" fill="#defbe6" stroke="#0e6027" stroke-width="0.5"/>
+        <line x1="360" y1="120" x2="505" y2="120" stroke="#0f62fe" stroke-width="1.5" marker-end="url(#sd1arr)"/>
+        <text x="432" y="115" text-anchor="middle" fill="#161616">createNamedQuery</text>
+        <text x="432" y="128" text-anchor="middle" fill="#525252" font-size="10">("Client.findAll")</text>
+
+        <!-- Step 4: SELECT * FROM clients -->
+        <rect x="503" y="130" width="14" height="70" fill="#e8daff" stroke="#491d8b" stroke-width="0.5"/>
+        <line x1="510" y1="148" x2="665" y2="148" stroke="#0f62fe" stroke-width="1.5" marker-end="url(#sd1arr)"/>
+        <text x="587" y="143" text-anchor="middle" fill="#161616">SELECT * FROM clients</text>
+
+        <!-- Step 5: ResultSet rows -->
+        <line x1="665" y1="170" x2="510" y2="170" stroke="#525252" stroke-width="1.5" stroke-dasharray="5,3" marker-end="url(#sd1ret)"/>
+        <text x="587" y="165" text-anchor="middle" fill="#525252">ResultSet rows</text>
+
+        <!-- Step 6: List&lt;Client&gt; -->
+        <line x1="503" y1="190" x2="365" y2="190" stroke="#525252" stroke-width="1.5" stroke-dasharray="5,3" marker-end="url(#sd1ret)"/>
+        <text x="432" y="185" text-anchor="middle" fill="#525252">List&lt;Client&gt;</text>
+
+        <!-- Step 7: return clients -->
+        <line x1="353" y1="210" x2="215" y2="210" stroke="#525252" stroke-width="1.5" stroke-dasharray="5,3" marker-end="url(#sd1ret)"/>
+        <text x="282" y="205" text-anchor="middle" fill="#525252">return clients</text>
+
+        <!-- Step 8: setAttribute + forward -->
+        <text x="215" y="238" fill="#161616" font-size="10">request.setAttribute("clients", clients)</text>
+        <text x="215" y="253" fill="#161616" font-size="10">forward → client-list.jsp</text>
+
+        <!-- Step 9: HTML 200 -->
+        <line x1="210" y1="270" x2="65" y2="270" stroke="#525252" stroke-width="1.5" stroke-dasharray="5,3" marker-end="url(#sd1ret)"/>
+        <text x="130" y="265" text-anchor="middle" fill="#525252">HTML 200 OK</text>
+      </svg>
+    </div>
+
+    <!-- ═══════════════════════════════════════════════
+         SD2 — Créer un client (POST /client action=create)
+         ═══════════════════════════════════════════════ -->
+    <h2>SD2 — Créer un client (POST /client action=create)</h2>
+    <div class="arch-box" role="img" aria-label="SD2 Créer un client">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 820 420" width="100%"
+           style="max-width:820px;font-family:'IBM Plex Sans',Arial,sans-serif;font-size:11px;">
+        <defs>
+          <marker id="sd2arr" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+            <path d="M0,0 L0,6 L8,3 z" fill="#0f62fe"/>
+          </marker>
+          <marker id="sd2ret" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+            <path d="M0,0 L0,6 L8,3 z" fill="#525252"/>
+          </marker>
+          <marker id="sd2err" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+            <path d="M0,0 L0,6 L8,3 z" fill="#da1e28"/>
+          </marker>
+        </defs>
+
+        <!-- Participants -->
+        <rect x="10"  y="10" width="100" height="36" rx="3" fill="#e0e0e0" stroke="#8d8d8d"/>
+        <text x="60"  y="33" text-anchor="middle" font-weight="600" fill="#161616">Browser</text>
+
+        <rect x="155" y="10" width="110" height="36" rx="3" fill="#d0e2ff" stroke="#0043ce"/>
+        <text x="210" y="24" text-anchor="middle" font-weight="600" fill="#0043ce">Client</text>
+        <text x="210" y="38" text-anchor="middle" fill="#0043ce">Controller</text>
+
+        <rect x="305" y="10" width="110" height="36" rx="3" fill="#defbe6" stroke="#0e6027"/>
+        <text x="360" y="24" text-anchor="middle" font-weight="600" fill="#0e6027">Client</text>
+        <text x="360" y="38" text-anchor="middle" fill="#0e6027">Service</text>
+
+        <rect x="455" y="10" width="110" height="36" rx="3" fill="#e8daff" stroke="#491d8b"/>
+        <text x="510" y="24" text-anchor="middle" font-weight="600" fill="#491d8b">Entity</text>
+        <text x="510" y="38" text-anchor="middle" fill="#491d8b">Manager</text>
+
+        <rect x="615" y="10" width="110" height="36" rx="3" fill="#f4f4f4" stroke="#8d8d8d"/>
+        <text x="670" y="24" text-anchor="middle" font-weight="600" fill="#161616">Post</text>
+        <text x="670" y="38" text-anchor="middle" fill="#161616">greSQL</text>
+
+        <!-- Lifelines -->
+        <line x1="60"  y1="46" x2="60"  y2="415" stroke="#c6c6c6" stroke-width="1" stroke-dasharray="4,3"/>
+        <line x1="210" y1="46" x2="210" y2="415" stroke="#c6c6c6" stroke-width="1" stroke-dasharray="4,3"/>
+        <line x1="360" y1="46" x2="360" y2="415" stroke="#c6c6c6" stroke-width="1" stroke-dasharray="4,3"/>
+        <line x1="510" y1="46" x2="510" y2="415" stroke="#c6c6c6" stroke-width="1" stroke-dasharray="4,3"/>
+        <line x1="670" y1="46" x2="670" y2="415" stroke="#c6c6c6" stroke-width="1" stroke-dasharray="4,3"/>
+
+        <!-- Step 1: POST /client action=create -->
+        <line x1="60" y1="80" x2="205" y2="80" stroke="#0f62fe" stroke-width="1.5" marker-end="url(#sd2arr)"/>
+        <text x="130" y="75" text-anchor="middle" fill="#161616">POST /client action=create</text>
+
+        <!-- Activation -->
+        <rect x="203" y="82" width="14" height="300" fill="#d0e2ff" stroke="#0043ce" stroke-width="0.5"/>
+
+        <!-- Step 2: validate(name, email not null) -->
+        <text x="220" y="110" fill="#161616" font-size="10">validate(name != null, email != null)</text>
+
+        <!-- [alt: validation fail] -->
+        <rect x="213" y="118" width="590" height="30" rx="2" fill="#fff1f1" stroke="#da1e28" stroke-width="0.5"/>
+        <text x="220" y="130" fill="#da1e28" font-size="9" font-style="italic">[alt] validation échouée</text>
+        <line x1="210" y1="140" x2="65" y2="140" stroke="#da1e28" stroke-width="1.5" stroke-dasharray="5,3" marker-end="url(#sd2err)"/>
+        <text x="130" y="135" text-anchor="middle" fill="#da1e28">400 Bad Request</text>
+
+        <!-- Step 3: createClient() -->
+        <line x1="210" y1="170" x2="355" y2="170" stroke="#0f62fe" stroke-width="1.5" marker-end="url(#sd2arr)"/>
+        <text x="282" y="165" text-anchor="middle" fill="#161616">create(client)</text>
+
+        <rect x="353" y="172" width="14" height="150" fill="#defbe6" stroke="#0e6027" stroke-width="0.5"/>
+
+        <!-- Step 4: em.getTransaction().begin() -->
+        <text x="370" y="192" fill="#161616" font-size="10">em.getTransaction().begin()</text>
+
+        <!-- Step 5: em.persist(client) -->
+        <line x1="360" y1="205" x2="505" y2="205" stroke="#0f62fe" stroke-width="1.5" marker-end="url(#sd2arr)"/>
+        <text x="432" y="200" text-anchor="middle" fill="#161616">em.persist(client)</text>
+
+        <rect x="503" y="207" width="14" height="90" fill="#e8daff" stroke="#491d8b" stroke-width="0.5"/>
+
+        <!-- Step 6: INSERT INTO clients -->
+        <line x1="510" y1="225" x2="665" y2="225" stroke="#0f62fe" stroke-width="1.5" marker-end="url(#sd2arr)"/>
+        <text x="587" y="220" text-anchor="middle" fill="#161616">INSERT INTO clients</text>
+
+        <!-- Step 7: rows inserted -->
+        <line x1="665" y1="250" x2="510" y2="250" stroke="#525252" stroke-width="1.5" stroke-dasharray="5,3" marker-end="url(#sd2ret)"/>
+        <text x="587" y="245" text-anchor="middle" fill="#525252">rows inserted</text>
+
+        <!-- Step 8: em.getTransaction().commit() -->
+        <text x="370" y="278" fill="#161616" font-size="10">em.getTransaction().commit()</text>
+
+        <!-- Step 9: return -->
+        <line x1="353" y1="295" x2="215" y2="295" stroke="#525252" stroke-width="1.5" stroke-dasharray="5,3" marker-end="url(#sd2ret)"/>
+        <text x="282" y="290" text-anchor="middle" fill="#525252">return client</text>
+
+        <!-- Step 10: PRG 302 redirect -->
+        <text x="220" y="320" fill="#161616" font-size="10">Pattern PRG — sendRedirect(/clients)</text>
+        <line x1="210" y1="335" x2="65" y2="335" stroke="#198038" stroke-width="1.5" stroke-dasharray="5,3" marker-end="url(#sd2ret)"/>
+        <text x="130" y="330" text-anchor="middle" fill="#198038">302 Redirect → GET /clients</text>
+      </svg>
+    </div>
+
+    <!-- ═══════════════════════════════════════════════════════
+         SD3 — Valider une transaction (GET /validate-transaction)
+         ═══════════════════════════════════════════════════════ -->
+    <h2>SD3 — Valider une transaction (GET /validate-transaction)</h2>
+    <div class="arch-box" role="img" aria-label="SD3 Valider une transaction">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 820 380" width="100%"
+           style="max-width:820px;font-family:'IBM Plex Sans',Arial,sans-serif;font-size:11px;">
+        <defs>
+          <marker id="sd3arr" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+            <path d="M0,0 L0,6 L8,3 z" fill="#0f62fe"/>
+          </marker>
+          <marker id="sd3ret" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+            <path d="M0,0 L0,6 L8,3 z" fill="#525252"/>
+          </marker>
+          <marker id="sd3ok" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+            <path d="M0,0 L0,6 L8,3 z" fill="#198038"/>
+          </marker>
+          <marker id="sd3ko" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+            <path d="M0,0 L0,6 L8,3 z" fill="#da1e28"/>
+          </marker>
+        </defs>
+
+        <!-- Participants -->
+        <rect x="10"  y="10" width="100" height="36" rx="3" fill="#e0e0e0" stroke="#8d8d8d"/>
+        <text x="60"  y="33" text-anchor="middle" font-weight="600" fill="#161616">Browser</text>
+
+        <rect x="140" y="10" width="120" height="36" rx="3" fill="#d0e2ff" stroke="#0043ce"/>
+        <text x="200" y="24" text-anchor="middle" font-weight="600" fill="#0043ce">Transaction</text>
+        <text x="200" y="38" text-anchor="middle" fill="#0043ce">ValidatorServlet</text>
+
+        <rect x="295" y="10" width="120" height="36" rx="3" fill="#fdf6dd" stroke="#f1c21b"/>
+        <text x="355" y="24" text-anchor="middle" font-weight="600" fill="#8c4f00">Jndi</text>
+        <text x="355" y="38" text-anchor="middle" fill="#8c4f00">ConfigService</text>
+
+        <rect x="450" y="10" width="120" height="36" rx="3" fill="#e0e0e0" stroke="#8d8d8d"/>
+        <text x="510" y="24" text-anchor="middle" font-weight="600" fill="#161616">JNDI</text>
+        <text x="510" y="38" text-anchor="middle" fill="#525252">Context</text>
+
+        <rect x="605" y="10" width="120" height="36" rx="3" fill="#defbe6" stroke="#0e6027"/>
+        <text x="665" y="24" text-anchor="middle" font-weight="600" fill="#0e6027">Response</text>
+        <text x="665" y="38" text-anchor="middle" fill="#0e6027">(HTML / JSON)</text>
+
+        <!-- Lifelines -->
+        <line x1="60"  y1="46" x2="60"  y2="375" stroke="#c6c6c6" stroke-width="1" stroke-dasharray="4,3"/>
+        <line x1="200" y1="46" x2="200" y2="375" stroke="#c6c6c6" stroke-width="1" stroke-dasharray="4,3"/>
+        <line x1="355" y1="46" x2="355" y2="375" stroke="#c6c6c6" stroke-width="1" stroke-dasharray="4,3"/>
+        <line x1="510" y1="46" x2="510" y2="375" stroke="#c6c6c6" stroke-width="1" stroke-dasharray="4,3"/>
+        <line x1="665" y1="46" x2="665" y2="375" stroke="#c6c6c6" stroke-width="1" stroke-dasharray="4,3"/>
+
+        <!-- Step 1: GET /validate-transaction?amount=X -->
+        <line x1="60" y1="80" x2="195" y2="80" stroke="#0f62fe" stroke-width="1.5" marker-end="url(#sd3arr)"/>
+        <text x="127" y="75" text-anchor="middle" fill="#161616">GET /validate-transaction?amount=X</text>
+
+        <rect x="193" y="82" width="14" height="250" fill="#d0e2ff" stroke="#0043ce" stroke-width="0.5"/>
+
+        <!-- Step 2: getMaxTransactionAmount() -->
+        <line x1="200" y1="110" x2="350" y2="110" stroke="#0f62fe" stroke-width="1.5" marker-end="url(#sd3arr)"/>
+        <text x="275" y="105" text-anchor="middle" fill="#161616">getMaxTransactionAmount()</text>
+
+        <rect x="348" y="112" width="14" height="90" fill="#fdf6dd" stroke="#f1c21b" stroke-width="0.5"/>
+
+        <!-- Step 3: JNDI lookup -->
+        <line x1="355" y1="130" x2="505" y2="130" stroke="#0f62fe" stroke-width="1.5" marker-end="url(#sd3arr)"/>
+        <text x="430" y="125" text-anchor="middle" fill="#161616">lookup(app/maxTransactionAmount)</text>
+
+        <!-- Step 4: "10000" -->
+        <line x1="505" y1="155" x2="355" y2="155" stroke="#525252" stroke-width="1.5" stroke-dasharray="5,3" marker-end="url(#sd3ret)"/>
+        <text x="430" y="150" text-anchor="middle" fill="#525252">"10000"</text>
+
+        <!-- Step 5: return 10000 -->
+        <line x1="348" y1="178" x2="205" y2="178" stroke="#525252" stroke-width="1.5" stroke-dasharray="5,3" marker-end="url(#sd3ret)"/>
+        <text x="275" y="173" text-anchor="middle" fill="#525252">return 10000</text>
+
+        <!-- Step 6: compare amount -->
+        <text x="207" y="198" fill="#161616" font-size="10">compare amount vs maxTransactionAmount</text>
+
+        <!-- Alt: valid (Accept: text/html) -->
+        <rect x="207" y="206" width="450" height="25" rx="2" fill="#defbe6" stroke="#198038" stroke-width="0.5"/>
+        <text x="214" y="218" fill="#198038" font-size="9" font-style="italic">[alt Accept=text/html] amount ≤ 10000</text>
+        <line x1="200" y1="225" x2="660" y2="225" stroke="#0f62fe" stroke-width="1.5" marker-end="url(#sd3arr)"/>
+        <text x="430" y="220" text-anchor="middle" fill="#161616">write HTML → TRANSACTION VALIDE</text>
+
+        <!-- Alt: valid (Accept: application/json) -->
+        <rect x="207" y="236" width="450" height="25" rx="2" fill="#d0e2ff" stroke="#0043ce" stroke-width="0.5"/>
+        <text x="214" y="248" fill="#0043ce" font-size="9" font-style="italic">[alt Accept=application/json] amount ≤ 10000</text>
+        <line x1="200" y1="255" x2="660" y2="255" stroke="#0f62fe" stroke-width="1.5" marker-end="url(#sd3arr)"/>
+        <text x="430" y="250" text-anchor="middle" fill="#161616">write JSON → {"valid":true}</text>
+
+        <!-- Alt: invalid -->
+        <rect x="207" y="266" width="450" height="25" rx="2" fill="#fff1f1" stroke="#da1e28" stroke-width="0.5"/>
+        <text x="214" y="278" fill="#da1e28" font-size="9" font-style="italic">[alt] amount &gt; 10000</text>
+        <line x1="200" y1="285" x2="660" y2="285" stroke="#da1e28" stroke-width="1.5" marker-end="url(#sd3arr)"/>
+        <text x="430" y="280" text-anchor="middle" fill="#da1e28">write HTML/JSON → MONTANT DÉPASSÉ</text>
+
+        <!-- Response back to browser -->
+        <line x1="660" y1="310" x2="65" y2="310" stroke="#525252" stroke-width="1.5" stroke-dasharray="5,3" marker-end="url(#sd3ret)"/>
+        <text x="360" y="305" text-anchor="middle" fill="#525252">HTTP 200 — réponse HTML ou JSON</text>
+      </svg>
+    </div>
+
+    <hr class="cds--divider"/>
+  </main>
+</div>
+
+<footer class="cds--footer">
+  Banking JPA Application — Lab 03 &nbsp;·&nbsp; Jakarta EE 10 / Open Liberty 23 &nbsp;·&nbsp; © 2025 Olivier Planson
+</footer>
+</body>
+</html>

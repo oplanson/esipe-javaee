@@ -1,0 +1,129 @@
+<!-- © Copyright 2026 Olivier Planson. All rights reserved. Reproduction prohibited. Made with IBM Bob. -->
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>Cours 03 — Concepts clés</title>
+  <link rel="stylesheet" href="../assets/carbon.css"/>
+</head>
+<body>
+<header class="cds--header">
+  <a class="cds--header__name" href="index.html">JPA &amp; Base de données<span>Cours Jakarta EE</span></a>
+  <a class="cds--header__back" href="../index.html">← Tous les Cours</a>
+</header>
+<div class="cds--shell">
+  <nav class="cds--side-nav">
+    <p class="cds--side-nav__section-title">Cours 03</p>
+    <a class="cds--side-nav__link" href="index.html">⊙ Vue d'ensemble</a>
+    <a class="cds--side-nav__link" href="slides.html">☰ Contenu du cours</a>
+    <a class="cds--side-nav__link active" href="concepts.html">◈ Concepts clés</a>
+    <a class="cds--side-nav__link" href="code.html">⟨/⟩ Exemples de code</a>
+  </nav>
+  <main class="cds--content">
+    <div class="breadcrumb"><a href="../index.html">Cours</a> › <a href="index.html">Cours 03</a> › Concepts clés</div>
+    <h1>Concepts clés</h1>
+    <p class="page-lead">Comparatifs, tableaux de référence et glossaire pour JPA &amp; intégration base de données.</p>
+
+    <h2>JPA vs JDBC</h2>
+    <div class="cds--data-table-container">
+      <table class="cds--data-table">
+        <thead><tr><th>Critère</th><th>JDBC</th><th>JPA</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Niveau d'abstraction</strong></td><td>Bas — SQL direct, <code>ResultSet</code> manuel</td><td>Haut — objets Java, mapping automatique</td></tr>
+          <tr><td><strong>Portabilité</strong></td><td>❌ SQL souvent spécifique au SGBD</td><td>✅ Indépendant du SGBD (dialectes)</td></tr>
+          <tr><td><strong>Quantité de code</strong></td><td>❌ Verbeux — try/catch, close(), mapping</td><td>✅ Concis — annotations, génération auto</td></tr>
+          <tr><td><strong>Performances</strong></td><td>✅ Contrôle total sur le SQL</td><td>⚠️ Overhead ORM, mais cache intégré</td></tr>
+          <tr><td><strong>Courbe d'apprentissage</strong></td><td>✅ Simple à apprendre</td><td>⚠️ Concepts avancés (lazy, cascade, contexte)</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h2>Stratégies de Génération d'ID</h2>
+    <div class="cds--data-table-container">
+      <table class="cds--data-table">
+        <thead><tr><th>Stratégie</th><th>Description</th><th>Utilisation recommandée</th></tr></thead>
+        <tbody>
+          <tr><td><code>AUTO</code></td><td>Le provider JPA choisit la stratégie selon le SGBD</td><td>Prototypage rapide, portabilité maximale</td></tr>
+          <tr><td><code>IDENTITY</code></td><td>Colonne auto-increment gérée par la BD</td><td>PostgreSQL (<code>SERIAL</code>), MySQL (<code>AUTO_INCREMENT</code>)</td></tr>
+          <tr><td><code>SEQUENCE</code></td><td>Séquence base de données dédiée</td><td>PostgreSQL, Oracle — meilleures performances en lot</td></tr>
+          <tr><td><code>TABLE</code></td><td>Table dédiée simulant une séquence</td><td>Portabilité totale entre tous les SGBD</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h2>Types de Fetch JPA</h2>
+    <div class="cds--data-table-container">
+      <table class="cds--data-table">
+        <thead><tr><th>Type</th><th>Comportement</th><th>Défaut pour</th><th>Quand l'utiliser</th></tr></thead>
+        <tbody>
+          <tr><td><strong>LAZY</strong></td><td>Chargement différé — données chargées à l'accès</td><td><code>@OneToMany</code>, <code>@ManyToMany</code></td><td>Collections volumineuses, rarement accédées</td></tr>
+          <tr><td><strong>EAGER</strong></td><td>Chargement immédiat — données jointes à la requête</td><td><code>@ManyToOne</code>, <code>@OneToOne</code></td><td>Associations toujours nécessaires</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h2>Types de Cascade JPA</h2>
+    <div class="cds--data-table-container">
+      <table class="cds--data-table">
+        <thead><tr><th>Type</th><th>Description</th></tr></thead>
+        <tbody>
+          <tr><td><code>PERSIST</code></td><td>La persistance de l'entité parent propage la persistance aux entités liées</td></tr>
+          <tr><td><code>MERGE</code></td><td>Le merge de l'entité parent propage le merge aux entités liées</td></tr>
+          <tr><td><code>REMOVE</code></td><td>La suppression de l'entité parent supprime aussi les entités liées</td></tr>
+          <tr><td><code>REFRESH</code></td><td>Le refresh du parent recharge aussi les entités liées depuis la BD</td></tr>
+          <tr><td><code>DETACH</code></td><td>Le détachement du parent détache aussi les entités liées</td></tr>
+          <tr><td><code>ALL</code></td><td>Applique tous les types de cascade (équivalent de tous les précédents)</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h2>Transactions CMT vs BMT</h2>
+    <div class="cds--data-table-container">
+      <table class="cds--data-table">
+        <thead><tr><th>Critère</th><th>CMT — Container-Managed</th><th>BMT — Bean-Managed</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Qui contrôle</strong></td><td>Le conteneur Jakarta EE</td><td>Le développeur</td></tr>
+          <tr><td><strong>Annotation</strong></td><td><code>@Transactional</code> (CDI) ou <code>@TransactionAttribute</code> (EJB)</td><td><code>@Inject UserTransaction ut</code></td></tr>
+          <tr><td><strong>Démarrage</strong></td><td>Automatique à l'entrée de la méthode annotée</td><td>Explicite : <code>ut.begin()</code></td></tr>
+          <tr><td><strong>Commit / Rollback</strong></td><td>Automatique — rollback sur exception non-vérifiée</td><td>Explicite : <code>ut.commit()</code> / <code>ut.rollback()</code></td></tr>
+          <tr><td><strong>Cas d'utilisation</strong></td><td>Cas standard (recommandé)</td><td>Logique transactionnelle complexe, multi-transactions</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h2>États d'une Entité JPA</h2>
+    <div class="cds--data-table-container">
+      <table class="cds--data-table">
+        <thead><tr><th>État</th><th>Description</th><th>Transition vers Managed</th></tr></thead>
+        <tbody>
+          <tr><td><strong>New / Transient</strong></td><td>Objet Java ordinaire, inconnu de l'EntityManager et de la BD</td><td><code>em.persist(entity)</code></td></tr>
+          <tr><td><strong>Managed</strong></td><td>Sous contrôle du contexte de persistance — modifications automatiquement synchronisées</td><td>— (déjà managed)</td></tr>
+          <tr><td><strong>Detached</strong></td><td>Entité qui existait en BD mais dont le contexte est fermé ou explicitement détaché</td><td><code>em.merge(entity)</code></td></tr>
+          <tr><td><strong>Removed</strong></td><td>Marquée pour suppression — sera effacée au prochain flush/commit</td><td><code>em.persist(entity)</code> (annule la suppression)</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h2>Glossaire</h2>
+    <div class="cds--data-table-container">
+      <table class="cds--data-table">
+        <thead><tr><th>Terme</th><th>Définition</th></tr></thead>
+        <tbody>
+          <tr><td><strong>EntityManager</strong></td><td>Interface principale de JPA — gère le cycle de vie des entités (persist, merge, remove, find, query)</td></tr>
+          <tr><td><strong>PersistenceContext</strong></td><td>Cache de premier niveau associé à l'EntityManager — ensemble des entités managed dans une transaction</td></tr>
+          <tr><td><strong>JPQL</strong></td><td>Jakarta Persistence Query Language — langage de requête orienté objet opérant sur les entités Java, pas sur les tables SQL</td></tr>
+          <tr><td><strong>Criteria API</strong></td><td>API Java type-safe pour construire des requêtes JPA dynamiques programmatiquement, sans concaténation de chaînes</td></tr>
+          <tr><td><strong>Flyway</strong></td><td>Outil de migration de schéma BD — versioning des scripts SQL avec suivi d'exécution et détection de modifications</td></tr>
+          <tr><td><strong>JNDI</strong></td><td>Java Naming and Directory Interface — registre permettant de localiser les ressources (DataSource, JMS) par leur nom logique</td></tr>
+          <tr><td><strong>DataSource</strong></td><td>Pool de connexions JDBC géré par le serveur d'application — plus performant que des connexions directes unitaires</td></tr>
+          <tr><td><strong>JTA</strong></td><td>Jakarta Transactions API — API standard pour les transactions distribuées dans Jakarta EE</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+  </main>
+</div>
+<footer class="cds--footer">Made with IBM Bob &nbsp;·&nbsp; © 2026 Olivier Planson &nbsp;·&nbsp; ESIPE — Jakarta EE &amp; Microservices</footer>
+</body>
+</html>

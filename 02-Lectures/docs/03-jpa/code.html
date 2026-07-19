@@ -1,0 +1,295 @@
+<!-- © Copyright 2026 Olivier Planson. All rights reserved. Reproduction prohibited. Made with IBM Bob. -->
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>Cours 03 — Exemples de code</title>
+  <link rel="stylesheet" href="../assets/carbon.css"/>
+</head>
+<body>
+<header class="cds--header">
+  <a class="cds--header__name" href="index.html">JPA &amp; Base de données<span>Cours Jakarta EE</span></a>
+  <a class="cds--header__back" href="../index.html">← Tous les Cours</a>
+</header>
+<div class="cds--shell">
+  <nav class="cds--side-nav">
+    <p class="cds--side-nav__section-title">Cours 03</p>
+    <a class="cds--side-nav__link" href="index.html">⊙ Vue d'ensemble</a>
+    <a class="cds--side-nav__link" href="slides.html">☰ Contenu du cours</a>
+    <a class="cds--side-nav__link" href="concepts.html">◈ Concepts clés</a>
+    <a class="cds--side-nav__link active" href="code.html">⟨/⟩ Exemples de code</a>
+  </nav>
+  <main class="cds--content">
+    <div class="breadcrumb"><a href="../index.html">Cours</a> › <a href="index.html">Cours 03</a> › Code</div>
+    <h1>Exemples de code</h1>
+    <p class="page-lead">Extraits Java, XML et SQL du cours 03 — JPA, relations, JPQL, Criteria API, Repository et Flyway.</p>
+
+    <h2>Entité JPA de base</h2>
+    <div class="code-block-wrap">
+      <span class="code-lang">java</span>
+      <pre><code>@Entity
+@Table(name = "accounts")
+@NamedQuery(
+    name = "Account.findByClientId",
+    query = "SELECT a FROM Account a WHERE a.client.id = :clientId"
+)
+public class Account {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @Column(name = "account_number", nullable = false, unique = true, length = 20)
+    private String accountNumber;
+
+    @Column(nullable = false, precision = 15, scale = 2)
+    private BigDecimal balance;
+
+    @Column(name = "created_at")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date createdAt;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "client_id", nullable = false)
+    private Client client;
+
+    @PrePersist
+    protected void onCreate() {
+        this.createdAt = new Date();
+        if (this.balance == null) {
+            this.balance = BigDecimal.ZERO;
+        }
+    }
+
+    // Getters et setters omis pour la lisibilité
+}</code></pre>
+    </div>
+
+    <h2>Relation One-To-Many</h2>
+    <div class="code-block-wrap">
+      <span class="code-lang">java</span>
+      <pre><code>@Entity
+@Table(name = "clients")
+public class Client {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @Column(nullable = false, length = 100)
+    private String name;
+
+    @Column(nullable = false, unique = true, length = 150)
+    private String email;
+
+    @OneToMany(
+        mappedBy = "client",
+        cascade = CascadeType.PERSIST,
+        fetch = FetchType.LAZY,
+        orphanRemoval = true
+    )
+    private List&lt;Account&gt; accounts = new ArrayList&lt;&gt;();
+
+    // Méthode helper pour maintenir la cohérence bidirectionnelle
+    public void addAccount(Account account) {
+        accounts.add(account);
+        account.setClient(this);
+    }
+
+    public void removeAccount(Account account) {
+        accounts.remove(account);
+        account.setClient(null);
+    }
+}
+
+// Côté Account (Many) :
+@ManyToOne(fetch = FetchType.LAZY)
+@JoinColumn(name = "client_id", nullable = false)
+private Client client;</code></pre>
+    </div>
+
+    <h2>Requêtes JPQL</h2>
+    <div class="code-block-wrap">
+      <span class="code-lang">java</span>
+      <pre><code>// Requête avec paramètre nommé
+TypedQuery&lt;Account&gt; query = em.createQuery(
+    "SELECT a FROM Account a WHERE a.client.id = :clientId ORDER BY a.createdAt DESC",
+    Account.class
+);
+query.setParameter("clientId", clientId);
+List&lt;Account&gt; accounts = query.getResultList();
+
+// Requête nommée (définie sur l'entité avec @NamedQuery)
+TypedQuery&lt;Account&gt; namedQuery = em.createNamedQuery(
+    "Account.findByClientId", Account.class
+);
+namedQuery.setParameter("clientId", clientId);
+
+// JOIN FETCH pour éviter le problème N+1
+TypedQuery&lt;Client&gt; fetchQuery = em.createQuery(
+    "SELECT DISTINCT c FROM Client c JOIN FETCH c.accounts WHERE c.id = :id",
+    Client.class
+);
+fetchQuery.setParameter("id", id);
+
+// Agrégations
+TypedQuery&lt;Object[]&gt; aggQuery = em.createQuery(
+    "SELECT c.name, COUNT(a), SUM(a.balance), AVG(a.balance) " +
+    "FROM Client c JOIN c.accounts a GROUP BY c.id, c.name",
+    Object[].class
+);
+List&lt;Object[]&gt; stats = aggQuery.getResultList();</code></pre>
+    </div>
+
+    <h2>Criteria API</h2>
+    <div class="code-block-wrap">
+      <span class="code-lang">java</span>
+      <pre><code>public List&lt;Client&gt; searchClients(String name, String email) {
+    CriteriaBuilder cb = em.getCriteriaBuilder();
+    CriteriaQuery&lt;Client&gt; cq = cb.createQuery(Client.class);
+    Root&lt;Client&gt; root = cq.from(Client.class);
+
+    List&lt;Predicate&gt; predicates = new ArrayList&lt;&gt;();
+
+    if (name != null &amp;&amp; !name.isBlank()) {
+        predicates.add(
+            cb.like(cb.lower(root.get("name")), "%" + name.toLowerCase() + "%")
+        );
+    }
+
+    if (email != null &amp;&amp; !email.isBlank()) {
+        predicates.add(
+            cb.equal(cb.lower(root.get("email")), email.toLowerCase())
+        );
+    }
+
+    if (!predicates.isEmpty()) {
+        cq.where(cb.and(predicates.toArray(new Predicate[0])));
+    }
+
+    cq.orderBy(cb.asc(root.get("name")));
+
+    return em.createQuery(cq).getResultList();
+}</code></pre>
+    </div>
+
+    <h2>Repository avec EntityManager</h2>
+    <div class="code-block-wrap">
+      <span class="code-lang">java</span>
+      <pre><code>@ApplicationScoped
+@Transactional
+public class ClientRepository {
+
+    @PersistenceContext(unitName = "bankPU")
+    private EntityManager em;
+
+    public Optional&lt;Client&gt; findById(Long id) {
+        return Optional.ofNullable(em.find(Client.class, id));
+    }
+
+    public List&lt;Client&gt; findAll() {
+        return em.createQuery("SELECT c FROM Client c ORDER BY c.name", Client.class)
+                 .getResultList();
+    }
+
+    public Client save(Client client) {
+        if (client.getId() == null) {
+            em.persist(client);
+            return client;
+        } else {
+            return em.merge(client);
+        }
+    }
+
+    public void delete(Long id) {
+        findById(id).ifPresent(client -> em.remove(client));
+    }
+
+    public long count() {
+        return em.createQuery("SELECT COUNT(c) FROM Client c", Long.class)
+                 .getSingleResult();
+    }
+}</code></pre>
+    </div>
+
+    <h2>Configuration persistence.xml</h2>
+    <div class="code-block-wrap">
+      <span class="code-lang">xml</span>
+      <pre><code>&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+&lt;persistence version="3.1"
+    xmlns="https://jakarta.ee/xml/ns/persistence"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="https://jakarta.ee/xml/ns/persistence
+        https://jakarta.ee/xml/ns/persistence/persistence_3_1.xsd"&gt;
+
+  &lt;persistence-unit name="bankPU" transaction-type="JTA"&gt;
+
+    &lt;jta-data-source&gt;java:comp/env/jdbc/bankDB&lt;/jta-data-source&gt;
+
+    &lt;class&gt;fr.esipe.bank.entity.Client&lt;/class&gt;
+    &lt;class&gt;fr.esipe.bank.entity.Account&lt;/class&gt;
+
+    &lt;properties&gt;
+      &lt;!-- Connexion (utilisé hors serveur, ex: tests) --&gt;
+      &lt;property name="javax.persistence.jdbc.url"
+                value="jdbc:postgresql://localhost:5432/bankdb"/&gt;
+      &lt;property name="javax.persistence.jdbc.driver"
+                value="org.postgresql.Driver"/&gt;
+      &lt;property name="javax.persistence.jdbc.user"     value="bankuser"/&gt;
+      &lt;property name="javax.persistence.jdbc.password" value="secret"/&gt;
+
+      &lt;!-- Hibernate / EclipseLink --&gt;
+      &lt;property name="hibernate.hbm2ddl.auto"   value="validate"/&gt;
+      &lt;property name="hibernate.show_sql"        value="false"/&gt;
+      &lt;property name="hibernate.format_sql"      value="true"/&gt;
+      &lt;property name="hibernate.dialect"
+                value="org.hibernate.dialect.PostgreSQLDialect"/&gt;
+    &lt;/properties&gt;
+
+  &lt;/persistence-unit&gt;
+&lt;/persistence&gt;</code></pre>
+    </div>
+
+    <h2>Migration Flyway — V1__init.sql</h2>
+    <div class="code-block-wrap">
+      <span class="code-lang">sql</span>
+      <pre><code>-- V1__init.sql
+-- Migration initiale : création du schéma bancaire
+
+CREATE TABLE clients (
+    id         BIGSERIAL    PRIMARY KEY,
+    name       VARCHAR(100) NOT NULL,
+    email      VARCHAR(150) NOT NULL UNIQUE,
+    phone      VARCHAR(20),
+    created_at TIMESTAMP    NOT NULL DEFAULT NOW(),
+    updated_at TIMESTAMP
+);
+
+CREATE INDEX idx_clients_email ON clients (email);
+
+CREATE TABLE accounts (
+    id             BIGSERIAL      PRIMARY KEY,
+    account_number VARCHAR(20)    NOT NULL UNIQUE,
+    balance        NUMERIC(15, 2) NOT NULL DEFAULT 0.00,
+    account_type   VARCHAR(20)    NOT NULL DEFAULT 'CHECKING',
+    client_id      BIGINT         NOT NULL,
+    created_at     TIMESTAMP      NOT NULL DEFAULT NOW(),
+
+    CONSTRAINT fk_accounts_client
+        FOREIGN KEY (client_id)
+        REFERENCES clients (id)
+        ON DELETE CASCADE,
+
+    CONSTRAINT chk_balance_positive
+        CHECK (balance >= 0)
+);
+
+CREATE INDEX idx_accounts_client_id ON accounts (client_id);</code></pre>
+    </div>
+
+  </main>
+</div>
+<footer class="cds--footer">Made with IBM Bob &nbsp;·&nbsp; © 2026 Olivier Planson &nbsp;·&nbsp; ESIPE — Jakarta EE &amp; Microservices</footer>
+</body>
+</html>

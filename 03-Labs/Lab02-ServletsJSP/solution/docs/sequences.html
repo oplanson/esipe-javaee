@@ -1,0 +1,271 @@
+<!-- © Copyright 2026 Olivier Planson. All rights reserved. Reproduction prohibited. Made with IBM Bob. -->
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>Diagrammes de Séquences — Banking Web App</title>
+  <link rel="stylesheet" href="assets/carbon.css"/>
+  <style>
+    .seq-box { background:#f4f4f4; border:1px solid #e0e0e0; padding:1.5rem; margin:1rem 0 2rem; overflow-x:auto; }
+    .seq-box svg { display:block; min-width:640px; }
+  </style>
+</head>
+<body>
+
+<header class="cds--header">
+  <a class="cds--header__name" href="index.html">Banking Web App<span>Documentation Technique — Lab 02</span></a>
+</header>
+
+<div class="cds--shell">
+  <nav class="cds--side-nav" aria-label="Navigation principale">
+    <p class="cds--side-nav__section-title">Documentation</p>
+    <a class="cds--side-nav__link" href="index.html"><i class="icon">⊙</i> Vue d'ensemble</a>
+    <a class="cds--side-nav__link" href="functional.html"><i class="icon">⊞</i> Architecture Fonctionnelle</a>
+    <a class="cds--side-nav__link" href="technical.html"><i class="icon">⊟</i> Architecture Technique</a>
+    <a class="cds--side-nav__link active" href="sequences.html"><i class="icon">⇄</i> Diagrammes de Séquences</a>
+    <a class="cds--side-nav__link" href="rules.html"><i class="icon">≡</i> Règles de Gestion</a>
+  </nav>
+
+  <main class="cds--content">
+    <nav class="cds--breadcrumb"><a href="index.html">Accueil</a><span class="sep">/</span><span class="current">Diagrammes de Séquences</span></nav>
+
+    <h1>Diagrammes de Séquences</h1>
+    <p class="page-lead">Quatre flux principaux : consultation de la liste, consultation du détail, création et suppression d'un client.</p>
+
+    <!-- ============================================================ -->
+    <!-- SD1 — List clients                                           -->
+    <!-- ============================================================ -->
+    <h2>SD1 — Consulter la liste des clients</h2>
+    <div class="seq-box">
+      <svg viewBox="0 0 740 320" xmlns="http://www.w3.org/2000/svg" font-family="IBM Plex Sans,Arial,sans-serif" font-size="12">
+        <defs><marker id="a1" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L0,6 L8,3 z" fill="#161616"/></marker>
+        <marker id="a2" markerWidth="8" markerHeight="8" refX="2" refY="3" orient="auto"><path d="M8,0 L8,6 L0,3 z" fill="#525252"/></marker></defs>
+
+        <!-- Actors -->
+        <rect x="20"  y="10" width="90" height="28" rx="3" fill="#d0e2ff" stroke="#0043ce"/><text x="65"  y="29" text-anchor="middle" fill="#0043ce" font-weight="600">Navigateur</text>
+        <rect x="160" y="10" width="110" height="28" rx="3" fill="#e8daff" stroke="#491d8b"/><text x="215" y="29" text-anchor="middle" fill="#491d8b" font-weight="600">Filter Chain</text>
+        <rect x="320" y="10" width="130" height="28" rx="3" fill="#defbe6" stroke="#198038"/><text x="385" y="29" text-anchor="middle" fill="#0e6027" font-weight="600">ClientController</text>
+        <rect x="500" y="10" width="110" height="28" rx="3" fill="#d9fbfb" stroke="#004144"/><text x="555" y="29" text-anchor="middle" fill="#004144" font-weight="600">ClientService</text>
+        <rect x="650" y="10" width="80"  height="28" rx="3" fill="#f5e0c3" stroke="#5d3b1e"/><text x="690" y="29" text-anchor="middle" fill="#5d3b1e" font-weight="600">Memory</text>
+
+        <!-- Lifelines -->
+        <line x1="65"  y1="38" x2="65"  y2="310" stroke="#c6c6c6" stroke-dasharray="4,3"/>
+        <line x1="215" y1="38" x2="215" y2="310" stroke="#c6c6c6" stroke-dasharray="4,3"/>
+        <line x1="385" y1="38" x2="385" y2="310" stroke="#c6c6c6" stroke-dasharray="4,3"/>
+        <line x1="555" y1="38" x2="555" y2="310" stroke="#c6c6c6" stroke-dasharray="4,3"/>
+        <line x1="690" y1="38" x2="690" y2="310" stroke="#c6c6c6" stroke-dasharray="4,3"/>
+
+        <!-- 1. GET /clients -->
+        <line x1="65" y1="70" x2="207" y2="70" stroke="#161616" stroke-width="1.5" marker-end="url(#a1)"/>
+        <text x="135" y="65" text-anchor="middle" fill="#161616" font-size="11">GET /clients</text>
+
+        <!-- 2. Logging, Auth check -->
+        <line x1="215" y1="90" x2="377" y2="90" stroke="#161616" stroke-width="1.5" marker-end="url(#a1)"/>
+        <text x="296" y="85" text-anchor="middle" fill="#161616" font-size="11">doFilter() — log + auth OK</text>
+
+        <!-- 3. doGet -> listClients -->
+        <rect x="375" y="105" width="20" height="90" fill="#defbe6" stroke="#198038"/>
+        <text x="450" y="122" text-anchor="start" fill="#0e6027" font-size="10">path=/clients → listClients()</text>
+
+        <!-- 4. findAll -->
+        <line x1="395" y1="130" x2="547" y2="130" stroke="#161616" stroke-width="1.5" marker-end="url(#a1)"/>
+        <text x="471" y="125" text-anchor="middle" fill="#161616" font-size="11">findAll()</text>
+
+        <!-- 5. clients.values() -->
+        <line x1="555" y1="150" x2="682" y2="150" stroke="#161616" stroke-width="1.5" marker-end="url(#a1)"/>
+        <text x="618" y="145" text-anchor="middle" fill="#161616" font-size="11">values()</text>
+
+        <!-- 6. return List&lt;Client&gt; -->
+        <line x1="682" y1="165" x2="563" y2="165" stroke="#525252" stroke-dasharray="5,3" marker-end="url(#a2)"/>
+        <text x="622" y="160" text-anchor="middle" fill="#525252" font-size="11">List&lt;Client&gt;</text>
+
+        <!-- 7. return List to controller -->
+        <line x1="547" y1="180" x2="403" y2="180" stroke="#525252" stroke-dasharray="5,3" marker-end="url(#a2)"/>
+        <text x="475" y="175" text-anchor="middle" fill="#525252" font-size="11">List&lt;Client&gt;</text>
+
+        <!-- 8. setAttribute + forward to JSP -->
+        <text x="410" y="205" text-anchor="start" fill="#0e6027" font-size="10">req.setAttribute("clients", clients)</text>
+        <text x="410" y="220" text-anchor="start" fill="#0e6027" font-size="10">forward → client-list.jsp</text>
+
+        <!-- 9. JSP renders HTML -->
+        <line x1="395" y1="235" x2="223" y2="235" stroke="#525252" stroke-dasharray="5,3" marker-end="url(#a2)"/>
+        <text x="309" y="230" text-anchor="middle" fill="#525252" font-size="11">HTML (200 OK)</text>
+
+        <!-- 10. Response -->
+        <line x1="215" y1="250" x2="73" y2="250" stroke="#525252" stroke-dasharray="5,3" marker-end="url(#a2)"/>
+        <text x="144" y="245" text-anchor="middle" fill="#525252" font-size="11">200 OK — HTML compressé</text>
+      </svg>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- SD2 — Create client                                          -->
+    <!-- ============================================================ -->
+    <h2>SD2 — Créer un client (pattern PRG)</h2>
+    <div class="seq-box">
+      <svg viewBox="0 0 740 380" xmlns="http://www.w3.org/2000/svg" font-family="IBM Plex Sans,Arial,sans-serif" font-size="12">
+        <defs><marker id="b1" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L0,6 L8,3 z" fill="#161616"/></marker>
+        <marker id="b2" markerWidth="8" markerHeight="8" refX="2" refY="3" orient="auto"><path d="M8,0 L8,6 L0,3 z" fill="#525252"/></marker></defs>
+
+        <!-- Actors -->
+        <rect x="20"  y="10" width="90"  height="28" rx="3" fill="#d0e2ff" stroke="#0043ce"/><text x="65"  y="29" text-anchor="middle" fill="#0043ce" font-weight="600">Navigateur</text>
+        <rect x="160" y="10" width="110" height="28" rx="3" fill="#e8daff" stroke="#491d8b"/><text x="215" y="29" text-anchor="middle" fill="#491d8b" font-weight="600">Filter Chain</text>
+        <rect x="320" y="10" width="130" height="28" rx="3" fill="#defbe6" stroke="#198038"/><text x="385" y="29" text-anchor="middle" fill="#0e6027" font-weight="600">ClientController</text>
+        <rect x="500" y="10" width="110" height="28" rx="3" fill="#d9fbfb" stroke="#004144"/><text x="555" y="29" text-anchor="middle" fill="#004144" font-weight="600">ClientService</text>
+        <rect x="650" y="10" width="80"  height="28" rx="3" fill="#f5e0c3" stroke="#5d3b1e"/><text x="690" y="29" text-anchor="middle" fill="#5d3b1e" font-weight="600">Memory</text>
+
+        <!-- Lifelines -->
+        <line x1="65"  y1="38" x2="65"  y2="370" stroke="#c6c6c6" stroke-dasharray="4,3"/>
+        <line x1="215" y1="38" x2="215" y2="370" stroke="#c6c6c6" stroke-dasharray="4,3"/>
+        <line x1="385" y1="38" x2="385" y2="370" stroke="#c6c6c6" stroke-dasharray="4,3"/>
+        <line x1="555" y1="38" x2="555" y2="370" stroke="#c6c6c6" stroke-dasharray="4,3"/>
+        <line x1="690" y1="38" x2="690" y2="370" stroke="#c6c6c6" stroke-dasharray="4,3"/>
+
+        <!-- 1. GET form -->
+        <line x1="65" y1="70" x2="207" y2="70" stroke="#161616" stroke-width="1.5" marker-end="url(#b1)"/>
+        <text x="135" y="65" text-anchor="middle" fill="#161616" font-size="11">GET /client?action=new</text>
+
+        <line x1="215" y1="85" x2="377" y2="85" stroke="#161616" stroke-width="1.5" marker-end="url(#b1)"/>
+        <text x="296" y="80" text-anchor="middle" fill="#161616" font-size="11">forward after filters</text>
+
+        <line x1="385" y1="100" x2="223" y2="100" stroke="#525252" stroke-dasharray="5,3" marker-end="url(#b2)"/>
+        <text x="304" y="95" text-anchor="middle" fill="#525252" font-size="11">forward client-form.jsp</text>
+
+        <line x1="215" y1="115" x2="73" y2="115" stroke="#525252" stroke-dasharray="5,3" marker-end="url(#b2)"/>
+        <text x="144" y="110" text-anchor="middle" fill="#525252" font-size="11">200 OK — Formulaire HTML</text>
+
+        <!-- 2. POST -->
+        <line x1="65" y1="145" x2="207" y2="145" stroke="#161616" stroke-width="2" marker-end="url(#b1)"/>
+        <text x="135" y="140" text-anchor="middle" fill="#161616" font-weight="600" font-size="11">POST /client action=create</text>
+        <text x="135" y="155" text-anchor="middle" fill="#525252" font-size="10">name=Jean Dupont &amp; email=jean@…</text>
+
+        <line x1="215" y1="168" x2="377" y2="168" stroke="#161616" stroke-width="1.5" marker-end="url(#b1)"/>
+        <text x="296" y="163" text-anchor="middle" fill="#161616" font-size="11">doFilter() chain</text>
+
+        <!-- Activation bar -->
+        <rect x="375" y="180" width="20" height="110" fill="#defbe6" stroke="#198038"/>
+        <text x="404" y="198" text-anchor="start" fill="#0e6027" font-size="10">action=create → createClient()</text>
+        <text x="404" y="212" text-anchor="start" fill="#525252" font-size="10">Validation : name ≠ null, email ≠ null</text>
+
+        <!-- create() -->
+        <line x1="395" y1="225" x2="547" y2="225" stroke="#161616" stroke-width="1.5" marker-end="url(#b1)"/>
+        <text x="471" y="220" text-anchor="middle" fill="#161616" font-size="11">create(client)</text>
+
+        <line x1="555" y1="242" x2="682" y2="242" stroke="#161616" stroke-width="1.5" marker-end="url(#b1)"/>
+        <text x="618" y="237" text-anchor="middle" fill="#161616" font-size="11">put(id, client)</text>
+
+        <line x1="682" y1="258" x2="563" y2="258" stroke="#525252" stroke-dasharray="5,3" marker-end="url(#b2)"/>
+        <line x1="547" y1="272" x2="403" y2="272" stroke="#525252" stroke-dasharray="5,3" marker-end="url(#b2)"/>
+        <text x="475" y="267" text-anchor="middle" fill="#525252" font-size="11">client (id assigné)</text>
+
+        <!-- PRG redirect -->
+        <line x1="395" y1="295" x2="73" y2="295" stroke="#525252" stroke-dasharray="5,3" marker-end="url(#b2)"/>
+        <text x="234" y="290" text-anchor="middle" fill="#da1e28" font-weight="600" font-size="11">302 Redirect → /clients?message=created</text>
+
+        <!-- GET after redirect -->
+        <line x1="65" y1="318" x2="73" y2="318" stroke="#161616" stroke-width="1.5"/>
+        <text x="200" y="330" text-anchor="middle" fill="#525252" font-size="10">Le navigateur effectue automatiquement GET /clients</text>
+        <text x="200" y="345" text-anchor="middle" fill="#525252" font-size="10">(pattern PRG — empêche la double soumission)</text>
+      </svg>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- SD3 — Delete client                                          -->
+    <!-- ============================================================ -->
+    <h2>SD3 — Supprimer un client</h2>
+    <div class="seq-box">
+      <svg viewBox="0 0 740 310" xmlns="http://www.w3.org/2000/svg" font-family="IBM Plex Sans,Arial,sans-serif" font-size="12">
+        <defs><marker id="c1" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L0,6 L8,3 z" fill="#161616"/></marker>
+        <marker id="c2" markerWidth="8" markerHeight="8" refX="2" refY="3" orient="auto"><path d="M8,0 L8,6 L0,3 z" fill="#525252"/></marker></defs>
+
+        <rect x="20"  y="10" width="90"  height="28" rx="3" fill="#d0e2ff" stroke="#0043ce"/><text x="65"  y="29" text-anchor="middle" fill="#0043ce" font-weight="600">Navigateur</text>
+        <rect x="160" y="10" width="110" height="28" rx="3" fill="#e8daff" stroke="#491d8b"/><text x="215" y="29" text-anchor="middle" fill="#491d8b" font-weight="600">Filter Chain</text>
+        <rect x="320" y="10" width="130" height="28" rx="3" fill="#defbe6" stroke="#198038"/><text x="385" y="29" text-anchor="middle" fill="#0e6027" font-weight="600">ClientController</text>
+        <rect x="500" y="10" width="110" height="28" rx="3" fill="#d9fbfb" stroke="#004144"/><text x="555" y="29" text-anchor="middle" fill="#004144" font-weight="600">ClientService</text>
+        <rect x="650" y="10" width="80"  height="28" rx="3" fill="#f5e0c3" stroke="#5d3b1e"/><text x="690" y="29" text-anchor="middle" fill="#5d3b1e" font-weight="600">Memory</text>
+
+        <line x1="65"  y1="38" x2="65"  y2="300" stroke="#c6c6c6" stroke-dasharray="4,3"/>
+        <line x1="215" y1="38" x2="215" y2="300" stroke="#c6c6c6" stroke-dasharray="4,3"/>
+        <line x1="385" y1="38" x2="385" y2="300" stroke="#c6c6c6" stroke-dasharray="4,3"/>
+        <line x1="555" y1="38" x2="555" y2="300" stroke="#c6c6c6" stroke-dasharray="4,3"/>
+        <line x1="690" y1="38" x2="690" y2="300" stroke="#c6c6c6" stroke-dasharray="4,3"/>
+
+        <line x1="65" y1="70" x2="207" y2="70" stroke="#161616" stroke-width="2" marker-end="url(#c1)"/>
+        <text x="135" y="65" text-anchor="middle" fill="#161616" font-weight="600" font-size="11">POST /client action=delete id=3</text>
+
+        <line x1="215" y1="88" x2="377" y2="88" stroke="#161616" stroke-width="1.5" marker-end="url(#c1)"/>
+        <text x="296" y="83" text-anchor="middle" fill="#161616" font-size="11">doFilter() — log + auth</text>
+
+        <rect x="375" y="100" width="20" height="130" fill="#defbe6" stroke="#198038"/>
+        <text x="404" y="118" text-anchor="start" fill="#0e6027" font-size="10">action=delete → deleteClient()</text>
+
+        <!-- Check deletionEnabled -->
+        <rect x="404" y="125" width="180" height="22" rx="2" fill="#fdf6dd" stroke="#f1c21b"/>
+        <text x="494" y="140" text-anchor="middle" fill="#8c4f00" font-size="10">Guard: deletionEnabled == true ?</text>
+
+        <line x1="395" y1="165" x2="547" y2="165" stroke="#161616" stroke-width="1.5" marker-end="url(#c1)"/>
+        <text x="471" y="160" text-anchor="middle" fill="#161616" font-size="11">delete(id=3)</text>
+
+        <line x1="555" y1="182" x2="682" y2="182" stroke="#161616" stroke-width="1.5" marker-end="url(#c1)"/>
+        <text x="618" y="177" text-anchor="middle" fill="#161616" font-size="11">remove(3)</text>
+
+        <line x1="682" y1="198" x2="563" y2="198" stroke="#525252" stroke-dasharray="5,3" marker-end="url(#c2)"/>
+        <text x="622" y="193" text-anchor="middle" fill="#525252" font-size="11">client supprimé (true)</text>
+
+        <line x1="547" y1="214" x2="403" y2="214" stroke="#525252" stroke-dasharray="5,3" marker-end="url(#c2)"/>
+        <text x="475" y="209" text-anchor="middle" fill="#525252" font-size="11">true</text>
+
+        <line x1="395" y1="240" x2="73" y2="240" stroke="#525252" stroke-dasharray="5,3" marker-end="url(#c2)"/>
+        <text x="234" y="235" text-anchor="middle" fill="#da1e28" font-weight="600" font-size="11">302 Redirect → /clients?message=deleted</text>
+
+        <!-- Alt: deletionEnabled=false -->
+        <rect x="404" y="258" width="180" height="22" rx="2" fill="#fff1f1" stroke="#da1e28"/>
+        <text x="494" y="273" text-anchor="middle" fill="#da1e28" font-size="10">Alt: deletionEnabled=false → 403 Forbidden</text>
+      </svg>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- SD4 — Health check                                           -->
+    <!-- ============================================================ -->
+    <h2>SD4 — Probe MicroProfile Health (Readiness)</h2>
+    <div class="seq-box">
+      <svg viewBox="0 0 640 220" xmlns="http://www.w3.org/2000/svg" font-family="IBM Plex Sans,Arial,sans-serif" font-size="12">
+        <defs><marker id="d1" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L0,6 L8,3 z" fill="#161616"/></marker>
+        <marker id="d2" markerWidth="8" markerHeight="8" refX="2" refY="3" orient="auto"><path d="M8,0 L8,6 L0,3 z" fill="#525252"/></marker></defs>
+
+        <rect x="20"  y="10" width="100" height="28" rx="3" fill="#d0e2ff" stroke="#0043ce"/><text x="70"  y="29" text-anchor="middle" fill="#0043ce" font-weight="600">Orchestrateur</text>
+        <rect x="170" y="10" width="130" height="28" rx="3" fill="#fdf6dd" stroke="#8c4f00"/><text x="235" y="29" text-anchor="middle" fill="#8c4f00" font-weight="600">Liberty /health/ready</text>
+        <rect x="360" y="10" width="160" height="28" rx="3" fill="#fdf6dd" stroke="#8c4f00"/><text x="440" y="29" text-anchor="middle" fill="#8c4f00" font-weight="600">WebAppReadinessCheck</text>
+        <rect x="560" y="10" width="70"  height="28" rx="3" fill="#f5e0c3" stroke="#5d3b1e"/><text x="595" y="29" text-anchor="middle" fill="#5d3b1e" font-weight="600">Memory</text>
+
+        <line x1="70"  y1="38" x2="70"  y2="210" stroke="#c6c6c6" stroke-dasharray="4,3"/>
+        <line x1="235" y1="38" x2="235" y2="210" stroke="#c6c6c6" stroke-dasharray="4,3"/>
+        <line x1="440" y1="38" x2="440" y2="210" stroke="#c6c6c6" stroke-dasharray="4,3"/>
+        <line x1="595" y1="38" x2="595" y2="210" stroke="#c6c6c6" stroke-dasharray="4,3"/>
+
+        <line x1="70" y1="72" x2="227" y2="72" stroke="#161616" stroke-width="1.5" marker-end="url(#d1)"/>
+        <text x="148" y="67" text-anchor="middle" fill="#161616" font-size="11">GET /health/ready</text>
+
+        <line x1="235" y1="90" x2="432" y2="90" stroke="#161616" stroke-width="1.5" marker-end="url(#d1)"/>
+        <text x="333" y="85" text-anchor="middle" fill="#161616" font-size="11">call()</text>
+
+        <line x1="440" y1="107" x2="587" y2="107" stroke="#161616" stroke-width="1.5" marker-end="url(#d1)"/>
+        <text x="513" y="102" text-anchor="middle" fill="#161616" font-size="11">check data OK</text>
+
+        <line x1="587" y1="122" x2="448" y2="122" stroke="#525252" stroke-dasharray="5,3" marker-end="url(#d2)"/>
+        <text x="517" y="117" text-anchor="middle" fill="#525252" font-size="11">UP</text>
+
+        <line x1="432" y1="140" x2="243" y2="140" stroke="#525252" stroke-dasharray="5,3" marker-end="url(#d2)"/>
+        <text x="337" y="135" text-anchor="middle" fill="#525252" font-size="11">HealthCheckResponse.up("webAppReady")</text>
+
+        <line x1="235" y1="158" x2="78" y2="158" stroke="#525252" stroke-dasharray="5,3" marker-end="url(#d2)"/>
+        <text x="156" y="153" text-anchor="middle" fill="#525252" font-size="11">200 {"status":"UP"}</text>
+      </svg>
+    </div>
+
+  </main>
+</div>
+
+<footer class="cds--footer">Made with IBM Bob &nbsp;|&nbsp; Banking Web Application — Lab 02 &nbsp;|&nbsp; Jakarta EE 10 &amp; MicroProfile 6</footer>
+</body>
+</html>

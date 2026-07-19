@@ -1,0 +1,279 @@
+<!-- © Copyright 2026 Olivier Planson. All rights reserved. Reproduction prohibited. Made with IBM Bob. -->
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Banking REST App — Lab 05 — Règles Métier</title>
+  <link rel="stylesheet" href="assets/carbon.css"/>
+</head>
+<body>
+
+<header class="cds--header">
+  <a class="cds--header__name" href="index.html">🏦 Banking REST Application<span>Lab 05</span></a>
+  <span class="cds--header__divider">|</span>
+  <span style="font-size:.8125rem;color:#c6c6c6;">Jakarta EE 10 · JAX-RS 3.1 · MicroProfile 6.0 · Open Liberty 23</span>
+</header>
+
+<div class="cds--shell">
+  <nav class="cds--side-nav" aria-label="Navigation">
+    <p class="cds--side-nav__section-title">Documentation</p>
+    <a class="cds--side-nav__link" href="index.html"><i class="icon">🏠</i>Vue d'ensemble</a>
+    <a class="cds--side-nav__link" href="functional.html"><i class="icon">⚙️</i>Architecture Fonctionnelle</a>
+    <a class="cds--side-nav__link" href="technical.html"><i class="icon">🔧</i>Architecture Technique</a>
+    <a class="cds--side-nav__link" href="sequences.html"><i class="icon">🔄</i>Diagrammes de Séquences</a>
+    <a class="cds--side-nav__link active" href="rules.html"><i class="icon">📋</i>Règles Métier</a>
+  </nav>
+
+  <main class="cds--content">
+    <nav class="cds--breadcrumb">
+      <a href="index.html">Accueil</a>
+      <span class="sep">/</span>
+      <span class="current">Règles Métier</span>
+    </nav>
+
+    <h1>Règles Métier</h1>
+    <p class="page-lead">
+      12 règles de validation, d'intégrité, d'audit et de gestion des erreurs.
+      Les règles <span class="cds--tag cds--tag--red">critiques</span> déclenchent une erreur HTTP 400/404 si elles sont violées.
+    </p>
+
+    <div class="cds--inline-notification">
+      <span>ℹ️</span>
+      <div>
+        Les règles <strong>R1 à R5</strong> sont <strong>critiques</strong> : leur violation bloque la transaction et retourne
+        un <code>ErrorResponse</code> standardisé. Les règles <strong>R6 à R12</strong> régissent le comportement,
+        l'audit et la politique de notification.
+      </div>
+    </div>
+
+    <h2>Règles critiques — Validation</h2>
+
+    <!-- R1 -->
+    <div class="rule-card critical">
+      <div class="rule-id">🔴 R1 <span class="cds--tag cds--tag--red">CRITIQUE</span></div>
+      <div class="rule-title">Nom du client — 2 à 100 caractères, obligatoire</div>
+      <div class="rule-desc">
+        Le champ <code>name</code> du client est obligatoire (<code>@NotNull</code>) et doit contenir entre 2 et 100 caractères (<code>@Size(min=2, max=100)</code>).
+        Une violation déclenche un <code>ConstraintViolationException</code> capturé par <code>ConstraintViolationExceptionMapper</code> → HTTP 400 avec la liste des violations dans <code>details[]</code>.
+        <br/><em>Source :</em> entité <code>Client</code>, BeanValidation, <code>ConstraintViolationExceptionMapper</code>.
+      </div>
+    </div>
+
+    <!-- R2 -->
+    <div class="rule-card critical">
+      <div class="rule-id">🔴 R2 <span class="cds--tag cds--tag--red">CRITIQUE</span></div>
+      <div class="rule-title">Email client — format valide et unique</div>
+      <div class="rule-desc">
+        Le champ <code>email</code> est obligatoire (<code>@NotNull</code>), doit respecter le format RFC 5322 (<code>@Email</code>) et doit être unique en base de données.
+        Un doublon déclenche un <code>ConstraintViolationException</code> ou une exception de contrainte JPA → HTTP 400.
+        <br/><em>Source :</em> <code>@Email</code> sur l'entité <code>Client</code>, contrainte UNIQUE PostgreSQL, <code>ConstraintViolationExceptionMapper</code>.
+      </div>
+    </div>
+
+    <!-- R3 -->
+    <div class="rule-card critical">
+      <div class="rule-id">🔴 R3 <span class="cds--tag cds--tag--red">CRITIQUE</span></div>
+      <div class="rule-title">Solde de compte — toujours ≥ 0</div>
+      <div class="rule-desc">
+        Le solde d'un compte ne peut jamais devenir négatif. La contrainte <code>@DecimalMin("0.0")</code> est appliquée à la fois au niveau de l'entité <code>Account</code>
+        et de façon programmatique dans la méthode <code>Account.withdraw(amount)</code>.
+        <br/><em>Source :</em> <code>@DecimalMin("0.0")</code> sur <code>Account.balance</code>, méthode <code>withdraw()</code>.
+      </div>
+    </div>
+
+    <!-- R4 -->
+    <div class="rule-card critical">
+      <div class="rule-id">🔴 R4 <span class="cds--tag cds--tag--red">CRITIQUE</span></div>
+      <div class="rule-title">Retrait — fonds suffisants obligatoires</div>
+      <div class="rule-desc">
+        Un retrait (<code>WITHDRAWAL</code>) ne peut être exécuté que si le solde du compte est supérieur ou égal au montant demandé.
+        Si <code>balance &lt; amount</code>, une <code>IllegalArgumentException("Fonds insuffisants")</code> est levée dans <code>AccountService.withdraw()</code>,
+        interceptée par <code>IllegalArgumentExceptionMapper</code> → HTTP 400.
+        <br/><em>Source :</em> <code>AccountService.withdraw()</code>, <code>Account.withdraw()</code>, <code>IllegalArgumentExceptionMapper</code>.
+      </div>
+    </div>
+
+    <!-- R5 -->
+    <div class="rule-card critical">
+      <div class="rule-id">🔴 R5 <span class="cds--tag cds--tag--red">CRITIQUE</span></div>
+      <div class="rule-title">Virement — les deux comptes doivent exister et les fonds être suffisants</div>
+      <div class="rule-desc">
+        Un virement (<code>TRANSFER_OUT</code> / <code>TRANSFER_IN</code>) requiert :
+        (1) que le compte source <em>et</em> le compte destination existent en base ;
+        (2) que le compte source ait un solde suffisant.
+        L'absence d'un des comptes déclenche une <code>NotFoundException</code> → HTTP 404.
+        Le manque de fonds déclenche <code>IllegalArgumentException</code> → HTTP 400.
+        <br/><em>Source :</em> <code>AccountService.transfer(fromId, toId, amount)</code>, <code>NotFoundExceptionMapper</code>, <code>IllegalArgumentExceptionMapper</code>.
+      </div>
+    </div>
+
+    <h2>Règles standard — Contraintes d'intégrité</h2>
+
+    <!-- R6 -->
+    <div class="rule-card">
+      <div class="rule-id">🔵 R6</div>
+      <div class="rule-title">Numéro de compte — 5 à 34 caractères, unique</div>
+      <div class="rule-desc">
+        Le champ <code>accountNumber</code> doit contenir entre 5 et 34 caractères (<code>@Size(min=5, max=34)</code>) et être unique en base de données.
+        Compatible avec les formats IBAN (max 34 caractères).
+        <br/><em>Source :</em> <code>@Size</code> sur <code>Account.accountNumber</code>, contrainte UNIQUE PostgreSQL.
+      </div>
+    </div>
+
+    <!-- R7 -->
+    <div class="rule-card">
+      <div class="rule-id">🔵 R7</div>
+      <div class="rule-title">Montant des opérations — strictement positif</div>
+      <div class="rule-desc">
+        Tout montant de dépôt, retrait ou virement doit être strictement supérieur à zéro (<code>@DecimalMin("0.01")</code>).
+        Un montant à 0 ou négatif est rejeté avec HTTP 400 via la validation BeanValidation ou une vérification explicite dans le service.
+        <br/><em>Source :</em> DTO de transaction, <code>@DecimalMin("0.01")</code>, <code>ConstraintViolationExceptionMapper</code>.
+      </div>
+    </div>
+
+    <h2>Règles standard — Audit et traçabilité</h2>
+
+    <!-- R8 -->
+    <div class="rule-card success">
+      <div class="rule-id">🟢 R8</div>
+      <div class="rule-title">Audit trail automatique — balanceBefore / balanceAfter</div>
+      <div class="rule-desc">
+        Chaque opération sur un compte (<code>DEPOSIT</code>, <code>WITHDRAWAL</code>, <code>TRANSFER_OUT</code>, <code>TRANSFER_IN</code>) crée automatiquement un enregistrement <code>Transaction</code>
+        avec les champs <code>balanceBefore</code> et <code>balanceAfter</code>. Cet enregistrement est immuable et consultable via <code>TransactionResource</code>.
+        <br/><em>Source :</em> <code>AccountService</code>, entité <code>Transaction</code>, <code>@Entity</code> persistée par <code>em.persist()</code>.
+      </div>
+    </div>
+
+    <!-- R9 -->
+    <div class="rule-card">
+      <div class="rule-id">🔵 R9</div>
+      <div class="rule-title">Notifications — politique Premium vs Standard</div>
+      <div class="rule-desc">
+        Les clients <code>@Premium</code> reçoivent une notification sur tous les canaux (email, SMS, push) pour chaque opération.
+        Les clients <code>@Standard</code> ne reçoivent qu'un email, et uniquement si le montant de l'opération dépasse 1 000 €.
+        Les qualifiers CDI (<code>@Premium</code>, <code>@Standard</code>) permettent à Liberty d'injecter la bonne implémentation de <code>NotificationService</code>.
+        <br/><em>Source :</em> <code>BankingEventObserver</code>, qualifiers <code>@Premium</code>/<code>@Standard</code>, <code>NotificationService</code>.
+      </div>
+    </div>
+
+    <h2>Règles standard — Gestion des erreurs et intégrité référentielle</h2>
+
+    <!-- R10 -->
+    <div class="rule-card">
+      <div class="rule-id">🔵 R10</div>
+      <div class="rule-title">Format d'erreur unifié — <code>ErrorResponse</code></div>
+      <div class="rule-desc">
+        Toutes les erreurs de l'API retournent un objet JSON <code>ErrorResponse</code> structuré avec les champs <code>status</code>, <code>error</code>, <code>message</code>, <code>timestamp</code> et <code>details[]</code>.
+        Aucun message d'erreur Java brut ne doit fuiter vers le client.
+        Les 5 <code>ExceptionMapper</code> garantissent la couverture totale des exceptions.
+        <br/><em>Source :</em> classe <code>ErrorResponse</code>, <code>NotFoundExceptionMapper</code>, <code>ConstraintViolationExceptionMapper</code>, <code>GenericExceptionMapper</code>…
+      </div>
+    </div>
+
+    <!-- R11 -->
+    <div class="rule-card warning">
+      <div class="rule-id">🟡 R11</div>
+      <div class="rule-title">Suppression client — cascade sur tous les comptes associés</div>
+      <div class="rule-desc">
+        La suppression d'un client (<code>DELETE /api/clients/{id}</code>) entraîne la suppression en cascade de tous ses comptes bancaires
+        via <code>@OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)</code> sur l'entité <code>Client</code>.
+        Les transactions associées aux comptes supprimés sont également affectées selon la stratégie de cascade JPA.
+        <br/><em>Source :</em> <code>@OneToMany(orphanRemoval=true)</code> sur <code>Client.accounts</code>, EclipseLink.
+      </div>
+    </div>
+
+    <!-- R12 -->
+    <div class="rule-card success">
+      <div class="rule-id">🟢 R12</div>
+      <div class="rule-title">Transactions triées par date décroissante</div>
+      <div class="rule-desc">
+        Toutes les requêtes portant sur les transactions retournent les résultats triés par <code>transactionDate DESC</code>
+        (les plus récentes en premier). Ce tri est défini dans les <code>NamedQuery</code> JPA de l'entité <code>Transaction</code>
+        et ne dépend pas du code appelant.
+        <br/><em>Source :</em> <code>NamedQuery</code> sur <code>Transaction</code> avec <code>ORDER BY t.transactionDate DESC</code>.
+      </div>
+    </div>
+
+    <hr class="cds--divider"/>
+
+    <!-- ── Tableau récapitulatif ── -->
+    <h2>Récapitulatif des règles</h2>
+    <div class="cds--data-table-container">
+      <table class="cds--data-table">
+        <thead>
+          <tr><th>ID</th><th>Règle</th><th>Criticité</th><th>Code HTTP si violation</th><th>Source</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>R1</td><td>Nom client 2-100 chars, obligatoire</td>
+            <td><span class="cds--tag cds--tag--red">Critique</span></td>
+            <td>400</td><td><code>Client @NotNull @Size</code></td>
+          </tr>
+          <tr>
+            <td>R2</td><td>Email client valide et unique</td>
+            <td><span class="cds--tag cds--tag--red">Critique</span></td>
+            <td>400</td><td><code>Client @Email</code></td>
+          </tr>
+          <tr>
+            <td>R3</td><td>Solde compte ≥ 0</td>
+            <td><span class="cds--tag cds--tag--red">Critique</span></td>
+            <td>400</td><td><code>Account @DecimalMin</code></td>
+          </tr>
+          <tr>
+            <td>R4</td><td>Retrait — fonds suffisants</td>
+            <td><span class="cds--tag cds--tag--red">Critique</span></td>
+            <td>400</td><td><code>AccountService.withdraw()</code></td>
+          </tr>
+          <tr>
+            <td>R5</td><td>Virement — comptes existants + fonds suffisants</td>
+            <td><span class="cds--tag cds--tag--red">Critique</span></td>
+            <td>400 / 404</td><td><code>AccountService.transfer()</code></td>
+          </tr>
+          <tr>
+            <td>R6</td><td>Numéro de compte 5-34 chars, unique</td>
+            <td><span class="cds--tag cds--tag--blue">Standard</span></td>
+            <td>400</td><td><code>Account @Size</code></td>
+          </tr>
+          <tr>
+            <td>R7</td><td>Montant opération &gt; 0</td>
+            <td><span class="cds--tag cds--tag--blue">Standard</span></td>
+            <td>400</td><td><code>DTO @DecimalMin("0.01")</code></td>
+          </tr>
+          <tr>
+            <td>R8</td><td>Audit trail automatique balanceBefore/After</td>
+            <td><span class="cds--tag cds--tag--green">Fonctionnel</span></td>
+            <td>—</td><td><code>AccountService</code> + <code>Transaction</code></td>
+          </tr>
+          <tr>
+            <td>R9</td><td>Notifications Premium (tous canaux) vs Standard (email &gt;1000€)</td>
+            <td><span class="cds--tag cds--tag--blue">Standard</span></td>
+            <td>—</td><td><code>@Premium</code>/<code>@Standard</code> CDI</td>
+          </tr>
+          <tr>
+            <td>R10</td><td>Format ErrorResponse unifié pour toutes les erreurs</td>
+            <td><span class="cds--tag cds--tag--blue">Standard</span></td>
+            <td>400/404/500</td><td><code>ExceptionMappers ×5</code></td>
+          </tr>
+          <tr>
+            <td>R11</td><td>DELETE client → cascade delete comptes</td>
+            <td><span class="cds--tag cds--tag--warm">Attention</span></td>
+            <td>204</td><td><code>@OneToMany orphanRemoval=true</code></td>
+          </tr>
+          <tr>
+            <td>R12</td><td>Transactions triées DESC par date</td>
+            <td><span class="cds--tag cds--tag--green">Fonctionnel</span></td>
+            <td>—</td><td><code>NamedQuery ORDER BY DESC</code></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <hr class="cds--divider"/>
+    <p>Voir aussi <a href="sequences.html">les Diagrammes de Séquences</a> pour visualiser l'application de ces règles dans les flux runtime.</p>
+  </main>
+</div>
+
+<footer class="cds--footer">Banking REST Application — Lab 05 · Jakarta EE 10 · MicroProfile 6.0 · Open Liberty 23 · © 2025 Olivier Planson</footer>
+</body>
+</html>

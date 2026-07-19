@@ -1,0 +1,268 @@
+<!-- © Copyright 2026 Olivier Planson. All rights reserved. Reproduction prohibited. Made with IBM Bob. -->
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Architecture Technique — Banking JPA App</title>
+  <link rel="stylesheet" href="assets/carbon.css"/>
+</head>
+<body>
+
+<header class="cds--header">
+  <a class="cds--header__name" href="index.html">
+    ☁ IBM Carbon <span>/ Banking JPA Application — Lab 03</span>
+  </a>
+</header>
+
+<div class="cds--shell">
+  <nav class="cds--side-nav" aria-label="Navigation principale">
+    <p class="cds--side-nav__section-title">Documentation</p>
+    <a class="cds--side-nav__link" href="index.html"><i class="icon">⊞</i> Vue d'ensemble</a>
+    <a class="cds--side-nav__link" href="functional.html"><i class="icon">⬡</i> Architecture Fonctionnelle</a>
+    <a class="cds--side-nav__link active" href="technical.html"><i class="icon">⚙</i> Architecture Technique</a>
+    <a class="cds--side-nav__link" href="sequences.html"><i class="icon">↔</i> Diagrammes de Séquence</a>
+    <a class="cds--side-nav__link" href="rules.html"><i class="icon">✔</i> Règles Métier</a>
+  </nav>
+
+  <main class="cds--content">
+    <nav class="cds--breadcrumb">
+      <a href="index.html">Lab 03</a>
+      <span class="sep">/</span>
+      <span class="current">Architecture Technique</span>
+    </nav>
+
+    <h1>Architecture Technique</h1>
+    <p class="page-lead">
+      Couches applicatives, unité de persistance JPA, configuration Open Liberty, datasources,
+      entrées JNDI, migrations Flyway et structure du WAR déployé.
+    </p>
+
+    <!-- ── Couches applicatives ── -->
+    <h2>Couches applicatives</h2>
+    <div class="arch-box" role="img" aria-label="Couches techniques">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 370" width="100%"
+           style="max-width:720px;font-family:'IBM Plex Sans',Arial,sans-serif;font-size:12px;">
+        <defs>
+          <marker id="ta" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L0,6 L8,3 z" fill="#8d8d8d"/></marker>
+          <marker id="tr" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L0,6 L8,3 z" fill="#da1e28"/></marker>
+        </defs>
+        <!-- Browser -->
+        <rect x="20" y="10" width="680" height="50" rx="3" fill="#e0e0e0" stroke="#8d8d8d"/>
+        <text x="360" y="30" text-anchor="middle" font-weight="600" fill="#161616">Browser / Client HTTP</text>
+        <text x="360" y="48" text-anchor="middle" fill="#525252">HTTP :9080 / HTTPS :9443</text>
+        <line x1="360" y1="60" x2="360" y2="75" stroke="#8d8d8d" stroke-width="2" marker-end="url(#ta)"/>
+        <!-- Servlet -->
+        <rect x="20" y="75" width="680" height="55" rx="3" fill="#d0e2ff" stroke="#0043ce"/>
+        <text x="360" y="97" text-anchor="middle" font-weight="600" fill="#0043ce">Couche Servlet (Jakarta Servlet 6.0)</text>
+        <text x="360" y="115" text-anchor="middle" fill="#525252">ClientController · TransactionValidatorServlet · DatabaseMigrationStartup</text>
+        <line x1="360" y1="130" x2="360" y2="145" stroke="#8d8d8d" stroke-width="2" marker-end="url(#ta)"/>
+        <!-- Service -->
+        <rect x="20" y="145" width="680" height="55" rx="3" fill="#defbe6" stroke="#0e6027"/>
+        <text x="360" y="167" text-anchor="middle" font-weight="600" fill="#0e6027">Couche Service (Singleton + CDI)</text>
+        <text x="360" y="185" text-anchor="middle" fill="#525252">ClientService (Singleton) · JndiConfigService (@ApplicationScoped)</text>
+        <line x1="360" y1="200" x2="360" y2="215" stroke="#8d8d8d" stroke-width="2" marker-end="url(#ta)"/>
+        <!-- JPA -->
+        <rect x="20" y="215" width="680" height="55" rx="3" fill="#e8daff" stroke="#491d8b"/>
+        <text x="360" y="237" text-anchor="middle" font-weight="600" fill="#491d8b">Couche JPA / EclipseLink (Jakarta Persistence 3.1)</text>
+        <text x="360" y="255" text-anchor="middle" fill="#525252">EntityManagerFactory · EntityManager · Client · Account · bankingPU (RESOURCE_LOCAL)</text>
+        <line x1="180" y1="270" x2="180" y2="285" stroke="#8d8d8d" stroke-width="2" marker-end="url(#ta)"/>
+        <line x1="540" y1="270" x2="540" y2="285" stroke="#da1e28" stroke-width="2" stroke-dasharray="5,3" marker-end="url(#tr)"/>
+        <!-- PostgreSQL -->
+        <rect x="20" y="285" width="320" height="55" rx="3" fill="#f4f4f4" stroke="#8d8d8d"/>
+        <text x="180" y="307" text-anchor="middle" font-weight="600" fill="#161616">PostgreSQL</text>
+        <text x="180" y="325" text-anchor="middle" fill="#525252">jdbc/bankingDS · clients · accounts</text>
+        <!-- Flyway -->
+        <rect x="360" y="285" width="340" height="55" rx="3" fill="#fff1f1" stroke="#da1e28"/>
+        <text x="530" y="307" text-anchor="middle" font-weight="600" fill="#da1e28">Flyway 10.4.1</text>
+        <text x="530" y="325" text-anchor="middle" fill="#525252">V1 / V2 / V3 · baselineOnMigrate=true</text>
+      </svg>
+    </div>
+
+    <!-- ── APIs ── -->
+    <h2>APIs Jakarta EE &amp; MicroProfile</h2>
+    <div class="cds--data-table-container">
+      <table class="cds--data-table">
+        <thead><tr><th>API</th><th>Version</th><th>Rôle</th></tr></thead>
+        <tbody>
+          <tr><td>Jakarta Servlet</td><td>6.0</td><td>Traitement HTTP, cycle de vie des servlets</td></tr>
+          <tr><td>Jakarta Persistence (JPA)</td><td>3.1</td><td>ORM, JPQL, gestion des transactions</td></tr>
+          <tr><td>EclipseLink</td><td>4.0</td><td>Fournisseur JPA (implémentation ORM)</td></tr>
+          <tr><td>Jakarta CDI</td><td>4.0</td><td>Injection de dépendances, <code>@ApplicationScoped</code></td></tr>
+          <tr><td>JDBC</td><td>4.2</td><td>Accès base de données, datasources</td></tr>
+          <tr><td>MicroProfile Health</td><td>4.0</td><td>Sondes <code>@Liveness</code> et <code>@Readiness</code></td></tr>
+          <tr><td>MicroProfile Config</td><td>3.0</td><td>Configuration externalisée</td></tr>
+          <tr><td>MicroProfile Metrics</td><td>5.0</td><td>Métriques applicatives</td></tr>
+          <tr><td>MicroProfile OpenAPI</td><td>3.1</td><td>Documentation API auto-générée</td></tr>
+          <tr><td>Jakarta JSTL</td><td>3.0.1</td><td>Tag library pour les vues JSP</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- ── Persistence Unit ── -->
+    <h2>Unité de persistance — <code>bankingPU</code></h2>
+    <div class="cds--tile">
+      <div class="tag-stack" style="margin-top:0;">
+        <span class="cds--tag cds--tag--purple">RESOURCE_LOCAL</span>
+        <span class="cds--tag cds--tag--teal">EclipseLink</span>
+        <span class="cds--tag cds--tag--blue">DDL = none</span>
+      </div>
+      <div class="cds--data-table-container">
+        <table class="cds--data-table">
+          <thead><tr><th>Propriété</th><th>Valeur</th></tr></thead>
+          <tbody>
+            <tr><td>Nom</td><td><code>bankingPU</code></td></tr>
+            <tr><td>Type de transaction</td><td><code>RESOURCE_LOCAL</code></td></tr>
+            <tr><td>DataSource (non-JTA)</td><td><code>jdbc/bankingDS</code></td></tr>
+            <tr><td>DDL generation</td><td><code>none</code> — géré par Flyway</td></tr>
+            <tr><td>Fournisseur JPA</td><td><code>org.eclipse.persistence.jpa.PersistenceProvider</code></td></tr>
+            <tr><td><code>eclipselink.logging.level</code></td><td><code>FINE</code></td></tr>
+            <tr><td><code>eclipselink.target-database</code></td><td><code>PostgreSQL</code></td></tr>
+            <tr><td><code>eclipselink.weaving</code></td><td><code>static</code></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ── server.xml features ── -->
+    <h2>Features Open Liberty (<code>server.xml</code>)</h2>
+    <div class="cds--data-table-container">
+      <table class="cds--data-table">
+        <thead><tr><th>Feature</th><th>Description</th></tr></thead>
+        <tbody>
+          <tr><td><code>servlet-6.0</code></td><td>Support Jakarta Servlet 6.0</td></tr>
+          <tr><td><code>persistence-3.1</code></td><td>Support Jakarta Persistence / JPA 3.1</td></tr>
+          <tr><td><code>jdbc-4.2</code></td><td>Gestion des datasources JDBC</td></tr>
+          <tr><td><code>mpHealth-4.0</code></td><td>MicroProfile Health — <code>/health</code></td></tr>
+          <tr><td><code>mpConfig-3.0</code></td><td>MicroProfile Config</td></tr>
+          <tr><td><code>mpMetrics-5.0</code></td><td>MicroProfile Metrics</td></tr>
+          <tr><td><code>mpOpenAPI-3.1</code></td><td>MicroProfile OpenAPI — <code>/openapi/ui</code></td></tr>
+          <tr><td><code>cdi-4.0</code></td><td>Contexts and Dependency Injection</td></tr>
+          <tr><td><code>jsonp-2.1</code></td><td>Jakarta JSON Processing</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- ── DataSources ── -->
+    <h2>DataSources</h2>
+    <div class="tile-grid">
+      <div class="cds--tile">
+        <h3>FlywayDataSource</h3>
+        <div class="tag-stack" style="margin-top:0;"><span class="cds--tag cds--tag--warm">maxPool=5</span></div>
+        <p>DataSource dédiée aux migrations Flyway. Pool limité à 5 connexions.
+        Utilisée uniquement lors de la phase de démarrage (<code>contextInitialized</code>).</p>
+      </div>
+      <div class="cds--tile">
+        <h3>DefaultDataSource / <code>jdbc/bankingDS</code></h3>
+        <div class="tag-stack" style="margin-top:0;">
+          <span class="cds--tag cds--tag--blue">maxPool=10</span>
+          <span class="cds--tag cds--tag--teal">JTA</span>
+        </div>
+        <p>DataSource principale. Pool de 10 connexions. Référencée dans <code>persistence.xml</code>
+        et dans <code>web.xml</code> via <code>&lt;resource-ref&gt;</code>.</p>
+      </div>
+    </div>
+
+    <!-- ── JNDI ── -->
+    <h2>Entrées JNDI (<code>web.xml</code>)</h2>
+    <div class="cds--data-table-container">
+      <table class="cds--data-table">
+        <thead><tr><th>Nom JNDI</th><th>Type</th><th>Valeur par défaut</th></tr></thead>
+        <tbody>
+          <tr><td><code>app/maxLoginAttempts</code></td><td><code>java.lang.Integer</code></td><td>3</td></tr>
+          <tr><td><code>app/supportEmail</code></td><td><code>java.lang.String</code></td><td>support@banking.lab</td></tr>
+          <tr><td><code>app/maxTransactionAmount</code></td><td><code>java.lang.Integer</code></td><td>10000</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- ── Flyway migrations ── -->
+    <h2>Migrations Flyway</h2>
+    <div class="cds--data-table-container">
+      <table class="cds--data-table">
+        <thead><tr><th>Version</th><th>Script</th><th>Contenu</th></tr></thead>
+        <tbody>
+          <tr>
+            <td><span class="cds--tag cds--tag--green">V1</span></td>
+            <td><code>V1__create_clients.sql</code></td>
+            <td>Table <code>clients</code> (id, name, email, created_at, updated_at)</td>
+          </tr>
+          <tr>
+            <td><span class="cds--tag cds--tag--blue">V2</span></td>
+            <td><code>V2__create_accounts.sql</code></td>
+            <td>Table <code>accounts</code> avec <code>client_id REFERENCES clients(id) ON DELETE CASCADE</code></td>
+          </tr>
+          <tr>
+            <td><span class="cds--tag cds--tag--purple">V3</span></td>
+            <td><code>V3__add_status.sql</code></td>
+            <td>Colonne <code>status VARCHAR(20) DEFAULT 'ACTIVE'</code> sur <code>accounts</code></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- ── Structure WAR ── -->
+    <h2>Structure du WAR</h2>
+    <div class="cds--tile">
+      <pre>banking-jpa-app.war
+├── WEB-INF/
+│   ├── web.xml                     ← context-params, resource-ref, env-entry
+│   ├── classes/
+│   │   ├── META-INF/
+│   │   │   └── persistence.xml     ← bankingPU RESOURCE_LOCAL
+│   │   ├── db/migration/
+│   │   │   ├── V1__create_clients.sql
+│   │   │   ├── V2__create_accounts.sql
+│   │   │   └── V3__add_status.sql
+│   │   └── com/example/banking/
+│   │       ├── controller/         ClientController, TransactionValidatorServlet
+│   │       ├── service/            ClientService, JndiConfigService
+│   │       ├── entity/             Client, Account
+│   │       ├── listener/           DatabaseMigrationStartup
+│   │       └── health/             DatabaseHealthCheck, WebAppReadinessCheck
+│   └── lib/
+│       ├── postgresql-42.7.1.jar
+│       ├── flyway-core-10.4.1.jar
+│       └── flyway-database-postgresql-10.4.1.jar
+└── WEB-INF/jsp/
+    ├── client-list.jsp
+    ├── client-detail.jsp
+    └── client-form.jsp</pre>
+    </div>
+
+    <h3>Extraits clés de <code>web.xml</code></h3>
+    <div class="cds--tile">
+      <pre>&lt;!-- Référence datasource --&gt;
+&lt;resource-ref&gt;
+  &lt;res-ref-name&gt;jdbc/bankingDS&lt;/res-ref-name&gt;
+  &lt;res-type&gt;javax.sql.DataSource&lt;/res-type&gt;
+  &lt;res-auth&gt;Container&lt;/res-auth&gt;
+&lt;/resource-ref&gt;
+
+&lt;!-- Entrées JNDI --&gt;
+&lt;env-entry&gt;
+  &lt;env-entry-name&gt;app/maxTransactionAmount&lt;/env-entry-name&gt;
+  &lt;env-entry-type&gt;java.lang.Integer&lt;/env-entry-type&gt;
+  &lt;env-entry-value&gt;10000&lt;/env-entry-value&gt;
+&lt;/env-entry&gt;
+&lt;env-entry&gt;
+  &lt;env-entry-name&gt;app/maxLoginAttempts&lt;/env-entry-name&gt;
+  &lt;env-entry-type&gt;java.lang.Integer&lt;/env-entry-type&gt;
+  &lt;env-entry-value&gt;3&lt;/env-entry-value&gt;
+&lt;/env-entry&gt;
+&lt;env-entry&gt;
+  &lt;env-entry-name&gt;app/supportEmail&lt;/env-entry-name&gt;
+  &lt;env-entry-type&gt;java.lang.String&lt;/env-entry-type&gt;
+  &lt;env-entry-value&gt;support@banking.lab&lt;/env-entry-value&gt;
+&lt;/env-entry&gt;</pre>
+    </div>
+
+    <hr class="cds--divider"/>
+  </main>
+</div>
+
+<footer class="cds--footer">
+  Banking JPA Application — Lab 03 &nbsp;·&nbsp; Jakarta EE 10 / Open Liberty 23 &nbsp;·&nbsp; © 2025 Olivier Planson
+</footer>
+</body>
+</html>

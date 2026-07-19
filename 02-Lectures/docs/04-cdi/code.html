@@ -1,0 +1,363 @@
+<!-- © Copyright 2026 Olivier Planson. All rights reserved. Reproduction prohibited. Made with IBM Bob. -->
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>Cours 04 — Exemples de code</title>
+  <link rel="stylesheet" href="../assets/carbon.css"/>
+</head>
+<body>
+<header class="cds--header">
+  <a class="cds--header__name" href="index.html">CDI — Injection de Dépendances<span>Cours Jakarta EE</span></a>
+  <a class="cds--header__back" href="../index.html">← Tous les Cours</a>
+</header>
+<div class="cds--shell">
+  <nav class="cds--side-nav">
+    <p class="cds--side-nav__section-title">Cours 04</p>
+    <a class="cds--side-nav__link" href="index.html">⊙ Vue d'ensemble</a>
+    <a class="cds--side-nav__link" href="slides.html">☰ Contenu du cours</a>
+    <a class="cds--side-nav__link" href="concepts.html">◈ Concepts clés</a>
+    <a class="cds--side-nav__link active" href="code.html">⟨/⟩ Exemples de code</a>
+  </nav>
+  <main class="cds--content">
+    <div class="breadcrumb"><a href="../index.html">Cours</a> › <a href="index.html">Cours 04</a> › Code</div>
+    <h1>Exemples de code</h1>
+    <p class="page-lead">Extraits de code Java du cours 04 — CDI, Qualificateurs, Producers, Intercepteurs, Transactions et Events.</p>
+
+    <h2>@ApplicationScoped — Service singleton</h2>
+    <div class="code-block-wrap">
+      <span class="code-lang">java</span>
+      <pre><code>import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
+import java.util.List;
+import java.util.concurrent.atomic.AtomicLong;
+
+@ApplicationScoped
+public class ClientService {
+
+    private final ClientRepository clientRepository;
+    private final AtomicLong counter = new AtomicLong(0);
+
+    // Constructor injection — méthode préférée
+    @Inject
+    public ClientService(ClientRepository clientRepository) {
+        this.clientRepository = clientRepository;
+    }
+
+    public List&lt;Client&gt; findAll() {
+        counter.incrementAndGet();
+        return clientRepository.findAll();
+    }
+
+    public Client create(Client client) {
+        counter.incrementAndGet();
+        return clientRepository.save(client);
+    }
+
+    public long getCallCount() {
+        return counter.get();
+    }
+
+    @PostConstruct
+    void init() {
+        System.out.println("ClientService initialized — singleton scope");
+    }
+
+    @PreDestroy
+    void destroy() {
+        System.out.println("ClientService destroyed after " + counter.get() + " calls");
+    }
+}</code></pre>
+    </div>
+
+    <h2>Qualificateurs CDI</h2>
+    <div class="code-block-wrap">
+      <span class="code-lang">java</span>
+      <pre><code>import jakarta.inject.Qualifier;
+import java.lang.annotation.*;
+
+// 1. Définition du qualificateur
+@Qualifier
+@Retention(RetentionPolicy.RUNTIME)
+@Target({ElementType.METHOD, ElementType.FIELD,
+         ElementType.PARAMETER, ElementType.TYPE})
+public @interface PremiumClient {}
+
+
+// 2. Implémentation qualifiée
+@PremiumClient
+@ApplicationScoped
+public class PremiumClientServiceImpl implements ClientNotificationService {
+
+    @Override
+    public void notify(Client client, String message) {
+        // Envoi via canal premium : email + SMS + push notification
+        sendEmail(client, message);
+        sendSms(client, message);
+        sendPushNotification(client, message);
+    }
+}
+
+
+// 3. Implémentation standard (sans qualificateur = @Default)
+@ApplicationScoped
+public class StandardClientServiceImpl implements ClientNotificationService {
+
+    @Override
+    public void notify(Client client, String message) {
+        // Envoi via canal standard : email uniquement
+        sendEmail(client, message);
+    }
+}
+
+
+// 4. Point d'injection avec qualificateur
+@ApplicationScoped
+public class AccountService {
+
+    @Inject @PremiumClient
+    private ClientNotificationService premiumNotifier;
+
+    @Inject
+    private ClientNotificationService standardNotifier;
+}</code></pre>
+    </div>
+
+    <h2>Producer Method</h2>
+    <div class="code-block-wrap">
+      <span class="code-lang">java</span>
+      <pre><code>import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.enterprise.inject.Disposes;
+import jakarta.enterprise.inject.Produces;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.EntityManagerFactory;
+import jakarta.persistence.Persistence;
+
+@ApplicationScoped
+public class EntityManagerProducer {
+
+    private EntityManagerFactory emf;
+
+    @PostConstruct
+    void init() {
+        emf = Persistence.createEntityManagerFactory("bankPU");
+    }
+
+    // Producer : crée un EntityManager injectable par @Inject
+    @Produces
+    @ApplicationScoped
+    public EntityManager produceEntityManager() {
+        return emf.createEntityManager();
+    }
+
+    // Disposer : ferme l'EntityManager lorsqu'il est détruit
+    public void closeEntityManager(@Disposes EntityManager em) {
+        if (em.isOpen()) {
+            em.close();
+        }
+    }
+
+    @PreDestroy
+    void shutdown() {
+        if (emf != null &amp;&amp; emf.isOpen()) {
+            emf.close();
+        }
+    }
+}</code></pre>
+    </div>
+
+    <h2>Intercepteur de Logging</h2>
+    <div class="code-block-wrap">
+      <span class="code-lang">java</span>
+      <pre><code>import jakarta.interceptor.InterceptorBinding;
+import java.lang.annotation.*;
+
+// 1. Annotation de binding
+@InterceptorBinding
+@Retention(RetentionPolicy.RUNTIME)
+@Target({ElementType.METHOD, ElementType.TYPE})
+public @interface Logged {}
+
+
+// 2. Implémentation de l'intercepteur
+import jakarta.annotation.Priority;
+import jakarta.interceptor.AroundInvoke;
+import jakarta.interceptor.Interceptor;
+import jakarta.interceptor.InvocationContext;
+import java.util.logging.Logger;
+
+@Logged
+@Interceptor
+@Priority(Interceptor.Priority.APPLICATION)
+public class LoggingInterceptor {
+
+    private static final Logger logger =
+        Logger.getLogger(LoggingInterceptor.class.getName());
+
+    @AroundInvoke
+    public Object logMethod(InvocationContext context) throws Exception {
+        String className  = context.getTarget().getClass().getSimpleName();
+        String methodName = context.getMethod().getName();
+        long start = System.currentTimeMillis();
+
+        logger.info("→ Entering  " + className + "." + methodName + "()");
+        try {
+            Object result = context.proceed(); // appel réel
+            long elapsed = System.currentTimeMillis() - start;
+            logger.info("← Returning " + className + "." + methodName
+                + "() [" + elapsed + " ms]");
+            return result;
+        } catch (Exception e) {
+            logger.warning("✗ Exception in " + className + "." + methodName
+                + "(): " + e.getMessage());
+            throw e;
+        }
+    }
+}
+
+
+// 3. Utilisation — annoter la méthode ou la classe
+@ApplicationScoped
+@Logged
+public class TransferService {
+
+    public void transferFunds(String fromId, String toId, BigDecimal amount) {
+        // ... logique métier — logging ajouté automatiquement
+    }
+}</code></pre>
+    </div>
+
+    <h2>Transaction @Transactional</h2>
+    <div class="code-block-wrap">
+      <span class="code-lang">java</span>
+      <pre><code>import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
+import jakarta.transaction.Transactional;
+import jakarta.transaction.Transactional.TxType;
+import java.math.BigDecimal;
+
+@ApplicationScoped
+public class BankingService {
+
+    @Inject private AccountRepository accountRepository;
+    @Inject private AuditService auditService;
+
+    // REQUIRED : participe à la transaction existante ou en crée une
+    @Transactional(TxType.REQUIRED)
+    public void transferFunds(String fromAccountId, String toAccountId,
+                              BigDecimal amount) {
+        Account source = accountRepository.findById(fromAccountId)
+            .orElseThrow(() -&gt; new AccountNotFoundException(fromAccountId));
+        Account target = accountRepository.findById(toAccountId)
+            .orElseThrow(() -&gt; new AccountNotFoundException(toAccountId));
+
+        if (source.getBalance().compareTo(amount) &lt; 0) {
+            throw new InsufficientFundsException(
+                "Insufficient funds: " + source.getBalance());
+        }
+
+        source.debit(amount);
+        target.credit(amount);
+        accountRepository.save(source);
+        accountRepository.save(target);
+
+        // Audit dans une transaction INDÉPENDANTE (toujours persisté même si rollback)
+        auditService.auditLog("TRANSFER", fromAccountId, toAccountId, amount);
+    }
+
+    // REQUIRES_NEW : transaction indépendante — survivra au rollback de l'appelant
+    @Transactional(TxType.REQUIRES_NEW)
+    public void auditLog(String operation, String from, String to, BigDecimal amount) {
+        AuditEntry entry = new AuditEntry(operation, from, to, amount);
+        try {
+            auditRepository.save(entry);
+        } catch (Exception e) {
+            // Rollback explicite de cette transaction uniquement
+            jakarta.transaction.TransactionSynchronizationRegistry tsr =
+                CDI.current().select(
+                    jakarta.transaction.TransactionSynchronizationRegistry.class).get();
+            tsr.setRollbackOnly();
+            throw e;
+        }
+    }
+
+    // MANDATORY : exige une transaction active — exception sinon
+    @Transactional(TxType.MANDATORY)
+    public void updateBalance(Account account) {
+        accountRepository.save(account);
+    }
+}</code></pre>
+    </div>
+
+    <h2>CDI Events</h2>
+    <div class="code-block-wrap">
+      <span class="code-lang">java</span>
+      <pre><code>import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.enterprise.event.Event;
+import jakarta.enterprise.event.Observes;
+import jakarta.enterprise.event.ObservesAsync;
+import jakarta.inject.Inject;
+
+// 1. Classe d'événement (POJO)
+public class ClientCreatedEvent {
+    private final String clientId;
+    private final String email;
+
+    public ClientCreatedEvent(String clientId, String email) {
+        this.clientId = clientId;
+        this.email    = email;
+    }
+    public String getClientId() { return clientId; }
+    public String getEmail()    { return email; }
+}
+
+
+// 2. Producteur d'événements
+@ApplicationScoped
+public class EventPublisher {
+
+    @Inject
+    private Event&lt;ClientCreatedEvent&gt; clientCreatedEvent;
+
+    public Client createClient(String name, String email) {
+        Client client = new Client(name, email);
+        clientRepository.save(client);
+
+        // Déclenchement synchrone — tous les observateurs exécutés avant le retour
+        clientCreatedEvent.fire(new ClientCreatedEvent(client.getId(), email));
+
+        // Ou déclenchement asynchrone — non bloquant
+        // clientCreatedEvent.fireAsync(new ClientCreatedEvent(client.getId(), email));
+
+        return client;
+    }
+}
+
+
+// 3. Observateurs
+@ApplicationScoped
+public class NotificationObserver {
+
+    // Observateur synchrone
+    public void onClientCreated(@Observes ClientCreatedEvent event) {
+        System.out.println("Sending welcome email to: " + event.getEmail());
+        emailService.sendWelcome(event.getEmail());
+    }
+}
+
+@ApplicationScoped
+public class AuditObserver {
+
+    // Observateur asynchrone
+    public void onClientCreatedAsync(@ObservesAsync ClientCreatedEvent event) {
+        auditService.log("NEW_CLIENT", event.getClientId());
+    }
+}</code></pre>
+    </div>
+
+  </main>
+</div>
+<footer class="cds--footer">Made with IBM Bob &nbsp;·&nbsp; © 2026 Olivier Planson &nbsp;·&nbsp; ESIPE — Jakarta EE &amp; Microservices</footer>
+</body>
+</html>

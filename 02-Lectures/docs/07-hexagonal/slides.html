@@ -1,0 +1,256 @@
+<!-- © Copyright 2026 Olivier Planson. All rights reserved. Reproduction prohibited. Made with IBM Bob. -->
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>Cours 07 — Contenu du cours</title>
+  <link rel="stylesheet" href="../assets/carbon.css"/>
+</head>
+<body>
+<header class="cds--header">
+  <a class="cds--header__name" href="index.html">Architecture Hexagonale<span>Cours Jakarta EE</span></a>
+  <a class="cds--header__back" href="../index.html">← Tous les Cours</a>
+</header>
+<div class="cds--shell">
+  <nav class="cds--side-nav">
+    <p class="cds--side-nav__section-title">Cours 07</p>
+    <a class="cds--side-nav__link" href="index.html">⊙ Vue d'ensemble</a>
+    <a class="cds--side-nav__link active" href="slides.html">☰ Contenu du cours</a>
+    <a class="cds--side-nav__link" href="concepts.html">◈ Concepts clés</a>
+    <a class="cds--side-nav__link" href="code.html">⟨/⟩ Exemples de code</a>
+    <a class="cds--side-nav__link" href="architecture.html">⬡ Architecture Hexagonale</a>
+  </nav>
+  <main class="cds--content">
+    <div class="breadcrumb"><a href="../index.html">Cours</a> › <a href="index.html">Cours 07</a> › Contenu</div>
+    <h1>Contenu du cours</h1>
+    <p class="page-lead">Toutes les sections — cliquez sur un titre pour développer.</p>
+
+    <details open>
+      <summary>⬡ Architecture Hexagonale — Introduction</summary>
+      <div class="slide-content">
+        <h3>Historique — Alistair Cockburn 2005</h3>
+        <p>L'architecture hexagonale, aussi connue sous le nom de <strong>Ports and Adapters</strong>, a été introduite par <strong>Alistair Cockburn en 2005</strong>. Elle propose de placer le domaine métier au centre de l'application et d'isoler toute communication avec l'extérieur derrière des interfaces appelées <em>ports</em>.</p>
+        <ul>
+          <li>Alias : <strong>Ports and Adapters Architecture</strong></li>
+          <li>Objectif fondamental : permettre à une application d'être <em>également</em> pilotée par des utilisateurs, des programmes, des tests automatisés ou des scripts batch</li>
+          <li>La forme hexagonale symbolise la possibilité d'avoir plusieurs points d'entrée et de sortie — aucun côté n'est privilégié</li>
+        </ul>
+        <h3>Problèmes résolus</h3>
+        <ul>
+          <li><strong>Couplage infrastructure/domaine</strong> — le domaine ne doit jamais importer de classes JPA, JAX-RS ou JMS</li>
+          <li><strong>Testabilité difficile</strong> — avec l'hexagonale, les use cases sont testables en POJO pur, sans serveur</li>
+          <li><strong>Changements d'infrastructure coûteux</strong> — remplacer JPA par MongoDB ne touche que les adapters secondaires</li>
+          <li><strong>Logique métier éparpillée</strong> — centralisée dans le domaine, aucune fuite vers les couches techniques</li>
+        </ul>
+        <h3>Évolution des architectures</h3>
+        <ul>
+          <li><strong>Monolithe classique</strong> — couches horizontales (UI → Service → DAO), dépendances vers le bas, domaine couplé à la base de données</li>
+          <li><strong>DDD</strong> — modèle de domaine riche, bounded contexts, mais toujours risque de couplage infrastructure si mal appliqué</li>
+          <li><strong>Architecture Hexagonale</strong> — domaine au centre, infrastructure à la périphérie, ports comme contrats, adapters comme implémentations</li>
+        </ul>
+        <img src="../../images/07-hexagonal-architecture-diagram-1.png" alt="Architecture Hexagonale — Vue d'ensemble"/>
+      </div>
+    </details>
+
+    <details>
+      <summary>🔄 Principe d'Inversion de Dépendances</summary>
+      <div class="slide-content">
+        <h3>DIP — Dépendre des abstractions, pas des concrétions</h3>
+        <p>Le <strong>Dependency Inversion Principle (DIP)</strong> est le fondement technique de l'architecture hexagonale. Il stipule que les modules de haut niveau (domaine, use cases) ne doivent jamais dépendre des modules de bas niveau (JPA, REST). Les deux doivent dépendre d'abstractions (interfaces).</p>
+        <ul>
+          <li><strong>Règle 1</strong> — Les modules de haut niveau ne doivent pas dépendre des modules de bas niveau</li>
+          <li><strong>Règle 2</strong> — Les abstractions ne doivent pas dépendre des détails — ce sont les détails qui dépendent des abstractions</li>
+          <li>En pratique : le domaine définit des <em>interfaces</em>, l'infrastructure les <em>implémente</em></li>
+        </ul>
+        <h3>Le domaine ne connaît pas l'infrastructure</h3>
+        <ul>
+          <li>Aucune annotation JPA (<code>@Entity</code>, <code>@Column</code>) dans le domaine</li>
+          <li>Aucun import <code>jakarta.persistence.*</code> dans les entités ou services de domaine</li>
+          <li>Aucune annotation JAX-RS (<code>@Path</code>, <code>@GET</code>) dans le domaine</li>
+          <li>Le domaine est un module Java ordinaire — compilable sans dépendances Jakarta EE</li>
+        </ul>
+        <h3>Interfaces dans le domaine, implémentations dans l'infra</h3>
+        <ul>
+          <li>L'interface <code>AccountPort</code> vit dans <code>com.bank.domain</code> — c'est un port secondaire</li>
+          <li>La classe <code>JpaAccountAdapter implements AccountPort</code> vit dans <code>com.bank.infrastructure</code></li>
+          <li>CDI injecte l'implémentation concrète sans que le domaine ne la connaisse</li>
+        </ul>
+        <h3>Avant / Après le DIP</h3>
+        <ul>
+          <li><strong>Avant</strong> : <code>MoneyTransferService</code> importe et instancie <code>JpaAccountRepository</code> directement → couplage fort</li>
+          <li><strong>Après</strong> : <code>MoneyTransferService</code> déclare une dépendance sur <code>AccountPort</code> (interface) → l'implémentation est injectée par CDI</li>
+        </ul>
+      </div>
+    </details>
+
+    <details>
+      <summary>🏗️ Structure Hexagonale — Couches</summary>
+      <div class="slide-content">
+        <h3>Couche Domaine — le cœur immuable</h3>
+        <p>La couche <strong>Domaine</strong> contient toute la logique métier. Elle est totalement indépendante de tout framework ou technologie.</p>
+        <ul>
+          <li><strong>Entités</strong> — objets avec identité métier (<code>Account</code>, <code>Client</code>)</li>
+          <li><strong>Value Objects</strong> — objets immuables sans identité (<code>Money</code>, <code>AccountId</code>)</li>
+          <li><strong>Services de domaine</strong> — logique métier impliquant plusieurs entités</li>
+          <li><strong>Interfaces des ports</strong> — contrats que l'infrastructure devra implémenter</li>
+          <li>Aucune annotation Jakarta EE, aucun framework — Java pur</li>
+        </ul>
+        <h3>Couche Application — orchestration des use cases</h3>
+        <ul>
+          <li>Contient les <strong>use cases</strong> (cas d'utilisation) de l'application</li>
+          <li>Orchestre les entités du domaine et les appels aux ports secondaires</li>
+          <li>Implémente les ports primaires (interfaces des use cases)</li>
+          <li>Exemples : <code>MoneyTransferService</code>, <code>AccountQueryService</code></li>
+        </ul>
+        <h3>Couche Infrastructure — adapters techniques</h3>
+        <ul>
+          <li><strong>Adapters REST</strong> — ressources JAX-RS qui reçoivent les requêtes HTTP et appellent les ports primaires</li>
+          <li><strong>Adapters JPA</strong> — implémentations JPA des ports secondaires (repositories)</li>
+          <li><strong>Adapters JMS</strong> — Message-Driven Beans ou producteurs JMS</li>
+          <li><strong>Adapters API externe</strong> — clients HTTP (MicroProfile Rest Client) implémentant des ports secondaires</li>
+        </ul>
+        <img src="../../images/07-hexagonal-architecture-diagram-2.png" alt="Structure hexagonale — Domaine, Application, Infrastructure"/>
+      </div>
+    </details>
+
+    <details>
+      <summary>🔌 Ports Primaires vs Secondaires</summary>
+      <div class="slide-content">
+        <h3>Ports Primaires (Driving) — entrées du domaine</h3>
+        <p>Les <strong>ports primaires</strong> sont les interfaces que le domaine expose vers l'extérieur. Ils représentent les cas d'usage que l'application offre. Les adapters primaires les appellent pour déclencher une action dans le domaine.</p>
+        <ul>
+          <li>Exemples : <code>MoneyTransferUseCase</code>, <code>AccountQueryUseCase</code>, <code>CreateAccountUseCase</code></li>
+          <li>Les REST Controllers, Servlets et CLI sont des <strong>adapters primaires</strong> qui utilisent ces ports</li>
+          <li>Direction du flux : <em>Adapter → Port → Domaine</em></li>
+        </ul>
+        <h3>Ports Secondaires (Driven) — sorties du domaine</h3>
+        <p>Les <strong>ports secondaires</strong> sont les interfaces que le domaine définit pour accéder à des ressources externes (base de données, messagerie, API tierces). Le domaine les définit, l'infrastructure les implémente.</p>
+        <ul>
+          <li>Exemples : <code>AccountPort</code>, <code>TransactionPort</code>, <code>NotificationPort</code></li>
+          <li>Les adapters JPA, JMS et HTTP Client sont des <strong>adapters secondaires</strong> qui implémentent ces ports</li>
+          <li>Direction du flux : <em>Domaine → Port → Adapter</em></li>
+        </ul>
+        <h3>Résumé mnémotechnique</h3>
+        <ul>
+          <li><strong>Primaire</strong> = le monde extérieur <em>pilote</em> (drive) l'application</li>
+          <li><strong>Secondaire</strong> = l'application <em>pilote</em> (drive) le monde extérieur</li>
+        </ul>
+        <img src="../../images/07-hexagonal-architecture-diagram-3.png" alt="Ports Primaires vs Secondaires"/>
+      </div>
+    </details>
+
+    <details>
+      <summary>📦 Package Structure et Dependency Flow</summary>
+      <div class="slide-content">
+        <h3>Organisation des packages recommandée</h3>
+        <ul>
+          <li><code>com.bank.domain.account</code> — entités (<code>Account</code>, <code>Transaction</code>), value objects (<code>Money</code>, <code>AccountId</code>), interfaces des ports (<code>AccountPort</code>)</li>
+          <li><code>com.bank.domain.transfer</code> — logique de transfert, port primaire (<code>MoneyTransferUseCase</code>)</li>
+          <li><code>com.bank.application</code> — use cases / services applicatifs (<code>MoneyTransferService</code>)</li>
+          <li><code>com.bank.infrastructure.persistence</code> — adapters JPA (<code>JpaAccountAdapter</code>, entités JPA)</li>
+          <li><code>com.bank.infrastructure.web</code> — adapters REST (<code>TransferRestAdapter</code>)</li>
+          <li><code>com.bank.infrastructure.messaging</code> — adapters JMS</li>
+        </ul>
+        <h3>Règles de dépendance — la règle d'or</h3>
+        <ul>
+          <li>✅ <code>application</code> peut importer des classes de <code>domain</code></li>
+          <li>✅ <code>infrastructure</code> peut importer des classes de <code>domain</code> et <code>application</code></li>
+          <li>❌ <code>domain</code> ne doit <strong>jamais</strong> importer des classes de <code>infrastructure</code></li>
+          <li>❌ <code>domain</code> ne doit <strong>jamais</strong> importer des classes de <code>application</code></li>
+          <li>❌ <strong>Jamais</strong> d'import <code>jakarta.persistence</code>, <code>jakarta.ws.rs</code>, <code>jakarta.jms</code> dans le package <code>domain</code></li>
+        </ul>
+        <h3>Enforcer la règle avec ArchUnit</h3>
+        <ul>
+          <li>La bibliothèque <strong>ArchUnit</strong> permet de tester les règles d'architecture en JUnit</li>
+          <li>Un test <code>noClasses().that().resideInPackage("..domain..")​.should().dependOnClassesThat().resideInPackage("..infrastructure..")</code> échoue immédiatement si la règle est violée</li>
+        </ul>
+      </div>
+    </details>
+
+    <details>
+      <summary>⚙️ Implémentation des Ports et Adapters</summary>
+      <div class="slide-content">
+        <h3>Port = interface Java dans le domaine</h3>
+        <p>Un <strong>port</strong> est simplement une interface Java déclarée dans le package domaine. Elle utilise exclusivement des types du domaine — pas de types JPA, JAX-RS ou JDBC.</p>
+        <ul>
+          <li><strong>Port primaire</strong> — interface du use case : <code>MoneyTransferUseCase</code> avec <code>transferMoney(TransferCommand)</code></li>
+          <li><strong>Port secondaire</strong> — interface repository : <code>AccountPort</code> avec <code>findById(AccountId)</code>, <code>save(Account)</code></li>
+        </ul>
+        <h3>Adapter = implémentation dans l'infrastructure</h3>
+        <ul>
+          <li><strong>Adapter primaire REST</strong> — ressource JAX-RS <code>TransferRestAdapter</code> annotée <code>@Path</code>, <code>@ApplicationScoped</code> ; injecte le port primaire et délègue</li>
+          <li><strong>Adapter secondaire JPA</strong> — classe <code>JpaAccountAdapter implements AccountPort</code> annotée <code>@ApplicationScoped</code> ; contient <code>@PersistenceContext EntityManager</code> ; effectue le mapping entre entités JPA et entités domaine</li>
+        </ul>
+        <h3>Mapping entre entités JPA et entités domaine</h3>
+        <ul>
+          <li>L'adapter JPA utilise des <strong>entités JPA séparées</strong> (<code>AccountJpaEntity</code>) dans le package infrastructure</li>
+          <li>Aucune annotation JPA sur les entités domaine — séparation stricte</li>
+          <li>Le mapping (entité JPA ↔ entité domaine) se fait dans l'adapter — méthodes <code>toDomain()</code> / <code>toJpa()</code></li>
+        </ul>
+        <img src="../../images/07-hexagonal-architecture-diagram-4.png" alt="Implémentation Port Primaire"/>
+        <img src="../../images/07-hexagonal-architecture-diagram-5.png" alt="Implémentation Port Secondaire JPA"/>
+      </div>
+    </details>
+
+    <details>
+      <summary>🧪 Stratégies de Test</summary>
+      <div class="slide-content">
+        <h3>Test du domaine — POJO pur, sans framework</h3>
+        <p>La couche domaine est testable avec de simples tests JUnit 5 — aucun serveur d'application, aucune base de données, aucune configuration Jakarta EE requise.</p>
+        <ul>
+          <li>Tests unitaires ultra-rapides (millisecondes) — exécutables à chaque compilation</li>
+          <li>Les règles métier sont testées directement sur les entités et value objects</li>
+          <li>Exemple : <code>account.debitAccount(Money.of(100, "EUR"))</code> → vérification des invariants</li>
+        </ul>
+        <h3>Test des use cases — mock adapters</h3>
+        <ul>
+          <li>Les ports secondaires sont remplacés par des <strong>mock adapters</strong> (implémentations in-memory)</li>
+          <li>On peut utiliser Mockito ou implémenter manuellement un <code>AccountPortMock</code> avec une <code>Map&lt;AccountId, Account&gt;</code></li>
+          <li>Les tests des services applicatifs s'exécutent sans Spring, sans CDI, sans JPA</li>
+          <li>Le comportement complet d'un use case est testé en isolant strictement les dépendances</li>
+        </ul>
+        <h3>Test des adapters — tests d'intégration ciblés</h3>
+        <ul>
+          <li><strong>Adapters JPA</strong> — testés avec une base H2 ou Testcontainers (PostgreSQL réel)</li>
+          <li><strong>Adapters REST</strong> — testés avec Arquillian ou REST-assured + Open Liberty embedded</li>
+          <li>Les tests d'intégration sont moins nombreux mais couvrent les contrats d'interface</li>
+        </ul>
+        <h3>Bénéfices pour la maintenabilité</h3>
+        <ul>
+          <li><strong>Rapidité</strong> — les tests unitaires du domaine s'exécutent en &lt; 1 seconde</li>
+          <li><strong>Isolation</strong> — chaque couche est testée indépendamment</li>
+          <li><strong>Fiabilité</strong> — les tests ne cassent pas quand on change un adapter (ex. migration JPA → MongoDB)</li>
+          <li><strong>Documentation vivante</strong> — les tests du domaine documentent les règles métier</li>
+        </ul>
+      </div>
+    </details>
+
+    <details>
+      <summary>🔄 Refactorisation DDD → Hexagonale</summary>
+      <div class="slide-content">
+        <h3>Pourquoi refactoriser depuis DDD ?</h3>
+        <p>Une application DDD bien conçue est déjà à mi-chemin vers l'hexagonale. La refactorisation consiste principalement à <strong>extraire des interfaces</strong> et à <strong>déplacer les implémentations</strong> dans l'infrastructure.</p>
+        <h3>Étapes de la refactorisation</h3>
+        <ul>
+          <li><strong>Étape 1 — Identifier le domaine</strong> : repérer les entités, value objects et services qui contiennent la logique métier pure</li>
+          <li><strong>Étape 2 — Extraire les interfaces (ports)</strong> : créer <code>AccountPort</code> depuis <code>JpaAccountRepository</code>, créer <code>MoneyTransferUseCase</code> depuis <code>MoneyTransferService</code></li>
+          <li><strong>Étape 3 — Déplacer les implémentations</strong> : <code>JpaAccountRepository</code> devient <code>JpaAccountAdapter implements AccountPort</code> dans le package infrastructure</li>
+          <li><strong>Étape 4 — Inverser les dépendances</strong> : supprimer tous les imports infrastructure dans le domaine, vérifier avec ArchUnit</li>
+          <li><strong>Étape 5 — Tester</strong> : écrire les tests unitaires du domaine et les tests des use cases avec mock adapters</li>
+        </ul>
+        <h3>Avantages vs DDD seul</h3>
+        <ul>
+          <li><strong>DDD</strong> — fournit le modèle de domaine riche, le langage ubiquitaire, les bounded contexts</li>
+          <li><strong>Hexagonale</strong> — ajoute l'isolation stricte du domaine, la testabilité maximale, la flexibilité d'infrastructure</li>
+          <li>Les deux se complètent : DDD modélise <em>quoi</em> faire, l'hexagonale organise <em>comment</em> les couches communiquent</li>
+          <li>Résultat : un domaine testé en POJO pur + des adapters remplaçables sans toucher au domaine</li>
+        </ul>
+      </div>
+    </details>
+
+  </main>
+</div>
+<footer class="cds--footer">Made with IBM Bob &nbsp;·&nbsp; © 2026 Olivier Planson &nbsp;·&nbsp; ESIPE — Jakarta EE &amp; Microservices</footer>
+</body>
+</html>

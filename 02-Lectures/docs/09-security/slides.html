@@ -1,0 +1,343 @@
+<!-- © Copyright 2026 Olivier Planson. All rights reserved. Reproduction prohibited. Made with IBM Bob. -->
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>Cours 09 — Contenu du cours</title>
+  <link rel="stylesheet" href="../assets/carbon.css"/>
+</head>
+<body>
+<header class="cds--header">
+  <a class="cds--header__name" href="index.html">Jakarta EE Security<span>Cours Jakarta EE</span></a>
+  <a class="cds--header__back" href="../index.html">← Tous les Cours</a>
+</header>
+<div class="cds--shell">
+  <nav class="cds--side-nav">
+    <p class="cds--side-nav__section-title">Cours 09</p>
+    <a class="cds--side-nav__link" href="index.html">⊙ Vue d'ensemble</a>
+    <a class="cds--side-nav__link active" href="slides.html">☰ Contenu du cours</a>
+    <a class="cds--side-nav__link" href="concepts.html">◈ Concepts clés</a>
+    <a class="cds--side-nav__link" href="code.html">⟨/⟩ Exemples de code</a>
+  </nav>
+  <main class="cds--content">
+    <div class="breadcrumb"><a href="../index.html">Cours</a> › <a href="index.html">Cours 09</a> › Contenu</div>
+    <h1>Contenu du cours</h1>
+    <p class="page-lead">Toutes les sections du cours — cliquez sur un titre pour développer son contenu.</p>
+
+    <details open>
+      <summary>🔒 Fondamentaux de Sécurité</summary>
+      <div class="slide-content">
+        <h3>CIA Triad — Les trois piliers de la sécurité</h3>
+        <div class="cds--data-table-container">
+          <table class="cds--data-table">
+            <thead><tr><th>Pilier</th><th>Définition</th><th>Exemple technique</th></tr></thead>
+            <tbody>
+              <tr><td><strong>Confidentiality</strong></td><td>Garantir que l'information n'est accessible qu'aux personnes autorisées</td><td>Chiffrement AES-256, TLS, tokens JWT</td></tr>
+              <tr><td><strong>Integrity</strong></td><td>Garantir que l'information n'a pas été altérée de façon non autorisée</td><td>Signatures numériques HMAC, SHA-256</td></tr>
+              <tr><td><strong>Availability</strong></td><td>Garantir que les systèmes restent accessibles aux utilisateurs légitimes</td><td>Protection DDoS, rate limiting, redondance</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <h3>Couches de sécurité</h3>
+        <ul>
+          <li><strong>Transport :</strong> HTTPS/TLS — chiffrement des communications réseau</li>
+          <li><strong>Application :</strong> Authentification, autorisation, validation des entrées</li>
+          <li><strong>Données :</strong> Chiffrement au repos, masquage des données sensibles</li>
+          <li><strong>Infrastructure :</strong> Pare-feux, VPN, cloisonnement réseau</li>
+        </ul>
+        <h3>OWASP Top 10 — 2021 (éléments essentiels)</h3>
+        <div class="cds--data-table-container">
+          <table class="cds--data-table">
+            <thead><tr><th>Rang</th><th>Vulnérabilité</th><th>Impact</th></tr></thead>
+            <tbody>
+              <tr><td>A01</td><td>Broken Access Control</td><td>Accès non autorisé aux ressources</td></tr>
+              <tr><td>A02</td><td>Cryptographic Failures</td><td>Exposition de données sensibles</td></tr>
+              <tr><td>A03</td><td><strong>Injection</strong></td><td>Exécution de code malveillant (SQL, LDAP, OS)</td></tr>
+              <tr><td>A04</td><td>Insecure Design</td><td>Failles architecturales fondamentales</td></tr>
+              <tr><td>A07</td><td><strong>Broken Authentication</strong></td><td>Compromission de comptes, sessions</td></tr>
+              <tr><td>A02</td><td><strong>Sensitive Data Exposure</strong></td><td>Fuite de mots de passe, données financières</td></tr>
+              <tr><td>A03</td><td><strong>XSS (Cross-Site Scripting)</strong></td><td>Injection de scripts dans le navigateur</td></tr>
+              <tr><td>A01</td><td><strong>IDOR (Insecure Direct Object Reference)</strong></td><td>Accès à des ressources d'autres utilisateurs</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <img src="../../images/09-jakarta-ee-security-diagram-1.png" alt="Jakarta EE Security Architecture"/>
+      </div>
+    </details>
+
+    <details>
+      <summary>🔑 Authentification vs Autorisation</summary>
+      <div class="slide-content">
+        <h3>Définitions distinctes</h3>
+        <div class="cds--data-table-container">
+          <table class="cds--data-table">
+            <thead><tr><th>Concept</th><th>Question fondamentale</th><th>Mécanisme</th><th>Résultat</th></tr></thead>
+            <tbody>
+              <tr><td><strong>Authentification</strong></td><td>Qui êtes-vous ?</td><td>Credentials, tokens, biométrie</td><td>Identité prouvée (Principal)</td></tr>
+              <tr><td><strong>Autorisation</strong></td><td>Que pouvez-vous faire ?</td><td>Rôles, permissions, politiques</td><td>Accès accordé ou refusé</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <h3>Flux d'authentification typique</h3>
+        <ol>
+          <li><strong>Client</strong> — soumet ses credentials (login + mot de passe)</li>
+          <li><strong>Server</strong> — vérifie les credentials contre l'IdentityStore</li>
+          <li><strong>Server</strong> — génère un token signé (JWT) avec claims et expiration</li>
+          <li><strong>Client</strong> — reçoit le token et le stocke (mémoire, cookie HTTP-only)</li>
+          <li><strong>Client</strong> — envoie le token dans chaque requête suivante (<code>Authorization: Bearer &lt;token&gt;</code>)</li>
+          <li><strong>Server</strong> — valide la signature du token et contrôle les rôles</li>
+        </ol>
+        <h3>Multi-Factor Authentication (MFA)</h3>
+        <ul>
+          <li><strong>Facteur 1 (connaissance) :</strong> mot de passe, PIN, question de sécurité</li>
+          <li><strong>Facteur 2 (possession) :</strong> TOTP (Google Authenticator), SMS OTP, clé FIDO2</li>
+          <li><strong>Facteur 3 (inhérence) :</strong> empreinte digitale, reconnaissance faciale</li>
+        </ul>
+      </div>
+    </details>
+
+    <details>
+      <summary>🔐 Méthodes d'Authentification</summary>
+      <div class="slide-content">
+        <h3>Basic Auth</h3>
+        <ul>
+          <li>Credentials encodés en Base64 dans l'en-tête HTTP : <code>Authorization: Basic dXNlcjpwYXNz</code></li>
+          <li>Simple à implémenter, mais les credentials transitent à chaque requête</li>
+          <li><strong>⚠️ Non sécurisé sans HTTPS</strong> — Base64 n'est pas du chiffrement</li>
+          <li>Usage : APIs internes, outils de développement</li>
+        </ul>
+        <h3>Form-Based Authentication</h3>
+        <ul>
+          <li>Formulaire HTML dédié (login page) soumis via POST</li>
+          <li>Session créée côté serveur après succès (stateful)</li>
+          <li>Protection obligatoire contre CSRF</li>
+          <li>Jakarta EE : <code>@FormAuthenticationMechanismDefinition</code></li>
+        </ul>
+        <h3>Token-Based Authentication (JWT)</h3>
+        <ul>
+          <li>Token auto-porteur signé cryptographiquement</li>
+          <li>Stateless — aucune session serveur nécessaire</li>
+          <li>Transmis dans <code>Authorization: Bearer &lt;token&gt;</code></li>
+          <li>Idéal pour APIs REST et architectures microservices</li>
+        </ul>
+        <h3>Certificate-Based Authentication (mTLS)</h3>
+        <ul>
+          <li>Certificat X.509 côté client et serveur</li>
+          <li>Mutual TLS — authentification bidirectionnelle</li>
+          <li>Usage : service-to-service dans les microservices, communications critiques</li>
+        </ul>
+        <h3>Comparaison des méthodes</h3>
+        <div class="cds--data-table-container">
+          <table class="cds--data-table">
+            <thead><tr><th>Méthode</th><th>État</th><th>Sécurité</th><th>Complexité</th><th>Use Case</th></tr></thead>
+            <tbody>
+              <tr><td>Basic Auth</td><td>Stateless</td><td>⚠️ Faible sans TLS</td><td>Très simple</td><td>APIs dev/internes</td></tr>
+              <tr><td>Form-Based</td><td>Stateful</td><td>✅ Bonne</td><td>Moyenne</td><td>Applications web</td></tr>
+              <tr><td>JWT Bearer</td><td>Stateless</td><td>✅ Bonne</td><td>Moyenne</td><td>APIs REST, microservices</td></tr>
+              <tr><td>Certificate (mTLS)</td><td>Stateless</td><td>✅✅ Excellente</td><td>Élevée</td><td>Service-to-service</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </details>
+
+    <details>
+      <summary>🛡️ Modèles d'Autorisation</summary>
+      <div class="slide-content">
+        <h3>RBAC — Role-Based Access Control</h3>
+        <p>Les permissions sont assignées aux <strong>rôles</strong>, les utilisateurs obtiennent des rôles.</p>
+        <ul>
+          <li><strong>ADMIN</strong> — accès complet (lecture, écriture, suppression, administration)</li>
+          <li><strong>USER</strong> — accès en lecture et écriture sur ses propres ressources</li>
+          <li><strong>VIEWER</strong> — accès en lecture seule</li>
+        </ul>
+        <h3>ABAC — Attribute-Based Access Control</h3>
+        <p>Les décisions d'accès sont basées sur des <strong>attributs</strong> de plusieurs dimensions :</p>
+        <ul>
+          <li><strong>User attributes :</strong> département, clearance level, localisation</li>
+          <li><strong>Resource attributes :</strong> classification des données, propriétaire, sensibilité</li>
+          <li><strong>Environment attributes :</strong> heure, adresse IP, état du contexte</li>
+        </ul>
+        <h3>Sécurité déclarative vs programmatique</h3>
+        <div class="cds--data-table-container">
+          <table class="cds--data-table">
+            <thead><tr><th>Approche</th><th>Mécanisme</th><th>Exemple</th><th>Avantage</th></tr></thead>
+            <tbody>
+              <tr><td><strong>Déclarative</strong></td><td>Annotations Jakarta EE</td><td><code>@RolesAllowed("ADMIN")</code></td><td>Simple, lisible, maintenable</td></tr>
+              <tr><td><strong>Programmatique</strong></td><td>SecurityContext API</td><td><code>securityContext.isCallerInRole("ADMIN")</code></td><td>Logique conditionnelle fine</td></tr>
+              <tr><td><strong>web.xml</strong></td><td>Contraintes de sécurité XML</td><td><code>&lt;security-constraint&gt;</code></td><td>Configuration externe</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </details>
+
+    <details>
+      <summary>⚙️ Jakarta Security API</summary>
+      <div class="slide-content">
+        <h3>Architecture Jakarta Security</h3>
+        <ul>
+          <li><strong>@HttpAuthenticationMechanism</strong> — intercepte les requêtes HTTP, extrait et valide les credentials</li>
+          <li><strong>@IdentityStore</strong> — vérifie les credentials et retourne les groupes/rôles de l'utilisateur</li>
+          <li><strong>SecurityContext</strong> — API programmatique pour interroger l'identité courante</li>
+          <li><strong>HttpMessageContext</strong> — fournit l'accès au contexte HTTP dans les mécanismes</li>
+        </ul>
+        <h3>Mécanismes built-in</h3>
+        <div class="cds--data-table-container">
+          <table class="cds--data-table">
+            <thead><tr><th>Annotation</th><th>Type</th><th>Usage</th></tr></thead>
+            <tbody>
+              <tr><td><code>@BasicAuthenticationMechanismDefinition</code></td><td>Basic Auth</td><td>APIs simples, outils internes</td></tr>
+              <tr><td><code>@FormAuthenticationMechanismDefinition</code></td><td>Form-Based</td><td>Applications web avec login HTML</td></tr>
+              <tr><td><code>@CustomFormAuthenticationMechanismDefinition</code></td><td>Custom Form</td><td>Login AJAX, formulaires modernes</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <h3>Flux Jakarta Security</h3>
+        <ol>
+          <li>Requête HTTP reçue par le conteneur Jakarta EE</li>
+          <li><code>HttpAuthenticationMechanism.validateRequest()</code> est invoqué</li>
+          <li>Les credentials extraits sont transmis à <code>IdentityStore.validate()</code></li>
+          <li>En cas de succès, un <code>CallerPrincipalCallback</code> est créé</li>
+          <li>Le SecurityContext est alimenté avec l'identité et les groupes</li>
+          <li>Les annotations <code>@RolesAllowed</code> sont évaluées</li>
+        </ol>
+      </div>
+    </details>
+
+    <details>
+      <summary>🎫 JWT et MicroProfile JWT</summary>
+      <div class="slide-content">
+        <h3>Structure d'un Token JWT</h3>
+        <p>Un JWT est composé de trois parties encodées en Base64URL séparées par des points : <strong>header.payload.signature</strong></p>
+        <div class="cds--data-table-container">
+          <table class="cds--data-table">
+            <thead><tr><th>Partie</th><th>Contenu</th><th>Exemple</th></tr></thead>
+            <tbody>
+              <tr><td><strong>Header</strong></td><td>Algorithme de signature et type</td><td><code>{"alg":"RS256","typ":"JWT"}</code></td></tr>
+              <tr><td><strong>Payload</strong></td><td>Claims : identité, rôles, expiration</td><td><code>{"sub":"alice","groups":["USER"],"exp":1234567890}</code></td></tr>
+              <tr><td><strong>Signature</strong></td><td>HMAC/RSA de header + payload</td><td><code>RSASHA256(base64Header + "." + base64Payload, key)</code></td></tr>
+            </tbody>
+          </table>
+        </div>
+        <h3>Claims standards (RFC 7519)</h3>
+        <ul>
+          <li><strong>iss</strong> (issuer) — émetteur du token</li>
+          <li><strong>sub</strong> (subject) — identifiant de l'utilisateur</li>
+          <li><strong>aud</strong> (audience) — destinataire(s) attendu(s)</li>
+          <li><strong>exp</strong> (expiration time) — date d'expiration Unix timestamp</li>
+          <li><strong>iat</strong> (issued at) — date d'émission Unix timestamp</li>
+          <li><strong>groups</strong> (MicroProfile) — liste des rôles/groupes de l'utilisateur</li>
+        </ul>
+        <h3>Configuration MicroProfile JWT</h3>
+        <ul>
+          <li><code>@LoginConfig(authMethod="MP-JWT")</code> sur la classe <code>Application</code></li>
+          <li><code>@RolesAllowed({"USER","ADMIN"})</code> sur les méthodes JAX-RS</li>
+          <li><code>@Inject @Claim("sub") String subject</code> — injection de claims dans les beans CDI</li>
+          <li>Propriétés : <code>mp.jwt.verify.publickey.location</code> et <code>mp.jwt.verify.issuer</code></li>
+        </ul>
+        <img src="../../images/09-jakarta-ee-security-diagram-2.png" alt="JWT MicroProfile Flow"/>
+      </div>
+    </details>
+
+    <details>
+      <summary>🔏 HTTPS/TLS — Configuration</summary>
+      <div class="slide-content">
+        <h3>Chiffrement asymétrique</h3>
+        <ul>
+          <li><strong>Clé publique</strong> — partagée librement, chiffre les données et vérifie les signatures</li>
+          <li><strong>Clé privée</strong> — secrète, déchiffre et signe</li>
+          <li>TLS Handshake : échange de certificats → négociation d'algorithmes → session chiffrée</li>
+        </ul>
+        <h3>Types de certificats</h3>
+        <div class="cds--data-table-container">
+          <table class="cds--data-table">
+            <thead><tr><th>Type</th><th>Émetteur</th><th>Coût</th><th>Confiance navigateur</th><th>Usage</th></tr></thead>
+            <tbody>
+              <tr><td><strong>Self-signed</strong></td><td>Vous-même</td><td>Gratuit</td><td>❌ Non</td><td>Développement, tests</td></tr>
+              <tr><td><strong>CA-signed (DV)</strong></td><td>Let's Encrypt, DigiCert</td><td>Gratuit / Payant</td><td>✅ Oui</td><td>Sites web publics</td></tr>
+              <tr><td><strong>CA-signed (EV)</strong></td><td>DigiCert, Sectigo</td><td>Payant</td><td>✅ Oui</td><td>E-commerce, banque</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <h3>Configuration Liberty et bonnes pratiques</h3>
+        <ul>
+          <li><strong>keyStore</strong> — contient la clé privée et le certificat du serveur</li>
+          <li><strong>trustStore</strong> — contient les certificats des CA de confiance</li>
+          <li><strong>HSTS header</strong> — <code>Strict-Transport-Security: max-age=31536000; includeSubDomains</code> force le HTTPS</li>
+          <li><strong>Perfect Forward Secrecy</strong> — utiliser ECDHE/DHE pour que la compromission de la clé privée n'affecte pas les sessions passées</li>
+          <li><strong>TLS 1.2+ obligatoire</strong> — désactiver SSLv3, TLS 1.0, TLS 1.1</li>
+        </ul>
+      </div>
+    </details>
+
+    <details>
+      <summary>🌐 Sécurité des APIs REST</summary>
+      <div class="slide-content">
+        <h3>CORS — Cross-Origin Resource Sharing</h3>
+        <ul>
+          <li>Mécanisme navigateur qui contrôle les requêtes cross-origin</li>
+          <li><strong>Préflight request</strong> — requête OPTIONS envoyée avant POST/PUT/DELETE cross-origin</li>
+          <li>En-têtes de réponse : <code>Access-Control-Allow-Origin</code>, <code>Access-Control-Allow-Methods</code>, <code>Access-Control-Allow-Headers</code></li>
+          <li>Ne jamais utiliser <code>Access-Control-Allow-Origin: *</code> avec credentials</li>
+        </ul>
+        <h3>Protection CSRF</h3>
+        <ul>
+          <li>Attaque exploitant la confiance du serveur envers le navigateur de la victime</li>
+          <li><strong>Token CSRF</strong> — valeur aléatoire en session, transmise dans l'en-tête <code>X-CSRF-Token</code></li>
+          <li>Valider avec comparaison en temps constant (<code>MessageDigest.isEqual()</code>) pour éviter les timing attacks</li>
+          <li>Cookie <code>SameSite=Strict</code> comme défense supplémentaire</li>
+        </ul>
+        <h3>Validation des entrées</h3>
+        <ul>
+          <li>Valider tous les inputs côté serveur (Jakarta Validation / Bean Validation)</li>
+          <li>Sanitizer les données pour prévenir XSS (encoder les caractères HTML)</li>
+          <li>Utiliser des requêtes préparées (JPA criteria, JPQL paramétré) contre l'injection SQL</li>
+        </ul>
+        <h3>Rate Limiting et API Keys</h3>
+        <ul>
+          <li><strong>Rate limiting</strong> — limiter le nombre de requêtes par IP/token par fenêtre de temps</li>
+          <li><strong>API Keys</strong> — identification des clients applicatifs (non des utilisateurs)</li>
+          <li><strong>OAuth2</strong> — délégation d'autorisation standardisée (préférer pour l'accès tiers)</li>
+        </ul>
+      </div>
+    </details>
+
+    <details>
+      <summary>☁️ Sécurité des Microservices</summary>
+      <div class="slide-content">
+        <h3>Authentification service-to-service</h3>
+        <ul>
+          <li><strong>mTLS (Mutual TLS)</strong> — chaque service possède un certificat, authentification bidirectionnelle</li>
+          <li><strong>JWT Propagation</strong> — le JWT utilisateur est transmis de service en service dans l'en-tête <code>Authorization</code></li>
+          <li><strong>Service Accounts</strong> — credentials dédiés par service (éviter les credentials partagés)</li>
+        </ul>
+        <h3>Gestion des secrets</h3>
+        <ul>
+          <li><strong>Variables d'environnement</strong> — méthode basique, injectée par le orchestrateur (Kubernetes Secrets)</li>
+          <li><strong>HashiCorp Vault</strong> — stockage sécurisé, rotation automatique des secrets</li>
+          <li><strong>Jamais</strong> committer des secrets dans le code source ou les images conteneur</li>
+          <li>MicroProfile Config permet d'injecter des secrets via <code>@ConfigProperty</code> depuis l'environnement</li>
+        </ul>
+        <h3>Security Headers essentiels</h3>
+        <div class="cds--data-table-container">
+          <table class="cds--data-table">
+            <thead><tr><th>Header</th><th>Valeur recommandée</th><th>Protection contre</th></tr></thead>
+            <tbody>
+              <tr><td><code>X-Frame-Options</code></td><td><code>DENY</code></td><td>Clickjacking</td></tr>
+              <tr><td><code>Content-Security-Policy</code></td><td><code>default-src 'self'</code></td><td>XSS, injection de ressources</td></tr>
+              <tr><td><code>X-Content-Type-Options</code></td><td><code>nosniff</code></td><td>MIME sniffing attacks</td></tr>
+              <tr><td><code>Strict-Transport-Security</code></td><td><code>max-age=31536000; includeSubDomains</code></td><td>Downgrade attacks</td></tr>
+              <tr><td><code>Referrer-Policy</code></td><td><code>no-referrer-when-downgrade</code></td><td>Fuite d'URL sensibles</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </details>
+
+  </main>
+</div>
+<footer class="cds--footer">Made with IBM Bob &nbsp;·&nbsp; © 2026 Olivier Planson &nbsp;·&nbsp; ESIPE — Jakarta EE &amp; Microservices</footer>
+</body>
+</html>

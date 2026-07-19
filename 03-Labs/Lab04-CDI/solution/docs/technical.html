@@ -1,0 +1,338 @@
+<!-- © Copyright 2026 Olivier Planson. All rights reserved. Reproduction prohibited. Made with IBM Bob. -->
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Architecture Technique — Banking CDI Lab 04</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;600&family=IBM+Plex+Mono&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="assets/carbon.css" />
+</head>
+<body>
+
+<header class="cds--header">
+  <a class="cds--header__name" href="index.html">⬡ IBM Carbon<span>Banking CDI App — Lab 04</span></a>
+</header>
+
+<div class="cds--shell">
+  <nav class="cds--side-nav" aria-label="Navigation principale">
+    <p class="cds--side-nav__section-title">Documentation</p>
+    <a class="cds--side-nav__link" href="index.html"><i class="icon">⊞</i>Vue d'ensemble</a>
+    <a class="cds--side-nav__link" href="functional.html"><i class="icon">◈</i>Architecture Fonctionnelle</a>
+    <a class="cds--side-nav__link active" href="technical.html"><i class="icon">⚙</i>Architecture Technique</a>
+    <a class="cds--side-nav__link" href="sequences.html"><i class="icon">↔</i>Diagrammes de Séquence</a>
+    <a class="cds--side-nav__link" href="rules.html"><i class="icon">⚑</i>Règles Métier</a>
+    <p class="cds--side-nav__section-title" style="margin-top:1.5rem">Sections</p>
+    <a class="cds--side-nav__link" href="#layers"><i class="icon">⊟</i>Couches</a>
+    <a class="cds--side-nav__link" href="#scopes"><i class="icon">◉</i>Scopes &amp; Beans</a>
+    <a class="cds--side-nav__link" href="#producers"><i class="icon">⊕</i>Producers</a>
+    <a class="cds--side-nav__link" href="#qualifiers"><i class="icon">◈</i>Qualifiers</a>
+    <a class="cds--side-nav__link" href="#interceptors"><i class="icon">⊛</i>Intercepteurs</a>
+    <a class="cds--side-nav__link" href="#events"><i class="icon">⚡</i>Événements CDI</a>
+    <a class="cds--side-nav__link" href="#transactions"><i class="icon">⇄</i>Transactions</a>
+    <a class="cds--side-nav__link" href="#persistence"><i class="icon">🗄</i>Persistence</a>
+  </nav>
+
+  <main class="cds--content">
+    <div class="cds--breadcrumb">
+      <a href="index.html">Vue d'ensemble</a>
+      <span class="sep">/</span>
+      <span class="current">Architecture Technique</span>
+    </div>
+
+    <h1>Architecture Technique</h1>
+    <p class="page-lead">Présentation des couches applicatives, de la configuration CDI et des mécanismes de persistence. CDI 4.0 est le cœur du lab : chaque fonctionnalité est démontrée avec son cas d'usage réel dans l'application bancaire.</p>
+
+    <!-- ══ Layers SVG ══ -->
+    <h2 id="layers">Couches applicatives</h2>
+    <div class="arch-box">
+      <svg viewBox="0 0 820 380" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:auto;font-family:'IBM Plex Sans',Arial,sans-serif">
+        <defs>
+          <marker id="larr" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L0,6 L8,3 z" fill="#525252"/></marker>
+          <marker id="larrb" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L0,6 L8,3 z" fill="#0f62fe"/></marker>
+        </defs>
+
+        <!-- Browser -->
+        <rect x="30" y="20" width="160" height="52" fill="#161616" rx="3"/>
+        <text x="110" y="42" fill="#f4f4f4" font-size="12" font-weight="600" text-anchor="middle">🌐 Browser</text>
+        <text x="110" y="60" fill="#c6c6c6" font-size="10" text-anchor="middle">HTTP Request / Response</text>
+
+        <!-- Arrow -->
+        <line x1="190" y1="46" x2="240" y2="46" stroke="#525252" stroke-width="1.5" marker-end="url(#larr)"/>
+
+        <!-- Servlet layer -->
+        <rect x="240" y="10" width="200" height="72" fill="#0f62fe" rx="3"/>
+        <text x="340" y="32" fill="#fff" font-size="12" font-weight="600" text-anchor="middle">Servlet Layer</text>
+        <text x="340" y="50" fill="#d0e2ff" font-size="10" text-anchor="middle">@WebServlet + @Inject CDI</text>
+        <text x="340" y="66" fill="#d0e2ff" font-size="10" text-anchor="middle">ClientController, AccountController</text>
+
+        <!-- Arrow -->
+        <line x1="440" y1="46" x2="490" y2="46" stroke="#525252" stroke-width="1.5" marker-end="url(#larr)"/>
+
+        <!-- CDI Services -->
+        <rect x="490" y="10" width="290" height="72" fill="#198038" rx="3"/>
+        <text x="635" y="32" fill="#fff" font-size="12" font-weight="600" text-anchor="middle">CDI Application Services</text>
+        <text x="635" y="50" fill="#defbe6" font-size="10" text-anchor="middle">@ApplicationScoped — ClientService</text>
+        <text x="635" y="66" fill="#defbe6" font-size="10" text-anchor="middle">AccountService · BatchTransferService</text>
+
+        <!-- Vertical arrow down -->
+        <line x1="635" y1="82" x2="635" y2="120" stroke="#525252" stroke-width="1.5" marker-end="url(#larr)"/>
+
+        <!-- EntityManager Producer -->
+        <rect x="490" y="120" width="290" height="60" fill="#491d8b" rx="3"/>
+        <text x="635" y="143" fill="#fff" font-size="12" font-weight="600" text-anchor="middle">@RequestScoped EntityManager</text>
+        <text x="635" y="160" fill="#e8daff" font-size="10" text-anchor="middle">Produit par EntityManagerProducer (@Produces)</text>
+        <text x="635" y="174" fill="#e8daff" font-size="9" text-anchor="middle">Cycle de vie lié à la requête HTTP</text>
+
+        <!-- Vertical arrow down -->
+        <line x1="635" y1="180" x2="635" y2="218" stroke="#525252" stroke-width="1.5" marker-end="url(#larr)"/>
+
+        <!-- EclipseLink JPA -->
+        <rect x="490" y="218" width="290" height="55" fill="#da1e28" rx="3"/>
+        <text x="635" y="240" fill="#fff" font-size="12" font-weight="600" text-anchor="middle">EclipseLink JPA</text>
+        <text x="635" y="258" fill="#ffd7d9" font-size="10" text-anchor="middle">Persistence Unit: bankingPU (JTA)</text>
+        <text x="635" y="272" fill="#ffd7d9" font-size="9" text-anchor="middle">Client · Account — entités mappées</text>
+
+        <!-- Vertical arrow down -->
+        <line x1="635" y1="273" x2="635" y2="308" stroke="#525252" stroke-width="1.5" marker-end="url(#larr)"/>
+
+        <!-- PostgreSQL -->
+        <rect x="490" y="308" width="290" height="52" fill="#f4f4f4" rx="3" stroke="#e0e0e0" stroke-width="1.5"/>
+        <text x="635" y="330" fill="#161616" font-size="12" font-weight="600" text-anchor="middle">🐘 PostgreSQL</text>
+        <text x="635" y="348" fill="#525252" font-size="10" text-anchor="middle">banking_db — Flyway 10.4.1 migrations</text>
+
+        <!-- Cross-cutting on left -->
+        <rect x="30" y="120" width="200" height="240" fill="#fdf6dd" rx="3" stroke="#f1c21b" stroke-width="1.5"/>
+        <text x="130" y="143" fill="#8c4f00" font-size="11" font-weight="700" text-anchor="middle">Cross-cutting CDI</text>
+        <text x="130" y="168" fill="#8c4f00" font-size="10" text-anchor="middle">⊛ LoggingInterceptor</text>
+        <text x="130" y="184" fill="#8c4f00" font-size="9" text-anchor="middle">@Logged — AOP trace</text>
+        <line x1="60" y1="195" x2="220" y2="195" stroke="#f1c21b" stroke-width="1" stroke-dasharray="4,3"/>
+        <text x="130" y="215" fill="#8c4f00" font-size="10" text-anchor="middle">⚡ CDI Events</text>
+        <text x="130" y="231" fill="#8c4f00" font-size="9" text-anchor="middle">Event&lt;T&gt; / @Observes</text>
+        <line x1="60" y1="242" x2="220" y2="242" stroke="#f1c21b" stroke-width="1" stroke-dasharray="4,3"/>
+        <text x="130" y="262" fill="#8c4f00" font-size="10" text-anchor="middle">◈ CDI Qualifiers</text>
+        <text x="130" y="278" fill="#8c4f00" font-size="9" text-anchor="middle">@Premium / @Standard</text>
+        <line x1="60" y1="289" x2="220" y2="289" stroke="#f1c21b" stroke-width="1" stroke-dasharray="4,3"/>
+        <text x="130" y="309" fill="#8c4f00" font-size="10" text-anchor="middle">⇄ Transactions</text>
+        <text x="130" y="325" fill="#8c4f00" font-size="9" text-anchor="middle">@Transactional (CMT)</text>
+        <text x="130" y="341" fill="#8c4f00" font-size="9" text-anchor="middle">UserTransaction (BMT)</text>
+      </svg>
+    </div>
+
+    <!-- ══ CDI Features table ══ -->
+    <h2 id="scopes">Fonctionnalités CDI — Tableau de référence</h2>
+    <div class="cds--data-table-container">
+      <table class="cds--data-table">
+        <thead>
+          <tr>
+            <th>Annotation / Mécanisme</th>
+            <th>Classes concernées</th>
+            <th>Description</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>@ApplicationScoped</code></td>
+            <td><code>ClientService</code>, <code>AccountService</code>, <code>BatchTransferService</code>, <code>BankingEventObserver</code>, <code>PremiumNotificationService</code>, <code>StandardNotificationService</code>, <code>EntityManagerProducer</code></td>
+            <td>Singleton CDI — une seule instance partagée pour toute la durée de vie de l'application</td>
+          </tr>
+          <tr>
+            <td><code>@RequestScoped</code></td>
+            <td><code>EntityManager</code> (produit)</td>
+            <td>Cycle de vie lié à la requête HTTP courante — évite les problèmes de concurrence sur l'<code>EntityManager</code></td>
+          </tr>
+          <tr>
+            <td><code>@Produces</code></td>
+            <td><code>EntityManagerProducer</code></td>
+            <td>Factory CDI pour les types non-CDI nativement : <code>EntityManager</code> et <code>Logger</code>. Permet l'injection de types Jakarta EE standards.</td>
+          </tr>
+          <tr>
+            <td><code>@Qualifier</code> — <code>@Premium</code></td>
+            <td><code>PremiumNotificationService</code></td>
+            <td>Qualifier personnalisé — sélectionne l'implémentation "tous canaux" (Email+SMS+Push+InApp) pour les clients premium</td>
+          </tr>
+          <tr>
+            <td><code>@Qualifier</code> — <code>@Standard</code></td>
+            <td><code>StandardNotificationService</code></td>
+            <td>Qualifier personnalisé — sélectionne l'implémentation "email &gt;1000€ uniquement" pour les clients standard</td>
+          </tr>
+          <tr>
+            <td><code>@Interceptor</code> + <code>@InterceptorBinding</code></td>
+            <td><code>LoggingInterceptor</code> + <code>@Logged</code></td>
+            <td>AOP déclaratif — trace entrée/sortie/durée/exception de toutes les méthodes portant <code>@Logged</code></td>
+          </tr>
+          <tr>
+            <td>CDI Events — <code>Event&lt;T&gt;</code></td>
+            <td><code>ClientService</code>, <code>AccountService</code></td>
+            <td>Producteurs d'événements : fire <code>ClientCreatedEvent</code>, <code>AccountCreatedEvent</code>, <code>TransactionEvent</code></td>
+          </tr>
+          <tr>
+            <td>CDI Events — <code>@Observes</code></td>
+            <td><code>BankingEventObserver</code></td>
+            <td>Observateur central — reçoit tous les événements et orchestre les notifications selon le type client</td>
+          </tr>
+          <tr>
+            <td><code>@Transactional</code> (CMT)</td>
+            <td><code>ClientService</code>, <code>AccountService</code></td>
+            <td>Transaction Container-Managed — le container démarre/commit/rollback automatiquement. Rollback sur <code>RuntimeException</code>.</td>
+          </tr>
+          <tr>
+            <td><code>UserTransaction</code> (BMT)</td>
+            <td><code>BatchTransferService</code></td>
+            <td>Transaction Bean-Managed — contrôle programmatique fin : <code>utx.begin()</code>, <code>utx.commit()</code>, <code>utx.rollback()</code>, timeout configurable</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- ══ Producers ══ -->
+    <h2 id="producers">Producteurs CDI</h2>
+    <div class="cds--tile">
+      <p>La classe <code>EntityManagerProducer</code> expose des types non-CDI via <code>@Produces</code> :</p>
+      <pre>@ApplicationScoped
+public class EntityManagerProducer {
+
+    @PersistenceUnit(unitName = "bankingPU")
+    private EntityManagerFactory emf;
+
+    @Produces
+    @RequestScoped
+    public EntityManager createEntityManager() {
+        return emf.createEntityManager();
+    }
+
+    public void closeEntityManager(@Disposes EntityManager em) {
+        if (em.isOpen()) em.close();
+    }
+
+    @Produces
+    public Logger createLogger(InjectionPoint ip) {
+        return Logger.getLogger(
+            ip.getMember().getDeclaringClass().getName()
+        );
+    }
+}</pre>
+    </div>
+
+    <!-- ══ Qualifiers ══ -->
+    <h2 id="qualifiers">Qualifieurs personnalisés</h2>
+    <div class="tile-grid">
+      <div class="cds--tile">
+        <h3>@Premium</h3>
+        <pre>@Qualifier
+@Retention(RUNTIME)
+@Target({TYPE, FIELD, METHOD, PARAMETER})
+public @interface Premium {}</pre>
+        <p>Marque <code>PremiumNotificationService</code> et les points d'injection qui requièrent l'implémentation premium.</p>
+      </div>
+      <div class="cds--tile">
+        <h3>@Standard</h3>
+        <pre>@Qualifier
+@Retention(RUNTIME)
+@Target({TYPE, FIELD, METHOD, PARAMETER})
+public @interface Standard {}</pre>
+        <p>Marque <code>StandardNotificationService</code> et les points d'injection standard.</p>
+      </div>
+    </div>
+
+    <!-- ══ Interceptors ══ -->
+    <h2 id="interceptors">Intercepteur de logging</h2>
+    <div class="cds--tile">
+      <pre>@Logged
+@Interceptor
+@Priority(Interceptor.Priority.APPLICATION)
+public class LoggingInterceptor {
+
+    @Inject
+    private Logger logger;
+
+    @AroundInvoke
+    public Object logMethod(InvocationContext ctx) throws Exception {
+        String method = ctx.getMethod().getName();
+        long start = System.currentTimeMillis();
+        logger.info("→ Entrée : " + method + " args=" + Arrays.toString(ctx.getParameters()));
+        try {
+            Object result = ctx.proceed();
+            logger.info("← Sortie : " + method + " (" + (System.currentTimeMillis()-start) + "ms)");
+            return result;
+        } catch (Exception e) {
+            logger.severe("✗ Exception : " + method + " — " + e.getMessage());
+            throw e;
+        }
+    }
+}</pre>
+    </div>
+
+    <!-- ══ Events ══ -->
+    <h2 id="events">Événements CDI</h2>
+    <div class="cds--data-table-container">
+      <table class="cds--data-table">
+        <thead><tr><th>Événement</th><th>Producteur</th><th>Observateur(s)</th><th>Action déclenchée</th></tr></thead>
+        <tbody>
+          <tr><td><code>ClientCreatedEvent</code></td><td><code>ClientService.createClient()</code></td><td><code>BankingEventObserver.onClientCreated()</code></td><td>Notification selon type client (@Premium ou @Standard)</td></tr>
+          <tr><td><code>AccountCreatedEvent</code></td><td><code>AccountService.createAccount()</code></td><td><code>BankingEventObserver.onAccountCreated()</code></td><td>Log de confirmation création compte</td></tr>
+          <tr><td><code>TransactionEvent(DEPOSIT)</code></td><td><code>AccountService.deposit()</code></td><td><code>BankingEventObserver.onTransaction()</code></td><td>Notification de dépôt + alerte si &gt;10 000 €</td></tr>
+          <tr><td><code>TransactionEvent(WITHDRAWAL)</code></td><td><code>AccountService.withdraw()</code></td><td><code>BankingEventObserver.onTransaction()</code></td><td>Notification de retrait + alerte si &gt;10 000 €</td></tr>
+          <tr><td><code>TransactionEvent(TRANSFER)</code></td><td><code>AccountService.transfer()</code></td><td><code>BankingEventObserver.onTransaction()</code></td><td>Notification de virement + alerte si &gt;10 000 €</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- ══ Transactions ══ -->
+    <h2 id="transactions">Gestion des transactions</h2>
+    <div class="tile-grid">
+      <div class="cds--tile">
+        <h3>CMT — Container-Managed Transactions</h3>
+        <div class="tag-stack"><span class="cds--tag cds--tag--green">@Transactional</span></div>
+        <p>Utilisé par <code>ClientService</code> et <code>AccountService</code>. Le container Jakarta EE gère le cycle de vie transactionnel :</p>
+        <ul>
+          <li>Début automatique avant la méthode</li>
+          <li>Commit automatique après succès</li>
+          <li>Rollback automatique sur <code>RuntimeException</code></li>
+          <li>Propagation <code>REQUIRED</code> par défaut</li>
+        </ul>
+      </div>
+      <div class="cds--tile">
+        <h3>BMT — Bean-Managed Transactions</h3>
+        <div class="tag-stack"><span class="cds--tag cds--tag--warm">UserTransaction</span></div>
+        <p>Utilisé par <code>BatchTransferService</code>. Contrôle programmatique explicite :</p>
+        <ul>
+          <li><code>utx.begin()</code> — début explicite</li>
+          <li><code>utx.commit()</code> — commit en cas de succès</li>
+          <li><code>utx.rollback()</code> — rollback en cas d'erreur</li>
+          <li><code>utx.setTransactionTimeout()</code> — timeout configurable</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- ══ Persistence ══ -->
+    <h2 id="persistence">Configuration de la persistence</h2>
+    <div class="cds--data-table-container">
+      <table class="cds--data-table">
+        <thead><tr><th>Paramètre</th><th>Valeur</th></tr></thead>
+        <tbody>
+          <tr><td>Persistence Unit</td><td><code>bankingPU</code></td></tr>
+          <tr><td>Transaction type</td><td><code>JTA</code></td></tr>
+          <tr><td>Provider ORM</td><td>EclipseLink (défaut Liberty)</td></tr>
+          <tr><td>Data source</td><td><code>jdbc/bankingDS</code> (JNDI)</td></tr>
+          <tr><td>CDI bean-discovery-mode</td><td><code>all</code> (beans.xml)</td></tr>
+          <tr><td>Migrations</td><td>Flyway 10.4.1 — scripts <code>V1__init.sql</code> etc.</td></tr>
+          <tr><td>Base de données</td><td>PostgreSQL 15+</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="cds--inline-notification" role="note">
+      <span>ℹ</span>
+      <div><strong>beans.xml</strong> — Le mode <code>bean-discovery-mode="all"</code> est requis pour que CDI découvre automatiquement tous les beans, intercepteurs et observateurs de l'application.</div>
+    </div>
+
+    <hr class="cds--divider" />
+    <p style="font-size:.75rem;color:#a8a8a8">Architecture technique — Lab 04 · CDI 4.0 / Jakarta EE 10 / Open Liberty 23</p>
+  </main>
+</div>
+
+<footer class="cds--footer">Banking CDI Application — Lab 04 · Jakarta EE 10 · © 2025 Olivier Planson</footer>
+</body>
+</html>

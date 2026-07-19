@@ -1,0 +1,303 @@
+<!-- © Copyright 2026 Olivier Planson. All rights reserved. Reproduction prohibited. Made with IBM Bob. -->
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>Cours 02b — Exemples de code</title>
+  <link rel="stylesheet" href="../assets/carbon.css"/>
+</head>
+<body>
+<header class="cds--header">
+  <a class="cds--header__name" href="index.html">JSF — JavaServer Faces<span>Cours Jakarta EE</span></a>
+  <a class="cds--header__back" href="../index.html">← Tous les Cours</a>
+</header>
+<div class="cds--shell">
+  <nav class="cds--side-nav">
+    <p class="cds--side-nav__section-title">Cours 02b</p>
+    <a class="cds--side-nav__link" href="index.html">⊙ Vue d'ensemble</a>
+    <a class="cds--side-nav__link" href="slides.html">☰ Contenu du cours</a>
+    <a class="cds--side-nav__link" href="concepts.html">◈ Concepts clés</a>
+    <a class="cds--side-nav__link active" href="code.html">⟨/⟩ Exemples de code</a>
+  </nav>
+  <main class="cds--content">
+    <div class="breadcrumb"><a href="../index.html">Cours</a> › <a href="index.html">Cours 02b</a> › Code</div>
+    <h1>Exemples de code</h1>
+    <p class="page-lead">Extraits de code Java et XHTML du cours 02b — JSF, CDI Beans, Facelets, Validation, Navigation et AJAX.</p>
+
+    <h2>Managed Bean avec CDI</h2>
+    <div class="code-block-wrap">
+      <span class="code-lang">java</span>
+      <pre><code>import jakarta.annotation.PostConstruct;
+import jakarta.enterprise.context.RequestScoped;
+import jakarta.faces.application.FacesMessage;
+import jakarta.faces.context.FacesContext;
+import jakarta.inject.Inject;
+import jakarta.inject.Named;
+import java.util.List;
+
+@Named
+@RequestScoped
+public class ClientBean {
+
+    @Inject
+    private ClientService clientService;
+
+    private List&lt;Client&gt; clients;
+    private String name;
+    private String email;
+
+    @PostConstruct
+    public void loadClients() {
+        clients = clientService.findAll();
+    }
+
+    public String createClient() {
+        Client client = new Client(name, email);
+        clientService.create(client);
+        addMessage(FacesMessage.SEVERITY_INFO,
+                   "Succès", "Client créé : " + name);
+        return "clients?faces-redirect=true";
+    }
+
+    private void addMessage(FacesMessage.Severity severity,
+                            String summary, String detail) {
+        FacesContext.getCurrentInstance()
+            .addMessage(null, new FacesMessage(severity, summary, detail));
+    }
+
+    // Getters &amp; Setters
+    public List&lt;Client&gt; getClients() { return clients; }
+    public String getName()           { return name; }
+    public void   setName(String n)   { this.name = n; }
+    public String getEmail()          { return email; }
+    public void   setEmail(String e)  { this.email = e; }
+}</code></pre>
+    </div>
+
+    <h2>Page Facelets complète</h2>
+    <div class="code-block-wrap">
+      <span class="code-lang">xhtml</span>
+      <pre><code>&lt;!DOCTYPE html&gt;
+&lt;html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="jakarta.faces.html"
+      xmlns:f="jakarta.faces.core"
+      xmlns:ui="jakarta.faces.facelets"&gt;
+&lt;h:head&gt;
+    &lt;title&gt;Créer un client&lt;/title&gt;
+&lt;/h:head&gt;
+&lt;h:body&gt;
+    &lt;h:messages globalOnly="true" styleClass="faces-messages"/&gt;
+
+    &lt;h:form id="clientForm"&gt;
+        &lt;h:outputLabel for="name" value="Nom :"/&gt;
+        &lt;h:inputText id="name" value="#{clientBean.name}"&gt;
+            &lt;f:validateRequired/&gt;
+            &lt;f:validateLength minimum="2" maximum="50"/&gt;
+        &lt;/h:inputText&gt;
+        &lt;h:message for="name" styleClass="error-msg"/&gt;
+
+        &lt;h:outputLabel for="email" value="Email :"/&gt;
+        &lt;h:inputText id="email" value="#{clientBean.email}"&gt;
+            &lt;f:validateRequired/&gt;
+            &lt;f:validateRegex pattern="^[A-Za-z0-9+_.-]+@(.+)$"/&gt;
+        &lt;/h:inputText&gt;
+        &lt;h:message for="email" styleClass="error-msg"/&gt;
+
+        &lt;h:commandButton value="Créer le client"
+                         action="#{clientBean.createClient}"
+                         styleClass="btn-primary"/&gt;
+    &lt;/h:form&gt;
+&lt;/h:body&gt;
+&lt;/html&gt;</code></pre>
+    </div>
+
+    <h2>Template Facelets</h2>
+    <div class="code-block-wrap">
+      <span class="code-lang">xhtml</span>
+      <pre><code>&lt;!-- /WEB-INF/templates/template.xhtml --&gt;
+&lt;!DOCTYPE html&gt;
+&lt;html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="jakarta.faces.html"
+      xmlns:ui="jakarta.faces.facelets"&gt;
+&lt;h:head&gt;
+    &lt;title&gt;&lt;ui:insert name="pageTitle"&gt;Application&lt;/ui:insert&gt;&lt;/title&gt;
+    &lt;h:outputStylesheet library="css" name="style.css"/&gt;
+&lt;/h:head&gt;
+&lt;h:body&gt;
+    &lt;header&gt;
+        &lt;ui:insert name="header"&gt;
+            &lt;h1&gt;En-tête par défaut&lt;/h1&gt;
+        &lt;/ui:insert&gt;
+    &lt;/header&gt;
+    &lt;main&gt;
+        &lt;ui:insert name="content"/&gt;
+    &lt;/main&gt;
+    &lt;footer&gt;
+        &lt;ui:insert name="footer"&gt;
+            &lt;p&gt;&amp;copy; 2026 ESIPE — Jakarta EE&lt;/p&gt;
+        &lt;/ui:insert&gt;
+    &lt;/footer&gt;
+&lt;/h:body&gt;
+&lt;/html&gt;
+
+&lt;!-- clients.xhtml — page utilisant le template --&gt;
+&lt;ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="jakarta.faces.html"
+                xmlns:ui="jakarta.faces.facelets"
+                template="/WEB-INF/templates/template.xhtml"&gt;
+
+    &lt;ui:define name="pageTitle"&gt;Liste des clients&lt;/ui:define&gt;
+
+    &lt;ui:define name="header"&gt;
+        &lt;h1&gt;Gestion des Clients&lt;/h1&gt;
+    &lt;/ui:define&gt;
+
+    &lt;ui:define name="content"&gt;
+        &lt;h:dataTable value="#{clientBean.clients}" var="client"
+                     styleClass="data-table"&gt;
+            &lt;h:column&gt;
+                &lt;f:facet name="header"&gt;Nom&lt;/f:facet&gt;
+                &lt;h:outputText value="#{client.name}"/&gt;
+            &lt;/h:column&gt;
+            &lt;h:column&gt;
+                &lt;f:facet name="header"&gt;Email&lt;/f:facet&gt;
+                &lt;h:outputText value="#{client.email}"/&gt;
+            &lt;/h:column&gt;
+        &lt;/h:dataTable&gt;
+    &lt;/ui:define&gt;
+
+&lt;/ui:composition&gt;</code></pre>
+    </div>
+
+    <h2>Validation personnalisée</h2>
+    <div class="code-block-wrap">
+      <span class="code-lang">java</span>
+      <pre><code>import jakarta.faces.application.FacesMessage;
+import jakarta.faces.component.UIComponent;
+import jakarta.faces.context.FacesContext;
+import jakarta.faces.validator.FacesValidator;
+import jakarta.faces.validator.Validator;
+import jakarta.faces.validator.ValidatorException;
+
+@FacesValidator("bankAccountValidator")
+public class BankAccountValidator implements Validator&lt;String&gt; {
+
+    private static final String IBAN_PATTERN = "^FR\\d{2}\\s?(\\d{4}\\s?){5}\\d{3}$";
+
+    @Override
+    public void validate(FacesContext context,
+                         UIComponent component,
+                         String value) throws ValidatorException {
+
+        if (value == null || value.trim().isEmpty()) {
+            return; // f:validateRequired gère le champ vide
+        }
+
+        String normalized = value.replaceAll("\\s", "");
+
+        if (!normalized.matches(IBAN_PATTERN.replaceAll("\\\\s\\?", ""))) {
+            FacesMessage msg = new FacesMessage(
+                FacesMessage.SEVERITY_ERROR,
+                "IBAN invalide",
+                "Le numéro de compte doit être un IBAN français valide (ex : FR76 3000 6000 0112 3456 7890 189)"
+            );
+            throw new ValidatorException(msg);
+        }
+    }
+}
+
+// Utilisation dans une vue Facelets :
+// &lt;h:inputText id="iban" value="#{accountBean.iban}"&gt;
+//     &lt;f:validator validatorId="bankAccountValidator"/&gt;
+// &lt;/h:inputText&gt;</code></pre>
+    </div>
+
+    <h2>Navigation implicite vs explicite</h2>
+    <div class="code-block-wrap">
+      <span class="code-lang">xml</span>
+      <pre><code>&lt;!-- Navigation implicite — dans le bean Java --&gt;
+&lt;!-- Retourner "clients" navigue vers /clients.xhtml --&gt;
+&lt;!-- Retourner "clients?faces-redirect=true" → redirect PRG --&gt;
+&lt;!-- Retourner null ou void → reste sur la vue courante --&gt;
+
+&lt;!-- Navigation explicite — /WEB-INF/faces-config.xml --&gt;
+&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+&lt;faces-config xmlns="https://jakarta.ee/xml/ns/jakartaee"
+              xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+              xsi:schemaLocation="https://jakarta.ee/xml/ns/jakartaee
+              https://jakarta.ee/xml/ns/jakartaee/web-facesconfig_4_0.xsd"
+              version="4.0"&gt;
+
+    &lt;navigation-rule&gt;
+        &lt;from-view-id&gt;/login.xhtml&lt;/from-view-id&gt;
+        &lt;navigation-case&gt;
+            &lt;from-outcome&gt;success&lt;/from-outcome&gt;
+            &lt;to-view-id&gt;/dashboard.xhtml&lt;/to-view-id&gt;
+            &lt;redirect/&gt;
+        &lt;/navigation-case&gt;
+        &lt;navigation-case&gt;
+            &lt;from-outcome&gt;failure&lt;/from-outcome&gt;
+            &lt;to-view-id&gt;/login.xhtml&lt;/to-view-id&gt;
+        &lt;/navigation-case&gt;
+    &lt;/navigation-rule&gt;
+
+    &lt;navigation-rule&gt;
+        &lt;from-view-id&gt;/clients/create.xhtml&lt;/from-view-id&gt;
+        &lt;navigation-case&gt;
+            &lt;from-outcome&gt;created&lt;/from-outcome&gt;
+            &lt;to-view-id&gt;/clients/list.xhtml&lt;/to-view-id&gt;
+            &lt;redirect/&gt;
+        &lt;/navigation-case&gt;
+    &lt;/navigation-rule&gt;
+
+&lt;/faces-config&gt;</code></pre>
+    </div>
+
+    <h2>AJAX avec f:ajax</h2>
+    <div class="code-block-wrap">
+      <span class="code-lang">xhtml</span>
+      <pre><code>&lt;h:form id="searchForm"&gt;
+    &lt;h:outputLabel for="query" value="Rechercher un client :"/&gt;
+    &lt;h:inputText id="query" value="#{clientBean.searchQuery}"&gt;
+        &lt;!-- Mise à jour dynamique à chaque frappe --&gt;
+        &lt;f:ajax event="keyup"
+                execute="@this"
+                render="resultPanel"
+                listener="#{clientBean.onSearchChange}"/&gt;
+    &lt;/h:inputText&gt;
+
+    &lt;h:commandButton value="Rechercher"
+                     action="#{clientBean.search}"&gt;
+        &lt;!-- Soumet tout le formulaire, met à jour le panel de résultats --&gt;
+        &lt;f:ajax execute="@form"
+                render="resultPanel"
+                event="click"
+                onevent="handleAjaxEvent"/&gt;
+    &lt;/h:commandButton&gt;
+&lt;/h:form&gt;
+
+&lt;h:panelGroup id="resultPanel" layout="block"&gt;
+    &lt;h:dataTable value="#{clientBean.searchResults}" var="client"
+                 rendered="#{not empty clientBean.searchResults}"
+                 styleClass="results-table"&gt;
+        &lt;h:column&gt;
+            &lt;f:facet name="header"&gt;Nom&lt;/f:facet&gt;
+            &lt;h:outputText value="#{client.name}"/&gt;
+        &lt;/h:column&gt;
+        &lt;h:column&gt;
+            &lt;f:facet name="header"&gt;Email&lt;/f:facet&gt;
+            &lt;h:outputText value="#{client.email}"/&gt;
+        &lt;/h:column&gt;
+    &lt;/h:dataTable&gt;
+    &lt;h:outputText value="Aucun résultat trouvé."
+                  rendered="#{empty clientBean.searchResults}"
+                  styleClass="no-results"/&gt;
+&lt;/h:panelGroup&gt;</code></pre>
+    </div>
+
+  </main>
+</div>
+<footer class="cds--footer">Made with IBM Bob &nbsp;·&nbsp; © 2026 Olivier Planson &nbsp;·&nbsp; ESIPE — Jakarta EE &amp; Microservices</footer>
+</body>
+</html>

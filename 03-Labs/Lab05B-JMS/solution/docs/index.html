@@ -1,0 +1,107 @@
+<!-- © Copyright 2026 Olivier Planson. All rights reserved. Reproduction prohibited. Made with IBM Bob. -->
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>Banking JMS Application — Documentation</title>
+  <link rel="stylesheet" href="assets/carbon.css"/>
+</head>
+<body>
+<header class="cds--header">
+  <a class="cds--header__name" href="index.html">Banking JMS Application<span>Documentation Technique — Lab 05B</span></a>
+  <a href="../../../index.html" style="margin-left:auto;font-size:.75rem;color:#c6c6c6;text-decoration:none;border:1px solid #393939;padding:.2rem .75rem;border-radius:2px;white-space:nowrap;">← Tous les Labs</a>
+</header>
+<div class="cds--shell">
+  <nav class="cds--side-nav" aria-label="Navigation principale">
+    <p class="cds--side-nav__section-title">Documentation</p>
+    <a class="cds--side-nav__link active" href="index.html"><i class="icon">⊙</i> Vue d'ensemble</a>
+    <a class="cds--side-nav__link" href="functional.html"><i class="icon">⊞</i> Architecture Fonctionnelle</a>
+    <a class="cds--side-nav__link" href="technical.html"><i class="icon">⊟</i> Architecture Technique</a>
+    <a class="cds--side-nav__link" href="sequences.html"><i class="icon">⇄</i> Diagrammes de Séquences</a>
+    <a class="cds--side-nav__link" href="rules.html"><i class="icon">≡</i> Règles de Gestion</a>
+  </nav>
+  <main class="cds--content">
+    <nav class="cds--breadcrumb"><a href="index.html">Accueil</a><span class="sep">/</span><span class="current">Vue d'ensemble</span></nav>
+    <h1>Banking JMS Application — Lab 05B</h1>
+    <p class="page-lead">Application bancaire démontrant la messagerie asynchrone Jakarta Messaging 3.1 (JMS) sur Open Liberty. Elle met en œuvre les patterns Queue (point-à-point), Topic (publication/abonnement), Dead Letter Queue et la sécurisation de la désérialisation JSON.</p>
+
+    <h2>Informations du projet</h2>
+    <div class="tile-grid">
+      <div class="cds--tile">
+        <h3>Identité</h3>
+        <div class="cds--data-table-container">
+          <table class="cds--data-table">
+            <tbody>
+              <tr><td><strong>Nom</strong></td><td>Banking JMS Application</td></tr>
+              <tr><td><strong>ArtifactId</strong></td><td><code>banking-jms-app</code></td></tr>
+              <tr><td><strong>Version</strong></td><td>1.0-SNAPSHOT</td></tr>
+              <tr><td><strong>Packaging</strong></td><td>WAR</td></tr>
+              <tr><td><strong>Lab</strong></td><td>05B — JMS 3.1 Messaging</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div class="cds--tile">
+        <h3>Environnement d'exécution</h3>
+        <div class="cds--data-table-container">
+          <table class="cds--data-table">
+            <tbody>
+              <tr><td><strong>Java</strong></td><td>17</td></tr>
+              <tr><td><strong>Jakarta EE</strong></td><td>10</td></tr>
+              <tr><td><strong>MicroProfile</strong></td><td>6.0</td></tr>
+              <tr><td><strong>Serveur</strong></td><td>Open Liberty 23</td></tr>
+              <tr><td><strong>Base de données</strong></td><td>PostgreSQL</td></tr>
+              <tr><td><strong>ORM</strong></td><td>EclipseLink</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <h2>Stack technologique</h2>
+    <div class="cds--data-table-container">
+      <table class="cds--data-table">
+        <thead><tr><th>Technologie</th><th>Version</th><th>Rôle</th></tr></thead>
+        <tbody>
+          <tr><td><code>jakarta.jakartaee-api</code></td><td>10.0.0</td><td>APIs Jakarta EE — JMS 3.1, CDI 4.0, JPA 3.1, Servlet 6.0 — scope provided</td></tr>
+          <tr><td><code>microprofile</code></td><td>6.0</td><td>APIs MicroProfile (Health, Config, Metrics) — scope provided</td></tr>
+          <tr><td>Jakarta Messaging (JMS)</td><td>3.1</td><td>API de messagerie asynchrone : JMSContext, Queue, Topic, MessageDrivenBean</td></tr>
+          <tr><td>EclipseLink</td><td>4.x</td><td>Implémentation JPA — persistance des entités <code>AuditLog</code> et <code>FailedMessage</code></td></tr>
+          <tr><td>PostgreSQL JDBC</td><td>42.x</td><td>Connecteur base de données — datasource Liberty</td></tr>
+          <tr><td>Open Liberty Messaging</td><td>23</td><td>Serveur JMS embarqué (features <code>messaging-3.1</code>, <code>messagingServer-3.0</code>)</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h2>Annotations JMS clés</h2>
+    <div class="tag-stack">
+      <span class="cds--tag cds--tag--blue">@MessageDriven</span>
+      <span class="cds--tag cds--tag--blue">@JMSConnectionFactory</span>
+      <span class="cds--tag cds--tag--blue">JMSContext</span>
+      <span class="cds--tag cds--tag--green">Queue</span>
+      <span class="cds--tag cds--tag--green">Topic</span>
+      <span class="cds--tag cds--tag--teal">DurableSubscription</span>
+      <span class="cds--tag cds--tag--teal">MessageSelector</span>
+      <span class="cds--tag cds--tag--red">DeadLetterQueue</span>
+      <span class="cds--tag cds--tag--purple">PERSISTENT</span>
+      <span class="cds--tag cds--tag--purple">AUTO_ACKNOWLEDGE</span>
+      <span class="cds--tag cds--tag--warm">TextMessage</span>
+      <span class="cds--tag cds--tag--warm">JSON</span>
+    </div>
+
+    <h2>Navigation rapide</h2>
+    <div class="tile-grid">
+      <div class="cds--tile"><h3><a href="functional.html">Architecture Fonctionnelle</a></h3><p>4 domaines : production de messages, consommateurs MDB, persistance d'audit et interface de test. Diagramme de flux JMS.</p></div>
+      <div class="cds--tile"><h3><a href="technical.html">Architecture Technique</a></h3><p>Couches Jakarta EE, infrastructure JMS (queues, topic, pool), format de message JSON, priorités et features Liberty.</p></div>
+      <div class="cds--tile"><h3><a href="sequences.html">Diagrammes de Séquences</a></h3><p>3 flux : dépôt (queue P2P), audit topic (pub/sub durable) et gestion Dead Letter Queue.</p></div>
+      <div class="cds--tile"><h3><a href="rules.html">Règles de Gestion</a></h3><p>R1–R11 : sécurité de désérialisation, livraison persistante, priorités, message selector, acquittement et concurrence.</p></div>
+    </div>
+
+    <hr class="cds--divider"/>
+    <div class="cds--inline-notification"><div><strong>Lab 05B</strong> — Démontre la messagerie asynchrone JMS 3.1 avec les patterns Queue (point-à-point), Topic (pub/sub), Dead Letter Queue et gestion de la sécurité de désérialisation.</div></div>
+  </main>
+</div>
+<footer class="cds--footer">Made with IBM Bob &nbsp;|&nbsp; Banking JMS Application — Lab 05B &nbsp;|&nbsp; Jakarta EE 10 &amp; JMS 3.1</footer>
+</body>
+</html>

@@ -1,0 +1,216 @@
+<!-- © Copyright 2026 Olivier Planson. All rights reserved. Reproduction prohibited. Made with IBM Bob. -->
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Architecture Technique — Banking REST App · Lab 05</title>
+  <link rel="stylesheet" href="assets/carbon.css" />
+</head>
+<body>
+
+<!-- ── Header ── -->
+<header class="cds--header">
+  <a class="cds--header__name" href="index.html">
+    ⬡ IBM Carbon <span>/ Banking REST Application — Lab 05</span>
+  </a>
+</header>
+
+<div class="cds--shell">
+
+  <!-- ── Side Navigation ── -->
+  <nav class="cds--side-nav" aria-label="Navigation principale">
+    <p class="cds--side-nav__section-title">Lab 05 — REST</p>
+    <a class="cds--side-nav__link" href="index.html"><i class="icon">⊞</i> Vue d'ensemble</a>
+    <a class="cds--side-nav__link" href="functional.html"><i class="icon">⬡</i> Architecture Fonctionnelle</a>
+    <a class="cds--side-nav__link active" href="technical.html"><i class="icon">⚙</i> Architecture Technique</a>
+    <a class="cds--side-nav__link" href="sequences.html"><i class="icon">⇄</i> Diagrammes de Séquence</a>
+    <a class="cds--side-nav__link" href="rules.html"><i class="icon">✔</i> Règles Métier</a>
+  </nav>
+
+  <!-- ── Main content ── -->
+  <main class="cds--content">
+
+    <nav class="cds--breadcrumb" aria-label="Fil d'Ariane">
+      <a href="index.html">Lab 05</a>
+      <span class="sep">/</span>
+      <span class="current">Architecture Technique</span>
+    </nav>
+
+    <h1>Architecture Technique</h1>
+    <p class="page-lead">
+      Quatre couches clairement délimitées : JAX-RS, CDI Services, JPA / EclipseLink, et PostgreSQL + Flyway.
+      Le tout déployé sur Open Liberty 23 avec MicroProfile 6.0.
+    </p>
+
+    <!-- ── SVG : Couches ── -->
+    <h2>Vue en couches</h2>
+    <div class="arch-box" aria-label="Diagramme en couches">
+      <svg viewBox="0 0 800 380" width="100%" font-family="'IBM Plex Sans','Helvetica Neue',Arial,sans-serif" font-size="12" role="img" aria-label="Couches applicatives">
+        <defs>
+          <marker id="la" markerWidth="8" markerHeight="8" refX="7" refY="3" orient="auto">
+            <path d="M0,0 L0,6 L8,3 z" fill="#0f62fe"/>
+          </marker>
+        </defs>
+
+        <!-- HTTP Client -->
+        <rect x="10" y="10" width="760" height="44" rx="2" fill="#161616"/>
+        <text x="390" y="28" text-anchor="middle" fill="#f4f4f4" font-weight="700" font-size="13">HTTP Client</text>
+        <text x="390" y="46" text-anchor="middle" fill="#c6c6c6" font-size="10">navigateur · curl · BankingRestClient (MicroProfile)</text>
+
+        <line x1="390" y1="54" x2="390" y2="78" stroke="#0f62fe" stroke-width="2" marker-end="url(#la)"/>
+
+        <!-- JAX-RS Layer -->
+        <rect x="10" y="80" width="760" height="66" rx="2" fill="#d0e2ff" stroke="#0043ce" stroke-width="1"/>
+        <text x="390" y="102" text-anchor="middle" fill="#0043ce" font-weight="700" font-size="13">JAX-RS Layer — @ApplicationPath("/api")</text>
+        <text x="390" y="120" text-anchor="middle" fill="#161616" font-size="10">Resources: RootResource · ClientResource · AccountResource · TransactionResource</text>
+        <text x="390" y="136" text-anchor="middle" fill="#525252" font-size="10">Providers: NotFoundExceptionMapper · ValidationExceptionMapper · ConstraintViolationExceptionMapper · IllegalArgumentExceptionMapper · GenericExceptionMapper</text>
+
+        <line x1="390" y1="146" x2="390" y2="168" stroke="#0f62fe" stroke-width="2" marker-end="url(#la)"/>
+
+        <!-- CDI Service Layer -->
+        <rect x="10" y="170" width="760" height="60" rx="2" fill="#defbe6" stroke="#198038" stroke-width="1"/>
+        <text x="390" y="193" text-anchor="middle" fill="#198038" font-weight="700" font-size="13">CDI Service Layer</text>
+        <text x="390" y="212" text-anchor="middle" fill="#161616" font-size="10">@ApplicationScoped + @Transactional · CDI Events · LoggingInterceptor (@Logged) · EntityManagerProducer</text>
+
+        <line x1="390" y1="230" x2="390" y2="252" stroke="#0f62fe" stroke-width="2" marker-end="url(#la)"/>
+
+        <!-- JPA Layer -->
+        <rect x="10" y="254" width="760" height="64" rx="2" fill="#e8daff" stroke="#491d8b" stroke-width="1"/>
+        <text x="390" y="277" text-anchor="middle" fill="#491d8b" font-weight="700" font-size="13">JPA Layer — EclipseLink + @RequestScoped EntityManager</text>
+        <text x="390" y="296" text-anchor="middle" fill="#161616" font-size="10">Entités: Client · Account · Transaction</text>
+        <text x="390" y="312" text-anchor="middle" fill="#525252" font-size="10">NamedQueries · BeanValidation (@NotNull @Email @Size @DecimalMin) · Cascade / orphanRemoval</text>
+
+        <line x1="390" y1="318" x2="390" y2="340" stroke="#0f62fe" stroke-width="2" marker-end="url(#la)"/>
+
+        <!-- Data Layer -->
+        <rect x="10" y="342" width="760" height="30" rx="2" fill="#161616"/>
+        <text x="390" y="362" text-anchor="middle" fill="#f4f4f4" font-weight="700" font-size="12">PostgreSQL + Flyway (migrations SQL versionées)</text>
+      </svg>
+    </div>
+
+    <!-- ── Composants JAX-RS ── -->
+    <h2>Composants JAX-RS</h2>
+    <div class="cds--data-table-container">
+      <table class="cds--data-table" aria-label="Composants JAX-RS">
+        <thead>
+          <tr><th>Annotation</th><th>Classe</th><th>Rôle</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><code>@ApplicationPath("/api")</code></td><td><code>RestApplication</code></td><td>Point d'entrée de l'application JAX-RS</td></tr>
+          <tr><td><code>@Path("/")</code></td><td><code>RootResource</code></td><td>Métadonnées API + découverte HATEOAS</td></tr>
+          <tr><td><code>@Path("/clients")</code></td><td><code>ClientResource</code></td><td>CRUD complet clients + search + count</td></tr>
+          <tr><td><code>@Path("/accounts")</code></td><td><code>AccountResource</code></td><td>CRUD + deposit / withdraw / transfer</td></tr>
+          <tr><td><code>@Path("/transactions")</code></td><td><code>TransactionResource</code></td><td>Requêtes audit par compte / type / date</td></tr>
+          <tr><td><code>@Provider</code></td><td><code>NotFoundExceptionMapper</code></td><td>404 Not Found</td></tr>
+          <tr><td><code>@Provider</code></td><td><code>ValidationExceptionMapper</code></td><td>400 Bad Request (validation)</td></tr>
+          <tr><td><code>@Provider</code></td><td><code>ConstraintViolationExceptionMapper</code></td><td>400 + liste des violations</td></tr>
+          <tr><td><code>@Provider</code></td><td><code>IllegalArgumentExceptionMapper</code></td><td>400 Bad Request (argument illégal)</td></tr>
+          <tr><td><code>@Provider</code></td><td><code>GenericExceptionMapper</code></td><td>500 Internal Server Error</td></tr>
+          <tr><td><code>@RegisterRestClient</code></td><td><code>BankingRestClient</code></td><td>MicroProfile REST Client (boucle de retour)</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- ── Entités JPA ── -->
+    <h2>Entités JPA</h2>
+
+    <h3>Client</h3>
+    <div class="cds--tile">
+      <p><code>@Entity</code> — représente un titulaire de compte.</p>
+      <ul>
+        <li><code>@NotNull @Size(min=2, max=100)</code> sur <code>name</code></li>
+        <li><code>@NotNull @Email</code> sur <code>email</code> (unique)</li>
+        <li><code>@OneToMany(mappedBy="client", cascade=ALL, orphanRemoval=true)</code> → <code>List&lt;Account&gt;</code></li>
+        <li>4 NamedQueries : <code>findAll</code>, <code>findById</code>, <code>findByName</code>, <code>count</code></li>
+      </ul>
+    </div>
+
+    <h3>Account</h3>
+    <div class="cds--tile">
+      <p><code>@Entity</code> — représente un compte bancaire.</p>
+      <ul>
+        <li><code>@NotNull @Size(min=5, max=34)</code> sur <code>accountNumber</code> (unique)</li>
+        <li><code>@NotNull @DecimalMin("0.0")</code> sur <code>balance</code></li>
+        <li><code>@ManyToOne @JsonbTransient</code> sur <code>client</code> (évite la récursion JSON)</li>
+        <li>Méthodes métier : <code>deposit(amount)</code>, <code>withdraw(amount)</code> avec validation solde</li>
+        <li>4 NamedQueries : <code>findAll</code>, <code>findById</code>, <code>findByClient</code>, <code>findByType</code></li>
+      </ul>
+    </div>
+
+    <h3>Transaction</h3>
+    <div class="cds--tile">
+      <p><code>@Entity</code> — enregistrement d'audit immuable.</p>
+      <ul>
+        <li>Type enum : <code>DEPOSIT</code>, <code>WITHDRAWAL</code>, <code>TRANSFER_OUT</code>, <code>TRANSFER_IN</code></li>
+        <li>Champs d'audit : <code>balanceBefore</code>, <code>balanceAfter</code>, <code>transactionDate</code></li>
+        <li>5 NamedQueries : <code>findAll</code>, <code>findById</code>, <code>findByAccount</code>, <code>findByType</code>, <code>findByDateRange</code></li>
+        <li>Toutes les requêtes triées <code>ORDER BY transactionDate DESC</code></li>
+      </ul>
+    </div>
+
+    <!-- ── Codes HTTP ── -->
+    <h2>Codes HTTP de référence</h2>
+    <div class="cds--data-table-container">
+      <table class="cds--data-table" aria-label="Codes HTTP">
+        <thead>
+          <tr><th>Opération</th><th>Succès</th><th>Erreur client</th><th>Non trouvé</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>GET liste</td><td><span class="cds--tag cds--tag--green">200 OK</span></td><td>—</td><td>—</td></tr>
+          <tr><td>GET par id</td><td><span class="cds--tag cds--tag--green">200 OK</span></td><td>—</td><td><span class="cds--tag cds--tag--warm">404 Not Found</span></td></tr>
+          <tr><td>POST création</td><td><span class="cds--tag cds--tag--green">201 Created</span></td><td><span class="cds--tag cds--tag--red">400 Bad Request</span></td><td>—</td></tr>
+          <tr><td>PUT mise à jour</td><td><span class="cds--tag cds--tag--green">200 OK</span></td><td><span class="cds--tag cds--tag--red">400 Bad Request</span></td><td><span class="cds--tag cds--tag--warm">404 Not Found</span></td></tr>
+          <tr><td>DELETE suppression</td><td><span class="cds--tag cds--tag--teal">204 No Content</span></td><td>—</td><td><span class="cds--tag cds--tag--warm">404 Not Found</span></td></tr>
+          <tr><td>deposit / withdraw</td><td><span class="cds--tag cds--tag--green">200 OK</span></td><td><span class="cds--tag cds--tag--red">400 (fonds insuffisants)</span></td><td><span class="cds--tag cds--tag--warm">404 Not Found</span></td></tr>
+          <tr><td>transfer</td><td><span class="cds--tag cds--tag--green">200 OK</span></td><td><span class="cds--tag cds--tag--red">400 (fonds insuffisants)</span></td><td><span class="cds--tag cds--tag--warm">404 (compte inconnu)</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- ── Features Liberty ── -->
+    <h2>Features Open Liberty</h2>
+    <div class="cds--data-table-container">
+      <table class="cds--data-table" aria-label="Features Liberty">
+        <thead>
+          <tr><th>Feature</th><th>Description</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><code>webProfile-10.0</code></td><td>Profil web Jakarta EE 10 (CDI, JPA, JSF, Bean Validation…)</td></tr>
+          <tr><td><code>restfulWS-3.1</code></td><td>JAX-RS 3.1 — Jakarta RESTful Web Services</td></tr>
+          <tr><td><code>jsonb-3.0</code></td><td>JSON-B 3.0 — sérialisation/désérialisation JSON</td></tr>
+          <tr><td><code>beanValidation-3.0</code></td><td>Bean Validation 3.0 — contraintes <code>@NotNull @Email @Size</code></td></tr>
+          <tr><td><code>mpConfig-3.0</code></td><td>MicroProfile Config 3.0 — configuration externalisée</td></tr>
+          <tr><td><code>mpHealth-4.0</code></td><td>MicroProfile Health 4.0 — endpoint <code>/health</code></td></tr>
+          <tr><td><code>mpMetrics-5.0</code></td><td>MicroProfile Metrics 5.0 — endpoint <code>/metrics</code></td></tr>
+          <tr><td><code>mpOpenAPI-3.1</code></td><td>MicroProfile OpenAPI 3.1 — documentation <code>/openapi/ui</code></td></tr>
+          <tr><td><code>mpRestClient-3.0</code></td><td>MicroProfile REST Client 3.0 — <code>BankingRestClient</code></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- ── MicroProfile REST Client ── -->
+    <h2>Configuration MicroProfile REST Client</h2>
+    <div class="cds--tile">
+      <pre>banking-api/mp-rest/url=http://localhost:9080
+banking-api/mp-rest/connectTimeout=5000
+banking-api/mp-rest/readTimeout=10000</pre>
+      <p>
+        <code>BankingRestClient</code> est annoté <code>@RegisterRestClient(configKey="banking-api")</code>.
+        Il permet à l'application d'appeler sa propre API REST ou une instance distante
+        sans manipulation manuelle de <code>HttpClient</code>.
+      </p>
+    </div>
+
+    <hr class="cds--divider" />
+    <p>Voir aussi <a href="sequences.html">les Diagrammes de Séquence</a> pour les interactions runtime détaillées.</p>
+
+  </main>
+</div>
+
+<footer class="cds--footer">
+  Banking REST Application — Lab 05 · Jakarta EE 10 · MicroProfile 6.0 · Open Liberty 23 · © 2025 Olivier Planson
+</footer>
+
+</body>
+</html>

@@ -1,0 +1,354 @@
+<!-- © Copyright 2026 Olivier Planson. All rights reserved. Reproduction prohibited. Made with IBM Bob. -->
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Bank Security — Lab 09 — Règles de Sécurité</title>
+  <link rel="stylesheet" href="assets/carbon.css"/>
+</head>
+<body>
+
+<header class="cds--header">
+  <a class="cds--header__name" href="index.html">🔐 Bank Security<span>Lab 09 — Sécurité Jakarta EE 10</span></a>
+</header>
+
+<div class="cds--shell">
+  <nav class="cds--side-nav">
+    <p class="cds--side-nav__section-title">Navigation</p>
+    <a class="cds--side-nav__link" href="index.html"><i class="icon">🏠</i>Vue d'ensemble</a>
+    <a class="cds--side-nav__link" href="functional.html"><i class="icon">⚙️</i>Architecture Fonctionnelle</a>
+    <a class="cds--side-nav__link" href="technical.html"><i class="icon">🔧</i>Architecture Technique</a>
+    <a class="cds--side-nav__link" href="sequences.html"><i class="icon">🔄</i>Diagrammes de Séquence</a>
+    <a class="cds--side-nav__link active" href="rules.html"><i class="icon">📋</i>Règles de Sécurité</a>
+  </nav>
+
+  <main class="cds--content">
+    <nav class="cds--breadcrumb">
+      <a href="index.html">Vue d'ensemble</a>
+      <span class="sep">/</span>
+      <span class="current">Règles de Sécurité</span>
+    </nav>
+
+    <h1>Règles de Sécurité</h1>
+    <p class="page-lead">
+      12 règles issues du code source de l'application, classées par criticité.
+      Les règles <strong>critiques</strong> constituent des exigences non négociables de sécurité ;
+      les règles <strong>d'avertissement</strong> signalent des configurations à renforcer en production.
+    </p>
+
+    <!-- Légende -->
+    <div class="tag-stack">
+      <span class="cds--tag cds--tag--red">● Critique</span>
+      <span class="cds--tag cds--tag--warm">● Avertissement</span>
+      <span class="cds--tag cds--tag--blue">● Recommandation</span>
+    </div>
+
+    <h2>Règles critiques — Authentification et cryptographie</h2>
+
+    <!-- R1 -->
+    <div class="rule-card critical">
+      <div class="rule-id">
+        <span>🔴</span> R1
+        <span class="cds--tag cds--tag--red" style="font-size:.65rem;">CRITIQUE</span>
+      </div>
+      <div class="rule-title">Authentification JWT obligatoire sur tous les endpoints protégés</div>
+      <div class="rule-desc">
+        Tout endpoint protégé exige un token Bearer JWT valide dans l'en-tête
+        <code>Authorization: Bearer &lt;token&gt;</code>. L'absence ou l'invalidité du token
+        déclenche un retour <strong>401 Unauthorized</strong> avant l'exécution du code métier.
+        <br/><br/>
+        <strong>Source :</strong> <code>JwtAuthenticationMechanism.validateRequest()</code>
+      </div>
+    </div>
+
+    <!-- R2 -->
+    <div class="rule-card critical">
+      <div class="rule-id">
+        <span>🔴</span> R2
+        <span class="cds--tag cds--tag--red" style="font-size:.65rem;">CRITIQUE</span>
+      </div>
+      <div class="rule-title">Hachage PBKDF2-SHA512 avec 310 000 itérations (standard OWASP 2023)</div>
+      <div class="rule-desc">
+        Les mots de passe ne sont jamais stockés en clair. L'algorithme
+        <code>PBKDF2WithHmacSHA512</code> est appliqué avec <strong>310 000 itérations</strong>
+        et un sel aléatoire de <strong>64 octets</strong> unique par utilisateur.
+        Ce paramétrage respecte la recommandation OWASP Password Storage Cheat Sheet 2023.
+        <br/><br/>
+        <strong>Source :</strong> <code>PasswordService.hashPassword()</code>
+      </div>
+    </div>
+
+    <!-- R3 -->
+    <div class="rule-card critical">
+      <div class="rule-id">
+        <span>🔴</span> R3
+        <span class="cds--tag cds--tag--red" style="font-size:.65rem;">CRITIQUE</span>
+      </div>
+      <div class="rule-title">Verrouillage du compte après 5 tentatives de connexion échouées</div>
+      <div class="rule-desc">
+        Le champ <code>failed_login_attempts</code> de l'entité <code>User</code> est incrémenté
+        à chaque échec d'authentification. Lorsque le compteur atteint <strong>5</strong>,
+        le champ <code>account_locked = true</code> est positionné et tout accès ultérieur
+        est bloqué jusqu'à un déblocage administratif.
+        <br/><br/>
+        <strong>Source :</strong> <code>DatabaseIdentityStore</code> + entité <code>User</code>
+      </div>
+    </div>
+
+    <!-- R4 -->
+    <div class="rule-card critical">
+      <div class="rule-id">
+        <span>🔴</span> R4
+        <span class="cds--tag cds--tag--red" style="font-size:.65rem;">CRITIQUE</span>
+      </div>
+      <div class="rule-title">Isolation CUSTOMER — accès aux seuls comptes personnels</div>
+      <div class="rule-desc">
+        Un utilisateur portant uniquement le rôle <code>CUSTOMER</code> ne peut consulter
+        que les comptes dont <code>account.ownerUsername == principal.getName()</code>.
+        Tout accès à un compte tiers est refusé avec <strong>403 Forbidden</strong>
+        et consigné dans la piste d'audit comme <code>ACCESS_DENIED</code>.
+        <br/><br/>
+        <strong>Source :</strong> <code>AccountResource.getAccountById()</code> +
+        <code>SecurityContext.isUserInRole("CUSTOMER")</code>
+      </div>
+    </div>
+
+    <!-- R5 -->
+    <div class="rule-card critical">
+      <div class="rule-id">
+        <span>🔴</span> R5
+        <span class="cds--tag cds--tag--red" style="font-size:.65rem;">CRITIQUE</span>
+      </div>
+      <div class="rule-title">Secret JWT minimum 256 bits, expiration 24 h, double validation obligatoire</div>
+      <div class="rule-desc">
+        Le secret de signature HS256 doit comporter au minimum <strong>256 bits</strong>
+        (32 octets). Chaque token est validé sur deux critères simultanés :
+        <ol style="margin-top:.5rem;">
+          <li><strong>Signature HS256</strong> — intégrité du token</li>
+          <li><strong>Expiration (<code>exp</code>)</strong> — token non expiré (24 h par défaut)</li>
+        </ol>
+        Un token dont l'une des deux validations échoue est rejeté immédiatement.
+        <br/><br/>
+        <strong>Source :</strong> <code>JwtService.validateToken()</code> / <code>parseToken()</code>
+      </div>
+    </div>
+
+    <h2>Règle d'avertissement — Configuration CORS</h2>
+
+    <!-- R6 -->
+    <div class="rule-card warning">
+      <div class="rule-id">
+        <span>⚠️</span> R6
+        <span class="cds--tag cds--tag--warm" style="font-size:.65rem;">AVERTISSEMENT</span>
+      </div>
+      <div class="rule-title">CORS ouvert à toutes les origines — à restreindre en production</div>
+      <div class="rule-desc">
+        La configuration actuelle autorise <code>Access-Control-Allow-Origin: *</code>,
+        ce qui permet à n'importe quel domaine d'effectuer des requêtes cross-origin vers l'API.
+        En environnement de production, il convient de restreindre cette valeur
+        aux domaines front-end connus (ex. <code>https://bank.example.com</code>).
+        <br/><br/>
+        <strong>Source :</strong> <code>CorsFilter</code>
+      </div>
+    </div>
+
+    <h2>Règles de bonnes pratiques</h2>
+
+    <!-- R7 -->
+    <div class="rule-card">
+      <div class="rule-id"><span>🔵</span> R7</div>
+      <div class="rule-title">Politique de mot de passe fort</div>
+      <div class="rule-desc">
+        Tout mot de passe soumis lors de l'inscription est évalué par
+        <code>PasswordService.isPasswordStrong()</code>.
+        Critères cumulatifs :
+        <ul style="margin-top:.4rem;">
+          <li>Longueur minimum : <strong>8 caractères</strong></li>
+          <li>Au moins une <strong>lettre majuscule</strong></li>
+          <li>Au moins une <strong>lettre minuscule</strong></li>
+          <li>Au moins un <strong>chiffre</strong></li>
+          <li>Au moins un <strong>caractère spécial</strong></li>
+        </ul>
+        Un mot de passe non conforme déclenche <strong>400 Bad Request</strong>.
+        <br/><strong>Source :</strong> <code>PasswordService.isPasswordStrong()</code>
+      </div>
+    </div>
+
+    <!-- R8 -->
+    <div class="rule-card">
+      <div class="rule-id"><span>🔵</span> R8</div>
+      <div class="rule-title">Hiérarchie stricte des rôles et cloisonnement des accès</div>
+      <div class="rule-desc">
+        Les droits d'accès sont déclarés via <code>@RolesAllowed</code> au niveau méthode :
+        <ul style="margin-top:.4rem;">
+          <li><code>ADMIN</code> — toutes opérations, y compris suppression</li>
+          <li><code>MANAGER</code> — toutes opérations sauf suppression ; virements inclus</li>
+          <li><code>TELLER</code> — dépôts, retraits, création de compte ; pas de virement</li>
+          <li><code>CUSTOMER</code> — consultation de ses propres comptes uniquement</li>
+        </ul>
+        <strong>Source :</strong> annotations <code>@RolesAllowed</code> sur <code>AccountResource</code>
+      </div>
+    </div>
+
+    <!-- R9 -->
+    <div class="rule-card">
+      <div class="rule-id"><span>🔵</span> R9</div>
+      <div class="rule-title">Piste d'audit exhaustive — tous les événements de sécurité sont enregistrés</div>
+      <div class="rule-desc">
+        L'ensemble des événements de sécurité (LOGIN, LOGOUT, ACCESS, ACCESS_DENIED,
+        ACCOUNT_LOCKED, PASSWORD_CHANGE, REGISTRATION) est persisté en base avec
+        les métadonnées : adresse IP, UserAgent, horodatage, résultat (SUCCESS / FAILURE / DENIED)
+        et détails textuels.
+        <br/><br/>
+        <strong>Source :</strong> <code>SecurityAuditService</code>
+      </div>
+    </div>
+
+    <!-- R10 -->
+    <div class="rule-card">
+      <div class="rule-id"><span>🔵</span> R10</div>
+      <div class="rule-title">7 en-têtes de sécurité HTTP ajoutés systématiquement</div>
+      <div class="rule-desc">
+        Chaque réponse HTTP reçoit les en-têtes suivants, quels que soient le chemin et le résultat :
+        <ul style="margin-top:.4rem;">
+          <li><code>X-Frame-Options: DENY</code></li>
+          <li><code>X-Content-Type-Options: nosniff</code></li>
+          <li><code>X-XSS-Protection: 1; mode=block</code></li>
+          <li><code>Content-Security-Policy</code></li>
+          <li><code>Referrer-Policy: strict-origin-when-cross-origin</code></li>
+          <li><code>Permissions-Policy</code></li>
+          <li><code>Strict-Transport-Security</code> (HSTS)</li>
+        </ul>
+        <strong>Source :</strong> <code>SecurityHeadersFilter</code>
+      </div>
+    </div>
+
+    <!-- R11 -->
+    <div class="rule-card">
+      <div class="rule-id"><span>🔵</span> R11</div>
+      <div class="rule-title">Comparaison de mots de passe en temps constant</div>
+      <div class="rule-desc">
+        La vérification du mot de passe utilise une comparaison en <strong>temps constant</strong>
+        qui ne court-circuite pas selon la position du premier octet différent.
+        Cette approche rend l'application résistante aux attaques par oracle temporel
+        (<em>timing attacks</em>), qui exploitent les différences de latence de
+        <code>String.equals()</code> pour deviner un hash caractère par caractère.
+        <br/><br/>
+        <strong>Source :</strong> <code>PasswordService.verifyPassword()</code>
+      </div>
+    </div>
+
+    <!-- R12 -->
+    <div class="rule-card">
+      <div class="rule-id"><span>🔵</span> R12</div>
+      <div class="rule-title">Rôle CUSTOMER attribué automatiquement à l'inscription</div>
+      <div class="rule-desc">
+        Lors de l'inscription via <code>POST /api/auth/register</code>, le rôle
+        <code>CUSTOMER</code> est attribué automatiquement à tout nouvel utilisateur.
+        L'élévation de privilèges (vers TELLER, MANAGER ou ADMIN) est une opération
+        exclusivement réservée aux administrateurs et gestionnaires — elle ne peut
+        pas être auto-assignée.
+        <br/><br/>
+        <strong>Source :</strong> <code>AuthResource.register()</code>
+      </div>
+    </div>
+
+    <hr class="cds--divider"/>
+
+    <h2>Résumé</h2>
+    <div class="cds--data-table-container">
+      <table class="cds--data-table">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Titre</th>
+            <th>Criticité</th>
+            <th>Source</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>R1</td>
+            <td>Authentification JWT obligatoire</td>
+            <td><span class="cds--tag cds--tag--red">Critique</span></td>
+            <td><code>JwtAuthenticationMechanism</code></td>
+          </tr>
+          <tr>
+            <td>R2</td>
+            <td>PBKDF2-SHA512 310 000 itérations</td>
+            <td><span class="cds--tag cds--tag--red">Critique</span></td>
+            <td><code>PasswordService</code></td>
+          </tr>
+          <tr>
+            <td>R3</td>
+            <td>Verrouillage après 5 échecs</td>
+            <td><span class="cds--tag cds--tag--red">Critique</span></td>
+            <td><code>DatabaseIdentityStore</code></td>
+          </tr>
+          <tr>
+            <td>R4</td>
+            <td>Isolation CUSTOMER</td>
+            <td><span class="cds--tag cds--tag--red">Critique</span></td>
+            <td><code>AccountResource</code> + <code>SecurityContext</code></td>
+          </tr>
+          <tr>
+            <td>R5</td>
+            <td>Secret JWT ≥ 256 bits, exp 24 h, double validation</td>
+            <td><span class="cds--tag cds--tag--red">Critique</span></td>
+            <td><code>JwtService</code></td>
+          </tr>
+          <tr>
+            <td>R6</td>
+            <td>CORS ouvert — restreindre en production</td>
+            <td><span class="cds--tag cds--tag--warm">Avertissement</span></td>
+            <td><code>CorsFilter</code></td>
+          </tr>
+          <tr>
+            <td>R7</td>
+            <td>Politique de mot de passe fort</td>
+            <td><span class="cds--tag cds--tag--blue">Recommandation</span></td>
+            <td><code>PasswordService.isPasswordStrong()</code></td>
+          </tr>
+          <tr>
+            <td>R8</td>
+            <td>Hiérarchie RBAC stricte</td>
+            <td><span class="cds--tag cds--tag--blue">Recommandation</span></td>
+            <td><code>@RolesAllowed</code> sur <code>AccountResource</code></td>
+          </tr>
+          <tr>
+            <td>R9</td>
+            <td>Piste d'audit exhaustive</td>
+            <td><span class="cds--tag cds--tag--blue">Recommandation</span></td>
+            <td><code>SecurityAuditService</code></td>
+          </tr>
+          <tr>
+            <td>R10</td>
+            <td>7 en-têtes de sécurité HTTP</td>
+            <td><span class="cds--tag cds--tag--blue">Recommandation</span></td>
+            <td><code>SecurityHeadersFilter</code></td>
+          </tr>
+          <tr>
+            <td>R11</td>
+            <td>Comparaison en temps constant</td>
+            <td><span class="cds--tag cds--tag--blue">Recommandation</span></td>
+            <td><code>PasswordService.verifyPassword()</code></td>
+          </tr>
+          <tr>
+            <td>R12</td>
+            <td>Rôle CUSTOMER par défaut à l'inscription</td>
+            <td><span class="cds--tag cds--tag--blue">Recommandation</span></td>
+            <td><code>AuthResource.register()</code></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+  </main>
+</div>
+
+<footer class="cds--footer">
+  Bank Security Application — Lab 09 · Jakarta EE 10 · Open Liberty 24.0.0.1 · © 2025 Olivier Planson
+</footer>
+</body>
+</html>

@@ -1,0 +1,2398 @@
+<!-- © Copyright 2026 Olivier Planson. All rights reserved. Reproduction prohibited. Made with IBM Bob. -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>ESIPE — 💉 Lecture 4: CDI and Dependency Injection — Slides</title>
+  <link rel="stylesheet" href="../assets/slide.css"/>
+  <style>
+/* suppress static .current when a slide is targeted */
+body:has(.slide:target) .progress-bar a.current { background: var(--bg); color: var(--muted); border-color: var(--border); }
+body:has(#slide-1:target) .progress-bar a[href="#slide-1"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-2:target) .progress-bar a[href="#slide-2"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-3:target) .progress-bar a[href="#slide-3"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-4:target) .progress-bar a[href="#slide-4"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-5:target) .progress-bar a[href="#slide-5"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-6:target) .progress-bar a[href="#slide-6"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-7:target) .progress-bar a[href="#slide-7"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-8:target) .progress-bar a[href="#slide-8"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-9:target) .progress-bar a[href="#slide-9"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-10:target) .progress-bar a[href="#slide-10"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-11:target) .progress-bar a[href="#slide-11"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-12:target) .progress-bar a[href="#slide-12"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-13:target) .progress-bar a[href="#slide-13"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-14:target) .progress-bar a[href="#slide-14"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-15:target) .progress-bar a[href="#slide-15"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-16:target) .progress-bar a[href="#slide-16"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-17:target) .progress-bar a[href="#slide-17"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-18:target) .progress-bar a[href="#slide-18"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-19:target) .progress-bar a[href="#slide-19"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-20:target) .progress-bar a[href="#slide-20"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-21:target) .progress-bar a[href="#slide-21"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-22:target) .progress-bar a[href="#slide-22"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-23:target) .progress-bar a[href="#slide-23"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-24:target) .progress-bar a[href="#slide-24"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-25:target) .progress-bar a[href="#slide-25"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-26:target) .progress-bar a[href="#slide-26"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-27:target) .progress-bar a[href="#slide-27"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-28:target) .progress-bar a[href="#slide-28"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-29:target) .progress-bar a[href="#slide-29"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-30:target) .progress-bar a[href="#slide-30"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-31:target) .progress-bar a[href="#slide-31"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-32:target) .progress-bar a[href="#slide-32"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-33:target) .progress-bar a[href="#slide-33"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-34:target) .progress-bar a[href="#slide-34"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-35:target) .progress-bar a[href="#slide-35"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-36:target) .progress-bar a[href="#slide-36"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-37:target) .progress-bar a[href="#slide-37"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-38:target) .progress-bar a[href="#slide-38"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-39:target) .progress-bar a[href="#slide-39"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-40:target) .progress-bar a[href="#slide-40"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-41:target) .progress-bar a[href="#slide-41"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-42:target) .progress-bar a[href="#slide-42"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-43:target) .progress-bar a[href="#slide-43"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-44:target) .progress-bar a[href="#slide-44"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-45:target) .progress-bar a[href="#slide-45"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-46:target) .progress-bar a[href="#slide-46"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-47:target) .progress-bar a[href="#slide-47"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-48:target) .progress-bar a[href="#slide-48"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-49:target) .progress-bar a[href="#slide-49"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-50:target) .progress-bar a[href="#slide-50"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-51:target) .progress-bar a[href="#slide-51"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-52:target) .progress-bar a[href="#slide-52"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-53:target) .progress-bar a[href="#slide-53"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-54:target) .progress-bar a[href="#slide-54"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-55:target) .progress-bar a[href="#slide-55"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-56:target) .progress-bar a[href="#slide-56"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-57:target) .progress-bar a[href="#slide-57"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-58:target) .progress-bar a[href="#slide-58"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-59:target) .progress-bar a[href="#slide-59"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-60:target) .progress-bar a[href="#slide-60"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-61:target) .progress-bar a[href="#slide-61"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-62:target) .progress-bar a[href="#slide-62"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-63:target) .progress-bar a[href="#slide-63"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-64:target) .progress-bar a[href="#slide-64"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-65:target) .progress-bar a[href="#slide-65"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-66:target) .progress-bar a[href="#slide-66"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-67:target) .progress-bar a[href="#slide-67"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-68:target) .progress-bar a[href="#slide-68"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-69:target) .progress-bar a[href="#slide-69"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-70:target) .progress-bar a[href="#slide-70"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-71:target) .progress-bar a[href="#slide-71"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-72:target) .progress-bar a[href="#slide-72"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+  </style>
+</head>
+<body>
+<header class="site-header">
+  <a class="brand" href="../index.html">ESIPE<span>Jakarta EE &amp; Microservices</span></a>
+  <!-- EN/FR language toggle -->
+  <div class="lang-toggle" id="lang-toggle">
+    <button id="btn-en" class="active">EN</button>
+    <span class="sep">|</span>
+    <button id="btn-fr">FR</button>
+  </div>
+  <a class="back-link" href="../index.html">&#8592; All Courses</a>
+</header>
+<!-- Thin trigger strip at top: hover to reveal progress bar -->
+<div class="progress-bar-trigger" id="pb-trigger"></div>
+<!-- Progress bar — hidden by default, revealed on hover -->
+<div class="progress-bar-wrap" id="pb-wrap">
+  <div class="progress-bar">
+    <a href="#slide-1" class="current">1</a>
+      <a href="#slide-2">2</a>
+      <a href="#slide-3">3</a>
+      <a href="#slide-4">4</a>
+      <a href="#slide-5">5</a>
+      <a href="#slide-6">6</a>
+      <a href="#slide-7">7</a>
+      <a href="#slide-8">8</a>
+      <a href="#slide-9">9</a>
+      <a href="#slide-10">10</a>
+      <a href="#slide-11">11</a>
+      <a href="#slide-12">12</a>
+      <a href="#slide-13">13</a>
+      <a href="#slide-14">14</a>
+      <a href="#slide-15">15</a>
+      <a href="#slide-16">16</a>
+      <a href="#slide-17">17</a>
+      <a href="#slide-18">18</a>
+      <a href="#slide-19">19</a>
+      <a href="#slide-20">20</a>
+      <a href="#slide-21">21</a>
+      <a href="#slide-22">22</a>
+      <a href="#slide-23">23</a>
+      <a href="#slide-24">24</a>
+      <a href="#slide-25">25</a>
+      <a href="#slide-26">26</a>
+      <a href="#slide-27">27</a>
+      <a href="#slide-28">28</a>
+      <a href="#slide-29">29</a>
+      <a href="#slide-30">30</a>
+      <a href="#slide-31">31</a>
+      <a href="#slide-32">32</a>
+      <a href="#slide-33">33</a>
+      <a href="#slide-34">34</a>
+      <a href="#slide-35">35</a>
+      <a href="#slide-36">36</a>
+      <a href="#slide-37">37</a>
+      <a href="#slide-38">38</a>
+      <a href="#slide-39">39</a>
+      <a href="#slide-40">40</a>
+      <a href="#slide-41">41</a>
+      <a href="#slide-42">42</a>
+      <a href="#slide-43">43</a>
+      <a href="#slide-44">44</a>
+      <a href="#slide-45">45</a>
+      <a href="#slide-46">46</a>
+      <a href="#slide-47">47</a>
+      <a href="#slide-48">48</a>
+      <a href="#slide-49">49</a>
+      <a href="#slide-50">50</a>
+      <a href="#slide-51">51</a>
+      <a href="#slide-52">52</a>
+      <a href="#slide-53">53</a>
+      <a href="#slide-54">54</a>
+      <a href="#slide-55">55</a>
+      <a href="#slide-56">56</a>
+      <a href="#slide-57">57</a>
+      <a href="#slide-58">58</a>
+      <a href="#slide-59">59</a>
+      <a href="#slide-60">60</a>
+      <a href="#slide-61">61</a>
+      <a href="#slide-62">62</a>
+      <a href="#slide-63">63</a>
+      <a href="#slide-64">64</a>
+      <a href="#slide-65">65</a>
+      <a href="#slide-66">66</a>
+      <a href="#slide-67">67</a>
+      <a href="#slide-68">68</a>
+      <a href="#slide-69">69</a>
+      <a href="#slide-70">70</a>
+      <a href="#slide-71">71</a>
+      <a href="#slide-72">72</a>
+  </div>
+</div>
+<!-- Thin trigger strip at left: hover to reveal sidenav -->
+<div class="sidenav-trigger" id="sidenav-trigger"></div>
+<div class="shell">
+  <nav class="sidenav" id="sidenav">
+    <div class="sidenav-section">Course outline</div>
+    <a href="#slide-3" class="active">📚 Topics Covered</a>
+    <a href="#slide-8">CDI Architecture</a>
+    <a href="#slide-9">Enabling CDI</a>
+    <a href="#slide-11">What are Bean Scopes?</a>
+    <a href="#slide-12">@ApplicationScoped - Singleton Beans</a>
+    <a href="#slide-13">@RequestScoped - Per-Request Beans</a>
+    <a href="#slide-14">@SessionScoped - Per-User Beans</a>
+    <a href="#slide-15">@Dependent - Default Scope</a>
+    <a href="#slide-18">Basic Injection with @Inject</a>
+    <a href="#slide-20">Qualifiers - Type-Safe Selection</a>
+    <a href="#slide-21">Creating Custom Qualifiers</a>
+    <a href="#slide-23">@Alternative - Switchable Implementations</a>
+    <a href="#slide-25">What are Producer Methods?</a>
+    <a href="#slide-26">Producer Methods with Configuration</a>
+    <a href="#slide-27">Producer Methods with Qualifiers</a>
+    <a href="#slide-28">Disposer Methods</a>
+    <a href="#slide-30">Interceptors - Cross-Cutting Concerns</a>
+    <a href="#slide-33">Performance Monitoring Interceptor</a>
+    <a href="#slide-34">Decorators - Dynamic Behavior</a>
+    <a href="#slide-37">@Transactional Annotation</a>
+    <a href="#slide-38">Transaction Attributes</a>
+    <a href="#slide-39">Transaction Types</a>
+    <a href="#slide-40">Rollback Strategies</a>
+    <a href="#slide-41">JTA Configuration for CDI</a>
+    <a href="#slide-42">EntityManager Producer for CDI</a>
+    <a href="#slide-44">Bean-Managed Transactions (BMT)</a>
+    <a href="#slide-45">UserTransaction API</a>
+    <a href="#slide-47">Multiple Transaction Boundaries</a>
+    <a href="#slide-48">Transaction Isolation Levels</a>
+    <a href="#slide-49">Isolation Levels Explained</a>
+    <a href="#slide-50">Distributed Transactions (JTS)</a>
+    <a href="#slide-51">Two-Phase Commit (2PC)</a>
+    <a href="#slide-52">Transaction Timeout</a>
+    <a href="#slide-53">Transaction Status Codes</a>
+    <a href="#slide-56">When to Use Each Approach</a>
+    <a href="#slide-57">Lab 4 Preview: Transaction Exercises</a>
+    <a href="#slide-59">Event-Driven Architecture with CDI</a>
+    <a href="#slide-60">Defining and Firing Events</a>
+    <a href="#slide-61">Observing Events</a>
+    <a href="#slide-62">Event Qualifiers</a>
+    <a href="#slide-63">Conditional Observers</a>
+    <a href="#slide-65">🎯 Lab 4 Preview</a>
+    <a href="#slide-67">❓ Questions?</a>
+    <a href="#slide-69">🙋 Questions &amp; Discussion</a>
+    <hr>
+    <div class="sidenav-section">Navigation</div>
+    <a href="index.html">&#9675; Overview</a>
+  </nav>
+  <main class="content">
+    <div class="slide-wrapper">
+<section id="slide-1" class="slide slide--title">
+<h1 data-en="💉 Lecture 4: CDI and Dependency Injection" data-fr="💉 Lecture 4: CDI and Injection de dépendances">💉 Lecture 4: CDI and Dependency Injection</h1>
+<p data-en="<strong>Jakarta Contexts and Dependency Injection (CDI)</strong>" data-fr="Jakarta Contexts and Injection de dépendances (CDI)"><strong>Jakarta Contexts and Dependency Injection (CDI)</strong></p>
+
+<span class="slide-counter">1 / 72</span>
+<div class="slide-nav">
+  <a class="disabled">&#8592; Previous</a>
+  <span class="slide-info">Slide 1 / 72 &nbsp;&middot;&nbsp; 💉 Lecture 4: CDI and Dependency Injection</span>
+  <a href="#slide-2">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-2" class="slide">
+<h2 data-en="📋 Lecture Objectives" data-fr="📋 Lecture Objectifs">📋 Lecture Objectives</h2>
+<p data-en="By the end of this lecture, you will be able to:" data-fr="À la fin de cette leçon, vous serez en mesure de:">By the end of this lecture, you will be able to:</p>
+<table class="slide-table"><thead><tr><th></th><th></th></tr></thead><tbody>
+<tr><td>✅</td><td>Understand dependency injection principles and benefits</td></tr>
+<tr><td>✅</td><td>Use CDI annotations to manage bean lifecycle</td></tr>
+<tr><td>✅</td><td>Apply different bean scopes appropriately</td></tr>
+<tr><td>✅</td><td>Implement qualifiers for type-safe injection</td></tr>
+<tr><td>✅</td><td>Use producer methods for complex object creation</td></tr>
+<tr><td>✅</td><td>Apply declarative transaction management with @Transactional</td></tr>
+</tbody></table>
+
+<span class="slide-counter">2 / 72</span>
+<div class="slide-nav">
+  <a href="#slide-1">&#8592; Previous</a>
+  <span class="slide-info">Slide 2 / 72 &nbsp;&middot;&nbsp; 💉 Lecture 4: CDI and Dependency Injection</span>
+  <a href="#slide-3">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-3" class="slide">
+<h2>📚 Topics Covered</h2>
+<p data-en="<strong>Part 1:</strong> Introduction to Dependency Injection and CDI" data-fr="Part 1: Introduction à Injection de dépendances and CDI"><strong>Part 1:</strong> Introduction to Dependency Injection and CDI</p>
+<p data-en="<strong>Part 2:</strong> CDI Bean Scopes and Lifecycle" data-fr="Part 2: CDI Bean Scopes and Cycle de vie"><strong>Part 2:</strong> CDI Bean Scopes and Lifecycle</p>
+<p><strong>Part 3:</strong> Injection Points and Qualifiers</p>
+<p><strong>Part 4:</strong> Producer Methods and Disposers</p>
+<p><strong>Part 5:</strong> Interceptors and Decorators</p>
+<p data-en="<strong>Part 6:</strong> Declarative Transaction Management" data-fr="Part 6: Declarative Gestion des transactions"><strong>Part 6:</strong> Declarative Transaction Management</p>
+<p><strong>Part 7:</strong> CDI Events and Observers</p>
+
+<span class="slide-counter">3 / 72</span>
+<div class="slide-nav">
+  <a href="#slide-2">&#8592; Previous</a>
+  <span class="slide-info">Slide 3 / 72 &nbsp;&middot;&nbsp; 💉 Lecture 4: CDI and Dependency Injection</span>
+  <a href="#slide-4">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-4" class="slide slide--section">
+<h1 data-en="Part 1: Introduction to Dependency Injection" data-fr="Part 1: Introduction à Injection de dépendances">Part 1: Introduction to Dependency Injection</h1>
+
+<span class="slide-counter">4 / 72</span>
+<div class="slide-nav">
+  <a href="#slide-3">&#8592; Previous</a>
+  <span class="slide-info">Slide 4 / 72 &nbsp;&middot;&nbsp; 💉 Lecture 4: CDI and Dependency Injection</span>
+  <a href="#slide-5">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-5" class="slide">
+<h2 data-en="What is Dependency Injection?" data-fr="Qu'est-ce que Injection de dépendances?">What is Dependency Injection?</h2>
+<p data-en="<strong>Dependency Injection (DI)</strong> is a design pattern where objects receive their dependencies from external sources rather than creating them internally." data-fr="Injection de dépendances (DI) is a design pattern where objects receive their dependencies from external sources rather than creating them internally."><strong>Dependency Injection (DI)</strong> is a design pattern where objects receive their dependencies from external sources rather than creating them internally.</p>
+<h3>Traditional Approach (Without DI):</h3>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>public class ClientController {
+    private ClientService clientService;
+    
+    public ClientController() {
+        // Tight coupling - controller creates its own dependencies
+        this.clientService = new ClientService();
+    }
+}</code></pre>
+<p><strong>Problems:</strong></p>
+<ul>
+<li>Tight coupling between classes</li>
+<li>Hard to test (can't mock dependencies)</li>
+<li>Difficult to change implementations</li>
+<li data-en="Manual lifecycle management" data-fr="Manual Cycle de vie management">Manual lifecycle management</li>
+</ul>
+
+<span class="slide-counter">5 / 72</span>
+<div class="slide-nav">
+  <a href="#slide-4">&#8592; Previous</a>
+  <span class="slide-info">Slide 5 / 72 &nbsp;&middot;&nbsp; 💉 Lecture 4: CDI and Dependency Injection</span>
+  <a href="#slide-6">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-6" class="slide">
+<h2 data-en="Dependency Injection Approach" data-fr="Injection de dépendances Approach">Dependency Injection Approach</h2>
+<h3>With DI:</h3>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>@WebServlet(&quot;/clients&quot;)
+public class ClientController extends HttpServlet {
+    
+    @Inject
+    private ClientService clientService;
+    
+    // No constructor needed!
+    // CDI container injects the dependency automatically
+}</code></pre>
+<p><strong>Benefits:</strong></p>
+<ul>
+<li>Loose coupling</li>
+<li>Easy to test (inject mocks)</li>
+<li>Flexible (change implementations easily)</li>
+<li data-en="Automatic lifecycle management" data-fr="Automatic Cycle de vie management">Automatic lifecycle management</li>
+<li>Cleaner code</li>
+</ul>
+
+<span class="slide-counter">6 / 72</span>
+<div class="slide-nav">
+  <a href="#slide-5">&#8592; Previous</a>
+  <span class="slide-info">Slide 6 / 72 &nbsp;&middot;&nbsp; 💉 Lecture 4: CDI and Dependency Injection</span>
+  <a href="#slide-7">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-7" class="slide">
+<h2 data-en="What is CDI?" data-fr="Qu'est-ce que CDI?">What is CDI?</h2>
+<p data-en="<strong>Jakarta Contexts and Dependency Injection (CDI)</strong> is the standard dependency injection framework for Jakarta EE." data-fr="Jakarta Contexts and Injection de dépendances (CDI) is the standard Injection de dépendances framework for Jakarta EE."><strong>Jakarta Contexts and Dependency Injection (CDI)</strong> is the standard dependency injection framework for Jakarta EE.</p>
+<h3 data-en="Key Features:" data-fr="Fonctionnalités clés:">Key Features:</h3>
+<table class="slide-table"><thead><tr><th>Feature</th><th>Description</th></tr></thead><tbody>
+<tr><td><strong>Type-safe DI</strong></td><td>Compile-time type checking</td></tr>
+<tr><td><strong>Contextual lifecycle</strong></td><td>Automatic bean lifecycle management</td></tr>
+<tr><td><strong>Interceptors</strong></td><td>Cross-cutting concerns (logging, security)</td></tr>
+<tr><td><strong>Events</strong></td><td>Loosely coupled communication</td></tr>
+<tr><td><strong>Decorators</strong></td><td>Dynamic behavior enhancement</td></tr>
+<tr><td><strong>Producers</strong></td><td>Complex object creation</td></tr>
+</tbody></table>
+
+<span class="slide-counter">7 / 72</span>
+<div class="slide-nav">
+  <a href="#slide-6">&#8592; Previous</a>
+  <span class="slide-info">Slide 7 / 72 &nbsp;&middot;&nbsp; 💉 Lecture 4: CDI and Dependency Injection</span>
+  <a href="#slide-8">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-8" class="slide">
+<h2>CDI Architecture</h2>
+<h3>How CDI Works:</h3>
+<p><img src="../../images/04-cdi-dependency-injection-diagram-1.png" alt="width:70%"></p>
+
+<span class="slide-counter">8 / 72</span>
+<div class="slide-nav">
+  <a href="#slide-7">&#8592; Previous</a>
+  <span class="slide-info">Slide 8 / 72 &nbsp;&middot;&nbsp; 💉 Lecture 4: CDI and Dependency Injection</span>
+  <a href="#slide-9">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-9" class="slide">
+<h2>Enabling CDI</h2>
+<h3>beans.xml Configuration</h3>
+<p>Create <code>src/main/webapp/WEB-INF/beans.xml</code>:</p>
+<pre class="dark"><span class="lang-badge">xml</span>
+<code>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
+&lt;beans xmlns=&quot;https://jakarta.ee/xml/ns/jakartaee&quot;
+       xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot;
+       xsi:schemaLocation=&quot;https://jakarta.ee/xml/ns/jakartaee
+       https://jakarta.ee/xml/ns/jakartaee/beans_4_0.xsd&quot;
+       version=&quot;4.0&quot;
+       bean-discovery-mode=&quot;all&quot;&gt;
+&lt;/beans&gt;</code></pre>
+<p><strong>Bean Discovery Modes:</strong></p>
+<ul>
+<li><code>all</code> - All classes are potential beans</li>
+<li><code>annotated</code> - Only classes with bean-defining annotations</li>
+<li><code>none</code> - CDI disabled</li>
+</ul>
+
+<span class="slide-counter">9 / 72</span>
+<div class="slide-nav">
+  <a href="#slide-8">&#8592; Previous</a>
+  <span class="slide-info">Slide 9 / 72 &nbsp;&middot;&nbsp; 💉 Lecture 4: CDI and Dependency Injection</span>
+  <a href="#slide-10">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-10" class="slide slide--section">
+<h1>Part 2: CDI Bean Scopes</h1>
+
+<span class="slide-counter">10 / 72</span>
+<div class="slide-nav">
+  <a href="#slide-9">&#8592; Previous</a>
+  <span class="slide-info">Slide 10 / 72 &nbsp;&middot;&nbsp; 💉 Lecture 4: CDI and Dependency Injection</span>
+  <a href="#slide-11">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-11" class="slide">
+<h2>What are Bean Scopes?</h2>
+<p data-en="<strong>Scopes</strong> define the lifecycle and visibility of CDI beans." data-fr="Scopes define the Cycle de vie and visibility of CDI beans."><strong>Scopes</strong> define the lifecycle and visibility of CDI beans.</p>
+<h3>Available Scopes:</h3>
+<table class="slide-table"><thead><tr><th>Scope</th><th>Annotation</th><th>Lifecycle</th><th>Use Case</th></tr></thead><tbody>
+<tr><td><strong>Request</strong></td><td><code>@RequestScoped</code></td><td>One HTTP request</td><td>Request-specific data</td></tr>
+<tr><td><strong>Session</strong></td><td><code>@SessionScoped</code></td><td>User session</td><td>User-specific data</td></tr>
+<tr><td><strong>Application</strong></td><td><code>@ApplicationScoped</code></td><td>Application lifetime</td><td>Singletons, services</td></tr>
+<tr><td><strong>Dependent</strong></td><td><code>@Dependent</code></td><td>Injecting bean's scope</td><td>Utility objects</td></tr>
+<tr><td><strong>Conversation</strong></td><td><code>@ConversationScoped</code></td><td>Multi-request workflow</td><td>Wizards, multi-step forms</td></tr>
+</tbody></table>
+
+<span class="slide-counter">11 / 72</span>
+<div class="slide-nav">
+  <a href="#slide-10">&#8592; Previous</a>
+  <span class="slide-info">Slide 11 / 72 &nbsp;&middot;&nbsp; 💉 Lecture 4: CDI and Dependency Injection</span>
+  <a href="#slide-12">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-12" class="slide">
+<h2>@ApplicationScoped - Singleton Beans</h2>
+<p><strong>Use for:</strong> Services, repositories, stateless components</p>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>@ApplicationScoped
+public class ClientService {
+    
+    @Inject
+    private EntityManager em;
+    
+    public List&lt;Client&gt; findAll() {
+        return em.createQuery(&quot;SELECT c FROM Client c&quot;, Client.class)
+                .getResultList();
+    }
+    
+    @Transactional
+    public void create(Client client) {
+        em.persist(client);
+    }
+}</code></pre>
+<p><strong>Characteristics:</strong></p>
+<ul>
+<li>One instance per application</li>
+<li>Shared across all users</li>
+<li>Must be thread-safe</li>
+<li>Ideal for stateless services</li>
+</ul>
+
+<span class="slide-counter">12 / 72</span>
+<div class="slide-nav">
+  <a href="#slide-11">&#8592; Previous</a>
+  <span class="slide-info">Slide 12 / 72 &nbsp;&middot;&nbsp; 💉 Lecture 4: CDI and Dependency Injection</span>
+  <a href="#slide-13">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-13" class="slide">
+<h2>@RequestScoped - Per-Request Beans</h2>
+<p><strong>Use for:</strong> Request-specific data, controllers</p>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>@RequestScoped
+@Named(&quot;clientBean&quot;)
+public class ClientBean {
+    
+    @Inject
+    private ClientService clientService;
+    
+    private List&lt;Client&gt; clients;
+    private Client selectedClient;
+    
+    @PostConstruct
+    public void init() {
+        clients = clientService.findAll();
+    }
+    
+    // Getters and setters
+}</code></pre>
+<p><strong>Characteristics:</strong></p>
+<ul>
+<li>New instance per HTTP request</li>
+<li>Destroyed after response sent</li>
+<li>Not shared between requests</li>
+<li>Ideal for web controllers</li>
+</ul>
+
+<span class="slide-counter">13 / 72</span>
+<div class="slide-nav">
+  <a href="#slide-12">&#8592; Previous</a>
+  <span class="slide-info">Slide 13 / 72 &nbsp;&middot;&nbsp; 💉 Lecture 4: CDI and Dependency Injection</span>
+  <a href="#slide-14">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-14" class="slide">
+<h2>@SessionScoped - Per-User Beans</h2>
+<p><strong>Use for:</strong> User-specific data, shopping carts, user preferences</p>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>@SessionScoped
+public class UserSession implements Serializable {
+    
+    private static final long serialVersionUID = 1L;
+    
+    private String username;
+    private List&lt;String&gt; recentActions = new ArrayList&lt;&gt;();
+    
+    public void addAction(String action) {
+        recentActions.add(action);
+    }
+    
+    public void logout() {
+        username = null;
+        recentActions.clear();
+    }
+    
+    // Getters and setters
+}</code></pre>
+<p><strong>Characteristics:</strong></p>
+<ul>
+<li>One instance per user session</li>
+<li>Must implement <code>Serializable</code></li>
+<li>Survives multiple requests</li>
+<li>Destroyed when session expires</li>
+</ul>
+
+<span class="slide-counter">14 / 72</span>
+<div class="slide-nav">
+  <a href="#slide-13">&#8592; Previous</a>
+  <span class="slide-info">Slide 14 / 72 &nbsp;&middot;&nbsp; 💉 Lecture 4: CDI and Dependency Injection</span>
+  <a href="#slide-15">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-15" class="slide">
+<h2>@Dependent - Default Scope</h2>
+<p><strong>Use for:</strong> Utility objects, value holders</p>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>@Dependent
+public class EmailValidator {
+    
+    public boolean isValid(String email) {
+        return email != null &amp;&amp; 
+               email.matches(&quot;^[A-Za-z0-9+_.-]+@(.+)$&quot;);
+    }
+}</code></pre>
+<p><strong>Characteristics:</strong></p>
+<ul>
+<li data-en="No independent lifecycle" data-fr="No independent Cycle de vie">No independent lifecycle</li>
+<li data-en="Lifecycle tied to injecting bean" data-fr="Cycle de vie tied to injecting bean">Lifecycle tied to injecting bean</li>
+<li>New instance per injection point</li>
+<li>Default scope if none specified</li>
+</ul>
+
+<span class="slide-counter">15 / 72</span>
+<div class="slide-nav">
+  <a href="#slide-14">&#8592; Previous</a>
+  <span class="slide-info">Slide 15 / 72 &nbsp;&middot;&nbsp; 💉 Lecture 4: CDI and Dependency Injection</span>
+  <a href="#slide-16">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-16" class="slide">
+<h2 data-en="Bean Lifecycle Callbacks" data-fr="Bean Cycle de vie Callbacks">Bean Lifecycle Callbacks</h2>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>@ApplicationScoped
+public class ClientService {
+    
+    @Inject
+    private EntityManager em;
+    
+    @PostConstruct
+    public void init() {
+        System.out.println(&quot;ClientService initialized&quot;);
+        // Initialization logic
+    }
+    
+    @PreDestroy
+    public void cleanup() {
+        System.out.println(&quot;ClientService destroyed&quot;);
+        // Cleanup logic
+    }
+}</code></pre>
+<p data-en="<strong>Lifecycle Methods:</strong>" data-fr="Cycle de vie Methods:"><strong>Lifecycle Methods:</strong></p>
+<ul>
+<li data-en="<code>@PostConstruct</code> - Called after dependency injection" data-fr="@PostConstruct - Called after Injection de dépendances"><code>@PostConstruct</code> - Called after dependency injection</li>
+<li><code>@PreDestroy</code> - Called before bean destruction</li>
+</ul>
+
+<span class="slide-counter">16 / 72</span>
+<div class="slide-nav">
+  <a href="#slide-15">&#8592; Previous</a>
+  <span class="slide-info">Slide 16 / 72 &nbsp;&middot;&nbsp; 💉 Lecture 4: CDI and Dependency Injection</span>
+  <a href="#slide-17">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-17" class="slide slide--section">
+<h1>Part 3: Injection Points and Qualifiers</h1>
+
+<span class="slide-counter">17 / 72</span>
+<div class="slide-nav">
+  <a href="#slide-16">&#8592; Previous</a>
+  <span class="slide-info">Slide 17 / 72 &nbsp;&middot;&nbsp; 💉 Lecture 4: CDI and Dependency Injection</span>
+  <a href="#slide-18">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-18" class="slide">
+<h2>Basic Injection with @Inject</h2>
+<h3>Field Injection:</h3>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>@WebServlet(&quot;/clients&quot;)
+public class ClientController extends HttpServlet {
+    
+    @Inject
+    private ClientService clientService;
+    
+    @Inject
+    private AccountService accountService;
+}</code></pre>
+<h3>Constructor Injection (Recommended):</h3>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>@ApplicationScoped
+public class ClientService {
+    
+    private final EntityManager em;
+    
+    @Inject
+    public ClientService(EntityManager em) {
+        this.em = em;
+    }
+}</code></pre>
+
+<span class="slide-counter">18 / 72</span>
+<div class="slide-nav">
+  <a href="#slide-17">&#8592; Previous</a>
+  <span class="slide-info">Slide 18 / 72 &nbsp;&middot;&nbsp; 💉 Lecture 4: CDI and Dependency Injection</span>
+  <a href="#slide-19">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-19" class="slide">
+<h2 data-en="Why Constructor Injection?" data-fr="Pourquoi Constructor Injection?">Why Constructor Injection?</h2>
+<p><strong>Advantages:</strong></p>
+<ul>
+<li>Immutable dependencies (final fields)</li>
+<li>Easier to test (no reflection needed)</li>
+<li>Clear dependencies</li>
+<li>Null-safe</li>
+</ul>
+<p data-en="<strong>Example:</strong>" data-fr="Exemple:"><strong>Example:</strong></p>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>@ApplicationScoped
+public class TransferService {
+    
+    private final ClientService clientService;
+    private final AccountService accountService;
+    
+    @Inject
+    public TransferService(ClientService clientService,
+                          AccountService accountService) {
+        this.clientService = clientService;
+        this.accountService = accountService;
+    }
+    
+    @Transactional
+    public void transfer(Long fromId, Long toId, BigDecimal amount) {
+        // Use injected services
+    }
+}</code></pre>
+
+<span class="slide-counter">19 / 72</span>
+<div class="slide-nav">
+  <a href="#slide-18">&#8592; Previous</a>
+  <span class="slide-info">Slide 19 / 72 &nbsp;&middot;&nbsp; 💉 Lecture 4: CDI and Dependency Injection</span>
+  <a href="#slide-20">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-20" class="slide">
+<h2>Qualifiers - Type-Safe Selection</h2>
+<p><strong>Problem:</strong> Multiple implementations of same interface</p>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>public interface PaymentProcessor {
+    void process(Payment payment);
+}
+
+@ApplicationScoped
+public class CreditCardProcessor implements PaymentProcessor {
+    // Implementation
+}
+
+@ApplicationScoped
+public class PayPalProcessor implements PaymentProcessor {
+    // Implementation
+}</code></pre>
+<p data-en="<strong>How to inject the right one?</strong> → Use Qualifiers!" data-fr="Comment inject the right one? → Use Qualifiers!"><strong>How to inject the right one?</strong> → Use Qualifiers!</p>
+
+<span class="slide-counter">20 / 72</span>
+<div class="slide-nav">
+  <a href="#slide-19">&#8592; Previous</a>
+  <span class="slide-info">Slide 20 / 72 &nbsp;&middot;&nbsp; 💉 Lecture 4: CDI and Dependency Injection</span>
+  <a href="#slide-21">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-21" class="slide">
+<h2>Creating Custom Qualifiers</h2>
+<h3>Define Qualifier Annotation:</h3>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>@Qualifier
+@Retention(RUNTIME)
+@Target({TYPE, METHOD, FIELD, PARAMETER})
+public @interface CreditCard {
+}
+
+@Qualifier
+@Retention(RUNTIME)
+@Target({TYPE, METHOD, FIELD, PARAMETER})
+public @interface PayPal {
+}</code></pre>
+<h3>Apply to Implementations:</h3>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>@CreditCard
+@ApplicationScoped
+public class CreditCardProcessor implements PaymentProcessor {
+    public void process(Payment payment) {
+        // Credit card processing
+    }
+}
+
+@PayPal
+@ApplicationScoped
+public class PayPalProcessor implements PaymentProcessor {
+    public void process(Payment payment) {
+        // PayPal processing
+    }
+}</code></pre>
+
+<span class="slide-counter">21 / 72</span>
+<div class="slide-nav">
+  <a href="#slide-20">&#8592; Previous</a>
+  <span class="slide-info">Slide 21 / 72 &nbsp;&middot;&nbsp; 💉 Lecture 4: CDI and Dependency Injection</span>
+  <a href="#slide-22">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-22" class="slide">
+<h2 data-en="Using Qualifiers for Injection" data-fr="Utilisation de Qualifiers for Injection">Using Qualifiers for Injection</h2>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>@ApplicationScoped
+public class PaymentService {
+    
+    @Inject
+    @CreditCard
+    private PaymentProcessor creditCardProcessor;
+    
+    @Inject
+    @PayPal
+    private PaymentProcessor payPalProcessor;
+    
+    public void processPayment(Payment payment) {
+        if (payment.getType() == PaymentType.CREDIT_CARD) {
+            creditCardProcessor.process(payment);
+        } else if (payment.getType() == PaymentType.PAYPAL) {
+            payPalProcessor.process(payment);
+        }
+    }
+}</code></pre>
+<p><strong>Benefits:</strong></p>
+<ul>
+<li>Type-safe selection</li>
+<li>Compile-time checking</li>
+<li>Clear intent</li>
+<li>No string-based lookup</li>
+</ul>
+
+<span class="slide-counter">22 / 72</span>
+<div class="slide-nav">
+  <a href="#slide-21">&#8592; Previous</a>
+  <span class="slide-info">Slide 22 / 72 &nbsp;&middot;&nbsp; 💉 Lecture 4: CDI and Dependency Injection</span>
+  <a href="#slide-23">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-23" class="slide">
+<h2>@Alternative - Switchable Implementations</h2>
+<p><strong>Use for:</strong> Different implementations for different environments</p>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>@Alternative
+@Priority(100)
+@ApplicationScoped
+public class MockPaymentProcessor implements PaymentProcessor {
+    
+    @Override
+    public void process(Payment payment) {
+        System.out.println(&quot;Mock payment: &quot; + payment.getAmount());
+        // No actual processing
+    }
+}</code></pre>
+<p><strong>Activation in beans.xml:</strong></p>
+<pre class="dark"><span class="lang-badge">xml</span>
+<code>&lt;beans&gt;
+    &lt;alternatives&gt;
+        &lt;class&gt;com.bank.service.MockPaymentProcessor&lt;/class&gt;
+    &lt;/alternatives&gt;
+&lt;/beans&gt;</code></pre>
+
+<span class="slide-counter">23 / 72</span>
+<div class="slide-nav">
+  <a href="#slide-22">&#8592; Previous</a>
+  <span class="slide-info">Slide 23 / 72 &nbsp;&middot;&nbsp; 💉 Lecture 4: CDI and Dependency Injection</span>
+  <a href="#slide-24">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-24" class="slide slide--section">
+<h1>Part 4: Producer Methods</h1>
+
+<span class="slide-counter">24 / 72</span>
+<div class="slide-nav">
+  <a href="#slide-23">&#8592; Previous</a>
+  <span class="slide-info">Slide 24 / 72 &nbsp;&middot;&nbsp; 💉 Lecture 4: CDI and Dependency Injection</span>
+  <a href="#slide-25">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-25" class="slide">
+<h2>What are Producer Methods?</h2>
+<p data-en="<strong>Producer methods</strong> create and configure beans programmatically when simple injection isn't enough." data-fr="Producer methods create and configure beans programmatically when Simple injection isn't enough."><strong>Producer methods</strong> create and configure beans programmatically when simple injection isn't enough.</p>
+<h3>Use Cases:</h3>
+<ul>
+<li>Complex object creation</li>
+<li>Third-party classes (can't annotate)</li>
+<li data-en="Runtime configuration" data-fr="Environnement d'exécution Configuration">Runtime configuration</li>
+<li>Resource management</li>
+</ul>
+<h3>Basic Producer:</h3>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>@ApplicationScoped
+public class EntityManagerProducer {
+    
+    @PersistenceContext
+    private EntityManager em;
+    
+    @Produces
+    @RequestScoped
+    public EntityManager getEntityManager() {
+        return em;
+    }
+}</code></pre>
+
+<span class="slide-counter">25 / 72</span>
+<div class="slide-nav">
+  <a href="#slide-24">&#8592; Previous</a>
+  <span class="slide-info">Slide 25 / 72 &nbsp;&middot;&nbsp; 💉 Lecture 4: CDI and Dependency Injection</span>
+  <a href="#slide-26">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-26" class="slide">
+<h2>Producer Methods with Configuration</h2>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>@ApplicationScoped
+public class DataSourceProducer {
+    
+    @Inject
+    @ConfigProperty(name = &quot;db.url&quot;)
+    private String dbUrl;
+    
+    @Inject
+    @ConfigProperty(name = &quot;db.user&quot;)
+    private String dbUser;
+    
+    @Inject
+    @ConfigProperty(name = &quot;db.password&quot;)
+    private String dbPassword;
+    
+    @Produces
+    @ApplicationScoped
+    public DataSource createDataSource() {
+        HikariConfig config = new HikariConfig();
+        config.setJdbcUrl(dbUrl);
+        config.setUsername(dbUser);
+        config.setPassword(dbPassword);
+        config.setMaximumPoolSize(10);
+        
+        return new HikariDataSource(config);
+    }
+}</code></pre>
+
+<span class="slide-counter">26 / 72</span>
+<div class="slide-nav">
+  <a href="#slide-25">&#8592; Previous</a>
+  <span class="slide-info">Slide 26 / 72 &nbsp;&middot;&nbsp; 💉 Lecture 4: CDI and Dependency Injection</span>
+  <a href="#slide-27">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-27" class="slide">
+<h2>Producer Methods with Qualifiers</h2>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>@ApplicationScoped
+public class LoggerProducer {
+    
+    @Produces
+    public Logger produceLogger(InjectionPoint injectionPoint) {
+        return Logger.getLogger(
+            injectionPoint.getMember()
+                         .getDeclaringClass()
+                         .getName()
+        );
+    }
+}</code></pre>
+<p><strong>Usage:</strong></p>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>@ApplicationScoped
+public class ClientService {
+    
+    @Inject
+    private Logger logger;  // Automatically gets logger for ClientService
+    
+    public void create(Client client) {
+        logger.info(&quot;Creating client: &quot; + client.getName());
+        // ...
+    }
+}</code></pre>
+
+<span class="slide-counter">27 / 72</span>
+<div class="slide-nav">
+  <a href="#slide-26">&#8592; Previous</a>
+  <span class="slide-info">Slide 27 / 72 &nbsp;&middot;&nbsp; 💉 Lecture 4: CDI and Dependency Injection</span>
+  <a href="#slide-28">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-28" class="slide">
+<h2>Disposer Methods</h2>
+<p><strong>Clean up resources</strong> created by producers:</p>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>@ApplicationScoped
+public class DataSourceProducer {
+    
+    @Produces
+    @ApplicationScoped
+    public DataSource createDataSource() {
+        // Create and configure DataSource
+        return new HikariDataSource(config);
+    }
+    
+    public void closeDataSource(@Disposes DataSource dataSource) {
+        if (dataSource instanceof HikariDataSource) {
+            ((HikariDataSource) dataSource).close();
+        }
+    }
+}</code></pre>
+<p data-en="<strong>Lifecycle:</strong>" data-fr="Cycle de vie:"><strong>Lifecycle:</strong></p>
+<ol>
+<li>Producer method called when bean needed</li>
+<li>Bean used throughout its scope</li>
+<li>Disposer method called when scope ends</li>
+</ol>
+
+<span class="slide-counter">28 / 72</span>
+<div class="slide-nav">
+  <a href="#slide-27">&#8592; Previous</a>
+  <span class="slide-info">Slide 28 / 72 &nbsp;&middot;&nbsp; 💉 Lecture 4: CDI and Dependency Injection</span>
+  <a href="#slide-29">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-29" class="slide slide--section">
+<h1>Part 5: Interceptors and Decorators</h1>
+
+<span class="slide-counter">29 / 72</span>
+<div class="slide-nav">
+  <a href="#slide-28">&#8592; Previous</a>
+  <span class="slide-info">Slide 29 / 72 &nbsp;&middot;&nbsp; 💉 Lecture 4: CDI and Dependency Injection</span>
+  <a href="#slide-30">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-30" class="slide">
+<h2>Interceptors - Cross-Cutting Concerns</h2>
+<p><strong>Interceptors</strong> add behavior to methods without modifying the method itself.</p>
+<h3>Common Use Cases:</h3>
+<ul>
+<li>Logging</li>
+<li data-en="Security checks" data-fr="Sécurité checks">Security checks</li>
+<li>Performance monitoring</li>
+<li data-en="Transaction management" data-fr="Gestion des transactions">Transaction management</li>
+<li>Caching</li>
+</ul>
+<h3>Creating an Interceptor:</h3>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>@InterceptorBinding
+@Retention(RUNTIME)
+@Target({TYPE, METHOD})
+public @interface Logged {
+}</code></pre>
+
+<span class="slide-counter">30 / 72</span>
+<div class="slide-nav">
+  <a href="#slide-29">&#8592; Previous</a>
+  <span class="slide-info">Slide 30 / 72 &nbsp;&middot;&nbsp; 💉 Lecture 4: CDI and Dependency Injection</span>
+  <a href="#slide-31">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-31" class="slide">
+<h2 data-en="Implementing an Interceptor" data-fr="Implémentation de an Interceptor">Implementing an Interceptor</h2>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>@Logged
+@Interceptor
+@Priority(Interceptor.Priority.APPLICATION)
+public class LoggingInterceptor {
+    
+    @Inject
+    private Logger logger;
+    
+    @AroundInvoke
+    public Object logMethod(InvocationContext context) throws Exception {
+        String methodName = context.getMethod().getName();
+        String className = context.getTarget().getClass().getSimpleName();
+        
+        logger.info(&quot;Entering: &quot; + className + &quot;.&quot; + methodName);
+        
+        try {
+            Object result = context.proceed();
+            logger.info(&quot;Exiting: &quot; + className + &quot;.&quot; + methodName);
+            return result;
+        } catch (Exception e) {
+            logger.severe(&quot;Exception in: &quot; + className + &quot;.&quot; + methodName + 
+                         &quot; - &quot; + e.getMessage());
+            throw e;
+        }
+    }
+}</code></pre>
+
+<span class="slide-counter">31 / 72</span>
+<div class="slide-nav">
+  <a href="#slide-30">&#8592; Previous</a>
+  <span class="slide-info">Slide 31 / 72 &nbsp;&middot;&nbsp; 💉 Lecture 4: CDI and Dependency Injection</span>
+  <a href="#slide-32">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-32" class="slide">
+<h2 data-en="Using Interceptors" data-fr="Utilisation de Interceptors">Using Interceptors</h2>
+<h3>On Class (All Methods):</h3>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>@Logged
+@ApplicationScoped
+public class ClientService {
+    
+    public List&lt;Client&gt; findAll() {
+        // Method automatically logged
+    }
+    
+    public void create(Client client) {
+        // Method automatically logged
+    }
+}</code></pre>
+<h3>On Specific Methods:</h3>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>@ApplicationScoped
+public class ClientService {
+    
+    @Logged
+    public List&lt;Client&gt; findAll() {
+        // Only this method logged
+    }
+    
+    public void create(Client client) {
+        // Not logged
+    }
+}</code></pre>
+
+<span class="slide-counter">32 / 72</span>
+<div class="slide-nav">
+  <a href="#slide-31">&#8592; Previous</a>
+  <span class="slide-info">Slide 32 / 72 &nbsp;&middot;&nbsp; 💉 Lecture 4: CDI and Dependency Injection</span>
+  <a href="#slide-33">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-33" class="slide">
+<h2>Performance Monitoring Interceptor</h2>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>@InterceptorBinding
+@Retention(RUNTIME)
+@Target({TYPE, METHOD})
+public @interface Monitored {
+}
+
+@Monitored
+@Interceptor
+@Priority(Interceptor.Priority.APPLICATION)
+public class PerformanceInterceptor {
+    
+    @Inject
+    private Logger logger;
+    
+    @AroundInvoke
+    public Object monitor(InvocationContext context) throws Exception {
+        long start = System.currentTimeMillis();
+        
+        try {
+            return context.proceed();
+        } finally {
+            long duration = System.currentTimeMillis() - start;
+            logger.info(context.getMethod().getName() + 
+                       &quot; took &quot; + duration + &quot;ms&quot;);
+        }
+    }
+}</code></pre>
+
+<span class="slide-counter">33 / 72</span>
+<div class="slide-nav">
+  <a href="#slide-32">&#8592; Previous</a>
+  <span class="slide-info">Slide 33 / 72 &nbsp;&middot;&nbsp; 💉 Lecture 4: CDI and Dependency Injection</span>
+  <a href="#slide-34">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-34" class="slide">
+<h2>Decorators - Dynamic Behavior</h2>
+<p><strong>Decorators</strong> wrap beans to add behavior while maintaining the same interface.</p>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>@Decorator
+@Priority(Interceptor.Priority.APPLICATION)
+public abstract class AuditedClientService implements ClientService {
+    
+    @Inject
+    @Delegate
+    @Any
+    private ClientService delegate;
+    
+    @Inject
+    private AuditService auditService;
+    
+    @Override
+    public void create(Client client) {
+        delegate.create(client);
+        auditService.log(&quot;Created client: &quot; + client.getName());
+    }
+    
+    @Override
+    public void delete(Long id) {
+        delegate.delete(id);
+        auditService.log(&quot;Deleted client: &quot; + id);
+    }
+}</code></pre>
+
+<span class="slide-counter">34 / 72</span>
+<div class="slide-nav">
+  <a href="#slide-33">&#8592; Previous</a>
+  <span class="slide-info">Slide 34 / 72 &nbsp;&middot;&nbsp; 💉 Lecture 4: CDI and Dependency Injection</span>
+  <a href="#slide-35">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-35" class="slide slide--section">
+<h1 data-en="Part 6: Declarative Transaction Management" data-fr="Part 6: Declarative Gestion des transactions">Part 6: Declarative Transaction Management</h1>
+
+<span class="slide-counter">35 / 72</span>
+<div class="slide-nav">
+  <a href="#slide-34">&#8592; Previous</a>
+  <span class="slide-info">Slide 35 / 72 &nbsp;&middot;&nbsp; 💉 Lecture 4: CDI and Dependency Injection</span>
+  <a href="#slide-36">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-36" class="slide">
+<h2 data-en="Why Declarative Transactions?" data-fr="Pourquoi Declarative Transactions?">Why Declarative Transactions?</h2>
+<h3 data-en="Manual Transaction Management (Lab 3):" data-fr="Manual Gestion des transactions (Lab 3):">Manual Transaction Management (Lab 3):</h3>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>public void create(Client client) {
+    EntityManager em = emf.createEntityManager();
+    EntityTransaction tx = em.getTransaction();
+    
+    try {
+        tx.begin();
+        em.persist(client);
+        tx.commit();
+    } catch (Exception e) {
+        if (tx.isActive()) {
+            tx.rollback();
+        }
+        throw e;
+    } finally {
+        em.close();
+    }
+}</code></pre>
+<p><strong>Problems:</strong> Boilerplate code, error-prone, hard to maintain</p>
+
+<span class="slide-counter">36 / 72</span>
+<div class="slide-nav">
+  <a href="#slide-35">&#8592; Previous</a>
+  <span class="slide-info">Slide 36 / 72 &nbsp;&middot;&nbsp; 💉 Lecture 4: CDI and Dependency Injection</span>
+  <a href="#slide-37">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-37" class="slide">
+<h2>@Transactional Annotation</h2>
+<h3>Declarative Approach:</h3>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>@ApplicationScoped
+public class ClientService {
+    
+    @Inject
+    private EntityManager em;
+    
+    @Transactional
+    public void create(Client client) {
+        em.persist(client);
+        // Transaction automatically managed!
+    }
+    
+    @Transactional
+    public void update(Client client) {
+        em.merge(client);
+    }
+    
+    @Transactional
+    public void delete(Long id) {
+        Client client = em.find(Client.class, id);
+        if (client != null) {
+            em.remove(client);
+        }
+    }
+}</code></pre>
+<p><strong>Benefits:</strong> Clean code, automatic rollback, consistent behavior</p>
+
+<span class="slide-counter">37 / 72</span>
+<div class="slide-nav">
+  <a href="#slide-36">&#8592; Previous</a>
+  <span class="slide-info">Slide 37 / 72 &nbsp;&middot;&nbsp; 💉 Lecture 4: CDI and Dependency Injection</span>
+  <a href="#slide-38">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-38" class="slide">
+<h2>Transaction Attributes</h2>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>@ApplicationScoped
+public class ClientService {
+    
+    // Default: REQUIRED - Join existing or create new
+    @Transactional
+    public void create(Client client) {
+        em.persist(client);
+    }
+    
+    // REQUIRES_NEW - Always create new transaction
+    @Transactional(Transactional.TxType.REQUIRES_NEW)
+    public void audit(String action) {
+        AuditLog log = new AuditLog(action);
+        em.persist(log);
+    }
+    
+    // SUPPORTS - Use transaction if exists, otherwise non-transactional
+    @Transactional(Transactional.TxType.SUPPORTS)
+    public List&lt;Client&gt; findAll() {
+        return em.createQuery(&quot;SELECT c FROM Client c&quot;, Client.class)
+                .getResultList();
+    }
+}</code></pre>
+
+<span class="slide-counter">38 / 72</span>
+<div class="slide-nav">
+  <a href="#slide-37">&#8592; Previous</a>
+  <span class="slide-info">Slide 38 / 72 &nbsp;&middot;&nbsp; 💉 Lecture 4: CDI and Dependency Injection</span>
+  <a href="#slide-39">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-39" class="slide">
+<h2>Transaction Types</h2>
+<table class="slide-table"><thead><tr><th>Type</th><th>Description</th><th>Use Case</th></tr></thead><tbody>
+<tr><td><strong>REQUIRED</strong></td><td>Join existing or create new (default)</td><td>Most operations</td></tr>
+<tr><td><strong>REQUIRES_NEW</strong></td><td>Always create new transaction</td><td>Independent operations, audit logs</td></tr>
+<tr><td><strong>MANDATORY</strong></td><td>Must have existing transaction</td><td>Enforce transactional context</td></tr>
+<tr><td><strong>SUPPORTS</strong></td><td>Use if exists, otherwise non-transactional</td><td>Read operations</td></tr>
+<tr><td><strong>NOT_SUPPORTED</strong></td><td>Suspend existing transaction</td><td>Non-transactional operations</td></tr>
+<tr><td><strong>NEVER</strong></td><td>Throw exception if transaction exists</td><td>Ensure non-transactional</td></tr>
+</tbody></table>
+
+<span class="slide-counter">39 / 72</span>
+<div class="slide-nav">
+  <a href="#slide-38">&#8592; Previous</a>
+  <span class="slide-info">Slide 39 / 72 &nbsp;&middot;&nbsp; 💉 Lecture 4: CDI and Dependency Injection</span>
+  <a href="#slide-40">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-40" class="slide">
+<h2>Rollback Strategies</h2>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>@ApplicationScoped
+public class TransferService {
+    
+    @Inject
+    private AccountService accountService;
+    
+    // Rollback on any exception (default for RuntimeException)
+    @Transactional
+    public void transfer(Long fromId, Long toId, BigDecimal amount) {
+        Account from = accountService.findById(fromId);
+        Account to = accountService.findById(toId);
+        
+        if (from.getBalance().compareTo(amount) &lt; 0) {
+            throw new InsufficientFundsException();
+        }
+        
+        from.setBalance(from.getBalance().subtract(amount));
+        to.setBalance(to.getBalance().add(amount));
+        
+        accountService.update(from);
+        accountService.update(to);
+    }
+    
+    // Rollback on specific exceptions
+    @Transactional(rollbackOn = {ValidationException.class})
+    public void createWithValidation(Client client) {
+        validate(client);
+        em.persist(client);
+    }
+}</code></pre>
+
+<span class="slide-counter">40 / 72</span>
+<div class="slide-nav">
+  <a href="#slide-39">&#8592; Previous</a>
+  <span class="slide-info">Slide 40 / 72 &nbsp;&middot;&nbsp; 💉 Lecture 4: CDI and Dependency Injection</span>
+  <a href="#slide-41">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-41" class="slide">
+<h2>JTA Configuration for CDI</h2>
+<h3>Update persistence.xml:</h3>
+<pre class="dark"><span class="lang-badge">xml</span>
+<code>&lt;persistence-unit name=&quot;bankingPU&quot; transaction-type=&quot;JTA&quot;&gt;
+    &lt;provider&gt;org.eclipse.persistence.jpa.PersistenceProvider&lt;/provider&gt;
+    &lt;jta-data-source&gt;jdbc/bankingDS&lt;/jta-data-source&gt;
+    
+    &lt;class&gt;com.bank.model.Client&lt;/class&gt;
+    &lt;class&gt;com.bank.model.Account&lt;/class&gt;
+    
+    &lt;properties&gt;
+        &lt;property name=&quot;eclipselink.target-database&quot; value=&quot;PostgreSQL&quot;/&gt;
+        &lt;property name=&quot;eclipselink.logging.level&quot; value=&quot;FINE&quot;/&gt;
+        &lt;property name=&quot;eclipselink.ddl-generation&quot; value=&quot;none&quot;/&gt;
+    &lt;/properties&gt;
+&lt;/persistence-unit&gt;</code></pre>
+<p><strong>Key Changes:</strong></p>
+<ul>
+<li><code>transaction-type="JTA"</code> (was RESOURCE_LOCAL)</li>
+<li><code><jta-data-source></code> (was non-jta-data-source)</li>
+</ul>
+
+<span class="slide-counter">41 / 72</span>
+<div class="slide-nav">
+  <a href="#slide-40">&#8592; Previous</a>
+  <span class="slide-info">Slide 41 / 72 &nbsp;&middot;&nbsp; 💉 Lecture 4: CDI and Dependency Injection</span>
+  <a href="#slide-42">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-42" class="slide">
+<h2>EntityManager Producer for CDI</h2>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>@ApplicationScoped
+public class EntityManagerProducer {
+    
+    @PersistenceContext(unitName = &quot;bankingPU&quot;)
+    private EntityManager em;
+    
+    @Produces
+    @RequestScoped
+    public EntityManager getEntityManager() {
+        return em;
+    }
+}</code></pre>
+<p><strong>Now inject EntityManager anywhere:</strong></p>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>@ApplicationScoped
+public class ClientService {
+    
+    @Inject
+    private EntityManager em;  // Injected by CDI!
+    
+    @Transactional
+    public void create(Client client) {
+        em.persist(client);
+    }
+}</code></pre>
+
+<span class="slide-counter">42 / 72</span>
+<div class="slide-nav">
+  <a href="#slide-41">&#8592; Previous</a>
+  <span class="slide-info">Slide 42 / 72 &nbsp;&middot;&nbsp; 💉 Lecture 4: CDI and Dependency Injection</span>
+  <a href="#slide-43">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-43" class="slide slide--section">
+<h1 data-en="Part 6B: Programmatic Transaction Management (BMT)" data-fr="Part 6B: Programmatic Gestion des transactions (BMT)">Part 6B: Programmatic Transaction Management (BMT)</h1>
+
+<span class="slide-counter">43 / 72</span>
+<div class="slide-nav">
+  <a href="#slide-42">&#8592; Previous</a>
+  <span class="slide-info">Slide 43 / 72 &nbsp;&middot;&nbsp; 💉 Lecture 4: CDI and Dependency Injection</span>
+  <a href="#slide-44">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-44" class="slide">
+<h2>Bean-Managed Transactions (BMT)</h2>
+<p>While <code>@Transactional</code> (CMT) is convenient, sometimes you need <strong>fine-grained control</strong> over transactions:</p>
+<p><strong>When to use BMT:</strong></p>
+<ul>
+<li>Complex business logic with multiple transaction boundaries</li>
+<li>Need to commit/rollback at specific points</li>
+<li>Conditional transaction behavior</li>
+<li>Long-running operations with intermediate commits</li>
+<li>Integration with non-JTA resources</li>
+</ul>
+<p><strong>Trade-off:</strong> More control = More code and responsibility</p>
+
+<span class="slide-counter">44 / 72</span>
+<div class="slide-nav">
+  <a href="#slide-43">&#8592; Previous</a>
+  <span class="slide-info">Slide 44 / 72 &nbsp;&middot;&nbsp; 💉 Lecture 4: CDI and Dependency Injection</span>
+  <a href="#slide-45">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-45" class="slide">
+<h2>UserTransaction API</h2>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>@ApplicationScoped
+public class ComplexTransferService {
+    
+    @Inject
+    private EntityManager em;
+    
+    @Resource
+    private UserTransaction utx;
+    
+    public void complexTransfer(Long fromId, Long toId, BigDecimal amount) 
+            throws Exception {
+        try {
+            // Start transaction manually
+            utx.begin();
+            
+            Account from = em.find(Account.class, fromId);
+            Account to = em.find(Account.class, toId);
+            
+            // Business logic
+            from.withdraw(amount);
+            to.deposit(amount);
+            
+            // Commit manually
+            utx.commit();
+            
+        } catch (Exception e) {
+            // Rollback manually
+            if (utx.getStatus() == Status.STATUS_ACTIVE) {
+                utx.rollback();
+            }
+            throw e;
+        }
+    }
+}</code></pre>
+
+<span class="slide-counter">45 / 72</span>
+<div class="slide-nav">
+  <a href="#slide-44">&#8592; Previous</a>
+  <span class="slide-info">Slide 45 / 72 &nbsp;&middot;&nbsp; 💉 Lecture 4: CDI and Dependency Injection</span>
+  <a href="#slide-46">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-46" class="slide">
+<h2 data-en="CMT vs BMT Comparison" data-fr="CMT vs BMT Comparaison">CMT vs BMT Comparison</h2>
+<table class="slide-table"><thead><tr><th>Aspect</th><th>CMT (@Transactional)</th><th>BMT (UserTransaction)</th></tr></thead><tbody>
+<tr><td><strong>Code</strong></td><td>Minimal</td><td>More verbose</td></tr>
+<tr><td><strong>Control</strong></td><td>Container-managed</td><td>Developer-managed</td></tr>
+<tr><td><strong>Boundaries</strong></td><td>Method-level</td><td>Arbitrary</td></tr>
+<tr><td><strong>Rollback</strong></td><td>Automatic on exception</td><td>Manual</td></tr>
+<tr><td><strong>Complexity</strong></td><td>Simple</td><td>Complex</td></tr>
+<tr><td><strong>Use Case</strong></td><td>Most operations</td><td>Complex scenarios</td></tr>
+<tr><td><strong>Error Prone</strong></td><td>Low</td><td>Higher</td></tr>
+<tr><td><strong>Performance</strong></td><td>Optimized by container</td><td>Manual optimization</td></tr>
+</tbody></table>
+<p><strong>Recommendation:</strong> Use CMT by default, BMT only when necessary</p>
+
+<span class="slide-counter">46 / 72</span>
+<div class="slide-nav">
+  <a href="#slide-45">&#8592; Previous</a>
+  <span class="slide-info">Slide 46 / 72 &nbsp;&middot;&nbsp; 💉 Lecture 4: CDI and Dependency Injection</span>
+  <a href="#slide-47">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-47" class="slide">
+<h2>Multiple Transaction Boundaries</h2>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>@ApplicationScoped
+public class BatchProcessingService {
+    
+    @Inject
+    private EntityManager em;
+    
+    @Resource
+    private UserTransaction utx;
+    
+    public void processBatch(List&lt;Transaction&gt; transactions) throws Exception {
+        int count = 0;
+        
+        for (Transaction tx : transactions) {
+            try {
+                utx.begin();
+                
+                // Process single transaction
+                processTransaction(tx);
+                
+                utx.commit();
+                count++;
+                
+                // Commit every 100 transactions
+                if (count % 100 == 0) {
+                    logger.info(&quot;Processed {} transactions&quot;, count);
+                }
+                
+            } catch (Exception e) {
+                if (utx.getStatus() == Status.STATUS_ACTIVE) {
+                    utx.rollback();
+                }
+                logger.error(&quot;Failed to process transaction: {}&quot;, tx.getId(), e);
+                // Continue with next transaction
+            }
+        }
+    }
+}</code></pre>
+<p data-en="<strong>Benefits:</strong> Partial success, better error handling, progress tracking" data-fr="Benefits: Partial success, better Gestion des erreurs, progress tracking"><strong>Benefits:</strong> Partial success, better error handling, progress tracking</p>
+
+<span class="slide-counter">47 / 72</span>
+<div class="slide-nav">
+  <a href="#slide-46">&#8592; Previous</a>
+  <span class="slide-info">Slide 47 / 72 &nbsp;&middot;&nbsp; 💉 Lecture 4: CDI and Dependency Injection</span>
+  <a href="#slide-48">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-48" class="slide">
+<h2>Transaction Isolation Levels</h2>
+<p>Control how transactions see each other's changes:</p>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>@ApplicationScoped
+public class AccountService {
+    
+    @PersistenceContext
+    private EntityManager em;
+    
+    @Transactional
+    public Account getAccountWithLock(Long id) {
+        // Pessimistic locking - prevents concurrent modifications
+        return em.find(Account.class, id, LockModeType.PESSIMISTIC_WRITE);
+    }
+    
+    @Transactional
+    public Account getAccountOptimistic(Long id) {
+        // Optimistic locking - detects conflicts at commit time
+        return em.find(Account.class, id, LockModeType.OPTIMISTIC);
+    }
+}</code></pre>
+
+<span class="slide-counter">48 / 72</span>
+<div class="slide-nav">
+  <a href="#slide-47">&#8592; Previous</a>
+  <span class="slide-info">Slide 48 / 72 &nbsp;&middot;&nbsp; 💉 Lecture 4: CDI and Dependency Injection</span>
+  <a href="#slide-49">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-49" class="slide">
+<h2>Isolation Levels Explained</h2>
+<table class="slide-table"><thead><tr><th>Level</th><th>Description</th><th>Dirty Read</th><th>Non-Repeatable Read</th><th>Phantom Read</th></tr></thead><tbody>
+<tr><td><strong>READ_UNCOMMITTED</strong></td><td>Lowest isolation</td><td>Yes</td><td>Yes</td><td>Yes</td></tr>
+<tr><td><strong>READ_COMMITTED</strong></td><td>Default in most DBs</td><td>No</td><td>Yes</td><td>Yes</td></tr>
+<tr><td><strong>REPEATABLE_READ</strong></td><td>Locks read rows</td><td>No</td><td>No</td><td>Yes</td></tr>
+<tr><td><strong>SERIALIZABLE</strong></td><td>Highest isolation</td><td>No</td><td>No</td><td>No</td></tr>
+</tbody></table>
+<p><strong>PostgreSQL Default:</strong> READ_COMMITTED</p>
+<p><strong>Configure in persistence.xml:</strong></p>
+<pre class="dark"><span class="lang-badge">xml</span>
+<code>&lt;property name=&quot;eclipselink.jdbc.transaction-isolation&quot; 
+          value=&quot;TRANSACTION_READ_COMMITTED&quot;/&gt;</code></pre>
+
+<span class="slide-counter">49 / 72</span>
+<div class="slide-nav">
+  <a href="#slide-48">&#8592; Previous</a>
+  <span class="slide-info">Slide 49 / 72 &nbsp;&middot;&nbsp; 💉 Lecture 4: CDI and Dependency Injection</span>
+  <a href="#slide-50">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-50" class="slide">
+<h2>Distributed Transactions (JTS)</h2>
+<p>When transactions span <strong>multiple resources</strong> (databases, JMS queues):</p>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>@ApplicationScoped
+public class DistributedTransferService {
+    
+    @PersistenceContext(unitName = &quot;bankingPU&quot;)
+    private EntityManager bankingEM;
+    
+    @PersistenceContext(unitName = &quot;auditPU&quot;)
+    private EntityManager auditEM;
+    
+    @Resource(lookup = &quot;jms/TransferQueue&quot;)
+    private Queue transferQueue;
+    
+    @Inject
+    private JMSContext jmsContext;
+    
+    @Transactional
+    public void transferWithAudit(Long fromId, Long toId, BigDecimal amount) {
+        // All operations in same distributed transaction
+        
+        // 1. Update banking database
+        Account from = bankingEM.find(Account.class, fromId);
+        Account to = bankingEM.find(Account.class, toId);
+        from.withdraw(amount);
+        to.deposit(amount);
+        
+        // 2. Write to audit database
+        AuditLog log = new AuditLog(&quot;TRANSFER&quot;, fromId, toId, amount);
+        auditEM.persist(log);
+        
+        // 3. Send JMS message
+        jmsContext.createProducer().send(transferQueue, 
+            new TransferNotification(fromId, toId, amount));
+        
+        // All commit together or all rollback together!
+    }
+}</code></pre>
+
+<span class="slide-counter">50 / 72</span>
+<div class="slide-nav">
+  <a href="#slide-49">&#8592; Previous</a>
+  <span class="slide-info">Slide 50 / 72 &nbsp;&middot;&nbsp; 💉 Lecture 4: CDI and Dependency Injection</span>
+  <a href="#slide-51">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-51" class="slide">
+<h2>Two-Phase Commit (2PC)</h2>
+<p>How distributed transactions work:</p>
+<p><img src="../../images/04-cdi-dependency-injection-diagram-2.png" alt="width:70%"></p>
+<p><strong>Phase 1: PREPARE</strong></p>
+<ul>
+<li>Coordinator asks: "Can you commit?"</li>
+<li>Each resource: "Yes, I'm ready" or "No, I can't"</li>
+</ul>
+<p><strong>Phase 2: COMMIT/ROLLBACK</strong></p>
+<ul>
+<li>If all said "Yes": Coordinator says "COMMIT"</li>
+<li>If any said "No": Coordinator says "ROLLBACK"</li>
+</ul>
+<p><strong>Automatic in Jakarta EE with JTA!</strong></p>
+
+<span class="slide-counter">51 / 72</span>
+<div class="slide-nav">
+  <a href="#slide-50">&#8592; Previous</a>
+  <span class="slide-info">Slide 51 / 72 &nbsp;&middot;&nbsp; 💉 Lecture 4: CDI and Dependency Injection</span>
+  <a href="#slide-52">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-52" class="slide">
+<h2>Transaction Timeout</h2>
+<p>Prevent long-running transactions from blocking resources:</p>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>@ApplicationScoped
+public class TimeoutService {
+    
+    @Resource
+    private UserTransaction utx;
+    
+    public void operationWithTimeout() throws Exception {
+        try {
+            // Set timeout to 30 seconds
+            utx.setTransactionTimeout(30);
+            utx.begin();
+            
+            // Long-running operation
+            performComplexCalculation();
+            
+            utx.commit();
+            
+        } catch (Exception e) {
+            if (utx.getStatus() == Status.STATUS_ACTIVE) {
+                utx.rollback();
+            }
+            throw e;
+        }
+    }
+}</code></pre>
+<p><strong>Configure default timeout in server.xml:</strong></p>
+<pre class="dark"><span class="lang-badge">xml</span>
+<code>&lt;transaction totalTranLifetimeTimeout=&quot;120s&quot;/&gt;</code></pre>
+
+<span class="slide-counter">52 / 72</span>
+<div class="slide-nav">
+  <a href="#slide-51">&#8592; Previous</a>
+  <span class="slide-info">Slide 52 / 72 &nbsp;&middot;&nbsp; 💉 Lecture 4: CDI and Dependency Injection</span>
+  <a href="#slide-53">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-53" class="slide">
+<h2>Transaction Status Codes</h2>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>import jakarta.transaction.Status;
+
+public void checkTransactionStatus(UserTransaction utx) throws Exception {
+    int status = utx.getStatus();
+    
+    switch (status) {
+        case Status.STATUS_ACTIVE:
+            // Transaction is active
+            break;
+        case Status.STATUS_COMMITTED:
+            // Transaction committed successfully
+            break;
+        case Status.STATUS_ROLLEDBACK:
+            // Transaction was rolled back
+            break;
+        case Status.STATUS_MARKED_ROLLBACK:
+            // Transaction marked for rollback only
+            break;
+        case Status.STATUS_NO_TRANSACTION:
+            // No transaction active
+            break;
+        // ... other statuses
+    }
+}</code></pre>
+
+<span class="slide-counter">53 / 72</span>
+<div class="slide-nav">
+  <a href="#slide-52">&#8592; Previous</a>
+  <span class="slide-info">Slide 53 / 72 &nbsp;&middot;&nbsp; 💉 Lecture 4: CDI and Dependency Injection</span>
+  <a href="#slide-54">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-54" class="slide">
+<h2 data-en="Best Practices: Transaction Management" data-fr="Bonnes pratiques: Gestion des transactions">Best Practices: Transaction Management</h2>
+<h3>✅ DO:</h3>
+<ul>
+<li><strong>Use CMT (@Transactional) by default</strong> - simpler and safer</li>
+<li><strong>Keep transactions short</strong> - minimize lock duration</li>
+<li data-en="<strong>Use appropriate isolation levels</strong> - balance consistency vs performance" data-fr="Use appropriate isolation levels - balance consistency vs Performance"><strong>Use appropriate isolation levels</strong> - balance consistency vs performance</li>
+<li><strong>Handle exceptions properly</strong> - ensure rollback on errors</li>
+<li><strong>Set reasonable timeouts</strong> - prevent resource exhaustion</li>
+<li><strong>Use optimistic locking</strong> - better concurrency for read-heavy workloads</li>
+</ul>
+<h3>❌ DON'T:</h3>
+<ul>
+<li><strong>Don't use BMT unless necessary</strong> - more error-prone</li>
+<li><strong>Don't perform I/O in transactions</strong> - network calls, file operations</li>
+<li><strong>Don't call remote services</strong> - increases transaction duration</li>
+<li><strong>Don't mix CMT and BMT</strong> - in same bean</li>
+<li data-en="<strong>Don't forget to rollback</strong> - in BMT error handling" data-fr="Don't forget to rollback - in BMT Gestion des erreurs"><strong>Don't forget to rollback</strong> - in BMT error handling</li>
+<li data-en="<strong>Don't use SERIALIZABLE</strong> - unless absolutely required (performance impact)" data-fr="Don't use SERIALIZABLE - unless absolutely required (Performance impact)"><strong>Don't use SERIALIZABLE</strong> - unless absolutely required (performance impact)</li>
+</ul>
+
+<span class="slide-counter">54 / 72</span>
+<div class="slide-nav">
+  <a href="#slide-53">&#8592; Previous</a>
+  <span class="slide-info">Slide 54 / 72 &nbsp;&middot;&nbsp; 💉 Lecture 4: CDI and Dependency Injection</span>
+  <a href="#slide-55">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-55" class="slide">
+<h2 data-en="Complete BMT Example" data-fr="Complete BMT Exemple">Complete BMT Example</h2>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>@ApplicationScoped
+public class ComplexBankingService {
+    
+    @Inject
+    private EntityManager em;
+    
+    @Resource
+    private UserTransaction utx;
+    
+    @Inject
+    private Logger logger;
+    
+    public TransferResult transferWithRetry(
+            Long fromId, Long toId, BigDecimal amount, int maxRetries) {
+        
+        int attempts = 0;
+        Exception lastException = null;
+        
+        while (attempts &lt; maxRetries) {
+            try {
+                utx.setTransactionTimeout(30);
+                utx.begin();
+                
+                // Lock accounts to prevent concurrent modifications
+                Account from = em.find(Account.class, fromId, 
+                                     LockModeType.PESSIMISTIC_WRITE);
+                Account to = em.find(Account.class, toId, 
+                                   LockModeType.PESSIMISTIC_WRITE);
+                
+                // Validate
+                if (from.getBalance().compareTo(amount) &lt; 0) {
+                    utx.rollback();
+                    return TransferResult.insufficient();
+                }
+                
+                // Execute transfer
+                from.withdraw(amount);
+                to.deposit(amount);
+                
+                // Create audit record
+                AuditLog log = new AuditLog(&quot;TRANSFER&quot;, fromId, toId, amount);
+                em.persist(log);
+                
+                utx.commit();
+                
+                logger.info(&quot;Transfer successful: {} -&gt; {} amount {}&quot;, 
+                          fromId, toId, amount);
+                return TransferResult.success();
+                
+            } catch (OptimisticLockException e) {
+                // Retry on optimistic lock failure
+                attempts++;
+                lastException = e;
+                logger.warn(&quot;Optimistic lock failure, retry {}/{}&quot;, 
+                          attempts, maxRetries);
+                
+                try {
+                    if (utx.getStatus() == Status.STATUS_ACTIVE) {
+                        utx.rollback();
+                    }
+                    Thread.sleep(100 * attempts); // Exponential backoff
+                } catch (Exception ex) {
+                    logger.error(&quot;Error during retry&quot;, ex);
+                }
+                
+            } catch (Exception e) {
+                try {
+                    if (utx.getStatus() == Status.STATUS_ACTIVE) {
+                        utx.rollback();
+                    }
+                } catch (Exception ex) {
+                    logger.error(&quot;Error during rollback&quot;, ex);
+                }
+                logger.error(&quot;Transfer failed&quot;, e);
+                return TransferResult.error(e.getMessage());
+            }
+        }
+        
+        return TransferResult.error(&quot;Max retries exceeded: &quot; + 
+                                   lastException.getMessage());
+    }
+}</code></pre>
+
+<span class="slide-counter">55 / 72</span>
+<div class="slide-nav">
+  <a href="#slide-54">&#8592; Previous</a>
+  <span class="slide-info">Slide 55 / 72 &nbsp;&middot;&nbsp; 💉 Lecture 4: CDI and Dependency Injection</span>
+  <a href="#slide-56">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-56" class="slide">
+<h2>When to Use Each Approach</h2>
+<h3>Use CMT (@Transactional):</h3>
+<ul>
+<li>✅ Standard CRUD operations</li>
+<li>✅ Single database operations</li>
+<li>✅ Simple business logic</li>
+<li>✅ Most REST endpoints</li>
+<li>✅ 95% of use cases</li>
+</ul>
+<h3>Use BMT (UserTransaction):</h3>
+<ul>
+<li>✅ Multiple transaction boundaries in one method</li>
+<li>✅ Conditional commit/rollback logic</li>
+<li>✅ Batch processing with partial commits</li>
+<li>✅ Complex error recovery scenarios</li>
+<li>✅ Need to query transaction status</li>
+<li>✅ Integration with legacy systems</li>
+</ul>
+
+<span class="slide-counter">56 / 72</span>
+<div class="slide-nav">
+  <a href="#slide-55">&#8592; Previous</a>
+  <span class="slide-info">Slide 56 / 72 &nbsp;&middot;&nbsp; 💉 Lecture 4: CDI and Dependency Injection</span>
+  <a href="#slide-57">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-57" class="slide">
+<h2>Lab 4 Preview: Transaction Exercises</h2>
+<p>In Lab 4, you will:</p>
+<ol>
+<li><strong>Compare CMT vs BMT</strong> - implement same operation both ways</li>
+<li><strong>Handle transaction failures</strong> - test rollback scenarios</li>
+<li><strong>Implement batch processing</strong> - with UserTransaction</li>
+<li><strong>Configure timeouts</strong> - prevent long-running transactions</li>
+<li><strong>Test isolation levels</strong> - understand concurrent access</li>
+</ol>
+<p data-en="<strong>Get ready to master transaction management!</strong>" data-fr="Get Prêt à master Gestion des transactions!"><strong>Get ready to master transaction management!</strong></p>
+
+<span class="slide-counter">57 / 72</span>
+<div class="slide-nav">
+  <a href="#slide-56">&#8592; Previous</a>
+  <span class="slide-info">Slide 57 / 72 &nbsp;&middot;&nbsp; 💉 Lecture 4: CDI and Dependency Injection</span>
+  <a href="#slide-58">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-58" class="slide slide--section">
+<h1>Part 7: CDI Events</h1>
+
+<span class="slide-counter">58 / 72</span>
+<div class="slide-nav">
+  <a href="#slide-57">&#8592; Previous</a>
+  <span class="slide-info">Slide 58 / 72 &nbsp;&middot;&nbsp; 💉 Lecture 4: CDI and Dependency Injection</span>
+  <a href="#slide-59">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-59" class="slide">
+<h2>Event-Driven Architecture with CDI</h2>
+<p><strong>CDI Events</strong> enable loosely coupled communication between beans.</p>
+<h3>Benefits:</h3>
+<ul>
+<li>Decoupled components</li>
+<li data-en="Extensible architecture" data-fr="Extensible Architecture">Extensible architecture</li>
+<li>Asynchronous processing</li>
+<li>Observer pattern built-in</li>
+</ul>
+<h3>Event Flow:</h3>
+<p><img src="../../images/04-cdi-dependency-injection-diagram-3.png" alt="width:70%"></p>
+
+<span class="slide-counter">59 / 72</span>
+<div class="slide-nav">
+  <a href="#slide-58">&#8592; Previous</a>
+  <span class="slide-info">Slide 59 / 72 &nbsp;&middot;&nbsp; 💉 Lecture 4: CDI and Dependency Injection</span>
+  <a href="#slide-60">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-60" class="slide">
+<h2>Defining and Firing Events</h2>
+<h3>Event Class:</h3>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>public class ClientCreatedEvent {
+    private final Client client;
+    private final LocalDateTime timestamp;
+    
+    public ClientCreatedEvent(Client client) {
+        this.client = client;
+        this.timestamp = LocalDateTime.now();
+    }
+    
+    // Getters
+}</code></pre>
+<h3>Firing Events:</h3>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>@ApplicationScoped
+public class ClientService {
+    
+    @Inject
+    private EntityManager em;
+    
+    @Inject
+    private Event&lt;ClientCreatedEvent&gt; clientCreatedEvent;
+    
+    @Transactional
+    public void create(Client client) {
+        em.persist(client);
+        clientCreatedEvent.fire(new ClientCreatedEvent(client));
+    }
+}</code></pre>
+
+<span class="slide-counter">60 / 72</span>
+<div class="slide-nav">
+  <a href="#slide-59">&#8592; Previous</a>
+  <span class="slide-info">Slide 60 / 72 &nbsp;&middot;&nbsp; 💉 Lecture 4: CDI and Dependency Injection</span>
+  <a href="#slide-61">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-61" class="slide">
+<h2>Observing Events</h2>
+<h3>Synchronous Observer:</h3>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>@ApplicationScoped
+public class EmailNotificationService {
+    
+    @Inject
+    private Logger logger;
+    
+    public void onClientCreated(@Observes ClientCreatedEvent event) {
+        logger.info(&quot;Sending welcome email to: &quot; + 
+                   event.getClient().getEmail());
+        // Send email
+    }
+}</code></pre>
+<h3>Asynchronous Observer:</h3>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>@ApplicationScoped
+public class AuditService {
+    
+    public void onClientCreated(@ObservesAsync ClientCreatedEvent event) {
+        // Runs in separate thread
+        AuditLog log = new AuditLog(
+            &quot;Client created: &quot; + event.getClient().getName(),
+            event.getTimestamp()
+        );
+        // Save audit log
+    }
+}</code></pre>
+
+<span class="slide-counter">61 / 72</span>
+<div class="slide-nav">
+  <a href="#slide-60">&#8592; Previous</a>
+  <span class="slide-info">Slide 61 / 72 &nbsp;&middot;&nbsp; 💉 Lecture 4: CDI and Dependency Injection</span>
+  <a href="#slide-62">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-62" class="slide">
+<h2>Event Qualifiers</h2>
+<p><strong>Filter events</strong> with qualifiers:</p>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>@Qualifier
+@Retention(RUNTIME)
+@Target({FIELD, PARAMETER})
+public @interface Premium {
+}
+
+// Fire qualified event
+@Inject
+@Premium
+private Event&lt;ClientCreatedEvent&gt; premiumClientEvent;
+
+premiumClientEvent.fire(new ClientCreatedEvent(client));
+
+// Observe qualified event
+public void onPremiumClient(@Observes @Premium ClientCreatedEvent event) {
+    // Only receives premium client events
+}</code></pre>
+
+<span class="slide-counter">62 / 72</span>
+<div class="slide-nav">
+  <a href="#slide-61">&#8592; Previous</a>
+  <span class="slide-info">Slide 62 / 72 &nbsp;&middot;&nbsp; 💉 Lecture 4: CDI and Dependency Injection</span>
+  <a href="#slide-63">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-63" class="slide">
+<h2>Conditional Observers</h2>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>@ApplicationScoped
+public class NotificationService {
+    
+    // Only observe during transaction success
+    public void onClientCreated(
+            @Observes(during = TransactionPhase.AFTER_SUCCESS) 
+            ClientCreatedEvent event) {
+        sendNotification(event.getClient());
+    }
+    
+    // Only observe during transaction failure
+    public void onClientCreationFailed(
+            @Observes(during = TransactionPhase.AFTER_FAILURE) 
+            ClientCreatedEvent event) {
+        logError(event.getClient());
+    }
+}</code></pre>
+<p><strong>Transaction Phases:</strong></p>
+<ul>
+<li><code>IN_PROGRESS</code> - During transaction</li>
+<li><code>AFTER_SUCCESS</code> - After commit</li>
+<li><code>AFTER_FAILURE</code> - After rollback</li>
+<li><code>AFTER_COMPLETION</code> - After transaction ends</li>
+</ul>
+
+<span class="slide-counter">63 / 72</span>
+<div class="slide-nav">
+  <a href="#slide-62">&#8592; Previous</a>
+  <span class="slide-info">Slide 63 / 72 &nbsp;&middot;&nbsp; 💉 Lecture 4: CDI and Dependency Injection</span>
+  <a href="#slide-64">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-64" class="slide">
+<h2 data-en="📊 Complete CDI Example" data-fr="📊 Complete CDI Exemple">📊 Complete CDI Example</h2>
+<h3>Service with All CDI Features:</h3>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>@ApplicationScoped
+@Logged
+@Monitored
+public class ClientService {
+    
+    @Inject
+    private EntityManager em;
+    
+    @Inject
+    private Logger logger;
+    
+    @Inject
+    private Event&lt;ClientCreatedEvent&gt; clientCreatedEvent;
+    
+    @Inject
+    @ConfigProperty(name = &quot;client.max.accounts&quot;, defaultValue = &quot;5&quot;)
+    private Integer maxAccounts;
+    
+    @Transactional
+    public void create(Client client) {
+        logger.info(&quot;Creating client: &quot; + client.getName());
+        em.persist(client);
+        clientCreatedEvent.fire(new ClientCreatedEvent(client));
+    }
+    
+    @Transactional(Transactional.TxType.SUPPORTS)
+    public List&lt;Client&gt; findAll() {
+        return em.createQuery(&quot;SELECT c FROM Client c&quot;, Client.class)
+                .getResultList();
+    }
+}</code></pre>
+
+<span class="slide-counter">64 / 72</span>
+<div class="slide-nav">
+  <a href="#slide-63">&#8592; Previous</a>
+  <span class="slide-info">Slide 64 / 72 &nbsp;&middot;&nbsp; 💉 Lecture 4: CDI and Dependency Injection</span>
+  <a href="#slide-65">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-65" class="slide">
+<h2>🎯 Lab 4 Preview</h2>
+<p><strong>In the next lab, you will:</strong></p>
+<ol>
+<li>Convert Lab 3 code to use CDI</li>
+<li>Replace Singleton pattern with @ApplicationScoped beans</li>
+<li data-en="Use @Inject for dependency injection" data-fr="Use @Inject for Injection de dépendances">Use @Inject for dependency injection</li>
+<li>Apply @Transactional for declarative transactions</li>
+<li>Change persistence.xml from RESOURCE_LOCAL to JTA</li>
+<li>Create producer methods for EntityManager</li>
+<li>Implement custom qualifiers</li>
+<li>Add interceptors for logging</li>
+<li>Use CDI events for notifications</li>
+<li>Test the complete CDI-based application</li>
+</ol>
+<p data-en="<strong>Get ready to modernize your banking app with CDI!</strong>" data-fr="Get Prêt à modernize your banking app with CDI!"><strong>Get ready to modernize your banking app with CDI!</strong></p>
+
+<span class="slide-counter">65 / 72</span>
+<div class="slide-nav">
+  <a href="#slide-64">&#8592; Previous</a>
+  <span class="slide-info">Slide 65 / 72 &nbsp;&middot;&nbsp; 💉 Lecture 4: CDI and Dependency Injection</span>
+  <a href="#slide-66">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-66" class="slide">
+<h2 data-en="📚 Additional Resources" data-fr="📚 Ressources supplémentaires">📚 Additional Resources</h2>
+<p><strong>Official Documentation:</strong></p>
+<ul>
+<li>Jakarta CDI Specification: https://jakarta.ee/specifications/cdi/</li>
+<li>Weld (CDI Implementation): https://weld.cdi-spec.org/</li>
+<li>Jakarta Transactions: https://jakarta.ee/specifications/transactions/</li>
+</ul>
+<p><strong>Tutorials:</strong></p>
+<ul>
+<li>Jakarta EE Tutorial (CDI Chapter): https://jakarta.ee/learn/docs/jakartaee-tutorial/</li>
+<li>Baeldung CDI Guide: https://www.baeldung.com/java-ee-cdi</li>
+</ul>
+<p><strong>Books:</strong></p>
+<ul>
+<li>"CDI in Action" by Antoine Sabot-Durand</li>
+<li>"Pro CDI 2 in Java EE 8" by Jan Beernink</li>
+</ul>
+
+<span class="slide-counter">66 / 72</span>
+<div class="slide-nav">
+  <a href="#slide-65">&#8592; Previous</a>
+  <span class="slide-info">Slide 66 / 72 &nbsp;&middot;&nbsp; 💉 Lecture 4: CDI and Dependency Injection</span>
+  <a href="#slide-67">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-67" class="slide">
+<h2>❓ Questions?</h2>
+<p data-en="<strong>Common Questions:</strong>" data-fr="Questions fréquentes:"><strong>Common Questions:</strong></p>
+<p>Q: When should I use @ApplicationScoped vs @RequestScoped?</p>
+<p>A: Use @ApplicationScoped for stateless services, @RequestScoped for request-specific data.</p>
+<p>Q: What's the difference between @Inject and @Autowired (Spring)?</p>
+<p>A: @Inject is the Jakarta EE standard, @Autowired is Spring-specific. Functionality is similar.</p>
+<p>Q: Can I use CDI with servlets?</p>
+<p data-en="A: Yes! Inject CDI beans into servlets using @Inject." data-fr="A: Yes! Inject CDI beans into servlets Utilisation de @Inject.">A: Yes! Inject CDI beans into servlets using @Inject.</p>
+<p>Q: How do I test CDI beans?</p>
+<p>A: Use Arquillian for integration tests or mock @Inject fields for unit tests.</p>
+
+<span class="slide-counter">67 / 72</span>
+<div class="slide-nav">
+  <a href="#slide-66">&#8592; Previous</a>
+  <span class="slide-info">Slide 67 / 72 &nbsp;&middot;&nbsp; 💉 Lecture 4: CDI and Dependency Injection</span>
+  <a href="#slide-68">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-68" class="slide">
+<h2 data-en="📝 Homework" data-fr="📝 Devoirs">📝 Homework</h2>
+<p data-en="<strong>Before Next Lecture:</strong>" data-fr="Before Prochaine leçon:"><strong>Before Next Lecture:</strong></p>
+<table class="slide-table"><thead><tr><th></th><th></th></tr></thead><tbody>
+<tr><td>✅</td><td>Complete Lab 4: CDI Service Layer</td></tr>
+<tr><td>✅</td><td>Convert Lab 3 code to use CDI</td></tr>
+<tr><td>✅</td><td>Practice using different bean scopes</td></tr>
+<tr><td>✅</td><td>Experiment with interceptors</td></tr>
+</tbody></table>
+<p><strong>Optional:</strong></p>
+<ul>
+<li>Read about CDI extensions</li>
+<li>Explore CDI events and observers</li>
+<li>Try creating custom producers</li>
+</ul>
+
+<span class="slide-counter">68 / 72</span>
+<div class="slide-nav">
+  <a href="#slide-67">&#8592; Previous</a>
+  <span class="slide-info">Slide 68 / 72 &nbsp;&middot;&nbsp; 💉 Lecture 4: CDI and Dependency Injection</span>
+  <a href="#slide-69">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-69" class="slide">
+<h2>🙋 Questions &amp; Discussion</h2>
+<p><strong>Discussion Topics:</strong></p>
+<ul>
+<li>How does CDI improve testability?</li>
+<li>When would you use decorators vs interceptors?</li>
+<li>What are the benefits of declarative transactions?</li>
+</ul>
+<p><strong>Office Hours:</strong></p>
+<ul>
+<li><strong>When:</strong> [Your schedule]</li>
+<li><strong>Where:</strong> [Your location/online]</li>
+<li><strong>Contact:</strong> [Your email]</li>
+</ul>
+
+<span class="slide-counter">69 / 72</span>
+<div class="slide-nav">
+  <a href="#slide-68">&#8592; Previous</a>
+  <span class="slide-info">Slide 69 / 72 &nbsp;&middot;&nbsp; 💉 Lecture 4: CDI and Dependency Injection</span>
+  <a href="#slide-70">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-70" class="slide">
+<h2 data-en="📅 Next Lecture" data-fr="📅 Prochaine leçon">📅 Next Lecture</h2>
+<h3 data-en="JAX-RS and RESTful Web Services" data-fr="JAX-RS and Services RESTful">JAX-RS and RESTful Web Services</h3>
+<p><strong>Date:</strong> [Next session date]</p>
+<p><strong>Duration:</strong> 3 hours</p>
+<p><strong>Topics:</strong></p>
+<ul>
+<li data-en="REST principles and architecture" data-fr="REST principles and Architecture">REST principles and architecture</li>
+<li>JAX-RS annotations and resources</li>
+<li>JSON-B for JSON processing</li>
+<li data-en="Exception handling and validation" data-fr="Gestion des exceptions and validation">Exception handling and validation</li>
+<li>MicroProfile Rest Client</li>
+</ul>
+<p><strong>Preparation:</strong> Complete Lab 4 and review REST concepts</p>
+
+<span class="slide-counter">70 / 72</span>
+<div class="slide-nav">
+  <a href="#slide-69">&#8592; Previous</a>
+  <span class="slide-info">Slide 70 / 72 &nbsp;&middot;&nbsp; 💉 Lecture 4: CDI and Dependency Injection</span>
+  <a href="#slide-71">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-71" class="slide slide--section">
+<h1>🚀 Ready for Lab 4!</h1>
+<p data-en="<strong>Next Steps:</strong>" data-fr="Prochaines étapes:"><strong>Next Steps:</strong></p>
+<ol>
+<li>Review this lecture</li>
+<li>Complete Lab 4: CDI Service Layer</li>
+<li data-en="Practice dependency injection" data-fr="Practice Injection de dépendances">Practice dependency injection</li>
+<li>Experiment with bean scopes</li>
+<li>Try creating interceptors</li>
+</ol>
+<p data-en="<strong>See you in the lab!</strong>" data-fr="À bientôt dans the lab!"><strong>See you in the lab!</strong></p>
+
+<span class="slide-counter">71 / 72</span>
+<div class="slide-nav">
+  <a href="#slide-70">&#8592; Previous</a>
+  <span class="slide-info">Slide 71 / 72 &nbsp;&middot;&nbsp; 💉 Lecture 4: CDI and Dependency Injection</span>
+  <a href="#slide-72">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-72" class="slide">
+<p><strong>End of Lecture 4</strong></p>
+<p>© 2025 - Jakarta EE &amp; MicroProfile Course</p>
+
+<span class="slide-counter">72 / 72</span>
+<div class="slide-nav">
+  <a href="#slide-71">&#8592; Previous</a>
+  <span class="slide-info">Slide 72 / 72 &nbsp;&middot;&nbsp; 💉 Lecture 4: CDI and Dependency Injection</span>
+  <a class="disabled">Next &#8594;</a>
+</div>
+</section>
+    </div>
+  </main>
+</div>
+<footer class="site-footer">Made with IBM Bob &nbsp;&middot;&nbsp; &copy; 2026 Olivier Planson</footer>
+<script>
+/* ── EN/FR language toggle — global scope so buttons can call it ── */
+var _lang = localStorage.getItem('slide-lang') || 'en';
+function setLang(lang) {
+  _lang = lang;
+  localStorage.setItem('slide-lang', lang);
+  document.getElementById('btn-en').classList.toggle('active', lang === 'en');
+  document.getElementById('btn-fr').classList.toggle('active', lang === 'fr');
+  document.querySelectorAll('[data-en][data-fr]').forEach(function(el) {
+    el.innerHTML = lang === 'fr' ? el.getAttribute('data-fr') : el.getAttribute('data-en');
+  });
+}
+
+(function() {
+  /* ── Sidenav hover ── */
+  var nav     = document.getElementById('sidenav');
+  var navTrig = document.getElementById('sidenav-trigger');
+  var navTimer = null;
+  function navShow() { clearTimeout(navTimer); nav.classList.add('sidenav--open'); }
+  function navHide() { navTimer = setTimeout(function(){ nav.classList.remove('sidenav--open'); }, 300); }
+  navTrig.addEventListener('mouseenter', navShow);
+  navTrig.addEventListener('mouseleave', navHide);
+  nav.addEventListener('mouseenter', navShow);
+  nav.addEventListener('mouseleave', navHide);
+
+  /* ── Progress bar hover ── */
+  var pbWrap  = document.getElementById('pb-wrap');
+  var pbTrig  = document.getElementById('pb-trigger');
+  var pbTimer = null;
+  function pbShow() { clearTimeout(pbTimer); pbWrap.classList.add('pb-open'); }
+  function pbHide() { pbTimer = setTimeout(function(){ pbWrap.classList.remove('pb-open'); }, 400); }
+  pbTrig.addEventListener('mouseenter', pbShow);
+  pbTrig.addEventListener('mouseleave', pbHide);
+  pbWrap.addEventListener('mouseenter', pbShow);
+  pbWrap.addEventListener('mouseleave', pbHide);
+
+  /* ── Wire EN/FR buttons via addEventListener (no inline onclick) ── */
+  document.getElementById('btn-en').addEventListener('click', function() { setLang('en'); });
+  document.getElementById('btn-fr').addEventListener('click', function() { setLang('fr'); });
+
+  /* Apply stored preference on page load */
+  if (_lang === 'fr') setLang('fr');
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,64 @@
+<!-- © Copyright 2026 Olivier Planson. All rights reserved. Reproduction prohibited. Made with IBM Bob. -->
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>Cours 04 — CDI — Injection de Dépendances</title>
+  <link rel="stylesheet" href="../assets/carbon.css"/>
+</head>
+<body>
+<header class="cds--header">
+  <a class="cds--header__name" href="index.html">CDI — Injection de Dépendances<span>Cours Jakarta EE</span></a>
+  <a class="cds--header__back" href="../index.html">← Tous les Cours</a>
+</header>
+<div class="cds--shell">
+  <nav class="cds--side-nav">
+    <p class="cds--side-nav__section-title">Cours 04</p>
+    <a class="cds--side-nav__link active" href="index.html">⊙ Vue d'ensemble</a>
+    <a class="cds--side-nav__link" href="slides.html">☰ Contenu du cours</a>
+    <a class="cds--side-nav__link" href="concepts.html">◈ Concepts clés</a>
+    <a class="cds--side-nav__link" href="code.html">⟨/⟩ Exemples de code</a>
+  </nav>
+  <main class="cds--content">
+    <div class="breadcrumb"><a href="../index.html">Cours</a> › Cours 04</div>
+    <h1>CDI — Injection de Dépendances</h1>
+    <p class="page-lead">Jakarta Contexts and Dependency Injection — Durée : 3h · Instructeur : Olivier Planson</p>
+    <div class="tag-stack">
+      <span class="cds--tag cds--tag--purple">CDI 4.0</span>
+      <span class="cds--tag cds--tag--blue">@Inject</span>
+      <span class="cds--tag cds--tag--teal">Scopes</span>
+      <span class="cds--tag cds--tag--green">Interceptors</span>
+      <span class="cds--tag cds--tag--warm-gray">Events</span>
+      <span class="cds--tag cds--tag--red">@Transactional</span>
+    </div>
+    <h2>Objectifs pédagogiques</h2>
+    <table class="objectives-table"><tbody>
+      <tr><td>✅</td><td>Comprendre les principes et bénéfices de l'injection de dépendances</td></tr>
+      <tr><td>✅</td><td>Utiliser les annotations CDI pour gérer le cycle de vie des beans</td></tr>
+      <tr><td>✅</td><td>Appliquer les différents scopes de beans</td></tr>
+      <tr><td>✅</td><td>Implémenter les qualificateurs pour l'injection type-safe</td></tr>
+      <tr><td>✅</td><td>Utiliser les Producer Methods pour la création d'objets complexes</td></tr>
+      <tr><td>✅</td><td>Appliquer la gestion déclarative des transactions avec @Transactional</td></tr>
+    </tbody></table>
+    <h2>Plan du cours</h2>
+    <ol class="course-plan">
+      <li>Qu'est-ce que l'Injection de Dépendances — problème du new, solution CDI</li>
+      <li>Scopes CDI — @ApplicationScoped, @RequestScoped, @SessionScoped, @Dependent</li>
+      <li>Injection avec @Inject — field, constructor, method injection</li>
+      <li>Qualificateurs CDI — @Qualifier, résolution d'ambiguïté, @Alternative</li>
+      <li>Producer Methods — @Produces, @Disposer, configuration</li>
+      <li>Intercepteurs — @InterceptorBinding, @AroundInvoke, logging, sécurité</li>
+      <li>Transactions @Transactional — REQUIRED, REQUIRES_NEW, rollback strategies</li>
+      <li>CDI Events — @Observes, Event&lt;T&gt;, événements synchrones et asynchrones</li>
+    </ol>
+    <div class="tile-grid">
+      <a class="tile-link" href="slides.html"><div class="cds--tile"><h3>☰ Contenu du cours</h3><p>Scopes, @Inject, Qualificateurs, Intercepteurs, Transactions et Events avec diagrammes.</p></div></a>
+      <a class="tile-link" href="concepts.html"><div class="cds--tile"><h3>◈ Concepts clés</h3><p>CDI vs EJB, comparatif des scopes, types de transactions, CMT vs BMT, glossaire.</p></div></a>
+      <a class="tile-link" href="code.html"><div class="cds--tile"><h3>⟨/⟩ Exemples de code</h3><p>Services @ApplicationScoped, qualificateurs, producers, intercepteurs, @Transactional, events.</p></div></a>
+    </div>
+  </main>
+</div>
+<footer class="cds--footer">Made with IBM Bob &nbsp;·&nbsp; © 2026 Olivier Planson &nbsp;·&nbsp; ESIPE — Jakarta EE &amp; Microservices</footer>
+</body>
+</html>

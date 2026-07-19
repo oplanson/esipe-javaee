@@ -1,0 +1,146 @@
+<!-- © Copyright 2026 Olivier Planson. All rights reserved. Reproduction prohibited. Made with IBM Bob. -->
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>Règles de Gestion — Banking Web App</title>
+  <link rel="stylesheet" href="assets/carbon.css"/>
+</head>
+<body>
+<header class="cds--header">
+  <a class="cds--header__name" href="index.html">Banking Web Application<span>Documentation Technique — Lab 02</span></a>
+</header>
+<div class="cds--shell">
+  <nav class="cds--side-nav" aria-label="Navigation principale">
+    <p class="cds--side-nav__section-title">Documentation</p>
+    <a class="cds--side-nav__link" href="index.html"><i class="icon">⊙</i> Vue d'ensemble</a>
+    <a class="cds--side-nav__link" href="functional.html"><i class="icon">⊞</i> Architecture Fonctionnelle</a>
+    <a class="cds--side-nav__link" href="technical.html"><i class="icon">⊟</i> Architecture Technique</a>
+    <a class="cds--side-nav__link" href="sequences.html"><i class="icon">⇄</i> Diagrammes de Séquences</a>
+    <a class="cds--side-nav__link active" href="rules.html"><i class="icon">≡</i> Règles de Gestion</a>
+  </nav>
+  <main class="cds--content">
+    <nav class="cds--breadcrumb"><a href="index.html">Accueil</a><span class="sep">/</span><span class="current">Règles de Gestion</span></nav>
+    <h1>Règles de Gestion</h1>
+    <p class="page-lead">14 règles extraites du code source, couvrant la validation des entrées, la sécurité, le routage, les patterns d'architecture et la qualité de service.</p>
+
+    <h2>Validation des données client</h2>
+
+    <div class="rule-card critical">
+      <div class="rule-id">R1 &nbsp;—&nbsp; Nom obligatoire</div>
+      <div class="rule-title">Le nom d'un client ne peut pas être vide ou null</div>
+      <div class="rule-desc">Lors de la création (<code>POST action=create</code>) ou de la mise à jour (<code>POST action=update</code>), si le paramètre <code>name</code> est null, vide ou blanc, l'opération est refusée et l'utilisateur est redirigé avec <code>error=name_required</code>. <br/><strong>Source :</strong> <code>ClientController.createClient()</code> / <code>validateUpdateInput()</code></div>
+    </div>
+
+    <div class="rule-card critical">
+      <div class="rule-id">R2 &nbsp;—&nbsp; Email obligatoire</div>
+      <div class="rule-title">L'email d'un client ne peut pas être vide ou null</div>
+      <div class="rule-desc">Même mécanique que R1 pour le champ <code>email</code>. Redirection avec <code>error=email_required</code>. Le champ est validé par le type HTML <code>input type="email"</code> côté client (premier niveau), puis contrôlé côté serveur (second niveau obligatoire). <br/><strong>Source :</strong> <code>ClientController.createClient()</code> / <code>validateUpdateInput()</code></div>
+    </div>
+
+    <div class="rule-card">
+      <div class="rule-id">R3 &nbsp;—&nbsp; ID de client valide pour consultation / édition / suppression</div>
+      <div class="rule-title">Tout accès à un client individuel exige un ID numérique</div>
+      <div class="rule-desc">Si le paramètre <code>id</code> est absent, vide ou non convertible en <code>Long</code>, la requête est rejetée avec <code>400 Bad Request</code>. Si l'ID est valide mais qu'aucun client ne lui correspond, la réponse est <code>404 Not Found</code>. <br/><strong>Source :</strong> <code>ClientController.viewClient()</code>, <code>editClient()</code>, <code>deleteClient()</code></div>
+    </div>
+
+    <div class="rule-card">
+      <div class="rule-id">R4 &nbsp;—&nbsp; Longueur maximale des champs</div>
+      <div class="rule-title">Les champs nom et email sont limités à 100 caractères</div>
+      <div class="rule-desc">Contrainte HTML <code>maxlength="100"</code> appliquée dans <code>client-form.jsp</code> sur les deux champs. La validation est assurée côté client uniquement dans ce lab. <br/><strong>Source :</strong> <code>client-form.jsp</code></div>
+    </div>
+
+    <h2>Gestion des comptes bancaires</h2>
+
+    <div class="rule-card">
+      <div class="rule-id">R5 &nbsp;—&nbsp; Types de compte autorisés</div>
+      <div class="rule-title">Un compte est de type CHECKING (courant) ou SAVINGS (épargne)</div>
+      <div class="rule-desc">La propriété <code>type</code> de <code>Account</code> est libre en Java mais la vue <code>client-details.jsp</code> n'affiche les labels localisés que pour <code>CHECKING</code> et <code>SAVINGS</code>. Tout autre type est affiché brut. <br/><strong>Source :</strong> <code>Account.java</code>, <code>client-details.jsp</code></div>
+    </div>
+
+    <div class="rule-card">
+      <div class="rule-id">R6 &nbsp;—&nbsp; Débit conditionnel</div>
+      <div class="rule-title">Un retrait n'est autorisé que si le solde est suffisant</div>
+      <div class="rule-desc">La méthode <code>Account.withdraw(amount)</code> renvoie <code>false</code> sans modifier le solde si <code>amount &gt; balance</code>. Elle rejette également les montants négatifs ou nuls. <br/><strong>Source :</strong> <code>Account.withdraw()</code></div>
+    </div>
+
+    <div class="rule-card success">
+      <div class="rule-id">R7 &nbsp;—&nbsp; Dépôt positif uniquement</div>
+      <div class="rule-title">Un dépôt doit être strictement supérieur à zéro</div>
+      <div class="rule-desc">La méthode <code>Account.deposit(amount)</code> ignore les montants ≤ 0 sans lever d'exception. <br/><strong>Source :</strong> <code>Account.deposit()</code></div>
+    </div>
+
+    <h2>Sécurité et contrôle d'accès</h2>
+
+    <div class="rule-card critical">
+      <div class="rule-id">R8 &nbsp;—&nbsp; Authentification obligatoire pour les ressources protégées</div>
+      <div class="rule-title">Les URLs /clients/* et /admin/* nécessitent une session authentifiée</div>
+      <div class="rule-desc"><code>AuthenticationFilter</code> vérifie la présence de l'attribut <code>user</code> dans la session HTTP. Si absent, l'URL d'origine est sauvegardée en session (<code>originalUrl</code>) et l'utilisateur est redirigé vers <code>/login</code>. <br/><strong>Source :</strong> <code>AuthenticationFilter.doFilter()</code></div>
+    </div>
+
+    <div class="rule-card warning">
+      <div class="rule-id">R9 &nbsp;—&nbsp; CORS restreint aux origines autorisées</div>
+      <div class="rule-title">Seules les origines localhost:3000, localhost:4200, localhost:8080 sont autorisées pour les appels cross-origin</div>
+      <div class="rule-desc"><code>CorsFilter</code> (pattern <code>/api/*</code>) compare l'en-tête <code>Origin</code> à une liste blanche statique. Les origines inconnues n'obtiennent pas les en-têtes CORS mais la requête n'est pas bloquée (pas de reject actif côté filtre). Les requêtes preflight OPTIONS reçoivent un <code>200 OK</code> sans progression dans la chaîne. <br/><strong>Source :</strong> <code>CorsFilter.doFilter()</code></div>
+    </div>
+
+    <div class="rule-card critical">
+      <div class="rule-id">R10 &nbsp;—&nbsp; Suppression contrôlée par feature flag</div>
+      <div class="rule-title">La suppression d'un client est désactivable via configuration</div>
+      <div class="rule-desc">Le paramètre de contexte web <code>feature.client.deletion.enabled</code> (défini dans <code>web.xml</code>) contrôle la disponibilité de l'action <code>delete</code>. Si <code>false</code> : le bouton de suppression est masqué dans la JSP et toute tentative de suppression HTTP retourne <code>403 Forbidden</code>. <br/><strong>Source :</strong> <code>ClientController.deleteClient()</code>, <code>client-list.jsp</code>, <code>client-details.jsp</code></div>
+    </div>
+
+    <h2>Architecture et patterns</h2>
+
+    <div class="rule-card">
+      <div class="rule-id">R11 &nbsp;—&nbsp; Pattern PRG (Post-Redirect-Get)</div>
+      <div class="rule-title">Toutes les opérations d'écriture redirigent après leur exécution</div>
+      <div class="rule-desc">Les actions <code>create</code>, <code>update</code> et <code>delete</code> redirigent systématiquement (302) vers une URL en GET après succès. Cela prévient la double soumission lors d'un rafraîchissement de page. <br/><strong>Source :</strong> <code>ClientController.createClient()</code>, <code>updateClient()</code>, <code>deleteClient()</code></div>
+    </div>
+
+    <div class="rule-card">
+      <div class="rule-id">R12 &nbsp;—&nbsp; Thread-safety du service</div>
+      <div class="rule-title">ClientService est partagé entre tous les threads de requêtes et doit être thread-safe</div>
+      <div class="rule-desc">Une seule instance de <code>ClientService</code> est créée dans <code>ClientController.init()</code> (chargée au démarrage via <code>loadOnStartup=1</code>). Le stockage utilise <code>ConcurrentHashMap</code> et la génération d'ID utilise <code>AtomicLong</code>. <br/><strong>Source :</strong> <code>ClientService.java</code></div>
+    </div>
+
+    <h2>Qualité de service</h2>
+
+    <div class="rule-card warning">
+      <div class="rule-id">R13 &nbsp;—&nbsp; Alerte sur les requêtes lentes</div>
+      <div class="rule-title">Toute requête dont le traitement dépasse 1 seconde doit déclencher un avertissement</div>
+      <div class="rule-desc"><code>LoggingFilter</code> mesure le temps de traitement de chaque requête. Si la durée dépasse 1000 ms, un message d'avertissement est ajouté au log de la réponse. <br/><strong>Source :</strong> <code>LoggingFilter.logResponse()</code></div>
+    </div>
+
+    <div class="rule-card success">
+      <div class="rule-id">R14 &nbsp;—&nbsp; Compression automatique des réponses textuelles</div>
+      <div class="rule-title">Les réponses textuelles de plus de 1 Ko sont compressées en GZIP si le client le supporte</div>
+      <div class="rule-desc"><code>CompressionFilter</code> capture les réponses via un <code>HttpServletResponseWrapper</code>. Si le client envoie <code>Accept-Encoding: gzip</code> et si la réponse est de type textuel (HTML, CSS, JS, JSON, XML…) et de taille supérieure à 1024 octets, le contenu est compressé GZIP avant envoi. L'en-tête <code>Content-Encoding: gzip</code> est positionné. <br/><strong>Source :</strong> <code>CompressionFilter.doFilter()</code></div>
+    </div>
+
+    <hr class="cds--divider"/>
+    <div class="cds--data-table-container">
+      <table class="cds--data-table">
+        <thead><tr><th>Règle</th><th>Catégorie</th><th>Niveau</th><th>Mécanisme Jakarta EE</th></tr></thead>
+        <tbody>
+          <tr><td>R1, R2</td><td>Validation entrées</td><td>Critique</td><td>Vérification manuelle côté Servlet</td></tr>
+          <tr><td>R3</td><td>Validation entrées</td><td>Standard</td><td>Parsing + <code>404/400</code> HTTP</td></tr>
+          <tr><td>R4</td><td>Validation entrées</td><td>Standard</td><td>Contrainte HTML <code>maxlength</code></td></tr>
+          <tr><td>R5</td><td>Métier</td><td>Standard</td><td>Énumération implicite via affichage JSP</td></tr>
+          <tr><td>R6, R7</td><td>Métier</td><td>Standard</td><td>Méthodes métier du modèle <code>Account</code></td></tr>
+          <tr><td>R8</td><td>Sécurité</td><td>Critique</td><td><code>@WebFilter</code> + gestion de session HTTP</td></tr>
+          <tr><td>R9</td><td>Sécurité</td><td>Avertissement</td><td><code>@WebFilter</code> CORS headers</td></tr>
+          <tr><td>R10</td><td>Sécurité</td><td>Critique</td><td>Feature flag <code>context-param</code> + <code>403 Forbidden</code></td></tr>
+          <tr><td>R11</td><td>Architecture</td><td>Standard</td><td>Pattern PRG — <code>sendRedirect()</code></td></tr>
+          <tr><td>R12</td><td>Architecture</td><td>Standard</td><td><code>ConcurrentHashMap</code> + <code>AtomicLong</code></td></tr>
+          <tr><td>R13</td><td>Qualité de service</td><td>Avertissement</td><td><code>@WebFilter</code> + mesure <code>System.currentTimeMillis()</code></td></tr>
+          <tr><td>R14</td><td>Qualité de service</td><td>Standard</td><td><code>@WebFilter</code> + <code>GZIPOutputStream</code></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </main>
+</div>
+<footer class="cds--footer">Made with IBM Bob</footer>
+</body>
+</html>

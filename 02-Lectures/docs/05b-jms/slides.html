@@ -1,0 +1,306 @@
+<!-- © Copyright 2026 Olivier Planson. All rights reserved. Reproduction prohibited. Made with IBM Bob. -->
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>Cours 05b — Contenu du cours</title>
+  <link rel="stylesheet" href="../assets/carbon.css"/>
+</head>
+<body>
+<header class="cds--header">
+  <a class="cds--header__name" href="index.html">JMS — Messagerie Enterprise<span>Cours Jakarta EE</span></a>
+  <a class="cds--header__back" href="../index.html">← Tous les Cours</a>
+</header>
+<div class="cds--shell">
+  <nav class="cds--side-nav">
+    <p class="cds--side-nav__section-title">Cours 05b</p>
+    <a class="cds--side-nav__link" href="index.html">⊙ Vue d'ensemble</a>
+    <a class="cds--side-nav__link active" href="slides.html">☰ Contenu du cours</a>
+    <a class="cds--side-nav__link" href="concepts.html">◈ Concepts clés</a>
+    <a class="cds--side-nav__link" href="code.html">⟨/⟩ Exemples de code</a>
+  </nav>
+  <main class="cds--content">
+    <div class="breadcrumb"><a href="../index.html">Cours</a> › <a href="index.html">Cours 05b</a> › Contenu</div>
+    <h1>Contenu du cours</h1>
+    <p class="page-lead">Toutes les sections — cliquez sur un titre pour développer.</p>
+
+    <details open>
+      <summary>📨 Messagerie Enterprise — Pourquoi ?</summary>
+      <div class="slide-content">
+        <h3>Les limites des appels directs</h3>
+        <p>Les appels synchrones (REST, EJB Remote) créent un <strong>couplage fort</strong> entre les services : l'appelant doit attendre la réponse, et une panne du service cible bloque l'ensemble de la chaîne.</p>
+        <ul>
+          <li><strong>Couplage fort</strong> — l'émetteur connaît l'adresse et le contrat du récepteur</li>
+          <li><strong>Disponibilité requise</strong> — les deux services doivent être actifs simultanément</li>
+          <li><strong>Scalabilité limitée</strong> — la montée en charge d'un service impacte directement l'autre</li>
+          <li><strong>Risque de cascade</strong> — une panne se propage instantanément</li>
+        </ul>
+        <h3>La messagerie enterprise : bénéfices</h3>
+        <ul>
+          <li>✅ <strong>Couplage faible</strong> — les services communiquent via un broker, sans se connaître directement</li>
+          <li>✅ <strong>Communication asynchrone</strong> — l'émetteur n'attend pas la réponse du récepteur</li>
+          <li>✅ <strong>Résilience</strong> — les messages sont persistés ; si le consommateur est indisponible, les messages l'attendent</li>
+          <li>✅ <strong>Découplage temporel</strong> — émetteur et récepteur n'ont pas besoin d'être actifs en même temps</li>
+          <li>✅ <strong>Lissage de la charge</strong> — le broker absorbe les pics de trafic</li>
+          <li>✅ <strong>Traçabilité</strong> — les messages peuvent être rejoués, archivés, audités</li>
+        </ul>
+        <h3>JMS vs Appels Directs</h3>
+        <table class="cds--data-table">
+          <thead><tr><th>Critère</th><th>Appel Direct (REST/EJB)</th><th>Messagerie JMS</th></tr></thead>
+          <tbody>
+            <tr><td>Mode</td><td>Synchrone — bloquant</td><td>Asynchrone — non bloquant</td></tr>
+            <tr><td>Couplage</td><td>Fort — adresse connue</td><td>Faible — via broker</td></tr>
+            <tr><td>Disponibilité</td><td>Requise des deux côtés</td><td>Indépendante</td></tr>
+            <tr><td>Résilience</td><td>Propagation des pannes</td><td>Isolation et rétention</td></tr>
+          </tbody>
+        </table>
+        <img src="../../images/05b-jms-enterprise-messaging-diagram-1.png" alt="JMS Enterprise Messaging — Pourquoi ?"/>
+      </div>
+    </details>
+
+    <details>
+      <summary>🏗️ Architecture JMS</summary>
+      <div class="slide-content">
+        <p>JMS (Jakarta Messaging Service) définit une API standard pour la communication asynchrone par messages via un <strong>broker de messages</strong>.</p>
+        <h3>Composants principaux</h3>
+        <ul>
+          <li><strong>ConnectionFactory</strong> — fabrique de connexions, configurée dans le serveur d'application (JNDI). Point d'entrée pour créer des connexions ou un <code>JMSContext</code></li>
+          <li><strong>Destination</strong> — cible des messages : <code>Queue</code> (Point-à-Point) ou <code>Topic</code> (Pub/Sub)</li>
+          <li><strong>Connection</strong> — connexion physique au broker (gère l'authentification, le pool)</li>
+          <li><strong>Session</strong> — contexte transactionnel pour l'envoi et la réception de messages</li>
+          <li><strong>MessageProducer</strong> — crée et envoie des messages vers une Destination</li>
+          <li><strong>MessageConsumer</strong> — reçoit des messages depuis une Destination (synchrone ou async)</li>
+          <li><strong>Message</strong> — unité de données échangée — corps + en-têtes + propriétés</li>
+        </ul>
+        <h3>JMS 2.0 — API simplifiée</h3>
+        <p>JMS 2.0 (Jakarta EE 7+) introduit <code>JMSContext</code>, qui combine <code>Connection</code> + <code>Session</code> en un seul objet injectable via <code>@Inject</code>.</p>
+        <ul>
+          <li><code>@Inject JMSContext jmsContext</code> — injection directe dans un bean CDI</li>
+          <li><code>jmsContext.createProducer().send(destination, body)</code> — envoi en une ligne</li>
+          <li>Gestion automatique de la connexion par le conteneur</li>
+        </ul>
+        <img src="../../images/05b-jms-enterprise-messaging-diagram-2.png" alt="JMS Architecture — Composants"/>
+      </div>
+    </details>
+
+    <details>
+      <summary>📥 Point-à-Point (Queue)</summary>
+      <div class="slide-content">
+        <p>Le modèle <strong>Point-à-Point</strong> utilise une <strong>Queue</strong> : chaque message est consommé par <em>un seul</em> consommateur.</p>
+        <h3>Caractéristiques</h3>
+        <ul>
+          <li><strong>Un message → un consommateur</strong> — même si plusieurs consommateurs écoutent la même Queue, chaque message n'est délivré qu'à un seul</li>
+          <li><strong>Garantie de livraison</strong> — les messages sont persistés et attendent jusqu'à être consommés</li>
+          <li><strong>Persistance</strong> — les messages survivent au redémarrage du broker (messages persistants)</li>
+          <li><strong>Accusé de réception (ACK)</strong> — le broker attend un ACK du consommateur avant de supprimer le message</li>
+          <li><strong>Load balancing naturel</strong> — plusieurs instances du même consommateur se partagent la charge</li>
+          <li><strong>Ordre FIFO</strong> — les messages sont généralement consommés dans l'ordre d'arrivée</li>
+        </ul>
+        <h3>Cas d'usage typiques</h3>
+        <ul>
+          <li>Traitement de commandes e-commerce</li>
+          <li>File de tâches (job queue) — envoi d'emails, génération de rapports</li>
+          <li>Intégration entre microservices (commande → stock → facturation)</li>
+        </ul>
+        <img src="../../images/05b-jms-enterprise-messaging-diagram-3.png" alt="JMS Point-à-Point Queue"/>
+      </div>
+    </details>
+
+    <details>
+      <summary>📡 Pub/Sub (Topic)</summary>
+      <div class="slide-content">
+        <p>Le modèle <strong>Publish/Subscribe</strong> utilise un <strong>Topic</strong> : chaque message est diffusé à <em>tous</em> les abonnés actifs.</p>
+        <h3>Caractéristiques</h3>
+        <ul>
+          <li><strong>Un message → plusieurs abonnés</strong> — chaque abonné reçoit une copie du message</li>
+          <li><strong>Broadcast</strong> — idéal pour notifier plusieurs systèmes d'un même événement</li>
+          <li><strong>Abonnements non-durables</strong> — l'abonné doit être actif au moment de la publication pour recevoir le message</li>
+          <li><strong>Abonnements durables</strong> — le broker conserve les messages pour les abonnés temporairement déconnectés</li>
+        </ul>
+        <h3>Durable vs Non-Durable</h3>
+        <table class="cds--data-table">
+          <thead><tr><th>Type</th><th>Abonné hors ligne</th><th>Cas d'usage</th></tr></thead>
+          <tbody>
+            <tr><td><strong>Non-durable</strong></td><td>Messages perdus</td><td>Notifications temps réel, logs</td></tr>
+            <tr><td><strong>Durable</strong></td><td>Messages conservés jusqu'à reconnexion</td><td>Notifications critiques, audit</td></tr>
+          </tbody>
+        </table>
+        <h3>Cas d'usage typiques</h3>
+        <ul>
+          <li>Notifications d'événements métier (création d'un compte, passage d'une commande)</li>
+          <li>Synchronisation de cache entre instances</li>
+          <li>Publication de cours boursiers, de métriques temps réel</li>
+        </ul>
+        <img src="../../images/05b-jms-enterprise-messaging-diagram-4.png" alt="JMS Pub/Sub Topic"/>
+      </div>
+    </details>
+
+    <details>
+      <summary>📄 Types de Messages JMS</summary>
+      <div class="slide-content">
+        <p>JMS définit 5 types de messages, chacun adapté à un type de contenu particulier.</p>
+        <h3>Les 5 types</h3>
+        <ul>
+          <li><strong>TextMessage</strong> — corps de type <code>String</code> ; idéal pour JSON, XML, texte brut. Le plus utilisé en pratique</li>
+          <li><strong>ObjectMessage</strong> — corps de type <code>Serializable</code> ; transporte un objet Java sérialisé. À éviter en inter-applicatif (couplage fort)</li>
+          <li><strong>MapMessage</strong> — paires clé/valeur (<code>String → primitif</code>) ; accès nommé aux champs, portable</li>
+          <li><strong>BytesMessage</strong> — corps de type tableau d'octets (<code>byte[]</code>) ; pour les données binaires (images, fichiers, protocoles custom)</li>
+          <li><strong>StreamMessage</strong> — flux de types primitifs Java écrits et lus séquentiellement</li>
+        </ul>
+        <h3>En-têtes JMS (headers)</h3>
+        <ul>
+          <li><code>JMSMessageID</code> — identifiant unique généré par le broker</li>
+          <li><code>JMSDestination</code> — Queue ou Topic cible</li>
+          <li><code>JMSDeliveryMode</code> — <code>PERSISTENT</code> ou <code>NON_PERSISTENT</code></li>
+          <li><code>JMSPriority</code> — priorité de livraison (0–9, défaut 4)</li>
+          <li><code>JMSExpiration</code> — date d'expiration du message</li>
+          <li><code>JMSCorrelationID</code> — pour relier une réponse à sa requête (request-reply)</li>
+        </ul>
+        <h3>Propriétés et sélecteurs</h3>
+        <p>Les <strong>propriétés</strong> sont des métadonnées applicatives arbitraires (String, int, boolean…) attachées au message via <code>message.setStringProperty("key", "value")</code>.</p>
+        <p>Les <strong>sélecteurs de messages</strong> (Message Selectors) permettent aux consommateurs de filtrer les messages en fonction de leurs propriétés, via une syntaxe proche de SQL WHERE : <code>"transferType = 'INTERNATIONAL' AND amount &gt; 1000"</code>.</p>
+      </div>
+    </details>
+
+    <details>
+      <summary>⚙️ Producteurs et Consommateurs</summary>
+      <div class="slide-content">
+        <p>JMS 2.0 simplifie drastiquement l'API avec <strong>JMSContext</strong> — une seule interface remplace <code>Connection</code> + <code>Session</code>.</p>
+        <h3>Producteur avec JMSContext (JMS 2.0)</h3>
+        <ul>
+          <li><code>@Inject JMSContext jmsContext</code> — injection directe dans un CDI bean</li>
+          <li><code>@Inject @JMSConnectionFactory("jms/cf") ConnectionFactory</code> — factory JNDI</li>
+          <li><code>jmsContext.createProducer().send(queue, textMessage)</code> — envoi simplifié</li>
+          <li>Options du producteur : priorité, TTL, mode de livraison, délai</li>
+        </ul>
+        <h3>Consommateur synchrone</h3>
+        <ul>
+          <li><code>jmsContext.createConsumer(destination).receiveBody(String.class)</code> — bloquant</li>
+          <li><code>receiveBody(String.class, timeout)</code> — avec délai d'attente en ms</li>
+          <li>À éviter dans les servlets / EJB (threads gérés par le conteneur)</li>
+        </ul>
+        <h3>Consommateur asynchrone — MessageListener</h3>
+        <ul>
+          <li>Implémente <code>MessageListener</code> avec <code>onMessage(Message msg)</code></li>
+          <li>Appelé automatiquement par le conteneur à chaque nouveau message</li>
+          <li>Non bloquant — le thread est libéré entre les messages</li>
+        </ul>
+        <h3>Pattern Request-Reply</h3>
+        <ul>
+          <li>L'émetteur définit <code>JMSReplyTo</code> (Queue temporaire) et <code>JMSCorrelationID</code></li>
+          <li>Le récepteur envoie sa réponse sur la Queue <code>JMSReplyTo</code></li>
+          <li>L'émetteur consomme la réponse en filtrant sur <code>JMSCorrelationID</code></li>
+        </ul>
+        <img src="../../images/05b-jms-enterprise-messaging-diagram-5.png" alt="JMS Producteurs et Consommateurs"/>
+      </div>
+    </details>
+
+    <details>
+      <summary>🤖 Message-Driven Beans</summary>
+      <div class="slide-content">
+        <p>Les <strong>Message-Driven Beans (MDB)</strong> sont des EJB déclenchés automatiquement par l'arrivée d'un message JMS. Ils constituent le moyen standard de consommer des messages dans Jakarta EE.</p>
+        <h3>Annotation @MessageDriven</h3>
+        <ul>
+          <li><code>@MessageDriven(activationConfig = {...})</code> — configure l'abonnement JMS du MDB</li>
+          <li><code>@ActivationConfigProperty(propertyName="destinationType", propertyValue="jakarta.jms.Queue")</code></li>
+          <li><code>@ActivationConfigProperty(propertyName="destination", propertyValue="jms/transferQueue")</code></li>
+          <li><code>@ActivationConfigProperty(propertyName="messageSelector", propertyValue="...")</code> — filtre de messages</li>
+        </ul>
+        <h3>Cycle de vie du MDB</h3>
+        <ul>
+          <li><strong>Does Not Exist</strong> → <strong>Pooled</strong> — le conteneur crée un pool d'instances MDB au démarrage</li>
+          <li><strong>Pooled</strong> → <strong>onMessage()</strong> — une instance est sélectionnée et la méthode est invoquée</li>
+          <li>Après <code>onMessage()</code>, l'instance retourne dans le pool</li>
+          <li><code>@PostConstruct</code> et <code>@PreDestroy</code> sont supportés</li>
+        </ul>
+        <h3>Injection CDI dans un MDB</h3>
+        <ul>
+          <li><code>@Inject</code> fonctionne dans un MDB comme dans un EJB Session</li>
+          <li>Les services applicatifs (BankingService, NotificationService…) sont injectables</li>
+          <li>Pas de scope conversationnel — le MDB est stateless</li>
+        </ul>
+        <h3>MDB Topic (Pub/Sub)</h3>
+        <ul>
+          <li><code>destinationType = jakarta.jms.Topic</code></li>
+          <li><code>subscriptionDurability = "Durable"</code> — pour les abonnements durables</li>
+          <li><code>durableSubscriptionName = "myDurableSub"</code> — nom unique de l'abonnement</li>
+          <li><code>clientId = "myClientId"</code> — identifiant client pour la durabilité</li>
+        </ul>
+      </div>
+    </details>
+
+    <details>
+      <summary>🔐 Transactions JMS</summary>
+      <div class="slide-content">
+        <p>La gestion des transactions est critique en messagerie enterprise pour garantir qu'un message est traité <em>exactement une fois</em>.</p>
+        <h3>CMT par défaut dans les MDB</h3>
+        <ul>
+          <li>Le conteneur démarre une transaction avant <code>onMessage()</code> et la committe après son retour normal</li>
+          <li>La transaction couvre à la fois l'ACK du message JMS et les opérations JPA/BD</li>
+          <li>Atomicité garantie : si la BD échoue, le message est remis en file</li>
+        </ul>
+        <h3>Rollback et rélivraison</h3>
+        <ul>
+          <li>En cas d'exception, la transaction est rollbackée et le message est <strong>rélivré</strong> par le broker</li>
+          <li>Le nombre de tentatives est configurable (propriété <code>maxRedeliveryCount</code>)</li>
+          <li>Après N tentatives échouées, le message est envoyé en <strong>Dead Letter Queue (DLQ)</strong></li>
+        </ul>
+        <h3>Poison Message Detection</h3>
+        <ul>
+          <li>Un <em>poison message</em> est un message qui déclenche systématiquement une exception, entraînant une boucle infinie de rélivraison</li>
+          <li>La DLQ interrompt cette boucle en isolant le message défaillant</li>
+          <li>Stratégie : inspecter le header <code>JMSXDeliveryCount</code> dans <code>onMessage()</code></li>
+        </ul>
+        <h3>Dead Letter Queue</h3>
+        <ul>
+          <li>File dédiée recevant les messages non traitables après épuisement des tentatives</li>
+          <li>Un MDB dédié (<em>DLQ Handler</em>) consomme cette file pour alerter, journaliser, corriger ou archiver</li>
+          <li>Évite la perte silencieuse de messages</li>
+        </ul>
+        <img src="../../images/05b-jms-enterprise-messaging-diagram-6.png" alt="JMS Transactions et Dead Letter Queue"/>
+      </div>
+    </details>
+
+    <details>
+      <summary>🏆 Meilleures Pratiques JMS</summary>
+      <div class="slide-content">
+        <h3>Conception des messages</h3>
+        <ul>
+          <li>✅ Préférer <strong>TextMessage avec JSON</strong> — interopérable, lisible, versionnable</li>
+          <li>✅ Garder les messages <strong>petits</strong> — inclure uniquement l'identifiant et les données essentielles</li>
+          <li>✅ Inclure un <strong>timestamp</strong> et un <strong>correlationId</strong> dans le corps JSON</li>
+          <li>⛔ Éviter <code>ObjectMessage</code> entre applications différentes — couplage Java-to-Java</li>
+        </ul>
+        <h3>Sélecteurs pour le filtrage</h3>
+        <ul>
+          <li>Utiliser les sélecteurs JMS pour router les messages vers les MDB spécialisés</li>
+          <li>Les sélecteurs sont évalués côté broker — réduisent le trafic réseau</li>
+          <li>Exemple : <code>"transferType = 'INTERNATIONAL'"</code> sur une Queue partagée</li>
+        </ul>
+        <h3>Gestion de la DLQ</h3>
+        <ul>
+          <li>Toujours configurer une DLQ par Queue applicative importante</li>
+          <li>Déployer un MDB DLQ Handler qui alerte et journalise en temps réel</li>
+          <li>Prévoir un outil de <em>replay</em> pour réinjecter les messages corrigés</li>
+        </ul>
+        <h3>Monitoring et performance</h3>
+        <ul>
+          <li>Superviser la profondeur des Queues (métrique <code>queueDepth</code>)</li>
+          <li>Configurer le pool de MDB (<code>maxEndpoints</code>) selon la charge</li>
+          <li>Éviter les opérations longues dans <code>onMessage()</code> — déléguer à un thread asynchrone si nécessaire</li>
+        </ul>
+        <h3>Configuration Open Liberty</h3>
+        <ul>
+          <li>Activer les features <code>messagingClient-3.0</code>, <code>mdb-3.2</code>, <code>wasJmsClient-2.0</code> dans <code>server.xml</code></li>
+          <li>Déclarer <code>jmsActivationSpec</code>, <code>jmsConnectionFactory</code>, <code>jmsQueue</code>, <code>jmsTopic</code></li>
+          <li>Utiliser JNDI names cohérents : <code>jms/transferCF</code>, <code>jms/transferQueue</code>, <code>jms/dlq</code></li>
+        </ul>
+      </div>
+    </details>
+
+  </main>
+</div>
+<footer class="cds--footer">Made with IBM Bob &nbsp;·&nbsp; © 2026 Olivier Planson &nbsp;·&nbsp; ESIPE — Jakarta EE &amp; Microservices</footer>
+</body>
+</html>

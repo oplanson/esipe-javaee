@@ -1,0 +1,280 @@
+<!-- © Copyright 2026 Olivier Planson. All rights reserved. Reproduction prohibited. Made with IBM Bob. -->
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Banking REST App — Lab 05 — Architecture Fonctionnelle</title>
+  <link rel="stylesheet" href="assets/carbon.css"/>
+</head>
+<body>
+
+<header class="cds--header">
+  <a class="cds--header__name" href="index.html">🏦 Banking REST Application<span>Lab 05</span></a>
+  <span class="cds--header__divider">|</span>
+  <span style="font-size:.8125rem;color:#c6c6c6;">Jakarta EE 10 · JAX-RS 3.1 · MicroProfile 6.0 · Open Liberty 23</span>
+</header>
+
+<div class="cds--shell">
+  <nav class="cds--side-nav" aria-label="Navigation">
+    <p class="cds--side-nav__section-title">Documentation</p>
+    <a class="cds--side-nav__link" href="index.html"><i class="icon">🏠</i>Vue d'ensemble</a>
+    <a class="cds--side-nav__link active" href="functional.html"><i class="icon">⚙️</i>Architecture Fonctionnelle</a>
+    <a class="cds--side-nav__link" href="technical.html"><i class="icon">🔧</i>Architecture Technique</a>
+    <a class="cds--side-nav__link" href="sequences.html"><i class="icon">🔄</i>Diagrammes de Séquences</a>
+    <a class="cds--side-nav__link" href="rules.html"><i class="icon">📋</i>Règles Métier</a>
+  </nav>
+
+  <main class="cds--content">
+    <nav class="cds--breadcrumb">
+      <a href="index.html">Accueil</a>
+      <span class="sep">/</span>
+      <span class="current">Architecture Fonctionnelle</span>
+    </nav>
+
+    <h1>Architecture Fonctionnelle</h1>
+    <p class="page-lead">Cinq domaines fonctionnels : API Clients, API Comptes, API Transactions (audit), Gestion des erreurs, et composants CDI transversaux. Le tout exposé sous <code>/api</code> via JAX-RS 3.1.</p>
+
+    <!-- ══════════════════════════════════════════════
+         SVG 1 — Vue globale : HTTP → JAX-RS → CDI → JPA → PostgreSQL
+    ══════════════════════════════════════════════ -->
+    <h2>Vue globale du flux</h2>
+    <div class="arch-box">
+      <svg viewBox="0 0 860 260" width="100%" font-family="'IBM Plex Sans','Helvetica Neue',Arial,sans-serif" font-size="12">
+        <defs>
+          <marker id="a1" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6 Z" fill="#0f62fe"/></marker>
+          <marker id="a2" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6 Z" fill="#8a3ffc"/></marker>
+          <marker id="a3" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6 Z" fill="#198038"/></marker>
+        </defs>
+
+        <!-- HTTP Client -->
+        <rect x="10" y="100" width="100" height="60" rx="3" fill="#161616"/>
+        <text x="60" y="127" text-anchor="middle" fill="#f4f4f4" font-weight="700" font-size="11">HTTP</text>
+        <text x="60" y="145" text-anchor="middle" fill="#c6c6c6" font-size="10">Client</text>
+
+        <!-- arrow -->
+        <line x1="110" y1="130" x2="148" y2="130" stroke="#0f62fe" stroke-width="1.5" marker-end="url(#a1)"/>
+
+        <!-- JAX-RS -->
+        <rect x="149" y="80" width="160" height="100" rx="3" fill="#d0e2ff" stroke="#0043ce" stroke-width="1"/>
+        <text x="229" y="103" text-anchor="middle" fill="#0043ce" font-weight="700">JAX-RS Layer</text>
+        <text x="229" y="120" text-anchor="middle" fill="#161616" font-size="10">ClientResource</text>
+        <text x="229" y="136" text-anchor="middle" fill="#161616" font-size="10">AccountResource</text>
+        <text x="229" y="152" text-anchor="middle" fill="#161616" font-size="10">TransactionResource</text>
+        <text x="229" y="169" text-anchor="middle" fill="#525252" font-size="9">ExceptionMappers ×5</text>
+
+        <!-- arrow -->
+        <line x1="309" y1="130" x2="348" y2="130" stroke="#0f62fe" stroke-width="1.5" marker-end="url(#a1)"/>
+
+        <!-- CDI Services -->
+        <rect x="349" y="80" width="155" height="100" rx="3" fill="#defbe6" stroke="#198038" stroke-width="1"/>
+        <text x="426" y="103" text-anchor="middle" fill="#198038" font-weight="700">CDI Services</text>
+        <text x="426" y="120" text-anchor="middle" fill="#161616" font-size="10">@ApplicationScoped</text>
+        <text x="426" y="136" text-anchor="middle" fill="#161616" font-size="10">@Transactional</text>
+        <text x="426" y="152" text-anchor="middle" fill="#161616" font-size="10">ClientService</text>
+        <text x="426" y="169" text-anchor="middle" fill="#161616" font-size="10">AccountService</text>
+
+        <!-- arrow -->
+        <line x1="504" y1="130" x2="543" y2="130" stroke="#0f62fe" stroke-width="1.5" marker-end="url(#a1)"/>
+
+        <!-- JPA -->
+        <rect x="544" y="80" width="150" height="100" rx="3" fill="#e8daff" stroke="#491d8b" stroke-width="1"/>
+        <text x="619" y="103" text-anchor="middle" fill="#491d8b" font-weight="700">JPA / EclipseLink</text>
+        <text x="619" y="120" text-anchor="middle" fill="#161616" font-size="10">@RequestScoped EM</text>
+        <text x="619" y="136" text-anchor="middle" fill="#161616" font-size="10">Client · Account</text>
+        <text x="619" y="152" text-anchor="middle" fill="#161616" font-size="10">Transaction</text>
+        <text x="619" y="169" text-anchor="middle" fill="#525252" font-size="9">NamedQueries</text>
+
+        <!-- arrow -->
+        <line x1="694" y1="130" x2="733" y2="130" stroke="#0f62fe" stroke-width="1.5" marker-end="url(#a1)"/>
+
+        <!-- PostgreSQL -->
+        <rect x="734" y="100" width="110" height="60" rx="3" fill="#161616"/>
+        <text x="789" y="127" text-anchor="middle" fill="#f4f4f4" font-weight="700" font-size="11">PostgreSQL</text>
+        <text x="789" y="145" text-anchor="middle" fill="#c6c6c6" font-size="9">+ Flyway</text>
+
+        <!-- CDI Events feedback (dashed purple, bottom) -->
+        <path d="M426,180 Q426,220 229,220 Q149,220 149,180" fill="none" stroke="#8a3ffc" stroke-width="1.5" stroke-dasharray="5,3" marker-end="url(#a2)"/>
+        <text x="310" y="237" text-anchor="middle" fill="#8a3ffc" font-size="10">CDI Events / @Observes → BankingEventObserver</text>
+
+        <!-- MicroProfile REST Client (top) -->
+        <path d="M229,80 Q229,40 60,40 Q10,40 10,100" fill="none" stroke="#198038" stroke-width="1.5" stroke-dasharray="5,3" marker-end="url(#a3)"/>
+        <text x="140" y="33" text-anchor="middle" fill="#198038" font-size="10">MicroProfile REST Client (BankingRestClient)</text>
+      </svg>
+    </div>
+
+    <!-- ══════════════════════════════════════════════
+         DOMAINE 1 — Clients
+    ══════════════════════════════════════════════ -->
+    <h2>1. API REST Clients — <code>ClientResource @Path("/clients")</code></h2>
+    <div class="cds--data-table-container">
+      <table class="cds--data-table">
+        <thead><tr><th>Verbe</th><th>Endpoint</th><th>Description</th><th>Codes HTTP</th></tr></thead>
+        <tbody>
+          <tr><td><span class="cds--tag cds--tag--blue">GET</span></td><td><code>GET /api/clients</code></td><td>Liste de tous les clients</td><td>200</td></tr>
+          <tr><td><span class="cds--tag cds--tag--blue">GET</span></td><td><code>GET /api/clients/{id}</code></td><td>Détail d'un client</td><td>200 / 404</td></tr>
+          <tr><td><span class="cds--tag cds--tag--green">POST</span></td><td><code>POST /api/clients</code></td><td>Créer un client (retourne <code>Location</code>)</td><td>201 / 400</td></tr>
+          <tr><td><span class="cds--tag cds--tag--warm">PUT</span></td><td><code>PUT /api/clients/{id}</code></td><td>Modifier un client</td><td>200 / 400 / 404</td></tr>
+          <tr><td><span class="cds--tag cds--tag--red">DELETE</span></td><td><code>DELETE /api/clients/{id}</code></td><td>Supprimer un client (cascade comptes)</td><td>204 / 404</td></tr>
+          <tr><td><span class="cds--tag cds--tag--blue">GET</span></td><td><code>GET /api/clients/search?name=</code></td><td>Recherche par nom</td><td>200</td></tr>
+          <tr><td><span class="cds--tag cds--tag--blue">GET</span></td><td><code>GET /api/clients/count</code></td><td>Nombre total de clients</td><td>200</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- ══════════════════════════════════════════════
+         DOMAINE 2 — Comptes
+    ══════════════════════════════════════════════ -->
+    <h2>2. API REST Comptes — <code>AccountResource @Path("/accounts")</code></h2>
+    <div class="cds--data-table-container">
+      <table class="cds--data-table">
+        <thead><tr><th>Verbe</th><th>Endpoint</th><th>Description</th><th>Codes HTTP</th></tr></thead>
+        <tbody>
+          <tr><td><span class="cds--tag cds--tag--blue">GET</span></td><td><code>GET /api/accounts</code></td><td>Liste de tous les comptes</td><td>200</td></tr>
+          <tr><td><span class="cds--tag cds--tag--blue">GET</span></td><td><code>GET /api/accounts/{id}</code></td><td>Détail d'un compte</td><td>200 / 404</td></tr>
+          <tr><td><span class="cds--tag cds--tag--green">POST</span></td><td><code>POST /api/accounts</code></td><td>Créer un compte</td><td>201 / 400</td></tr>
+          <tr><td><span class="cds--tag cds--tag--warm">PUT</span></td><td><code>PUT /api/accounts/{id}</code></td><td>Modifier un compte</td><td>200 / 404</td></tr>
+          <tr><td><span class="cds--tag cds--tag--red">DELETE</span></td><td><code>DELETE /api/accounts/{id}</code></td><td>Supprimer un compte</td><td>204 / 404</td></tr>
+          <tr><td><span class="cds--tag cds--tag--blue">GET</span></td><td><code>GET /api/accounts/client/{clientId}</code></td><td>Comptes d'un client donné</td><td>200</td></tr>
+          <tr><td><span class="cds--tag cds--tag--blue">GET</span></td><td><code>GET /api/accounts/type/{type}</code></td><td>Comptes par type (COURANT / EPARGNE…)</td><td>200</td></tr>
+          <tr><td><span class="cds--tag cds--tag--green">POST</span></td><td><code>POST /api/accounts/{id}/deposit?amount=</code></td><td>Dépôt — crée un <code>Transaction DEPOSIT</code></td><td>200 / 400 / 404</td></tr>
+          <tr><td><span class="cds--tag cds--tag--green">POST</span></td><td><code>POST /api/accounts/{id}/withdraw?amount=</code></td><td>Retrait — vérifie les fonds</td><td>200 / 400 / 404</td></tr>
+          <tr><td><span class="cds--tag cds--tag--green">POST</span></td><td><code>POST /api/accounts/{fromId}/transfer?toId=&amp;amount=</code></td><td>Virement — crée TRANSFER_OUT + TRANSFER_IN</td><td>200 / 400 / 404</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- ══════════════════════════════════════════════
+         DOMAINE 3 — Transactions
+    ══════════════════════════════════════════════ -->
+    <h2>3. API REST Transactions (audit) — <code>TransactionResource @Path("/transactions")</code></h2>
+    <p>Chaque opération financière génère automatiquement un enregistrement <code>Transaction</code> immuable avec <code>balanceBefore</code> et <code>balanceAfter</code>.</p>
+    <div class="cds--data-table-container">
+      <table class="cds--data-table">
+        <thead><tr><th>Verbe</th><th>Endpoint</th><th>Description</th><th>Codes HTTP</th></tr></thead>
+        <tbody>
+          <tr><td><span class="cds--tag cds--tag--blue">GET</span></td><td><code>GET /api/transactions</code></td><td>Toutes les transactions (triées DESC)</td><td>200</td></tr>
+          <tr><td><span class="cds--tag cds--tag--blue">GET</span></td><td><code>GET /api/transactions/{id}</code></td><td>Détail d'une transaction</td><td>200 / 404</td></tr>
+          <tr><td><span class="cds--tag cds--tag--blue">GET</span></td><td><code>GET /api/transactions/account/{id}?limit=</code></td><td>Transactions d'un compte (avec limite)</td><td>200</td></tr>
+          <tr><td><span class="cds--tag cds--tag--blue">GET</span></td><td><code>GET /api/transactions/type/{type}</code></td><td>Transactions par type (<code>DEPOSIT</code>, <code>WITHDRAWAL</code>…)</td><td>200</td></tr>
+          <tr><td><span class="cds--tag cds--tag--blue">GET</span></td><td><code>GET /api/transactions/date-range?start=&amp;end=</code></td><td>Transactions sur une plage de dates ISO-8601</td><td>200</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- ══════════════════════════════════════════════
+         DOMAINE 4 — Gestion des erreurs
+    ══════════════════════════════════════════════ -->
+    <h2>4. Gestion des erreurs — ExceptionMappers <code>@Provider</code></h2>
+    <div class="cds--data-table-container">
+      <table class="cds--data-table">
+        <thead><tr><th>Mapper</th><th>Exception interceptée</th><th>Code HTTP</th><th>Corps retourné</th></tr></thead>
+        <tbody>
+          <tr><td><code>NotFoundExceptionMapper</code></td><td><code>NotFoundException</code></td><td><span class="cds--tag cds--tag--warm">404</span></td><td><code>ErrorResponse</code></td></tr>
+          <tr><td><code>ValidationExceptionMapper</code></td><td><code>ValidationException</code></td><td><span class="cds--tag cds--tag--red">400</span></td><td><code>ErrorResponse</code></td></tr>
+          <tr><td><code>ConstraintViolationExceptionMapper</code></td><td><code>ConstraintViolationException</code></td><td><span class="cds--tag cds--tag--red">400</span></td><td><code>ErrorResponse</code> + <code>details[]</code></td></tr>
+          <tr><td><code>IllegalArgumentExceptionMapper</code></td><td><code>IllegalArgumentException</code></td><td><span class="cds--tag cds--tag--red">400</span></td><td><code>ErrorResponse</code></td></tr>
+          <tr><td><code>GenericExceptionMapper</code></td><td><code>Throwable</code></td><td><span class="cds--tag cds--tag--red">500</span></td><td><code>ErrorResponse</code></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="cds--tile">
+      <h3>Schéma <code>ErrorResponse</code> unifié</h3>
+      <pre>{
+  "status":    400,
+  "error":     "Bad Request",
+  "message":   "Validation échouée : email invalide",
+  "timestamp": "2025-06-15T10:32:00Z",
+  "details":   [
+    "email : doit être une adresse email valide",
+    "name : la taille doit être comprise entre 2 et 100"
+  ]
+}</pre>
+    </div>
+
+    <!-- ══════════════════════════════════════════════
+         DOMAINE 5 — CDI Transversal
+    ══════════════════════════════════════════════ -->
+    <h2>5. CDI Transversal</h2>
+    <div class="tile-grid">
+      <div class="cds--tile">
+        <h3>EntityManagerProducer</h3>
+        <p><code>@Produces</code> un <code>EntityManager</code> <code>@RequestScoped</code> injecté dans tous les services via <code>@Inject</code>. Produit également un <code>Logger</code> nommé par classe (<code>@Produces @Dependent</code>).</p>
+      </div>
+      <div class="cds--tile">
+        <h3>LoggingInterceptor <code>@Logged</code></h3>
+        <p>Intercepteur CDI activé par l'annotation <code>@Logged</code>. Trace l'entrée, la sortie et la durée d'exécution de chaque méthode interceptée via le <code>Logger</code> injecté.</p>
+      </div>
+      <div class="cds--tile">
+        <h3>BankingEventObserver</h3>
+        <p>Observe 3 types d'événements via <code>@Observes</code> :<br/>
+          • <code>ClientCreatedEvent</code><br/>
+          • <code>TransactionEvent</code> (dépôt / retrait)<br/>
+          • <code>TransferEvent</code> (virement)
+        </p>
+      </div>
+      <div class="cds--tile">
+        <h3>Qualifiers de notification</h3>
+        <p><code>@Premium</code> — tous les canaux : email + SMS + push.<br/>
+           <code>@Standard</code> — email uniquement, seulement si montant &gt; 1 000 €.<br/>
+           Sélectionnés par CDI à l'injection dans <code>BankingEventObserver</code>.</p>
+      </div>
+    </div>
+
+    <!-- SVG 2 — CDI Events flow -->
+    <h2>Flux des événements CDI</h2>
+    <div class="arch-box">
+      <svg viewBox="0 0 820 190" width="100%" font-family="'IBM Plex Sans','Helvetica Neue',Arial,sans-serif" font-size="12">
+        <defs>
+          <marker id="ev" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6 Z" fill="#8a3ffc"/></marker>
+          <marker id="notif" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6 Z" fill="#0043ce"/></marker>
+        </defs>
+
+        <!-- AccountService -->
+        <rect x="10" y="60" width="140" height="70" rx="3" fill="#defbe6" stroke="#198038"/>
+        <text x="80" y="88" text-anchor="middle" fill="#198038" font-weight="700">AccountService</text>
+        <text x="80" y="106" text-anchor="middle" fill="#525252" font-size="10">@Transactional</text>
+        <text x="80" y="120" text-anchor="middle" fill="#525252" font-size="10">event.fire()</text>
+
+        <line x1="150" y1="95" x2="188" y2="95" stroke="#8a3ffc" stroke-width="1.5" stroke-dasharray="4,3" marker-end="url(#ev)"/>
+        <text x="169" y="87" text-anchor="middle" fill="#8a3ffc" font-size="9">fire()</text>
+
+        <!-- CDI Event Bus -->
+        <rect x="189" y="40" width="155" height="110" rx="3" fill="#e8daff" stroke="#491d8b"/>
+        <text x="266" y="65" text-anchor="middle" fill="#491d8b" font-weight="700">CDI Event Bus</text>
+        <text x="266" y="85" text-anchor="middle" fill="#161616" font-size="10">ClientCreatedEvent</text>
+        <text x="266" y="102" text-anchor="middle" fill="#161616" font-size="10">TransactionEvent</text>
+        <text x="266" y="119" text-anchor="middle" fill="#161616" font-size="10">TransferEvent</text>
+        <text x="266" y="136" text-anchor="middle" fill="#525252" font-size="9">(asynchrone possible)</text>
+
+        <line x1="344" y1="95" x2="382" y2="95" stroke="#8a3ffc" stroke-width="1.5" stroke-dasharray="4,3" marker-end="url(#ev)"/>
+        <text x="363" y="87" text-anchor="middle" fill="#8a3ffc" font-size="9">@Observes</text>
+
+        <!-- BankingEventObserver -->
+        <rect x="383" y="60" width="175" height="70" rx="3" fill="#fdf6dd" stroke="#f1c21b"/>
+        <text x="470" y="88" text-anchor="middle" fill="#8c4f00" font-weight="700">BankingEventObserver</text>
+        <text x="470" y="106" text-anchor="middle" fill="#525252" font-size="10">@ApplicationScoped</text>
+        <text x="470" y="121" text-anchor="middle" fill="#525252" font-size="9">dispatche vers NotificationService</text>
+
+        <line x1="558" y1="95" x2="596" y2="95" stroke="#0043ce" stroke-width="1.5" marker-end="url(#notif)"/>
+
+        <!-- NotificationService -->
+        <rect x="597" y="40" width="210" height="110" rx="3" fill="#d9fbfb" stroke="#004144"/>
+        <text x="702" y="65" text-anchor="middle" fill="#004144" font-weight="700">NotificationService</text>
+        <rect x="612" y="76" width="80" height="30" rx="2" fill="#edf5ff" stroke="#0043ce"/>
+        <text x="652" y="97" text-anchor="middle" fill="#0043ce" font-size="10">@Premium</text>
+        <rect x="706" y="76" width="85" height="30" rx="2" fill="#defbe6" stroke="#198038"/>
+        <text x="748" y="97" text-anchor="middle" fill="#198038" font-size="10">@Standard</text>
+        <text x="702" y="130" text-anchor="middle" fill="#525252" font-size="9">email + SMS + push  |  email (&gt;1000€)</text>
+      </svg>
+    </div>
+
+    <hr class="cds--divider"/>
+    <p>Voir aussi <a href="technical.html">l'Architecture Technique</a> pour les entités JPA, les features Liberty et les codes HTTP de référence.</p>
+  </main>
+</div>
+
+<footer class="cds--footer">Banking REST Application — Lab 05 · Jakarta EE 10 · MicroProfile 6.0 · Open Liberty 23 · © 2025 Olivier Planson</footer>
+</body>
+</html>

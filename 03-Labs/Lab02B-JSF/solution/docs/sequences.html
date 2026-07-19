@@ -1,0 +1,298 @@
+<!-- © Copyright 2026 Olivier Planson. All rights reserved. Reproduction prohibited. Made with IBM Bob. -->
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Diagrammes de Séquences — Banking JSF Application Lab 02B</title>
+  <link rel="stylesheet" href="assets/carbon.css"/>
+  <style>
+    .seq-label { font-size: .75rem; fill: #525252; }
+    .seq-actor-box { fill: #d0e2ff; stroke: #0043ce; stroke-width: 1.5; }
+    .seq-actor-text { fill: #0043ce; font-weight: 600; font-size: 11px; }
+    .seq-lifeline { stroke: #c6c6c6; stroke-width: 1; stroke-dasharray: 4,3; }
+    .seq-activation { fill: #e8daff; stroke: #491d8b; stroke-width: 1; }
+    .seq-msg { stroke: #161616; stroke-width: 1.5; fill: none; }
+    .seq-msg-text { font-size: 10px; fill: #161616; }
+    .seq-ret { stroke: #8d8d8d; stroke-width: 1; stroke-dasharray: 4,3; fill: none; }
+    .seq-ret-text { font-size: 10px; fill: #8d8d8d; }
+  </style>
+</head>
+<body>
+
+<header class="cds--header">
+  <a class="cds--header__name" href="index.html">Banking JSF Application<span>Documentation Technique — Lab 02B</span></a>
+</header>
+
+<div class="cds--shell">
+  <nav class="cds--side-nav">
+    <p class="cds--side-nav__section-title">Documentation</p>
+    <a class="cds--side-nav__link" href="index.html"><i class="icon">⊙</i> Vue d'ensemble</a>
+    <a class="cds--side-nav__link" href="functional.html"><i class="icon">⊞</i> Architecture Fonctionnelle</a>
+    <a class="cds--side-nav__link" href="technical.html"><i class="icon">⊟</i> Architecture Technique</a>
+    <a class="cds--side-nav__link active" href="sequences.html"><i class="icon">⇄</i> Diagrammes de Séquences</a>
+    <a class="cds--side-nav__link" href="rules.html"><i class="icon">≡</i> Règles de Gestion</a>
+  </nav>
+
+  <main class="cds--content">
+
+    <nav class="cds--breadcrumb">
+      <a href="index.html">Vue d'ensemble</a>
+      <span class="sep">/</span>
+      <span class="current">Diagrammes de Séquences</span>
+    </nav>
+
+    <h1>Diagrammes de Séquences</h1>
+    <p class="page-lead">
+      Trois flux principaux illustrant les interactions entre le navigateur, le cycle de vie JSF,
+      les beans CDI et le service applicatif.
+    </p>
+
+    <!-- ══════════════════════════════════════════
+         SD1 — Listage des clients
+    ══════════════════════════════════════════ -->
+    <h2>SD1 — Listage des clients (GET)</h2>
+    <div class="arch-box">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 820 300" font-family="IBM Plex Sans,Arial,sans-serif">
+        <defs>
+          <marker id="arr-s1" markerWidth="7" markerHeight="7" refX="5" refY="3" orient="auto">
+            <path d="M0,0 L0,6 L7,3 z" fill="#161616"/>
+          </marker>
+          <marker id="arr-r1" markerWidth="7" markerHeight="7" refX="5" refY="3" orient="auto">
+            <path d="M0,0 L0,6 L7,3 z" fill="#8d8d8d"/>
+          </marker>
+        </defs>
+
+        <!-- Actors -->
+        <!-- Browser -->
+        <rect x="20" y="10" width="90" height="30" rx="3" class="seq-actor-box"/>
+        <text x="65" y="30" text-anchor="middle" class="seq-actor-text">Browser</text>
+        <line x1="65" y1="40" x2="65" y2="285" class="seq-lifeline"/>
+
+        <!-- FacesServlet -->
+        <rect x="155" y="10" width="110" height="30" rx="3" fill="#e8daff" stroke="#491d8b" stroke-width="1.5"/>
+        <text x="210" y="30" text-anchor="middle" font-weight="600" font-size="11" fill="#491d8b">FacesServlet</text>
+        <line x1="210" y1="40" x2="210" y2="285" class="seq-lifeline"/>
+
+        <!-- client-list.xhtml -->
+        <rect x="305" y="10" width="120" height="30" rx="3" fill="#defbe6" stroke="#0e6027" stroke-width="1.5"/>
+        <text x="365" y="30" text-anchor="middle" font-weight="600" font-size="10" fill="#0e6027">client-list.xhtml</text>
+        <line x1="365" y1="40" x2="365" y2="285" class="seq-lifeline"/>
+
+        <!-- ClientBean -->
+        <rect x="455" y="10" width="110" height="30" rx="3" fill="#defbe6" stroke="#0e6027" stroke-width="1.5"/>
+        <text x="510" y="30" text-anchor="middle" font-weight="600" font-size="11" fill="#0e6027">ClientBean</text>
+        <line x1="510" y1="40" x2="510" y2="285" class="seq-lifeline"/>
+
+        <!-- ClientService -->
+        <rect x="595" y="10" width="120" height="30" rx="3" fill="#fdf6dd" stroke="#8c4f00" stroke-width="1.5"/>
+        <text x="655" y="30" text-anchor="middle" font-weight="600" font-size="11" fill="#8c4f00">ClientService</text>
+        <line x1="655" y1="40" x2="655" y2="285" class="seq-lifeline"/>
+
+        <!-- ArrayList -->
+        <rect x="735" y="10" width="70" height="30" rx="3" fill="#f4f4f4" stroke="#8d8d8d" stroke-width="1.5"/>
+        <text x="770" y="30" text-anchor="middle" font-weight="600" font-size="11" fill="#525252">ArrayList</text>
+        <line x1="770" y1="40" x2="770" y2="285" class="seq-lifeline"/>
+
+        <!-- Messages -->
+        <!-- 1: GET /client-list.xhtml -->
+        <line x1="65" y1="70" x2="203" y2="70" stroke="#161616" stroke-width="1.5" marker-end="url(#arr-s1)"/>
+        <text x="134" y="65" text-anchor="middle" class="seq-msg-text">GET /client-list.xhtml</text>
+
+        <!-- 2: Restore View + Render -->
+        <line x1="210" y1="100" x2="358" y2="100" stroke="#161616" stroke-width="1.5" marker-end="url(#arr-s1)"/>
+        <text x="284" y="95" text-anchor="middle" class="seq-msg-text">Render View (EL eval)</text>
+
+        <!-- 3: #{clientBean.clients} -->
+        <line x1="365" y1="130" x2="503" y2="130" stroke="#161616" stroke-width="1.5" marker-end="url(#arr-s1)"/>
+        <text x="434" y="125" text-anchor="middle" class="seq-msg-text">#{clientBean.clients}</text>
+
+        <!-- 4: loadClients() / getAllClients() -->
+        <line x1="510" y1="155" x2="648" y2="155" stroke="#161616" stroke-width="1.5" marker-end="url(#arr-s1)"/>
+        <text x="579" y="150" text-anchor="middle" class="seq-msg-text">getAllClients()</text>
+
+        <!-- 5: query ArrayList -->
+        <line x1="655" y1="180" x2="763" y2="180" stroke="#161616" stroke-width="1.5" marker-end="url(#arr-s1)"/>
+        <text x="709" y="175" text-anchor="middle" class="seq-msg-text">list.stream()</text>
+
+        <!-- 6: return List<Client> -->
+        <line x1="763" y1="205" x2="662" y2="205" stroke="#8d8d8d" stroke-width="1" stroke-dasharray="4,3" marker-end="url(#arr-r1)"/>
+        <text x="713" y="200" text-anchor="middle" class="seq-ret-text">List&lt;Client&gt;</text>
+
+        <!-- 7: return clients -->
+        <line x1="648" y1="228" x2="517" y2="228" stroke="#8d8d8d" stroke-width="1" stroke-dasharray="4,3" marker-end="url(#arr-r1)"/>
+        <text x="583" y="223" text-anchor="middle" class="seq-ret-text">List&lt;Client&gt;</text>
+
+        <!-- 8: HTML response -->
+        <line x1="210" y1="260" x2="72" y2="260" stroke="#8d8d8d" stroke-width="1" stroke-dasharray="4,3" marker-end="url(#arr-r1)"/>
+        <text x="141" y="255" text-anchor="middle" class="seq-ret-text">HTML response (tableau)</text>
+      </svg>
+    </div>
+
+    <!-- ══════════════════════════════════════════
+         SD2 — Création d'un client (POST + validation)
+    ══════════════════════════════════════════ -->
+    <h2>SD2 — Création d'un client (POST avec validation)</h2>
+    <div class="arch-box">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 820 360" font-family="IBM Plex Sans,Arial,sans-serif">
+        <defs>
+          <marker id="arr-s2" markerWidth="7" markerHeight="7" refX="5" refY="3" orient="auto">
+            <path d="M0,0 L0,6 L7,3 z" fill="#161616"/>
+          </marker>
+          <marker id="arr-r2" markerWidth="7" markerHeight="7" refX="5" refY="3" orient="auto">
+            <path d="M0,0 L0,6 L7,3 z" fill="#8d8d8d"/>
+          </marker>
+        </defs>
+
+        <!-- Actors -->
+        <rect x="20" y="10" width="90" height="30" rx="3" fill="#d0e2ff" stroke="#0043ce" stroke-width="1.5"/>
+        <text x="65" y="30" text-anchor="middle" font-weight="600" font-size="11" fill="#0043ce">Browser</text>
+        <line x1="65" y1="40" x2="65" y2="345" stroke="#c6c6c6" stroke-width="1" stroke-dasharray="4,3"/>
+
+        <rect x="145" y="10" width="110" height="30" rx="3" fill="#e8daff" stroke="#491d8b" stroke-width="1.5"/>
+        <text x="200" y="30" text-anchor="middle" font-weight="600" font-size="11" fill="#491d8b">FacesServlet</text>
+        <line x1="200" y1="40" x2="200" y2="345" stroke="#c6c6c6" stroke-width="1" stroke-dasharray="4,3"/>
+
+        <rect x="285" y="10" width="120" height="30" rx="3" fill="#fff1f1" stroke="#da1e28" stroke-width="1.5"/>
+        <text x="345" y="30" text-anchor="middle" font-weight="600" font-size="11" fill="#da1e28">EmailValidator</text>
+        <line x1="345" y1="40" x2="345" y2="345" stroke="#c6c6c6" stroke-width="1" stroke-dasharray="4,3"/>
+
+        <rect x="435" y="10" width="110" height="30" rx="3" fill="#defbe6" stroke="#0e6027" stroke-width="1.5"/>
+        <text x="490" y="30" text-anchor="middle" font-weight="600" font-size="11" fill="#0e6027">ClientBean</text>
+        <line x1="490" y1="40" x2="490" y2="345" stroke="#c6c6c6" stroke-width="1" stroke-dasharray="4,3"/>
+
+        <rect x="575" y="10" width="120" height="30" rx="3" fill="#fdf6dd" stroke="#8c4f00" stroke-width="1.5"/>
+        <text x="635" y="30" text-anchor="middle" font-weight="600" font-size="11" fill="#8c4f00">ClientService</text>
+        <line x1="635" y1="40" x2="635" y2="345" stroke="#c6c6c6" stroke-width="1" stroke-dasharray="4,3"/>
+
+        <!-- 1: POST form data -->
+        <line x1="65" y1="70" x2="193" y2="70" stroke="#161616" stroke-width="1.5" marker-end="url(#arr-s2)"/>
+        <text x="129" y="65" text-anchor="middle" font-size="10" fill="#161616">POST /client-form.xhtml</text>
+
+        <!-- 2: Apply Request Values -->
+        <line x1="200" y1="95" x2="193" y2="95" stroke="#161616" stroke-width="1" fill="none"/>
+        <text x="200" y="91" text-anchor="start" font-size="9" fill="#8d8d8d">Apply Request Values</text>
+
+        <!-- 3: Process Validations -> EmailValidator -->
+        <line x1="200" y1="120" x2="338" y2="120" stroke="#161616" stroke-width="1.5" marker-end="url(#arr-s2)"/>
+        <text x="269" y="115" text-anchor="middle" font-size="10" fill="#161616">validate(email)</text>
+
+        <!-- 4: regex check OK -->
+        <line x1="338" y1="145" x2="207" y2="145" stroke="#8d8d8d" stroke-width="1" stroke-dasharray="4,3" marker-end="url(#arr-r2)"/>
+        <text x="273" y="140" text-anchor="middle" font-size="10" fill="#198038">✔ validation OK</text>
+
+        <!-- 5: f:validateLength OK -->
+        <line x1="200" y1="168" x2="193" y2="168" stroke="#161616" stroke-width="1"/>
+        <text x="200" y="164" text-anchor="start" font-size="9" fill="#8d8d8d">f:validateLength(nom, cp)</text>
+
+        <!-- 6: Update Model Values -->
+        <line x1="200" y1="193" x2="483" y2="193" stroke="#161616" stroke-width="1.5" marker-end="url(#arr-s2)"/>
+        <text x="341" y="188" text-anchor="middle" font-size="10" fill="#161616">Update Model Values</text>
+
+        <!-- 7: Invoke Application -> ClientBean.save() -->
+        <line x1="200" y1="218" x2="483" y2="218" stroke="#161616" stroke-width="1.5" marker-end="url(#arr-s2)"/>
+        <text x="341" y="213" text-anchor="middle" font-size="10" fill="#161616">clientBean.save()</text>
+
+        <!-- 8: ClientBean -> ClientService.save() -->
+        <line x1="490" y1="243" x2="628" y2="243" stroke="#161616" stroke-width="1.5" marker-end="url(#arr-s2)"/>
+        <text x="559" y="238" text-anchor="middle" font-size="10" fill="#161616">clientService.save(client)</text>
+
+        <!-- 9: ID assigned -->
+        <line x1="628" y1="268" x2="497" y2="268" stroke="#8d8d8d" stroke-width="1" stroke-dasharray="4,3" marker-end="url(#arr-r2)"/>
+        <text x="563" y="263" text-anchor="middle" font-size="10" fill="#198038">client.id = autoId++</text>
+
+        <!-- 10: FacesMessage success -->
+        <line x1="490" y1="293" x2="207" y2="293" stroke="#8d8d8d" stroke-width="1" stroke-dasharray="4,3" marker-end="url(#arr-r2)"/>
+        <text x="348" y="288" text-anchor="middle" font-size="10" fill="#0e6027">FacesMessage.SEVERITY_INFO</text>
+
+        <!-- 11: redirect to client-list -->
+        <line x1="200" y1="318" x2="72" y2="318" stroke="#8d8d8d" stroke-width="1" stroke-dasharray="4,3" marker-end="url(#arr-r2)"/>
+        <text x="136" y="313" text-anchor="middle" font-size="10" fill="#8d8d8d">redirect → client-list</text>
+      </svg>
+    </div>
+
+    <!-- ══════════════════════════════════════════
+         SD3 — Recherche AJAX
+    ══════════════════════════════════════════ -->
+    <h2>SD3 — Recherche AJAX (keyup partiel)</h2>
+    <div class="arch-box">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 780 300" font-family="IBM Plex Sans,Arial,sans-serif">
+        <defs>
+          <marker id="arr-s3" markerWidth="7" markerHeight="7" refX="5" refY="3" orient="auto">
+            <path d="M0,0 L0,6 L7,3 z" fill="#161616"/>
+          </marker>
+          <marker id="arr-r3" markerWidth="7" markerHeight="7" refX="5" refY="3" orient="auto">
+            <path d="M0,0 L0,6 L7,3 z" fill="#8d8d8d"/>
+          </marker>
+        </defs>
+
+        <!-- Actors -->
+        <rect x="20" y="10" width="90" height="30" rx="3" fill="#d0e2ff" stroke="#0043ce" stroke-width="1.5"/>
+        <text x="65" y="30" text-anchor="middle" font-weight="600" font-size="11" fill="#0043ce">Browser</text>
+        <line x1="65" y1="40" x2="65" y2="285" stroke="#c6c6c6" stroke-width="1" stroke-dasharray="4,3"/>
+
+        <rect x="155" y="10" width="110" height="30" rx="3" fill="#e8daff" stroke="#491d8b" stroke-width="1.5"/>
+        <text x="210" y="30" text-anchor="middle" font-weight="600" font-size="11" fill="#491d8b">f:ajax</text>
+        <line x1="210" y1="40" x2="210" y2="285" stroke="#c6c6c6" stroke-width="1" stroke-dasharray="4,3"/>
+
+        <rect x="310" y="10" width="110" height="30" rx="3" fill="#defbe6" stroke="#0e6027" stroke-width="1.5"/>
+        <text x="365" y="30" text-anchor="middle" font-weight="600" font-size="11" fill="#0e6027">ClientBean</text>
+        <line x1="365" y1="40" x2="365" y2="285" stroke="#c6c6c6" stroke-width="1" stroke-dasharray="4,3"/>
+
+        <rect x="470" y="10" width="120" height="30" rx="3" fill="#fdf6dd" stroke="#8c4f00" stroke-width="1.5"/>
+        <text x="530" y="30" text-anchor="middle" font-weight="600" font-size="11" fill="#8c4f00">ClientService</text>
+        <line x1="530" y1="40" x2="530" y2="285" stroke="#c6c6c6" stroke-width="1" stroke-dasharray="4,3"/>
+
+        <rect x="640" y="10" width="110" height="30" rx="3" fill="#f4f4f4" stroke="#8d8d8d" stroke-width="1.5"/>
+        <text x="695" y="30" text-anchor="middle" font-weight="600" font-size="11" fill="#525252">Datatable UI</text>
+        <line x1="695" y1="40" x2="695" y2="285" stroke="#c6c6c6" stroke-width="1" stroke-dasharray="4,3"/>
+
+        <!-- 1: keyup event -->
+        <line x1="65" y1="70" x2="203" y2="70" stroke="#161616" stroke-width="1.5" marker-end="url(#arr-s3)"/>
+        <text x="134" y="65" text-anchor="middle" font-size="10" fill="#161616">keyup → f:ajax trigger</text>
+
+        <!-- 2: partial AJAX POST -->
+        <line x1="210" y1="100" x2="203" y2="100" stroke="#161616" stroke-width="1"/>
+        <text x="210" y="96" text-anchor="start" font-size="9" fill="#8d8d8d">execute="searchInput"</text>
+
+        <!-- 3: clientBean.search() -->
+        <line x1="210" y1="125" x2="358" y2="125" stroke="#161616" stroke-width="1.5" marker-end="url(#arr-s3)"/>
+        <text x="284" y="120" text-anchor="middle" font-size="10" fill="#161616">clientBean.search()</text>
+
+        <!-- 4: searchClients(term) -->
+        <line x1="365" y1="150" x2="523" y2="150" stroke="#161616" stroke-width="1.5" marker-end="url(#arr-s3)"/>
+        <text x="444" y="145" text-anchor="middle" font-size="10" fill="#161616">searchClients(term)</text>
+
+        <!-- 5: filter stream (case-insensitive) -->
+        <line x1="530" y1="178" x2="523" y2="178" stroke="#161616" stroke-width="1"/>
+        <text x="530" y="174" text-anchor="start" font-size="9" fill="#8d8d8d">toLowerCase contains</text>
+
+        <!-- 6: return filtered list -->
+        <line x1="523" y1="203" x2="372" y2="203" stroke="#8d8d8d" stroke-width="1" stroke-dasharray="4,3" marker-end="url(#arr-r3)"/>
+        <text x="447" y="198" text-anchor="middle" font-size="10" fill="#8d8d8d">List&lt;Client&gt; (filtrée)</text>
+
+        <!-- 7: partial render datatable -->
+        <line x1="210" y1="232" x2="688" y2="232" stroke="#161616" stroke-width="1.5" marker-end="url(#arr-s3)"/>
+        <text x="449" y="227" text-anchor="middle" font-size="10" fill="#161616">render="clientTable" (partial)</text>
+
+        <!-- 8: DOM update -->
+        <line x1="688" y1="258" x2="72" y2="258" stroke="#8d8d8d" stroke-width="1" stroke-dasharray="4,3" marker-end="url(#arr-r3)"/>
+        <text x="380" y="253" text-anchor="middle" font-size="10" fill="#8d8d8d">DOM update — tableau mis à jour</text>
+      </svg>
+    </div>
+
+    <div class="cds--inline-notification">
+      <span>ℹ</span>
+      <div>
+        <strong>AJAX JSF</strong> — Le tag <code>&lt;f:ajax&gt;</code> de Jakarta Faces 4.0 permet de ne
+        re-rendre que la portion <code>render="clientTable"</code> du DOM, sans rechargement complet de la page.
+        L'attribut <code>execute</code> limite la soumission au champ de recherche uniquement.
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<footer class="cds--footer">Made with IBM Bob — Banking JSF Application Lab 02B · Jakarta EE 10 · Open Liberty 23</footer>
+</body>
+</html>

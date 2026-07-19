@@ -1,0 +1,282 @@
+<!-- © Copyright 2026 Olivier Planson. All rights reserved. Reproduction prohibited. Made with IBM Bob. -->
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>Cours 07 — Architecture Hexagonale</title>
+  <link rel="stylesheet" href="../assets/carbon.css"/>
+</head>
+<body>
+<header class="cds--header">
+  <a class="cds--header__name" href="index.html">Architecture Hexagonale<span>Cours Jakarta EE</span></a>
+  <a class="cds--header__back" href="../index.html">← Tous les Cours</a>
+</header>
+<div class="cds--shell">
+  <nav class="cds--side-nav">
+    <p class="cds--side-nav__section-title">Cours 07</p>
+    <a class="cds--side-nav__link" href="index.html">⊙ Vue d'ensemble</a>
+    <a class="cds--side-nav__link" href="slides.html">☰ Contenu du cours</a>
+    <a class="cds--side-nav__link" href="concepts.html">◈ Concepts clés</a>
+    <a class="cds--side-nav__link" href="code.html">⟨/⟩ Exemples de code</a>
+    <a class="cds--side-nav__link active" href="architecture.html">⬡ Architecture Hexagonale</a>
+  </nav>
+  <main class="cds--content">
+    <div class="breadcrumb"><a href="../index.html">Cours</a> › <a href="index.html">Cours 07</a> › Architecture</div>
+    <h1>Architecture Hexagonale — Diagramme</h1>
+    <p class="page-lead">Représentation visuelle du pattern Ports &amp; Adapters — le domaine au centre, les adapters à la périphérie.</p>
+
+    <!-- ═══════════════════════════════════════════════════════════════
+         SVG — Hexagonal Architecture Diagram
+         700 × 520px
+         Left  : PRIMARY / DRIVING adapters  (blue #d0e2ff)
+         Center: Application layer + Domain hexagon
+         Right : SECONDARY / DRIVEN adapters (green/teal)
+    ═══════════════════════════════════════════════════════════════ -->
+    <div class="arch-box">
+      <svg viewBox="0 0 700 520" width="700" height="520" xmlns="http://www.w3.org/2000/svg"
+           aria-label="Diagramme Architecture Hexagonale — Ports et Adapters" role="img">
+
+        <!-- ── Fond général ── -->
+        <rect width="700" height="520" fill="#fafafa" rx="4"/>
+
+        <!-- ══════════════════════════════════════════════
+             COUCHE EXTERNE : étiquettes zones
+        ══════════════════════════════════════════════ -->
+
+        <!-- Zone PRIMAIRE (gauche) -->
+        <rect x="8" y="8" width="160" height="504" rx="6" fill="#edf5ff" stroke="#a6c8ff" stroke-width="1.5" stroke-dasharray="6,3"/>
+        <text x="88" y="28" text-anchor="middle" font-family="IBM Plex Sans,sans-serif" font-size="10" font-weight="700" fill="#0043ce" letter-spacing="0.08em">ADAPTERS PRIMAIRES</text>
+        <text x="88" y="41" text-anchor="middle" font-family="IBM Plex Sans,sans-serif" font-size="9" fill="#4589ff">(Driving)</text>
+
+        <!-- Zone SECONDAIRE (droite) -->
+        <rect x="532" y="8" width="160" height="504" rx="6" fill="#defbe6" stroke="#6fdc8c" stroke-width="1.5" stroke-dasharray="6,3"/>
+        <text x="612" y="28" text-anchor="middle" font-family="IBM Plex Sans,sans-serif" font-size="10" font-weight="700" fill="#0e6027" letter-spacing="0.08em">ADAPTERS SECONDAIRES</text>
+        <text x="612" y="41" text-anchor="middle" font-family="IBM Plex Sans,sans-serif" font-size="9" fill="#24a148">(Driven)</text>
+
+        <!-- ══════════════════════════════════════════════
+             COUCHE APPLICATION (anneau autour de l'hexagone)
+        ══════════════════════════════════════════════ -->
+        <!-- Hexagone extérieur — Application Layer -->
+        <polygon
+          points="350,88  456,148  456,268  350,328  244,268  244,148"
+          fill="#f3ecff" stroke="#8a3ffc" stroke-width="2"/>
+        <text x="350" y="78" text-anchor="middle" font-family="IBM Plex Sans,sans-serif" font-size="10" font-weight="700" fill="#491d8b" letter-spacing="0.06em">COUCHE APPLICATION</text>
+        <text x="350" y="90" text-anchor="middle" font-family="IBM Plex Sans,sans-serif" font-size="9" fill="#6929c4">Use Cases · Services Applicatifs</text>
+
+        <!-- ══════════════════════════════════════════════
+             DOMAINE — hexagone central
+        ══════════════════════════════════════════════ -->
+        <!-- Hexagone intérieur — Domaine -->
+        <polygon
+          points="350,140  416,178  416,254  350,292  284,254  284,178"
+          fill="#e8daff" stroke="#6929c4" stroke-width="2.5"/>
+
+        <!-- Texte domaine -->
+        <text x="350" y="196" text-anchor="middle" font-family="IBM Plex Sans,sans-serif" font-size="22" font-weight="300" fill="#21003d">⬡</text>
+        <text x="350" y="220" text-anchor="middle" font-family="IBM Plex Sans,sans-serif" font-size="13" font-weight="700" fill="#21003d">Domaine</text>
+        <text x="350" y="236" text-anchor="middle" font-family="IBM Plex Sans,sans-serif" font-size="9" fill="#491d8b">Entités · Value Objects</text>
+        <text x="350" y="249" text-anchor="middle" font-family="IBM Plex Sans,sans-serif" font-size="9" fill="#491d8b">Services · Ports</text>
+        <text x="350" y="264" text-anchor="middle" font-family="IBM Plex Sans,sans-serif" font-size="8" fill="#6929c4" font-style="italic">Aucune dépendance externe</text>
+
+        <!-- ══════════════════════════════════════════════
+             ADAPTERS PRIMAIRES — gauche
+        ══════════════════════════════════════════════ -->
+
+        <!-- REST Adapter -->
+        <rect x="20" y="110" width="120" height="54" rx="3" fill="#d0e2ff" stroke="#0043ce" stroke-width="1.5"/>
+        <text x="80" y="133" text-anchor="middle" font-family="IBM Plex Sans,sans-serif" font-size="11" font-weight="700" fill="#001d6c">REST Adapter</text>
+        <text x="80" y="148" text-anchor="middle" font-family="IBM Plex Sans,sans-serif" font-size="9" fill="#0043ce">@Path · JAX-RS Resource</text>
+        <text x="80" y="158" text-anchor="middle" font-family="IBM Plex Sans,sans-serif" font-size="8" fill="#4589ff" font-style="italic">TransferRestAdapter</text>
+
+        <!-- Servlet Adapter -->
+        <rect x="20" y="215" width="120" height="54" rx="3" fill="#d0e2ff" stroke="#0043ce" stroke-width="1.5"/>
+        <text x="80" y="238" text-anchor="middle" font-family="IBM Plex Sans,sans-serif" font-size="11" font-weight="700" fill="#001d6c">Servlet Adapter</text>
+        <text x="80" y="253" text-anchor="middle" font-family="IBM Plex Sans,sans-serif" font-size="9" fill="#0043ce">@WebServlet</text>
+        <text x="80" y="263" text-anchor="middle" font-family="IBM Plex Sans,sans-serif" font-size="8" fill="#4589ff" font-style="italic">AccountServlet</text>
+
+        <!-- CLI Adapter -->
+        <rect x="20" y="320" width="120" height="54" rx="3" fill="#d0e2ff" stroke="#0043ce" stroke-width="1.5"/>
+        <text x="80" y="343" text-anchor="middle" font-family="IBM Plex Sans,sans-serif" font-size="11" font-weight="700" fill="#001d6c">CLI Adapter</text>
+        <text x="80" y="358" text-anchor="middle" font-family="IBM Plex Sans,sans-serif" font-size="9" fill="#0043ce">Command-line Driver</text>
+        <text x="80" y="368" text-anchor="middle" font-family="IBM Plex Sans,sans-serif" font-size="8" fill="#4589ff" font-style="italic">BankCLI / Test Driver</text>
+
+        <!-- ══════════════════════════════════════════════
+             FLÈCHES primaires : Adapter → Port → Domaine
+        ══════════════════════════════════════════════ -->
+
+        <!-- Flèche REST → hexagone -->
+        <line x1="140" y1="137" x2="237" y2="185" stroke="#0f62fe" stroke-width="1.8" stroke-dasharray="0"/>
+        <polygon points="237,185 225,179 229,191" fill="#0f62fe"/>
+        <text x="185" y="154" text-anchor="middle" font-family="IBM Plex Sans,sans-serif" font-size="8" fill="#0043ce" font-style="italic">«primary port»</text>
+
+        <!-- Flèche Servlet → hexagone -->
+        <line x1="140" y1="242" x2="237" y2="208" stroke="#0f62fe" stroke-width="1.8"/>
+        <polygon points="237,208 224,205 229,216" fill="#0f62fe"/>
+        <text x="183" y="231" text-anchor="middle" font-family="IBM Plex Sans,sans-serif" font-size="8" fill="#0043ce" font-style="italic">«primary port»</text>
+
+        <!-- Flèche CLI → hexagone -->
+        <line x1="140" y1="347" x2="237" y2="240" stroke="#0f62fe" stroke-width="1.8"/>
+        <polygon points="237,240 222,241 229,252" fill="#0f62fe"/>
+        <text x="176" y="308" text-anchor="middle" font-family="IBM Plex Sans,sans-serif" font-size="8" fill="#0043ce" font-style="italic">«primary port»</text>
+
+        <!-- ══════════════════════════════════════════════
+             ADAPTERS SECONDAIRES — droite
+        ══════════════════════════════════════════════ -->
+
+        <!-- JPA Adapter -->
+        <rect x="560" y="110" width="120" height="54" rx="3" fill="#defbe6" stroke="#198038" stroke-width="1.5"/>
+        <text x="620" y="133" text-anchor="middle" font-family="IBM Plex Sans,sans-serif" font-size="11" font-weight="700" fill="#0e3e1f">JPA Adapter</text>
+        <text x="620" y="148" text-anchor="middle" font-family="IBM Plex Sans,sans-serif" font-size="9" fill="#198038">@PersistenceContext</text>
+        <text x="620" y="158" text-anchor="middle" font-family="IBM Plex Sans,sans-serif" font-size="8" fill="#24a148" font-style="italic">JpaAccountAdapter</text>
+
+        <!-- JMS Adapter -->
+        <rect x="560" y="215" width="120" height="54" rx="3" fill="#d9fbfb" stroke="#007d79" stroke-width="1.5"/>
+        <text x="620" y="238" text-anchor="middle" font-family="IBM Plex Sans,sans-serif" font-size="11" font-weight="700" fill="#004144">JMS Adapter</text>
+        <text x="620" y="253" text-anchor="middle" font-family="IBM Plex Sans,sans-serif" font-size="9" fill="#007d79">@MessageDriven / Producer</text>
+        <text x="620" y="263" text-anchor="middle" font-family="IBM Plex Sans,sans-serif" font-size="8" fill="#08bdba" font-style="italic">TransferEventPublisher</text>
+
+        <!-- External API Adapter -->
+        <rect x="560" y="320" width="120" height="54" rx="3" fill="#defbe6" stroke="#198038" stroke-width="1.5"/>
+        <text x="620" y="340" text-anchor="middle" font-family="IBM Plex Sans,sans-serif" font-size="10" font-weight="700" fill="#0e3e1f">External API</text>
+        <text x="620" y="354" text-anchor="middle" font-family="IBM Plex Sans,sans-serif" font-size="10" font-weight="700" fill="#0e3e1f">Adapter</text>
+        <text x="620" y="369" text-anchor="middle" font-family="IBM Plex Sans,sans-serif" font-size="9" fill="#198038">MicroProfile Rest Client</text>
+
+        <!-- ══════════════════════════════════════════════
+             FLÈCHES secondaires : Domaine → Port → Adapter
+        ══════════════════════════════════════════════ -->
+
+        <!-- Flèche hexagone → JPA -->
+        <line x1="463" y1="185" x2="558" y2="137" stroke="#198038" stroke-width="1.8"/>
+        <polygon points="558,137 545,136 550,147" fill="#198038"/>
+        <text x="515" y="152" text-anchor="middle" font-family="IBM Plex Sans,sans-serif" font-size="8" fill="#198038" font-style="italic">«secondary port»</text>
+
+        <!-- Flèche hexagone → JMS -->
+        <line x1="463" y1="208" x2="558" y2="242" stroke="#007d79" stroke-width="1.8"/>
+        <polygon points="558,242 545,233 550,245" fill="#007d79"/>
+        <text x="515" y="224" text-anchor="middle" font-family="IBM Plex Sans,sans-serif" font-size="8" fill="#007d79" font-style="italic">«secondary port»</text>
+
+        <!-- Flèche hexagone → External API -->
+        <line x1="463" y1="240" x2="558" y2="347" stroke="#198038" stroke-width="1.8"/>
+        <polygon points="558,347 543,339 550,351" fill="#198038"/>
+        <text x="519" y="310" text-anchor="middle" font-family="IBM Plex Sans,sans-serif" font-size="8" fill="#198038" font-style="italic">«secondary port»</text>
+
+        <!-- ══════════════════════════════════════════════
+             LÉGENDE
+        ══════════════════════════════════════════════ -->
+        <rect x="180" y="380" width="340" height="128" rx="4" fill="#f4f4f4" stroke="#e0e0e0" stroke-width="1"/>
+        <text x="350" y="400" text-anchor="middle" font-family="IBM Plex Sans,sans-serif" font-size="10" font-weight="700" fill="#161616">Légende</text>
+
+        <!-- Légende item 1 : hexagone domaine -->
+        <polygon points="204,420 212,416 220,420 220,428 212,432 204,428" fill="#e8daff" stroke="#6929c4" stroke-width="1.5"/>
+        <text x="228" y="428" font-family="IBM Plex Sans,sans-serif" font-size="9" fill="#161616">Domaine — cœur métier, aucune dépendance externe</text>
+
+        <!-- Légende item 2 : anneau application -->
+        <polygon points="204,445 212,441 220,445 220,453 212,457 204,453" fill="#f3ecff" stroke="#8a3ffc" stroke-width="1.5"/>
+        <text x="228" y="453" font-family="IBM Plex Sans,sans-serif" font-size="9" fill="#161616">Couche Application — use cases, orchestration du domaine</text>
+
+        <!-- Légende item 3 : adapter primaire -->
+        <rect x="198" y="462" width="18" height="12" rx="2" fill="#d0e2ff" stroke="#0043ce" stroke-width="1"/>
+        <text x="228" y="472" font-family="IBM Plex Sans,sans-serif" font-size="9" fill="#161616">Adapter Primaire — REST, Servlet, CLI (initie l'action)</text>
+
+        <!-- Légende item 4 : adapter secondaire -->
+        <rect x="198" y="480" width="18" height="12" rx="2" fill="#defbe6" stroke="#198038" stroke-width="1"/>
+        <text x="228" y="490" font-family="IBM Plex Sans,sans-serif" font-size="9" fill="#161616">Adapter Secondaire — JPA, JMS, API (piloté par le domaine)</text>
+
+        <!-- Légende flèche primaire -->
+        <line x1="350" y1="420" x2="382" y2="420" stroke="#0f62fe" stroke-width="1.8"/>
+        <polygon points="382,420 374,416 374,424" fill="#0f62fe"/>
+        <text x="390" y="424" font-family="IBM Plex Sans,sans-serif" font-size="9" fill="#0043ce">Port primaire</text>
+
+        <!-- Légende flèche secondaire -->
+        <line x1="350" y1="440" x2="382" y2="440" stroke="#198038" stroke-width="1.8"/>
+        <polygon points="382,440 374,436 374,444" fill="#198038"/>
+        <text x="390" y="444" font-family="IBM Plex Sans,sans-serif" font-size="9" fill="#198038">Port secondaire</text>
+
+      </svg>
+    </div>
+
+    <!-- ══════════════════════════════════════════════════════════════
+         TEXTE EXPLICATIF
+    ═══════════════════════════════════════════════════════════════ -->
+
+    <h2>Adapters Primaires (Driving)</h2>
+    <p>Les adapters primaires <strong>initient</strong> l'exécution d'un use case. Ils traduisent un événement externe (requête HTTP, message, commande CLI) en appel sur un <strong>port primaire</strong> du domaine. L'adapter ne contient aucune logique métier — il délègue immédiatement au port.</p>
+    <ul>
+      <li><strong>REST Controllers / Resources</strong> — ressources JAX-RS annotées <code>@Path</code>, reçoivent les requêtes HTTP et appellent le use case</li>
+      <li><strong>Servlets</strong> — <code>@WebServlet</code> pour des cas d'usage non-REST (formulaires, téléchargements)</li>
+      <li><strong>Message Consumers (initiant des requêtes)</strong> — Message-Driven Beans qui traitent un message entrant et déclenchent un use case</li>
+      <li><strong>CLI Commands</strong> — outils de ligne de commande pour les opérations de maintenance ou de batch</li>
+      <li><strong>Test Drivers</strong> — les classes de test JUnit qui appellent directement les use cases — c'est la valeur principale de l'architecture !</li>
+    </ul>
+
+    <h2>Adapters Secondaires (Driven)</h2>
+    <p>Les adapters secondaires <strong>reçoivent les appels</strong> du domaine via les ports secondaires. Ils traduisent les requêtes du domaine (en termes métier) en appels techniques (SQL, JMS, HTTP). L'adapter effectue le mapping entre les objets du domaine et les entités techniques.</p>
+    <ul>
+      <li><strong>JPA Repositories</strong> — implémentent les ports secondaires avec JPA (<code>EntityManager</code>, entités JPA séparées des entités domaine)</li>
+      <li><strong>JMS Producers / Consumers (driven)</strong> — publient des événements métier vers un broker de messagerie</li>
+      <li><strong>External HTTP Clients (Rest Client)</strong> — MicroProfile Rest Client appelant des APIs tierces (système de paiement, service de fraude)</li>
+      <li><strong>File System Adapters</strong> — lecture/écriture de fichiers (import CSV, export de rapports)</li>
+      <li><strong>In-Memory Adapters (for tests)</strong> — implémentations <code>HashMap</code>-based pour les tests unitaires des use cases sans base de données</li>
+    </ul>
+
+    <h2>Flux de Dépendance</h2>
+    <p>La règle fondamentale de l'architecture hexagonale est que <strong>toutes les flèches de dépendance pointent vers le domaine</strong>, jamais vers l'extérieur :</p>
+    <ul>
+      <li>Les adapters primaires <em>dépendent</em> des interfaces de ports primaires (définis dans le domaine)</li>
+      <li>Les adapters secondaires <em>implémentent</em> les interfaces de ports secondaires (définis dans le domaine)</li>
+      <li>Le domaine n'a <strong>zéro connaissance</strong> des adapters — il ne les importe pas, ne les référence pas</li>
+      <li>Si le domaine voulait parler à l'extérieur, il pose une interface (port secondaire) — l'extérieur l'implémente</li>
+      <li>Le résultat : remplacer un adapter (ex. migrer de JPA vers MongoDB) ne nécessite <em>aucune modification</em> dans le domaine ou les use cases</li>
+    </ul>
+
+    <h2>Application à l'Application Bancaire</h2>
+    <div class="cds--data-table-container">
+      <table class="cds--data-table">
+        <thead>
+          <tr>
+            <th>Use Case</th>
+            <th>Port Primaire (Interface)</th>
+            <th>Adapter Primaire (Implémentation)</th>
+            <th>Port Secondaire (Interface)</th>
+            <th>Adapter Secondaire (Implémentation)</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Virement monétaire</strong></td>
+            <td><code>MoneyTransferUseCase</code><br/><em>domain.transfer</em></td>
+            <td><code>TransferRestAdapter</code><br/><em>infra.web — @Path("/transfers")</em></td>
+            <td><code>AccountPort</code><br/><em>domain.account</em></td>
+            <td><code>JpaAccountAdapter</code><br/><em>infra.persistence — @PersistenceContext</em></td>
+          </tr>
+          <tr>
+            <td><strong>Consultation de compte</strong></td>
+            <td><code>AccountQueryUseCase</code><br/><em>domain.account</em></td>
+            <td><code>AccountRestAdapter</code><br/><em>infra.web — @Path("/accounts")</em></td>
+            <td><code>AccountPort</code><br/><em>domain.account</em></td>
+            <td><code>JpaAccountAdapter</code><br/><em>infra.persistence</em></td>
+          </tr>
+          <tr>
+            <td><strong>Ouverture de compte</strong></td>
+            <td><code>OpenAccountUseCase</code><br/><em>domain.account</em></td>
+            <td><code>AccountRestAdapter</code><br/><em>infra.web — @POST</em></td>
+            <td><code>AccountPort</code>, <code>ClientPort</code><br/><em>domain.account / domain.client</em></td>
+            <td><code>JpaAccountAdapter</code>, <code>JpaClientAdapter</code><br/><em>infra.persistence</em></td>
+          </tr>
+          <tr>
+            <td><strong>Notification de virement</strong></td>
+            <td><em>(use case interne — réaction à un événement)</em></td>
+            <td><code>TransferEventConsumer</code><br/><em>infra.messaging — @MessageDriven</em></td>
+            <td><code>NotificationPort</code><br/><em>domain.notification</em></td>
+            <td><code>SmtpNotificationAdapter</code><br/><em>infra.messaging — SMTP</em></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+  </main>
+</div>
+<footer class="cds--footer">Made with IBM Bob &nbsp;·&nbsp; © 2026 Olivier Planson &nbsp;·&nbsp; ESIPE — Jakarta EE &amp; Microservices</footer>
+</body>
+</html>
