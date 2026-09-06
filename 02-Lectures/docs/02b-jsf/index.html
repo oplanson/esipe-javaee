@@ -1,29 +1,31 @@
 <!-- © Copyright 2026 Olivier Planson. All rights reserved. Reproduction prohibited. Made with IBM Bob. -->
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="en">
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-  <title>Cours 02b — JSF — JavaServer Faces</title>
+  <title>Course 02b — JSF — JavaServer Faces</title>
   <link rel="stylesheet" href="../assets/carbon.css"/>
 </head>
 <body>
 <header class="cds--header">
-  <a class="cds--header__name" href="index.html">JSF — JavaServer Faces<span>Cours Jakarta EE</span></a>
-  <a class="cds--header__back" href="../index.html">← Tous les Cours</a>
+  <a class="cds--header__name" href="index.html" data-en="JSF — JavaServer Faces" data-fr="JSF — JavaServer Faces">JSF — JavaServer Faces<span data-en="Jakarta EE Course" data-fr="Cours Jakarta EE">Jakarta EE Course</span></a>
+  <button class="lang-toggle-btn" id="lang-toggle">FR</button>
+  <a class="cds--header__back" href="../index.html" data-en="← All Courses" data-fr="← Tous les Cours">← All Courses</a>
 </header>
 <div class="cds--shell">
   <nav class="cds--side-nav">
-    <p class="cds--side-nav__section-title">Cours 02b</p>
-    <a class="cds--side-nav__link active" href="index.html">⊙ Vue d'ensemble</a>
-    <a class="cds--side-nav__link" href="slides.html">☰ Contenu du cours</a>
-    <a class="cds--side-nav__link" href="concepts.html">◈ Concepts clés</a>
-    <a class="cds--side-nav__link" href="code.html">⟨/⟩ Exemples de code</a>
+    <p class="cds--side-nav__section-title" data-en="Course 02b" data-fr="Cours 02b">Course 02b</p>
+    <a class="cds--side-nav__link active" href="index.html" data-en="⊙ Overview" data-fr="⊙ Vue d'ensemble">⊙ Overview</a>
+    <a class="cds--side-nav__link" href="slides.html" data-en="☰ Lecture Content" data-fr="☰ Contenu du cours">☰ Lecture Content</a>
+    <a class="cds--side-nav__link" href="concepts.html" data-en="◈ Key Concepts" data-fr="◈ Concepts clés">◈ Key Concepts</a>
+    <a class="cds--side-nav__link" href="code.html" data-en="⟨/⟩ Code Examples" data-fr="⟨/⟩ Exemples de code">⟨/⟩ Code Examples</a>
+    <a class="cds--side-nav__lang-toggle">FR</a>
   </nav>
   <main class="cds--content">
-    <div class="breadcrumb"><a href="../index.html">Cours</a> › Cours 02b</div>
-    <h1>JSF — JavaServer Faces</h1>
-    <p class="page-lead">Framework UI orienté composants — Durée : 3h · Instructeur : Olivier Planson</p>
+    <div class="breadcrumb"><a href="../index.html" data-en="Courses" data-fr="Cours">Courses</a> › <span data-en="Course 02b" data-fr="Cours 02b">Course 02b</span></div>
+    <h1 data-en="JSF — JavaServer Faces" data-fr="JSF — JavaServer Faces">JSF — JavaServer Faces</h1>
+    <p class="page-lead" data-en="Component-oriented UI framework — Duration: 3h · Instructor: Olivier Planson" data-fr="Framework UI orienté composants — Durée : 3h · Instructeur : Olivier Planson">Component-oriented UI framework — Duration: 3h · Instructor: Olivier Planson</p>
     <div class="tag-stack">
       <span class="cds--tag cds--tag--blue">JSF</span>
       <span class="cds--tag cds--tag--blue">Facelets</span>
@@ -32,33 +34,34 @@
       <span class="cds--tag cds--tag--green">Validators</span>
       <span class="cds--tag cds--tag--warm">Navigation</span>
     </div>
-    <h2>Objectifs pédagogiques</h2>
+    <h2 data-en="Learning Objectives" data-fr="Objectifs pédagogiques">Learning Objectives</h2>
     <table class="objectives-table"><tbody>
-      <tr><td>✅</td><td>Comprendre l'architecture JSF et le cycle de vie en 6 phases</td></tr>
-      <tr><td>✅</td><td>Créer des beans CDI gérés pour JSF</td></tr>
-      <tr><td>✅</td><td>Utiliser Facelets pour les templates de pages</td></tr>
-      <tr><td>✅</td><td>Implémenter validation et conversion</td></tr>
-      <tr><td>✅</td><td>Utiliser AJAX avec JSF</td></tr>
-      <tr><td>✅</td><td>Gérer la navigation entre vues</td></tr>
+      <tr><td>✅</td><td data-en="Understand the JSF architecture and the 6-phase lifecycle" data-fr="Comprendre l'architecture JSF et le cycle de vie en 6 phases">Understand the JSF architecture and the 6-phase lifecycle</td></tr>
+      <tr><td>✅</td><td data-en="Create CDI managed beans for JSF" data-fr="Créer des beans CDI gérés pour JSF">Create CDI managed beans for JSF</td></tr>
+      <tr><td>✅</td><td data-en="Use Facelets for page templates" data-fr="Utiliser Facelets pour les templates de pages">Use Facelets for page templates</td></tr>
+      <tr><td>✅</td><td data-en="Implement validation and conversion" data-fr="Implémenter validation et conversion">Implement validation and conversion</td></tr>
+      <tr><td>✅</td><td data-en="Use AJAX with JSF" data-fr="Utiliser AJAX avec JSF">Use AJAX with JSF</td></tr>
+      <tr><td>✅</td><td data-en="Manage navigation between views" data-fr="Gérer la navigation entre vues">Manage navigation between views</td></tr>
     </tbody></table>
-    <h2>Plan du cours</h2>
+    <h2 data-en="Course Plan" data-fr="Plan du cours">Course Plan</h2>
     <ol class="course-plan">
-      <li>Architecture JSF et cycle de vie (6 phases)</li>
-      <li>Managed Beans avec CDI (scopes)</li>
-      <li>Facelets et templates</li>
-      <li>Composants JSF Core (input, output, command)</li>
-      <li>Validation et Converters</li>
-      <li>AJAX avec f:ajax</li>
-      <li>Navigation Rules</li>
-      <li>Bonnes pratiques JSF</li>
+      <li data-en="JSF architecture and lifecycle (6 phases)" data-fr="Architecture JSF et cycle de vie (6 phases)">JSF architecture and lifecycle (6 phases)</li>
+      <li data-en="Managed Beans with CDI (scopes)" data-fr="Managed Beans avec CDI (scopes)">Managed Beans with CDI (scopes)</li>
+      <li data-en="Facelets and templates" data-fr="Facelets et templates">Facelets and templates</li>
+      <li data-en="JSF Core components (input, output, command)" data-fr="Composants JSF Core (input, output, command)">JSF Core components (input, output, command)</li>
+      <li data-en="Validation and Converters" data-fr="Validation et Converters">Validation and Converters</li>
+      <li data-en="AJAX with f:ajax" data-fr="AJAX avec f:ajax">AJAX with f:ajax</li>
+      <li data-en="Navigation Rules" data-fr="Navigation Rules">Navigation Rules</li>
+      <li data-en="JSF best practices" data-fr="Bonnes pratiques JSF">JSF best practices</li>
     </ol>
     <div class="tile-grid">
-      <a class="tile-link" href="slides.html"><div class="cds--tile"><h3>☰ Contenu du cours</h3><p>Cycle de vie JSF, Facelets, CDI Beans, AJAX et navigation avec diagrammes.</p></div></a>
-      <a class="tile-link" href="concepts.html"><div class="cds--tile"><h3>◈ Concepts clés</h3><p>JSF vs technologies web, scopes CDI, phases du cycle de vie, composants clés.</p></div></a>
-      <a class="tile-link" href="code.html"><div class="cds--tile"><h3>⟨/⟩ Exemples de code</h3><p>Beans CDI, Facelets, templates, validators, navigation et AJAX.</p></div></a>
+      <a class="tile-link" href="slides.html"><div class="cds--tile"><h3 data-en="☰ Lecture Content" data-fr="☰ Contenu du cours">☰ Lecture Content</h3><p data-en="JSF lifecycle, Facelets, CDI Beans, AJAX and navigation with diagrams." data-fr="Cycle de vie JSF, Facelets, CDI Beans, AJAX et navigation avec diagrammes.">JSF lifecycle, Facelets, CDI Beans, AJAX and navigation with diagrams.</p></div></a>
+      <a class="tile-link" href="concepts.html"><div class="cds--tile"><h3 data-en="◈ Key Concepts" data-fr="◈ Concepts clés">◈ Key Concepts</h3><p data-en="JSF vs web technologies, CDI scopes, lifecycle phases, key components." data-fr="JSF vs technologies web, scopes CDI, phases du cycle de vie, composants clés.">JSF vs web technologies, CDI scopes, lifecycle phases, key components.</p></div></a>
+      <a class="tile-link" href="code.html"><div class="cds--tile"><h3 data-en="⟨/⟩ Code Examples" data-fr="⟨/⟩ Exemples de code">⟨/⟩ Code Examples</h3><p data-en="CDI Beans, Facelets, templates, validators, navigation and AJAX." data-fr="Beans CDI, Facelets, templates, validators, navigation et AJAX.">CDI Beans, Facelets, templates, validators, navigation and AJAX.</p></div></a>
     </div>
   </main>
 </div>
 <footer class="cds--footer">Made with IBM Bob &nbsp;·&nbsp; © 2026 Olivier Planson &nbsp;·&nbsp; ESIPE — Jakarta EE &amp; Microservices</footer>
+<script src="../assets/language-toggle.js"></script>
 </body>
 </html>

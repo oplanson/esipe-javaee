@@ -1,6 +1,6 @@
 <!-- © Copyright 2026 Olivier Planson. All rights reserved. Reproduction prohibited. Made with IBM Bob. -->
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="en">
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
@@ -9,22 +9,24 @@
 </head>
 <body>
 <header class="cds--header">
-  <a class="cds--header__name" href="index.html">Introduction Jakarta EE<span>Cours Jakarta EE</span></a>
-  <a class="cds--header__back" href="../index.html">← Tous les Cours</a>
+  <button class="lang-toggle-btn" id="lang-toggle">FR</button>
+  <a class="cds--header__name" href="index.html" data-en="Introduction Jakarta EE<span>Jakarta EE Course</span>" data-fr="Introduction Jakarta EE<span>Cours Jakarta EE</span>">Introduction Jakarta EE<span>Jakarta EE Course</span></a>
+  <a class="cds--header__back" href="../index.html" data-en="← All Courses" data-fr="← Tous les Cours">← All Courses</a>
 </header>
 <div class="cds--shell">
   <nav class="cds--side-nav">
-    <p class="cds--side-nav__section-title">Cours 01</p>
-    <a class="cds--side-nav__link active" href="index.html">⊙ Vue d'ensemble</a>
-    <a class="cds--side-nav__link" href="slides.html">☰ Contenu du cours</a>
-    <a class="cds--side-nav__link" href="concepts.html">◈ Concepts clés</a>
-    <a class="cds--side-nav__link" href="code.html">⟨/⟩ Exemples de code</a>
+    <p class="cds--side-nav__section-title" data-en="Course 01" data-fr="Cours 01">Course 01</p>
+    <a class="cds--side-nav__link active" href="index.html" data-en="⊙ Overview" data-fr="⊙ Vue d'ensemble">⊙ Overview</a>
+    <a class="cds--side-nav__link" href="slides.html" data-en="☰ Lecture Content" data-fr="☰ Contenu du cours">☰ Lecture Content</a>
+    <a class="cds--side-nav__link" href="concepts.html" data-en="◈ Key Concepts" data-fr="◈ Concepts clés">◈ Key Concepts</a>
+    <a class="cds--side-nav__link" href="code.html" data-en="⟨/⟩ Code Examples" data-fr="⟨/⟩ Exemples de code">⟨/⟩ Code Examples</a>
+    <a class="cds--side-nav__lang-toggle">FR</a>
   </nav>
   <main class="cds--content">
-    <div class="breadcrumb"><a href="../index.html">Cours</a> › Cours 01</div>
+    <div class="breadcrumb"><a href="../index.html" data-en="Courses" data-fr="Cours">Courses</a> › <span data-en="Course 01" data-fr="Cours 01">Course 01</span></div>
 
-    <h1>Introduction à Jakarta EE et MicroProfile</h1>
-    <p class="page-lead">Développement Java Enterprise avec Open Liberty — Durée : 2h · Instructeur : Olivier Planson</p>
+    <h1 data-en="Introduction to Jakarta EE and MicroProfile" data-fr="Introduction à Jakarta EE et MicroProfile">Introduction to Jakarta EE and MicroProfile</h1>
+    <p class="page-lead" data-en="Enterprise Java Development with Open Liberty — Duration: 2h · Instructor: Olivier Planson" data-fr="Développement Java Enterprise avec Open Liberty — Durée : 2h · Instructeur : Olivier Planson">Enterprise Java Development with Open Liberty — Duration: 2h · Instructor: Olivier Planson</p>
 
     <div class="tag-stack">
       <span class="cds--tag cds--tag--blue">Jakarta EE 10</span>
@@ -35,50 +37,51 @@
       <span class="cds--tag cds--tag--purple">Maven</span>
     </div>
 
-    <h2>Objectifs pédagogiques</h2>
+    <h2 data-en="Learning Objectives" data-fr="Objectifs pédagogiques">Learning Objectives</h2>
     <table class="objectives-table">
       <tbody>
-        <tr><td>✅</td><td>Comprendre les écosystèmes Jakarta EE et MicroProfile</td></tr>
-        <tr><td>✅</td><td>Différencier Jakarta EE et MicroProfile</td></tr>
-        <tr><td>✅</td><td>Identifier les spécifications et APIs clés</td></tr>
-        <tr><td>✅</td><td>Configurer l'environnement de développement Open Liberty</td></tr>
-        <tr><td>✅</td><td>Créer et déployer une première application avec Podman</td></tr>
-        <tr><td>✅</td><td>Comprendre le rôle des serveurs d'applications</td></tr>
+        <tr><td>✅</td><td data-en="Understand the Jakarta EE and MicroProfile ecosystems" data-fr="Comprendre les écosystèmes Jakarta EE et MicroProfile">Understand the Jakarta EE and MicroProfile ecosystems</td></tr>
+        <tr><td>✅</td><td data-en="Differentiate Jakarta EE and MicroProfile" data-fr="Différencier Jakarta EE et MicroProfile">Differentiate Jakarta EE and MicroProfile</td></tr>
+        <tr><td>✅</td><td data-en="Identify key specifications and APIs" data-fr="Identifier les spécifications et APIs clés">Identify key specifications and APIs</td></tr>
+        <tr><td>✅</td><td data-en="Set up the Open Liberty development environment" data-fr="Configurer l'environnement de développement Open Liberty">Set up the Open Liberty development environment</td></tr>
+        <tr><td>✅</td><td data-en="Create and deploy a first application with Podman" data-fr="Créer et déployer une première application avec Podman">Create and deploy a first application with Podman</td></tr>
+        <tr><td>✅</td><td data-en="Understand the role of application servers" data-fr="Comprendre le rôle des serveurs d'applications">Understand the role of application servers</td></tr>
       </tbody>
     </table>
 
-    <h2>Plan du cours</h2>
+    <h2 data-en="Course Outline" data-fr="Plan du cours">Course Outline</h2>
     <ol class="course-plan">
-      <li>Introduction à Jakarta EE — historique, J2EE → Jakarta EE</li>
-      <li>Introduction à MicroProfile — cloud-native, spécifications</li>
-      <li>Jakarta EE vs MicroProfile — comparaison et complémentarité</li>
-      <li>Spécifications Jakarta EE — Web, Business, Persistence</li>
-      <li>MicroProfile Config, Health, Metrics — exemples</li>
-      <li>Open Liberty — runtime léger et modulaire</li>
-      <li>Structure de projet Jakarta EE + MicroProfile</li>
-      <li>Configuration de l'environnement (JDK 17, Maven, Podman)</li>
-      <li>Premier servlet avec Health Check</li>
-      <li>Configuration server.xml Open Liberty</li>
-      <li>Build avec Liberty Maven Plugin</li>
-      <li>Containerisation avec Podman (Containerfile)</li>
-      <li>Architecture de l'application bancaire</li>
-      <li>Feuille de route du cours</li>
+      <li data-en="Introduction to Jakarta EE — history, J2EE → Jakarta EE" data-fr="Introduction à Jakarta EE — historique, J2EE → Jakarta EE">Introduction to Jakarta EE — history, J2EE → Jakarta EE</li>
+      <li data-en="Introduction to MicroProfile — cloud-native, specifications" data-fr="Introduction à MicroProfile — cloud-native, spécifications">Introduction to MicroProfile — cloud-native, specifications</li>
+      <li data-en="Jakarta EE vs MicroProfile — comparison and complementarity" data-fr="Jakarta EE vs MicroProfile — comparaison et complémentarité">Jakarta EE vs MicroProfile — comparison and complementarity</li>
+      <li data-en="Jakarta EE Specifications — Web, Business, Persistence" data-fr="Spécifications Jakarta EE — Web, Métier, Persistence">Jakarta EE Specifications — Web, Business, Persistence</li>
+      <li data-en="MicroProfile Config, Health, Metrics — examples" data-fr="MicroProfile Config, Health, Metrics — exemples">MicroProfile Config, Health, Metrics — examples</li>
+      <li data-en="Open Liberty — lightweight and modular runtime" data-fr="Open Liberty — runtime léger et modulaire">Open Liberty — lightweight and modular runtime</li>
+      <li data-en="Jakarta EE + MicroProfile project structure" data-fr="Structure de projet Jakarta EE + MicroProfile">Jakarta EE + MicroProfile project structure</li>
+      <li data-en="Environment setup (JDK 17, Maven, Podman)" data-fr="Configuration de l'environnement (JDK 17, Maven, Podman)">Environment setup (JDK 17, Maven, Podman)</li>
+      <li data-en="First servlet with Health Check" data-fr="Premier servlet avec Health Check">First servlet with Health Check</li>
+      <li data-en="Open Liberty server.xml configuration" data-fr="Configuration server.xml Open Liberty">Open Liberty server.xml configuration</li>
+      <li data-en="Build with Liberty Maven Plugin" data-fr="Build avec Liberty Maven Plugin">Build with Liberty Maven Plugin</li>
+      <li data-en="Containerisation with Podman (Containerfile)" data-fr="Containerisation avec Podman (Containerfile)">Containerisation with Podman (Containerfile)</li>
+      <li data-en="Banking application architecture" data-fr="Architecture de l'application bancaire">Banking application architecture</li>
+      <li data-en="Course roadmap" data-fr="Feuille de route du cours">Course roadmap</li>
     </ol>
 
-    <h2>Navigation</h2>
+    <h2 data-en="Navigation" data-fr="Navigation">Navigation</h2>
     <div class="tile-grid">
       <a class="tile-link" href="slides.html">
-        <div class="cds--tile"><h3>☰ Contenu du cours</h3><p>Toutes les sections du cours en accordéon — théorie, exemples, comparatifs.</p></div>
+        <div class="cds--tile"><h3 data-en="☰ Lecture Content" data-fr="☰ Contenu du cours">☰ Lecture Content</h3><p data-en="All course sections in accordion — theory, examples, comparisons." data-fr="Toutes les sections du cours en accordéon — théorie, exemples, comparatifs.">All course sections in accordion — theory, examples, comparisons.</p></div>
       </a>
       <a class="tile-link" href="concepts.html">
-        <div class="cds--tile"><h3>◈ Concepts clés</h3><p>Tableaux comparatifs Jakarta EE vs MicroProfile, spécifications, Open Liberty vs autres runtimes.</p></div>
+        <div class="cds--tile"><h3 data-en="◈ Key Concepts" data-fr="◈ Concepts clés">◈ Key Concepts</h3><p data-en="Comparison tables Jakarta EE vs MicroProfile, specifications, Open Liberty vs other runtimes." data-fr="Tableaux comparatifs Jakarta EE vs MicroProfile, spécifications, Open Liberty vs autres runtimes.">Comparison tables Jakarta EE vs MicroProfile, specifications, Open Liberty vs other runtimes.</p></div>
       </a>
       <a class="tile-link" href="code.html">
-        <div class="cds--tile"><h3>⟨/⟩ Exemples de code</h3><p>Premier Servlet, MicroProfile Config, Health Check, Metrics, server.xml, Containerfile.</p></div>
+        <div class="cds--tile"><h3 data-en="⟨/⟩ Code Examples" data-fr="⟨/⟩ Exemples de code">⟨/⟩ Code Examples</h3><p data-en="First Servlet, MicroProfile Config, Health Check, Metrics, server.xml, Containerfile." data-fr="Premier Servlet, MicroProfile Config, Health Check, Metrics, server.xml, Containerfile.">First Servlet, MicroProfile Config, Health Check, Metrics, server.xml, Containerfile.</p></div>
       </a>
     </div>
   </main>
 </div>
 <footer class="cds--footer">Made with IBM Bob &nbsp;·&nbsp; © 2026 Olivier Planson &nbsp;·&nbsp; ESIPE — Jakarta EE &amp; Microservices</footer>
+<script src="../assets/language-toggle.js"></script>
 </body>
 </html>

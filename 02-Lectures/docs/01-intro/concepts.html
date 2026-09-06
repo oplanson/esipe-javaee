@@ -1,122 +1,124 @@
 <!-- © Copyright 2026 Olivier Planson. All rights reserved. Reproduction prohibited. Made with IBM Bob. -->
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="en">
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-  <title>Cours 01 — Concepts clés</title>
+  <title>Cours 01 — Key Concepts</title>
   <link rel="stylesheet" href="../assets/carbon.css"/>
 </head>
 <body>
 <header class="cds--header">
-  <a class="cds--header__name" href="index.html">Introduction Jakarta EE<span>Cours Jakarta EE</span></a>
-  <a class="cds--header__back" href="../index.html">← Tous les Cours</a>
+  <button class="lang-toggle-btn" id="lang-toggle">FR</button>
+  <a class="cds--header__name" href="index.html" data-en="Introduction Jakarta EE<span>Jakarta EE Course</span>" data-fr="Introduction Jakarta EE<span>Cours Jakarta EE</span>">Introduction Jakarta EE<span>Jakarta EE Course</span></a>
+  <a class="cds--header__back" href="../index.html" data-en="← All Courses" data-fr="← Tous les Cours">← All Courses</a>
 </header>
 <div class="cds--shell">
   <nav class="cds--side-nav">
-    <p class="cds--side-nav__section-title">Cours 01</p>
-    <a class="cds--side-nav__link" href="index.html">⊙ Vue d'ensemble</a>
-    <a class="cds--side-nav__link" href="slides.html">☰ Contenu du cours</a>
-    <a class="cds--side-nav__link active" href="concepts.html">◈ Concepts clés</a>
-    <a class="cds--side-nav__link" href="code.html">⟨/⟩ Exemples de code</a>
+    <p class="cds--side-nav__section-title" data-en="Course 01" data-fr="Cours 01">Course 01</p>
+    <a class="cds--side-nav__link" href="index.html" data-en="⊙ Overview" data-fr="⊙ Vue d'ensemble">⊙ Overview</a>
+    <a class="cds--side-nav__link" href="slides.html" data-en="☰ Lecture Content" data-fr="☰ Contenu du cours">☰ Lecture Content</a>
+    <a class="cds--side-nav__link active" href="concepts.html" data-en="◈ Key Concepts" data-fr="◈ Concepts clés">◈ Key Concepts</a>
+    <a class="cds--side-nav__link" href="code.html" data-en="⟨/⟩ Code Examples" data-fr="⟨/⟩ Exemples de code">⟨/⟩ Code Examples</a>
+    <a class="cds--side-nav__lang-toggle">FR</a>
   </nav>
   <main class="cds--content">
-    <div class="breadcrumb"><a href="../index.html">Cours</a> › <a href="index.html">Cours 01</a> › Concepts clés</div>
-    <h1>Concepts clés</h1>
-    <p class="page-lead">Définitions, comparatifs et spécifications essentielles de Jakarta EE et MicroProfile.</p>
+    <div class="breadcrumb"><a href="../index.html" data-en="Courses" data-fr="Cours">Courses</a> › <a href="index.html" data-en="Course 01" data-fr="Cours 01">Course 01</a> › <span data-en="Key Concepts" data-fr="Concepts clés">Key Concepts</span></div>
+    <h1 data-en="Key Concepts" data-fr="Concepts clés">Key Concepts</h1>
+    <p class="page-lead" data-en="Definitions, comparisons and essential specifications of Jakarta EE and MicroProfile." data-fr="Définitions, comparatifs et spécifications essentielles de Jakarta EE et MicroProfile.">Definitions, comparisons and essential specifications of Jakarta EE and MicroProfile.</p>
 
-    <h2>Jakarta EE vs MicroProfile</h2>
+    <h2 data-en="Jakarta EE vs MicroProfile" data-fr="Jakarta EE vs MicroProfile">Jakarta EE vs MicroProfile</h2>
     <div class="cds--data-table-container">
       <table class="cds--data-table">
-        <thead><tr><th>Aspect</th><th>Jakarta EE</th><th>MicroProfile</th></tr></thead>
+        <thead><tr><th data-en="Aspect" data-fr="Aspect">Aspect</th><th>Jakarta EE</th><th>MicroProfile</th></tr></thead>
         <tbody>
-          <tr><td><strong>Focus</strong></td><td>Applications enterprise (monolithes)</td><td>Microservices cloud-native</td></tr>
-          <tr><td><strong>Scope</strong></td><td>Plateforme complète (30+ spécifications)</td><td>Spécifications ciblées (12)</td></tr>
-          <tr><td><strong>Cycle de release</strong></td><td>Lent, stable (tous les 2-3 ans)</td><td>Rapide et innovant (6-12 mois)</td></tr>
-          <tr><td><strong>Taille</strong></td><td>Full-featured, lourd</td><td>Léger et modulaire</td></tr>
-          <tr><td><strong>Cas d'usage</strong></td><td>Monolithes, services enterprise</td><td>Applications cloud-native</td></tr>
-          <tr><td><strong>Gouvernance</strong></td><td>Eclipse Foundation</td><td>Eclipse Foundation</td></tr>
-          <tr><td><strong>Usage recommandé</strong></td><td>Logique métier core</td><td>Fonctionnalités cloud-native</td></tr>
+          <tr><td data-en="<strong>Focus</strong>" data-fr="<strong>Focus</strong>"><strong>Focus</strong></td><td data-en="Enterprise applications (monoliths)" data-fr="Applications enterprise (monolithes)">Enterprise applications (monoliths)</td><td data-en="Cloud-native microservices" data-fr="Microservices cloud-native">Cloud-native microservices</td></tr>
+          <tr><td data-en="<strong>Scope</strong>" data-fr="<strong>Portée</strong>"><strong>Scope</strong></td><td data-en="Full platform (30+ specifications)" data-fr="Plateforme complète (30+ spécifications)">Full platform (30+ specifications)</td><td data-en="Targeted specifications (12)" data-fr="Spécifications ciblées (12)">Targeted specifications (12)</td></tr>
+          <tr><td data-en="<strong>Release cycle</strong>" data-fr="<strong>Cycle de release</strong>"><strong>Release cycle</strong></td><td data-en="Slow, stable (every 2-3 years)" data-fr="Lent, stable (tous les 2-3 ans)">Slow, stable (every 2-3 years)</td><td data-en="Fast and innovative (6-12 months)" data-fr="Rapide et innovant (6-12 mois)">Fast and innovative (6-12 months)</td></tr>
+          <tr><td data-en="<strong>Size</strong>" data-fr="<strong>Taille</strong>"><strong>Size</strong></td><td data-en="Full-featured, heavyweight" data-fr="Full-featured, lourd">Full-featured, heavyweight</td><td data-en="Lightweight and modular" data-fr="Léger et modulaire">Lightweight and modular</td></tr>
+          <tr><td data-en="<strong>Use cases</strong>" data-fr="<strong>Cas d'usage</strong>"><strong>Use cases</strong></td><td data-en="Monoliths, enterprise services" data-fr="Monolithes, services enterprise">Monoliths, enterprise services</td><td data-en="Cloud-native applications" data-fr="Applications cloud-native">Cloud-native applications</td></tr>
+          <tr><td data-en="<strong>Governance</strong>" data-fr="<strong>Gouvernance</strong>"><strong>Governance</strong></td><td>Eclipse Foundation</td><td>Eclipse Foundation</td></tr>
+          <tr><td data-en="<strong>Recommended usage</strong>" data-fr="<strong>Usage recommandé</strong>"><strong>Recommended usage</strong></td><td data-en="Core business logic" data-fr="Logique métier core">Core business logic</td><td data-en="Cloud-native features" data-fr="Fonctionnalités cloud-native">Cloud-native features</td></tr>
         </tbody>
       </table>
     </div>
 
-    <h2>Spécifications Jakarta EE Core</h2>
+    <h2 data-en="Core Jakarta EE Specifications" data-fr="Spécifications Jakarta EE Core">Core Jakarta EE Specifications</h2>
     <div class="cds--data-table-container">
       <table class="cds--data-table">
-        <thead><tr><th>Catégorie</th><th>Spécification</th><th>Rôle</th></tr></thead>
+        <thead><tr><th data-en="Category" data-fr="Catégorie">Category</th><th data-en="Specification" data-fr="Spécification">Specification</th><th data-en="Role" data-fr="Rôle">Role</th></tr></thead>
         <tbody>
-          <tr><td>Web</td><td>Jakarta Servlet 6.0</td><td>Gestion des requêtes/réponses HTTP</td></tr>
-          <tr><td>Web</td><td>Jakarta Server Pages (JSP)</td><td>Pages web dynamiques</td></tr>
-          <tr><td>Web</td><td>Jakarta Server Faces (JSF)</td><td>Framework UI orienté composants</td></tr>
-          <tr><td>Web</td><td>Jakarta RESTful Web Services (JAX-RS)</td><td>APIs REST avec annotations</td></tr>
-          <tr><td>Métier</td><td>Jakarta CDI 4.0</td><td>Injection de dépendances et scopes</td></tr>
-          <tr><td>Métier</td><td>Jakarta EJB</td><td>Composants métier avec transactions</td></tr>
-          <tr><td>Persistence</td><td>Jakarta JPA 3.1</td><td>Mapping objet-relationnel</td></tr>
-          <tr><td>Persistence</td><td>Jakarta JTA</td><td>Gestion des transactions distribuées</td></tr>
-          <tr><td>Messagerie</td><td>Jakarta JMS</td><td>Messagerie asynchrone</td></tr>
+          <tr><td data-en="Web" data-fr="Web">Web</td><td>Jakarta Servlet 6.0</td><td data-en="HTTP request/response handling" data-fr="Gestion des requêtes/réponses HTTP">HTTP request/response handling</td></tr>
+          <tr><td data-en="Web" data-fr="Web">Web</td><td>Jakarta Server Pages (JSP)</td><td data-en="Dynamic web pages" data-fr="Pages web dynamiques">Dynamic web pages</td></tr>
+          <tr><td data-en="Web" data-fr="Web">Web</td><td>Jakarta Server Faces (JSF)</td><td data-en="Component-oriented UI framework" data-fr="Framework UI orienté composants">Component-oriented UI framework</td></tr>
+          <tr><td data-en="Web" data-fr="Web">Web</td><td>Jakarta RESTful Web Services (JAX-RS)</td><td data-en="REST APIs with annotations" data-fr="APIs REST avec annotations">REST APIs with annotations</td></tr>
+          <tr><td data-en="Business" data-fr="Métier">Business</td><td>Jakarta CDI 4.0</td><td data-en="Dependency injection and scopes" data-fr="Injection de dépendances et scopes">Dependency injection and scopes</td></tr>
+          <tr><td data-en="Business" data-fr="Métier">Business</td><td>Jakarta EJB</td><td data-en="Business components with transactions" data-fr="Composants métier avec transactions">Business components with transactions</td></tr>
+          <tr><td data-en="Persistence" data-fr="Persistence">Persistence</td><td>Jakarta JPA 3.1</td><td data-en="Object-relational mapping" data-fr="Mapping objet-relationnel">Object-relational mapping</td></tr>
+          <tr><td data-en="Persistence" data-fr="Persistence">Persistence</td><td>Jakarta JTA</td><td data-en="Distributed transaction management" data-fr="Gestion des transactions distribuées">Distributed transaction management</td></tr>
+          <tr><td data-en="Messaging" data-fr="Messagerie">Messaging</td><td>Jakarta JMS</td><td data-en="Asynchronous messaging" data-fr="Messagerie asynchrone">Asynchronous messaging</td></tr>
         </tbody>
       </table>
     </div>
 
-    <h2>Spécifications MicroProfile Core</h2>
+    <h2 data-en="Core MicroProfile Specifications" data-fr="Spécifications MicroProfile Core">Core MicroProfile Specifications</h2>
     <div class="cds--data-table-container">
       <table class="cds--data-table">
-        <thead><tr><th>Spécification</th><th>Rôle</th><th>Endpoint</th></tr></thead>
+        <thead><tr><th data-en="Specification" data-fr="Spécification">Specification</th><th data-en="Role" data-fr="Rôle">Role</th><th data-en="Endpoint" data-fr="Endpoint">Endpoint</th></tr></thead>
         <tbody>
-          <tr><td>MP Config 3.0</td><td>Configuration externalisée et dynamique</td><td>Propriétés, env vars, system props</td></tr>
-          <tr><td>MP Health 4.0</td><td>Endpoints de santé (liveness, readiness)</td><td><code>/health</code></td></tr>
-          <tr><td>MP Metrics 5.0</td><td>Métriques JVM et applicatives</td><td><code>/metrics</code></td></tr>
-          <tr><td>MP OpenAPI 3.1</td><td>Documentation d'API REST</td><td><code>/openapi</code></td></tr>
-          <tr><td>MP Fault Tolerance</td><td>Circuit breakers, retry, timeout, bulkhead</td><td>Annotations déclaratives</td></tr>
-          <tr><td>MP Rest Client</td><td>Clients REST type-safe</td><td>Interfaces Java annotées</td></tr>
-          <tr><td>MP JWT</td><td>Authentification par JWT</td><td>Header Authorization Bearer</td></tr>
+          <tr><td>MP Config 3.0</td><td data-en="Externalised and dynamic configuration" data-fr="Configuration externalisée et dynamique">Externalised and dynamic configuration</td><td data-en="Properties, env vars, system props" data-fr="Propriétés, env vars, system props">Properties, env vars, system props</td></tr>
+          <tr><td>MP Health 4.0</td><td data-en="Health endpoints (liveness, readiness)" data-fr="Endpoints de santé (liveness, readiness)">Health endpoints (liveness, readiness)</td><td><code>/health</code></td></tr>
+          <tr><td>MP Metrics 5.0</td><td data-en="JVM and application metrics" data-fr="Métriques JVM et applicatives">JVM and application metrics</td><td><code>/metrics</code></td></tr>
+          <tr><td>MP OpenAPI 3.1</td><td data-en="REST API documentation" data-fr="Documentation d'API REST">REST API documentation</td><td><code>/openapi</code></td></tr>
+          <tr><td>MP Fault Tolerance</td><td data-en="Circuit breakers, retry, timeout, bulkhead" data-fr="Circuit breakers, retry, timeout, bulkhead">Circuit breakers, retry, timeout, bulkhead</td><td data-en="Declarative annotations" data-fr="Annotations déclaratives">Declarative annotations</td></tr>
+          <tr><td>MP Rest Client</td><td data-en="Type-safe REST clients" data-fr="Clients REST type-safe">Type-safe REST clients</td><td data-en="Annotated Java interfaces" data-fr="Interfaces Java annotées">Annotated Java interfaces</td></tr>
+          <tr><td>MP JWT</td><td data-en="JWT authentication" data-fr="Authentification par JWT">JWT authentication</td><td data-en="Header Authorization Bearer" data-fr="Header Authorization Bearer">Header Authorization Bearer</td></tr>
         </tbody>
       </table>
     </div>
 
-    <h2>Comparaison des Runtimes Jakarta EE</h2>
+    <h2 data-en="Jakarta EE Runtime Comparison" data-fr="Comparaison des Runtimes Jakarta EE">Jakarta EE Runtime Comparison</h2>
     <div class="cds--data-table-container">
       <table class="cds--data-table">
-        <thead><tr><th>Runtime</th><th>Démarrage</th><th>Mémoire</th><th>MicroProfile</th><th>Container</th></tr></thead>
+        <thead><tr><th>Runtime</th><th data-en="Startup" data-fr="Démarrage">Startup</th><th data-en="Memory" data-fr="Mémoire">Memory</th><th>MicroProfile</th><th>Container</th></tr></thead>
         <tbody>
-          <tr><td><strong>Open Liberty</strong></td><td>⚡ Très rapide</td><td>💚 Faible</td><td>✅ Complet</td><td>✅ Excellent</td></tr>
-          <tr><td>WildFly</td><td>Rapide</td><td>Moyen</td><td>⚠️ Partiel</td><td>Bon</td></tr>
-          <tr><td>Payara</td><td>Moyen</td><td>Moyen</td><td>✅ Complet</td><td>Bon</td></tr>
-          <tr><td>GlassFish</td><td>Lent</td><td>Élevé</td><td>❌ Minimal</td><td>Moyen</td></tr>
+          <tr><td><strong>Open Liberty</strong></td><td data-en="⚡ Very fast" data-fr="⚡ Très rapide">⚡ Very fast</td><td data-en="💚 Low" data-fr="💚 Faible">💚 Low</td><td data-en="✅ Full" data-fr="✅ Complet">✅ Full</td><td data-en="✅ Excellent" data-fr="✅ Excellent">✅ Excellent</td></tr>
+          <tr><td>WildFly</td><td data-en="Fast" data-fr="Rapide">Fast</td><td data-en="Medium" data-fr="Moyen">Medium</td><td data-en="⚠️ Partial" data-fr="⚠️ Partiel">⚠️ Partial</td><td data-en="Good" data-fr="Bon">Good</td></tr>
+          <tr><td>Payara</td><td data-en="Medium" data-fr="Moyen">Medium</td><td data-en="Medium" data-fr="Moyen">Medium</td><td data-en="✅ Full" data-fr="✅ Complet">✅ Full</td><td data-en="Good" data-fr="Bon">Good</td></tr>
+          <tr><td>GlassFish</td><td data-en="Slow" data-fr="Lent">Slow</td><td data-en="High" data-fr="Élevé">High</td><td data-en="❌ Minimal" data-fr="❌ Minimal">❌ Minimal</td><td data-en="Medium" data-fr="Moyen">Medium</td></tr>
         </tbody>
       </table>
     </div>
 
-    <h2>Podman vs Docker</h2>
+    <h2 data-en="Podman vs Docker" data-fr="Podman vs Docker">Podman vs Docker</h2>
     <div class="cds--data-table-container">
       <table class="cds--data-table">
-        <thead><tr><th>Fonctionnalité</th><th>Podman</th><th>Docker</th></tr></thead>
+        <thead><tr><th data-en="Feature" data-fr="Fonctionnalité">Feature</th><th>Podman</th><th>Docker</th></tr></thead>
         <tbody>
-          <tr><td>Daemon background</td><td>❌ Non (daemonless)</td><td>✅ Oui</td></tr>
-          <tr><td>Root requis</td><td>❌ Non (rootless)</td><td>⚠️ Souvent</td></tr>
-          <tr><td>Compatibilité CLI</td><td>✅ Compatible Docker</td><td>N/A</td></tr>
-          <tr><td>Intégration Systemd</td><td>✅ Natif</td><td>⚠️ Limité</td></tr>
-          <tr><td>Modèle de sécurité</td><td>✅ Meilleur</td><td>Bon</td></tr>
-          <tr><td>Licence</td><td>Open-source (Apache 2.0)</td><td>Propriétaire (noyau open)</td></tr>
-          <tr><td>OCI compliant</td><td>✅ Oui</td><td>✅ Oui</td></tr>
+          <tr><td data-en="Background daemon" data-fr="Daemon background">Background daemon</td><td data-en="❌ No (daemonless)" data-fr="❌ Non (daemonless)">❌ No (daemonless)</td><td data-en="✅ Yes" data-fr="✅ Oui">✅ Yes</td></tr>
+          <tr><td data-en="Root required" data-fr="Root requis">Root required</td><td data-en="❌ No (rootless)" data-fr="❌ Non (rootless)">❌ No (rootless)</td><td data-en="⚠️ Often" data-fr="⚠️ Souvent">⚠️ Often</td></tr>
+          <tr><td data-en="CLI compatibility" data-fr="Compatibilité CLI">CLI compatibility</td><td data-en="✅ Docker-compatible" data-fr="✅ Compatible Docker">✅ Docker-compatible</td><td>N/A</td></tr>
+          <tr><td data-en="Systemd integration" data-fr="Intégration Systemd">Systemd integration</td><td data-en="✅ Native" data-fr="✅ Natif">✅ Native</td><td data-en="⚠️ Limited" data-fr="⚠️ Limité">⚠️ Limited</td></tr>
+          <tr><td data-en="Security model" data-fr="Modèle de sécurité">Security model</td><td data-en="✅ Better" data-fr="✅ Meilleur">✅ Better</td><td data-en="Good" data-fr="Bon">Good</td></tr>
+          <tr><td data-en="Licence" data-fr="Licence">Licence</td><td data-en="Open-source (Apache 2.0)" data-fr="Open-source (Apache 2.0)">Open-source (Apache 2.0)</td><td data-en="Proprietary (open core)" data-fr="Propriétaire (noyau open)">Proprietary (open core)</td></tr>
+          <tr><td data-en="OCI compliant" data-fr="OCI compliant">OCI compliant</td><td data-en="✅ Yes" data-fr="✅ Oui">✅ Yes</td><td data-en="✅ Yes" data-fr="✅ Oui">✅ Yes</td></tr>
         </tbody>
       </table>
     </div>
 
-    <h2>Glossaire</h2>
+    <h2 data-en="Glossary" data-fr="Glossaire">Glossary</h2>
     <div class="cds--data-table-container">
       <table class="cds--data-table">
-        <thead><tr><th>Terme</th><th>Définition</th></tr></thead>
+        <thead><tr><th data-en="Term" data-fr="Terme">Term</th><th data-en="Definition" data-fr="Définition">Definition</th></tr></thead>
         <tbody>
-          <tr><td><strong>Jakarta EE</strong></td><td>Anciennement Java EE — plateforme de spécifications pour applications enterprise Java, gérée par l'Eclipse Foundation depuis 2017</td></tr>
-          <tr><td><strong>MicroProfile</strong></td><td>Ensemble de spécifications complémentaires à Jakarta EE, ciblant les architectures microservices et cloud-native</td></tr>
-          <tr><td><strong>Open Liberty</strong></td><td>Serveur d'applications open-source d'IBM, implémentant Jakarta EE 10 et MicroProfile 6, optimisé pour les conteneurs</td></tr>
-          <tr><td><strong>Podman</strong></td><td>Outil de gestion de conteneurs OCI sans daemon, compatible avec la CLI Docker, permettant l'exécution rootless</td></tr>
-          <tr><td><strong>WAR</strong></td><td>Web Application Archive — format de packaging Java pour les applications web déployées sur un serveur d'applications</td></tr>
-          <tr><td><strong>CDI</strong></td><td>Contexts and Dependency Injection — mécanisme d'injection de dépendances standardisé de Jakarta EE</td></tr>
-          <tr><td><strong>JPA</strong></td><td>Jakarta Persistence API — spécification pour le mapping objet-relationnel (ORM) en Java</td></tr>
-          <tr><td><strong>JAX-RS</strong></td><td>Jakarta RESTful Web Services — API pour la création de services REST avec des annotations Java</td></tr>
+          <tr><td><strong>Jakarta EE</strong></td><td data-en="Formerly Java EE — platform of specifications for enterprise Java applications, managed by the Eclipse Foundation since 2017" data-fr="Anciennement Java EE — plateforme de spécifications pour applications enterprise Java, gérée par l'Eclipse Foundation depuis 2017">Formerly Java EE — platform of specifications for enterprise Java applications, managed by the Eclipse Foundation since 2017</td></tr>
+          <tr><td><strong>MicroProfile</strong></td><td data-en="Set of specifications complementary to Jakarta EE, targeting microservices and cloud-native architectures" data-fr="Ensemble de spécifications complémentaires à Jakarta EE, ciblant les architectures microservices et cloud-native">Set of specifications complementary to Jakarta EE, targeting microservices and cloud-native architectures</td></tr>
+          <tr><td><strong>Open Liberty</strong></td><td data-en="IBM open-source application server implementing Jakarta EE 10 and MicroProfile 6, optimised for containers" data-fr="Serveur d'applications open-source d'IBM, implémentant Jakarta EE 10 et MicroProfile 6, optimisé pour les conteneurs">IBM open-source application server implementing Jakarta EE 10 and MicroProfile 6, optimised for containers</td></tr>
+          <tr><td><strong>Podman</strong></td><td data-en="OCI container management tool without daemon, compatible with Docker CLI, enabling rootless execution" data-fr="Outil de gestion de conteneurs OCI sans daemon, compatible avec la CLI Docker, permettant l'exécution rootless">OCI container management tool without daemon, compatible with Docker CLI, enabling rootless execution</td></tr>
+          <tr><td><strong>WAR</strong></td><td data-en="Web Application Archive — Java packaging format for web applications deployed on an application server" data-fr="Web Application Archive — format de packaging Java pour les applications web déployées sur un serveur d'applications">Web Application Archive — Java packaging format for web applications deployed on an application server</td></tr>
+          <tr><td><strong>CDI</strong></td><td data-en="Contexts and Dependency Injection — standardised dependency injection mechanism of Jakarta EE" data-fr="Contexts and Dependency Injection — mécanisme d'injection de dépendances standardisé de Jakarta EE">Contexts and Dependency Injection — standardised dependency injection mechanism of Jakarta EE</td></tr>
+          <tr><td><strong>JPA</strong></td><td data-en="Jakarta Persistence API — specification for object-relational mapping (ORM) in Java" data-fr="Jakarta Persistence API — spécification pour le mapping objet-relationnel (ORM) en Java">Jakarta Persistence API — specification for object-relational mapping (ORM) in Java</td></tr>
+          <tr><td><strong>JAX-RS</strong></td><td data-en="Jakarta RESTful Web Services — API for creating REST services with Java annotations" data-fr="Jakarta RESTful Web Services — API pour la création de services REST avec des annotations Java">Jakarta RESTful Web Services — API for creating REST services with Java annotations</td></tr>
         </tbody>
       </table>
     </div>
@@ -124,5 +126,6 @@
   </main>
 </div>
 <footer class="cds--footer">Made with IBM Bob &nbsp;·&nbsp; © 2026 Olivier Planson &nbsp;·&nbsp; ESIPE — Jakarta EE &amp; Microservices</footer>
+<script src="../assets/language-toggle.js"></script>
 </body>
 </html>

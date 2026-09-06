@@ -1,64 +1,66 @@
 <!-- © Copyright 2026 Olivier Planson. All rights reserved. Reproduction prohibited. Made with IBM Bob. -->
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="en">
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-  <title>Cours 09 — Contenu du cours</title>
+  <title>Course 09 — Security | Jakarta EE Course</title>
   <link rel="stylesheet" href="../assets/carbon.css"/>
 </head>
 <body>
 <header class="cds--header">
-  <a class="cds--header__name" href="index.html">Jakarta EE Security<span>Cours Jakarta EE</span></a>
-  <a class="cds--header__back" href="../index.html">← Tous les Cours</a>
+  <a class="cds--header__name" href="index.html">Jakarta EE Security<span data-en="Jakarta EE Course" data-fr="Cours Jakarta EE">Jakarta EE Course</span></a>
+  <button class="lang-toggle-btn" id="lang-toggle">FR</button>
+  <a class="cds--header__back" href="../index.html" data-en="← All Courses" data-fr="← Tous les Cours">← All Courses</a>
 </header>
 <div class="cds--shell">
   <nav class="cds--side-nav">
-    <p class="cds--side-nav__section-title">Cours 09</p>
-    <a class="cds--side-nav__link" href="index.html">⊙ Vue d'ensemble</a>
-    <a class="cds--side-nav__link active" href="slides.html">☰ Contenu du cours</a>
-    <a class="cds--side-nav__link" href="concepts.html">◈ Concepts clés</a>
-    <a class="cds--side-nav__link" href="code.html">⟨/⟩ Exemples de code</a>
+    <p class="cds--side-nav__section-title" data-en="Course 09" data-fr="Cours 09">Course 09</p>
+    <a class="cds--side-nav__link" href="index.html" data-en="⊙ Overview" data-fr="⊙ Vue d'ensemble">⊙ Overview</a>
+    <a class="cds--side-nav__link active" href="slides.html" data-en="☰ Course Content" data-fr="☰ Contenu du cours">☰ Course Content</a>
+    <a class="cds--side-nav__link" href="concepts.html" data-en="◈ Key Concepts" data-fr="◈ Concepts clés">◈ Key Concepts</a>
+    <a class="cds--side-nav__link" href="code.html" data-en="⟨/⟩ Code Examples" data-fr="⟨/⟩ Exemples de code">⟨/⟩ Code Examples</a>
+    <a class="cds--side-nav__lang-toggle">FR</a>
   </nav>
   <main class="cds--content">
-    <div class="breadcrumb"><a href="../index.html">Cours</a> › <a href="index.html">Cours 09</a> › Contenu</div>
-    <h1>Contenu du cours</h1>
-    <p class="page-lead">Toutes les sections du cours — cliquez sur un titre pour développer son contenu.</p>
+    <div class="breadcrumb"><a href="../index.html" data-en="Courses" data-fr="Cours">Courses</a> › <a href="index.html" data-en="Course 09" data-fr="Cours 09">Course 09</a> › <span data-en="Content" data-fr="Contenu">Content</span></div>
+    <h1 data-en="Course Content" data-fr="Contenu du cours">Course Content</h1>
+    <p class="page-lead" data-en="All course sections — click a title to expand its content." data-fr="Toutes les sections du cours — cliquez sur un titre pour développer son contenu.">All course sections — click a title to expand its content.</p>
 
     <details open>
-      <summary>🔒 Fondamentaux de Sécurité</summary>
+      <summary data-en="🔒 Security Fundamentals" data-fr="🔒 Fondamentaux de Sécurité">🔒 Security Fundamentals</summary>
       <div class="slide-content">
-        <h3>CIA Triad — Les trois piliers de la sécurité</h3>
+        <h3 data-en="CIA Triad — The three pillars of security" data-fr="CIA Triad — Les trois piliers de la sécurité">CIA Triad — The three pillars of security</h3>
         <div class="cds--data-table-container">
           <table class="cds--data-table">
-            <thead><tr><th>Pilier</th><th>Définition</th><th>Exemple technique</th></tr></thead>
+            <thead><tr><th data-en="Pillar" data-fr="Pilier">Pillar</th><th data-en="Definition" data-fr="Définition">Definition</th><th data-en="Technical Example" data-fr="Exemple technique">Technical Example</th></tr></thead>
             <tbody>
-              <tr><td><strong>Confidentiality</strong></td><td>Garantir que l'information n'est accessible qu'aux personnes autorisées</td><td>Chiffrement AES-256, TLS, tokens JWT</td></tr>
-              <tr><td><strong>Integrity</strong></td><td>Garantir que l'information n'a pas été altérée de façon non autorisée</td><td>Signatures numériques HMAC, SHA-256</td></tr>
-              <tr><td><strong>Availability</strong></td><td>Garantir que les systèmes restent accessibles aux utilisateurs légitimes</td><td>Protection DDoS, rate limiting, redondance</td></tr>
+              <tr><td><strong>Confidentiality</strong></td><td data-en="Ensure information is accessible only to authorized persons" data-fr="Garantir que l'information n'est accessible qu'aux personnes autorisées">Ensure information is accessible only to authorized persons</td><td data-en="AES-256 encryption, TLS, JWT tokens" data-fr="Chiffrement AES-256, TLS, tokens JWT">AES-256 encryption, TLS, JWT tokens</td></tr>
+              <tr><td><strong>Integrity</strong></td><td data-en="Ensure information has not been altered in an unauthorized way" data-fr="Garantir que l'information n'a pas été altérée de façon non autorisée">Ensure information has not been altered in an unauthorized way</td><td data-en="HMAC digital signatures, SHA-256" data-fr="Signatures numériques HMAC, SHA-256">HMAC digital signatures, SHA-256</td></tr>
+              <tr><td><strong>Availability</strong></td><td data-en="Ensure systems remain accessible to legitimate users" data-fr="Garantir que les systèmes restent accessibles aux utilisateurs légitimes">Ensure systems remain accessible to legitimate users</td><td data-en="DDoS protection, rate limiting, redundancy" data-fr="Protection DDoS, rate limiting, redondance">DDoS protection, rate limiting, redundancy</td></tr>
             </tbody>
           </table>
         </div>
-        <h3>Couches de sécurité</h3>
+        <h3 data-en="Security layers" data-fr="Couches de sécurité">Security layers</h3>
         <ul>
-          <li><strong>Transport :</strong> HTTPS/TLS — chiffrement des communications réseau</li>
-          <li><strong>Application :</strong> Authentification, autorisation, validation des entrées</li>
-          <li><strong>Données :</strong> Chiffrement au repos, masquage des données sensibles</li>
-          <li><strong>Infrastructure :</strong> Pare-feux, VPN, cloisonnement réseau</li>
+          <li data-en="<strong>Transport:</strong> HTTPS/TLS — encryption of network communications" data-fr="<strong>Transport :</strong> HTTPS/TLS — chiffrement des communications réseau"><strong>Transport:</strong> HTTPS/TLS — encryption of network communications</li>
+          <li data-en="<strong>Application:</strong> Authentication, authorization, input validation" data-fr="<strong>Application :</strong> Authentification, autorisation, validation des entrées"><strong>Application:</strong> Authentication, authorization, input validation</li>
+          <li data-en="<strong>Data:</strong> Encryption at rest, masking of sensitive data" data-fr="<strong>Données :</strong> Chiffrement au repos, masquage des données sensibles"><strong>Data:</strong> Encryption at rest, masking of sensitive data</li>
+          <li data-en="<strong>Infrastructure:</strong> Firewalls, VPN, network segmentation" data-fr="<strong>Infrastructure :</strong> Pare-feux, VPN, cloisonnement réseau"><strong>Infrastructure:</strong> Firewalls, VPN, network segmentation</li>
         </ul>
-        <h3>OWASP Top 10 — 2021 (éléments essentiels)</h3>
+        <h3 data-en="OWASP Top 10 — 2021 (essential elements)" data-fr="OWASP Top 10 — 2021 (éléments essentiels)">OWASP Top 10 — 2021 (essential elements)</h3>
         <div class="cds--data-table-container">
           <table class="cds--data-table">
-            <thead><tr><th>Rang</th><th>Vulnérabilité</th><th>Impact</th></tr></thead>
+            <thead><tr><th data-en="Rank" data-fr="Rang">Rank</th><th data-en="Vulnerability" data-fr="Vulnérabilité">Vulnerability</th><th data-en="Impact" data-fr="Impact">Impact</th></tr></thead>
             <tbody>
-              <tr><td>A01</td><td>Broken Access Control</td><td>Accès non autorisé aux ressources</td></tr>
-              <tr><td>A02</td><td>Cryptographic Failures</td><td>Exposition de données sensibles</td></tr>
-              <tr><td>A03</td><td><strong>Injection</strong></td><td>Exécution de code malveillant (SQL, LDAP, OS)</td></tr>
-              <tr><td>A04</td><td>Insecure Design</td><td>Failles architecturales fondamentales</td></tr>
-              <tr><td>A07</td><td><strong>Broken Authentication</strong></td><td>Compromission de comptes, sessions</td></tr>
-              <tr><td>A02</td><td><strong>Sensitive Data Exposure</strong></td><td>Fuite de mots de passe, données financières</td></tr>
-              <tr><td>A03</td><td><strong>XSS (Cross-Site Scripting)</strong></td><td>Injection de scripts dans le navigateur</td></tr>
-              <tr><td>A01</td><td><strong>IDOR (Insecure Direct Object Reference)</strong></td><td>Accès à des ressources d'autres utilisateurs</td></tr>
+              <tr><td>A01</td><td>Broken Access Control</td><td data-en="Unauthorized access to resources" data-fr="Accès non autorisé aux ressources">Unauthorized access to resources</td></tr>
+              <tr><td>A02</td><td>Cryptographic Failures</td><td data-en="Sensitive data exposure" data-fr="Exposition de données sensibles">Sensitive data exposure</td></tr>
+              <tr><td>A03</td><td><strong>Injection</strong></td><td data-en="Malicious code execution (SQL, LDAP, OS)" data-fr="Exécution de code malveillant (SQL, LDAP, OS)">Malicious code execution (SQL, LDAP, OS)</td></tr>
+              <tr><td>A04</td><td>Insecure Design</td><td data-en="Fundamental architectural flaws" data-fr="Failles architecturales fondamentales">Fundamental architectural flaws</td></tr>
+              <tr><td>A07</td><td><strong>Broken Authentication</strong></td><td data-en="Account and session compromise" data-fr="Compromission de comptes, sessions">Account and session compromise</td></tr>
+              <tr><td>A02</td><td><strong>Sensitive Data Exposure</strong></td><td data-en="Leakage of passwords, financial data" data-fr="Fuite de mots de passe, données financières">Leakage of passwords, financial data</td></tr>
+              <tr><td>A03</td><td><strong>XSS (Cross-Site Scripting)</strong></td><td data-en="Script injection in the browser" data-fr="Injection de scripts dans le navigateur">Script injection in the browser</td></tr>
+              <tr><td>A01</td><td><strong>IDOR (Insecure Direct Object Reference)</strong></td><td data-en="Access to other users' resources" data-fr="Accès à des ressources d'autres utilisateurs">Access to other users' resources</td></tr>
             </tbody>
           </table>
         </div>
@@ -67,75 +69,76 @@
     </details>
 
     <details>
-      <summary>🔑 Authentification vs Autorisation</summary>
+      <summary data-en="🔑 Authentication vs Authorization" data-fr="🔑 Authentification vs Autorisation">🔑 Authentication vs Authorization</summary>
       <div class="slide-content">
-        <h3>Définitions distinctes</h3>
+        <h3 data-en="Distinct definitions" data-fr="Définitions distinctes">Distinct definitions</h3>
         <div class="cds--data-table-container">
           <table class="cds--data-table">
-            <thead><tr><th>Concept</th><th>Question fondamentale</th><th>Mécanisme</th><th>Résultat</th></tr></thead>
+            <thead><tr><th data-en="Concept" data-fr="Concept">Concept</th><th data-en="Fundamental question" data-fr="Question fondamentale">Fundamental question</th><th data-en="Mechanism" data-fr="Mécanisme">Mechanism</th><th data-en="Result" data-fr="Résultat">Result</th></tr></thead>
             <tbody>
-              <tr><td><strong>Authentification</strong></td><td>Qui êtes-vous ?</td><td>Credentials, tokens, biométrie</td><td>Identité prouvée (Principal)</td></tr>
-              <tr><td><strong>Autorisation</strong></td><td>Que pouvez-vous faire ?</td><td>Rôles, permissions, politiques</td><td>Accès accordé ou refusé</td></tr>
+              <tr><td><strong data-en="Authentication" data-fr="Authentification">Authentication</strong></td><td data-en="Who are you?" data-fr="Qui êtes-vous ?">Who are you?</td><td data-en="Credentials, tokens, biometrics" data-fr="Credentials, tokens, biométrie">Credentials, tokens, biometrics</td><td data-en="Proven identity (Principal)" data-fr="Identité prouvée (Principal)">Proven identity (Principal)</td></tr>
+              <tr><td><strong data-en="Authorization" data-fr="Autorisation">Authorization</strong></td><td data-en="What can you do?" data-fr="Que pouvez-vous faire ?">What can you do?</td><td data-en="Roles, permissions, policies" data-fr="Rôles, permissions, politiques">Roles, permissions, policies</td><td data-en="Access granted or denied" data-fr="Accès accordé ou refusé">Access granted or denied</td></tr>
             </tbody>
           </table>
         </div>
-        <h3>Flux d'authentification typique</h3>
+        <h3 data-en="Typical authentication flow" data-fr="Flux d'authentification typique">Typical authentication flow</h3>
         <ol>
-          <li><strong>Client</strong> — soumet ses credentials (login + mot de passe)</li>
-          <li><strong>Server</strong> — vérifie les credentials contre l'IdentityStore</li>
-          <li><strong>Server</strong> — génère un token signé (JWT) avec claims et expiration</li>
-          <li><strong>Client</strong> — reçoit le token et le stocke (mémoire, cookie HTTP-only)</li>
-          <li><strong>Client</strong> — envoie le token dans chaque requête suivante (<code>Authorization: Bearer &lt;token&gt;</code>)</li>
-          <li><strong>Server</strong> — valide la signature du token et contrôle les rôles</li>
+          <li data-en="<strong>Client</strong> — submits credentials (login + password)" data-fr="<strong>Client</strong> — soumet ses credentials (login + mot de passe)"><strong>Client</strong> — submits credentials (login + password)</li>
+          <li data-en="<strong>Server</strong> — verifies credentials against the IdentityStore" data-fr="<strong>Server</strong> — vérifie les credentials contre l'IdentityStore"><strong>Server</strong> — verifies credentials against the IdentityStore</li>
+          <li data-en="<strong>Server</strong> — generates a signed token (JWT) with claims and expiration" data-fr="<strong>Server</strong> — génère un token signé (JWT) avec claims et expiration"><strong>Server</strong> — generates a signed token (JWT) with claims and expiration</li>
+          <li data-en="<strong>Client</strong> — receives the token and stores it (memory, HTTP-only cookie)" data-fr="<strong>Client</strong> — reçoit le token et le stocke (mémoire, cookie HTTP-only)"><strong>Client</strong> — receives the token and stores it (memory, HTTP-only cookie)</li>
+          <li><strong>Client</strong> — <span data-en="sends the token in each subsequent request (" data-fr="envoie le token dans chaque requête suivante (">sends the token in each subsequent request (</span><code>Authorization: Bearer &lt;token&gt;</code>)</li>
+          <li data-en="<strong>Server</strong> — validates the token signature and checks roles" data-fr="<strong>Server</strong> — valide la signature du token et contrôle les rôles"><strong>Server</strong> — validates the token signature and checks roles</li>
         </ol>
-        <h3>Multi-Factor Authentication (MFA)</h3>
+        <h3 data-en="Multi-Factor Authentication (MFA)" data-fr="Multi-Factor Authentication (MFA)">Multi-Factor Authentication (MFA)</h3>
         <ul>
-          <li><strong>Facteur 1 (connaissance) :</strong> mot de passe, PIN, question de sécurité</li>
-          <li><strong>Facteur 2 (possession) :</strong> TOTP (Google Authenticator), SMS OTP, clé FIDO2</li>
-          <li><strong>Facteur 3 (inhérence) :</strong> empreinte digitale, reconnaissance faciale</li>
+          <li data-en="<strong>Factor 1 (knowledge):</strong> password, PIN, security question" data-fr="<strong>Facteur 1 (connaissance) :</strong> mot de passe, PIN, question de sécurité"><strong>Factor 1 (knowledge):</strong> password, PIN, security question</li>
+          <li data-en="<strong>Factor 2 (possession):</strong> TOTP (Google Authenticator), SMS OTP, FIDO2 key" data-fr="<strong>Facteur 2 (possession) :</strong> TOTP (Google Authenticator), SMS OTP, clé FIDO2"><strong>Factor 2 (possession):</strong> TOTP (Google Authenticator), SMS OTP, FIDO2 key</li>
+          <li data-en="<strong>Factor 3 (inherence):</strong> fingerprint, facial recognition" data-fr="<strong>Facteur 3 (inhérence) :</strong> empreinte digitale, reconnaissance faciale"><strong>Factor 3 (inherence):</strong> fingerprint, facial recognition</li>
         </ul>
       </div>
     </details>
 
     <details>
-      <summary>🔐 Méthodes d'Authentification</summary>
+      <summary data-en="🔐 Authentication Methods" data-fr="🔐 Méthodes d'Authentification">🔐 Authentication Methods</summary>
       <div class="slide-content">
         <h3>Basic Auth</h3>
         <ul>
-          <li>Credentials encodés en Base64 dans l'en-tête HTTP : <code>Authorization: Basic dXNlcjpwYXNz</code></li>
-          <li>Simple à implémenter, mais les credentials transitent à chaque requête</li>
-          <li><strong>⚠️ Non sécurisé sans HTTPS</strong> — Base64 n'est pas du chiffrement</li>
-          <li>Usage : APIs internes, outils de développement</li>
+          <li data-en="Credentials Base64-encoded in the HTTP header: " data-fr="Credentials encodés en Base64 dans l'en-tête HTTP : ">Credentials Base64-encoded in the HTTP header: <code>Authorization: Basic dXNlcjpwYXNz</code></li>
+          <li data-en="Simple to implement, but credentials transit on every request" data-fr="Simple à implémenter, mais les credentials transitent à chaque requête">Simple to implement, but credentials transit on every request</li>
+          <li data-en="<strong>⚠️ Insecure without HTTPS</strong> — Base64 is not encryption" data-fr="<strong>⚠️ Non sécurisé sans HTTPS</strong> — Base64 n'est pas du chiffrement"><strong>⚠️ Insecure without HTTPS</strong> — Base64 is not encryption</li>
+          <li data-en="Usage: internal APIs, development tools" data-fr="Usage : APIs internes, outils de développement">Usage: internal APIs, development tools</li>
         </ul>
-        <h3>Form-Based Authentication</h3>
+        <h3 data-en="Form-Based Authentication" data-fr="Form-Based Authentication">Form-Based Authentication</h3>
         <ul>
-          <li>Formulaire HTML dédié (login page) soumis via POST</li>
-          <li>Session créée côté serveur après succès (stateful)</li>
-          <li>Protection obligatoire contre CSRF</li>
+          <li data-en="Dedicated HTML form (login page) submitted via POST" data-fr="Formulaire HTML dédié (login page) soumis via POST">Dedicated HTML form (login page) submitted via POST</li>
+          <li data-en="Session created server-side after success (stateful)" data-fr="Session créée côté serveur après succès (stateful)">Session created server-side after success (stateful)</li>
+          <li data-en="Mandatory CSRF protection" data-fr="Protection obligatoire contre CSRF">Mandatory CSRF protection</li>
           <li>Jakarta EE : <code>@FormAuthenticationMechanismDefinition</code></li>
         </ul>
-        <h3>Token-Based Authentication (JWT)</h3>
+        <h3 data-en="Token-Based Authentication (JWT)" data-fr="Token-Based Authentication (JWT)">Token-Based Authentication (JWT)</h3>
         <ul>
-          <li>Token auto-porteur signé cryptographiquement</li>
-          <li>Stateless — aucune session serveur nécessaire</li>
-          <li>Transmis dans <code>Authorization: Bearer &lt;token&gt;</code></li>
-          <li>Idéal pour APIs REST et architectures microservices</li>
+          <li data-en="Cryptographically signed self-contained token" data-fr="Token auto-porteur signé cryptographiquement">Cryptographically signed self-contained token</li>
+          <li data-en="Stateless — no server session required" data-fr="Stateless — aucune session serveur nécessaire">Stateless — no server session required</li>
+          <li data-en="Transmitted in " data-fr="Transmis dans ">Transmitted in <code>Authorization: Bearer &lt;token&gt;</code></li>
+          <li data-en="Ideal for REST APIs and microservices architectures" data-fr="Idéal pour APIs REST et architectures microservices">Ideal for REST APIs and microservices architectures</li>
         </ul>
-        <h3>Certificate-Based Authentication (mTLS)</h3>
+        <p class="cds--inline-notification cds--inline-notification--info" data-en="Tip: MicroProfile JWT Propagation (MP-JWT) standardizes JWT-based authentication across microservices. Annotate your JAX-RS application with @LoginConfig(authMethod=&quot;MP-JWT&quot;) and inject claims with @Claim." data-fr="Conseil : MicroProfile JWT Propagation (MP-JWT) standardise l'authentification JWT entre microservices. Annotez votre application JAX-RS avec @LoginConfig(authMethod=&quot;MP-JWT&quot;) et injectez les claims avec @Claim.">Tip: MicroProfile JWT Propagation (MP-JWT) standardizes JWT-based authentication across microservices. Annotate your JAX-RS application with @LoginConfig(authMethod="MP-JWT") and inject claims with @Claim.</p>
+        <h3 data-en="Certificate-Based Authentication (mTLS)" data-fr="Certificate-Based Authentication (mTLS)">Certificate-Based Authentication (mTLS)</h3>
         <ul>
-          <li>Certificat X.509 côté client et serveur</li>
-          <li>Mutual TLS — authentification bidirectionnelle</li>
-          <li>Usage : service-to-service dans les microservices, communications critiques</li>
+          <li data-en="X.509 certificate on both client and server" data-fr="Certificat X.509 côté client et serveur">X.509 certificate on both client and server</li>
+          <li data-en="Mutual TLS — bidirectional authentication" data-fr="Mutual TLS — authentification bidirectionnelle">Mutual TLS — bidirectional authentication</li>
+          <li data-en="Usage: service-to-service in microservices, critical communications" data-fr="Usage : service-to-service dans les microservices, communications critiques">Usage: service-to-service in microservices, critical communications</li>
         </ul>
-        <h3>Comparaison des méthodes</h3>
+        <h3 data-en="Comparison of methods" data-fr="Comparaison des méthodes">Comparison of methods</h3>
         <div class="cds--data-table-container">
           <table class="cds--data-table">
-            <thead><tr><th>Méthode</th><th>État</th><th>Sécurité</th><th>Complexité</th><th>Use Case</th></tr></thead>
+            <thead><tr><th data-en="Method" data-fr="Méthode">Method</th><th data-en="State" data-fr="État">State</th><th data-en="Security" data-fr="Sécurité">Security</th><th data-en="Complexity" data-fr="Complexité">Complexity</th><th>Use Case</th></tr></thead>
             <tbody>
-              <tr><td>Basic Auth</td><td>Stateless</td><td>⚠️ Faible sans TLS</td><td>Très simple</td><td>APIs dev/internes</td></tr>
-              <tr><td>Form-Based</td><td>Stateful</td><td>✅ Bonne</td><td>Moyenne</td><td>Applications web</td></tr>
-              <tr><td>JWT Bearer</td><td>Stateless</td><td>✅ Bonne</td><td>Moyenne</td><td>APIs REST, microservices</td></tr>
-              <tr><td>Certificate (mTLS)</td><td>Stateless</td><td>✅✅ Excellente</td><td>Élevée</td><td>Service-to-service</td></tr>
+              <tr><td>Basic Auth</td><td>Stateless</td><td data-en="⚠️ Weak without TLS" data-fr="⚠️ Faible sans TLS">⚠️ Weak without TLS</td><td data-en="Very simple" data-fr="Très simple">Very simple</td><td data-en="Dev/internal APIs" data-fr="APIs dev/internes">Dev/internal APIs</td></tr>
+              <tr><td>Form-Based</td><td>Stateful</td><td data-en="✅ Good" data-fr="✅ Bonne">✅ Good</td><td data-en="Medium" data-fr="Moyenne">Medium</td><td data-en="Web applications" data-fr="Applications web">Web applications</td></tr>
+              <tr><td>JWT Bearer</td><td>Stateless</td><td data-en="✅ Good" data-fr="✅ Bonne">✅ Good</td><td data-en="Medium" data-fr="Moyenne">Medium</td><td data-en="REST APIs, microservices" data-fr="APIs REST, microservices">REST APIs, microservices</td></tr>
+              <tr><td>Certificate (mTLS)</td><td>Stateless</td><td data-en="✅✅ Excellent" data-fr="✅✅ Excellente">✅✅ Excellent</td><td data-en="High" data-fr="Élevée">High</td><td>Service-to-service</td></tr>
             </tbody>
           </table>
         </div>
@@ -143,30 +146,30 @@
     </details>
 
     <details>
-      <summary>🛡️ Modèles d'Autorisation</summary>
+      <summary data-en="🛡️ Authorization Models" data-fr="🛡️ Modèles d'Autorisation">🛡️ Authorization Models</summary>
       <div class="slide-content">
-        <h3>RBAC — Role-Based Access Control</h3>
-        <p>Les permissions sont assignées aux <strong>rôles</strong>, les utilisateurs obtiennent des rôles.</p>
+        <h3 data-en="RBAC — Role-Based Access Control" data-fr="RBAC — Role-Based Access Control">RBAC — Role-Based Access Control</h3>
+        <p data-en="Permissions are assigned to <strong>roles</strong>, users obtain roles." data-fr="Les permissions sont assignées aux <strong>rôles</strong>, les utilisateurs obtiennent des rôles.">Permissions are assigned to <strong>roles</strong>, users obtain roles.</p>
         <ul>
-          <li><strong>ADMIN</strong> — accès complet (lecture, écriture, suppression, administration)</li>
-          <li><strong>USER</strong> — accès en lecture et écriture sur ses propres ressources</li>
-          <li><strong>VIEWER</strong> — accès en lecture seule</li>
+          <li data-en="<strong>ADMIN</strong> — full access (read, write, delete, administration)" data-fr="<strong>ADMIN</strong> — accès complet (lecture, écriture, suppression, administration)"><strong>ADMIN</strong> — full access (read, write, delete, administration)</li>
+          <li data-en="<strong>USER</strong> — read and write access on own resources" data-fr="<strong>USER</strong> — accès en lecture et écriture sur ses propres ressources"><strong>USER</strong> — read and write access on own resources</li>
+          <li data-en="<strong>VIEWER</strong> — read-only access" data-fr="<strong>VIEWER</strong> — accès en lecture seule"><strong>VIEWER</strong> — read-only access</li>
         </ul>
-        <h3>ABAC — Attribute-Based Access Control</h3>
-        <p>Les décisions d'accès sont basées sur des <strong>attributs</strong> de plusieurs dimensions :</p>
+        <h3 data-en="ABAC — Attribute-Based Access Control" data-fr="ABAC — Attribute-Based Access Control">ABAC — Attribute-Based Access Control</h3>
+        <p data-en="Access decisions are based on <strong>attributes</strong> from multiple dimensions:" data-fr="Les décisions d'accès sont basées sur des <strong>attributs</strong> de plusieurs dimensions :">Access decisions are based on <strong>attributes</strong> from multiple dimensions:</p>
         <ul>
-          <li><strong>User attributes :</strong> département, clearance level, localisation</li>
-          <li><strong>Resource attributes :</strong> classification des données, propriétaire, sensibilité</li>
-          <li><strong>Environment attributes :</strong> heure, adresse IP, état du contexte</li>
+          <li data-en="<strong>User attributes:</strong> department, clearance level, location" data-fr="<strong>User attributes :</strong> département, clearance level, localisation"><strong>User attributes:</strong> department, clearance level, location</li>
+          <li data-en="<strong>Resource attributes:</strong> data classification, owner, sensitivity" data-fr="<strong>Resource attributes :</strong> classification des données, propriétaire, sensibilité"><strong>Resource attributes:</strong> data classification, owner, sensitivity</li>
+          <li data-en="<strong>Environment attributes:</strong> time, IP address, context state" data-fr="<strong>Environment attributes :</strong> heure, adresse IP, état du contexte"><strong>Environment attributes:</strong> time, IP address, context state</li>
         </ul>
-        <h3>Sécurité déclarative vs programmatique</h3>
+        <h3 data-en="Declarative vs programmatic security" data-fr="Sécurité déclarative vs programmatique">Declarative vs programmatic security</h3>
         <div class="cds--data-table-container">
           <table class="cds--data-table">
-            <thead><tr><th>Approche</th><th>Mécanisme</th><th>Exemple</th><th>Avantage</th></tr></thead>
+            <thead><tr><th data-en="Approach" data-fr="Approche">Approach</th><th data-en="Mechanism" data-fr="Mécanisme">Mechanism</th><th data-en="Example" data-fr="Exemple">Example</th><th data-en="Advantage" data-fr="Avantage">Advantage</th></tr></thead>
             <tbody>
-              <tr><td><strong>Déclarative</strong></td><td>Annotations Jakarta EE</td><td><code>@RolesAllowed("ADMIN")</code></td><td>Simple, lisible, maintenable</td></tr>
-              <tr><td><strong>Programmatique</strong></td><td>SecurityContext API</td><td><code>securityContext.isCallerInRole("ADMIN")</code></td><td>Logique conditionnelle fine</td></tr>
-              <tr><td><strong>web.xml</strong></td><td>Contraintes de sécurité XML</td><td><code>&lt;security-constraint&gt;</code></td><td>Configuration externe</td></tr>
+              <tr><td><strong data-en="Declarative" data-fr="Déclarative">Declarative</strong></td><td data-en="Jakarta EE Annotations" data-fr="Annotations Jakarta EE">Jakarta EE Annotations</td><td><code>@RolesAllowed("ADMIN")</code></td><td data-en="Simple, readable, maintainable" data-fr="Simple, lisible, maintenable">Simple, readable, maintainable</td></tr>
+              <tr><td><strong data-en="Programmatic" data-fr="Programmatique">Programmatic</strong></td><td>SecurityContext API</td><td><code>securityContext.isCallerInRole("ADMIN")</code></td><td data-en="Fine conditional logic" data-fr="Logique conditionnelle fine">Fine conditional logic</td></tr>
+              <tr><td><strong>web.xml</strong></td><td data-en="XML security constraints" data-fr="Contraintes de sécurité XML">XML security constraints</td><td><code>&lt;security-constraint&gt;</code></td><td data-en="External configuration" data-fr="Configuration externe">External configuration</td></tr>
             </tbody>
           </table>
         </div>
@@ -174,162 +177,162 @@
     </details>
 
     <details>
-      <summary>⚙️ Jakarta Security API</summary>
+      <summary data-en="⚙️ Jakarta Security API" data-fr="⚙️ Jakarta Security API">⚙️ Jakarta Security API</summary>
       <div class="slide-content">
-        <h3>Architecture Jakarta Security</h3>
+        <h3 data-en="Jakarta Security Architecture" data-fr="Architecture Jakarta Security">Jakarta Security Architecture</h3>
         <ul>
-          <li><strong>@HttpAuthenticationMechanism</strong> — intercepte les requêtes HTTP, extrait et valide les credentials</li>
-          <li><strong>@IdentityStore</strong> — vérifie les credentials et retourne les groupes/rôles de l'utilisateur</li>
-          <li><strong>SecurityContext</strong> — API programmatique pour interroger l'identité courante</li>
-          <li><strong>HttpMessageContext</strong> — fournit l'accès au contexte HTTP dans les mécanismes</li>
+          <li data-en="<strong>@HttpAuthenticationMechanism</strong> — intercepts HTTP requests, extracts and validates credentials" data-fr="<strong>@HttpAuthenticationMechanism</strong> — intercepte les requêtes HTTP, extrait et valide les credentials"><strong>@HttpAuthenticationMechanism</strong> — intercepts HTTP requests, extracts and validates credentials</li>
+          <li data-en="<strong>@IdentityStore</strong> — verifies credentials and returns the user's groups/roles" data-fr="<strong>@IdentityStore</strong> — vérifie les credentials et retourne les groupes/rôles de l'utilisateur"><strong>@IdentityStore</strong> — verifies credentials and returns the user's groups/roles</li>
+          <li data-en="<strong>SecurityContext</strong> — programmatic API to query the current identity" data-fr="<strong>SecurityContext</strong> — API programmatique pour interroger l'identité courante"><strong>SecurityContext</strong> — programmatic API to query the current identity</li>
+          <li data-en="<strong>HttpMessageContext</strong> — provides access to the HTTP context in mechanisms" data-fr="<strong>HttpMessageContext</strong> — fournit l'accès au contexte HTTP dans les mécanismes"><strong>HttpMessageContext</strong> — provides access to the HTTP context in mechanisms</li>
         </ul>
-        <h3>Mécanismes built-in</h3>
+        <h3 data-en="Built-in mechanisms" data-fr="Mécanismes built-in">Built-in mechanisms</h3>
         <div class="cds--data-table-container">
           <table class="cds--data-table">
-            <thead><tr><th>Annotation</th><th>Type</th><th>Usage</th></tr></thead>
+            <thead><tr><th data-en="Annotation" data-fr="Annotation">Annotation</th><th data-en="Type" data-fr="Type">Type</th><th data-en="Usage" data-fr="Usage">Usage</th></tr></thead>
             <tbody>
-              <tr><td><code>@BasicAuthenticationMechanismDefinition</code></td><td>Basic Auth</td><td>APIs simples, outils internes</td></tr>
-              <tr><td><code>@FormAuthenticationMechanismDefinition</code></td><td>Form-Based</td><td>Applications web avec login HTML</td></tr>
-              <tr><td><code>@CustomFormAuthenticationMechanismDefinition</code></td><td>Custom Form</td><td>Login AJAX, formulaires modernes</td></tr>
+              <tr><td><code>@BasicAuthenticationMechanismDefinition</code></td><td>Basic Auth</td><td data-en="Simple APIs, internal tools" data-fr="APIs simples, outils internes">Simple APIs, internal tools</td></tr>
+              <tr><td><code>@FormAuthenticationMechanismDefinition</code></td><td>Form-Based</td><td data-en="Web applications with HTML login" data-fr="Applications web avec login HTML">Web applications with HTML login</td></tr>
+              <tr><td><code>@CustomFormAuthenticationMechanismDefinition</code></td><td>Custom Form</td><td data-en="AJAX login, modern forms" data-fr="Login AJAX, formulaires modernes">AJAX login, modern forms</td></tr>
             </tbody>
           </table>
         </div>
-        <h3>Flux Jakarta Security</h3>
+        <h3 data-en="Jakarta Security flow" data-fr="Flux Jakarta Security">Jakarta Security flow</h3>
         <ol>
-          <li>Requête HTTP reçue par le conteneur Jakarta EE</li>
-          <li><code>HttpAuthenticationMechanism.validateRequest()</code> est invoqué</li>
-          <li>Les credentials extraits sont transmis à <code>IdentityStore.validate()</code></li>
-          <li>En cas de succès, un <code>CallerPrincipalCallback</code> est créé</li>
-          <li>Le SecurityContext est alimenté avec l'identité et les groupes</li>
-          <li>Les annotations <code>@RolesAllowed</code> sont évaluées</li>
+          <li data-en="HTTP request received by the Jakarta EE container" data-fr="Requête HTTP reçue par le conteneur Jakarta EE">HTTP request received by the Jakarta EE container</li>
+          <li><code>HttpAuthenticationMechanism.validateRequest()</code> <span data-en="is invoked" data-fr="est invoqué">is invoked</span></li>
+          <li data-en="Extracted credentials are passed to " data-fr="Les credentials extraits sont transmis à ">Extracted credentials are passed to <code>IdentityStore.validate()</code></li>
+          <li data-en="On success, a " data-fr="En cas de succès, un ">On success, a <code>CallerPrincipalCallback</code> <span data-en="is created" data-fr="est créé">is created</span></li>
+          <li data-en="The SecurityContext is populated with identity and groups" data-fr="Le SecurityContext est alimenté avec l'identité et les groupes">The SecurityContext is populated with identity and groups</li>
+          <li data-en="The " data-fr="Les annotations ">The <code>@RolesAllowed</code> <span data-en="annotations are evaluated" data-fr="sont évaluées">annotations are evaluated</span></li>
         </ol>
       </div>
     </details>
 
     <details>
-      <summary>🎫 JWT et MicroProfile JWT</summary>
+      <summary data-en="🎫 JWT and MicroProfile JWT" data-fr="🎫 JWT et MicroProfile JWT">🎫 JWT and MicroProfile JWT</summary>
       <div class="slide-content">
-        <h3>Structure d'un Token JWT</h3>
-        <p>Un JWT est composé de trois parties encodées en Base64URL séparées par des points : <strong>header.payload.signature</strong></p>
+        <h3 data-en="JWT Token Structure" data-fr="Structure d'un Token JWT">JWT Token Structure</h3>
+        <p data-en="A JWT is composed of three Base64URL-encoded parts separated by dots: <strong>header.payload.signature</strong>" data-fr="Un JWT est composé de trois parties encodées en Base64URL séparées par des points : <strong>header.payload.signature</strong>">A JWT is composed of three Base64URL-encoded parts separated by dots: <strong>header.payload.signature</strong></p>
         <div class="cds--data-table-container">
           <table class="cds--data-table">
-            <thead><tr><th>Partie</th><th>Contenu</th><th>Exemple</th></tr></thead>
+            <thead><tr><th data-en="Part" data-fr="Partie">Part</th><th data-en="Content" data-fr="Contenu">Content</th><th data-en="Example" data-fr="Exemple">Example</th></tr></thead>
             <tbody>
-              <tr><td><strong>Header</strong></td><td>Algorithme de signature et type</td><td><code>{"alg":"RS256","typ":"JWT"}</code></td></tr>
-              <tr><td><strong>Payload</strong></td><td>Claims : identité, rôles, expiration</td><td><code>{"sub":"alice","groups":["USER"],"exp":1234567890}</code></td></tr>
-              <tr><td><strong>Signature</strong></td><td>HMAC/RSA de header + payload</td><td><code>RSASHA256(base64Header + "." + base64Payload, key)</code></td></tr>
+              <tr><td><strong>Header</strong></td><td data-en="Signature algorithm and type" data-fr="Algorithme de signature et type">Signature algorithm and type</td><td><code>{"alg":"RS256","typ":"JWT"}</code></td></tr>
+              <tr><td><strong>Payload</strong></td><td data-en="Claims: identity, roles, expiration" data-fr="Claims : identité, rôles, expiration">Claims: identity, roles, expiration</td><td><code>{"sub":"alice","groups":["USER"],"exp":1234567890}</code></td></tr>
+              <tr><td><strong>Signature</strong></td><td data-en="HMAC/RSA of header + payload" data-fr="HMAC/RSA de header + payload">HMAC/RSA of header + payload</td><td><code>RSASHA256(base64Header + "." + base64Payload, key)</code></td></tr>
             </tbody>
           </table>
         </div>
-        <h3>Claims standards (RFC 7519)</h3>
+        <h3 data-en="Standard claims (RFC 7519)" data-fr="Claims standards (RFC 7519)">Standard claims (RFC 7519)</h3>
         <ul>
-          <li><strong>iss</strong> (issuer) — émetteur du token</li>
-          <li><strong>sub</strong> (subject) — identifiant de l'utilisateur</li>
-          <li><strong>aud</strong> (audience) — destinataire(s) attendu(s)</li>
-          <li><strong>exp</strong> (expiration time) — date d'expiration Unix timestamp</li>
-          <li><strong>iat</strong> (issued at) — date d'émission Unix timestamp</li>
-          <li><strong>groups</strong> (MicroProfile) — liste des rôles/groupes de l'utilisateur</li>
+          <li data-en="<strong>iss</strong> (issuer) — token issuer" data-fr="<strong>iss</strong> (issuer) — émetteur du token"><strong>iss</strong> (issuer) — token issuer</li>
+          <li data-en="<strong>sub</strong> (subject) — user identifier" data-fr="<strong>sub</strong> (subject) — identifiant de l'utilisateur"><strong>sub</strong> (subject) — user identifier</li>
+          <li data-en="<strong>aud</strong> (audience) — expected recipient(s)" data-fr="<strong>aud</strong> (audience) — destinataire(s) attendu(s)"><strong>aud</strong> (audience) — expected recipient(s)</li>
+          <li data-en="<strong>exp</strong> (expiration time) — expiration Unix timestamp" data-fr="<strong>exp</strong> (expiration time) — date d'expiration Unix timestamp"><strong>exp</strong> (expiration time) — expiration Unix timestamp</li>
+          <li data-en="<strong>iat</strong> (issued at) — issuance Unix timestamp" data-fr="<strong>iat</strong> (issued at) — date d'émission Unix timestamp"><strong>iat</strong> (issued at) — issuance Unix timestamp</li>
+          <li data-en="<strong>groups</strong> (MicroProfile) — list of user roles/groups" data-fr="<strong>groups</strong> (MicroProfile) — liste des rôles/groupes de l'utilisateur"><strong>groups</strong> (MicroProfile) — list of user roles/groups</li>
         </ul>
-        <h3>Configuration MicroProfile JWT</h3>
+        <h3 data-en="MicroProfile JWT Configuration" data-fr="Configuration MicroProfile JWT">MicroProfile JWT Configuration</h3>
         <ul>
-          <li><code>@LoginConfig(authMethod="MP-JWT")</code> sur la classe <code>Application</code></li>
-          <li><code>@RolesAllowed({"USER","ADMIN"})</code> sur les méthodes JAX-RS</li>
-          <li><code>@Inject @Claim("sub") String subject</code> — injection de claims dans les beans CDI</li>
-          <li>Propriétés : <code>mp.jwt.verify.publickey.location</code> et <code>mp.jwt.verify.issuer</code></li>
+          <li><code>@LoginConfig(authMethod="MP-JWT")</code> <span data-en="on the " data-fr="sur la classe ">on the </span><code>Application</code> <span data-en="class" data-fr="">class</span></li>
+          <li><code>@RolesAllowed({"USER","ADMIN"})</code> <span data-en="on JAX-RS methods" data-fr="sur les méthodes JAX-RS">on JAX-RS methods</span></li>
+          <li><code>@Inject @Claim("sub") String subject</code> — <span data-en="claims injection into CDI beans" data-fr="injection de claims dans les beans CDI">claims injection into CDI beans</span></li>
+          <li data-en="Properties: " data-fr="Propriétés : ">Properties: <code>mp.jwt.verify.publickey.location</code> <span data-en="and" data-fr="et">and</span> <code>mp.jwt.verify.issuer</code></li>
         </ul>
         <img src="../../images/09-jakarta-ee-security-diagram-2.png" alt="JWT MicroProfile Flow"/>
       </div>
     </details>
 
     <details>
-      <summary>🔏 HTTPS/TLS — Configuration</summary>
+      <summary data-en="🔏 HTTPS/TLS — Configuration" data-fr="🔏 HTTPS/TLS — Configuration">🔏 HTTPS/TLS — Configuration</summary>
       <div class="slide-content">
-        <h3>Chiffrement asymétrique</h3>
+        <h3 data-en="Asymmetric encryption" data-fr="Chiffrement asymétrique">Asymmetric encryption</h3>
         <ul>
-          <li><strong>Clé publique</strong> — partagée librement, chiffre les données et vérifie les signatures</li>
-          <li><strong>Clé privée</strong> — secrète, déchiffre et signe</li>
-          <li>TLS Handshake : échange de certificats → négociation d'algorithmes → session chiffrée</li>
+          <li data-en="<strong>Public key</strong> — freely shared, encrypts data and verifies signatures" data-fr="<strong>Clé publique</strong> — partagée librement, chiffre les données et vérifie les signatures"><strong>Public key</strong> — freely shared, encrypts data and verifies signatures</li>
+          <li data-en="<strong>Private key</strong> — secret, decrypts and signs" data-fr="<strong>Clé privée</strong> — secrète, déchiffre et signe"><strong>Private key</strong> — secret, decrypts and signs</li>
+          <li data-en="TLS Handshake: certificate exchange → algorithm negotiation → encrypted session" data-fr="TLS Handshake : échange de certificats → négociation d'algorithmes → session chiffrée">TLS Handshake: certificate exchange → algorithm negotiation → encrypted session</li>
         </ul>
-        <h3>Types de certificats</h3>
+        <h3 data-en="Certificate types" data-fr="Types de certificats">Certificate types</h3>
         <div class="cds--data-table-container">
           <table class="cds--data-table">
-            <thead><tr><th>Type</th><th>Émetteur</th><th>Coût</th><th>Confiance navigateur</th><th>Usage</th></tr></thead>
+            <thead><tr><th data-en="Type" data-fr="Type">Type</th><th data-en="Issuer" data-fr="Émetteur">Issuer</th><th data-en="Cost" data-fr="Coût">Cost</th><th data-en="Browser trust" data-fr="Confiance navigateur">Browser trust</th><th data-en="Usage" data-fr="Usage">Usage</th></tr></thead>
             <tbody>
-              <tr><td><strong>Self-signed</strong></td><td>Vous-même</td><td>Gratuit</td><td>❌ Non</td><td>Développement, tests</td></tr>
-              <tr><td><strong>CA-signed (DV)</strong></td><td>Let's Encrypt, DigiCert</td><td>Gratuit / Payant</td><td>✅ Oui</td><td>Sites web publics</td></tr>
-              <tr><td><strong>CA-signed (EV)</strong></td><td>DigiCert, Sectigo</td><td>Payant</td><td>✅ Oui</td><td>E-commerce, banque</td></tr>
+              <tr><td><strong>Self-signed</strong></td><td data-en="Yourself" data-fr="Vous-même">Yourself</td><td data-en="Free" data-fr="Gratuit">Free</td><td>❌ <span data-en="No" data-fr="Non">No</span></td><td data-en="Development, testing" data-fr="Développement, tests">Development, testing</td></tr>
+              <tr><td><strong>CA-signed (DV)</strong></td><td>Let's Encrypt, DigiCert</td><td data-en="Free / Paid" data-fr="Gratuit / Payant">Free / Paid</td><td>✅ <span data-en="Yes" data-fr="Oui">Yes</span></td><td data-en="Public websites" data-fr="Sites web publics">Public websites</td></tr>
+              <tr><td><strong>CA-signed (EV)</strong></td><td>DigiCert, Sectigo</td><td data-en="Paid" data-fr="Payant">Paid</td><td>✅ <span data-en="Yes" data-fr="Oui">Yes</span></td><td data-en="E-commerce, banking" data-fr="E-commerce, banque">E-commerce, banking</td></tr>
             </tbody>
           </table>
         </div>
-        <h3>Configuration Liberty et bonnes pratiques</h3>
+        <h3 data-en="Liberty configuration and best practices" data-fr="Configuration Liberty et bonnes pratiques">Liberty configuration and best practices</h3>
         <ul>
-          <li><strong>keyStore</strong> — contient la clé privée et le certificat du serveur</li>
-          <li><strong>trustStore</strong> — contient les certificats des CA de confiance</li>
-          <li><strong>HSTS header</strong> — <code>Strict-Transport-Security: max-age=31536000; includeSubDomains</code> force le HTTPS</li>
-          <li><strong>Perfect Forward Secrecy</strong> — utiliser ECDHE/DHE pour que la compromission de la clé privée n'affecte pas les sessions passées</li>
-          <li><strong>TLS 1.2+ obligatoire</strong> — désactiver SSLv3, TLS 1.0, TLS 1.1</li>
+          <li data-en="<strong>keyStore</strong> — contains the server private key and certificate" data-fr="<strong>keyStore</strong> — contient la clé privée et le certificat du serveur"><strong>keyStore</strong> — contains the server private key and certificate</li>
+          <li data-en="<strong>trustStore</strong> — contains trusted CA certificates" data-fr="<strong>trustStore</strong> — contient les certificats des CA de confiance"><strong>trustStore</strong> — contains trusted CA certificates</li>
+          <li><strong>HSTS header</strong> — <code>Strict-Transport-Security: max-age=31536000; includeSubDomains</code> <span data-en="forces HTTPS" data-fr="force le HTTPS">forces HTTPS</span></li>
+          <li data-en="<strong>Perfect Forward Secrecy</strong> — use ECDHE/DHE so that compromising the private key does not affect past sessions" data-fr="<strong>Perfect Forward Secrecy</strong> — utiliser ECDHE/DHE pour que la compromission de la clé privée n'affecte pas les sessions passées"><strong>Perfect Forward Secrecy</strong> — use ECDHE/DHE so that compromising the private key does not affect past sessions</li>
+          <li data-en="<strong>TLS 1.2+ mandatory</strong> — disable SSLv3, TLS 1.0, TLS 1.1" data-fr="<strong>TLS 1.2+ obligatoire</strong> — désactiver SSLv3, TLS 1.0, TLS 1.1"><strong>TLS 1.2+ mandatory</strong> — disable SSLv3, TLS 1.0, TLS 1.1</li>
         </ul>
       </div>
     </details>
 
     <details>
-      <summary>🌐 Sécurité des APIs REST</summary>
+      <summary data-en="🌐 REST API Security" data-fr="🌐 Sécurité des APIs REST">🌐 REST API Security</summary>
       <div class="slide-content">
-        <h3>CORS — Cross-Origin Resource Sharing</h3>
+        <h3 data-en="CORS — Cross-Origin Resource Sharing" data-fr="CORS — Cross-Origin Resource Sharing">CORS — Cross-Origin Resource Sharing</h3>
         <ul>
-          <li>Mécanisme navigateur qui contrôle les requêtes cross-origin</li>
-          <li><strong>Préflight request</strong> — requête OPTIONS envoyée avant POST/PUT/DELETE cross-origin</li>
-          <li>En-têtes de réponse : <code>Access-Control-Allow-Origin</code>, <code>Access-Control-Allow-Methods</code>, <code>Access-Control-Allow-Headers</code></li>
-          <li>Ne jamais utiliser <code>Access-Control-Allow-Origin: *</code> avec credentials</li>
+          <li data-en="Browser mechanism that controls cross-origin requests" data-fr="Mécanisme navigateur qui contrôle les requêtes cross-origin">Browser mechanism that controls cross-origin requests</li>
+          <li data-en="<strong>Preflight request</strong> — OPTIONS request sent before cross-origin POST/PUT/DELETE" data-fr="<strong>Préflight request</strong> — requête OPTIONS envoyée avant POST/PUT/DELETE cross-origin"><strong>Preflight request</strong> — OPTIONS request sent before cross-origin POST/PUT/DELETE</li>
+          <li data-en="Response headers: " data-fr="En-têtes de réponse : ">Response headers: <code>Access-Control-Allow-Origin</code>, <code>Access-Control-Allow-Methods</code>, <code>Access-Control-Allow-Headers</code></li>
+          <li data-en="Never use " data-fr="Ne jamais utiliser ">Never use <code>Access-Control-Allow-Origin: *</code> <span data-en="with credentials" data-fr="avec credentials">with credentials</span></li>
         </ul>
-        <h3>Protection CSRF</h3>
+        <h3 data-en="CSRF Protection" data-fr="Protection CSRF">CSRF Protection</h3>
         <ul>
-          <li>Attaque exploitant la confiance du serveur envers le navigateur de la victime</li>
-          <li><strong>Token CSRF</strong> — valeur aléatoire en session, transmise dans l'en-tête <code>X-CSRF-Token</code></li>
-          <li>Valider avec comparaison en temps constant (<code>MessageDigest.isEqual()</code>) pour éviter les timing attacks</li>
-          <li>Cookie <code>SameSite=Strict</code> comme défense supplémentaire</li>
+          <li data-en="Attack exploiting the server's trust in the victim's browser" data-fr="Attaque exploitant la confiance du serveur envers le navigateur de la victime">Attack exploiting the server's trust in the victim's browser</li>
+          <li data-en="<strong>CSRF Token</strong> — random session value, transmitted in the " data-fr="<strong>Token CSRF</strong> — valeur aléatoire en session, transmise dans l'en-tête "><strong>CSRF Token</strong> — random session value, transmitted in the <code>X-CSRF-Token</code> <span data-en="header" data-fr="">header</span></li>
+          <li data-en="Validate with constant-time comparison (" data-fr="Valider avec comparaison en temps constant (">Validate with constant-time comparison (<code>MessageDigest.isEqual()</code>) <span data-en="to prevent timing attacks" data-fr="pour éviter les timing attacks">to prevent timing attacks</span></li>
+          <li><code>SameSite=Strict</code> <span data-en="cookie as additional defense" data-fr="Cookie comme défense supplémentaire">cookie as additional defense</span></li>
         </ul>
-        <h3>Validation des entrées</h3>
+        <h3 data-en="Input validation" data-fr="Validation des entrées">Input validation</h3>
         <ul>
-          <li>Valider tous les inputs côté serveur (Jakarta Validation / Bean Validation)</li>
-          <li>Sanitizer les données pour prévenir XSS (encoder les caractères HTML)</li>
-          <li>Utiliser des requêtes préparées (JPA criteria, JPQL paramétré) contre l'injection SQL</li>
+          <li data-en="Validate all inputs server-side (Jakarta Validation / Bean Validation)" data-fr="Valider tous les inputs côté serveur (Jakarta Validation / Bean Validation)">Validate all inputs server-side (Jakarta Validation / Bean Validation)</li>
+          <li data-en="Sanitize data to prevent XSS (encode HTML characters)" data-fr="Sanitizer les données pour prévenir XSS (encoder les caractères HTML)">Sanitize data to prevent XSS (encode HTML characters)</li>
+          <li data-en="Use prepared queries (JPA criteria, parameterized JPQL) against SQL injection" data-fr="Utiliser des requêtes préparées (JPA criteria, JPQL paramétré) contre l'injection SQL">Use prepared queries (JPA criteria, parameterized JPQL) against SQL injection</li>
         </ul>
-        <h3>Rate Limiting et API Keys</h3>
+        <h3 data-en="Rate Limiting and API Keys" data-fr="Rate Limiting et API Keys">Rate Limiting and API Keys</h3>
         <ul>
-          <li><strong>Rate limiting</strong> — limiter le nombre de requêtes par IP/token par fenêtre de temps</li>
-          <li><strong>API Keys</strong> — identification des clients applicatifs (non des utilisateurs)</li>
-          <li><strong>OAuth2</strong> — délégation d'autorisation standardisée (préférer pour l'accès tiers)</li>
+          <li data-en="<strong>Rate limiting</strong> — limit the number of requests per IP/token per time window" data-fr="<strong>Rate limiting</strong> — limiter le nombre de requêtes par IP/token par fenêtre de temps"><strong>Rate limiting</strong> — limit the number of requests per IP/token per time window</li>
+          <li data-en="<strong>API Keys</strong> — identification of application clients (not users)" data-fr="<strong>API Keys</strong> — identification des clients applicatifs (non des utilisateurs)"><strong>API Keys</strong> — identification of application clients (not users)</li>
+          <li data-en="<strong>OAuth2</strong> — standardized authorization delegation (prefer for third-party access)" data-fr="<strong>OAuth2</strong> — délégation d'autorisation standardisée (préférer pour l'accès tiers)"><strong>OAuth2</strong> — standardized authorization delegation (prefer for third-party access)</li>
         </ul>
       </div>
     </details>
 
     <details>
-      <summary>☁️ Sécurité des Microservices</summary>
+      <summary data-en="☁️ Microservices Security" data-fr="☁️ Sécurité des Microservices">☁️ Microservices Security</summary>
       <div class="slide-content">
-        <h3>Authentification service-to-service</h3>
+        <h3 data-en="Service-to-service authentication" data-fr="Authentification service-to-service">Service-to-service authentication</h3>
         <ul>
-          <li><strong>mTLS (Mutual TLS)</strong> — chaque service possède un certificat, authentification bidirectionnelle</li>
-          <li><strong>JWT Propagation</strong> — le JWT utilisateur est transmis de service en service dans l'en-tête <code>Authorization</code></li>
-          <li><strong>Service Accounts</strong> — credentials dédiés par service (éviter les credentials partagés)</li>
+          <li data-en="<strong>mTLS (Mutual TLS)</strong> — each service has a certificate, bidirectional authentication" data-fr="<strong>mTLS (Mutual TLS)</strong> — chaque service possède un certificat, authentification bidirectionnelle"><strong>mTLS (Mutual TLS)</strong> — each service has a certificate, bidirectional authentication</li>
+          <li data-en="<strong>JWT Propagation</strong> — the user JWT is passed service-to-service in the " data-fr="<strong>JWT Propagation</strong> — le JWT utilisateur est transmis de service en service dans l'en-tête "><strong>JWT Propagation</strong> — the user JWT is passed service-to-service in the <code>Authorization</code> <span data-en="header" data-fr="">header</span></li>
+          <li data-en="<strong>Service Accounts</strong> — dedicated credentials per service (avoid shared credentials)" data-fr="<strong>Service Accounts</strong> — credentials dédiés par service (éviter les credentials partagés)"><strong>Service Accounts</strong> — dedicated credentials per service (avoid shared credentials)</li>
         </ul>
-        <h3>Gestion des secrets</h3>
+        <h3 data-en="Secrets management" data-fr="Gestion des secrets">Secrets management</h3>
         <ul>
-          <li><strong>Variables d'environnement</strong> — méthode basique, injectée par le orchestrateur (Kubernetes Secrets)</li>
-          <li><strong>HashiCorp Vault</strong> — stockage sécurisé, rotation automatique des secrets</li>
-          <li><strong>Jamais</strong> committer des secrets dans le code source ou les images conteneur</li>
-          <li>MicroProfile Config permet d'injecter des secrets via <code>@ConfigProperty</code> depuis l'environnement</li>
+          <li data-en="<strong>Environment variables</strong> — basic method, injected by the orchestrator (Kubernetes Secrets)" data-fr="<strong>Variables d'environnement</strong> — méthode basique, injectée par le orchestrateur (Kubernetes Secrets)"><strong>Environment variables</strong> — basic method, injected by the orchestrator (Kubernetes Secrets)</li>
+          <li data-en="<strong>HashiCorp Vault</strong> — secure storage, automatic secret rotation" data-fr="<strong>HashiCorp Vault</strong> — stockage sécurisé, rotation automatique des secrets"><strong>HashiCorp Vault</strong> — secure storage, automatic secret rotation</li>
+          <li data-en="<strong>Never</strong> commit secrets in source code or container images" data-fr="<strong>Jamais</strong> committer des secrets dans le code source ou les images conteneur"><strong>Never</strong> commit secrets in source code or container images</li>
+          <li data-en="MicroProfile Config allows injecting secrets via " data-fr="MicroProfile Config permet d'injecter des secrets via ">MicroProfile Config allows injecting secrets via <code>@ConfigProperty</code> <span data-en="from the environment" data-fr="depuis l'environnement">from the environment</span></li>
         </ul>
-        <h3>Security Headers essentiels</h3>
+        <h3 data-en="Essential security headers" data-fr="Security Headers essentiels">Essential security headers</h3>
         <div class="cds--data-table-container">
           <table class="cds--data-table">
-            <thead><tr><th>Header</th><th>Valeur recommandée</th><th>Protection contre</th></tr></thead>
+            <thead><tr><th>Header</th><th data-en="Recommended value" data-fr="Valeur recommandée">Recommended value</th><th data-en="Protection against" data-fr="Protection contre">Protection against</th></tr></thead>
             <tbody>
               <tr><td><code>X-Frame-Options</code></td><td><code>DENY</code></td><td>Clickjacking</td></tr>
-              <tr><td><code>Content-Security-Policy</code></td><td><code>default-src 'self'</code></td><td>XSS, injection de ressources</td></tr>
-              <tr><td><code>X-Content-Type-Options</code></td><td><code>nosniff</code></td><td>MIME sniffing attacks</td></tr>
-              <tr><td><code>Strict-Transport-Security</code></td><td><code>max-age=31536000; includeSubDomains</code></td><td>Downgrade attacks</td></tr>
-              <tr><td><code>Referrer-Policy</code></td><td><code>no-referrer-when-downgrade</code></td><td>Fuite d'URL sensibles</td></tr>
+              <tr><td><code>Content-Security-Policy</code></td><td><code>default-src 'self'</code></td><td data-en="XSS, resource injection" data-fr="XSS, injection de ressources">XSS, resource injection</td></tr>
+              <tr><td><code>X-Content-Type-Options</code></td><td><code>nosniff</code></td><td data-en="MIME sniffing attacks" data-fr="MIME sniffing attacks">MIME sniffing attacks</td></tr>
+              <tr><td><code>Strict-Transport-Security</code></td><td><code>max-age=31536000; includeSubDomains</code></td><td data-en="Downgrade attacks" data-fr="Downgrade attacks">Downgrade attacks</td></tr>
+              <tr><td><code>Referrer-Policy</code></td><td><code>no-referrer-when-downgrade</code></td><td data-en="Sensitive URL leakage" data-fr="Fuite d'URL sensibles">Sensitive URL leakage</td></tr>
             </tbody>
           </table>
         </div>
@@ -339,5 +342,6 @@
   </main>
 </div>
 <footer class="cds--footer">Made with IBM Bob &nbsp;·&nbsp; © 2026 Olivier Planson &nbsp;·&nbsp; ESIPE — Jakarta EE &amp; Microservices</footer>
+<script src="../assets/language-toggle.js"></script>
 </body>
 </html>

@@ -1,103 +1,107 @@
 <!-- © Copyright 2026 Olivier Planson. All rights reserved. Reproduction prohibited. Made with IBM Bob. -->
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="en">
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-  <title>Cours 04 — Concepts clés</title>
+  <title>Course 04 — Key Concepts</title>
   <link rel="stylesheet" href="../assets/carbon.css"/>
 </head>
 <body>
 <header class="cds--header">
-  <a class="cds--header__name" href="index.html">CDI — Injection de Dépendances<span>Cours Jakarta EE</span></a>
-  <a class="cds--header__back" href="../index.html">← Tous les Cours</a>
+  <a class="cds--header__name" href="index.html" data-en="CDI — Contexts and Dependency Injection<span>Jakarta EE Course</span>" data-fr="CDI — Injection de Dépendances<span>Cours Jakarta EE</span>">CDI — Contexts and Dependency Injection<span>Jakarta EE Course</span></a>
+  <button class="lang-toggle-btn" id="lang-toggle">FR</button>
+  <a class="cds--header__back" href="../index.html" data-en="← All Courses" data-fr="← Tous les Cours">← All Courses</a>
 </header>
 <div class="cds--shell">
   <nav class="cds--side-nav">
-    <p class="cds--side-nav__section-title">Cours 04</p>
-    <a class="cds--side-nav__link" href="index.html">⊙ Vue d'ensemble</a>
-    <a class="cds--side-nav__link" href="slides.html">☰ Contenu du cours</a>
-    <a class="cds--side-nav__link active" href="concepts.html">◈ Concepts clés</a>
-    <a class="cds--side-nav__link" href="code.html">⟨/⟩ Exemples de code</a>
+    <p class="cds--side-nav__section-title" data-en="Course 04" data-fr="Cours 04">Course 04</p>
+    <a class="cds--side-nav__link" href="index.html" data-en="⊙ Overview" data-fr="⊙ Vue d'ensemble">⊙ Overview</a>
+    <a class="cds--side-nav__link" href="slides.html" data-en="☰ Course Content" data-fr="☰ Contenu du cours">☰ Course Content</a>
+    <a class="cds--side-nav__link active" href="concepts.html" data-en="◈ Key Concepts" data-fr="◈ Concepts clés">◈ Key Concepts</a>
+    <a class="cds--side-nav__link" href="code.html" data-en="⟨/⟩ Code Examples" data-fr="⟨/⟩ Exemples de code">⟨/⟩ Code Examples</a>
+    <a class="cds--side-nav__lang-toggle">FR</a>
   </nav>
   <main class="cds--content">
-    <div class="breadcrumb"><a href="../index.html">Cours</a> › <a href="index.html">Cours 04</a> › Concepts clés</div>
-    <h1>Concepts clés</h1>
-    <p class="page-lead">Comparatifs, tableaux de référence et glossaire pour CDI et la gestion des transactions.</p>
+    <div class="breadcrumb"><a href="../index.html" data-en="Courses" data-fr="Cours">Courses</a> › <a href="index.html" data-en="Course 04" data-fr="Cours 04">Course 04</a> › <span data-en="Key Concepts" data-fr="Concepts clés">Key Concepts</span></div>
+    <h1 data-en="Key Concepts" data-fr="Concepts clés">Key Concepts</h1>
+    <p class="page-lead" data-en="Comparisons, reference tables and glossary for CDI and transaction management." data-fr="Comparatifs, tableaux de référence et glossaire pour CDI et la gestion des transactions.">Comparisons, reference tables and glossary for CDI and transaction management.</p>
 
-    <h2>CDI vs EJB</h2>
+    <h2 data-en="CDI vs EJB" data-fr="CDI vs EJB">CDI vs EJB</h2>
     <div class="cds--data-table-container">
       <table class="cds--data-table">
-        <thead><tr><th>Fonctionnalité</th><th>CDI Bean</th><th>EJB (Session Bean)</th></tr></thead>
+        <thead><tr><th data-en="Feature" data-fr="Fonctionnalité">Feature</th><th data-en="CDI Bean" data-fr="CDI Bean">CDI Bean</th><th data-en="EJB (Session Bean)" data-fr="EJB (Session Bean)">EJB (Session Bean)</th></tr></thead>
         <tbody>
-          <tr><td><strong>Gestion des transactions</strong></td><td>Via <code>@Transactional</code> (CDI Interceptor)</td><td>Nativement intégrée (CMT)</td></tr>
-          <tr><td><strong>Sécurité déclarative</strong></td><td>Via intercepteur personnalisé</td><td><code>@RolesAllowed</code>, <code>@DenyAll</code> intégrés</td></tr>
-          <tr><td><strong>Clustering &amp; passivation</strong></td><td>❌ Non supporté nativement</td><td>✅ Stateful beans passivables</td></tr>
-          <tr><td><strong>Accès distant (Remote)</strong></td><td>❌ Non</td><td>✅ Via <code>@Remote</code></td></tr>
-          <tr><td><strong>Complexité</strong></td><td>✅ Légère, POJO</td><td>⚠️ Plus lourde, spécification dédiée</td></tr>
-          <tr><td><strong>Usage recommandé</strong></td><td>Services applicatifs modernes, microservices</td><td>Applications legacy, transactions distribuées</td></tr>
+          <tr><td data-en="<strong>Transaction management</strong>" data-fr="<strong>Gestion des transactions</strong>"><strong>Transaction management</strong></td><td data-en="Via &lt;code&gt;@Transactional&lt;/code&gt; (CDI Interceptor)" data-fr="Via &lt;code&gt;@Transactional&lt;/code&gt; (CDI Interceptor)">Via <code>@Transactional</code> (CDI Interceptor)</td><td data-en="Natively integrated (CMT)" data-fr="Nativement intégrée (CMT)">Natively integrated (CMT)</td></tr>
+          <tr><td data-en="<strong>Declarative security</strong>" data-fr="<strong>Sécurité déclarative</strong>"><strong>Declarative security</strong></td><td data-en="Via custom interceptor" data-fr="Via intercepteur personnalisé">Via custom interceptor</td><td data-en="&lt;code&gt;@RolesAllowed&lt;/code&gt;, &lt;code&gt;@DenyAll&lt;/code&gt; built-in" data-fr="&lt;code&gt;@RolesAllowed&lt;/code&gt;, &lt;code&gt;@DenyAll&lt;/code&gt; intégrés"><code>@RolesAllowed</code>, <code>@DenyAll</code> built-in</td></tr>
+          <tr><td data-en="<strong>Clustering &amp; passivation</strong>" data-fr="<strong>Clustering &amp; passivation</strong>"><strong>Clustering &amp; passivation</strong></td><td data-en="❌ Not natively supported" data-fr="❌ Non supporté nativement">❌ Not natively supported</td><td data-en="✅ Passivatable stateful beans" data-fr="✅ Stateful beans passivables">✅ Passivatable stateful beans</td></tr>
+          <tr><td data-en="<strong>Remote access</strong>" data-fr="<strong>Accès distant (Remote)</strong>"><strong>Remote access</strong></td><td data-en="❌ No" data-fr="❌ Non">❌ No</td><td data-en="✅ Via &lt;code&gt;@Remote&lt;/code&gt;" data-fr="✅ Via &lt;code&gt;@Remote&lt;/code&gt;">✅ Via <code>@Remote</code></td></tr>
+          <tr><td data-en="<strong>Complexity</strong>" data-fr="<strong>Complexité</strong>"><strong>Complexity</strong></td><td data-en="✅ Lightweight, POJO" data-fr="✅ Légère, POJO">✅ Lightweight, POJO</td><td data-en="⚠️ Heavier, dedicated specification" data-fr="⚠️ Plus lourde, spécification dédiée">⚠️ Heavier, dedicated specification</td></tr>
+          <tr><td data-en="<strong>Recommended use</strong>" data-fr="<strong>Usage recommandé</strong>"><strong>Recommended use</strong></td><td data-en="Modern application services, microservices" data-fr="Services applicatifs modernes, microservices">Modern application services, microservices</td><td data-en="Legacy applications, distributed transactions" data-fr="Applications legacy, transactions distribuées">Legacy applications, distributed transactions</td></tr>
         </tbody>
       </table>
     </div>
 
-    <h2>Scopes CDI comparés</h2>
+    <h2 data-en="CDI Scopes Compared" data-fr="Scopes CDI comparés">CDI Scopes Compared</h2>
     <div class="cds--data-table-container">
       <table class="cds--data-table">
-        <thead><tr><th>Scope</th><th>Annotation</th><th>Durée de vie</th><th>Cas d'usage typique</th></tr></thead>
+        <thead><tr><th data-en="Scope" data-fr="Scope">Scope</th><th data-en="Annotation" data-fr="Annotation">Annotation</th><th data-en="Lifetime" data-fr="Durée de vie">Lifetime</th><th data-en="Typical use case" data-fr="Cas d'usage typique">Typical use case</th></tr></thead>
         <tbody>
-          <tr><td><strong>Application</strong></td><td><code>@ApplicationScoped</code></td><td>Durée de vie de l'application</td><td>Services stateless, caches, configuration</td></tr>
-          <tr><td><strong>Session</strong></td><td><code>@SessionScoped</code></td><td>Durée de la session HTTP utilisateur</td><td>Panier, préférences, état de connexion</td></tr>
-          <tr><td><strong>Request</strong></td><td><code>@RequestScoped</code></td><td>Durée d'une requête HTTP</td><td>Traitement de formulaire, opérations unitaires</td></tr>
-          <tr><td><strong>Conversation</strong></td><td><code>@ConversationScoped</code></td><td>Conversation explicitement gérée</td><td>Wizards multi-étapes, formulaires longs</td></tr>
-          <tr><td><strong>Dependent</strong></td><td><code>@Dependent</code> (défaut)</td><td>Liée au bean injecteur</td><td>Value objects, helpers, beans légers</td></tr>
-          <tr><td><strong>Singleton</strong></td><td><code>@Singleton</code> (Jakarta Concurrency)</td><td>Durée de vie de l'application (thread-safe)</td><td>Ressources partagées avec accès concurrent</td></tr>
+          <tr><td data-en="<strong>Application</strong>" data-fr="<strong>Application</strong>"><strong>Application</strong></td><td><code>@ApplicationScoped</code></td><td data-en="Application lifetime" data-fr="Durée de vie de l'application">Application lifetime</td><td data-en="Stateless services, caches, configuration" data-fr="Services stateless, caches, configuration">Stateless services, caches, configuration</td></tr>
+          <tr><td data-en="<strong>Session</strong>" data-fr="<strong>Session</strong>"><strong>Session</strong></td><td><code>@SessionScoped</code></td><td data-en="Duration of the HTTP user session" data-fr="Durée de la session HTTP utilisateur">Duration of the HTTP user session</td><td data-en="Cart, preferences, login state" data-fr="Panier, préférences, état de connexion">Cart, preferences, login state</td></tr>
+          <tr><td data-en="<strong>Request</strong>" data-fr="<strong>Request</strong>"><strong>Request</strong></td><td><code>@RequestScoped</code></td><td data-en="Duration of an HTTP request" data-fr="Durée d'une requête HTTP">Duration of an HTTP request</td><td data-en="Form processing, single operations" data-fr="Traitement de formulaire, opérations unitaires">Form processing, single operations</td></tr>
+          <tr><td data-en="<strong>Conversation</strong>" data-fr="<strong>Conversation</strong>"><strong>Conversation</strong></td><td><code>@ConversationScoped</code></td><td data-en="Explicitly managed conversation" data-fr="Conversation explicitement gérée">Explicitly managed conversation</td><td data-en="Multi-step wizards, long forms" data-fr="Wizards multi-étapes, formulaires longs">Multi-step wizards, long forms</td></tr>
+          <tr><td data-en="<strong>Dependent</strong>" data-fr="<strong>Dependent</strong>"><strong>Dependent</strong></td><td><code>@Dependent</code> (<span data-en="default" data-fr="défaut">default</span>)</td><td data-en="Bound to the injecting bean" data-fr="Liée au bean injecteur">Bound to the injecting bean</td><td data-en="Value objects, helpers, lightweight beans" data-fr="Value objects, helpers, beans légers">Value objects, helpers, lightweight beans</td></tr>
+          <tr><td data-en="<strong>Singleton (pseudo-scope)</strong>" data-fr="<strong>Singleton (pseudo-scope)</strong>"><strong>Singleton (pseudo-scope)</strong></td><td><code>@Singleton</code> (<code>jakarta.enterprise.inject.Singleton</code>)</td><td data-en="Application lifetime — no proxy, direct instance" data-fr="Durée de vie de l'application — pas de proxy, instance directe">Application lifetime — no proxy, direct instance</td><td data-en="Shared resources where proxy overhead is undesirable; prefer @ApplicationScoped for general singletons" data-fr="Ressources partagées sans overhead de proxy ; préférer @ApplicationScoped pour les singletons classiques">Shared resources where proxy overhead is undesirable; prefer @ApplicationScoped for general singletons</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p data-en="⚠️ &lt;strong&gt;Note on @Singleton:&lt;/strong&gt; &lt;code&gt;@Singleton&lt;/code&gt; in CDI is a &lt;em&gt;pseudo-scope&lt;/em&gt; from &lt;code&gt;jakarta.enterprise.inject.Singleton&lt;/code&gt;. Unlike &lt;code&gt;@ApplicationScoped&lt;/code&gt;, it does &lt;strong&gt;not&lt;/strong&gt; create a proxy — injection points receive the actual instance. This means it is not passivation-capable and subtypes cannot be proxied. For most singleton use cases, prefer &lt;code&gt;@ApplicationScoped&lt;/code&gt;." data-fr="⚠️ &lt;strong&gt;Note sur @Singleton :&lt;/strong&gt; &lt;code&gt;@Singleton&lt;/code&gt; en CDI est un &lt;em&gt;pseudo-scope&lt;/em&gt; de &lt;code&gt;jakarta.enterprise.inject.Singleton&lt;/code&gt;. Contrairement à &lt;code&gt;@ApplicationScoped&lt;/code&gt;, il ne crée &lt;strong&gt;pas&lt;/strong&gt; de proxy — les points d'injection reçoivent l'instance réelle. Il n'est donc pas passivable et les sous-types ne peuvent pas être proxifiés. Pour la majorité des cas de singleton, préférer &lt;code&gt;@ApplicationScoped&lt;/code&gt;.">⚠️ <strong>Note on @Singleton:</strong> <code>@Singleton</code> in CDI is a <em>pseudo-scope</em> from <code>jakarta.enterprise.inject.Singleton</code>. Unlike <code>@ApplicationScoped</code>, it does <strong>not</strong> create a proxy — injection points receive the actual instance. This means it is not passivation-capable and subtypes cannot be proxied. For most singleton use cases, prefer <code>@ApplicationScoped</code>.</p>
+
+    <h2 data-en="@Transactional Transaction Types" data-fr="Types de Transaction @Transactional">@Transactional Transaction Types</h2>
+    <div class="cds--data-table-container">
+      <table class="cds--data-table">
+        <thead><tr><th data-en="Type" data-fr="Type">Type</th><th data-en="Called WITH existing transaction" data-fr="Appelé AVEC transaction existante">Called WITH existing transaction</th><th data-en="Called WITHOUT existing transaction" data-fr="Appelé SANS transaction existante">Called WITHOUT existing transaction</th></tr></thead>
+        <tbody>
+          <tr><td><strong>REQUIRED</strong></td><td data-en="Joins the existing transaction" data-fr="Participe à la transaction existante">Joins the existing transaction</td><td data-en="Creates a new transaction" data-fr="Crée une nouvelle transaction">Creates a new transaction</td></tr>
+          <tr><td><strong>REQUIRES_NEW</strong></td><td data-en="Suspends the existing one, creates a new independent transaction" data-fr="Suspend l'existante, crée une nouvelle transaction indépendante">Suspends the existing one, creates a new independent transaction</td><td data-en="Creates a new transaction" data-fr="Crée une nouvelle transaction">Creates a new transaction</td></tr>
+          <tr><td><strong>MANDATORY</strong></td><td data-en="Joins the existing transaction" data-fr="Participe à la transaction existante">Joins the existing transaction</td><td data-en="⛔ Throws &lt;code&gt;TransactionRequiredException&lt;/code&gt;" data-fr="⛔ Lance &lt;code&gt;TransactionRequiredException&lt;/code&gt;">⛔ Throws <code>TransactionRequiredException</code></td></tr>
+          <tr><td><strong>SUPPORTS</strong></td><td data-en="Joins the existing transaction" data-fr="Participe à la transaction existante">Joins the existing transaction</td><td data-en="Executes without a transaction" data-fr="S'exécute sans transaction">Executes without a transaction</td></tr>
+          <tr><td><strong>NOT_SUPPORTED</strong></td><td data-en="Suspends the existing one, executes without a transaction" data-fr="Suspend l'existante, s'exécute sans transaction">Suspends the existing one, executes without a transaction</td><td data-en="Executes without a transaction" data-fr="S'exécute sans transaction">Executes without a transaction</td></tr>
+          <tr><td><strong>NEVER</strong></td><td data-en="⛔ Throws &lt;code&gt;InvalidTransactionException&lt;/code&gt;" data-fr="⛔ Lance &lt;code&gt;InvalidTransactionException&lt;/code&gt;">⛔ Throws <code>InvalidTransactionException</code></td><td data-en="Executes without a transaction" data-fr="S'exécute sans transaction">Executes without a transaction</td></tr>
         </tbody>
       </table>
     </div>
 
-    <h2>Types de Transaction @Transactional</h2>
+    <h2 data-en="CMT vs BMT" data-fr="CMT vs BMT">CMT vs BMT</h2>
     <div class="cds--data-table-container">
       <table class="cds--data-table">
-        <thead><tr><th>Type</th><th>Appelé AVEC transaction existante</th><th>Appelé SANS transaction existante</th></tr></thead>
+        <thead><tr><th data-en="Aspect" data-fr="Aspect">Aspect</th><th data-en="CMT — Container-Managed Transactions" data-fr="CMT — Container-Managed Transactions">CMT — Container-Managed Transactions</th><th data-en="BMT — Bean-Managed Transactions" data-fr="BMT — Bean-Managed Transactions">BMT — Bean-Managed Transactions</th></tr></thead>
         <tbody>
-          <tr><td><strong>REQUIRED</strong></td><td>Participe à la transaction existante</td><td>Crée une nouvelle transaction</td></tr>
-          <tr><td><strong>REQUIRES_NEW</strong></td><td>Suspend l'existante, crée une nouvelle transaction indépendante</td><td>Crée une nouvelle transaction</td></tr>
-          <tr><td><strong>MANDATORY</strong></td><td>Participe à la transaction existante</td><td>⛔ Lance <code>TransactionRequiredException</code></td></tr>
-          <tr><td><strong>SUPPORTS</strong></td><td>Participe à la transaction existante</td><td>S'exécute sans transaction</td></tr>
-          <tr><td><strong>NOT_SUPPORTED</strong></td><td>Suspend l'existante, s'exécute sans transaction</td><td>S'exécute sans transaction</td></tr>
-          <tr><td><strong>NEVER</strong></td><td>⛔ Lance <code>InvalidTransactionException</code></td><td>S'exécute sans transaction</td></tr>
+          <tr><td data-en="<strong>Management</strong>" data-fr="<strong>Gestion</strong>"><strong>Management</strong></td><td data-en="Delegated to the container via &lt;code&gt;@Transactional&lt;/code&gt;" data-fr="Déléguée au conteneur via &lt;code&gt;@Transactional&lt;/code&gt;">Delegated to the container via <code>@Transactional</code></td><td data-en="Manual via &lt;code&gt;UserTransaction&lt;/code&gt;" data-fr="Manuelle via &lt;code&gt;UserTransaction&lt;/code&gt;">Manual via <code>UserTransaction</code></td></tr>
+          <tr><td data-en="<strong>Transaction code</strong>" data-fr="<strong>Code transactionnel</strong>"><strong>Transaction code</strong></td><td data-en="Absent from business code (declarative)" data-fr="Absent du code métier (déclaratif)">Absent from business code (declarative)</td><td data-en="Present in code (begin/commit/rollback)" data-fr="Présent dans le code (begin/commit/rollback)">Present in code (begin/commit/rollback)</td></tr>
+          <tr><td data-en="<strong>Complexity</strong>" data-fr="<strong>Complexité</strong>"><strong>Complexity</strong></td><td data-en="✅ Low — annotations only" data-fr="✅ Faible — annotations uniquement">✅ Low — annotations only</td><td data-en="⚠️ High — explicit error handling" data-fr="⚠️ Élevée — gestion explicite des erreurs">⚠️ High — explicit error handling</td></tr>
+          <tr><td data-en="<strong>Flexibility</strong>" data-fr="<strong>Flexibilité</strong>"><strong>Flexibility</strong></td><td data-en="Limited to standard propagation types" data-fr="Limitée aux types de propagation standard">Limited to standard propagation types</td><td data-en="✅ Full — custom transactional logic" data-fr="✅ Totale — logique transactionnelle sur mesure">✅ Full — custom transactional logic</td></tr>
+          <tr><td data-en="<strong>Recommended for</strong>" data-fr="<strong>Recommandé pour</strong>"><strong>Recommended for</strong></td><td data-en="The vast majority of use cases" data-fr="La grande majorité des cas d'usage">The vast majority of use cases</td><td data-en="Advanced cases: saga, long-running transactions" data-fr="Cas avancés : saga, transactions longues">Advanced cases: saga, long-running transactions</td></tr>
+          <tr><td data-en="<strong>Rollback</strong>" data-fr="<strong>Rollback</strong>"><strong>Rollback</strong></td><td data-en="Automatic on &lt;code&gt;RuntimeException&lt;/code&gt;" data-fr="Automatique sur &lt;code&gt;RuntimeException&lt;/code&gt;">Automatic on <code>RuntimeException</code></td><td data-en="Explicit: &lt;code&gt;tx.rollback()&lt;/code&gt; in the catch block" data-fr="Explicite : &lt;code&gt;tx.rollback()&lt;/code&gt; dans le catch">Explicit: <code>tx.rollback()</code> in the catch block</td></tr>
         </tbody>
       </table>
     </div>
 
-    <h2>CMT vs BMT</h2>
+    <h2 data-en="Glossary" data-fr="Glossaire">Glossary</h2>
     <div class="cds--data-table-container">
       <table class="cds--data-table">
-        <thead><tr><th>Aspect</th><th>CMT — Container-Managed Transactions</th><th>BMT — Bean-Managed Transactions</th></tr></thead>
+        <thead><tr><th data-en="Term" data-fr="Terme">Term</th><th data-en="Definition" data-fr="Définition">Definition</th></tr></thead>
         <tbody>
-          <tr><td><strong>Gestion</strong></td><td>Déléguée au conteneur via <code>@Transactional</code></td><td>Manuelle via <code>UserTransaction</code></td></tr>
-          <tr><td><strong>Code transactionnel</strong></td><td>Absent du code métier (déclaratif)</td><td>Présent dans le code (begin/commit/rollback)</td></tr>
-          <tr><td><strong>Complexité</strong></td><td>✅ Faible — annotations uniquement</td><td>⚠️ Élevée — gestion explicite des erreurs</td></tr>
-          <tr><td><strong>Flexibilité</strong></td><td>Limitée aux types de propagation standard</td><td>✅ Totale — logique transactionnelle sur mesure</td></tr>
-          <tr><td><strong>Recommandé pour</strong></td><td>La grande majorité des cas d'usage</td><td>Cas avancés : saga, transactions longues</td></tr>
-          <tr><td><strong>Rollback</strong></td><td>Automatique sur <code>RuntimeException</code></td><td>Explicite : <code>tx.rollback()</code> dans le catch</td></tr>
-        </tbody>
-      </table>
-    </div>
-
-    <h2>Glossaire</h2>
-    <div class="cds--data-table-container">
-      <table class="cds--data-table">
-        <thead><tr><th>Terme</th><th>Définition</th></tr></thead>
-        <tbody>
-          <tr><td><strong>CDI</strong></td><td>Contexts and Dependency Injection — spécification Jakarta EE pour l'injection de dépendances et la gestion du cycle de vie des beans</td></tr>
-          <tr><td><strong>@Inject</strong></td><td>Annotation standard (Jakarta Inject) demandant au conteneur CDI d'injecter une dépendance dans un champ, constructeur ou méthode</td></tr>
-          <tr><td><strong>@Qualifier</strong></td><td>Méta-annotation permettant de créer des qualificateurs personnalisés pour lever l'ambiguïté lors de l'injection de plusieurs implémentations</td></tr>
-          <tr><td><strong>@Produces</strong></td><td>Annotation déclarant une méthode ou un champ comme source d'un bean CDI — utile pour les objets nécessitant une logique de création complexe</td></tr>
-          <tr><td><strong>@Interceptor</strong></td><td>Annotation marquant une classe comme intercepteur CDI — s'intercale dans l'invocation des méthodes pour ajouter un comportement transversal</td></tr>
-          <tr><td><strong>@Decorator</strong></td><td>Annotation marquant un bean comme décorateur — enveloppe un bean existant pour enrichir son comportement, contrairement aux intercepteurs qui sont agnostiques du type</td></tr>
-          <tr><td><strong>@Observes</strong></td><td>Annotation placée sur un paramètre de méthode pour s'abonner à un type d'événement CDI — la méthode est appelée automatiquement lors du déclenchement</td></tr>
-          <tr><td><strong>UserTransaction</strong></td><td>Interface Jakarta Transactions permettant la gestion programmatique (BMT) des transactions — begin(), commit(), rollback(), setRollbackOnly()</td></tr>
+          <tr><td><strong>CDI</strong></td><td data-en="Contexts and Dependency Injection — Jakarta EE specification for dependency injection and bean lifecycle management" data-fr="Contexts and Dependency Injection — spécification Jakarta EE pour l'injection de dépendances et la gestion du cycle de vie des beans">Contexts and Dependency Injection — Jakarta EE specification for dependency injection and bean lifecycle management</td></tr>
+          <tr><td><strong>@Inject</strong></td><td data-en="Standard annotation (Jakarta Inject) asking the CDI container to inject a dependency into a field, constructor or method" data-fr="Annotation standard (Jakarta Inject) demandant au conteneur CDI d'injecter une dépendance dans un champ, constructeur ou méthode">Standard annotation (Jakarta Inject) asking the CDI container to inject a dependency into a field, constructor or method</td></tr>
+          <tr><td><strong>@Qualifier</strong></td><td data-en="Meta-annotation for creating custom qualifiers to resolve ambiguity when injecting multiple implementations of the same type" data-fr="Méta-annotation permettant de créer des qualificateurs personnalisés pour lever l'ambiguïté lors de l'injection de plusieurs implémentations">Meta-annotation for creating custom qualifiers to resolve ambiguity when injecting multiple implementations of the same type</td></tr>
+          <tr><td><strong>@Produces</strong></td><td data-en="Annotation declaring a method or field as a source of a CDI bean — useful for objects requiring complex creation logic" data-fr="Annotation déclarant une méthode ou un champ comme source d'un bean CDI — utile pour les objets nécessitant une logique de création complexe">Annotation declaring a method or field as a source of a CDI bean — useful for objects requiring complex creation logic</td></tr>
+          <tr><td><strong>@Interceptor</strong></td><td data-en="Annotation marking a class as a CDI interceptor — intercepts method invocations to add cross-cutting behaviour" data-fr="Annotation marquant une classe comme intercepteur CDI — s'intercale dans l'invocation des méthodes pour ajouter un comportement transversal">Annotation marking a class as a CDI interceptor — intercepts method invocations to add cross-cutting behaviour</td></tr>
+          <tr><td><strong>@Decorator</strong></td><td data-en="Annotation marking a bean as a decorator — wraps an existing bean to enrich its behaviour, unlike interceptors which are type-agnostic" data-fr="Annotation marquant un bean comme décorateur — enveloppe un bean existant pour enrichir son comportement, contrairement aux intercepteurs qui sont agnostiques du type">Annotation marking a bean as a decorator — wraps an existing bean to enrich its behaviour, unlike interceptors which are type-agnostic</td></tr>
+          <tr><td><strong>@Observes</strong></td><td data-en="Annotation placed on a method parameter to subscribe to a CDI event type — the method is called &lt;strong&gt;synchronously&lt;/strong&gt; in the same thread as the event producer" data-fr="Annotation placée sur un paramètre de méthode pour s'abonner à un type d'événement CDI — la méthode est appelée &lt;strong&gt;de façon synchrone&lt;/strong&gt; dans le même thread que le producteur">Annotation placed on a method parameter to subscribe to a CDI event type — the method is called <strong>synchronously</strong> in the same thread as the event producer</td></tr>
+          <tr><td><strong>@ObservesAsync</strong></td><td data-en="Annotation (CDI 2.0+ / Jakarta CDI 4.0) placed on a method parameter to subscribe to asynchronous CDI events — the method is called in a &lt;strong&gt;separate thread&lt;/strong&gt; when &lt;code&gt;event.fireAsync()&lt;/code&gt; is invoked" data-fr="Annotation (CDI 2.0+ / Jakarta CDI 4.0) placée sur un paramètre de méthode pour s'abonner aux événements CDI asynchrones — la méthode est appelée dans un &lt;strong&gt;thread séparé&lt;/strong&gt; lors de l'appel à &lt;code&gt;event.fireAsync()&lt;/code&gt;">Annotation (CDI 2.0+ / Jakarta CDI 4.0) placed on a method parameter to subscribe to asynchronous CDI events — the method is called in a <strong>separate thread</strong> when <code>event.fireAsync()</code> is invoked</td></tr>
+          <tr><td><strong>UserTransaction</strong></td><td data-en="Jakarta Transactions interface for programmatic (BMT) transaction management — begin(), commit(), rollback(), setRollbackOnly()" data-fr="Interface Jakarta Transactions permettant la gestion programmatique (BMT) des transactions — begin(), commit(), rollback(), setRollbackOnly()">Jakarta Transactions interface for programmatic (BMT) transaction management — begin(), commit(), rollback(), setRollbackOnly()</td></tr>
         </tbody>
       </table>
     </div>
@@ -105,5 +109,6 @@
   </main>
 </div>
 <footer class="cds--footer">Made with IBM Bob &nbsp;·&nbsp; © 2026 Olivier Planson &nbsp;·&nbsp; ESIPE — Jakarta EE &amp; Microservices</footer>
+<script src="../assets/language-toggle.js"></script>
 </body>
 </html>

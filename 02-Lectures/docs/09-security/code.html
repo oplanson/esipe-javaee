@@ -1,6 +1,6 @@
 <!-- © Copyright 2026 Olivier Planson. All rights reserved. Reproduction prohibited. Made with IBM Bob. -->
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="en">
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
@@ -9,23 +9,25 @@
 </head>
 <body>
 <header class="cds--header">
-  <a class="cds--header__name" href="index.html">Jakarta EE Security<span>Cours Jakarta EE</span></a>
-  <a class="cds--header__back" href="../index.html">← Tous les Cours</a>
+  <a class="cds--header__name" href="index.html">Jakarta EE Security<span data-en="Jakarta EE Course" data-fr="Cours Jakarta EE">Jakarta EE Course</span></a>
+  <button class="lang-toggle-btn" id="lang-toggle">FR</button>
+  <a class="cds--header__back" href="../index.html" data-en="← All Courses" data-fr="← Tous les Cours">← All Courses</a>
 </header>
 <div class="cds--shell">
   <nav class="cds--side-nav">
-    <p class="cds--side-nav__section-title">Cours 09</p>
-    <a class="cds--side-nav__link" href="index.html">⊙ Vue d'ensemble</a>
-    <a class="cds--side-nav__link" href="slides.html">☰ Contenu du cours</a>
-    <a class="cds--side-nav__link" href="concepts.html">◈ Concepts clés</a>
-    <a class="cds--side-nav__link active" href="code.html">⟨/⟩ Exemples de code</a>
+    <p class="cds--side-nav__section-title" data-en="Course 09" data-fr="Cours 09">Course 09</p>
+    <a class="cds--side-nav__link" href="index.html" data-en="⊙ Overview" data-fr="⊙ Vue d'ensemble">⊙ Overview</a>
+    <a class="cds--side-nav__link" href="slides.html" data-en="☰ Course Content" data-fr="☰ Contenu du cours">☰ Course Content</a>
+    <a class="cds--side-nav__link" href="concepts.html" data-en="◈ Key Concepts" data-fr="◈ Concepts clés">◈ Key Concepts</a>
+    <a class="cds--side-nav__link active" href="code.html" data-en="⟨/⟩ Code Examples" data-fr="⟨/⟩ Exemples de code">⟨/⟩ Code Examples</a>
+    <a class="cds--side-nav__lang-toggle">FR</a>
   </nav>
   <main class="cds--content">
-    <div class="breadcrumb"><a href="../index.html">Cours</a> › <a href="index.html">Cours 09</a> › Code</div>
-    <h1>Exemples de code</h1>
-    <p class="page-lead">Extraits de code Java et XML du cours 09 — Jakarta Security, MicroProfile JWT, TLS, CORS et CSRF.</p>
+    <div class="breadcrumb"><a href="../index.html" data-en="Courses" data-fr="Cours">Courses</a> › <a href="index.html" data-en="Course 09" data-fr="Cours 09">Course 09</a> › <span data-en="Code" data-fr="Code">Code</span></div>
+    <h1 data-en="Code Examples" data-fr="Exemples de code">Code Examples</h1>
+    <p class="page-lead" data-en="Java and XML code snippets from course 09 — Jakarta Security, MicroProfile JWT, TLS, CORS and CSRF." data-fr="Extraits de code Java et XML du cours 09 — Jakarta Security, MicroProfile JWT, TLS, CORS et CSRF.">Java and XML code snippets from course 09 — Jakarta Security, MicroProfile JWT, TLS, CORS and CSRF.</p>
 
-    <h2>Authentication Mechanism personnalisée</h2>
+    <h2 data-en="Custom Authentication Mechanism" data-fr="Authentication Mechanism personnalisée">Custom Authentication Mechanism</h2>
     <div class="code-block-wrap">
       <span class="code-lang">java</span>
       <pre><code>@ApplicationScoped
@@ -78,7 +80,7 @@ public class JwtAuthenticationMechanism implements HttpAuthenticationMechanism {
 }</code></pre>
     </div>
 
-    <h2>IdentityStore avec base de données</h2>
+    <h2 data-en="IdentityStore with database" data-fr="IdentityStore avec base de données">IdentityStore with database</h2>
     <div class="code-block-wrap">
       <span class="code-lang">java</span>
       <pre><code>@ApplicationScoped
@@ -113,7 +115,7 @@ public class DatabaseIdentityStore implements IdentityStore {
                     user.getUsername(), groups);
             }
         } catch (NoResultException e) {
-            // Utilisateur inexistant — même délai pour éviter timing attack
+            // User not found — same delay to prevent timing attack
             passwordHashService.dummyVerify();
         }
         return CredentialValidationResult.INVALID_RESULT;
@@ -131,7 +133,30 @@ public class DatabaseIdentityStore implements IdentityStore {
 }</code></pre>
     </div>
 
-    <h2>Jakarta Security API — SecurityContext</h2>
+    <h2 data-en="Custom IdentityStore (Jakarta Security)" data-fr="IdentityStore personnalisé (Jakarta Security)">Custom IdentityStore (Jakarta Security)</h2>
+    <p data-en="Jakarta Security 3.0 provides the IdentityStore API for pluggable credential validation and group retrieval, replacing vendor-specific JAAS LoginModules." data-fr="Jakarta Security 3.0 fournit l'API IdentityStore pour la validation des identifiants et la récupération des groupes, remplaçant les LoginModules JAAS spécifiques aux fournisseurs.">Jakarta Security 3.0 provides the IdentityStore API for pluggable credential validation and group retrieval, replacing vendor-specific JAAS LoginModules.</p>
+    <div class="code-block-wrap">
+      <span class="code-lang">java</span>
+      <pre><code class="language-java">@ApplicationScoped
+public class CustomIdentityStore implements IdentityStore {
+
+    @Inject
+    private UserRepository userRepository;
+
+    @Override
+    public CredentialValidationResult validate(UsernamePasswordCredential credential) {
+        User user = userRepository.findByUsername(credential.getCaller());
+        if (user != null && user.passwordMatches(credential.getPasswordAsString())) {
+            return new CredentialValidationResult(user.getUsername(),
+                new HashSet<>(user.getRoles()));
+        }
+        return CredentialValidationResult.INVALID_RESULT;
+    }
+}</code></pre>
+    </div>
+    <p data-en="This custom store integrates with any data source (JPA, LDAP, etc.) and is automatically discovered by the Jakarta Security runtime via CDI." data-fr="Ce store personnalisé s'intègre avec n'importe quelle source de données (JPA, LDAP, etc.) et est automatiquement découvert par le runtime Jakarta Security via CDI.">This custom store integrates with any data source (JPA, LDAP, etc.) and is automatically discovered by the Jakarta Security runtime via CDI.</p>
+
+    <h2 data-en="Jakarta Security API — SecurityContext" data-fr="Jakarta Security API — SecurityContext">Jakarta Security API — SecurityContext</h2>
     <div class="code-block-wrap">
       <span class="code-lang">java</span>
       <pre><code>@Path("/accounts")
@@ -147,16 +172,16 @@ public class AccountResource {
 
     @GET
     public Response getAccounts() {
-        // Récupérer l'identité de l'utilisateur connecté
+        // Retrieve the identity of the logged-in user
         Principal caller = securityContext.getCallerPrincipal();
         String username = caller.getName();
 
-        // Vérification programmatique du rôle
+        // Programmatic role check
         if (securityContext.isCallerInRole("ADMIN")) {
-            // ADMIN voit tous les comptes
+            // ADMIN sees all accounts
             return Response.ok(accountService.findAll()).build();
         } else {
-            // USER ne voit que ses propres comptes
+            // USER only sees their own accounts
             return Response.ok(
                 accountService.findByOwner(username)).build();
         }
@@ -165,10 +190,10 @@ public class AccountResource {
     @DELETE
     @Path("/{id}")
     public Response deleteAccount(@PathParam("id") Long id) {
-        // Vérification d'accès à la ressource web (programmatique)
+        // Web resource access check (programmatic)
         if (!securityContext.hasAccessToWebResource("/admin", "GET")) {
             return Response.status(Response.Status.FORBIDDEN)
-                .entity("Seuls les administrateurs peuvent supprimer des comptes")
+                .entity("Only administrators can delete accounts")
                 .build();
         }
         accountService.delete(id);
@@ -177,10 +202,11 @@ public class AccountResource {
 }</code></pre>
     </div>
 
-    <h2>MicroProfile JWT — Configuration et Claims</h2>
+    <h2 data-en="MicroProfile JWT — Configuration and Claims" data-fr="MicroProfile JWT — Configuration et Claims">MicroProfile JWT — Configuration and Claims</h2>
+    <p data-en="Tip: MicroProfile JWT Propagation (MP-JWT) standardizes JWT-based authentication across microservices. Annotate your JAX-RS application with @LoginConfig(authMethod=&quot;MP-JWT&quot;) and inject claims with @Claim." data-fr="Conseil : MicroProfile JWT Propagation (MP-JWT) standardise l'authentification JWT entre microservices. Annotez votre application JAX-RS avec @LoginConfig(authMethod=&quot;MP-JWT&quot;) et injectez les claims avec @Claim." class="cds--inline-notification cds--inline-notification--info">Tip: MicroProfile JWT Propagation (MP-JWT) standardizes JWT-based authentication across microservices. Annotate your JAX-RS application with @LoginConfig(authMethod="MP-JWT") and inject claims with @Claim.</p>
     <div class="code-block-wrap">
       <span class="code-lang">java</span>
-      <pre><code>// Activer MP-JWT sur l'application
+      <pre><code>// Enable MP-JWT on the application
 @LoginConfig(authMethod = "MP-JWT", realmName = "banking-realm")
 @ApplicationPath("/api")
 public class SecureApp extends Application { }
@@ -192,22 +218,22 @@ public class SecureApp extends Application { }
 @RolesAllowed("USER")
 public class AccountResource {
 
-    // Injection directe des claims JWT via CDI
+    // Direct injection of JWT claims via CDI
     @Inject
     @Claim("sub")
-    private String subject;           // Identifiant de l'utilisateur
+    private String subject;           // User identifier
 
     @Inject
     @Claim("groups")
-    private Set&lt;String&gt; groups;       // Rôles/groupes de l'utilisateur
+    private Set&lt;String&gt; groups;       // User roles/groups
 
     @Inject
     @Claim("upn")
-    private String userPrincipalName; // Email ou identifiant principal
+    private String userPrincipalName; // Email or principal identifier
 
     @Inject
     @Claim("exp")
-    private Long expiration;          // Timestamp d'expiration du token
+    private Long expiration;          // Token expiration timestamp
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
@@ -230,7 +256,7 @@ mp.jwt.token.header=Authorization
 mp.jwt.token.cookie=Bearer</code></pre>
     </div>
 
-    <h2>Configuration TLS dans Liberty server.xml</h2>
+    <h2 data-en="TLS Configuration in Liberty server.xml" data-fr="Configuration TLS dans Liberty server.xml">TLS Configuration in Liberty server.xml</h2>
     <div class="code-block-wrap">
       <span class="code-lang">xml</span>
       <pre><code>&lt;server description="Banking Secure Server"&gt;
@@ -241,30 +267,30 @@ mp.jwt.token.cookie=Bearer</code></pre>
         &lt;feature&gt;cdi-4.0&lt;/feature&gt;
     &lt;/featureManager&gt;
 
-    &lt;!-- Keystore contenant la clé privée et le certificat serveur --&gt;
+    &lt;!-- Keystore containing the private key and server certificate --&gt;
     &lt;keyStore id="defaultKeyStore"
               location="${server.config.dir}/resources/security/key.p12"
               type="PKCS12"
               password="${env.KEYSTORE_PASSWORD}"/&gt;
 
-    &lt;!-- Truststore contenant les certificats CA de confiance --&gt;
+    &lt;!-- Truststore containing trusted CA certificates --&gt;
     &lt;keyStore id="defaultTrustStore"
               location="${server.config.dir}/resources/security/trust.p12"
               type="PKCS12"
               password="${env.TRUSTSTORE_PASSWORD}"/&gt;
 
-    &lt;!-- Configuration SSL/TLS --&gt;
+    &lt;!-- SSL/TLS configuration --&gt;
     &lt;ssl id="defaultSSLConfig"
          keyStoreRef="defaultKeyStore"
          trustStoreRef="defaultTrustStore"
          sslProtocol="TLSv1.3"
          clientAuthentication="false"/&gt;
 
-    &lt;!-- SSL options : désactiver TLS &lt; 1.2 --&gt;
+    &lt;!-- SSL options: disable TLS &lt; 1.2 --&gt;
     &lt;sslOptions sslRef="defaultSSLConfig"
                 sslProtocols="TLSv1.3,TLSv1.2"/&gt;
 
-    &lt;!-- Point d'accès HTTP et HTTPS --&gt;
+    &lt;!-- HTTP and HTTPS access points --&gt;
     &lt;httpEndpoint id="defaultHttpEndpoint"
                   host="*"
                   httpPort="-1"
@@ -274,7 +300,7 @@ mp.jwt.token.cookie=Bearer</code></pre>
 &lt;/server&gt;</code></pre>
     </div>
 
-    <h2>Génération et Validation JWT</h2>
+    <h2 data-en="JWT Generation and Validation" data-fr="Génération et Validation JWT">JWT Generation and Validation</h2>
     <div class="code-block-wrap">
       <span class="code-lang">java</span>
       <pre><code>@ApplicationScoped
@@ -290,13 +316,13 @@ public class JwtUtil {
 
     @PostConstruct
     public void init() throws Exception {
-        // Charger les clés depuis les ressources ou le keystore
+        // Load keys from resources or keystore
         this.privateKey = loadPrivateKey();
         this.publicKey  = loadPublicKey();
     }
 
     /**
-     * Génère un token JWT signé avec RS256
+     * Generates a JWT token signed with RS256
      */
     public String generateToken(String username, Set&lt;String&gt; roles) {
         Date now        = new Date();
@@ -315,7 +341,7 @@ public class JwtUtil {
     }
 
     /**
-     * Valide un token JWT et retourne les claims
+     * Validates a JWT token and returns the claims
      */
     public Claims validateToken(String token) {
         return Jwts.parser()
@@ -328,7 +354,7 @@ public class JwtUtil {
 }</code></pre>
     </div>
 
-    <h2>Filtre CORS pour JAX-RS</h2>
+    <h2 data-en="CORS Filter for JAX-RS" data-fr="Filtre CORS pour JAX-RS">CORS Filter for JAX-RS</h2>
     <div class="code-block-wrap">
       <span class="code-lang">java</span>
       <pre><code>@Provider
@@ -341,7 +367,7 @@ public class CorsFilter implements ContainerRequestFilter,
         "https://app.banking.esipe.fr"
     );
 
-    // Intercepte AVANT le routing — gère le préflight OPTIONS
+    // Intercepts BEFORE routing — handles OPTIONS preflight
     @Override
     public void filter(ContainerRequestContext request) throws IOException {
         String method = request.getMethod();
@@ -354,7 +380,7 @@ public class CorsFilter implements ContainerRequestFilter,
         }
     }
 
-    // Ajoute les en-têtes CORS à toutes les réponses
+    // Adds CORS headers to all responses
     @Override
     public void filter(ContainerRequestContext request,
                        ContainerResponseContext response) throws IOException {
@@ -389,7 +415,7 @@ public class CorsFilter implements ContainerRequestFilter,
 }</code></pre>
     </div>
 
-    <h2>Protection CSRF dans les Servlets</h2>
+    <h2 data-en="CSRF Protection in Servlets" data-fr="Protection CSRF dans les Servlets">CSRF Protection in Servlets</h2>
     <div class="code-block-wrap">
       <span class="code-lang">java</span>
       <pre><code>@WebFilter("/*")
@@ -410,17 +436,17 @@ public class CsrfFilter implements Filter {
         String method = request.getMethod().toUpperCase();
 
         if ("GET".equals(method) || "HEAD".equals(method)) {
-            // Générer le token CSRF à la première visite (GET)
+            // Generate the CSRF token on first visit (GET)
             if (session.getAttribute(CSRF_TOKEN_ATTR) == null) {
                 String token = generateSecureToken();
                 session.setAttribute(CSRF_TOKEN_ATTR, token);
-                // Exposer le token dans un en-tête de réponse pour les SPAs
+                // Expose the token in a response header for SPAs
                 response.setHeader(CSRF_HEADER, token);
             }
             chain.doFilter(request, response);
 
         } else {
-            // Valider le token CSRF sur les requêtes mutantes (POST, PUT, DELETE)
+            // Validate the CSRF token on mutating requests (POST, PUT, DELETE)
             String sessionToken = (String) session.getAttribute(CSRF_TOKEN_ATTR);
             String requestToken = request.getHeader(CSRF_HEADER);
 
@@ -441,8 +467,8 @@ public class CsrfFilter implements Filter {
     }
 
     /**
-     * Comparaison en temps constant pour prévenir les timing attacks.
-     * MessageDigest.isEqual() garantit un temps d'exécution uniforme.
+     * Constant-time comparison to prevent timing attacks.
+     * MessageDigest.isEqual() guarantees uniform execution time.
      */
     private boolean isTokenValid(String expected, String actual) {
         byte[] expectedBytes = expected.getBytes(StandardCharsets.UTF_8);
@@ -455,5 +481,6 @@ public class CsrfFilter implements Filter {
   </main>
 </div>
 <footer class="cds--footer">Made with IBM Bob &nbsp;·&nbsp; © 2026 Olivier Planson &nbsp;·&nbsp; ESIPE — Jakarta EE &amp; Microservices</footer>
+<script src="../assets/language-toggle.js"></script>
 </body>
 </html>

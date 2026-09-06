@@ -1,323 +1,325 @@
 <!-- © Copyright 2026 Olivier Planson. All rights reserved. Reproduction prohibited. Made with IBM Bob. -->
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="en">
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-  <title>Cours 05 — Contenu du cours</title>
+  <title>Course 05 — Course Content</title>
   <link rel="stylesheet" href="../assets/carbon.css"/>
 </head>
 <body>
 <header class="cds--header">
-  <a class="cds--header__name" href="index.html">JAX-RS — Services RESTful<span>Cours Jakarta EE</span></a>
-  <a class="cds--header__back" href="../index.html">← Tous les Cours</a>
+  <a class="cds--header__name" href="index.html" data-en="Jakarta REST — RESTful Web Services" data-fr="Jakarta REST — Services RESTful">Jakarta REST — RESTful Web Services<span data-en="Jakarta EE Course" data-fr="Cours Jakarta EE">Jakarta EE Course</span></a>
+  <button class="lang-toggle-btn" id="lang-toggle">FR</button>
+  <a class="cds--header__back" href="../index.html" data-en="← All Courses" data-fr="← Tous les Cours">← All Courses</a>
 </header>
 <div class="cds--shell">
   <nav class="cds--side-nav">
-    <p class="cds--side-nav__section-title">Cours 05</p>
-    <a class="cds--side-nav__link" href="index.html">⊙ Vue d'ensemble</a>
-    <a class="cds--side-nav__link active" href="slides.html">☰ Contenu du cours</a>
-    <a class="cds--side-nav__link" href="concepts.html">◈ Concepts clés</a>
-    <a class="cds--side-nav__link" href="code.html">⟨/⟩ Exemples de code</a>
+    <p class="cds--side-nav__section-title" data-en="Course 05" data-fr="Cours 05">Course 05</p>
+    <a class="cds--side-nav__link" href="index.html" data-en="⊙ Overview" data-fr="⊙ Vue d'ensemble">⊙ Overview</a>
+    <a class="cds--side-nav__link active" href="slides.html" data-en="☰ Course Content" data-fr="☰ Contenu du cours">☰ Course Content</a>
+    <a class="cds--side-nav__link" href="concepts.html" data-en="◈ Key Concepts" data-fr="◈ Concepts clés">◈ Key Concepts</a>
+    <a class="cds--side-nav__link" href="code.html" data-en="⟨/⟩ Code Examples" data-fr="⟨/⟩ Exemples de code">⟨/⟩ Code Examples</a>
+    <a class="cds--side-nav__lang-toggle">FR</a>
   </nav>
   <main class="cds--content">
-    <div class="breadcrumb"><a href="../index.html">Cours</a> › <a href="index.html">Cours 05</a> › Contenu</div>
-    <h1>Contenu du cours</h1>
-    <p class="page-lead">Toutes les sections — cliquez sur un titre pour développer.</p>
+    <div class="breadcrumb"><a href="../index.html" data-en="Courses" data-fr="Cours">Courses</a> › <a href="index.html" data-en="Course 05" data-fr="Cours 05">Course 05</a> › <span data-en="Content" data-fr="Contenu">Content</span></div>
+    <h1 data-en="Course Content" data-fr="Contenu du cours">Course Content</h1>
+    <p class="page-lead" data-en="All sections — click a title to expand." data-fr="Toutes les sections — cliquez sur un titre pour développer.">All sections — click a title to expand.</p>
 
     <details open>
-      <summary>🌐 Principes REST et Richardson Maturity Model</summary>
+      <summary data-en="🌐 REST Principles and Richardson Maturity Model" data-fr="🌐 Principes REST et Richardson Maturity Model">🌐 REST Principles and Richardson Maturity Model</summary>
       <div class="slide-content">
-        <h3>Qu'est-ce que REST ?</h3>
-        <p><strong>REST</strong> (Representational State Transfer) est un style architectural défini par Roy Fielding en 2000. Il repose sur les ressources, les représentations et le protocole HTTP comme moteur d'état applicatif.</p>
-        <h3>Level 0 — Plain Old XML / POX</h3>
+        <h3 data-en="What is REST?" data-fr="Qu'est-ce que REST ?">What is REST?</h3>
+        <p data-en="REST (Representational State Transfer) is an architectural style defined by Roy Fielding in 2000. It is based on resources, representations, and HTTP as the engine of application state." data-fr="REST (Representational State Transfer) est un style architectural défini par Roy Fielding en 2000. Il repose sur les ressources, les représentations et le protocole HTTP comme moteur d'état applicatif."><strong>REST</strong> (Representational State Transfer) is an architectural style defined by Roy Fielding in 2000. It is based on resources, representations, and HTTP as the engine of application state.</p>
+        <h3 data-en="Level 0 — Plain Old XML / POX" data-fr="Level 0 — Plain Old XML / POX">Level 0 — Plain Old XML / POX</h3>
         <ul>
-          <li>HTTP utilisé comme simple protocole de transport</li>
-          <li>Un seul endpoint pour toutes les opérations — ex. <code>POST /api</code></li>
-          <li>L'opération est décrite dans le corps de la requête</li>
-          <li>Pas de distinction de ressources — comparable à du RPC sur HTTP</li>
+          <li data-en="HTTP used as a simple transport protocol" data-fr="HTTP utilisé comme simple protocole de transport">HTTP used as a simple transport protocol</li>
+          <li data-en="Single endpoint for all operations — e.g. POST /api" data-fr="Un seul endpoint pour toutes les opérations — ex. POST /api">Single endpoint for all operations — e.g. <code>POST /api</code></li>
+          <li data-en="The operation is described in the request body" data-fr="L'opération est décrite dans le corps de la requête">The operation is described in the request body</li>
+          <li data-en="No resource distinction — comparable to RPC over HTTP" data-fr="Pas de distinction de ressources — comparable à du RPC sur HTTP">No resource distinction — comparable to RPC over HTTP</li>
         </ul>
-        <h3>Level 1 — Ressources</h3>
+        <h3 data-en="Level 1 — Resources" data-fr="Level 1 — Ressources">Level 1 — Resources</h3>
         <ul>
-          <li>Les ressources sont identifiées par des URIs distinctes</li>
-          <li>Ex. <code>POST /clients</code>, <code>POST /clients/42</code></li>
-          <li>HTTP toujours utilisé comme simple tunnel — verbes non respectés</li>
-          <li>Amélioration : chaque ressource possède son propre endpoint</li>
+          <li data-en="Resources identified by distinct URIs" data-fr="Les ressources sont identifiées par des URIs distinctes">Resources identified by distinct URIs</li>
+          <li data-en="E.g. POST /clients, POST /clients/42" data-fr="Ex. POST /clients, POST /clients/42">E.g. <code>POST /clients</code>, <code>POST /clients/42</code></li>
+          <li data-en="HTTP still used as a tunnel — HTTP verbs not respected" data-fr="HTTP toujours utilisé comme simple tunnel — verbes non respectés">HTTP still used as a tunnel — HTTP verbs not respected</li>
+          <li data-en="Improvement: each resource has its own endpoint" data-fr="Amélioration : chaque ressource possède son propre endpoint">Improvement: each resource has its own endpoint</li>
         </ul>
-        <h3>Level 2 — Verbes HTTP</h3>
+        <h3 data-en="Level 2 — HTTP Verbs" data-fr="Level 2 — Verbes HTTP">Level 2 — HTTP Verbs</h3>
         <ul>
-          <li>Utilisation sémantique correcte des verbes HTTP : <code>GET</code>, <code>POST</code>, <code>PUT</code>, <code>DELETE</code>, <code>PATCH</code></li>
-          <li>Codes de statut HTTP significatifs : 200, 201, 204, 400, 404, 409…</li>
-          <li>Ex. <code>GET /clients</code>, <code>POST /clients</code>, <code>PUT /clients/42</code>, <code>DELETE /clients/42</code></li>
-          <li>La grande majorité des APIs REST modernes se situent à ce niveau</li>
+          <li data-en="Correct semantic use of HTTP verbs: GET, POST, PUT, DELETE, PATCH" data-fr="Utilisation sémantique correcte des verbes HTTP : GET, POST, PUT, DELETE, PATCH">Correct semantic use of HTTP verbs: <code>GET</code>, <code>POST</code>, <code>PUT</code>, <code>DELETE</code>, <code>PATCH</code></li>
+          <li data-en="Meaningful HTTP status codes: 200, 201, 204, 400, 404, 409…" data-fr="Codes de statut HTTP significatifs : 200, 201, 204, 400, 404, 409…">Meaningful HTTP status codes: 200, 201, 204, 400, 404, 409…</li>
+          <li data-en="E.g. GET /clients, POST /clients, PUT /clients/42, DELETE /clients/42" data-fr="Ex. GET /clients, POST /clients, PUT /clients/42, DELETE /clients/42">E.g. <code>GET /clients</code>, <code>POST /clients</code>, <code>PUT /clients/42</code>, <code>DELETE /clients/42</code></li>
+          <li data-en="The vast majority of modern REST APIs operate at this level" data-fr="La grande majorité des APIs REST modernes se situent à ce niveau">The vast majority of modern REST APIs operate at this level</li>
         </ul>
-        <h3>Level 3 — HATEOAS</h3>
+        <h3 data-en="Level 3 — HATEOAS" data-fr="Level 3 — HATEOAS">Level 3 — HATEOAS</h3>
         <ul>
-          <li><strong>HATEOAS</strong> (Hypermedia As The Engine Of Application State)</li>
-          <li>Les réponses contiennent des liens vers les actions possibles suivantes</li>
-          <li>Le client découvre l'API dynamiquement à travers les hyperliens</li>
-          <li>Ex. : une réponse <code>GET /clients/42</code> inclut des liens <code>self</code>, <code>update</code>, <code>delete</code>, <code>orders</code></li>
-          <li>Niveau rarement atteint en pratique — surtout pertinent pour les APIs publiques évolutives</li>
+          <li data-en="HATEOAS (Hypermedia As The Engine Of Application State)" data-fr="HATEOAS (Hypermedia As The Engine Of Application State)"><strong>HATEOAS</strong> (Hypermedia As The Engine Of Application State)</li>
+          <li data-en="Responses contain links to possible next actions" data-fr="Les réponses contiennent des liens vers les actions possibles suivantes">Responses contain links to possible next actions</li>
+          <li data-en="The client discovers the API dynamically through hyperlinks" data-fr="Le client découvre l'API dynamiquement à travers les hyperliens">The client discovers the API dynamically through hyperlinks</li>
+          <li data-en="E.g. a GET /clients/42 response includes self, update, delete, orders links" data-fr="Ex. : une réponse GET /clients/42 inclut des liens self, update, delete, orders">E.g.: a <code>GET /clients/42</code> response includes <code>self</code>, <code>update</code>, <code>delete</code>, <code>orders</code> links</li>
+          <li data-en="Rarely reached in practice — most relevant for evolving public APIs" data-fr="Niveau rarement atteint en pratique — surtout pertinent pour les APIs publiques évolutives">Rarely reached in practice — most relevant for evolving public APIs</li>
         </ul>
         <img src="../../images/05-jaxrs-restful-services-diagram-1.png" alt="Richardson Maturity Model — Levels 0 to 3"/>
       </div>
     </details>
 
     <details>
-      <summary>📌 Annotations JAX-RS</summary>
+      <summary data-en="📌 Jakarta REST Annotations" data-fr="📌 Annotations Jakarta REST">📌 Jakarta REST Annotations</summary>
       <div class="slide-content">
-        <h3>@Path — Identification des ressources</h3>
+        <h3 data-en="@Path — Resource identification" data-fr="@Path — Identification des ressources">@Path — Resource identification</h3>
         <ul>
-          <li><code>@Path("/clients")</code> sur la classe — chemin racine de la ressource</li>
-          <li><code>@Path("/{id}")</code> sur la méthode — sous-chemin avec paramètre de chemin</li>
-          <li>Les paths se composent : <code>/clients/{id}</code></li>
+          <li data-en="@Path(&quot;/clients&quot;) on the class — root path of the resource" data-fr="@Path(&quot;/clients&quot;) sur la classe — chemin racine de la ressource"><code>@Path("/clients")</code> on the class — root path of the resource</li>
+          <li data-en="@Path(&quot;/{id}&quot;) on a method — sub-path with path parameter" data-fr="@Path(&quot;/{id}&quot;) sur la méthode — sous-chemin avec paramètre de chemin"><code>@Path("/{id}")</code> on a method — sub-path with path parameter</li>
+          <li data-en="Paths compose: /clients/{id}" data-fr="Les paths se composent : /clients/{id}">Paths compose: <code>/clients/{id}</code></li>
         </ul>
-        <h3>Verbes HTTP — @GET @POST @PUT @DELETE @PATCH</h3>
+        <h3 data-en="HTTP Verbs — @GET @POST @PUT @DELETE @PATCH" data-fr="Verbes HTTP — @GET @POST @PUT @DELETE @PATCH">HTTP Verbs — @GET @POST @PUT @DELETE @PATCH</h3>
         <ul>
-          <li><code>@GET</code> — lecture d'une ressource ou liste (idempotent, sans corps)</li>
-          <li><code>@POST</code> — création d'une nouvelle ressource (non idempotent)</li>
-          <li><code>@PUT</code> — remplacement complet d'une ressource existante (idempotent)</li>
-          <li><code>@DELETE</code> — suppression d'une ressource (idempotent)</li>
-          <li><code>@PATCH</code> — mise à jour partielle d'une ressource</li>
+          <li data-en="@GET — read a resource or list (idempotent, no body)" data-fr="@GET — lecture d'une ressource ou liste (idempotent, sans corps)"><code>@GET</code> — read a resource or list (idempotent, no body)</li>
+          <li data-en="@POST — create a new resource (non-idempotent)" data-fr="@POST — création d'une nouvelle ressource (non idempotent)"><code>@POST</code> — create a new resource (non-idempotent)</li>
+          <li data-en="@PUT — complete replacement of an existing resource (idempotent)" data-fr="@PUT — remplacement complet d'une ressource existante (idempotent)"><code>@PUT</code> — complete replacement of an existing resource (idempotent)</li>
+          <li data-en="@DELETE — delete a resource (idempotent)" data-fr="@DELETE — suppression d'une ressource (idempotent)"><code>@DELETE</code> — delete a resource (idempotent)</li>
+          <li data-en="@PATCH — partial update of a resource" data-fr="@PATCH — mise à jour partielle d'une ressource"><code>@PATCH</code> — partial update of a resource</li>
         </ul>
-        <h3>Paramètres de la requête</h3>
+        <h3 data-en="Request parameters" data-fr="Paramètres de la requête">Request parameters</h3>
         <ul>
-          <li><code>@PathParam("id")</code> — extrait un segment de l'URI : <code>/clients/{id}</code></li>
-          <li><code>@QueryParam("page")</code> — paramètre de requête URL : <code>?page=2&amp;size=10</code></li>
-          <li><code>@HeaderParam("Authorization")</code> — valeur d'un en-tête HTTP</li>
-          <li><code>@BeanParam</code> — regroupe plusieurs paramètres dans un objet</li>
+          <li data-en="@PathParam(&quot;id&quot;) — extracts a URI segment: /clients/{id}" data-fr="@PathParam(&quot;id&quot;) — extrait un segment de l'URI : /clients/{id}"><code>@PathParam("id")</code> — extracts a URI segment: <code>/clients/{id}</code></li>
+          <li data-en="@QueryParam(&quot;page&quot;) — URL query parameter: ?page=2&amp;size=10" data-fr="@QueryParam(&quot;page&quot;) — paramètre de requête URL : ?page=2&amp;size=10"><code>@QueryParam("page")</code> — URL query parameter: <code>?page=2&amp;size=10</code></li>
+          <li data-en="@HeaderParam(&quot;Authorization&quot;) — value of an HTTP header" data-fr="@HeaderParam(&quot;Authorization&quot;) — valeur d'un en-tête HTTP"><code>@HeaderParam("Authorization")</code> — value of an HTTP header</li>
+          <li data-en="@BeanParam — groups multiple parameters into a single object" data-fr="@BeanParam — regroupe plusieurs paramètres dans un objet"><code>@BeanParam</code> — groups multiple parameters into a single object</li>
         </ul>
-        <h3>Négociation de contenu</h3>
+        <h3 data-en="Content negotiation" data-fr="Négociation de contenu">Content negotiation</h3>
         <ul>
-          <li><code>@Produces(MediaType.APPLICATION_JSON)</code> — type MIME de la réponse</li>
-          <li><code>@Consumes(MediaType.APPLICATION_JSON)</code> — type MIME attendu du corps de requête</li>
-          <li>Valeurs courantes : <code>APPLICATION_JSON</code>, <code>APPLICATION_XML</code>, <code>TEXT_PLAIN</code></li>
+          <li data-en="@Produces(MediaType.APPLICATION_JSON) — MIME type of the response" data-fr="@Produces(MediaType.APPLICATION_JSON) — type MIME de la réponse"><code>@Produces(MediaType.APPLICATION_JSON)</code> — MIME type of the response</li>
+          <li data-en="@Consumes(MediaType.APPLICATION_JSON) — expected MIME type of the request body" data-fr="@Consumes(MediaType.APPLICATION_JSON) — type MIME attendu du corps de requête"><code>@Consumes(MediaType.APPLICATION_JSON)</code> — expected MIME type of the request body</li>
+          <li data-en="Common values: APPLICATION_JSON, APPLICATION_XML, TEXT_PLAIN" data-fr="Valeurs courantes : APPLICATION_JSON, APPLICATION_XML, TEXT_PLAIN">Common values: <code>APPLICATION_JSON</code>, <code>APPLICATION_XML</code>, <code>TEXT_PLAIN</code></li>
         </ul>
-        <h3>@ApplicationPath — Point d'entrée de l'application</h3>
+        <h3 data-en="@ApplicationPath — Application entry point" data-fr="@ApplicationPath — Point d'entrée de l'application">@ApplicationPath — Application entry point</h3>
         <ul>
-          <li>Classe étendant <code>jakarta.ws.rs.core.Application</code> annotée <code>@ApplicationPath("/api")</code></li>
-          <li>Définit le préfixe global de toutes les ressources JAX-RS</li>
-          <li>Peut être vide pour déléguer la configuration au serveur</li>
+          <li data-en="Class extending jakarta.ws.rs.core.Application annotated @ApplicationPath(&quot;/api&quot;)" data-fr="Classe étendant jakarta.ws.rs.core.Application annotée @ApplicationPath(&quot;/api&quot;)">Class extending <code>jakarta.ws.rs.core.Application</code> annotated <code>@ApplicationPath("/api")</code></li>
+          <li data-en="Defines the global prefix for all Jakarta REST resources" data-fr="Définit le préfixe global de toutes les ressources Jakarta REST">Defines the global prefix for all Jakarta REST resources</li>
+          <li data-en="Can be empty to delegate configuration to the server" data-fr="Peut être vide pour déléguer la configuration au serveur">Can be empty to delegate configuration to the server</li>
         </ul>
-        <img src="../../images/05-jaxrs-restful-services-diagram-2.png" alt="JAX-RS Annotations Overview"/>
+        <img src="../../images/05-jaxrs-restful-services-diagram-2.png" alt="Jakarta REST Annotations Overview"/>
       </div>
     </details>
 
     <details>
-      <summary>📦 JSON-B — Sérialisation JSON</summary>
+      <summary data-en="📦 JSON-B — JSON Serialization" data-fr="📦 JSON-B — Sérialisation JSON">📦 JSON-B — JSON Serialization</summary>
       <div class="slide-content">
-        <p><strong>JSON-B</strong> (Jakarta JSON Binding) est la spécification standard Jakarta EE pour la conversion bidirectionnelle entre objets Java et JSON.</p>
-        <h3>@JsonbProperty — Renommage des champs</h3>
+        <p data-en="JSON-B (Jakarta JSON Binding) is the standard Jakarta EE specification for bidirectional conversion between Java objects and JSON." data-fr="JSON-B (Jakarta JSON Binding) est la spécification standard Jakarta EE pour la conversion bidirectionnelle entre objets Java et JSON."><strong>JSON-B</strong> (Jakarta JSON Binding) is the standard Jakarta EE specification for bidirectional conversion between Java objects and JSON.</p>
+        <h3 data-en="@JsonbProperty — Field renaming" data-fr="@JsonbProperty — Renommage des champs">@JsonbProperty — Field renaming</h3>
         <ul>
-          <li><code>@JsonbProperty("full_name")</code> sur un champ — le JSON utilisera <code>full_name</code> au lieu du nom Java</li>
-          <li>Utile pour respecter les conventions snake_case des APIs REST</li>
+          <li data-en="@JsonbProperty(&quot;full_name&quot;) on a field — the JSON will use full_name instead of the Java name" data-fr="@JsonbProperty(&quot;full_name&quot;) sur un champ — le JSON utilisera full_name au lieu du nom Java"><code>@JsonbProperty("full_name")</code> on a field — the JSON will use <code>full_name</code> instead of the Java name</li>
+          <li data-en="Useful for following snake_case conventions in REST APIs" data-fr="Utile pour respecter les conventions snake_case des APIs REST">Useful for following snake_case conventions in REST APIs</li>
         </ul>
-        <h3>@JsonbTransient — Exclusion de champs</h3>
+        <h3 data-en="@JsonbTransient — Field exclusion" data-fr="@JsonbTransient — Exclusion de champs">@JsonbTransient — Field exclusion</h3>
         <ul>
-          <li><code>@JsonbTransient</code> sur un champ — exclu de la sérialisation et désérialisation JSON</li>
-          <li>Idéal pour les mots de passe, tokens, champs sensibles</li>
+          <li data-en="@JsonbTransient on a field — excluded from JSON serialization and deserialization" data-fr="@JsonbTransient sur un champ — exclu de la sérialisation et désérialisation JSON"><code>@JsonbTransient</code> on a field — excluded from JSON serialization and deserialization</li>
+          <li data-en="Ideal for passwords, tokens, sensitive fields" data-fr="Idéal pour les mots de passe, tokens, champs sensibles">Ideal for passwords, tokens, sensitive fields</li>
         </ul>
-        <h3>@JsonbDateFormat — Format des dates</h3>
+        <h3 data-en="@JsonbDateFormat — Date format" data-fr="@JsonbDateFormat — Format des dates">@JsonbDateFormat — Date format</h3>
         <ul>
-          <li><code>@JsonbDateFormat("yyyy-MM-dd")</code> — contrôle le format de sérialisation des dates</li>
-          <li>Applicable aux champs <code>LocalDate</code>, <code>LocalDateTime</code>, <code>ZonedDateTime</code></li>
+          <li data-en="@JsonbDateFormat(&quot;yyyy-MM-dd&quot;) — controls the serialization format for dates" data-fr="@JsonbDateFormat(&quot;yyyy-MM-dd&quot;) — contrôle le format de sérialisation des dates"><code>@JsonbDateFormat("yyyy-MM-dd")</code> — controls the serialization format for dates</li>
+          <li data-en="Applicable to LocalDate, LocalDateTime, ZonedDateTime fields" data-fr="Applicable aux champs LocalDate, LocalDateTime, ZonedDateTime">Applicable to <code>LocalDate</code>, <code>LocalDateTime</code>, <code>ZonedDateTime</code> fields</li>
         </ul>
-        <h3>Naming Strategies</h3>
+        <h3 data-en="Naming Strategies" data-fr="Naming Strategies">Naming Strategies</h3>
         <ul>
-          <li><code>PropertyNamingStrategy.LOWER_CASE_WITH_UNDERSCORES</code> — conversion automatique camelCase → snake_case</li>
-          <li><code>PropertyNamingStrategy.UPPER_CAMEL_CASE</code> — PascalCase pour tous les champs</li>
-          <li>Configurable via <code>JsonbConfig</code> ou <code>@JsonbNillable</code>, <code>@JsonbPropertyOrder</code></li>
+          <li data-en="PropertyNamingStrategy.LOWER_CASE_WITH_UNDERSCORES — automatic camelCase → snake_case conversion" data-fr="PropertyNamingStrategy.LOWER_CASE_WITH_UNDERSCORES — conversion automatique camelCase → snake_case"><code>PropertyNamingStrategy.LOWER_CASE_WITH_UNDERSCORES</code> — automatic camelCase → snake_case conversion</li>
+          <li data-en="PropertyNamingStrategy.UPPER_CAMEL_CASE — PascalCase for all fields" data-fr="PropertyNamingStrategy.UPPER_CAMEL_CASE — PascalCase pour tous les champs"><code>PropertyNamingStrategy.UPPER_CAMEL_CASE</code> — PascalCase for all fields</li>
+          <li data-en="Configurable via JsonbConfig or @JsonbNillable, @JsonbPropertyOrder" data-fr="Configurable via JsonbConfig ou @JsonbNillable, @JsonbPropertyOrder">Configurable via <code>JsonbConfig</code> or <code>@JsonbNillable</code>, <code>@JsonbPropertyOrder</code></li>
         </ul>
-        <h3>Custom Adapters</h3>
+        <h3 data-en="Custom Adapters" data-fr="Custom Adapters">Custom Adapters</h3>
         <ul>
-          <li>Implémenter <code>JsonbAdapter&lt;Original, Adapted&gt;</code> pour une conversion sur mesure</li>
-          <li>Méthodes <code>adaptToJson()</code> et <code>adaptFromJson()</code></li>
-          <li>Enregistrement via <code>@JsonbTypeAdapter</code> sur le champ ou via <code>JsonbConfig</code></li>
+          <li data-en="Implement JsonbAdapter&lt;Original, Adapted&gt; for custom conversion" data-fr="Implémenter JsonbAdapter&lt;Original, Adapted&gt; pour une conversion sur mesure">Implement <code>JsonbAdapter&lt;Original, Adapted&gt;</code> for custom conversion</li>
+          <li data-en="Methods adaptToJson() and adaptFromJson()" data-fr="Méthodes adaptToJson() et adaptFromJson()">Methods <code>adaptToJson()</code> and <code>adaptFromJson()</code></li>
+          <li data-en="Registration via @JsonbTypeAdapter on the field or via JsonbConfig" data-fr="Enregistrement via @JsonbTypeAdapter sur le champ ou via JsonbConfig">Registration via <code>@JsonbTypeAdapter</code> on the field or via <code>JsonbConfig</code></li>
         </ul>
-        <h3>Références circulaires</h3>
+        <h3 data-en="Circular references" data-fr="Références circulaires">Circular references</h3>
         <ul>
-          <li>Problème courant avec les entités JPA bidirectionnelles (ex. <code>Client</code> ↔ <code>Order</code>)</li>
-          <li>Solution 1 : <code>@JsonbTransient</code> sur le côté propriétaire inverse</li>
-          <li>Solution 2 : utiliser des DTOs sans cycles au lieu des entités directement</li>
-          <li>Solution 3 : adapter personnalisé qui interrompt la récursion</li>
-        </ul>
-      </div>
-    </details>
-
-    <details>
-      <summary>⚠️ Gestion des Exceptions</summary>
-      <div class="slide-content">
-        <p>JAX-RS fournit un mécanisme élégant pour intercepter les exceptions et les convertir en réponses HTTP structurées.</p>
-        <h3>ExceptionMapper&lt;T&gt;</h3>
-        <ul>
-          <li>Interface JAX-RS à implémenter : <code>ExceptionMapper&lt;MonException&gt;</code></li>
-          <li>Méthode unique : <code>Response toResponse(MonException exception)</code></li>
-          <li>Permet de retourner un corps JSON avec le message d'erreur, le code, le champ concerné</li>
-        </ul>
-        <h3>@Provider</h3>
-        <ul>
-          <li>Annotation JAX-RS indiquant au runtime que cette classe est un composant de l'infrastructure</li>
-          <li>Enregistrement automatique des ExceptionMapper, MessageBodyWriter, ContainerFilter…</li>
-        </ul>
-        <h3>WebApplicationException</h3>
-        <ul>
-          <li>Exception JAX-RS de base — encapsule un <code>Response</code> directement</li>
-          <li>Sous-classes prêtes à l'emploi : <code>NotFoundException</code> (404), <code>BadRequestException</code> (400), <code>NotAuthorizedException</code> (401), <code>ForbiddenException</code> (403)</li>
-          <li>Peut être lancée directement depuis une méthode de ressource</li>
-        </ul>
-        <h3>Exceptions personnalisées</h3>
-        <ul>
-          <li>Créer une exception métier <code>ClientNotFoundException extends RuntimeException</code></li>
-          <li>Créer le mapper correspondant <code>@Provider ClientNotFoundExceptionMapper</code></li>
-          <li>Découplage total entre logique métier et protocole HTTP</li>
-        </ul>
-        <h3>Validation avec Bean Validation</h3>
-        <ul>
-          <li><code>@NotNull</code> — le champ ne peut pas être null</li>
-          <li><code>@Size(min=2, max=100)</code> — contrainte de longueur sur une chaîne ou collection</li>
-          <li><code>@Email</code> — format d'adresse email valide</li>
-          <li><code>@Valid</code> sur le paramètre de la méthode JAX-RS pour déclencher la validation</li>
-          <li>Les violations sont reportées via <code>ConstraintViolationException</code> interceptable par un mapper</li>
+          <li data-en="Common issue with bidirectional JPA entities (e.g. Client ↔ Order)" data-fr="Problème courant avec les entités JPA bidirectionnelles (ex. Client ↔ Order)">Common issue with bidirectional JPA entities (e.g. <code>Client</code> ↔ <code>Order</code>)</li>
+          <li data-en="Solution 1: @JsonbTransient on the inverse owning side" data-fr="Solution 1 : @JsonbTransient sur le côté propriétaire inverse">Solution 1: <code>@JsonbTransient</code> on the inverse owning side</li>
+          <li data-en="Solution 2: use DTOs without cycles instead of entities directly" data-fr="Solution 2 : utiliser des DTOs sans cycles au lieu des entités directement">Solution 2: use DTOs without cycles instead of entities directly</li>
+          <li data-en="Solution 3: custom adapter that breaks the recursion" data-fr="Solution 3 : adapter personnalisé qui interrompt la récursion">Solution 3: custom adapter that breaks the recursion</li>
         </ul>
       </div>
     </details>
 
     <details>
-      <summary>🔌 MicroProfile Rest Client</summary>
+      <summary data-en="⚠️ Exception Handling" data-fr="⚠️ Gestion des Exceptions">⚠️ Exception Handling</summary>
       <div class="slide-content">
-        <p><strong>MicroProfile Rest Client</strong> permet de consommer des APIs REST distantes à travers une interface Java typée — sans code HTTP boilerplate.</p>
-        <h3>@RegisterRestClient</h3>
+        <p data-en="Jakarta REST provides an elegant mechanism to intercept exceptions and convert them into structured HTTP responses." data-fr="JAX-RS fournit un mécanisme élégant pour intercepter les exceptions et les convertir en réponses HTTP structurées.">Jakarta REST provides an elegant mechanism to intercept exceptions and convert them into structured HTTP responses.</p>
+        <h3 data-en="ExceptionMapper&lt;T&gt;" data-fr="ExceptionMapper&lt;T&gt;">ExceptionMapper&lt;T&gt;</h3>
         <ul>
-          <li>Annotation placée sur l'interface — enregistre le client auprès du runtime MicroProfile</li>
-          <li><code>configKey</code> — clé de configuration pour l'URL de base dans <code>microprofile-config.properties</code></li>
-          <li>Ex. : <code>@RegisterRestClient(configKey="currency-api")</code></li>
+          <li data-en="Jakarta REST interface to implement: ExceptionMapper&lt;MyException&gt;" data-fr="Interface Jakarta REST à implémenter : ExceptionMapper&lt;MonException&gt;">Jakarta REST interface to implement: <code>ExceptionMapper&lt;MyException&gt;</code></li>
+          <li data-en="Single method: Response toResponse(MyException exception)" data-fr="Méthode unique : Response toResponse(MonException exception)">Single method: <code>Response toResponse(MyException exception)</code></li>
+          <li data-en="Allows returning a JSON body with error message, code, affected field" data-fr="Permet de retourner un corps JSON avec le message d'erreur, le code, le champ concerné">Allows returning a JSON body with error message, code, affected field</li>
         </ul>
-        <h3>Interface @Path annotée</h3>
+        <h3 data-en="@Provider" data-fr="@Provider">@Provider</h3>
         <ul>
-          <li>L'interface utilise les mêmes annotations JAX-RS que les ressources serveur : <code>@Path</code>, <code>@GET</code>, <code>@POST</code>, <code>@PathParam</code>, <code>@QueryParam</code>, <code>@Produces</code>, <code>@Consumes</code></li>
-          <li>Aucune implémentation à écrire — le runtime génère le proxy automatiquement</li>
+          <li data-en="Jakarta REST annotation indicating to the runtime that this class is an infrastructure component" data-fr="Annotation Jakarta REST indiquant au runtime que cette classe est un composant de l'infrastructure">Jakarta REST annotation indicating to the runtime that this class is an infrastructure component</li>
+          <li data-en="Automatic registration of ExceptionMapper, MessageBodyWriter, ContainerFilter…" data-fr="Enregistrement automatique des ExceptionMapper, MessageBodyWriter, ContainerFilter…">Automatic registration of ExceptionMapper, MessageBodyWriter, ContainerFilter…</li>
         </ul>
-        <h3>@Inject @RestClient</h3>
+        <h3 data-en="WebApplicationException" data-fr="WebApplicationException">WebApplicationException</h3>
         <ul>
-          <li>Injection CDI du client avec le qualificateur <code>@RestClient</code></li>
-          <li>Le runtime injecte le proxy généré — utilisation identique à une dépendance locale</li>
+          <li data-en="Base Jakarta REST exception — wraps a Response directly" data-fr="Exception Jakarta REST de base — encapsule un Response directement">Base Jakarta REST exception — wraps a <code>Response</code> directly</li>
+          <li data-en="Ready-to-use subclasses: NotFoundException (404), BadRequestException (400), NotAuthorizedException (401), ForbiddenException (403)" data-fr="Sous-classes prêtes à l'emploi : NotFoundException (404), BadRequestException (400), NotAuthorizedException (401), ForbiddenException (403)">Ready-to-use subclasses: <code>NotFoundException</code> (404), <code>BadRequestException</code> (400), <code>NotAuthorizedException</code> (401), <code>ForbiddenException</code> (403)</li>
+          <li data-en="Can be thrown directly from a resource method" data-fr="Peut être lancée directement depuis une méthode de ressource">Can be thrown directly from a resource method</li>
         </ul>
-        <h3>Configuration dans microprofile-config.properties</h3>
+        <h3 data-en="Custom exceptions" data-fr="Exceptions personnalisées">Custom exceptions</h3>
+        <ul>
+          <li data-en="Create a business exception ClientNotFoundException extends RuntimeException" data-fr="Créer une exception métier ClientNotFoundException extends RuntimeException">Create a business exception <code>ClientNotFoundException extends RuntimeException</code></li>
+          <li data-en="Create the corresponding mapper @Provider ClientNotFoundExceptionMapper" data-fr="Créer le mapper correspondant @Provider ClientNotFoundExceptionMapper">Create the corresponding mapper <code>@Provider ClientNotFoundExceptionMapper</code></li>
+          <li data-en="Complete decoupling between business logic and HTTP protocol" data-fr="Découplage total entre logique métier et protocole HTTP">Complete decoupling between business logic and HTTP protocol</li>
+        </ul>
+        <h3 data-en="Validation with Bean Validation" data-fr="Validation avec Bean Validation">Validation with Bean Validation</h3>
+        <ul>
+          <li data-en="@NotNull — the field cannot be null" data-fr="@NotNull — le champ ne peut pas être null"><code>@NotNull</code> — the field cannot be null</li>
+          <li data-en="@Size(min=2, max=100) — length constraint on a string or collection" data-fr="@Size(min=2, max=100) — contrainte de longueur sur une chaîne ou collection"><code>@Size(min=2, max=100)</code> — length constraint on a string or collection</li>
+          <li data-en="@Email — valid email address format" data-fr="@Email — format d'adresse email valide"><code>@Email</code> — valid email address format</li>
+          <li data-en="@Valid on the Jakarta REST method parameter to trigger validation" data-fr="@Valid sur le paramètre de la méthode Jakarta REST pour déclencher la validation"><code>@Valid</code> on the Jakarta REST method parameter to trigger validation</li>
+          <li data-en="Violations are reported via ConstraintViolationException interceptable by a mapper" data-fr="Les violations sont reportées via ConstraintViolationException interceptable par un mapper">Violations are reported via <code>ConstraintViolationException</code> interceptable by a mapper</li>
+        </ul>
+      </div>
+    </details>
+
+    <details>
+      <summary data-en="🔌 MicroProfile Rest Client" data-fr="🔌 MicroProfile Rest Client">🔌 MicroProfile Rest Client</summary>
+      <div class="slide-content">
+        <p data-en="MicroProfile Rest Client allows consuming remote REST APIs through a typed Java interface — without HTTP boilerplate code." data-fr="MicroProfile Rest Client permet de consommer des APIs REST distantes à travers une interface Java typée — sans code HTTP boilerplate."><strong>MicroProfile Rest Client</strong> allows consuming remote REST APIs through a typed Java interface — without HTTP boilerplate code.</p>
+        <h3 data-en="@RegisterRestClient" data-fr="@RegisterRestClient">@RegisterRestClient</h3>
+        <ul>
+          <li data-en="Annotation placed on the interface — registers the client with the MicroProfile runtime" data-fr="Annotation placée sur l'interface — enregistre le client auprès du runtime MicroProfile">Annotation placed on the interface — registers the client with the MicroProfile runtime</li>
+          <li data-en="configKey — configuration key for the base URL in microprofile-config.properties" data-fr="configKey — clé de configuration pour l'URL de base dans microprofile-config.properties"><code>configKey</code> — configuration key for the base URL in <code>microprofile-config.properties</code></li>
+          <li data-en="E.g. @RegisterRestClient(configKey=&quot;currency-api&quot;)" data-fr="Ex. : @RegisterRestClient(configKey=&quot;currency-api&quot;)">E.g.: <code>@RegisterRestClient(configKey="currency-api")</code></li>
+        </ul>
+        <h3 data-en="Annotated @Path interface" data-fr="Interface @Path annotée">Annotated @Path interface</h3>
+        <ul>
+          <li data-en="The interface uses the same Jakarta REST annotations as server resources: @Path, @GET, @POST, @PathParam, @QueryParam, @Produces, @Consumes" data-fr="L'interface utilise les mêmes annotations Jakarta REST que les ressources serveur : @Path, @GET, @POST, @PathParam, @QueryParam, @Produces, @Consumes">The interface uses the same Jakarta REST annotations as server resources: <code>@Path</code>, <code>@GET</code>, <code>@POST</code>, <code>@PathParam</code>, <code>@QueryParam</code>, <code>@Produces</code>, <code>@Consumes</code></li>
+          <li data-en="No implementation to write — the runtime generates the proxy automatically" data-fr="Aucune implémentation à écrire — le runtime génère le proxy automatiquement">No implementation to write — the runtime generates the proxy automatically</li>
+        </ul>
+        <h3 data-en="@Inject @RestClient" data-fr="@Inject @RestClient">@Inject @RestClient</h3>
+        <ul>
+          <li data-en="CDI injection of the client with the @RestClient qualifier" data-fr="Injection CDI du client avec le qualificateur @RestClient">CDI injection of the client with the <code>@RestClient</code> qualifier</li>
+          <li data-en="The runtime injects the generated proxy — usage identical to a local dependency" data-fr="Le runtime injecte le proxy généré — utilisation identique à une dépendance locale">The runtime injects the generated proxy — usage identical to a local dependency</li>
+        </ul>
+        <h3 data-en="Configuration in microprofile-config.properties" data-fr="Configuration dans microprofile-config.properties">Configuration in microprofile-config.properties</h3>
         <ul>
           <li><code>currency-api/mp-rest/url=https://api.exchangerate.host</code></li>
           <li><code>currency-api/mp-rest/connectTimeout=3000</code></li>
           <li><code>currency-api/mp-rest/readTimeout=5000</code></li>
           <li><code>currency-api/mp-rest/scope=jakarta.enterprise.context.ApplicationScoped</code></li>
         </ul>
-        <h3>ResponseExceptionMapper — Gestion des erreurs distantes</h3>
+        <h3 data-en="ResponseExceptionMapper — Remote error handling" data-fr="ResponseExceptionMapper — Gestion des erreurs distantes">ResponseExceptionMapper — Remote error handling</h3>
         <ul>
-          <li>Implémenter <code>ResponseExceptionMapper&lt;RuntimeException&gt;</code> pour transformer les réponses erreur en exceptions Java</li>
-          <li>Méthode <code>toThrowable(Response response)</code> — inspekte le statut et retourne l'exception appropriée</li>
-          <li>Enregistrement avec <code>@RegisterProvider(MonExceptionMapper.class)</code> sur l'interface cliente</li>
+          <li data-en="Implement ResponseExceptionMapper&lt;RuntimeException&gt; to transform error responses into Java exceptions" data-fr="Implémenter ResponseExceptionMapper&lt;RuntimeException&gt; pour transformer les réponses erreur en exceptions Java">Implement <code>ResponseExceptionMapper&lt;RuntimeException&gt;</code> to transform error responses into Java exceptions</li>
+          <li data-en="Method toThrowable(Response response) — inspects the status and returns the appropriate exception" data-fr="Méthode toThrowable(Response response) — inspekte le statut et retourne l'exception appropriée">Method <code>toThrowable(Response response)</code> — inspects the status and returns the appropriate exception</li>
+          <li data-en="Registration with @RegisterProvider(MyExceptionMapper.class) on the client interface" data-fr="Enregistrement avec @RegisterProvider(MonExceptionMapper.class) sur l'interface cliente">Registration with <code>@RegisterProvider(MyExceptionMapper.class)</code> on the client interface</li>
         </ul>
       </div>
     </details>
 
     <details>
-      <summary>🔗 Intégration REST + CDI</summary>
+      <summary data-en="🔗 REST + CDI Integration" data-fr="🔗 Intégration REST + CDI">🔗 REST + CDI Integration</summary>
       <div class="slide-content">
-        <p>JAX-RS et CDI s'intègrent nativement dans Jakarta EE — les ressources JAX-RS sont des beans CDI à part entière.</p>
-        <h3>Service CDI @ApplicationScoped dans une ressource REST</h3>
+        <p data-en="Jakarta REST and CDI integrate natively in Jakarta EE — Jakarta REST resources are full CDI beans." data-fr="JAX-RS et CDI s'intègrent nativement dans Jakarta EE — les ressources JAX-RS sont des beans CDI à part entière.">Jakarta REST and CDI integrate natively in Jakarta EE — Jakarta REST resources are full CDI beans.</p>
+        <h3 data-en="@ApplicationScoped CDI service in a REST resource" data-fr="Service CDI @ApplicationScoped dans une ressource REST">@ApplicationScoped CDI service in a REST resource</h3>
         <ul>
-          <li>Injection directe par <code>@Inject</code> dans la classe ressource JAX-RS</li>
-          <li>La ressource peut elle-même porter un scope CDI (<code>@RequestScoped</code>, <code>@ApplicationScoped</code>)</li>
-          <li>Meilleure pratique : scope <code>@RequestScoped</code> pour les ressources JAX-RS</li>
+          <li data-en="Direct injection via @Inject in the Jakarta REST resource class" data-fr="Injection directe par @Inject dans la classe ressource Jakarta REST">Direct injection via <code>@Inject</code> in the Jakarta REST resource class</li>
+          <li data-en="The resource can itself carry a CDI scope (@RequestScoped, @ApplicationScoped)" data-fr="La ressource peut elle-même porter un scope CDI (@RequestScoped, @ApplicationScoped)">The resource can itself carry a CDI scope (<code>@RequestScoped</code>, <code>@ApplicationScoped</code>)</li>
+          <li data-en="Best practice: @RequestScoped scope for Jakarta REST resources" data-fr="Meilleure pratique : scope @RequestScoped pour les ressources Jakarta REST">Best practice: <code>@RequestScoped</code> scope for Jakarta REST resources</li>
         </ul>
-        <h3>Intercepteur CDI sur les ressources REST</h3>
+        <h3 data-en="CDI interceptor on REST resources" data-fr="Intercepteur CDI sur les ressources REST">CDI interceptor on REST resources</h3>
         <ul>
-          <li>Les intercepteurs CDI (<code>@Logged</code>, <code>@Audited</code>…) s'appliquent aussi sur les méthodes JAX-RS</li>
-          <li>Permet d'ajouter du logging, de la sécurité ou du métriques sans modifier le code de ressource</li>
+          <li data-en="CDI interceptors (@Logged, @Audited…) also apply to Jakarta REST methods" data-fr="Les intercepteurs CDI (@Logged, @Audited…) s'appliquent aussi sur les méthodes Jakarta REST">CDI interceptors (<code>@Logged</code>, <code>@Audited</code>…) also apply to Jakarta REST methods</li>
+          <li data-en="Allows adding logging, security, or metrics without modifying resource code" data-fr="Permet d'ajouter du logging, de la sécurité ou du métriques sans modifier le code de ressource">Allows adding logging, security, or metrics without modifying resource code</li>
         </ul>
-        <h3>CDI Events déclenchés par des opérations REST</h3>
+        <h3 data-en="CDI Events triggered by REST operations" data-fr="CDI Events déclenchés par des opérations REST">CDI Events triggered by REST operations</h3>
         <ul>
-          <li>Injecter <code>Event&lt;ClientCreatedEvent&gt;</code> dans la ressource JAX-RS</li>
-          <li>Déclencher l'événement après une opération réussie (création, mise à jour, suppression)</li>
-          <li>Les observateurs CDI réagissent de façon découplée : notifications, audit, cache invalidation</li>
+          <li data-en="Inject Event&lt;ClientCreatedEvent&gt; in the Jakarta REST resource" data-fr="Injecter Event&lt;ClientCreatedEvent&gt; dans la ressource Jakarta REST">Inject <code>Event&lt;ClientCreatedEvent&gt;</code> in the Jakarta REST resource</li>
+          <li data-en="Fire the event after a successful operation (create, update, delete)" data-fr="Déclencher l'événement après une opération réussie (création, mise à jour, suppression)">Fire the event after a successful operation (create, update, delete)</li>
+          <li data-en="CDI observers react in a decoupled way: notifications, audit, cache invalidation" data-fr="Les observateurs CDI réagissent de façon découplée : notifications, audit, cache invalidation">CDI observers react in a decoupled way: notifications, audit, cache invalidation</li>
         </ul>
-        <h3>CDI Qualifiers avec Rest Clients</h3>
+        <h3 data-en="CDI Qualifiers with Rest Clients" data-fr="CDI Qualifiers avec Rest Clients">CDI Qualifiers with Rest Clients</h3>
         <ul>
-          <li>Plusieurs implémentations de la même interface cliente peuvent être distinguées par des qualificateurs CDI</li>
-          <li>Ex. : <code>@Production</code> et <code>@Staging</code> clients configurés sur des URLs différentes</li>
-          <li>Combinaison de <code>@RegisterRestClient</code> + qualificateur CDI sur l'interface</li>
+          <li data-en="Multiple implementations of the same client interface can be distinguished by CDI qualifiers" data-fr="Plusieurs implémentations de la même interface cliente peuvent être distinguées par des qualificateurs CDI">Multiple implementations of the same client interface can be distinguished by CDI qualifiers</li>
+          <li data-en="E.g. @Production and @Staging clients configured on different URLs" data-fr="Ex. : @Production et @Staging clients configurés sur des URLs différentes">E.g.: <code>@Production</code> and <code>@Staging</code> clients configured on different URLs</li>
+          <li data-en="Combination of @RegisterRestClient + CDI qualifier on the interface" data-fr="Combinaison de @RegisterRestClient + qualificateur CDI sur l'interface">Combination of <code>@RegisterRestClient</code> + CDI qualifier on the interface</li>
         </ul>
       </div>
     </details>
 
     <details>
-      <summary>📖 OpenAPI et Documentation</summary>
+      <summary data-en="📖 OpenAPI and Documentation" data-fr="📖 OpenAPI et Documentation">📖 OpenAPI and Documentation</summary>
       <div class="slide-content">
-        <p><strong>MicroProfile OpenAPI</strong> génère automatiquement une documentation <code>/openapi</code> (format YAML/JSON) à partir des annotations Java.</p>
-        <h3>@OpenAPIDefinition — Métadonnées globales</h3>
+        <p data-en="MicroProfile OpenAPI automatically generates /openapi documentation (YAML/JSON format) from Java annotations." data-fr="MicroProfile OpenAPI génère automatiquement une documentation /openapi (format YAML/JSON) à partir des annotations Java."><strong>MicroProfile OpenAPI</strong> automatically generates <code>/openapi</code> documentation (YAML/JSON format) from Java annotations.</p>
+        <h3 data-en="@OpenAPIDefinition — Global metadata" data-fr="@OpenAPIDefinition — Métadonnées globales">@OpenAPIDefinition — Global metadata</h3>
         <ul>
-          <li>Placée sur la classe <code>Application</code> ou une classe de configuration</li>
-          <li>Définit <code>info</code> (titre, version, description), <code>servers</code>, <code>tags</code>, <code>security</code></li>
+          <li data-en="Placed on the Application class or a configuration class" data-fr="Placée sur la classe Application ou une classe de configuration">Placed on the <code>Application</code> class or a configuration class</li>
+          <li data-en="Defines info (title, version, description), servers, tags, security" data-fr="Définit info (titre, version, description), servers, tags, security">Defines <code>info</code> (title, version, description), <code>servers</code>, <code>tags</code>, <code>security</code></li>
         </ul>
-        <h3>@Operation — Documentation d'un endpoint</h3>
+        <h3 data-en="@Operation — Endpoint documentation" data-fr="@Operation — Documentation d'un endpoint">@Operation — Endpoint documentation</h3>
         <ul>
-          <li><code>summary</code> — résumé court de l'opération</li>
-          <li><code>description</code> — description longue détaillée</li>
-          <li><code>operationId</code> — identifiant unique utilisé par les générateurs de clients</li>
-          <li><code>tags</code> — regroupement logique dans l'UI Swagger</li>
+          <li data-en="summary — short summary of the operation" data-fr="summary — résumé court de l'opération"><code>summary</code> — short summary of the operation</li>
+          <li data-en="description — detailed long description" data-fr="description — description longue détaillée"><code>description</code> — detailed long description</li>
+          <li data-en="operationId — unique identifier used by client generators" data-fr="operationId — identifiant unique utilisé par les générateurs de clients"><code>operationId</code> — unique identifier used by client generators</li>
+          <li data-en="tags — logical grouping in the Swagger UI" data-fr="tags — regroupement logique dans l'UI Swagger"><code>tags</code> — logical grouping in the Swagger UI</li>
         </ul>
-        <h3>@APIResponse — Documentation des réponses</h3>
+        <h3 data-en="@APIResponse — Response documentation" data-fr="@APIResponse — Documentation des réponses">@APIResponse — Response documentation</h3>
         <ul>
-          <li><code>responseCode</code> — code HTTP de la réponse documentée</li>
-          <li><code>description</code> — explication du cas de réponse</li>
-          <li><code>content</code> — schéma du corps de réponse avec <code>@Content</code> et <code>@Schema</code></li>
+          <li data-en="responseCode — HTTP code of the documented response" data-fr="responseCode — code HTTP de la réponse documentée"><code>responseCode</code> — HTTP code of the documented response</li>
+          <li data-en="description — explanation of the response case" data-fr="description — explication du cas de réponse"><code>description</code> — explanation of the response case</li>
+          <li data-en="content — schema of the response body with @Content and @Schema" data-fr="content — schéma du corps de réponse avec @Content et @Schema"><code>content</code> — schema of the response body with <code>@Content</code> and <code>@Schema</code></li>
         </ul>
-        <h3>@Schema — Structure des DTOs</h3>
+        <h3 data-en="@Schema — DTO structure" data-fr="@Schema — Structure des DTOs">@Schema — DTO structure</h3>
         <ul>
-          <li>Placé sur les classes DTO et leurs champs</li>
-          <li><code>description</code>, <code>example</code>, <code>required</code>, <code>minimum</code>, <code>maximum</code></li>
-          <li>Enrichit la documentation générée avec des exemples concrets</li>
+          <li data-en="Placed on DTO classes and their fields" data-fr="Placé sur les classes DTO et leurs champs">Placed on DTO classes and their fields</li>
+          <li data-en="description, example, required, minimum, maximum" data-fr="description, example, required, minimum, maximum"><code>description</code>, <code>example</code>, <code>required</code>, <code>minimum</code>, <code>maximum</code></li>
+          <li data-en="Enriches the generated documentation with concrete examples" data-fr="Enrichit la documentation générée avec des exemples concrets">Enriches the generated documentation with concrete examples</li>
         </ul>
-        <h3>@Parameter — Documentation des paramètres</h3>
+        <h3 data-en="@Parameter — Parameter documentation" data-fr="@Parameter — Documentation des paramètres">@Parameter — Parameter documentation</h3>
         <ul>
-          <li>Documente les <code>@PathParam</code>, <code>@QueryParam</code>, <code>@HeaderParam</code></li>
-          <li><code>in</code> (path/query/header), <code>required</code>, <code>description</code>, <code>schema</code></li>
+          <li data-en="Documents @PathParam, @QueryParam, @HeaderParam" data-fr="Documente les @PathParam, @QueryParam, @HeaderParam">Documents <code>@PathParam</code>, <code>@QueryParam</code>, <code>@HeaderParam</code></li>
+          <li data-en="in (path/query/header), required, description, schema" data-fr="in (path/query/header), required, description, schema"><code>in</code> (path/query/header), <code>required</code>, <code>description</code>, <code>schema</code></li>
         </ul>
-        <h3>Endpoint /openapi</h3>
+        <h3 data-en="/openapi endpoint" data-fr="Endpoint /openapi">/openapi endpoint</h3>
         <ul>
-          <li>Disponible automatiquement sur <code>GET /openapi</code> (YAML) ou <code>GET /openapi?format=JSON</code></li>
-          <li>Interface Swagger UI souvent accessible sur <code>/swagger-ui</code> selon le runtime</li>
+          <li data-en="Automatically available at GET /openapi (YAML) or GET /openapi?format=JSON" data-fr="Disponible automatiquement sur GET /openapi (YAML) ou GET /openapi?format=JSON">Automatically available at <code>GET /openapi</code> (YAML) or <code>GET /openapi?format=JSON</code></li>
+          <li data-en="Swagger UI often accessible at /swagger-ui depending on the runtime" data-fr="Interface Swagger UI souvent accessible sur /swagger-ui selon le runtime">Swagger UI often accessible at <code>/swagger-ui</code> depending on the runtime</li>
         </ul>
       </div>
     </details>
 
     <details>
-      <summary>🔢 Codes HTTP et bonnes pratiques</summary>
+      <summary data-en="🔢 HTTP Codes and Best Practices" data-fr="🔢 Codes HTTP et bonnes pratiques">🔢 HTTP Codes and Best Practices</summary>
       <div class="slide-content">
-        <p>Le choix du code de statut HTTP est fondamental pour une API REST sémantiquement correcte et prévisible.</p>
-        <h3>Codes de succès</h3>
+        <p data-en="The choice of HTTP status code is fundamental for a semantically correct and predictable REST API." data-fr="Le choix du code de statut HTTP est fondamental pour une API REST sémantiquement correcte et prévisible.">The choice of HTTP status code is fundamental for a semantically correct and predictable REST API.</p>
+        <h3 data-en="Success codes" data-fr="Codes de succès">Success codes</h3>
         <ul>
-          <li><strong>200 OK</strong> — succès générique pour GET, PUT, PATCH avec corps de réponse</li>
-          <li><strong>201 Created</strong> — ressource créée avec succès (POST) — inclure l'en-tête <code>Location</code> avec l'URI de la ressource créée</li>
-          <li><strong>204 No Content</strong> — succès sans corps de réponse (DELETE, PUT sans retour)</li>
+          <li data-en="200 OK — generic success for GET, PUT, PATCH with response body" data-fr="200 OK — succès générique pour GET, PUT, PATCH avec corps de réponse"><strong>200 OK</strong> — generic success for GET, PUT, PATCH with response body</li>
+          <li data-en="201 Created — resource created successfully (POST) — include the Location header with the URI of the created resource" data-fr="201 Created — ressource créée avec succès (POST) — inclure l'en-tête Location avec l'URI de la ressource créée"><strong>201 Created</strong> — resource created successfully (POST) — include the <code>Location</code> header with the URI of the created resource</li>
+          <li data-en="204 No Content — success without response body (DELETE, PUT without return)" data-fr="204 No Content — succès sans corps de réponse (DELETE, PUT sans retour)"><strong>204 No Content</strong> — success without response body (DELETE, PUT without return)</li>
         </ul>
-        <h3>Codes d'erreur client (4xx)</h3>
+        <h3 data-en="Client error codes (4xx)" data-fr="Codes d'erreur client (4xx)">Client error codes (4xx)</h3>
         <ul>
-          <li><strong>400 Bad Request</strong> — requête malformée, validation échouée, données invalides</li>
-          <li><strong>401 Unauthorized</strong> — authentification requise ou token invalide/expiré</li>
-          <li><strong>403 Forbidden</strong> — authentifié mais sans les droits nécessaires</li>
-          <li><strong>404 Not Found</strong> — ressource demandée inexistante</li>
-          <li><strong>409 Conflict</strong> — conflit d'état : doublon, version obsolète (optimistic lock), état incompatible</li>
+          <li data-en="400 Bad Request — malformed request, failed validation, invalid data" data-fr="400 Bad Request — requête malformée, validation échouée, données invalides"><strong>400 Bad Request</strong> — malformed request, failed validation, invalid data</li>
+          <li data-en="401 Unauthorized — authentication required or token invalid/expired" data-fr="401 Unauthorized — authentification requise ou token invalide/expiré"><strong>401 Unauthorized</strong> — authentication required or token invalid/expired</li>
+          <li data-en="403 Forbidden — authenticated but without the necessary permissions" data-fr="403 Forbidden — authentifié mais sans les droits nécessaires"><strong>403 Forbidden</strong> — authenticated but without the necessary permissions</li>
+          <li data-en="404 Not Found — requested resource does not exist" data-fr="404 Not Found — ressource demandée inexistante"><strong>404 Not Found</strong> — requested resource does not exist</li>
+          <li data-en="409 Conflict — state conflict: duplicate, stale version (optimistic lock), incompatible state" data-fr="409 Conflict — conflit d'état : doublon, version obsolète (optimistic lock), état incompatible"><strong>409 Conflict</strong> — state conflict: duplicate, stale version (optimistic lock), incompatible state</li>
         </ul>
-        <h3>Codes d'erreur serveur (5xx)</h3>
+        <h3 data-en="Server error codes (5xx)" data-fr="Codes d'erreur serveur (5xx)">Server error codes (5xx)</h3>
         <ul>
-          <li><strong>500 Internal Server Error</strong> — erreur interne non gérée — ne jamais exposer les stack traces</li>
+          <li data-en="500 Internal Server Error — unhandled internal error — never expose stack traces" data-fr="500 Internal Server Error — erreur interne non gérée — ne jamais exposer les stack traces"><strong>500 Internal Server Error</strong> — unhandled internal error — never expose stack traces</li>
         </ul>
-        <h3>Bonnes pratiques REST</h3>
+        <h3 data-en="REST best practices" data-fr="Bonnes pratiques REST">REST best practices</h3>
         <ul>
-          <li>✅ Utiliser des noms de ressources au pluriel : <code>/clients</code> et non <code>/client</code></li>
-          <li>✅ Toujours retourner l'en-tête <code>Location</code> après un POST 201</li>
-          <li>✅ Inclure un corps d'erreur JSON structuré pour les 4xx et 5xx</li>
-          <li>✅ Versionner les APIs : <code>/api/v1/clients</code> ou via Accept Header</li>
-          <li>✅ Ne jamais retourner 200 avec un corps d'erreur — antipattern courant</li>
+          <li data-en="✅ Use plural resource names: /clients not /client" data-fr="✅ Utiliser des noms de ressources au pluriel : /clients et non /client">✅ Use plural resource names: <code>/clients</code> not <code>/client</code></li>
+          <li data-en="✅ Always return the Location header after a 201 POST" data-fr="✅ Toujours retourner l'en-tête Location après un POST 201">✅ Always return the <code>Location</code> header after a 201 POST</li>
+          <li data-en="✅ Include a structured JSON error body for 4xx and 5xx" data-fr="✅ Inclure un corps d'erreur JSON structuré pour les 4xx et 5xx">✅ Include a structured JSON error body for 4xx and 5xx</li>
+          <li data-en="✅ Version APIs: /api/v1/clients or via Accept Header" data-fr="✅ Versionner les APIs : /api/v1/clients ou via Accept Header">✅ Version APIs: <code>/api/v1/clients</code> or via Accept Header</li>
+          <li data-en="✅ Never return 200 with an error body — common antipattern" data-fr="✅ Ne jamais retourner 200 avec un corps d'erreur — antipattern courant">✅ Never return 200 with an error body — common antipattern</li>
         </ul>
       </div>
     </details>
@@ -325,5 +327,6 @@
   </main>
 </div>
 <footer class="cds--footer">Made with IBM Bob &nbsp;·&nbsp; © 2026 Olivier Planson &nbsp;·&nbsp; ESIPE — Jakarta EE &amp; Microservices</footer>
+<script src="../assets/language-toggle.js"></script>
 </body>
 </html>

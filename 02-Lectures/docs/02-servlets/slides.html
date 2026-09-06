@@ -1,161 +1,163 @@
 <!-- © Copyright 2026 Olivier Planson. All rights reserved. Reproduction prohibited. Made with IBM Bob. -->
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="en">
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-  <title>Cours 02 — Contenu du cours</title>
+  <title>Cours 02 — Lecture Content</title>
   <link rel="stylesheet" href="../assets/carbon.css"/>
 </head>
 <body>
 <header class="cds--header">
-  <a class="cds--header__name" href="index.html">Servlets &amp; JSP<span>Cours Jakarta EE</span></a>
-  <a class="cds--header__back" href="../index.html">← Tous les Cours</a>
+  <button class="lang-toggle-btn" id="lang-toggle">FR</button>
+  <a class="cds--header__name" href="index.html" data-en="Servlets &amp; JSP<span>Jakarta EE Course</span>" data-fr="Servlets &amp; JSP<span>Cours Jakarta EE</span>">Servlets &amp; JSP<span>Jakarta EE Course</span></a>
+  <a class="cds--header__back" href="../index.html" data-en="← All Courses" data-fr="← Tous les Cours">← All Courses</a>
 </header>
 <div class="cds--shell">
   <nav class="cds--side-nav">
-    <p class="cds--side-nav__section-title">Cours 02</p>
-    <a class="cds--side-nav__link" href="index.html">⊙ Vue d'ensemble</a>
-    <a class="cds--side-nav__link active" href="slides.html">☰ Contenu du cours</a>
-    <a class="cds--side-nav__link" href="concepts.html">◈ Concepts clés</a>
-    <a class="cds--side-nav__link" href="code.html">⟨/⟩ Exemples de code</a>
+    <p class="cds--side-nav__section-title" data-en="Course 02" data-fr="Cours 02">Course 02</p>
+    <a class="cds--side-nav__link" href="index.html" data-en="⊙ Overview" data-fr="⊙ Vue d'ensemble">⊙ Overview</a>
+    <a class="cds--side-nav__link active" href="slides.html" data-en="☰ Lecture Content" data-fr="☰ Contenu du cours">☰ Lecture Content</a>
+    <a class="cds--side-nav__link" href="concepts.html" data-en="◈ Key Concepts" data-fr="◈ Concepts clés">◈ Key Concepts</a>
+    <a class="cds--side-nav__link" href="code.html" data-en="⟨/⟩ Code Examples" data-fr="⟨/⟩ Exemples de code">⟨/⟩ Code Examples</a>
+    <a class="cds--side-nav__lang-toggle">FR</a>
   </nav>
   <main class="cds--content">
-    <div class="breadcrumb"><a href="../index.html">Cours</a> › <a href="index.html">Cours 02</a> › Contenu</div>
-    <h1>Contenu du cours</h1>
-    <p class="page-lead">Toutes les sections — cliquez sur un titre pour développer.</p>
+    <div class="breadcrumb"><a href="../index.html" data-en="Courses" data-fr="Cours">Courses</a> › <a href="index.html" data-en="Course 02" data-fr="Cours 02">Course 02</a> › <span data-en="Content" data-fr="Contenu">Content</span></div>
+    <h1 data-en="Lecture Content" data-fr="Contenu du cours">Lecture Content</h1>
+    <p class="page-lead" data-en="All sections — click a title to expand." data-fr="Toutes les sections — cliquez sur un titre pour développer.">All sections — click a title to expand.</p>
 
     <details open>
-      <summary>📋 Objectifs d'apprentissage</summary>
+      <summary data-en="📋 Learning Objectives" data-fr="📋 Objectifs d'apprentissage">📋 Learning Objectives</summary>
       <div class="slide-content">
         <ul>
-          <li>Comprendre le cycle de vie complet d'un servlet</li>
-          <li>Créer des pages web dynamiques avec JSP et JSTL</li>
-          <li>Implémenter le pattern MVC dans les applications web</li>
-          <li>Utiliser MicroProfile Config dans la couche web</li>
-          <li>Ajouter des health checks pour les composants web</li>
-          <li>Construire une interface web bancaire complète</li>
+          <li data-en="Understand the complete servlet lifecycle" data-fr="Comprendre le cycle de vie complet d'un servlet">Understand the complete servlet lifecycle</li>
+          <li data-en="Create dynamic web pages with JSP and JSTL" data-fr="Créer des pages web dynamiques avec JSP et JSTL">Create dynamic web pages with JSP and JSTL</li>
+          <li data-en="Implement the MVC pattern in web applications" data-fr="Implémenter le pattern MVC dans les applications web">Implement the MVC pattern in web applications</li>
+          <li data-en="Use MicroProfile Config in the web layer" data-fr="Utiliser MicroProfile Config dans la couche web">Use MicroProfile Config in the web layer</li>
+          <li data-en="Add health checks for web components" data-fr="Ajouter des health checks pour les composants web">Add health checks for web components</li>
+          <li data-en="Build a complete banking web interface" data-fr="Construire une interface web bancaire complète">Build a complete banking web interface</li>
         </ul>
       </div>
     </details>
 
     <details>
-      <summary>🔄 Cycle de vie d'un Servlet</summary>
+      <summary data-en="🔄 Servlet Lifecycle" data-fr="🔄 Cycle de vie d'un Servlet">🔄 Servlet Lifecycle</summary>
       <div class="slide-content">
-        <p>Un <strong>servlet</strong> est une classe Java qui gère les requêtes HTTP et génère des réponses dynamiques.</p>
+        <p data-en="A <strong>servlet</strong> is a Java class that handles HTTP requests and generates dynamic responses." data-fr="Un <strong>servlet</strong> est une classe Java qui gère les requêtes HTTP et génère des réponses dynamiques.">A <strong>servlet</strong> is a Java class that handles HTTP requests and generates dynamic responses.</p>
         <img src="../../images/02-servlets-jsp-microprofile-diagram-1.png" alt="Servlet Lifecycle"/>
-        <h3>Phases du cycle de vie :</h3>
+        <h3 data-en="Lifecycle phases:" data-fr="Phases du cycle de vie :">Lifecycle phases:</h3>
         <ul>
-          <li><strong>Loading &amp; Instantiation</strong> — chargement de la classe par le conteneur</li>
-          <li><strong>init()</strong> — initialisation des ressources (appelé une seule fois)</li>
-          <li><strong>service()</strong> — traitement de chaque requête HTTP</li>
-          <li><strong>destroy()</strong> — libération des ressources (appelé une seule fois)</li>
+          <li data-en="<strong>Loading &amp; Instantiation</strong> — class loaded by the container" data-fr="<strong>Loading &amp; Instantiation</strong> — chargement de la classe par le conteneur"><strong>Loading &amp; Instantiation</strong> — class loaded by the container</li>
+          <li data-en="<strong>init()</strong> — resource initialisation (called once)" data-fr="<strong>init()</strong> — initialisation des ressources (appelé une seule fois)"><strong>init()</strong> — resource initialisation (called once)</li>
+          <li data-en="<strong>service()</strong> — handles each HTTP request" data-fr="<strong>service()</strong> — traitement de chaque requête HTTP"><strong>service()</strong> — handles each HTTP request</li>
+          <li data-en="<strong>destroy()</strong> — resource release (called once)" data-fr="<strong>destroy()</strong> — libération des ressources (appelé une seule fois)"><strong>destroy()</strong> — resource release (called once)</li>
         </ul>
       </div>
     </details>
 
     <details>
-      <summary>🔄 Méthodes HTTP — doGet, doPost</summary>
+      <summary data-en="🔄 HTTP Methods — doGet, doPost" data-fr="🔄 Méthodes HTTP — doGet, doPost">🔄 HTTP Methods — doGet, doPost</summary>
       <div class="slide-content">
         <ul>
-          <li><strong>doGet()</strong> — récupération de données, recherche, liste de ressources</li>
-          <li><strong>doPost()</strong> — soumission de formulaire, création de ressources</li>
-          <li><strong>doPut()</strong> — mise à jour complète d'une ressource</li>
-          <li><strong>doDelete()</strong> — suppression d'une ressource</li>
+          <li data-en="<strong>doGet()</strong> — data retrieval, search, resource listing" data-fr="<strong>doGet()</strong> — récupération de données, recherche, liste de ressources"><strong>doGet()</strong> — data retrieval, search, resource listing</li>
+          <li data-en="<strong>doPost()</strong> — form submission, resource creation" data-fr="<strong>doPost()</strong> — soumission de formulaire, création de ressources"><strong>doPost()</strong> — form submission, resource creation</li>
+          <li data-en="<strong>doPut()</strong> — full resource update" data-fr="<strong>doPut()</strong> — mise à jour complète d'une ressource"><strong>doPut()</strong> — full resource update</li>
+          <li data-en="<strong>doDelete()</strong> — resource deletion" data-fr="<strong>doDelete()</strong> — suppression d'une ressource"><strong>doDelete()</strong> — resource deletion</li>
         </ul>
-        <p><strong>Pattern PRG (Post-Redirect-Get) :</strong> après un POST réussi, rediriger vers un GET pour éviter les doubles soumissions.</p>
+        <p data-en="<strong>PRG pattern (Post-Redirect-Get):</strong> after a successful POST, redirect to a GET to avoid double submissions." data-fr="<strong>Pattern PRG (Post-Redirect-Get) :</strong> après un POST réussi, rediriger vers un GET pour éviter les doubles soumissions."><strong>PRG pattern (Post-Redirect-Get):</strong> after a successful POST, redirect to a GET to avoid double submissions.</p>
       </div>
     </details>
 
     <details>
-      <summary>🎨 JavaServer Pages (JSP)</summary>
+      <summary data-en="🎨 JavaServer Pages (JSP)" data-fr="🎨 JavaServer Pages (JSP)">🎨 JavaServer Pages (JSP)</summary>
       <div class="slide-content">
-        <p><strong>JSP</strong> est une technologie pour créer des pages web dynamiques avec du HTML embarqué Java.</p>
-        <h3>Éléments de syntaxe JSP :</h3>
+        <p data-en="<strong>JSP</strong> is a technology for creating dynamic web pages with embedded Java HTML." data-fr="<strong>JSP</strong> est une technologie pour créer des pages web dynamiques avec du HTML embarqué Java."><strong>JSP</strong> is a technology for creating dynamic web pages with embedded Java HTML.</p>
+        <h3 data-en="JSP syntax elements:" data-fr="Éléments de syntaxe JSP :">JSP syntax elements:</h3>
         <ul>
-          <li><strong>Directives</strong> <code>&lt;%@ page ... %&gt;</code> — configuration de la page</li>
-          <li><strong>Scriptlets</strong> <code>&lt;% ... %&gt;</code> — blocs Java (à éviter)</li>
-          <li><strong>Expressions</strong> <code>&lt;%= ... %&gt;</code> — affichage de valeurs</li>
-          <li><strong>EL (Expression Language)</strong> <code>${...}</code> — accès simplifié aux données</li>
-          <li><strong>JSTL</strong> — tags standards pour itération, conditions, formatage</li>
+          <li data-en="<strong>Directives</strong> <code>&lt;%@ page ... %&gt;</code> — page configuration" data-fr="<strong>Directives</strong> <code>&lt;%@ page ... %&gt;</code> — configuration de la page"><strong>Directives</strong> <code>&lt;%@ page ... %&gt;</code> — page configuration</li>
+          <li data-en="<strong>Scriptlets</strong> <code>&lt;% ... %&gt;</code> — Java blocks (to avoid)" data-fr="<strong>Scriptlets</strong> <code>&lt;% ... %&gt;</code> — blocs Java (à éviter)"><strong>Scriptlets</strong> <code>&lt;% ... %&gt;</code> — Java blocks (to avoid)</li>
+          <li data-en="<strong>Expressions</strong> <code>&lt;%= ... %&gt;</code> — value display" data-fr="<strong>Expressions</strong> <code>&lt;%= ... %&gt;</code> — affichage de valeurs"><strong>Expressions</strong> <code>&lt;%= ... %&gt;</code> — value display</li>
+          <li data-en="<strong>EL (Expression Language)</strong> <code>${...}</code> — simplified data access" data-fr="<strong>EL (Expression Language)</strong> <code>${...}</code> — accès simplifié aux données"><strong>EL (Expression Language)</strong> <code>${...}</code> — simplified data access</li>
+          <li data-en="<strong>JSTL</strong> — standard tags for iteration, conditions, formatting" data-fr="<strong>JSTL</strong> — tags standards pour itération, conditions, formatage"><strong>JSTL</strong> — standard tags for iteration, conditions, formatting</li>
         </ul>
-        <p><strong>Bonne pratique :</strong> Éviter les scriptlets — utiliser JSTL et EL !</p>
+        <p data-en="<strong>Best practice:</strong> Avoid scriptlets — use JSTL and EL!" data-fr="<strong>Bonne pratique :</strong> Éviter les scriptlets — utiliser JSTL et EL !"><strong>Best practice:</strong> Avoid scriptlets — use JSTL and EL!</p>
       </div>
     </details>
 
     <details>
-      <summary>🏗️ Pattern MVC</summary>
+      <summary data-en="🏗️ MVC Pattern" data-fr="🏗️ Pattern MVC">🏗️ MVC Pattern</summary>
       <div class="slide-content">
         <img src="../../images/02-servlets-jsp-microprofile-diagram-2.png" alt="MVC Pattern"/>
-        <h3>Responsabilités :</h3>
+        <h3 data-en="Responsibilities:" data-fr="Responsabilités :">Responsibilities:</h3>
         <ul>
-          <li><strong>Model</strong> — logique métier, accès aux données (classes Java, entités JPA)</li>
-          <li><strong>View</strong> — couche présentation (JSP, HTML, CSS)</li>
-          <li><strong>Controller</strong> — gestion des requêtes, contrôle du flux (Servlets)</li>
+          <li data-en="<strong>Model</strong> — business logic, data access (Java classes, JPA entities)" data-fr="<strong>Model</strong> — logique métier, accès aux données (classes Java, entités JPA)"><strong>Model</strong> — business logic, data access (Java classes, JPA entities)</li>
+          <li data-en="<strong>View</strong> — presentation layer (JSP, HTML, CSS)" data-fr="<strong>View</strong> — couche présentation (JSP, HTML, CSS)"><strong>View</strong> — presentation layer (JSP, HTML, CSS)</li>
+          <li data-en="<strong>Controller</strong> — request handling, flow control (Servlets)" data-fr="<strong>Controller</strong> — gestion des requêtes, contrôle du flux (Servlets)"><strong>Controller</strong> — request handling, flow control (Servlets)</li>
         </ul>
       </div>
     </details>
 
     <details>
-      <summary>⚙️ MicroProfile Config dans la couche Web</summary>
+      <summary data-en="⚙️ MicroProfile Config in the Web Layer" data-fr="⚙️ MicroProfile Config dans la couche Web">⚙️ MicroProfile Config in the Web Layer</summary>
       <div class="slide-content">
         <img src="../../images/02-servlets-jsp-microprofile-diagram-3.png" alt="MP Config"/>
         <ul>
-          <li>Externaliser la configuration (URLs, limites, feature flags)</li>
-          <li>Paramètres spécifiques à l'environnement (dev, test, prod)</li>
-          <li>Sources de configuration (priorité décroissante) : system properties → env vars → microprofile-config.properties</li>
+          <li data-en="Externalise configuration (URLs, limits, feature flags)" data-fr="Externaliser la configuration (URLs, limites, feature flags)">Externalise configuration (URLs, limits, feature flags)</li>
+          <li data-en="Environment-specific parameters (dev, test, prod)" data-fr="Paramètres spécifiques à l'environnement (dev, test, prod)">Environment-specific parameters (dev, test, prod)</li>
+          <li data-en="Configuration sources (decreasing priority): system properties → env vars → microprofile-config.properties" data-fr="Sources de configuration (priorité décroissante) : system properties → env vars → microprofile-config.properties">Configuration sources (decreasing priority): system properties → env vars → microprofile-config.properties</li>
         </ul>
       </div>
     </details>
 
     <details>
-      <summary>💊 Health Checks — Liveness et Readiness</summary>
+      <summary data-en="💊 Health Checks — Liveness and Readiness" data-fr="💊 Health Checks — Liveness et Readiness">💊 Health Checks — Liveness and Readiness</summary>
       <div class="slide-content">
         <ul>
-          <li><strong>Liveness</strong> — l'application est-elle en cours d'exécution ?</li>
-          <li><strong>Readiness</strong> — l'application est-elle prête à traiter des requêtes ?</li>
-          <li><strong>Startup</strong> — l'application a-t-elle démarré avec succès ?</li>
+          <li data-en="<strong>Liveness</strong> — is the application running?" data-fr="<strong>Liveness</strong> — l'application est-elle en cours d'exécution ?"><strong>Liveness</strong> — is the application running?</li>
+          <li data-en="<strong>Readiness</strong> — is the application ready to handle requests?" data-fr="<strong>Readiness</strong> — l'application est-elle prête à traiter des requêtes ?"><strong>Readiness</strong> — is the application ready to handle requests?</li>
+          <li data-en="<strong>Startup</strong> — has the application started successfully?" data-fr="<strong>Startup</strong> — l'application a-t-elle démarré avec succès ?"><strong>Startup</strong> — has the application started successfully?</li>
         </ul>
-        <p>Endpoints : <code>/health</code> · <code>/health/live</code> · <code>/health/ready</code> · <code>/health/started</code></p>
+        <p data-en="Endpoints: <code>/health</code> · <code>/health/live</code> · <code>/health/ready</code> · <code>/health/started</code>" data-fr="Endpoints : <code>/health</code> · <code>/health/live</code> · <code>/health/ready</code> · <code>/health/started</code>">Endpoints: <code>/health</code> · <code>/health/live</code> · <code>/health/ready</code> · <code>/health/started</code></p>
       </div>
     </details>
 
     <details>
-      <summary>🔐 Session HTTP</summary>
+      <summary data-en="🔐 HTTP Session" data-fr="🔐 Session HTTP">🔐 HTTP Session</summary>
       <div class="slide-content">
         <ul>
-          <li>Maintient l'état utilisateur dans le protocole HTTP sans état</li>
-          <li>Identification par ID de session (cookie JSESSIONID)</li>
-          <li>Prévention session fixation : invalider l'ancienne session avant la nouvelle</li>
-          <li>Protection : HttpOnly + Secure flags sur les cookies, timeout configuré</li>
+          <li data-en="Maintains user state in the stateless HTTP protocol" data-fr="Maintient l'état utilisateur dans le protocole HTTP sans état">Maintains user state in the stateless HTTP protocol</li>
+          <li data-en="Identified by session ID (JSESSIONID cookie)" data-fr="Identification par ID de session (cookie JSESSIONID)">Identified by session ID (JSESSIONID cookie)</li>
+          <li data-en="Session fixation prevention: invalidate the old session before the new one" data-fr="Prévention session fixation : invalider l'ancienne session avant la nouvelle">Session fixation prevention: invalidate the old session before the new one</li>
+          <li data-en="Protection: HttpOnly + Secure flags on cookies, configured timeout" data-fr="Protection : HttpOnly + Secure flags sur les cookies, timeout configuré">Protection: HttpOnly + Secure flags on cookies, configured timeout</li>
         </ul>
       </div>
     </details>
 
     <details>
-      <summary>🔍 Filtres Servlet</summary>
+      <summary data-en="🔍 Servlet Filters" data-fr="🔍 Filtres Servlet">🔍 Servlet Filters</summary>
       <div class="slide-content">
         <img src="../../images/02-servlets-jsp-microprofile-diagram-5.png" alt="Filter Chain"/>
-        <p>Les <strong>filtres</strong> interceptent les requêtes/réponses pour les préoccupations transverses :</p>
+        <p data-en="<strong>Filters</strong> intercept requests/responses for cross-cutting concerns:" data-fr="Les <strong>filtres</strong> interceptent les requêtes/réponses pour les préoccupations transverses :"><strong>Filters</strong> intercept requests/responses for cross-cutting concerns:</p>
         <ul>
-          <li>Authentification et autorisation</li>
-          <li>Journalisation et audit</li>
-          <li>Modification requête/réponse</li>
-          <li>Compression et chiffrement</li>
-          <li>Gestion CORS</li>
+          <li data-en="Authentication and authorisation" data-fr="Authentification et autorisation">Authentication and authorisation</li>
+          <li data-en="Logging and audit" data-fr="Journalisation et audit">Logging and audit</li>
+          <li data-en="Request/response modification" data-fr="Modification requête/réponse">Request/response modification</li>
+          <li data-en="Compression and encryption" data-fr="Compression et chiffrement">Compression and encryption</li>
+          <li data-en="CORS management" data-fr="Gestion CORS">CORS management</li>
         </ul>
       </div>
     </details>
 
     <details>
-      <summary>👂 Listeners Servlet</summary>
+      <summary data-en="👂 Servlet Listeners" data-fr="👂 Listeners Servlet">👂 Servlet Listeners</summary>
       <div class="slide-content">
         <img src="../../images/02-servlets-jsp-microprofile-diagram-6.png" alt="Listeners"/>
-        <p>Les <strong>listeners</strong> réagissent aux événements du cycle de vie :</p>
+        <p data-en="<strong>Listeners</strong> react to lifecycle events:" data-fr="Les <strong>listeners</strong> réagissent aux événements du cycle de vie :"><strong>Listeners</strong> react to lifecycle events:</p>
         <ul>
-          <li><strong>ServletContextListener</strong> — démarrage/arrêt de l'application</li>
-          <li><strong>HttpSessionListener</strong> — création/destruction des sessions</li>
-          <li><strong>ServletRequestListener</strong> — début/fin de chaque requête</li>
+          <li data-en="<strong>ServletContextListener</strong> — application start/stop" data-fr="<strong>ServletContextListener</strong> — démarrage/arrêt de l'application"><strong>ServletContextListener</strong> — application start/stop</li>
+          <li data-en="<strong>HttpSessionListener</strong> — session creation/destruction" data-fr="<strong>HttpSessionListener</strong> — création/destruction des sessions"><strong>HttpSessionListener</strong> — session creation/destruction</li>
+          <li data-en="<strong>ServletRequestListener</strong> — start/end of each request" data-fr="<strong>ServletRequestListener</strong> — début/fin de chaque requête"><strong>ServletRequestListener</strong> — start/end of each request</li>
         </ul>
       </div>
     </details>
@@ -163,5 +165,6 @@
   </main>
 </div>
 <footer class="cds--footer">Made with IBM Bob &nbsp;·&nbsp; © 2026 Olivier Planson &nbsp;·&nbsp; ESIPE — Jakarta EE &amp; Microservices</footer>
+<script src="../assets/language-toggle.js"></script>
 </body>
 </html>

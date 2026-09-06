@@ -1,6 +1,6 @@
 <!-- © Copyright 2026 Olivier Planson. All rights reserved. Reproduction prohibited. Made with IBM Bob. -->
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="en">
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
@@ -9,34 +9,33 @@
 </head>
 <body>
 <header class="cds--header">
-  <a class="cds--header__name" href="index.html">Microservices<span>Cours Jakarta EE</span></a>
-  <a class="cds--header__back" href="../index.html">← Tous les Cours</a>
+  <a class="cds--header__name" href="index.html">Microservices<span data-en="Jakarta EE Course" data-fr="Cours Jakarta EE">Jakarta EE Course</span></a>
+  <button class="lang-toggle-btn" id="lang-toggle">FR</button>
+  <a class="cds--header__back" href="../index.html" data-en="← All Courses" data-fr="← Tous les Cours">← All Courses</a>
 </header>
 <div class="cds--shell">
   <nav class="cds--side-nav">
-    <p class="cds--side-nav__section-title">Cours 08</p>
-    <a class="cds--side-nav__link" href="index.html">⊙ Vue d'ensemble</a>
-    <a class="cds--side-nav__link" href="slides.html">☰ Contenu du cours</a>
-    <a class="cds--side-nav__link" href="concepts.html">◈ Concepts clés</a>
-    <a class="cds--side-nav__link" href="code.html">⟨/⟩ Exemples de code</a>
-    <a class="cds--side-nav__link active" href="patterns.html">⧫ Patterns Microservices</a>
+    <p class="cds--side-nav__section-title" data-en="Course 08" data-fr="Cours 08">Course 08</p>
+    <a class="cds--side-nav__link" href="index.html" data-en="⊙ Overview" data-fr="⊙ Vue d'ensemble">⊙ Overview</a>
+    <a class="cds--side-nav__link" href="slides.html" data-en="☰ Course Content" data-fr="☰ Contenu du cours">☰ Course Content</a>
+    <a class="cds--side-nav__link" href="concepts.html" data-en="◈ Key Concepts" data-fr="◈ Concepts clés">◈ Key Concepts</a>
+    <a class="cds--side-nav__link" href="code.html" data-en="⟨/⟩ Code Examples" data-fr="⟨/⟩ Exemples de code">⟨/⟩ Code Examples</a>
+    <a class="cds--side-nav__link active" href="patterns.html" data-en="⧫ Microservices Patterns" data-fr="⧫ Patterns Microservices">⧫ Microservices Patterns</a>
+    <a class="cds--side-nav__lang-toggle">FR</a>
   </nav>
   <main class="cds--content">
-    <div class="breadcrumb"><a href="../index.html">Cours</a> › <a href="index.html">Cours 08</a> › Patterns</div>
-    <h1>Patterns Microservices</h1>
-    <p class="page-lead">Patterns architecturaux essentiels pour systèmes distribués.</p>
+    <div class="breadcrumb"><a href="../index.html" data-en="Courses" data-fr="Cours">Courses</a> › <a href="index.html" data-en="Course 08" data-fr="Cours 08">Course 08</a> › <span data-en="Patterns" data-fr="Patterns">Patterns</span></div>
+    <h1 data-en="Microservices Patterns" data-fr="Patterns Microservices">Microservices Patterns</h1>
+    <p class="page-lead" data-en="Essential architectural patterns for distributed systems." data-fr="Patterns architecturaux essentiels pour systèmes distribués.">Essential architectural patterns for distributed systems.</p>
 
     <!-- ═══════════════════════════════════════════════════════ -->
     <!-- PATTERN 1 — API GATEWAY                                 -->
     <!-- ═══════════════════════════════════════════════════════ -->
-    <h2>API Gateway</h2>
+    <h2 data-en="API Gateway" data-fr="API Gateway">API Gateway</h2>
     <p>
-      L'<strong>API Gateway</strong> est le point d'entrée unique (single entry point) pour tous les clients externes.
-      Elle masque la complexité interne de l'architecture microservices : les clients ne connaissent ni l'adresse,
-      ni l'existence des services individuels.
+      <span data-en="The API Gateway is the single entry point for all external clients. It hides the internal complexity of the microservices architecture: clients know neither the address nor the existence of individual services." data-fr="L'API Gateway est le point d'entrée unique (single entry point) pour tous les clients externes. Elle masque la complexité interne de l'architecture microservices : les clients ne connaissent ni l'adresse, ni l'existence des services individuels.">The <strong>API Gateway</strong> is the single entry point for all external clients. It hides the internal complexity of the microservices architecture: clients know neither the address nor the existence of individual services.</span>
     </p>
-    <p><strong>Cas d'usage :</strong> Toute architecture microservices exposée à des clients externes (web, mobile, tiers).
-      La Gateway est systématiquement présente en production.</p>
+    <p data-en="Use case: Any microservices architecture exposed to external clients (web, mobile, third-party). The Gateway is always present in production." data-fr="Cas d'usage : Toute architecture microservices exposée à des clients externes (web, mobile, tiers). La Gateway est systématiquement présente en production."><strong data-en="Use case:" data-fr="Cas d'usage :">Use case:</strong> <span data-en="Any microservices architecture exposed to external clients (web, mobile, third-party). The Gateway is always present in production." data-fr="Toute architecture microservices exposée à des clients externes (web, mobile, tiers). La Gateway est systématiquement présente en production.">Any microservices architecture exposed to external clients (web, mobile, third-party). The Gateway is always present in production.</span></p>
 
     <svg viewBox="0 0 640 240" xmlns="http://www.w3.org/2000/svg"
          style="width:100%;max-width:640px;display:block;margin:1.5rem 0;font-family:IBM Plex Mono,monospace;">
@@ -80,9 +79,9 @@
       </defs>
     </svg>
 
-    <p><strong>Responsabilités :</strong> routing, authentification &amp; autorisation JWT/OAuth2, rate limiting, SSL termination, logging centralisé, agrégation de réponses (BFF).</p>
-    <p><strong>Bénéfices :</strong> les clients n'ont qu'une seule URL à connaître ; les services internes peuvent évoluer librement sans impact sur les clients.</p>
-    <p><strong>Risques :</strong> single point of failure si non répliqué ; bottleneck potentiel sous forte charge si l'agrégation est lourde.</p>
+    <p data-en="Responsibilities: routing, JWT/OAuth2 authentication &amp; authorization, rate limiting, SSL termination, centralized logging, response aggregation (BFF)." data-fr="Responsabilités : routing, authentification &amp; autorisation JWT/OAuth2, rate limiting, SSL termination, logging centralisé, agrégation de réponses (BFF)."><strong data-en="Responsibilities:" data-fr="Responsabilités :">Responsibilities:</strong> <span data-en="routing, JWT/OAuth2 authentication &amp; authorization, rate limiting, SSL termination, centralized logging, response aggregation (BFF)." data-fr="routing, authentification &amp; autorisation JWT/OAuth2, rate limiting, SSL termination, logging centralisé, agrégation de réponses (BFF).">routing, JWT/OAuth2 authentication &amp; authorization, rate limiting, SSL termination, centralized logging, response aggregation (BFF).</span></p>
+    <p data-en="Benefits: clients only need to know one URL; internal services can evolve freely without impact on clients." data-fr="Bénéfices : les clients n'ont qu'une seule URL à connaître ; les services internes peuvent évoluer librement sans impact sur les clients."><strong data-en="Benefits:" data-fr="Bénéfices :">Benefits:</strong> <span data-en="clients only need to know one URL; internal services can evolve freely without impact on clients." data-fr="les clients n'ont qu'une seule URL à connaître ; les services internes peuvent évoluer librement sans impact sur les clients.">clients only need to know one URL; internal services can evolve freely without impact on clients.</span></p>
+    <p data-en="Risks: single point of failure if not replicated; potential bottleneck under heavy load if aggregation is heavy." data-fr="Risques : single point of failure si non répliqué ; bottleneck potentiel sous forte charge si l'agrégation est lourde."><strong data-en="Risks:" data-fr="Risques :">Risks:</strong> <span data-en="single point of failure if not replicated; potential bottleneck under heavy load if aggregation is heavy." data-fr="single point of failure si non répliqué ; bottleneck potentiel sous forte charge si l'agrégation est lourde.">single point of failure if not replicated; potential bottleneck under heavy load if aggregation is heavy.</span></p>
 
     <div class="code-block-wrap">
       <span class="code-lang">java</span>
@@ -103,13 +102,11 @@ public class GatewayResource {
     <!-- ═══════════════════════════════════════════════════════ -->
     <!-- PATTERN 2 — CIRCUIT BREAKER                             -->
     <!-- ═══════════════════════════════════════════════════════ -->
-    <h2>Circuit Breaker</h2>
+    <h2 data-en="Circuit Breaker" data-fr="Circuit Breaker">Circuit Breaker</h2>
     <p>
-      Le <strong>Circuit Breaker</strong> est un pattern de résilience inspiré des disjoncteurs électriques.
-      Lorsqu'un service distant tombe en panne ou répond trop lentement, le Circuit Breaker détecte la défaillance
-      et interrompt les appels pour éviter l'effet de cascade (cascading failure) qui pourrait paralyser tout le système.
+      <span data-en="The Circuit Breaker is a resilience pattern inspired by electrical circuit breakers. When a remote service goes down or responds too slowly, the Circuit Breaker detects the failure and interrupts calls to prevent the cascading failure (cascading failure) that could paralyse the whole system." data-fr="Le Circuit Breaker est un pattern de résilience inspiré des disjoncteurs électriques. Lorsqu'un service distant tombe en panne ou répond trop lentement, le Circuit Breaker détecte la défaillance et interrompt les appels pour éviter l'effet de cascade (cascading failure) qui pourrait paralyser tout le système.">The <strong>Circuit Breaker</strong> is a resilience pattern inspired by electrical circuit breakers. When a remote service goes down or responds too slowly, the Circuit Breaker detects the failure and interrupts calls to prevent the cascading failure that could paralyse the whole system.</span>
     </p>
-    <p><strong>Cas d'usage :</strong> Tout appel synchrone inter-services en production, particulièrement sur les chemins critiques.</p>
+    <p><strong data-en="Use case:" data-fr="Cas d'usage :">Use case:</strong> <span data-en="Any synchronous inter-service call in production, particularly on critical paths." data-fr="Tout appel synchrone inter-services en production, particulièrement sur les chemins critiques.">Any synchronous inter-service call in production, particularly on critical paths.</span></p>
 
     <svg viewBox="0 0 580 210" xmlns="http://www.w3.org/2000/svg"
          style="width:100%;max-width:580px;display:block;margin:1.5rem 0;font-family:IBM Plex Mono,monospace;">
@@ -157,15 +154,15 @@ public class GatewayResource {
 
     <div class="cds--data-table-container">
       <table class="cds--data-table">
-        <thead><tr><th>Annotation / Paramètre</th><th>Description</th><th>Valeur par défaut</th></tr></thead>
+        <thead><tr><th data-en="Annotation / Parameter" data-fr="Annotation / Paramètre">Annotation / Parameter</th><th data-en="Description" data-fr="Description">Description</th><th data-en="Default value" data-fr="Valeur par défaut">Default value</th></tr></thead>
         <tbody>
-          <tr><td><code>@CircuitBreaker</code></td><td>Active le circuit breaker sur la méthode</td><td>—</td></tr>
-          <tr><td><code>requestVolumeThreshold</code></td><td>Nombre minimum de requêtes avant évaluation du taux d'échec</td><td>20</td></tr>
-          <tr><td><code>failureRatio</code></td><td>Taux d'échec déclenchant l'ouverture du circuit (0.0 à 1.0)</td><td>0.5</td></tr>
-          <tr><td><code>delay</code></td><td>Durée (ms) pendant laquelle le circuit reste OPEN avant de passer en HALF-OPEN</td><td>5000</td></tr>
-          <tr><td><code>successThreshold</code></td><td>Nombre de succès consécutifs en HALF-OPEN avant retour à CLOSED</td><td>1</td></tr>
-          <tr><td><code>skipOn</code></td><td>Exceptions ne comptant pas comme des échecs pour le circuit breaker</td><td>—</td></tr>
-          <tr><td><code>failOn</code></td><td>Exceptions comptant comme des échecs (par défaut : toutes les Throwable)</td><td>Throwable.class</td></tr>
+          <tr><td><code>@CircuitBreaker</code></td><td data-en="Activates the circuit breaker on the method" data-fr="Active le circuit breaker sur la méthode">Activates the circuit breaker on the method</td><td>—</td></tr>
+          <tr><td><code>requestVolumeThreshold</code></td><td data-en="Minimum number of requests before evaluating the failure rate" data-fr="Nombre minimum de requêtes avant évaluation du taux d'échec">Minimum number of requests before evaluating the failure rate</td><td>20</td></tr>
+          <tr><td><code>failureRatio</code></td><td data-en="Failure rate triggering circuit opening (0.0 to 1.0)" data-fr="Taux d'échec déclenchant l'ouverture du circuit (0.0 à 1.0)">Failure rate triggering circuit opening (0.0 to 1.0)</td><td>0.5</td></tr>
+          <tr><td><code>delay</code></td><td data-en="Duration (ms) the circuit remains OPEN before switching to HALF-OPEN" data-fr="Durée (ms) pendant laquelle le circuit reste OPEN avant de passer en HALF-OPEN">Duration (ms) the circuit remains OPEN before switching to HALF-OPEN</td><td>5000</td></tr>
+          <tr><td><code>successThreshold</code></td><td data-en="Consecutive successes in HALF-OPEN before returning to CLOSED" data-fr="Nombre de succès consécutifs en HALF-OPEN avant retour à CLOSED">Consecutive successes in HALF-OPEN before returning to CLOSED</td><td>1</td></tr>
+          <tr><td><code>skipOn</code></td><td data-en="Exceptions not counted as failures for the circuit breaker" data-fr="Exceptions ne comptant pas comme des échecs pour le circuit breaker">Exceptions not counted as failures for the circuit breaker</td><td>—</td></tr>
+          <tr><td><code>failOn</code></td><td data-en="Exceptions counted as failures (default: all Throwable)" data-fr="Exceptions comptant comme des échecs (par défaut : toutes les Throwable)">Exceptions counted as failures (default: all Throwable)</td><td>Throwable.class</td></tr>
         </tbody>
       </table>
     </div>
@@ -187,14 +184,11 @@ public Account getAccount(Long id) {
     <!-- ═══════════════════════════════════════════════════════ -->
     <!-- PATTERN 3 — DATABASE PER SERVICE                        -->
     <!-- ═══════════════════════════════════════════════════════ -->
-    <h2>Database par Service</h2>
+    <h2 data-en="Database per Service" data-fr="Database par Service">Database per Service</h2>
     <p>
-      Le pattern <strong>Database per Service</strong> stipule que chaque microservice est seul propriétaire de sa base de données.
-      Aucun autre service ne peut accéder directement aux données d'un autre — uniquement via son API exposée.
-      Ce pattern est un prérequis de l'indépendance réelle des services.
+      <span data-en="The Database per Service pattern stipulates that each microservice is the sole owner of its database. No other service can directly access another's data — only via its exposed API. This pattern is a prerequisite for real service independence." data-fr="Le pattern Database per Service stipule que chaque microservice est seul propriétaire de sa base de données. Aucun autre service ne peut accéder directement aux données d'un autre — uniquement via son API exposée. Ce pattern est un prérequis de l'indépendance réelle des services.">The pattern <strong>Database per Service</strong> stipulates that each microservice is the sole owner of its database. No other service can directly access another's data — only via its exposed API. This pattern is a prerequisite for real service independence.</span>
     </p>
-    <p><strong>Cas d'usage :</strong> Systématiquement dans une architecture microservices correctement conçue. Sans ce pattern,
-      une base partagée recrée du couplage structurel entre les services.</p>
+    <p><strong data-en="Use case:" data-fr="Cas d'usage :">Use case:</strong> <span data-en="Systematically in a correctly designed microservices architecture. Without this pattern, a shared database recreates structural coupling between services." data-fr="Systématiquement dans une architecture microservices correctement conçue. Sans ce pattern, une base partagée recrée du couplage structurel entre les services.">Systematically in a correctly designed microservices architecture. Without this pattern, a shared database recreates structural coupling between services.</span></p>
 
     <svg viewBox="0 0 620 230" xmlns="http://www.w3.org/2000/svg"
          style="width:100%;max-width:620px;display:block;margin:1.5rem 0;font-family:IBM Plex Mono,monospace;">
@@ -258,31 +252,26 @@ public Account getAccount(Long id) {
 
     <div class="cds--data-table-container">
       <table class="cds--data-table">
-        <thead><tr><th>Avantages</th><th>Inconvénients</th></tr></thead>
+        <thead><tr><th data-en="Advantages" data-fr="Avantages">Advantages</th><th data-en="Drawbacks" data-fr="Inconvénients">Drawbacks</th></tr></thead>
         <tbody>
-          <tr><td>✅ Indépendance totale — chaque service choisit sa technologie de stockage</td><td>⚠️ Pas de JOIN SQL natif entre services — requêtes croisées via API</td></tr>
-          <tr><td>✅ Schéma de données évolutif sans coordination avec les autres équipes</td><td>⚠️ Eventual consistency — données potentiellement divergentes entre services</td></tr>
-          <tr><td>✅ Scalabilité indépendante de la couche données</td><td>⚠️ Duplication partielle des données dans les read models (CQRS)</td></tr>
-          <tr><td>✅ Isolation des pannes — panne d'une DB n'impacte qu'un service</td><td>⚠️ Saga nécessaire pour les transactions distribuées multi-services</td></tr>
+          <tr><td data-en="✅ Full independence — each service chooses its storage technology" data-fr="✅ Indépendance totale — chaque service choisit sa technologie de stockage">✅ Full independence — each service chooses its storage technology</td><td data-en="⚠️ No native SQL JOIN between services — cross-service queries via API" data-fr="⚠️ Pas de JOIN SQL natif entre services — requêtes croisées via API">⚠️ No native SQL JOIN between services — cross-service queries via API</td></tr>
+          <tr><td data-en="✅ Evolving data schema without coordination with other teams" data-fr="✅ Schéma de données évolutif sans coordination avec les autres équipes">✅ Evolving data schema without coordination with other teams</td><td data-en="⚠️ Eventual consistency — potentially divergent data between services" data-fr="⚠️ Eventual consistency — données potentiellement divergentes entre services">⚠️ Eventual consistency — potentially divergent data between services</td></tr>
+          <tr><td data-en="✅ Independent scalability of the data layer" data-fr="✅ Scalabilité indépendante de la couche données">✅ Independent scalability of the data layer</td><td data-en="⚠️ Partial data duplication in read models (CQRS)" data-fr="⚠️ Duplication partielle des données dans les read models (CQRS)">⚠️ Partial data duplication in read models (CQRS)</td></tr>
+          <tr><td data-en="✅ Failure isolation — a DB failure only impacts one service" data-fr="✅ Isolation des pannes — panne d'une DB n'impacte qu'un service">✅ Failure isolation — a DB failure only impacts one service</td><td data-en="⚠️ Saga required for distributed multi-service transactions" data-fr="⚠️ Saga nécessaire pour les transactions distribuées multi-services">⚠️ Saga required for distributed multi-service transactions</td></tr>
         </tbody>
       </table>
     </div>
-    <p>L'<strong>eventual consistency</strong> est le corollaire inévitable de ce pattern : entre deux services, la cohérence
-    n'est pas immédiate mais garantie à terme via la propagation d'événements.</p>
+    <p data-en="Eventual consistency is the inevitable corollary of this pattern: between two services, consistency is not immediate but guaranteed in time via event propagation." data-fr="L'eventual consistency est le corollaire inévitable de ce pattern : entre deux services, la cohérence n'est pas immédiate mais garantie à terme via la propagation d'événements.">The <strong>eventual consistency</strong> is the inevitable corollary of this pattern: between two services, consistency is not immediate but guaranteed in time via event propagation.</p>
 
     <!-- ═══════════════════════════════════════════════════════ -->
     <!-- PATTERN 4 — SAGA                                        -->
     <!-- ═══════════════════════════════════════════════════════ -->
-    <h2>Pattern Saga</h2>
+    <h2 data-en="Saga Pattern" data-fr="Pattern Saga">Saga Pattern</h2>
     <p>
-      Le <strong>Pattern Saga</strong> résout le problème des transactions distribuées dans une architecture microservices.
-      Puisqu'il n'y a pas de transaction ACID globale possible à travers plusieurs bases de données, la Saga découpe
-      l'opération en une séquence de transactions locales. Si une étape échoue, des <em>transactions compensatoires</em>
-      annulent les étapes déjà validées.
+      <span data-en="The Saga Pattern solves the problem of distributed transactions in a microservices architecture. Since there is no possible global ACID transaction across multiple databases, the Saga breaks the operation into a sequence of local transactions. If a step fails, compensatory transactions cancel the already validated steps." data-fr="Le Pattern Saga résout le problème des transactions distribuées dans une architecture microservices. Puisqu'il n'y a pas de transaction ACID globale possible à travers plusieurs bases de données, la Saga découpe l'opération en une séquence de transactions locales. Si une étape échoue, des transactions compensatoires annulent les étapes déjà validées.">The <strong>Saga Pattern</strong> solves the problem of distributed transactions in a microservices architecture. Since there is no possible global ACID transaction across multiple databases, the Saga breaks the operation into a sequence of local transactions. If a step fails, <em>compensatory transactions</em> cancel the already validated steps.</span>
     </p>
-    <p><strong>Variantes :</strong> <strong>Choreography</strong> — pas de coordinateur, les services réagissent aux événements
-      des autres ; <strong>Orchestration</strong> — un coordinateur central pilote les étapes et les compensations.</p>
-    <p><strong>Cas d'usage :</strong> Toute opération métier touchant plusieurs services (ex. virement bancaire : débit + crédit + notification).</p>
+    <p><strong data-en="Variants:" data-fr="Variantes :">Variants:</strong> <span data-en="Choreography — no coordinator, services react to each other's events; Orchestration — a central coordinator drives the steps and compensations." data-fr="Choreography — pas de coordinateur, les services réagissent aux événements des autres ; Orchestration — un coordinateur central pilote les étapes et les compensations."><strong>Choreography</strong> — no coordinator, services react to each other's events; <strong>Orchestration</strong> — a central coordinator drives the steps and compensations.</span></p>
+    <p><strong data-en="Use case:" data-fr="Cas d'usage :">Use case:</strong> <span data-en="Any business operation touching multiple services (e.g. bank transfer: debit + credit + notification)." data-fr="Toute opération métier touchant plusieurs services (ex. virement bancaire : débit + crédit + notification).">Any business operation touching multiple services (e.g. bank transfer: debit + credit + notification).</span></p>
 
     <svg viewBox="0 0 620 270" xmlns="http://www.w3.org/2000/svg"
          style="width:100%;max-width:620px;display:block;margin:1.5rem 0;font-family:IBM Plex Mono,monospace;">
@@ -340,9 +329,7 @@ public Account getAccount(Long id) {
       <text x="310" y="255" text-anchor="middle" font-size="9" fill="#da1e28">↺ Compensation si crédit échoue : DebitCompensatedEvent → annulation du débit (step ②)</text>
     </svg>
 
-    <p><strong>Transactions compensatoires :</strong> chaque étape validée doit disposer d'une opération inverse.
-      Exemple : si le crédit du compte destinataire échoue après que le débit ait été réalisé,
-      le service émet un <code>DebitCompensatedEvent</code> qui déclenche le remboursement du montant débité.</p>
+    <p><strong data-en="Compensatory transactions:" data-fr="Transactions compensatoires :">Compensatory transactions:</strong> <span data-en="each validated step must have an inverse operation. Example: if the credit of the target account fails after the debit was performed, the service emits a DebitCompensatedEvent that triggers the refund of the debited amount." data-fr="chaque étape validée doit disposer d'une opération inverse. Exemple : si le crédit du compte destinataire échoue après que le débit ait été réalisé, le service émet un DebitCompensatedEvent qui déclenche le remboursement du montant débité.">each validated step must have an inverse operation. Example: if the credit of the target account fails after the debit was performed, the service emits a <code>DebitCompensatedEvent</code> that triggers the refund of the debited amount.</span></p>
 
     <div class="code-block-wrap">
       <span class="code-lang">java</span>
@@ -364,19 +351,14 @@ public void onDebitFailed(@Observes DebitFailedEvent event) {
     <!-- ═══════════════════════════════════════════════════════ -->
     <!-- PATTERN 5 — CQRS + EVENT SOURCING                       -->
     <!-- ═══════════════════════════════════════════════════════ -->
-    <h2>CQRS et Event Sourcing</h2>
+    <h2 data-en="CQRS and Event Sourcing" data-fr="CQRS et Event Sourcing">CQRS and Event Sourcing</h2>
     <p>
-      <strong>CQRS</strong> (Command Query Responsibility Segregation) sépare le modèle d'écriture (Commands) du modèle de lecture (Queries).
-      Le modèle de commandes garantit la cohérence transactionnelle ; le modèle de requêtes est optimisé pour les lectures
-      complexes et les performances. Les deux modèles sont synchronisés de façon asynchrone via des événements.
+      <span data-en="CQRS (Command Query Responsibility Segregation) separates the write model (Commands) from the read model (Queries). The command model guarantees transactional consistency; the query model is optimised for complex reads and performance. Both models are synchronised asynchronously via events." data-fr="CQRS (Command Query Responsibility Segregation) sépare le modèle d'écriture (Commands) du modèle de lecture (Queries). Le modèle de commandes garantit la cohérence transactionnelle ; le modèle de requêtes est optimisé pour les lectures complexes et les performances. Les deux modèles sont synchronisés de façon asynchrone via des événements."><strong>CQRS</strong> (Command Query Responsibility Segregation) separates the write model (Commands) from the read model (Queries). The command model guarantees transactional consistency; the query model is optimised for complex reads and performance. Both models are synchronised asynchronously via events.</span>
     </p>
     <p>
-      <strong>Event Sourcing</strong> pousse ce principe plus loin : l'état d'une entité n'est jamais stocké directement.
-      Au lieu de cela, chaque changement d'état est persisé comme un événement immuable dans un <em>Event Store</em>.
-      L'état courant est recalculé en rejouant tous les événements depuis le début.
+      <span data-en="Event Sourcing pushes this principle further: the state of an entity is never stored directly. Instead, each state change is persisted as an immutable event in an Event Store. The current state is recalculated by replaying all events from the beginning." data-fr="Event Sourcing pousse ce principe plus loin : l'état d'une entité n'est jamais stocké directement. Au lieu de cela, chaque changement d'état est persisé comme un événement immuable dans un Event Store. L'état courant est recalculé en rejouant tous les événements depuis le début."><strong>Event Sourcing</strong> pushes this principle further: the state of an entity is never stored directly. Instead, each state change is persisted as an immutable event in an <em>Event Store</em>. The current state is recalculated by replaying all events from the beginning.</span>
     </p>
-    <p><strong>Cas d'usage :</strong> Domaines avec besoin d'audit trail complet (finance, santé), scalabilité en lecture,
-      besoins de vues multiples sur les mêmes données.</p>
+    <p><strong data-en="Use case:" data-fr="Cas d'usage :">Use case:</strong> <span data-en="Domains requiring a complete audit trail (finance, health), read scalability, needs for multiple views of the same data." data-fr="Domaines avec besoin d'audit trail complet (finance, santé), scalabilité en lecture, besoins de vues multiples sur les mêmes données.">Domains requiring a complete audit trail (finance, health), read scalability, needs for multiple views of the same data.</span></p>
 
     <svg viewBox="0 0 640 240" xmlns="http://www.w3.org/2000/svg"
          style="width:100%;max-width:640px;display:block;margin:1.5rem 0;font-family:IBM Plex Mono,monospace;">
@@ -433,13 +415,13 @@ public void onDebitFailed(@Observes DebitFailedEvent event) {
       <text x="318" y="216" text-anchor="middle" font-size="10" fill="#24a148">Projections : vues optimisées pour la lecture, mises à jour async</text>
     </svg>
 
-    <p><strong>Avantages combinés CQRS + Event Sourcing :</strong></p>
+    <p><strong data-en="Combined CQRS + Event Sourcing advantages:" data-fr="Avantages combinés CQRS + Event Sourcing :">Combined CQRS + Event Sourcing advantages:</strong></p>
     <ul>
-      <li>✅ <strong>Audit trail complet</strong> — chaque changement d'état est enregistré avec son contexte et sa date</li>
-      <li>✅ <strong>Replay des événements</strong> — possibilité de reconstruire l'état à n'importe quel instant passé</li>
-      <li>✅ <strong>Vues multiples</strong> — plusieurs projections (read models) peuvent être créées depuis le même flux d'événements</li>
-      <li>✅ <strong>Scalabilité en lecture</strong> — les read models peuvent être répliqués et mis en cache indépendamment</li>
-      <li>⚠️ <strong>Complexité accrue</strong> — eventual consistency entre write et read model, schema evolution des événements</li>
+      <li data-en="✅ Complete audit trail — every state change is recorded with its context and date" data-fr="✅ Audit trail complet — chaque changement d'état est enregistré avec son contexte et sa date">✅ <strong data-en="Complete audit trail" data-fr="Audit trail complet">Complete audit trail</strong> — <span data-en="every state change is recorded with its context and date" data-fr="chaque changement d'état est enregistré avec son contexte et sa date">every state change is recorded with its context and date</span></li>
+      <li data-en="✅ Event replay — ability to reconstruct state at any past point in time" data-fr="✅ Replay des événements — possibilité de reconstruire l'état à n'importe quel instant passé">✅ <strong data-en="Event replay" data-fr="Replay des événements">Event replay</strong> — <span data-en="ability to reconstruct state at any past point in time" data-fr="possibilité de reconstruire l'état à n'importe quel instant passé">ability to reconstruct state at any past point in time</span></li>
+      <li data-en="✅ Multiple views — several projections (read models) can be created from the same event stream" data-fr="✅ Vues multiples — plusieurs projections (read models) peuvent être créées depuis le même flux d'événements">✅ <strong data-en="Multiple views" data-fr="Vues multiples">Multiple views</strong> — <span data-en="several projections (read models) can be created from the same event stream" data-fr="plusieurs projections (read models) peuvent être créées depuis le même flux d'événements">several projections (read models) can be created from the same event stream</span></li>
+      <li data-en="✅ Read scalability — read models can be replicated and cached independently" data-fr="✅ Scalabilité en lecture — les read models peuvent être répliqués et mis en cache indépendamment">✅ <strong data-en="Read scalability" data-fr="Scalabilité en lecture">Read scalability</strong> — <span data-en="read models can be replicated and cached independently" data-fr="les read models peuvent être répliqués et mis en cache indépendamment">read models can be replicated and cached independently</span></li>
+      <li data-en="⚠️ Increased complexity — eventual consistency between write and read model, event schema evolution" data-fr="⚠️ Complexité accrue — eventual consistency entre write et read model, schema evolution des événements">⚠️ <strong data-en="Increased complexity" data-fr="Complexité accrue">Increased complexity</strong> — <span data-en="eventual consistency between write and read model, event schema evolution" data-fr="eventual consistency entre write et read model, schema evolution des événements">eventual consistency between write and read model, event schema evolution</span></li>
     </ul>
 
     <div class="code-block-wrap">
@@ -500,5 +482,6 @@ public class AccountSummaryProjection {
   </main>
 </div>
 <footer class="cds--footer">Made with IBM Bob &nbsp;·&nbsp; © 2026 Olivier Planson &nbsp;·&nbsp; ESIPE — Jakarta EE &amp; Microservices</footer>
+<script src="../assets/language-toggle.js"></script>
 </body>
 </html>

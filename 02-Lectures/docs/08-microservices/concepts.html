@@ -1,6 +1,6 @@
 <!-- © Copyright 2026 Olivier Planson. All rights reserved. Reproduction prohibited. Made with IBM Bob. -->
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="en">
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
@@ -9,122 +9,125 @@
 </head>
 <body>
 <header class="cds--header">
-  <a class="cds--header__name" href="index.html">Microservices<span>Cours Jakarta EE</span></a>
-  <a class="cds--header__back" href="../index.html">← Tous les Cours</a>
+  <a class="cds--header__name" href="index.html">Microservices<span data-en="Jakarta EE Course" data-fr="Cours Jakarta EE">Jakarta EE Course</span></a>
+  <button class="lang-toggle-btn" id="lang-toggle">FR</button>
+  <a class="cds--header__back" href="../index.html" data-en="← All Courses" data-fr="← Tous les Cours">← All Courses</a>
 </header>
 <div class="cds--shell">
   <nav class="cds--side-nav">
-    <p class="cds--side-nav__section-title">Cours 08</p>
-    <a class="cds--side-nav__link" href="index.html">⊙ Vue d'ensemble</a>
-    <a class="cds--side-nav__link" href="slides.html">☰ Contenu du cours</a>
-    <a class="cds--side-nav__link active" href="concepts.html">◈ Concepts clés</a>
-    <a class="cds--side-nav__link" href="code.html">⟨/⟩ Exemples de code</a>
-    <a class="cds--side-nav__link" href="patterns.html">⧫ Patterns Microservices</a>
+    <p class="cds--side-nav__section-title" data-en="Course 08" data-fr="Cours 08">Course 08</p>
+    <a class="cds--side-nav__link" href="index.html" data-en="⊙ Overview" data-fr="⊙ Vue d'ensemble">⊙ Overview</a>
+    <a class="cds--side-nav__link" href="slides.html" data-en="☰ Course Content" data-fr="☰ Contenu du cours">☰ Course Content</a>
+    <a class="cds--side-nav__link active" href="concepts.html" data-en="◈ Key Concepts" data-fr="◈ Concepts clés">◈ Key Concepts</a>
+    <a class="cds--side-nav__link" href="code.html" data-en="⟨/⟩ Code Examples" data-fr="⟨/⟩ Exemples de code">⟨/⟩ Code Examples</a>
+    <a class="cds--side-nav__link" href="patterns.html" data-en="⧫ Microservices Patterns" data-fr="⧫ Patterns Microservices">⧫ Microservices Patterns</a>
+    <a class="cds--side-nav__lang-toggle">FR</a>
   </nav>
   <main class="cds--content">
-    <div class="breadcrumb"><a href="../index.html">Cours</a> › <a href="index.html">Cours 08</a> › Concepts clés</div>
-    <h1>Concepts clés</h1>
-    <p class="page-lead">Comparatifs, patterns, piliers de l'observabilité, théorème CAP et glossaire pour l'architecture microservices.</p>
+    <div class="breadcrumb"><a href="../index.html" data-en="Courses" data-fr="Cours">Courses</a> › <a href="index.html" data-en="Course 08" data-fr="Cours 08">Course 08</a> › <span data-en="Key Concepts" data-fr="Concepts clés">Key Concepts</span></div>
+    <h1 data-en="Key Concepts" data-fr="Concepts clés">Key Concepts</h1>
+    <p class="page-lead" data-en="Comparisons, communication strategies, microservices patterns, observability pillars, CAP theorem and glossary for microservices architecture." data-fr="Comparatifs, patterns, piliers de l'observabilité, théorème CAP et glossaire pour l'architecture microservices.">Comparisons, communication strategies, microservices patterns, observability pillars, CAP theorem and glossary for microservices architecture.</p>
 
-    <h2>Monolithe vs Microservices</h2>
+    <h2 data-en="Monolith vs Microservices" data-fr="Monolithe vs Microservices">Monolith vs Microservices</h2>
     <div class="cds--data-table-container">
       <table class="cds--data-table">
-        <thead><tr><th>Aspect</th><th>Monolithe</th><th>Microservices</th></tr></thead>
+        <thead><tr><th data-en="Aspect" data-fr="Aspect">Aspect</th><th data-en="Monolith" data-fr="Monolithe">Monolith</th><th>Microservices</th></tr></thead>
         <tbody>
-          <tr><td><strong>Déploiement</strong></td><td>Un seul artefact (WAR/EAR) — déploiement tout ou rien</td><td>N services déployés indépendamment — déploiement ciblé</td></tr>
-          <tr><td><strong>Scalabilité</strong></td><td>Horizontale uniquement sur le monolithe entier — coûteuse</td><td>Scalabilité indépendante par service selon la charge réelle</td></tr>
-          <tr><td><strong>Diversité technologique</strong></td><td>Un seul stack technologique contraint pour toute l'application</td><td>Chaque service choisit le stack le plus adapté à son besoin</td></tr>
-          <tr><td><strong>Gestion des données</strong></td><td>Base de données partagée — schéma commun, transactions ACID natives</td><td>Database per Service — eventual consistency, Saga pour les transactions</td></tr>
-          <tr><td><strong>Tests</strong></td><td>Tests d'intégration simples — tout est dans le même processus</td><td>Tests de composants et contract tests nécessaires — plus complexes</td></tr>
-          <tr><td><strong>Taille des équipes</strong></td><td>Toute l'équipe travaille sur le même code — coordination forte nécessaire</td><td>Équipes autonomes par service (2-pizza teams) — loi de Conway</td></tr>
-          <tr><td><strong>Recommandé quand</strong></td><td>Petite équipe, domaine peu complexe, démarrage rapide (MVP)</td><td>Application à forte croissance, multiples équipes, scalabilité différenciée</td></tr>
+          <tr><td><strong data-en="Deployment" data-fr="Déploiement">Deployment</strong></td><td data-en="Single artifact (WAR/EAR) — all-or-nothing deployment" data-fr="Un seul artefact (WAR/EAR) — déploiement tout ou rien">Single artifact (WAR/EAR) — all-or-nothing deployment</td><td data-en="N services deployed independently — targeted deployment" data-fr="N services déployés indépendamment — déploiement ciblé">N services deployed independently — targeted deployment</td></tr>
+          <tr><td><strong data-en="Scalability" data-fr="Scalabilité">Scalability</strong></td><td data-en="Horizontal only on the entire monolith — expensive" data-fr="Horizontale uniquement sur le monolithe entier — coûteuse">Horizontal only on the entire monolith — expensive</td><td data-en="Independent scalability per service based on actual load" data-fr="Scalabilité indépendante par service selon la charge réelle">Independent scalability per service based on actual load</td></tr>
+          <tr><td><strong data-en="Technological diversity" data-fr="Diversité technologique">Technological diversity</strong></td><td data-en="Single technology stack constrained for the whole application" data-fr="Un seul stack technologique contraint pour toute l'application">Single technology stack constrained for the whole application</td><td data-en="Each service chooses the stack best suited to its needs" data-fr="Chaque service choisit le stack le plus adapté à son besoin">Each service chooses the stack best suited to its needs</td></tr>
+          <tr><td><strong data-en="Data management" data-fr="Gestion des données">Data management</strong></td><td data-en="Shared database — common schema, native ACID transactions" data-fr="Base de données partagée — schéma commun, transactions ACID natives">Shared database — common schema, native ACID transactions</td><td data-en="Database per Service — eventual consistency, Saga for transactions" data-fr="Database per Service — eventual consistency, Saga pour les transactions">Database per Service — eventual consistency, Saga for transactions</td></tr>
+          <tr><td><strong data-en="Tests" data-fr="Tests">Tests</strong></td><td data-en="Simple integration tests — everything is in the same process" data-fr="Tests d'intégration simples — tout est dans le même processus">Simple integration tests — everything is in the same process</td><td data-en="Component and contract tests required — more complex" data-fr="Tests de composants et contract tests nécessaires — plus complexes">Component and contract tests required — more complex</td></tr>
+          <tr><td><strong data-en="Team size" data-fr="Taille des équipes">Team size</strong></td><td data-en="The whole team works on the same code — strong coordination required" data-fr="Toute l'équipe travaille sur le même code — coordination forte nécessaire">The whole team works on the same code — strong coordination required</td><td data-en="Autonomous teams per service (2-pizza teams) — Conway's Law" data-fr="Équipes autonomes par service (2-pizza teams) — loi de Conway">Autonomous teams per service (2-pizza teams) — Conway's Law</td></tr>
+          <tr><td><strong data-en="Recommended when" data-fr="Recommandé quand">Recommended when</strong></td><td data-en="Small team, low-complexity domain, fast start (MVP)" data-fr="Petite équipe, domaine peu complexe, démarrage rapide (MVP)">Small team, low-complexity domain, fast start (MVP)</td><td data-en="High-growth application, multiple teams, differentiated scalability" data-fr="Application à forte croissance, multiples équipes, scalabilité différenciée">High-growth application, multiple teams, differentiated scalability</td></tr>
         </tbody>
       </table>
     </div>
 
-    <h2>Stratégies de Communication</h2>
+    <h2 data-en="Communication Strategies" data-fr="Stratégies de Communication">Communication Strategies</h2>
     <div class="cds--data-table-container">
       <table class="cds--data-table">
-        <thead><tr><th>Style</th><th>Protocole</th><th>Latence</th><th>Couplage</th><th>Cas d'usage</th></tr></thead>
+        <thead><tr><th data-en="Style" data-fr="Style">Style</th><th data-en="Protocol" data-fr="Protocole">Protocol</th><th data-en="Latency" data-fr="Latence">Latency</th><th data-en="Coupling" data-fr="Couplage">Coupling</th><th data-en="Use case" data-fr="Cas d'usage">Use case</th></tr></thead>
         <tbody>
-          <tr><td><strong>Synchrone REST</strong></td><td>HTTP/1.1 + JSON</td><td>Faible à moyenne</td><td>Temporel fort</td><td>Requêtes nécessitant une réponse immédiate (lecture de données, validation)</td></tr>
-          <tr><td><strong>Synchrone gRPC</strong></td><td>HTTP/2 + Protobuf</td><td>Très faible</td><td>Temporel fort</td><td>Communications haute performance entre services internes</td></tr>
-          <tr><td><strong>Asynchrone JMS</strong></td><td>AMQP / propriétaire</td><td>Variable</td><td>Découplé</td><td>Notifications, traitements différés, workflows métier</td></tr>
-          <tr><td><strong>Asynchrone Kafka</strong></td><td>Binary TCP</td><td>Faible</td><td>Très découplé</td><td>Event streaming, audit log, intégration entre bounded contexts</td></tr>
-          <tr><td><strong>Événements CDI</strong></td><td>In-process</td><td>Négligeable</td><td>Découplé</td><td>Communication interne au service (dans la même JVM)</td></tr>
+          <tr><td><strong data-en="Synchronous REST" data-fr="Synchrone REST">Synchronous REST</strong></td><td>HTTP/1.1 + JSON</td><td data-en="Low to medium" data-fr="Faible à moyenne">Low to medium</td><td data-en="Strongly temporal" data-fr="Temporel fort">Strongly temporal</td><td data-en="Requests requiring an immediate response (data read, validation)" data-fr="Requêtes nécessitant une réponse immédiate (lecture de données, validation)">Requests requiring an immediate response (data read, validation)</td></tr>
+          <tr><td><strong data-en="Synchronous gRPC" data-fr="Synchrone gRPC">Synchronous gRPC</strong></td><td>HTTP/2 + Protobuf</td><td data-en="Very low" data-fr="Très faible">Very low</td><td data-en="Strongly temporal" data-fr="Temporel fort">Strongly temporal</td><td data-en="High-performance communications between internal services" data-fr="Communications haute performance entre services internes">High-performance communications between internal services</td></tr>
+          <tr><td><strong data-en="Asynchronous JMS" data-fr="Asynchrone JMS">Asynchronous JMS</strong></td><td>AMQP / proprietary</td><td data-en="Variable" data-fr="Variable">Variable</td><td data-en="Decoupled" data-fr="Découplé">Decoupled</td><td data-en="Notifications, deferred processing, business workflows" data-fr="Notifications, traitements différés, workflows métier">Notifications, deferred processing, business workflows</td></tr>
+          <tr><td><strong data-en="Asynchronous Kafka" data-fr="Asynchrone Kafka">Asynchronous Kafka</strong></td><td>Binary TCP</td><td data-en="Low" data-fr="Faible">Low</td><td data-en="Very decoupled" data-fr="Très découplé">Very decoupled</td><td data-en="Event streaming, audit log, integration between bounded contexts" data-fr="Event streaming, audit log, intégration entre bounded contexts">Event streaming, audit log, integration between bounded contexts</td></tr>
+          <tr><td><strong data-en="CDI Events" data-fr="Événements CDI">CDI Events</strong></td><td>In-process</td><td data-en="Negligible" data-fr="Négligeable">Negligible</td><td data-en="Decoupled" data-fr="Découplé">Decoupled</td><td data-en="Internal service communication (within the same JVM)" data-fr="Communication interne au service (dans la même JVM)">Internal service communication (within the same JVM)</td></tr>
         </tbody>
       </table>
     </div>
 
-    <h2>Patterns Microservices — Vue d'ensemble</h2>
+    <h2 data-en="Microservices Patterns — Overview" data-fr="Patterns Microservices — Vue d'ensemble">Microservices Patterns — Overview</h2>
     <div class="cds--data-table-container">
       <table class="cds--data-table">
-        <thead><tr><th>Pattern</th><th>Problème résolu</th><th>Solution</th><th>Quand l'utiliser</th></tr></thead>
+        <thead><tr><th data-en="Pattern" data-fr="Pattern">Pattern</th><th data-en="Problem solved" data-fr="Problème résolu">Problem solved</th><th data-en="Solution" data-fr="Solution">Solution</th><th data-en="When to use" data-fr="Quand l'utiliser">When to use</th></tr></thead>
         <tbody>
-          <tr><td><strong>API Gateway</strong></td><td>Les clients doivent connaître l'adresse de chaque service</td><td>Point d'entrée unique qui route les requêtes vers les services internes</td><td>Toujours en production — protection et simplification des APIs exposées</td></tr>
-          <tr><td><strong>Circuit Breaker</strong></td><td>Un service lent ou en panne met en cascade tout le système</td><td>Détecte les pannes et court-circuite les appels vers le service défaillant</td><td>Tous les appels synchrones inter-services en production</td></tr>
-          <tr><td><strong>Saga</strong></td><td>Maintenir la cohérence des données à travers plusieurs services sans transaction distribuée ACID</td><td>Séquence de transactions locales avec transactions compensatoires en cas d'échec</td><td>Toute opération métier multi-services (ex. virement bancaire)</td></tr>
-          <tr><td><strong>Database per Service</strong></td><td>Une base partagée crée du couplage et des conflits de schema entre services</td><td>Chaque service est seul propriétaire de sa base de données</td><td>Toujours — c'est un prérequis de l'indépendance des microservices</td></tr>
-          <tr><td><strong>CQRS</strong></td><td>Le modèle de données optimal pour écrire est différent du modèle optimal pour lire</td><td>Modèles d'écriture (Commands) et de lecture (Queries) séparés</td><td>Services avec lectures fréquentes complexes et écritures transactionnelles</td></tr>
-          <tr><td><strong>Event Sourcing</strong></td><td>Perte de l'historique des changements d'état — impossible de reconstruire l'état passé</td><td>L'état est dérivé de la séquence immuable des événements passés</td><td>Domaines avec audit trail exigé ou besoins de replay des événements</td></tr>
-          <tr><td><strong>Service Discovery</strong></td><td>Les adresses des services changent dynamiquement dans les environnements cloud/containers</td><td>Registre de services permettant de localiser dynamiquement les instances disponibles</td><td>Environnements dynamiques avec scaling automatique (cloud, Kubernetes)</td></tr>
+          <tr><td><strong>API Gateway</strong></td><td data-en="Clients must know the address of each service" data-fr="Les clients doivent connaître l'adresse de chaque service">Clients must know the address of each service</td><td data-en="Single entry point that routes requests to internal services" data-fr="Point d'entrée unique qui route les requêtes vers les services internes">Single entry point that routes requests to internal services</td><td data-en="Always in production — protection and simplification of exposed APIs" data-fr="Toujours en production — protection et simplification des APIs exposées">Always in production — protection and simplification of exposed APIs</td></tr>
+          <tr><td><strong>Circuit Breaker</strong></td><td data-en="A slow or failing service cascades to the whole system" data-fr="Un service lent ou en panne met en cascade tout le système">A slow or failing service cascades to the whole system</td><td data-en="Detects failures and short-circuits calls to the failing service" data-fr="Détecte les pannes et court-circuite les appels vers le service défaillant">Detects failures and short-circuits calls to the failing service</td><td data-en="All synchronous inter-service calls in production" data-fr="Tous les appels synchrones inter-services en production">All synchronous inter-service calls in production</td></tr>
+          <tr><td><strong>Saga</strong></td><td data-en="Maintain data consistency across multiple services without distributed ACID transaction" data-fr="Maintenir la cohérence des données à travers plusieurs services sans transaction distribuée ACID">Maintain data consistency across multiple services without distributed ACID transaction</td><td data-en="Sequence of local transactions with compensatory transactions on failure" data-fr="Séquence de transactions locales avec transactions compensatoires en cas d'échec">Sequence of local transactions with compensatory transactions on failure</td><td data-en="Any multi-service business operation (e.g. bank transfer)" data-fr="Toute opération métier multi-services (ex. virement bancaire)">Any multi-service business operation (e.g. bank transfer)</td></tr>
+          <tr><td><strong>Database per Service</strong></td><td data-en="A shared database creates coupling and schema conflicts between services" data-fr="Une base partagée crée du couplage et des conflits de schema entre services">A shared database creates coupling and schema conflicts between services</td><td data-en="Each service is the sole owner of its database" data-fr="Chaque service est seul propriétaire de sa base de données">Each service is the sole owner of its database</td><td data-en="Always — it is a prerequisite for microservices independence" data-fr="Toujours — c'est un prérequis de l'indépendance des microservices">Always — it is a prerequisite for microservices independence</td></tr>
+          <tr><td><strong>CQRS</strong></td><td data-en="The optimal data model for writing differs from the optimal model for reading" data-fr="Le modèle de données optimal pour écrire est différent du modèle optimal pour lire">The optimal data model for writing differs from the optimal model for reading</td><td data-en="Separate write (Commands) and read (Queries) models" data-fr="Modèles d'écriture (Commands) et de lecture (Queries) séparés">Separate write (Commands) and read (Queries) models</td><td data-en="Services with frequent complex reads and transactional writes" data-fr="Services avec lectures fréquentes complexes et écritures transactionnelles">Services with frequent complex reads and transactional writes</td></tr>
+          <tr><td><strong>Event Sourcing</strong></td><td data-en="Loss of change history — impossible to reconstruct past state" data-fr="Perte de l'historique des changements d'état — impossible de reconstruire l'état passé">Loss of change history — impossible to reconstruct past state</td><td data-en="State is derived from the immutable sequence of past events" data-fr="L'état est dérivé de la séquence immuable des événements passés">State is derived from the immutable sequence of past events</td><td data-en="Domains with mandatory audit trail or event replay requirements" data-fr="Domaines avec audit trail exigé ou besoins de replay des événements">Domains with mandatory audit trail or event replay requirements</td></tr>
+          <tr><td><strong>Service Discovery</strong></td><td data-en="Service addresses change dynamically in cloud/container environments" data-fr="Les adresses des services changent dynamiquement dans les environnements cloud/containers">Service addresses change dynamically in cloud/container environments</td><td data-en="Service registry enabling dynamic location of available instances" data-fr="Registre de services permettant de localiser dynamiquement les instances disponibles">Service registry enabling dynamic location of available instances</td><td data-en="Dynamic environments with auto-scaling (cloud, Kubernetes)" data-fr="Environnements dynamiques avec scaling automatique (cloud, Kubernetes)">Dynamic environments with auto-scaling (cloud, Kubernetes)</td></tr>
         </tbody>
       </table>
     </div>
 
-    <h2>Piliers de l'Observabilité</h2>
+    <h2 data-en="Observability Pillars" data-fr="Piliers de l'Observabilité">Observability Pillars</h2>
     <div class="cds--data-table-container">
       <table class="cds--data-table">
-        <thead><tr><th>Pilier</th><th>Outil</th><th>Ce qu'il mesure</th><th>Endpoint</th></tr></thead>
+        <thead><tr><th data-en="Pillar" data-fr="Pilier">Pillar</th><th data-en="Tool" data-fr="Outil">Tool</th><th data-en="What it measures" data-fr="Ce qu'il mesure">What it measures</th><th data-en="Endpoint" data-fr="Endpoint">Endpoint</th></tr></thead>
         <tbody>
-          <tr><td><strong>Métriques</strong></td><td>MicroProfile Metrics + Prometheus + Grafana</td><td>Compteurs, jauges, histogrammes — latence, erreurs, saturation (RED method)</td><td><code>GET /metrics</code></td></tr>
-          <tr><td><strong>Logging structuré</strong></td><td>SLF4J + Logstash + Elasticsearch + Kibana (ELK)</td><td>Événements applicatifs contextualisés avec correlation ID, niveau, service, timestamp</td><td>Sortie standard collectée par Logstash ou Fluentd</td></tr>
-          <tr><td><strong>Tracing distribué</strong></td><td>MicroProfile OpenTracing + Jaeger ou Zipkin</td><td>Parcours des requêtes entre services — spans, durées, dépendances</td><td>Agent Jaeger UDP 6831 / HTTP 14268</td></tr>
-          <tr><td><strong>Health Checks</strong></td><td>MicroProfile Health</td><td>État liveness et readiness de chaque service — consommé par Kubernetes</td><td><code>GET /health</code>, <code>/health/live</code>, <code>/health/ready</code></td></tr>
+          <tr><td><strong data-en="Metrics" data-fr="Métriques">Metrics</strong></td><td>MicroProfile Metrics + Prometheus + Grafana</td><td data-en="Counters, gauges, histograms — latency, errors, saturation (RED method)" data-fr="Compteurs, jauges, histogrammes — latence, erreurs, saturation (RED method)">Counters, gauges, histograms — latency, errors, saturation (RED method)</td><td><code>GET /metrics</code></td></tr>
+          <tr><td><strong data-en="Structured logging" data-fr="Logging structuré">Structured logging</strong></td><td>SLF4J + Logstash + Elasticsearch + Kibana (ELK)</td><td data-en="Contextualized application events with correlation ID, level, service, timestamp" data-fr="Événements applicatifs contextualisés avec correlation ID, niveau, service, timestamp">Contextualized application events with correlation ID, level, service, timestamp</td><td data-en="Standard output collected by Logstash or Fluentd" data-fr="Sortie standard collectée par Logstash ou Fluentd">Standard output collected by Logstash or Fluentd</td></tr>
+          <tr><td><strong data-en="Distributed Tracing" data-fr="Tracing distribué">Distributed Tracing</strong></td><td data-en="MicroProfile Telemetry (OpenTelemetry) + Jaeger or Zipkin" data-fr="MicroProfile Telemetry (OpenTelemetry) + Jaeger ou Zipkin">MicroProfile Telemetry (OpenTelemetry) + Jaeger or Zipkin</td><td data-en="Request path between services — spans, durations, dependencies" data-fr="Parcours des requêtes entre services — spans, durées, dépendances">Request path between services — spans, durations, dependencies</td><td data-en="Jaeger agent UDP 6831 / HTTP 14268" data-fr="Agent Jaeger UDP 6831 / HTTP 14268">Jaeger agent UDP 6831 / HTTP 14268</td></tr>
+          <tr><td><strong data-en="Health Checks" data-fr="Health Checks">Health Checks</strong></td><td>MicroProfile Health</td><td data-en="Liveness and readiness state of each service — consumed by Kubernetes" data-fr="État liveness et readiness de chaque service — consommé par Kubernetes">Liveness and readiness state of each service — consumed by Kubernetes</td><td><code>GET /health</code>, <code>/health/live</code>, <code>/health/ready</code></td></tr>
         </tbody>
       </table>
     </div>
+    <p data-en="Note: MicroProfile OpenTracing is deprecated (archived January 2023). Use MicroProfile Telemetry 1.0+ with OpenTelemetry instead." data-fr="Note : MicroProfile OpenTracing est déprécié (archivé en janvier 2023). Utilisez MicroProfile Telemetry 1.0+ avec OpenTelemetry à la place."><em>Note: MicroProfile OpenTracing is deprecated (archived January 2023). Use MicroProfile Telemetry 1.0+ with OpenTelemetry instead.</em></p>
 
-    <h2>CAP Theorem</h2>
+    <h2 data-en="CAP Theorem" data-fr="CAP Theorem">CAP Theorem</h2>
     <div class="cds--data-table-container">
       <table class="cds--data-table">
-        <thead><tr><th>Propriété</th><th>Description</th><th>Systèmes CP (sacrifient A)</th><th>Systèmes AP (sacrifient C)</th></tr></thead>
+        <thead><tr><th data-en="Property" data-fr="Propriété">Property</th><th data-en="Description" data-fr="Description">Description</th><th data-en="CP systems (sacrifice A)" data-fr="Systèmes CP (sacrifient A)">CP systems (sacrifice A)</th><th data-en="AP systems (sacrifice C)" data-fr="Systèmes AP (sacrifient C)">AP systems (sacrifice C)</th></tr></thead>
         <tbody>
           <tr>
             <td><strong>C — Consistency</strong></td>
-            <td>Tous les nœuds voient les mêmes données au même instant. Chaque lecture reçoit les données les plus récentes ou une erreur.</td>
-            <td>MongoDB (en mode strict), HBase, Zookeeper</td>
+            <td data-en="All nodes see the same data at the same instant. Every read receives the most recent data or an error." data-fr="Tous les nœuds voient les mêmes données au même instant. Chaque lecture reçoit les données les plus récentes ou une erreur.">All nodes see the same data at the same instant. Every read receives the most recent data or an error.</td>
+            <td>MongoDB (strict mode), HBase, Zookeeper</td>
             <td>—</td>
           </tr>
           <tr>
             <td><strong>A — Availability</strong></td>
-            <td>Chaque requête reçoit une réponse (sans garantie d'être à jour). Le système reste disponible même si certains nœuds sont en panne.</td>
+            <td data-en="Every request receives a response (no guarantee of being up to date). The system remains available even if some nodes are down." data-fr="Chaque requête reçoit une réponse (sans garantie d'être à jour). Le système reste disponible même si certains nœuds sont en panne.">Every request receives a response (no guarantee of being up to date). The system remains available even if some nodes are down.</td>
             <td>—</td>
             <td>Cassandra, CouchDB, DynamoDB</td>
           </tr>
           <tr>
             <td><strong>P — Partition Tolerance</strong></td>
-            <td>Le système continue à fonctionner malgré des partitions réseau entre les nœuds. Toujours requis en production.</td>
-            <td>✅ Requis</td>
-            <td>✅ Requis</td>
+            <td data-en="The system continues to operate despite network partitions between nodes. Always required in production." data-fr="Le système continue à fonctionner malgré des partitions réseau entre les nœuds. Toujours requis en production.">The system continues to operate despite network partitions between nodes. Always required in production.</td>
+            <td data-en="✅ Required" data-fr="✅ Requis">✅ Required</td>
+            <td data-en="✅ Required" data-fr="✅ Requis">✅ Required</td>
           </tr>
         </tbody>
       </table>
     </div>
 
-    <h2>Glossaire</h2>
+    <h2 data-en="Glossary" data-fr="Glossaire">Glossary</h2>
     <div class="cds--data-table-container">
       <table class="cds--data-table">
-        <thead><tr><th>Terme</th><th>Définition</th></tr></thead>
+        <thead><tr><th data-en="Term" data-fr="Terme">Term</th><th data-en="Definition" data-fr="Définition">Definition</th></tr></thead>
         <tbody>
-          <tr><td><strong>Microservice</strong></td><td>Service applicatif autonome avec responsabilité unique, déployable indépendamment, possédant sa propre base de données et communiquant via des interfaces légères</td></tr>
-          <tr><td><strong>API Gateway</strong></td><td>Point d'entrée unique de l'architecture microservices — gère le routing, l'authentification, le rate limiting et l'agrégation des réponses</td></tr>
-          <tr><td><strong>Circuit Breaker</strong></td><td>Pattern de résilience détectant les pannes d'un service et court-circuitant les appels pour éviter les effets de cascade — états : CLOSED, OPEN, HALF-OPEN</td></tr>
-          <tr><td><strong>Saga Pattern</strong></td><td>Gestion des transactions distribuées par une séquence de transactions locales avec compensation — variantes : choreography (événements) et orchestration (coordinateur)</td></tr>
-          <tr><td><strong>CQRS</strong></td><td>Command Query Responsibility Segregation — séparation des modèles de lecture et d'écriture pour optimiser indépendamment les performances et la cohérence</td></tr>
-          <tr><td><strong>Event Sourcing</strong></td><td>Persistence de l'état d'une entité sous forme de séquence immuable d'événements — l'état courant est recalculé en rejouant les événements depuis le début</td></tr>
-          <tr><td><strong>Service Mesh</strong></td><td>Infrastructure réseau dédiée à la communication inter-services — gère TLS mutuel, retries, circuit breaking, tracing au niveau proxy (ex. Istio, Linkerd)</td></tr>
-          <tr><td><strong>Eventual Consistency</strong></td><td>Propriété d'un système distribué garantissant que si aucune nouvelle mise à jour n'est effectuée, toutes les répliques convergeront finalement vers la même valeur</td></tr>
+          <tr><td><strong>Microservice</strong></td><td data-en="Autonomous application service with a single responsibility, independently deployable, owning its own database and communicating via lightweight interfaces" data-fr="Service applicatif autonome avec responsabilité unique, déployable indépendamment, possédant sa propre base de données et communiquant via des interfaces légères">Autonomous application service with a single responsibility, independently deployable, owning its own database and communicating via lightweight interfaces</td></tr>
+          <tr><td><strong>API Gateway</strong></td><td data-en="Single entry point of the microservices architecture — handles routing, authentication, rate limiting and response aggregation" data-fr="Point d'entrée unique de l'architecture microservices — gère le routing, l'authentification, le rate limiting et l'agrégation des réponses">Single entry point of the microservices architecture — handles routing, authentication, rate limiting and response aggregation</td></tr>
+          <tr><td><strong>Circuit Breaker</strong></td><td data-en="Resilience pattern detecting service failures and short-circuiting calls to prevent cascade effects — states: CLOSED, OPEN, HALF-OPEN" data-fr="Pattern de résilience détectant les pannes d'un service et court-circuitant les appels pour éviter les effets de cascade — états : CLOSED, OPEN, HALF-OPEN">Resilience pattern detecting service failures and short-circuiting calls to prevent cascade effects — states: CLOSED, OPEN, HALF-OPEN</td></tr>
+          <tr><td><strong>Saga Pattern</strong></td><td data-en="Distributed transaction management via a sequence of local transactions with compensation — variants: choreography (events) and orchestration (coordinator)" data-fr="Gestion des transactions distribuées par une séquence de transactions locales avec compensation — variantes : choreography (événements) et orchestration (coordinateur)">Distributed transaction management via a sequence of local transactions with compensation — variants: choreography (events) and orchestration (coordinator)</td></tr>
+          <tr><td><strong>CQRS</strong></td><td data-en="Command Query Responsibility Segregation — separation of read and write models to independently optimize performance and consistency" data-fr="Command Query Responsibility Segregation — séparation des modèles de lecture et d'écriture pour optimiser indépendamment les performances et la cohérence">Command Query Responsibility Segregation — separation of read and write models to independently optimize performance and consistency</td></tr>
+          <tr><td><strong>Event Sourcing</strong></td><td data-en="Persistence of entity state as an immutable sequence of events — current state is recalculated by replaying events from the beginning" data-fr="Persistence de l'état d'une entité sous forme de séquence immuable d'événements — l'état courant est recalculé en rejouant les événements depuis le début">Persistence of entity state as an immutable sequence of events — current state is recalculated by replaying events from the beginning</td></tr>
+          <tr><td><strong>Service Mesh</strong></td><td data-en="Network infrastructure dedicated to inter-service communication — handles mutual TLS, retries, circuit breaking, tracing at proxy level (e.g. Istio, Linkerd)" data-fr="Infrastructure réseau dédiée à la communication inter-services — gère TLS mutuel, retries, circuit breaking, tracing au niveau proxy (ex. Istio, Linkerd)">Network infrastructure dedicated to inter-service communication — handles mutual TLS, retries, circuit breaking, tracing at proxy level (e.g. Istio, Linkerd)</td></tr>
+          <tr><td><strong>Eventual Consistency</strong></td><td data-en="Property of a distributed system guaranteeing that if no new update is performed, all replicas will eventually converge to the same value" data-fr="Propriété d'un système distribué garantissant que si aucune nouvelle mise à jour n'est effectuée, toutes les répliques convergeront finalement vers la même valeur">Property of a distributed system guaranteeing that if no new update is performed, all replicas will eventually converge to the same value</td></tr>
         </tbody>
       </table>
     </div>
@@ -132,5 +135,6 @@
   </main>
 </div>
 <footer class="cds--footer">Made with IBM Bob &nbsp;·&nbsp; © 2026 Olivier Planson &nbsp;·&nbsp; ESIPE — Jakarta EE &amp; Microservices</footer>
+<script src="../assets/language-toggle.js"></script>
 </body>
 </html>

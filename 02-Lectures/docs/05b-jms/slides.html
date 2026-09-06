@@ -1,300 +1,304 @@
 <!-- © Copyright 2026 Olivier Planson. All rights reserved. Reproduction prohibited. Made with IBM Bob. -->
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="en">
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-  <title>Cours 05b — Contenu du cours</title>
+  <title>Course 05b — Course Content</title>
   <link rel="stylesheet" href="../assets/carbon.css"/>
 </head>
 <body>
 <header class="cds--header">
-  <a class="cds--header__name" href="index.html">JMS — Messagerie Enterprise<span>Cours Jakarta EE</span></a>
-  <a class="cds--header__back" href="../index.html">← Tous les Cours</a>
+  <a class="cds--header__name" href="index.html" data-en="Jakarta Messaging — Enterprise Messaging" data-fr="JMS — Messagerie Enterprise">Jakarta Messaging — Enterprise Messaging<span data-en="Jakarta EE Course" data-fr="Cours Jakarta EE">Jakarta EE Course</span></a>
+  <button class="lang-toggle-btn" id="lang-toggle">FR</button>
+  <a class="cds--header__back" href="../index.html" data-en="← All Courses" data-fr="← Tous les Cours">← All Courses</a>
 </header>
 <div class="cds--shell">
   <nav class="cds--side-nav">
-    <p class="cds--side-nav__section-title">Cours 05b</p>
-    <a class="cds--side-nav__link" href="index.html">⊙ Vue d'ensemble</a>
-    <a class="cds--side-nav__link active" href="slides.html">☰ Contenu du cours</a>
-    <a class="cds--side-nav__link" href="concepts.html">◈ Concepts clés</a>
-    <a class="cds--side-nav__link" href="code.html">⟨/⟩ Exemples de code</a>
+    <p class="cds--side-nav__section-title" data-en="Course 05b" data-fr="Cours 05b">Course 05b</p>
+    <a class="cds--side-nav__link" href="index.html" data-en="⊙ Overview" data-fr="⊙ Vue d'ensemble">⊙ Overview</a>
+    <a class="cds--side-nav__link active" href="slides.html" data-en="☰ Course Content" data-fr="☰ Contenu du cours">☰ Course Content</a>
+    <a class="cds--side-nav__link" href="concepts.html" data-en="◈ Key Concepts" data-fr="◈ Concepts clés">◈ Key Concepts</a>
+    <a class="cds--side-nav__link" href="code.html" data-en="⟨/⟩ Code Examples" data-fr="⟨/⟩ Exemples de code">⟨/⟩ Code Examples</a>
+    <a class="cds--side-nav__lang-toggle">FR</a>
   </nav>
   <main class="cds--content">
-    <div class="breadcrumb"><a href="../index.html">Cours</a> › <a href="index.html">Cours 05b</a> › Contenu</div>
-    <h1>Contenu du cours</h1>
-    <p class="page-lead">Toutes les sections — cliquez sur un titre pour développer.</p>
+    <div class="breadcrumb"><a href="../index.html" data-en="Courses" data-fr="Cours">Courses</a> › <a href="index.html" data-en="Course 05b" data-fr="Cours 05b">Course 05b</a> › <span data-en="Content" data-fr="Contenu">Content</span></div>
+    <h1 data-en="Course Content" data-fr="Contenu du cours">Course Content</h1>
+    <p class="page-lead" data-en="All sections — click a title to expand." data-fr="Toutes les sections — cliquez sur un titre pour développer.">All sections — click a title to expand.</p>
 
     <details open>
-      <summary>📨 Messagerie Enterprise — Pourquoi ?</summary>
+      <summary data-en="📨 Enterprise Messaging — Why?" data-fr="📨 Messagerie Enterprise — Pourquoi ?">📨 Enterprise Messaging — Why?</summary>
       <div class="slide-content">
-        <h3>Les limites des appels directs</h3>
-        <p>Les appels synchrones (REST, EJB Remote) créent un <strong>couplage fort</strong> entre les services : l'appelant doit attendre la réponse, et une panne du service cible bloque l'ensemble de la chaîne.</p>
+        <h3 data-en="The limits of direct calls" data-fr="Les limites des appels directs">The limits of direct calls</h3>
+        <p data-en="Synchronous calls (REST, EJB Remote) create tight coupling between services: the caller must wait for the response, and a failure of the target service blocks the entire chain." data-fr="Les appels synchrones (REST, EJB Remote) créent un couplage fort entre les services : l'appelant doit attendre la réponse, et une panne du service cible bloque l'ensemble de la chaîne.">Synchronous calls (REST, EJB Remote) create <strong>tight coupling</strong> between services: the caller must wait for the response, and a failure of the target service blocks the entire chain.</p>
         <ul>
-          <li><strong>Couplage fort</strong> — l'émetteur connaît l'adresse et le contrat du récepteur</li>
-          <li><strong>Disponibilité requise</strong> — les deux services doivent être actifs simultanément</li>
-          <li><strong>Scalabilité limitée</strong> — la montée en charge d'un service impacte directement l'autre</li>
-          <li><strong>Risque de cascade</strong> — une panne se propage instantanément</li>
+          <li data-en="Tight coupling — the sender knows the address and contract of the receiver" data-fr="Couplage fort — l'émetteur connaît l'adresse et le contrat du récepteur"><strong>Tight coupling</strong> — the sender knows the address and contract of the receiver</li>
+          <li data-en="Required availability — both services must be active simultaneously" data-fr="Disponibilité requise — les deux services doivent être actifs simultanément"><strong>Required availability</strong> — both services must be active simultaneously</li>
+          <li data-en="Limited scalability — scaling one service directly impacts the other" data-fr="Scalabilité limitée — la montée en charge d'un service impacte directement l'autre"><strong>Limited scalability</strong> — scaling one service directly impacts the other</li>
+          <li data-en="Cascade risk — a failure propagates instantly" data-fr="Risque de cascade — une panne se propage instantanément"><strong>Cascade risk</strong> — a failure propagates instantly</li>
         </ul>
-        <h3>La messagerie enterprise : bénéfices</h3>
+        <h3 data-en="Enterprise messaging: benefits" data-fr="La messagerie enterprise : bénéfices">Enterprise messaging: benefits</h3>
         <ul>
-          <li>✅ <strong>Couplage faible</strong> — les services communiquent via un broker, sans se connaître directement</li>
-          <li>✅ <strong>Communication asynchrone</strong> — l'émetteur n'attend pas la réponse du récepteur</li>
-          <li>✅ <strong>Résilience</strong> — les messages sont persistés ; si le consommateur est indisponible, les messages l'attendent</li>
-          <li>✅ <strong>Découplage temporel</strong> — émetteur et récepteur n'ont pas besoin d'être actifs en même temps</li>
-          <li>✅ <strong>Lissage de la charge</strong> — le broker absorbe les pics de trafic</li>
-          <li>✅ <strong>Traçabilité</strong> — les messages peuvent être rejoués, archivés, audités</li>
+          <li data-en="✅ Loose coupling — services communicate via a broker without knowing each other directly" data-fr="✅ Couplage faible — les services communiquent via un broker, sans se connaître directement">✅ <strong>Loose coupling</strong> — services communicate via a broker without knowing each other directly</li>
+          <li data-en="✅ Asynchronous communication — the sender does not wait for the receiver's response" data-fr="✅ Communication asynchrone — l'émetteur n'attend pas la réponse du récepteur">✅ <strong>Asynchronous communication</strong> — the sender does not wait for the receiver's response</li>
+          <li data-en="✅ Resilience — messages are persisted; if the consumer is unavailable, messages wait for it" data-fr="✅ Résilience — les messages sont persistés ; si le consommateur est indisponible, les messages l'attendent">✅ <strong>Resilience</strong> — messages are persisted; if the consumer is unavailable, messages wait for it</li>
+          <li data-en="✅ Temporal decoupling — sender and receiver don't need to be active at the same time" data-fr="✅ Découplage temporel — émetteur et récepteur n'ont pas besoin d'être actifs en même temps">✅ <strong>Temporal decoupling</strong> — sender and receiver don't need to be active at the same time</li>
+          <li data-en="✅ Load smoothing — the broker absorbs traffic spikes" data-fr="✅ Lissage de la charge — le broker absorbe les pics de trafic">✅ <strong>Load smoothing</strong> — the broker absorbs traffic spikes</li>
+          <li data-en="✅ Traceability — messages can be replayed, archived, audited" data-fr="✅ Traçabilité — les messages peuvent être rejoués, archivés, audités">✅ <strong>Traceability</strong> — messages can be replayed, archived, audited</li>
         </ul>
-        <h3>JMS vs Appels Directs</h3>
+        <h3 data-en="Jakarta Messaging vs Direct Calls" data-fr="JMS vs Appels Directs">Jakarta Messaging vs Direct Calls</h3>
         <table class="cds--data-table">
-          <thead><tr><th>Critère</th><th>Appel Direct (REST/EJB)</th><th>Messagerie JMS</th></tr></thead>
+          <thead><tr><th data-en="Criterion" data-fr="Critère">Criterion</th><th data-en="Direct Call (REST/EJB)" data-fr="Appel Direct (REST/EJB)">Direct Call (REST/EJB)</th><th data-en="Jakarta Messaging" data-fr="Messagerie JMS">Jakarta Messaging</th></tr></thead>
           <tbody>
-            <tr><td>Mode</td><td>Synchrone — bloquant</td><td>Asynchrone — non bloquant</td></tr>
-            <tr><td>Couplage</td><td>Fort — adresse connue</td><td>Faible — via broker</td></tr>
-            <tr><td>Disponibilité</td><td>Requise des deux côtés</td><td>Indépendante</td></tr>
-            <tr><td>Résilience</td><td>Propagation des pannes</td><td>Isolation et rétention</td></tr>
+            <tr><td data-en="Mode" data-fr="Mode">Mode</td><td data-en="Synchronous — blocking" data-fr="Synchrone — bloquant">Synchronous — blocking</td><td data-en="Asynchronous — non-blocking" data-fr="Asynchrone — non bloquant">Asynchronous — non-blocking</td></tr>
+            <tr><td data-en="Coupling" data-fr="Couplage">Coupling</td><td data-en="Tight — known address" data-fr="Fort — adresse connue">Tight — known address</td><td data-en="Loose — via broker" data-fr="Faible — via broker">Loose — via broker</td></tr>
+            <tr><td data-en="Availability" data-fr="Disponibilité">Availability</td><td data-en="Required on both sides" data-fr="Requise des deux côtés">Required on both sides</td><td data-en="Independent" data-fr="Indépendante">Independent</td></tr>
+            <tr><td data-en="Resilience" data-fr="Résilience">Resilience</td><td data-en="Failure propagation" data-fr="Propagation des pannes">Failure propagation</td><td data-en="Isolation and retention" data-fr="Isolation et rétention">Isolation and retention</td></tr>
           </tbody>
         </table>
-        <img src="../../images/05b-jms-enterprise-messaging-diagram-1.png" alt="JMS Enterprise Messaging — Pourquoi ?"/>
+        <img src="../../images/05b-jms-enterprise-messaging-diagram-1.png" alt="Enterprise Messaging — Why?"/>
       </div>
     </details>
 
     <details>
-      <summary>🏗️ Architecture JMS</summary>
+      <summary data-en="🏗️ Jakarta Messaging Architecture" data-fr="🏗️ Architecture Jakarta Messaging">🏗️ Jakarta Messaging Architecture</summary>
       <div class="slide-content">
-        <p>JMS (Jakarta Messaging Service) définit une API standard pour la communication asynchrone par messages via un <strong>broker de messages</strong>.</p>
-        <h3>Composants principaux</h3>
+        <p data-en="Jakarta Messaging (formerly JMS — Jakarta Messaging Service) defines a standard API for asynchronous message communication via a message broker." data-fr="Jakarta Messaging (anciennement JMS — Jakarta Messaging Service) définit une API standard pour la communication asynchrone par messages via un broker de messages.">Jakarta Messaging (formerly JMS) defines a standard API for asynchronous message communication via a <strong>message broker</strong>.</p>
+        <h3 data-en="Main components" data-fr="Composants principaux">Main components</h3>
         <ul>
-          <li><strong>ConnectionFactory</strong> — fabrique de connexions, configurée dans le serveur d'application (JNDI). Point d'entrée pour créer des connexions ou un <code>JMSContext</code></li>
-          <li><strong>Destination</strong> — cible des messages : <code>Queue</code> (Point-à-Point) ou <code>Topic</code> (Pub/Sub)</li>
-          <li><strong>Connection</strong> — connexion physique au broker (gère l'authentification, le pool)</li>
-          <li><strong>Session</strong> — contexte transactionnel pour l'envoi et la réception de messages</li>
-          <li><strong>MessageProducer</strong> — crée et envoie des messages vers une Destination</li>
-          <li><strong>MessageConsumer</strong> — reçoit des messages depuis une Destination (synchrone ou async)</li>
-          <li><strong>Message</strong> — unité de données échangée — corps + en-têtes + propriétés</li>
+          <li data-en="ConnectionFactory — connection factory, configured in the application server (JNDI). Entry point for creating connections or a JMSContext" data-fr="ConnectionFactory — fabrique de connexions, configurée dans le serveur d'application (JNDI). Point d'entrée pour créer des connexions ou un JMSContext"><strong>ConnectionFactory</strong> — connection factory, configured in the application server (JNDI). Entry point for creating connections or a <code>JMSContext</code></li>
+          <li data-en="Destination — message target: Queue (Point-to-Point) or Topic (Pub/Sub)" data-fr="Destination — cible des messages : Queue (Point-à-Point) ou Topic (Pub/Sub)"><strong>Destination</strong> — message target: <code>Queue</code> (Point-to-Point) or <code>Topic</code> (Pub/Sub)</li>
+          <li data-en="Connection — physical connection to the broker (handles authentication, pooling)" data-fr="Connection — connexion physique au broker (gère l'authentification, le pool)"><strong>Connection</strong> — physical connection to the broker (handles authentication, pooling)</li>
+          <li data-en="Session — transactional context for sending and receiving messages" data-fr="Session — contexte transactionnel pour l'envoi et la réception de messages"><strong>Session</strong> — transactional context for sending and receiving messages</li>
+          <li data-en="MessageProducer — creates and sends messages to a Destination" data-fr="MessageProducer — crée et envoie des messages vers une Destination"><strong>MessageProducer</strong> — creates and sends messages to a Destination</li>
+          <li data-en="MessageConsumer — receives messages from a Destination (synchronous or async)" data-fr="MessageConsumer — reçoit des messages depuis une Destination (synchrone ou async)"><strong>MessageConsumer</strong> — receives messages from a Destination (synchronous or async)</li>
+          <li data-en="Message — unit of data exchanged — body + headers + properties" data-fr="Message — unité de données échangée — corps + en-têtes + propriétés"><strong>Message</strong> — unit of data exchanged — body + headers + properties</li>
         </ul>
-        <h3>JMS 2.0 — API simplifiée</h3>
-        <p>JMS 2.0 (Jakarta EE 7+) introduit <code>JMSContext</code>, qui combine <code>Connection</code> + <code>Session</code> en un seul objet injectable via <code>@Inject</code>.</p>
+        <h3 data-en="JMSContext — Simplified API (Jakarta Messaging 2.0+)" data-fr="JMSContext — API simplifiée (Jakarta Messaging 2.0+)">JMSContext — Simplified API (Jakarta Messaging 2.0+)</h3>
+        <p data-en="Jakarta Messaging 2.0 (Jakarta EE 7+) introduced JMSContext, which combines Connection + Session into a single injectable object via @Inject." data-fr="Jakarta Messaging 2.0 (Jakarta EE 7+) introduit JMSContext, qui combine Connection + Session en un seul objet injectable via @Inject.">Jakarta Messaging 2.0 (Jakarta EE 7+) introduced <code>JMSContext</code>, which combines <code>Connection</code> + <code>Session</code> into a single injectable object via <code>@Inject</code>.</p>
         <ul>
-          <li><code>@Inject JMSContext jmsContext</code> — injection directe dans un bean CDI</li>
-          <li><code>jmsContext.createProducer().send(destination, body)</code> — envoi en une ligne</li>
-          <li>Gestion automatique de la connexion par le conteneur</li>
+          <li data-en="@Inject JMSContext jmsContext — direct injection into a CDI bean" data-fr="@Inject JMSContext jmsContext — injection directe dans un bean CDI"><code>@Inject JMSContext jmsContext</code> — direct injection into a CDI bean</li>
+          <li data-en="jmsContext.createProducer().send(destination, body) — send in one line" data-fr="jmsContext.createProducer().send(destination, body) — envoi en une ligne"><code>jmsContext.createProducer().send(destination, body)</code> — send in one line</li>
+          <li data-en="Automatic connection management by the container" data-fr="Gestion automatique de la connexion par le conteneur">Automatic connection management by the container</li>
         </ul>
-        <img src="../../images/05b-jms-enterprise-messaging-diagram-2.png" alt="JMS Architecture — Composants"/>
+        <img src="../../images/05b-jms-enterprise-messaging-diagram-2.png" alt="Jakarta Messaging Architecture — Components"/>
       </div>
     </details>
 
     <details>
-      <summary>📥 Point-à-Point (Queue)</summary>
+      <summary data-en="📥 Point-to-Point (Queue)" data-fr="📥 Point-à-Point (Queue)">📥 Point-to-Point (Queue)</summary>
       <div class="slide-content">
-        <p>Le modèle <strong>Point-à-Point</strong> utilise une <strong>Queue</strong> : chaque message est consommé par <em>un seul</em> consommateur.</p>
-        <h3>Caractéristiques</h3>
+        <p data-en="The Point-to-Point model uses a Queue: each message is consumed by only one consumer." data-fr="Le modèle Point-à-Point utilise une Queue : chaque message est consommé par un seul consommateur.">The <strong>Point-to-Point</strong> model uses a <strong>Queue</strong>: each message is consumed by <em>only one</em> consumer.</p>
+        <h3 data-en="Characteristics" data-fr="Caractéristiques">Characteristics</h3>
         <ul>
-          <li><strong>Un message → un consommateur</strong> — même si plusieurs consommateurs écoutent la même Queue, chaque message n'est délivré qu'à un seul</li>
-          <li><strong>Garantie de livraison</strong> — les messages sont persistés et attendent jusqu'à être consommés</li>
-          <li><strong>Persistance</strong> — les messages survivent au redémarrage du broker (messages persistants)</li>
-          <li><strong>Accusé de réception (ACK)</strong> — le broker attend un ACK du consommateur avant de supprimer le message</li>
-          <li><strong>Load balancing naturel</strong> — plusieurs instances du même consommateur se partagent la charge</li>
-          <li><strong>Ordre FIFO</strong> — les messages sont généralement consommés dans l'ordre d'arrivée</li>
+          <li data-en="One message → one consumer — even if multiple consumers listen on the same Queue, each message is delivered to only one" data-fr="Un message → un consommateur — même si plusieurs consommateurs écoutent la même Queue, chaque message n'est délivré qu'à un seul"><strong>One message → one consumer</strong> — even if multiple consumers listen on the same Queue, each message is delivered to only one</li>
+          <li data-en="Delivery guarantee — messages are persisted and wait until consumed" data-fr="Garantie de livraison — les messages sont persistés et attendent jusqu'à être consommés"><strong>Delivery guarantee</strong> — messages are persisted and wait until consumed</li>
+          <li data-en="Persistence — messages survive broker restart (persistent messages)" data-fr="Persistance — les messages survivent au redémarrage du broker (messages persistants)"><strong>Persistence</strong> — messages survive broker restart (persistent messages)</li>
+          <li data-en="Acknowledgement (ACK) — the broker waits for an ACK from the consumer before deleting the message" data-fr="Accusé de réception (ACK) — le broker attend un ACK du consommateur avant de supprimer le message"><strong>Acknowledgement (ACK)</strong> — the broker waits for an ACK from the consumer before deleting the message</li>
+          <li data-en="Natural load balancing — multiple instances of the same consumer share the load" data-fr="Load balancing naturel — plusieurs instances du même consommateur se partagent la charge"><strong>Natural load balancing</strong> — multiple instances of the same consumer share the load</li>
+          <li data-en="FIFO order — messages are generally consumed in arrival order" data-fr="Ordre FIFO — les messages sont généralement consommés dans l'ordre d'arrivée"><strong>FIFO order</strong> — messages are generally consumed in arrival order</li>
         </ul>
-        <h3>Cas d'usage typiques</h3>
+        <h3 data-en="Typical use cases" data-fr="Cas d'usage typiques">Typical use cases</h3>
         <ul>
-          <li>Traitement de commandes e-commerce</li>
-          <li>File de tâches (job queue) — envoi d'emails, génération de rapports</li>
-          <li>Intégration entre microservices (commande → stock → facturation)</li>
+          <li data-en="E-commerce order processing" data-fr="Traitement de commandes e-commerce">E-commerce order processing</li>
+          <li data-en="Job queue — email sending, report generation" data-fr="File de tâches (job queue) — envoi d'emails, génération de rapports">Job queue — email sending, report generation</li>
+          <li data-en="Microservice integration (order → stock → billing)" data-fr="Intégration entre microservices (commande → stock → facturation)">Microservice integration (order → stock → billing)</li>
         </ul>
-        <img src="../../images/05b-jms-enterprise-messaging-diagram-3.png" alt="JMS Point-à-Point Queue"/>
+        <img src="../../images/05b-jms-enterprise-messaging-diagram-3.png" alt="Point-to-Point Queue"/>
       </div>
     </details>
 
     <details>
-      <summary>📡 Pub/Sub (Topic)</summary>
+      <summary data-en="📡 Pub/Sub (Topic)" data-fr="📡 Pub/Sub (Topic)">📡 Pub/Sub (Topic)</summary>
       <div class="slide-content">
-        <p>Le modèle <strong>Publish/Subscribe</strong> utilise un <strong>Topic</strong> : chaque message est diffusé à <em>tous</em> les abonnés actifs.</p>
-        <h3>Caractéristiques</h3>
+        <p data-en="The Publish/Subscribe model uses a Topic: each message is broadcast to all active subscribers." data-fr="Le modèle Publish/Subscribe utilise un Topic : chaque message est diffusé à tous les abonnés actifs.">The <strong>Publish/Subscribe</strong> model uses a <strong>Topic</strong>: each message is broadcast to <em>all</em> active subscribers.</p>
+        <h3 data-en="Characteristics" data-fr="Caractéristiques">Characteristics</h3>
         <ul>
-          <li><strong>Un message → plusieurs abonnés</strong> — chaque abonné reçoit une copie du message</li>
-          <li><strong>Broadcast</strong> — idéal pour notifier plusieurs systèmes d'un même événement</li>
-          <li><strong>Abonnements non-durables</strong> — l'abonné doit être actif au moment de la publication pour recevoir le message</li>
-          <li><strong>Abonnements durables</strong> — le broker conserve les messages pour les abonnés temporairement déconnectés</li>
+          <li data-en="One message → multiple subscribers — each subscriber receives a copy of the message" data-fr="Un message → plusieurs abonnés — chaque abonné reçoit une copie du message"><strong>One message → multiple subscribers</strong> — each subscriber receives a copy of the message</li>
+          <li data-en="Broadcast — ideal for notifying multiple systems of the same event" data-fr="Broadcast — idéal pour notifier plusieurs systèmes d'un même événement"><strong>Broadcast</strong> — ideal for notifying multiple systems of the same event</li>
+          <li data-en="Non-durable subscriptions — the subscriber must be active at publish time to receive the message" data-fr="Abonnements non-durables — l'abonné doit être actif au moment de la publication pour recevoir le message"><strong>Non-durable subscriptions</strong> — the subscriber must be active at publish time to receive the message</li>
+          <li data-en="Durable subscriptions — the broker retains messages for temporarily disconnected subscribers" data-fr="Abonnements durables — le broker conserve les messages pour les abonnés temporairement déconnectés"><strong>Durable subscriptions</strong> — the broker retains messages for temporarily disconnected subscribers</li>
         </ul>
-        <h3>Durable vs Non-Durable</h3>
+        <h3 data-en="Durable vs Non-Durable" data-fr="Durable vs Non-Durable">Durable vs Non-Durable</h3>
         <table class="cds--data-table">
-          <thead><tr><th>Type</th><th>Abonné hors ligne</th><th>Cas d'usage</th></tr></thead>
+          <thead><tr><th data-en="Type" data-fr="Type">Type</th><th data-en="Subscriber offline" data-fr="Abonné hors ligne">Subscriber offline</th><th data-en="Use Case" data-fr="Cas d'usage">Use Case</th></tr></thead>
           <tbody>
-            <tr><td><strong>Non-durable</strong></td><td>Messages perdus</td><td>Notifications temps réel, logs</td></tr>
-            <tr><td><strong>Durable</strong></td><td>Messages conservés jusqu'à reconnexion</td><td>Notifications critiques, audit</td></tr>
+            <tr><td><strong data-en="Non-durable" data-fr="Non-durable">Non-durable</strong></td><td data-en="Messages lost" data-fr="Messages perdus">Messages lost</td><td data-en="Real-time notifications, logs" data-fr="Notifications temps réel, logs">Real-time notifications, logs</td></tr>
+            <tr><td><strong data-en="Durable" data-fr="Durable">Durable</strong></td><td data-en="Messages retained until reconnection" data-fr="Messages conservés jusqu'à reconnexion">Messages retained until reconnection</td><td data-en="Critical notifications, audit" data-fr="Notifications critiques, audit">Critical notifications, audit</td></tr>
           </tbody>
         </table>
-        <h3>Cas d'usage typiques</h3>
+        <h3 data-en="Typical use cases" data-fr="Cas d'usage typiques">Typical use cases</h3>
         <ul>
-          <li>Notifications d'événements métier (création d'un compte, passage d'une commande)</li>
-          <li>Synchronisation de cache entre instances</li>
-          <li>Publication de cours boursiers, de métriques temps réel</li>
+          <li data-en="Business event notifications (account creation, order placement)" data-fr="Notifications d'événements métier (création d'un compte, passage d'une commande)">Business event notifications (account creation, order placement)</li>
+          <li data-en="Cache synchronization between instances" data-fr="Synchronisation de cache entre instances">Cache synchronization between instances</li>
+          <li data-en="Publishing stock quotes, real-time metrics" data-fr="Publication de cours boursiers, de métriques temps réel">Publishing stock quotes, real-time metrics</li>
         </ul>
-        <img src="../../images/05b-jms-enterprise-messaging-diagram-4.png" alt="JMS Pub/Sub Topic"/>
+        <img src="../../images/05b-jms-enterprise-messaging-diagram-4.png" alt="Pub/Sub Topic"/>
       </div>
     </details>
 
     <details>
-      <summary>📄 Types de Messages JMS</summary>
+      <summary data-en="📄 Jakarta Messaging Message Types" data-fr="📄 Types de Messages Jakarta Messaging">📄 Jakarta Messaging Message Types</summary>
       <div class="slide-content">
-        <p>JMS définit 5 types de messages, chacun adapté à un type de contenu particulier.</p>
-        <h3>Les 5 types</h3>
+        <p data-en="Jakarta Messaging defines 5 message types, each suited to a particular content type." data-fr="JMS définit 5 types de messages, chacun adapté à un type de contenu particulier.">Jakarta Messaging defines 5 message types, each suited to a particular content type.</p>
+        <h3 data-en="The 5 types" data-fr="Les 5 types">The 5 types</h3>
         <ul>
-          <li><strong>TextMessage</strong> — corps de type <code>String</code> ; idéal pour JSON, XML, texte brut. Le plus utilisé en pratique</li>
-          <li><strong>ObjectMessage</strong> — corps de type <code>Serializable</code> ; transporte un objet Java sérialisé. À éviter en inter-applicatif (couplage fort)</li>
-          <li><strong>MapMessage</strong> — paires clé/valeur (<code>String → primitif</code>) ; accès nommé aux champs, portable</li>
-          <li><strong>BytesMessage</strong> — corps de type tableau d'octets (<code>byte[]</code>) ; pour les données binaires (images, fichiers, protocoles custom)</li>
-          <li><strong>StreamMessage</strong> — flux de types primitifs Java écrits et lus séquentiellement</li>
+          <li data-en="TextMessage — String body; ideal for JSON, XML, plain text. Most commonly used in practice." data-fr="TextMessage — corps de type String ; idéal pour JSON, XML, texte brut. Le plus utilisé en pratique"><strong>TextMessage</strong> — <code>String</code> body; ideal for JSON, XML, plain text. Most commonly used in practice.</li>
+          <li data-en="ObjectMessage — Serializable body; transports a serialized Java object. Avoid for inter-application use (tight coupling)" data-fr="ObjectMessage — corps de type Serializable ; transporte un objet Java sérialisé. À éviter en inter-applicatif (couplage fort)"><strong>ObjectMessage</strong> — <code>Serializable</code> body; transports a serialized Java object. Avoid for inter-application use (tight coupling)</li>
+          <li data-en="MapMessage — key/value pairs (String → primitive); named field access, portable" data-fr="MapMessage — paires clé/valeur (String → primitif) ; accès nommé aux champs, portable"><strong>MapMessage</strong> — key/value pairs (<code>String → primitive</code>); named field access, portable</li>
+          <li data-en="BytesMessage — byte array body (byte[]); for binary data (images, files, custom protocols)" data-fr="BytesMessage — corps de type tableau d'octets (byte[]) ; pour les données binaires (images, fichiers, protocoles custom)"><strong>BytesMessage</strong> — byte array body (<code>byte[]</code>); for binary data (images, files, custom protocols)</li>
+          <li data-en="StreamMessage — stream of Java primitive types written and read sequentially" data-fr="StreamMessage — flux de types primitifs Java écrits et lus séquentiellement"><strong>StreamMessage</strong> — stream of Java primitive types written and read sequentially</li>
         </ul>
-        <h3>En-têtes JMS (headers)</h3>
+        <h3 data-en="JMS headers" data-fr="En-têtes JMS (headers)">JMS headers</h3>
         <ul>
-          <li><code>JMSMessageID</code> — identifiant unique généré par le broker</li>
-          <li><code>JMSDestination</code> — Queue ou Topic cible</li>
-          <li><code>JMSDeliveryMode</code> — <code>PERSISTENT</code> ou <code>NON_PERSISTENT</code></li>
-          <li><code>JMSPriority</code> — priorité de livraison (0–9, défaut 4)</li>
-          <li><code>JMSExpiration</code> — date d'expiration du message</li>
-          <li><code>JMSCorrelationID</code> — pour relier une réponse à sa requête (request-reply)</li>
+          <li data-en="JMSMessageID — unique identifier generated by the broker" data-fr="JMSMessageID — identifiant unique généré par le broker"><code>JMSMessageID</code> — unique identifier generated by the broker</li>
+          <li data-en="JMSDestination — target Queue or Topic" data-fr="JMSDestination — Queue ou Topic cible"><code>JMSDestination</code> — target Queue or Topic</li>
+          <li data-en="JMSDeliveryMode — PERSISTENT or NON_PERSISTENT" data-fr="JMSDeliveryMode — PERSISTENT ou NON_PERSISTENT"><code>JMSDeliveryMode</code> — <code>PERSISTENT</code> or <code>NON_PERSISTENT</code></li>
+          <li data-en="JMSPriority — delivery priority (0–9, default 4)" data-fr="JMSPriority — priorité de livraison (0–9, défaut 4)"><code>JMSPriority</code> — delivery priority (0–9, default 4)</li>
+          <li data-en="JMSExpiration — message expiration date" data-fr="JMSExpiration — date d'expiration du message"><code>JMSExpiration</code> — message expiration date</li>
+          <li data-en="JMSCorrelationID — to link a response to its request (request-reply)" data-fr="JMSCorrelationID — pour relier une réponse à sa requête (request-reply)"><code>JMSCorrelationID</code> — to link a response to its request (request-reply)</li>
         </ul>
-        <h3>Propriétés et sélecteurs</h3>
-        <p>Les <strong>propriétés</strong> sont des métadonnées applicatives arbitraires (String, int, boolean…) attachées au message via <code>message.setStringProperty("key", "value")</code>.</p>
-        <p>Les <strong>sélecteurs de messages</strong> (Message Selectors) permettent aux consommateurs de filtrer les messages en fonction de leurs propriétés, via une syntaxe proche de SQL WHERE : <code>"transferType = 'INTERNATIONAL' AND amount &gt; 1000"</code>.</p>
+        <h3 data-en="Properties and selectors" data-fr="Propriétés et sélecteurs">Properties and selectors</h3>
+        <p data-en="Properties are arbitrary application metadata (String, int, boolean…) attached to the message via message.setStringProperty(&quot;key&quot;, &quot;value&quot;)." data-fr="Les propriétés sont des métadonnées applicatives arbitraires (String, int, boolean…) attachées au message via message.setStringProperty(&quot;key&quot;, &quot;value&quot;)."><strong>Properties</strong> are arbitrary application metadata (String, int, boolean…) attached to the message via <code>message.setStringProperty("key", "value")</code>.</p>
+        <p data-en="Message Selectors allow consumers to filter messages based on their properties, using SQL WHERE-like syntax: &quot;transferType = 'INTERNATIONAL' AND amount &gt; 1000&quot;." data-fr="Les sélecteurs de messages (Message Selectors) permettent aux consommateurs de filtrer les messages en fonction de leurs propriétés, via une syntaxe proche de SQL WHERE : &quot;transferType = 'INTERNATIONAL' AND amount &gt; 1000&quot;."><strong>Message Selectors</strong> allow consumers to filter messages based on their properties, using SQL WHERE-like syntax: <code>"transferType = 'INTERNATIONAL' AND amount &gt; 1000"</code>.</p>
       </div>
     </details>
 
     <details>
-      <summary>⚙️ Producteurs et Consommateurs</summary>
+      <summary data-en="⚙️ Producers and Consumers" data-fr="⚙️ Producteurs et Consommateurs">⚙️ Producers and Consumers</summary>
       <div class="slide-content">
-        <p>JMS 2.0 simplifie drastiquement l'API avec <strong>JMSContext</strong> — une seule interface remplace <code>Connection</code> + <code>Session</code>.</p>
-        <h3>Producteur avec JMSContext (JMS 2.0)</h3>
+        <p data-en="Jakarta Messaging 2.0 dramatically simplifies the API with JMSContext — a single interface replaces Connection + Session." data-fr="Jakarta Messaging 2.0 simplifie drastiquement l'API avec JMSContext — une seule interface remplace Connection + Session.">Jakarta Messaging 2.0 dramatically simplifies the API with <strong>JMSContext</strong> — a single interface replaces <code>Connection</code> + <code>Session</code>.</p>
+        <h3 data-en="Producer with JMSContext" data-fr="Producteur avec JMSContext">Producer with JMSContext</h3>
         <ul>
-          <li><code>@Inject JMSContext jmsContext</code> — injection directe dans un CDI bean</li>
-          <li><code>@Inject @JMSConnectionFactory("jms/cf") ConnectionFactory</code> — factory JNDI</li>
-          <li><code>jmsContext.createProducer().send(queue, textMessage)</code> — envoi simplifié</li>
-          <li>Options du producteur : priorité, TTL, mode de livraison, délai</li>
+          <li data-en="@Inject JMSContext jmsContext — direct injection into a CDI bean" data-fr="@Inject JMSContext jmsContext — injection directe dans un CDI bean"><code>@Inject JMSContext jmsContext</code> — direct injection into a CDI bean</li>
+          <li data-en="@Inject @JMSConnectionFactory(&quot;jms/cf&quot;) ConnectionFactory — JNDI factory" data-fr="@Inject @JMSConnectionFactory(&quot;jms/cf&quot;) ConnectionFactory — factory JNDI"><code>@Inject @JMSConnectionFactory("jms/cf") ConnectionFactory</code> — JNDI factory</li>
+          <li data-en="jmsContext.createProducer().send(queue, textMessage) — simplified send" data-fr="jmsContext.createProducer().send(queue, textMessage) — envoi simplifié"><code>jmsContext.createProducer().send(queue, textMessage)</code> — simplified send</li>
+          <li data-en="Producer options: priority, TTL, delivery mode, delay" data-fr="Options du producteur : priorité, TTL, mode de livraison, délai">Producer options: priority, TTL, delivery mode, delay</li>
         </ul>
-        <h3>Consommateur synchrone</h3>
+        <h3 data-en="Synchronous consumer" data-fr="Consommateur synchrone">Synchronous consumer</h3>
         <ul>
-          <li><code>jmsContext.createConsumer(destination).receiveBody(String.class)</code> — bloquant</li>
-          <li><code>receiveBody(String.class, timeout)</code> — avec délai d'attente en ms</li>
-          <li>À éviter dans les servlets / EJB (threads gérés par le conteneur)</li>
+          <li data-en="jmsContext.createConsumer(destination).receiveBody(String.class) — blocking" data-fr="jmsContext.createConsumer(destination).receiveBody(String.class) — bloquant"><code>jmsContext.createConsumer(destination).receiveBody(String.class)</code> — blocking</li>
+          <li data-en="receiveBody(String.class, timeout) — with timeout in ms" data-fr="receiveBody(String.class, timeout) — avec délai d'attente en ms"><code>receiveBody(String.class, timeout)</code> — with timeout in ms</li>
+          <li data-en="Avoid in servlets / EJB (threads managed by the container)" data-fr="À éviter dans les servlets / EJB (threads gérés par le conteneur)">Avoid in servlets / EJB (threads managed by the container)</li>
         </ul>
-        <h3>Consommateur asynchrone — MessageListener</h3>
+        <h3 data-en="Asynchronous consumer — MessageListener" data-fr="Consommateur asynchrone — MessageListener">Asynchronous consumer — MessageListener</h3>
         <ul>
-          <li>Implémente <code>MessageListener</code> avec <code>onMessage(Message msg)</code></li>
-          <li>Appelé automatiquement par le conteneur à chaque nouveau message</li>
-          <li>Non bloquant — le thread est libéré entre les messages</li>
+          <li data-en="Implements MessageListener with onMessage(Message msg)" data-fr="Implémente MessageListener avec onMessage(Message msg)">Implements <code>MessageListener</code> with <code>onMessage(Message msg)</code></li>
+          <li data-en="Called automatically by the container on each new message" data-fr="Appelé automatiquement par le conteneur à chaque nouveau message">Called automatically by the container on each new message</li>
+          <li data-en="Non-blocking — the thread is freed between messages" data-fr="Non bloquant — le thread est libéré entre les messages">Non-blocking — the thread is freed between messages</li>
         </ul>
-        <h3>Pattern Request-Reply</h3>
+        <h3 data-en="Request-Reply pattern" data-fr="Pattern Request-Reply">Request-Reply pattern</h3>
         <ul>
-          <li>L'émetteur définit <code>JMSReplyTo</code> (Queue temporaire) et <code>JMSCorrelationID</code></li>
-          <li>Le récepteur envoie sa réponse sur la Queue <code>JMSReplyTo</code></li>
-          <li>L'émetteur consomme la réponse en filtrant sur <code>JMSCorrelationID</code></li>
+          <li data-en="The sender sets JMSReplyTo (temporary Queue) and JMSCorrelationID" data-fr="L'émetteur définit JMSReplyTo (Queue temporaire) et JMSCorrelationID">The sender sets <code>JMSReplyTo</code> (temporary Queue) and <code>JMSCorrelationID</code></li>
+          <li data-en="The receiver sends its response to the JMSReplyTo Queue" data-fr="Le récepteur envoie sa réponse sur la Queue JMSReplyTo">The receiver sends its response to the <code>JMSReplyTo</code> Queue</li>
+          <li data-en="The sender consumes the response by filtering on JMSCorrelationID" data-fr="L'émetteur consomme la réponse en filtrant sur JMSCorrelationID">The sender consumes the response by filtering on <code>JMSCorrelationID</code></li>
         </ul>
-        <img src="../../images/05b-jms-enterprise-messaging-diagram-5.png" alt="JMS Producteurs et Consommateurs"/>
+        <img src="../../images/05b-jms-enterprise-messaging-diagram-5.png" alt="Producers and Consumers"/>
       </div>
     </details>
 
     <details>
-      <summary>🤖 Message-Driven Beans</summary>
+      <summary data-en="🤖 Message-Driven Beans" data-fr="🤖 Message-Driven Beans">🤖 Message-Driven Beans</summary>
       <div class="slide-content">
-        <p>Les <strong>Message-Driven Beans (MDB)</strong> sont des EJB déclenchés automatiquement par l'arrivée d'un message JMS. Ils constituent le moyen standard de consommer des messages dans Jakarta EE.</p>
-        <h3>Annotation @MessageDriven</h3>
+        <p data-en="Message-Driven Beans (MDB) are EJBs triggered automatically by the arrival of a Jakarta Messaging message. They are the standard way to consume messages in Jakarta EE." data-fr="Les Message-Driven Beans (MDB) sont des EJB déclenchés automatiquement par l'arrivée d'un message Jakarta Messaging. Ils constituent le moyen standard de consommer des messages dans Jakarta EE."><strong>Message-Driven Beans (MDB)</strong> are EJBs triggered automatically by the arrival of a Jakarta Messaging message. They are the standard way to consume messages in Jakarta EE.</p>
+        <h3 data-en="@MessageDriven annotation" data-fr="Annotation @MessageDriven">@MessageDriven annotation</h3>
         <ul>
-          <li><code>@MessageDriven(activationConfig = {...})</code> — configure l'abonnement JMS du MDB</li>
-          <li><code>@ActivationConfigProperty(propertyName="destinationType", propertyValue="jakarta.jms.Queue")</code></li>
-          <li><code>@ActivationConfigProperty(propertyName="destination", propertyValue="jms/transferQueue")</code></li>
-          <li><code>@ActivationConfigProperty(propertyName="messageSelector", propertyValue="...")</code> — filtre de messages</li>
+          <li data-en="@MessageDriven(activationConfig = {...}) — configures the MDB's JMS subscription" data-fr="@MessageDriven(activationConfig = {...}) — configure l'abonnement JMS du MDB"><code>@MessageDriven(activationConfig = {...})</code> — configures the MDB's Jakarta Messaging subscription</li>
+          <li data-en="@ActivationConfigProperty(propertyName=&quot;destinationType&quot;, propertyValue=&quot;jakarta.jms.Queue&quot;)" data-fr="@ActivationConfigProperty(propertyName=&quot;destinationType&quot;, propertyValue=&quot;jakarta.jms.Queue&quot;)"><code>@ActivationConfigProperty(propertyName="destinationType", propertyValue="jakarta.jms.Queue")</code></li>
+          <li data-en="@ActivationConfigProperty(propertyName=&quot;destination&quot;, propertyValue=&quot;jms/transferQueue&quot;)" data-fr="@ActivationConfigProperty(propertyName=&quot;destination&quot;, propertyValue=&quot;jms/transferQueue&quot;)"><code>@ActivationConfigProperty(propertyName="destination", propertyValue="jms/transferQueue")</code></li>
+          <li data-en="@ActivationConfigProperty(propertyName=&quot;messageSelector&quot;, propertyValue=&quot;...&quot;) — message filter" data-fr="@ActivationConfigProperty(propertyName=&quot;messageSelector&quot;, propertyValue=&quot;...&quot;) — filtre de messages"><code>@ActivationConfigProperty(propertyName="messageSelector", propertyValue="...")</code> — message filter</li>
         </ul>
-        <h3>Cycle de vie du MDB</h3>
+        <h3 data-en="MDB lifecycle" data-fr="Cycle de vie du MDB">MDB lifecycle</h3>
         <ul>
-          <li><strong>Does Not Exist</strong> → <strong>Pooled</strong> — le conteneur crée un pool d'instances MDB au démarrage</li>
-          <li><strong>Pooled</strong> → <strong>onMessage()</strong> — une instance est sélectionnée et la méthode est invoquée</li>
-          <li>Après <code>onMessage()</code>, l'instance retourne dans le pool</li>
-          <li><code>@PostConstruct</code> et <code>@PreDestroy</code> sont supportés</li>
+          <li data-en="Does Not Exist → Pooled — the container creates a pool of MDB instances on startup" data-fr="Does Not Exist → Pooled — le conteneur crée un pool d'instances MDB au démarrage"><strong>Does Not Exist</strong> → <strong>Pooled</strong> — the container creates a pool of MDB instances on startup</li>
+          <li data-en="Pooled → onMessage() — an instance is selected and the method is invoked" data-fr="Pooled → onMessage() — une instance est sélectionnée et la méthode est invoquée"><strong>Pooled</strong> → <strong>onMessage()</strong> — an instance is selected and the method is invoked</li>
+          <li data-en="After onMessage(), the instance returns to the pool" data-fr="Après onMessage(), l'instance retourne dans le pool">After <code>onMessage()</code>, the instance returns to the pool</li>
+          <li data-en="@PostConstruct and @PreDestroy are supported" data-fr="@PostConstruct et @PreDestroy sont supportés"><code>@PostConstruct</code> and <code>@PreDestroy</code> are supported</li>
         </ul>
-        <h3>Injection CDI dans un MDB</h3>
+        <h3 data-en="CDI injection in an MDB" data-fr="Injection CDI dans un MDB">CDI injection in an MDB</h3>
         <ul>
-          <li><code>@Inject</code> fonctionne dans un MDB comme dans un EJB Session</li>
-          <li>Les services applicatifs (BankingService, NotificationService…) sont injectables</li>
-          <li>Pas de scope conversationnel — le MDB est stateless</li>
+          <li data-en="@Inject works in an MDB as in a Session EJB" data-fr="@Inject fonctionne dans un MDB comme dans un EJB Session"><code>@Inject</code> works in an MDB as in a Session EJB</li>
+          <li data-en="Application services (BankingService, NotificationService…) are injectable" data-fr="Les services applicatifs (BankingService, NotificationService…) sont injectables">Application services (BankingService, NotificationService…) are injectable</li>
+          <li data-en="No conversational scope — the MDB is stateless" data-fr="Pas de scope conversationnel — le MDB est stateless">No conversational scope — the MDB is stateless</li>
         </ul>
-        <h3>MDB Topic (Pub/Sub)</h3>
+        <h3 data-en="Topic MDB (Pub/Sub)" data-fr="MDB Topic (Pub/Sub)">Topic MDB (Pub/Sub)</h3>
         <ul>
-          <li><code>destinationType = jakarta.jms.Topic</code></li>
-          <li><code>subscriptionDurability = "Durable"</code> — pour les abonnements durables</li>
-          <li><code>durableSubscriptionName = "myDurableSub"</code> — nom unique de l'abonnement</li>
-          <li><code>clientId = "myClientId"</code> — identifiant client pour la durabilité</li>
+          <li data-en="destinationType = jakarta.jms.Topic" data-fr="destinationType = jakarta.jms.Topic"><code>destinationType = jakarta.jms.Topic</code></li>
+          <li data-en="subscriptionDurability = &quot;Durable&quot; — for durable subscriptions" data-fr="subscriptionDurability = &quot;Durable&quot; — pour les abonnements durables"><code>subscriptionDurability = "Durable"</code> — for durable subscriptions</li>
+          <li data-en="durableSubscriptionName = &quot;myDurableSub&quot; — unique subscription name" data-fr="durableSubscriptionName = &quot;myDurableSub&quot; — nom unique de l'abonnement"><code>durableSubscriptionName = "myDurableSub"</code> — unique subscription name</li>
+          <li data-en="clientId = &quot;myClientId&quot; — client identifier for durability" data-fr="clientId = &quot;myClientId&quot; — identifiant client pour la durabilité"><code>clientId = "myClientId"</code> — client identifier for durability</li>
         </ul>
       </div>
     </details>
 
     <details>
-      <summary>🔐 Transactions JMS</summary>
+      <summary data-en="🔐 Jakarta Messaging Transactions" data-fr="🔐 Transactions Jakarta Messaging">🔐 Jakarta Messaging Transactions</summary>
       <div class="slide-content">
-        <p>La gestion des transactions est critique en messagerie enterprise pour garantir qu'un message est traité <em>exactement une fois</em>.</p>
-        <h3>CMT par défaut dans les MDB</h3>
+        <p data-en="Transaction management is critical in enterprise messaging to guarantee that a message is processed exactly once." data-fr="La gestion des transactions est critique en messagerie enterprise pour garantir qu'un message est traité exactement une fois.">Transaction management is critical in enterprise messaging to guarantee that a message is processed <em>exactly once</em>.</p>
+        <h3 data-en="CMT by default in MDBs" data-fr="CMT par défaut dans les MDB">CMT by default in MDBs</h3>
         <ul>
-          <li>Le conteneur démarre une transaction avant <code>onMessage()</code> et la committe après son retour normal</li>
-          <li>La transaction couvre à la fois l'ACK du message JMS et les opérations JPA/BD</li>
-          <li>Atomicité garantie : si la BD échoue, le message est remis en file</li>
+          <li data-en="The container starts a transaction before onMessage() and commits after its normal return" data-fr="Le conteneur démarre une transaction avant onMessage() et la committe après son retour normal">The container starts a transaction before <code>onMessage()</code> and commits after its normal return</li>
+          <li data-en="The transaction covers both the JMS ACK and JPA/DB operations" data-fr="La transaction couvre à la fois l'ACK du message JMS et les opérations JPA/BD">The transaction covers both the JMS ACK and JPA/DB operations</li>
+          <li data-en="Guaranteed atomicity: if the DB fails, the message is re-queued" data-fr="Atomicité garantie : si la BD échoue, le message est remis en file">Guaranteed atomicity: if the DB fails, the message is re-queued</li>
         </ul>
-        <h3>Rollback et rélivraison</h3>
+        <h3 data-en="Rollback and redelivery" data-fr="Rollback et rélivraison">Rollback and redelivery</h3>
         <ul>
-          <li>En cas d'exception, la transaction est rollbackée et le message est <strong>rélivré</strong> par le broker</li>
-          <li>Le nombre de tentatives est configurable (propriété <code>maxRedeliveryCount</code>)</li>
-          <li>Après N tentatives échouées, le message est envoyé en <strong>Dead Letter Queue (DLQ)</strong></li>
+          <li data-en="On exception, the transaction is rolled back and the message is redelivered by the broker" data-fr="En cas d'exception, la transaction est rollbackée et le message est rélivré par le broker">On exception, the transaction is rolled back and the message is <strong>redelivered</strong> by the broker</li>
+          <li data-en="The number of attempts is configurable (maxRedeliveryCount property)" data-fr="Le nombre de tentatives est configurable (propriété maxRedeliveryCount)">The number of attempts is configurable (<code>maxRedeliveryCount</code> property)</li>
+          <li data-en="After N failed attempts, the message is sent to the Dead Letter Queue (DLQ)" data-fr="Après N tentatives échouées, le message est envoyé en Dead Letter Queue (DLQ)">After N failed attempts, the message is sent to the <strong>Dead Letter Queue (DLQ)</strong></li>
         </ul>
-        <h3>Poison Message Detection</h3>
+        <h3 data-en="Poison Message Detection" data-fr="Poison Message Detection">Poison Message Detection</h3>
         <ul>
-          <li>Un <em>poison message</em> est un message qui déclenche systématiquement une exception, entraînant une boucle infinie de rélivraison</li>
-          <li>La DLQ interrompt cette boucle en isolant le message défaillant</li>
-          <li>Stratégie : inspecter le header <code>JMSXDeliveryCount</code> dans <code>onMessage()</code></li>
+          <li data-en="A poison message is a message that systematically triggers an exception, causing an infinite redelivery loop" data-fr="Un poison message est un message qui déclenche systématiquement une exception, entraînant une boucle infinie de rélivraison">A <em>poison message</em> is a message that systematically triggers an exception, causing an infinite redelivery loop</li>
+          <li data-en="The DLQ breaks this loop by isolating the failing message" data-fr="La DLQ interrompt cette boucle en isolant le message défaillant">The DLQ breaks this loop by isolating the failing message</li>
+          <li data-en="Strategy: inspect the JMSXDeliveryCount header in onMessage()" data-fr="Stratégie : inspecter le header JMSXDeliveryCount dans onMessage()">Strategy: inspect the <code>JMSXDeliveryCount</code> header in <code>onMessage()</code></li>
         </ul>
-        <h3>Dead Letter Queue</h3>
+        <h3 data-en="Dead Letter Queue" data-fr="Dead Letter Queue">Dead Letter Queue</h3>
         <ul>
-          <li>File dédiée recevant les messages non traitables après épuisement des tentatives</li>
-          <li>Un MDB dédié (<em>DLQ Handler</em>) consomme cette file pour alerter, journaliser, corriger ou archiver</li>
-          <li>Évite la perte silencieuse de messages</li>
+          <li data-en="Dedicated queue receiving unprocessable messages after exhausting all retry attempts" data-fr="File dédiée recevant les messages non traitables après épuisement des tentatives">Dedicated queue receiving unprocessable messages after exhausting all retry attempts</li>
+          <li data-en="A dedicated MDB (DLQ Handler) consumes this queue to alert, log, fix or archive" data-fr="Un MDB dédié (DLQ Handler) consomme cette file pour alerter, journaliser, corriger ou archiver">A dedicated MDB (<em>DLQ Handler</em>) consumes this queue to alert, log, fix or archive</li>
+          <li data-en="Prevents silent message loss" data-fr="Évite la perte silencieuse de messages">Prevents silent message loss</li>
         </ul>
-        <img src="../../images/05b-jms-enterprise-messaging-diagram-6.png" alt="JMS Transactions et Dead Letter Queue"/>
+        <img src="../../images/05b-jms-enterprise-messaging-diagram-6.png" alt="Transactions and Dead Letter Queue"/>
       </div>
     </details>
 
     <details>
-      <summary>🏆 Meilleures Pratiques JMS</summary>
+      <summary data-en="🏆 Jakarta Messaging Best Practices" data-fr="🏆 Meilleures Pratiques Jakarta Messaging">🏆 Jakarta Messaging Best Practices</summary>
       <div class="slide-content">
-        <h3>Conception des messages</h3>
+        <h3 data-en="Message design" data-fr="Conception des messages">Message design</h3>
         <ul>
-          <li>✅ Préférer <strong>TextMessage avec JSON</strong> — interopérable, lisible, versionnable</li>
-          <li>✅ Garder les messages <strong>petits</strong> — inclure uniquement l'identifiant et les données essentielles</li>
-          <li>✅ Inclure un <strong>timestamp</strong> et un <strong>correlationId</strong> dans le corps JSON</li>
-          <li>⛔ Éviter <code>ObjectMessage</code> entre applications différentes — couplage Java-to-Java</li>
+          <li data-en="✅ Prefer TextMessage with JSON — interoperable, readable, versionable" data-fr="✅ Préférer TextMessage avec JSON — interopérable, lisible, versionnable">✅ Prefer <strong>TextMessage with JSON</strong> — interoperable, readable, versionable</li>
+          <li data-en="✅ Keep messages small — include only the identifier and essential data" data-fr="✅ Garder les messages petits — inclure uniquement l'identifiant et les données essentielles">✅ Keep messages <strong>small</strong> — include only the identifier and essential data</li>
+          <li data-en="✅ Include a timestamp and correlationId in the JSON body" data-fr="✅ Inclure un timestamp et un correlationId dans le corps JSON">✅ Include a <strong>timestamp</strong> and a <strong>correlationId</strong> in the JSON body</li>
+          <li data-en="⛔ Avoid ObjectMessage between different applications — Java-to-Java coupling" data-fr="⛔ Éviter ObjectMessage entre applications différentes — couplage Java-to-Java">⛔ Avoid <code>ObjectMessage</code> between different applications — Java-to-Java coupling</li>
         </ul>
-        <h3>Sélecteurs pour le filtrage</h3>
+        <h3 data-en="Selectors for filtering" data-fr="Sélecteurs pour le filtrage">Selectors for filtering</h3>
         <ul>
-          <li>Utiliser les sélecteurs JMS pour router les messages vers les MDB spécialisés</li>
-          <li>Les sélecteurs sont évalués côté broker — réduisent le trafic réseau</li>
-          <li>Exemple : <code>"transferType = 'INTERNATIONAL'"</code> sur une Queue partagée</li>
+          <li data-en="Use JMS selectors to route messages to specialized MDBs" data-fr="Utiliser les sélecteurs JMS pour router les messages vers les MDB spécialisés">Use JMS selectors to route messages to specialized MDBs</li>
+          <li data-en="Selectors are evaluated broker-side — reduce network traffic" data-fr="Les sélecteurs sont évalués côté broker — réduisent le trafic réseau">Selectors are evaluated broker-side — reduce network traffic</li>
+          <li data-en="Example: &quot;transferType = 'INTERNATIONAL'&quot; on a shared Queue" data-fr="Exemple : &quot;transferType = 'INTERNATIONAL'&quot; sur une Queue partagée">Example: <code>"transferType = 'INTERNATIONAL'"</code> on a shared Queue</li>
         </ul>
-        <h3>Gestion de la DLQ</h3>
+        <h3 data-en="DLQ management" data-fr="Gestion de la DLQ">DLQ management</h3>
         <ul>
-          <li>Toujours configurer une DLQ par Queue applicative importante</li>
-          <li>Déployer un MDB DLQ Handler qui alerte et journalise en temps réel</li>
-          <li>Prévoir un outil de <em>replay</em> pour réinjecter les messages corrigés</li>
+          <li data-en="Always configure a DLQ for each important application Queue" data-fr="Toujours configurer une DLQ par Queue applicative importante">Always configure a DLQ for each important application Queue</li>
+          <li data-en="Deploy a DLQ Handler MDB that alerts and logs in real time" data-fr="Déployer un MDB DLQ Handler qui alerte et journalise en temps réel">Deploy a DLQ Handler MDB that alerts and logs in real time</li>
+          <li data-en="Provide a replay tool to re-inject corrected messages" data-fr="Prévoir un outil de replay pour réinjecter les messages corrigés">Provide a <em>replay</em> tool to re-inject corrected messages</li>
         </ul>
-        <h3>Monitoring et performance</h3>
+        <h3 data-en="Monitoring and performance" data-fr="Monitoring et performance">Monitoring and performance</h3>
         <ul>
-          <li>Superviser la profondeur des Queues (métrique <code>queueDepth</code>)</li>
-          <li>Configurer le pool de MDB (<code>maxEndpoints</code>) selon la charge</li>
-          <li>Éviter les opérations longues dans <code>onMessage()</code> — déléguer à un thread asynchrone si nécessaire</li>
+          <li data-en="Monitor Queue depth (queueDepth metric)" data-fr="Superviser la profondeur des Queues (métrique queueDepth)">Monitor Queue depth (<code>queueDepth</code> metric)</li>
+          <li data-en="Configure the MDB pool (maxEndpoints) according to load" data-fr="Configurer le pool de MDB (maxEndpoints) selon la charge">Configure the MDB pool (<code>maxEndpoints</code>) according to load</li>
+          <li data-en="Avoid long operations in onMessage() — delegate to an async thread if necessary" data-fr="Éviter les opérations longues dans onMessage() — déléguer à un thread asynchrone si nécessaire">Avoid long operations in <code>onMessage()</code> — delegate to an async thread if necessary</li>
         </ul>
-        <h3>Configuration Open Liberty</h3>
+        <h3 data-en="MicroProfile Reactive Messaging — Modern Alternative" data-fr="MicroProfile Reactive Messaging — Alternative moderne">MicroProfile Reactive Messaging — Modern Alternative</h3>
+        <p data-en="For microservices, MicroProfile Reactive Messaging (with SmallRye) offers a simpler annotation-based model with @Incoming and @Outgoing, supporting Kafka, AMQP, and other brokers without JMS infrastructure." data-fr="Pour les microservices, MicroProfile Reactive Messaging (avec SmallRye) offre un modèle plus simple basé sur des annotations @Incoming et @Outgoing, supportant Kafka, AMQP et d'autres brokers sans infrastructure JMS.">For microservices, <strong>MicroProfile Reactive Messaging</strong> (with SmallRye) offers a simpler annotation-based model with <code>@Incoming</code> and <code>@Outgoing</code>, supporting Kafka, AMQP, and other brokers without JMS infrastructure.</p>
+        <h3 data-en="Open Liberty configuration" data-fr="Configuration Open Liberty">Open Liberty configuration</h3>
         <ul>
-          <li>Activer les features <code>messagingClient-3.0</code>, <code>mdb-3.2</code>, <code>wasJmsClient-2.0</code> dans <code>server.xml</code></li>
-          <li>Déclarer <code>jmsActivationSpec</code>, <code>jmsConnectionFactory</code>, <code>jmsQueue</code>, <code>jmsTopic</code></li>
-          <li>Utiliser JNDI names cohérents : <code>jms/transferCF</code>, <code>jms/transferQueue</code>, <code>jms/dlq</code></li>
+          <li data-en="Enable features messagingClient-3.0, mdb-4.0, wasJmsClient-2.0 in server.xml" data-fr="Activer les features messagingClient-3.0, mdb-4.0, wasJmsClient-2.0 dans server.xml">Enable features <code>messagingClient-3.0</code>, <code>mdb-4.0</code>, <code>wasJmsClient-2.0</code> in <code>server.xml</code></li>
+          <li data-en="Declare jmsActivationSpec, jmsConnectionFactory, jmsQueue, jmsTopic" data-fr="Déclarer jmsActivationSpec, jmsConnectionFactory, jmsQueue, jmsTopic">Declare <code>jmsActivationSpec</code>, <code>jmsConnectionFactory</code>, <code>jmsQueue</code>, <code>jmsTopic</code></li>
+          <li data-en="Use consistent JNDI names: jms/transferCF, jms/transferQueue, jms/dlq" data-fr="Utiliser JNDI names cohérents : jms/transferCF, jms/transferQueue, jms/dlq">Use consistent JNDI names: <code>jms/transferCF</code>, <code>jms/transferQueue</code>, <code>jms/dlq</code></li>
         </ul>
       </div>
     </details>
@@ -302,5 +306,6 @@
   </main>
 </div>
 <footer class="cds--footer">Made with IBM Bob &nbsp;·&nbsp; © 2026 Olivier Planson &nbsp;·&nbsp; ESIPE — Jakarta EE &amp; Microservices</footer>
+<script src="../assets/language-toggle.js"></script>
 </body>
 </html>

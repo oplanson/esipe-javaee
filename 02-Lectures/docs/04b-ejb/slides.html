@@ -1,248 +1,309 @@
 <!-- © Copyright 2026 Olivier Planson. All rights reserved. Reproduction prohibited. Made with IBM Bob. -->
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="en">
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-  <title>Cours 04b — Contenu du cours</title>
+  <title>Chapter 04b — Course Content</title>
   <link rel="stylesheet" href="../assets/carbon.css"/>
 </head>
 <body>
 <header class="cds--header">
-  <a class="cds--header__name" href="index.html">EJB — Enterprise Java Beans<span>Cours Jakarta EE</span></a>
-  <a class="cds--header__back" href="../index.html">← Tous les Cours</a>
+  <a class="cds--header__name" href="index.html" data-en="EJB — Enterprise Java Beans&lt;span&gt;Jakarta EE Course&lt;/span&gt;" data-fr="EJB — Enterprise Java Beans&lt;span&gt;Cours Jakarta EE&lt;/span&gt;">EJB — Enterprise Java Beans<span>Jakarta EE Course</span></a>
+  <button class="lang-toggle-btn" id="lang-toggle">FR</button>
+  <a class="cds--header__back" href="../index.html" data-en="← All Courses" data-fr="← Tous les Cours">← All Courses</a>
 </header>
 <div class="cds--shell">
   <nav class="cds--side-nav">
-    <p class="cds--side-nav__section-title">Cours 04b</p>
-    <a class="cds--side-nav__link" href="index.html">⊙ Vue d'ensemble</a>
-    <a class="cds--side-nav__link active" href="slides.html">☰ Contenu du cours</a>
-    <a class="cds--side-nav__link" href="concepts.html">◈ Concepts clés</a>
-    <a class="cds--side-nav__link" href="code.html">⟨/⟩ Exemples de code</a>
+    <p class="cds--side-nav__section-title" data-en="Course 04b" data-fr="Cours 04b">Course 04b</p>
+    <a class="cds--side-nav__link" href="index.html" data-en="⊙ Overview" data-fr="⊙ Vue d'ensemble">⊙ Overview</a>
+    <a class="cds--side-nav__link active" href="slides.html" data-en="☰ Course Content" data-fr="☰ Contenu du cours">☰ Course Content</a>
+    <a class="cds--side-nav__link" href="concepts.html" data-en="◈ Key Concepts" data-fr="◈ Concepts clés">◈ Key Concepts</a>
+    <a class="cds--side-nav__link" href="code.html" data-en="⟨/⟩ Code Examples" data-fr="⟨/⟩ Exemples de code">⟨/⟩ Code Examples</a>
+    <a class="cds--side-nav__lang-toggle">FR</a>
   </nav>
   <main class="cds--content">
-    <div class="breadcrumb"><a href="../index.html">Cours</a> › <a href="index.html">Cours 04b</a> › Contenu</div>
-    <h1>Contenu du cours</h1>
-    <p class="page-lead">Toutes les sections — cliquez sur un titre pour développer.</p>
+    <div class="breadcrumb"><a href="../index.html" data-en="Courses" data-fr="Cours">Courses</a> › <a href="index.html" data-en="Chapter 04b" data-fr="Cours 04b">Chapter 04b</a> › <span data-en="Content" data-fr="Contenu">Content</span></div>
+    <h1 data-en="Course Content" data-fr="Contenu du cours">Course Content</h1>
+    <p class="page-lead" data-en="All sections — click a title to expand." data-fr="Toutes les sections — cliquez sur un titre pour développer.">All sections — click a title to expand.</p>
 
     <details open>
-      <summary>🏗️ Architecture EJB et Services du Conteneur</summary>
+      <summary data-en="🏗️ EJB Architecture and Container Services" data-fr="🏗️ Architecture EJB et Services du Conteneur">🏗️ EJB Architecture and Container Services</summary>
       <div class="slide-content">
-        <h3>Qu'est-ce qu'un EJB ?</h3>
-        <p>Les <strong>Enterprise Java Beans</strong> sont des composants serveur gérés par le <strong>conteneur EJB</strong> du serveur d'applications Jakarta EE. Ils encapsulent la logique métier et délèguent les préoccupations transversales (transactions, sécurité, cycle de vie) au conteneur.</p>
-        <h3>Types de beans EJB</h3>
+        <h3 data-en="What is an EJB?" data-fr="Qu'est-ce qu'un EJB ?">What is an EJB?</h3>
+        <p data-en="<strong>Enterprise Java Beans</strong> are server-side components managed by the <strong>EJB container</strong> of a Jakarta EE application server. They encapsulate business logic and delegate cross-cutting concerns (transactions, security, lifecycle) to the container." data-fr="Les <strong>Enterprise Java Beans</strong> sont des composants serveur gérés par le <strong>conteneur EJB</strong> du serveur d'applications Jakarta EE. Ils encapsulent la logique métier et délèguent les préoccupations transversales (transactions, sécurité, cycle de vie) au conteneur."><strong>Enterprise Java Beans</strong> are server-side components managed by the <strong>EJB container</strong> of a Jakarta EE application server. They encapsulate business logic and delegate cross-cutting concerns (transactions, security, lifecycle) to the container.</p>
+        <h3 data-en="EJB bean types" data-fr="Types de beans EJB">EJB bean types</h3>
         <ul>
-          <li><strong>Session Stateless</strong> — pas d'état entre les appels, pooling automatique, haute performance</li>
-          <li><strong>Session Stateful</strong> — conserve l'état conversationnel par client, passivation possible</li>
-          <li><strong>Session Singleton</strong> — une seule instance partagée dans toute l'application</li>
-          <li><strong>Message-Driven Bean (MDB)</strong> — traitement asynchrone de messages JMS</li>
+          <li data-en="<strong>Stateless Session</strong> — no state between calls, automatic pooling, high performance" data-fr="<strong>Session Stateless</strong> — pas d'état entre les appels, pooling automatique, haute performance"><strong>Stateless Session</strong> — no state between calls, automatic pooling, high performance</li>
+          <li data-en="<strong>Stateful Session</strong> — preserves conversational state per client, passivation possible" data-fr="<strong>Session Stateful</strong> — conserve l'état conversationnel par client, passivation possible"><strong>Stateful Session</strong> — preserves conversational state per client, passivation possible</li>
+          <li data-en="<strong>Singleton Session</strong> — a single shared instance throughout the application" data-fr="<strong>Session Singleton</strong> — une seule instance partagée dans toute l'application"><strong>Singleton Session</strong> — a single shared instance throughout the application</li>
+          <li data-en="<strong>Message-Driven Bean (MDB)</strong> — asynchronous processing of JMS messages" data-fr="<strong>Message-Driven Bean (MDB)</strong> — traitement asynchrone de messages JMS"><strong>Message-Driven Bean (MDB)</strong> — asynchronous processing of JMS messages</li>
         </ul>
-        <h3>Services fournis par le conteneur</h3>
+        <h3 data-en="Services provided by the container" data-fr="Services fournis par le conteneur">Services provided by the container</h3>
         <ul>
-          <li>✅ <strong>Pooling</strong> — gestion automatique d'un pool d'instances pour les beans Stateless</li>
-          <li>✅ <strong>Sécurité</strong> — contrôle d'accès déclaratif via annotations (<code>@RolesAllowed</code>, <code>@DenyAll</code>)</li>
-          <li>✅ <strong>Transactions</strong> — gestion automatique CMT ou programmatique BMT</li>
-          <li>✅ <strong>Timers</strong> — planification de tâches avec le Timer Service</li>
-          <li>✅ <strong>Interception</strong> — intercepteurs autour des invocations de méthodes</li>
-          <li>✅ <strong>Injection</strong> — injection de dépendances via <code>@EJB</code> et <code>@Inject</code></li>
-          <li>✅ <strong>Accès distant</strong> — interfaces <code>@Remote</code> pour appels inter-JVM</li>
+          <li data-en="✅ <strong>Pooling</strong> — automatic management of an instance pool for Stateless beans" data-fr="✅ <strong>Pooling</strong> — gestion automatique d'un pool d'instances pour les beans Stateless">✅ <strong>Pooling</strong> — automatic management of an instance pool for Stateless beans</li>
+          <li data-en="✅ <strong>Security</strong> — declarative access control via annotations (<code>@RolesAllowed</code>, <code>@DenyAll</code>)" data-fr="✅ <strong>Sécurité</strong> — contrôle d'accès déclaratif via annotations (<code>@RolesAllowed</code>, <code>@DenyAll</code>)">✅ <strong>Security</strong> — declarative access control via annotations (<code>@RolesAllowed</code>, <code>@DenyAll</code>)</li>
+          <li data-en="✅ <strong>Transactions</strong> — automatic CMT management or programmatic BMT" data-fr="✅ <strong>Transactions</strong> — gestion automatique CMT ou programmatique BMT">✅ <strong>Transactions</strong> — automatic CMT management or programmatic BMT</li>
+          <li data-en="✅ <strong>Timers</strong> — task scheduling with the Timer Service" data-fr="✅ <strong>Timers</strong> — planification de tâches avec le Timer Service">✅ <strong>Timers</strong> — task scheduling with the Timer Service</li>
+          <li data-en="✅ <strong>Interception</strong> — interceptors around method invocations" data-fr="✅ <strong>Interception</strong> — intercepteurs autour des invocations de méthodes">✅ <strong>Interception</strong> — interceptors around method invocations</li>
+          <li data-en="✅ <strong>Injection</strong> — dependency injection via <code>@EJB</code> and <code>@Inject</code>" data-fr="✅ <strong>Injection</strong> — injection de dépendances via <code>@EJB</code> et <code>@Inject</code>">✅ <strong>Injection</strong> — dependency injection via <code>@EJB</code> and <code>@Inject</code></li>
+          <li data-en="✅ <strong>Remote access</strong> — <code>@Remote</code> interfaces for cross-JVM calls" data-fr="✅ <strong>Accès distant</strong> — interfaces <code>@Remote</code> pour appels inter-JVM">✅ <strong>Remote access</strong> — <code>@Remote</code> interfaces for cross-JVM calls</li>
         </ul>
-        <img src="../../images/04b-ejb-enterprise-java-beans-diagram-1.png" alt="Architecture EJB et Services du Conteneur"/>
+        <img src="../../images/04b-ejb-enterprise-java-beans-diagram-1.png" alt="EJB Architecture and Container Services"/>
       </div>
     </details>
 
     <details>
-      <summary>🔵 Stateless Session Beans</summary>
+      <summary data-en="🔵 Stateless Session Beans" data-fr="🔵 Stateless Session Beans">🔵 Stateless Session Beans</summary>
       <div class="slide-content">
-        <h3>Caractéristiques</h3>
-        <p>Un <strong>Stateless Session Bean</strong> annoté <code>@Stateless</code> ne conserve <strong>aucun état conversationnel</strong> entre deux appels clients. Chaque méthode est une opération autonome et indépendante.</p>
+        <h3 data-en="Characteristics" data-fr="Caractéristiques">Characteristics</h3>
+        <p data-en="A <strong>Stateless Session Bean</strong> annotated <code>@Stateless</code> preserves <strong>no conversational state</strong> between two client calls. Each method is an autonomous, independent operation." data-fr="Un <strong>Stateless Session Bean</strong> annoté <code>@Stateless</code> ne conserve <strong>aucun état conversationnel</strong> entre deux appels clients. Chaque méthode est une opération autonome et indépendante.">A <strong>Stateless Session Bean</strong> annotated <code>@Stateless</code> preserves <strong>no conversational state</strong> between two client calls. Each method is an autonomous, independent operation.</p>
         <ul>
-          <li>Le conteneur maintient un <strong>pool d'instances</strong> — réutilisées entre les requêtes</li>
-          <li>Très haute performance et scalabilité — bean le plus utilisé en pratique</li>
-          <li>Thread-safe par nature — le conteneur garantit qu'une instance n'est utilisée que par un seul thread à la fois</li>
-          <li>Injection de dépendances via <code>@EJB</code> pour d'autres EJBs ou <code>@Inject</code> pour les beans CDI</li>
+          <li data-en="The container maintains an <strong>instance pool</strong> — reused between requests" data-fr="Le conteneur maintient un <strong>pool d'instances</strong> — réutilisées entre les requêtes">The container maintains an <strong>instance pool</strong> — reused between requests</li>
+          <li data-en="Very high performance and scalability — the most used bean type in practice" data-fr="Très haute performance et scalabilité — bean le plus utilisé en pratique">Very high performance and scalability — the most used bean type in practice</li>
+          <li data-en="Thread-safe by nature — the container guarantees a single thread uses one instance at a time" data-fr="Thread-safe par nature — le conteneur garantit qu'une instance n'est utilisée que par un seul thread à la fois">Thread-safe by nature — the container guarantees a single thread uses one instance at a time</li>
+          <li data-en="Dependency injection via <code>@EJB</code> for other EJBs or <code>@Inject</code> for CDI beans" data-fr="Injection de dépendances via <code>@EJB</code> pour d'autres EJBs ou <code>@Inject</code> pour les beans CDI">Dependency injection via <code>@EJB</code> for other EJBs or <code>@Inject</code> for CDI beans</li>
         </ul>
-        <h3>Cas d'usage typiques</h3>
+        <h3 data-en="Typical use cases" data-fr="Cas d'usage typiques">Typical use cases</h3>
         <ul>
-          <li>Services métier sans état : paiement, validation, calcul</li>
-          <li>Façades vers la couche de persistance (DAO Pattern)</li>
-          <li>Services d'envoi de notifications, d'emails</li>
-          <li>Services REST backends (injection dans les ressources JAX-RS)</li>
+          <li data-en="Stateless business services: payment, validation, calculation" data-fr="Services métier sans état : paiement, validation, calcul">Stateless business services: payment, validation, calculation</li>
+          <li data-en="Facades to the persistence layer (DAO Pattern)" data-fr="Façades vers la couche de persistance (DAO Pattern)">Facades to the persistence layer (DAO Pattern)</li>
+          <li data-en="Notification or email sending services" data-fr="Services d'envoi de notifications, d'emails">Notification or email sending services</li>
+          <li data-en="REST backend services (injection into JAX-RS resources)" data-fr="Services REST backends (injection dans les ressources JAX-RS)">REST backend services (injection into JAX-RS resources)</li>
         </ul>
-        <h3>Cycle de vie</h3>
+        <h3 data-en="Lifecycle" data-fr="Cycle de vie">Lifecycle</h3>
         <ul>
-          <li><code>@PostConstruct</code> — appelé après l'injection, lors de l'entrée dans le pool</li>
-          <li><code>@PreDestroy</code> — appelé lors du retrait du pool et de la destruction de l'instance</li>
+          <li data-en="<code>@PostConstruct</code> — called after injection, when entering the pool" data-fr="<code>@PostConstruct</code> — appelé après l'injection, lors de l'entrée dans le pool"><code>@PostConstruct</code> — called after injection, when entering the pool</li>
+          <li data-en="<code>@PreDestroy</code> — called when removed from the pool and the instance is destroyed" data-fr="<code>@PreDestroy</code> — appelé lors du retrait du pool et de la destruction de l'instance"><code>@PreDestroy</code> — called when removed from the pool and the instance is destroyed</li>
         </ul>
-        <img src="../../images/04b-ejb-enterprise-java-beans-diagram-2.png" alt="Stateless Session Bean — pooling et cycle de vie"/>
+        <img src="../../images/04b-ejb-enterprise-java-beans-diagram-2.png" alt="Stateless Session Bean — pooling and lifecycle"/>
       </div>
     </details>
 
     <details>
-      <summary>🔶 Stateful Session Beans</summary>
+      <summary data-en="🔶 Stateful Session Beans" data-fr="🔶 Stateful Session Beans">🔶 Stateful Session Beans</summary>
       <div class="slide-content">
-        <h3>Caractéristiques</h3>
-        <p>Un <strong>Stateful Session Bean</strong> annoté <code>@Stateful</code> maintient un <strong>état conversationnel</strong> propre à chaque client. L'instance est dédiée à un seul client pendant toute la durée de la conversation.</p>
+        <h3 data-en="Characteristics" data-fr="Caractéristiques">Characteristics</h3>
+        <p data-en="A <strong>Stateful Session Bean</strong> annotated <code>@Stateful</code> maintains a <strong>conversational state</strong> specific to each client. The instance is dedicated to a single client for the entire duration of the conversation." data-fr="Un <strong>Stateful Session Bean</strong> annoté <code>@Stateful</code> maintient un <strong>état conversationnel</strong> propre à chaque client. L'instance est dédiée à un seul client pendant toute la durée de la conversation.">A <strong>Stateful Session Bean</strong> annotated <code>@Stateful</code> maintains a <strong>conversational state</strong> specific to each client. The instance is dedicated to a single client for the entire duration of the conversation.</p>
         <ul>
-          <li>L'état (champs de l'instance) est conservé entre les appels successifs du même client</li>
-          <li>Pas de pool — une instance par conversation client active</li>
-          <li>Doit implémenter <code>java.io.Serializable</code> pour permettre la passivation</li>
+          <li data-en="State (instance fields) is preserved between successive calls from the same client" data-fr="L'état (champs de l'instance) est conservé entre les appels successifs du même client">State (instance fields) is preserved between successive calls from the same client</li>
+          <li data-en="No pool — one instance per active client conversation" data-fr="Pas de pool — une instance par conversation client active">No pool — one instance per active client conversation</li>
+          <li data-en="Must implement <code>java.io.Serializable</code> to allow passivation" data-fr="Doit implémenter <code>java.io.Serializable</code> pour permettre la passivation">Must implement <code>java.io.Serializable</code> to allow passivation</li>
         </ul>
-        <h3>Gestion du cycle de vie étendu</h3>
+        <h3 data-en="Extended lifecycle management" data-fr="Gestion du cycle de vie étendu">Extended lifecycle management</h3>
         <ul>
-          <li><code>@Remove</code> — marque une méthode qui libère l'instance après son appel (fin de conversation)</li>
-          <li><code>@PrePassivate</code> — appelé avant la passivation (sauvegarde sur disque) par le conteneur</li>
-          <li><code>@PostActivate</code> — appelé après la réactivation (rechargement depuis disque)</li>
-          <li>La passivation permet au conteneur de libérer de la mémoire RAM en sérialisant les beans inactifs</li>
+          <li data-en="<code>@Remove</code> — marks a method that releases the instance after its call (end of conversation)" data-fr="<code>@Remove</code> — marque une méthode qui libère l'instance après son appel (fin de conversation)"><code>@Remove</code> — marks a method that releases the instance after its call (end of conversation)</li>
+          <li data-en="<code>@PrePassivate</code> — called before passivation (disk save) by the container" data-fr="<code>@PrePassivate</code> — appelé avant la passivation (sauvegarde sur disque) par le conteneur"><code>@PrePassivate</code> — called before passivation (disk save) by the container</li>
+          <li data-en="<code>@PostActivate</code> — called after reactivation (reload from disk)" data-fr="<code>@PostActivate</code> — appelé après la réactivation (rechargement depuis disque)"><code>@PostActivate</code> — called after reactivation (reload from disk)</li>
+          <li data-en="Passivation allows the container to free RAM by serialising inactive beans" data-fr="La passivation permet au conteneur de libérer de la mémoire RAM en sérialisant les beans inactifs">Passivation allows the container to free RAM by serialising inactive beans</li>
         </ul>
-        <h3>Cas d'usage typiques</h3>
+        <h3 data-en="Typical use cases" data-fr="Cas d'usage typiques">Typical use cases</h3>
         <ul>
-          <li>Panier d'achat e-commerce — accumulation d'articles sur plusieurs requêtes</li>
-          <li>Wizards multi-étapes — formulaires en plusieurs étapes avec état intermédiaire</li>
-          <li>Sessions de travail collaboratif — état d'édition d'un document</li>
+          <li data-en="E-commerce shopping cart — accumulating items across multiple requests" data-fr="Panier d'achat e-commerce — accumulation d'articles sur plusieurs requêtes">E-commerce shopping cart — accumulating items across multiple requests</li>
+          <li data-en="Multi-step wizards — multi-page forms with intermediate state" data-fr="Wizards multi-étapes — formulaires en plusieurs étapes avec état intermédiaire">Multi-step wizards — multi-page forms with intermediate state</li>
+          <li data-en="Collaborative work sessions — document editing state" data-fr="Sessions de travail collaboratif — état d'édition d'un document">Collaborative work sessions — document editing state</li>
         </ul>
-        <img src="../../images/04b-ejb-enterprise-java-beans-diagram-3.png" alt="Stateful Session Bean — état conversationnel et passivation"/>
+        <img src="../../images/04b-ejb-enterprise-java-beans-diagram-3.png" alt="Stateful Session Bean — conversational state and passivation"/>
       </div>
     </details>
 
     <details>
-      <summary>⬛ Singleton Session Beans</summary>
+      <summary data-en="⬛ Singleton Session Beans" data-fr="⬛ Singleton Session Beans">⬛ Singleton Session Beans</summary>
       <div class="slide-content">
-        <h3>Caractéristiques</h3>
-        <p>Un <strong>Singleton Session Bean</strong> annoté <code>@Singleton</code> garantit qu'il n'existe qu'<strong>une seule instance</strong> de ce bean dans toute l'application. Partagée par tous les clients, elle nécessite une gestion explicite de la concurrence.</p>
+        <h3 data-en="Characteristics" data-fr="Caractéristiques">Characteristics</h3>
+        <p data-en="A <strong>Singleton Session Bean</strong> annotated <code>@Singleton</code> guarantees that only <strong>one instance</strong> of this bean exists in the entire application. Shared by all clients, it requires explicit concurrency management." data-fr="Un <strong>Singleton Session Bean</strong> annoté <code>@Singleton</code> garantit qu'il n'existe qu'<strong>une seule instance</strong> de ce bean dans toute l'application. Partagée par tous les clients, elle nécessite une gestion explicite de la concurrence.">A <strong>Singleton Session Bean</strong> annotated <code>@Singleton</code> guarantees that only <strong>one instance</strong> of this bean exists in the entire application. Shared by all clients, it requires explicit concurrency management.</p>
         <ul>
-          <li>Une seule instance créée et partagée par tout le conteneur</li>
-          <li>Initialisée au démarrage de l'application si annotée <code>@Startup</code></li>
-          <li>Persistance de l'état pendant toute la durée de vie de l'application</li>
+          <li data-en="A single instance created and shared by the entire container" data-fr="Une seule instance créée et partagée par tout le conteneur">A single instance created and shared by the entire container</li>
+          <li data-en="Initialised at application startup if annotated <code>@Startup</code>" data-fr="Initialisée au démarrage de l'application si annotée <code>@Startup</code>">Initialised at application startup if annotated <code>@Startup</code></li>
+          <li data-en="State persists for the entire lifetime of the application" data-fr="Persistance de l'état pendant toute la durée de vie de l'application">State persists for the entire lifetime of the application</li>
         </ul>
-        <h3>Gestion de la concurrence</h3>
+        <h3 data-en="Concurrency management" data-fr="Gestion de la concurrence">Concurrency management</h3>
         <ul>
-          <li><code>@ConcurrencyManagement(CONTAINER)</code> — le conteneur gère les verrous automatiquement (défaut)</li>
-          <li><code>@ConcurrencyManagement(BEAN)</code> — le développeur gère la synchronisation manuellement</li>
-          <li><code>@Lock(READ)</code> — accès concurrent en lecture autorisé pour plusieurs threads simultanés</li>
-          <li><code>@Lock(WRITE)</code> — accès exclusif, un seul thread à la fois (défaut sur les méthodes)</li>
-          <li><code>@AccessTimeout</code> — durée maximale d'attente pour l'obtention d'un verrou</li>
+          <li data-en="<code>@ConcurrencyManagement(CONTAINER)</code> — the container manages locks automatically (default)" data-fr="<code>@ConcurrencyManagement(CONTAINER)</code> — le conteneur gère les verrous automatiquement (défaut)"><code>@ConcurrencyManagement(CONTAINER)</code> — the container manages locks automatically (default)</li>
+          <li data-en="<code>@ConcurrencyManagement(BEAN)</code> — the developer manages synchronisation manually" data-fr="<code>@ConcurrencyManagement(BEAN)</code> — le développeur gère la synchronisation manuellement"><code>@ConcurrencyManagement(BEAN)</code> — the developer manages synchronisation manually</li>
+          <li data-en="<code>@Lock(READ)</code> — concurrent read access allowed for multiple simultaneous threads" data-fr="<code>@Lock(READ)</code> — accès concurrent en lecture autorisé pour plusieurs threads simultanés"><code>@Lock(READ)</code> — concurrent read access allowed for multiple simultaneous threads</li>
+          <li data-en="<code>@Lock(WRITE)</code> — exclusive access, one thread at a time (default on methods)" data-fr="<code>@Lock(WRITE)</code> — accès exclusif, un seul thread à la fois (défaut sur les méthodes)"><code>@Lock(WRITE)</code> — exclusive access, one thread at a time (default on methods)</li>
+          <li data-en="<code>@AccessTimeout</code> — maximum wait time for acquiring a lock" data-fr="<code>@AccessTimeout</code> — durée maximale d'attente pour l'obtention d'un verrou"><code>@AccessTimeout</code> — maximum wait time for acquiring a lock</li>
         </ul>
-        <h3>Initialisation au démarrage</h3>
+        <h3 data-en="Startup initialisation" data-fr="Initialisation au démarrage">Startup initialisation</h3>
         <ul>
-          <li><code>@Startup</code> — force l'initialisation du Singleton au démarrage du serveur</li>
-          <li><code>@DependsOn("AutreBean")</code> — déclare une dépendance d'initialisation ordonnée</li>
-          <li>Utile pour pré-charger des caches, lire des configurations, initialiser des connexions</li>
+          <li data-en="<code>@Startup</code> — forces Singleton initialisation at server startup" data-fr="<code>@Startup</code> — force l'initialisation du Singleton au démarrage du serveur"><code>@Startup</code> — forces Singleton initialisation at server startup</li>
+          <li data-en="<code>@DependsOn(\"OtherBean\")</code> — declares an ordered initialisation dependency" data-fr="<code>@DependsOn(\"AutreBean\")</code> — déclare une dépendance d'initialisation ordonnée"><code>@DependsOn("OtherBean")</code> — declares an ordered initialisation dependency</li>
+          <li data-en="Useful for pre-loading caches, reading configurations, initialising connections" data-fr="Utile pour pré-charger des caches, lire des configurations, initialiser des connexions">Useful for pre-loading caches, reading configurations, initialising connections</li>
         </ul>
-        <img src="../../images/04b-ejb-enterprise-java-beans-diagram-4.png" alt="Singleton Session Bean — instance unique et gestion de la concurrence"/>
+        <img src="../../images/04b-ejb-enterprise-java-beans-diagram-4.png" alt="Singleton Session Bean — single instance and concurrency management"/>
       </div>
     </details>
 
     <details>
-      <summary>📨 Message-Driven Beans</summary>
+      <summary data-en="📨 Message-Driven Beans" data-fr="📨 Message-Driven Beans">📨 Message-Driven Beans</summary>
       <div class="slide-content">
-        <h3>Caractéristiques</h3>
-        <p>Un <strong>Message-Driven Bean (MDB)</strong> annoté <code>@MessageDriven</code> permet le <strong>traitement asynchrone</strong> de messages JMS (Jakarta Messaging). Il est déclenché par l'arrivée d'un message dans une queue ou un topic.</p>
+        <h3 data-en="Characteristics" data-fr="Caractéristiques">Characteristics</h3>
+        <p data-en="A <strong>Message-Driven Bean (MDB)</strong> annotated <code>@MessageDriven</code> enables <strong>asynchronous processing</strong> of JMS messages (Jakarta Messaging). It is triggered by the arrival of a message in a queue or topic." data-fr="Un <strong>Message-Driven Bean (MDB)</strong> annoté <code>@MessageDriven</code> permet le <strong>traitement asynchrone</strong> de messages JMS (Jakarta Messaging). Il est déclenché par l'arrivée d'un message dans une queue ou un topic.">A <strong>Message-Driven Bean (MDB)</strong> annotated <code>@MessageDriven</code> enables <strong>asynchronous processing</strong> of JMS messages (Jakarta Messaging). It is triggered by the arrival of a message in a queue or topic.</p>
         <ul>
-          <li>Implémente l'interface <code>jakarta.jms.MessageListener</code> avec la méthode <code>onMessage(Message)</code></li>
-          <li>Entièrement asynchrone — le client émetteur n'attend pas la réponse</li>
-          <li>Pooling automatique d'instances géré par le conteneur</li>
-          <li>Transactions CMT applicables sur la méthode <code>onMessage()</code></li>
+          <li data-en="Implements the <code>jakarta.jms.MessageListener</code> interface with the <code>onMessage(Message)</code> method" data-fr="Implémente l'interface <code>jakarta.jms.MessageListener</code> avec la méthode <code>onMessage(Message)</code>">Implements the <code>jakarta.jms.MessageListener</code> interface with the <code>onMessage(Message)</code> method</li>
+          <li data-en="Fully asynchronous — the sending client does not wait for a response" data-fr="Entièrement asynchrone — le client émetteur n'attend pas la réponse">Fully asynchronous — the sending client does not wait for a response</li>
+          <li data-en="Automatic instance pooling managed by the container" data-fr="Pooling automatique d'instances géré par le conteneur">Automatic instance pooling managed by the container</li>
+          <li data-en="CMT transactions applicable on the <code>onMessage()</code> method" data-fr="Transactions CMT applicables sur la méthode <code>onMessage()</code>">CMT transactions applicable on the <code>onMessage()</code> method</li>
         </ul>
-        <h3>Configuration via @ActivationConfigProperty</h3>
+        <h3 data-en="Configuration via @ActivationConfigProperty" data-fr="Configuration via @ActivationConfigProperty">Configuration via @ActivationConfigProperty</h3>
         <ul>
-          <li><code>destinationType</code> — <code>jakarta.jms.Queue</code> ou <code>jakarta.jms.Topic</code></li>
-          <li><code>destinationLookup</code> — nom JNDI de la destination JMS</li>
-          <li><code>messageSelector</code> — filtre SQL-like sur les propriétés du message</li>
-          <li><code>acknowledgeMode</code> — mode d'acquittement (<code>Auto-acknowledge</code>, <code>Dups-ok-acknowledge</code>)</li>
+          <li data-en="<code>destinationType</code> — <code>jakarta.jms.Queue</code> or <code>jakarta.jms.Topic</code>" data-fr="<code>destinationType</code> — <code>jakarta.jms.Queue</code> ou <code>jakarta.jms.Topic</code>"><code>destinationType</code> — <code>jakarta.jms.Queue</code> or <code>jakarta.jms.Topic</code></li>
+          <li data-en="<code>destinationLookup</code> — JNDI name of the JMS destination" data-fr="<code>destinationLookup</code> — nom JNDI de la destination JMS"><code>destinationLookup</code> — JNDI name of the JMS destination</li>
+          <li data-en="<code>messageSelector</code> — SQL-like filter on message properties" data-fr="<code>messageSelector</code> — filtre SQL-like sur les propriétés du message"><code>messageSelector</code> — SQL-like filter on message properties</li>
+          <li data-en="<code>acknowledgeMode</code> — acknowledgement mode (<code>Auto-acknowledge</code>, <code>Dups-ok-acknowledge</code>)" data-fr="<code>acknowledgeMode</code> — mode d'acquittement (<code>Auto-acknowledge</code>, <code>Dups-ok-acknowledge</code>)"><code>acknowledgeMode</code> — acknowledgement mode (<code>Auto-acknowledge</code>, <code>Dups-ok-acknowledge</code>)</li>
         </ul>
-        <h3>Cas d'usage typiques</h3>
+        <h3 data-en="Typical use cases" data-fr="Cas d'usage typiques">Typical use cases</h3>
         <ul>
-          <li>Traitement de demandes bancaires asynchrones (virements, paiements)</li>
-          <li>Envoi de notifications (email, SMS) en arrière-plan</li>
-          <li>Intégration de systèmes hétérogènes via message broker</li>
-          <li>Traitement batch découplé de l'interface utilisateur</li>
+          <li data-en="Asynchronous banking request processing (wire transfers, payments)" data-fr="Traitement de demandes bancaires asynchrones (virements, paiements)">Asynchronous banking request processing (wire transfers, payments)</li>
+          <li data-en="Sending notifications (email, SMS) in the background" data-fr="Envoi de notifications (email, SMS) en arrière-plan">Sending notifications (email, SMS) in the background</li>
+          <li data-en="Integration of heterogeneous systems via message broker" data-fr="Intégration de systèmes hétérogènes via message broker">Integration of heterogeneous systems via message broker</li>
+          <li data-en="Batch processing decoupled from the user interface" data-fr="Traitement batch découplé de l'interface utilisateur">Batch processing decoupled from the user interface</li>
         </ul>
-        <img src="../../images/04b-ejb-enterprise-java-beans-diagram-5.png" alt="Message-Driven Bean — traitement asynchrone JMS"/>
+        <img src="../../images/04b-ejb-enterprise-java-beans-diagram-5.png" alt="Message-Driven Bean — asynchronous JMS processing"/>
       </div>
     </details>
 
     <details>
-      <summary>💳 Transactions CMT et BMT</summary>
+      <summary data-en="💳 CMT and BMT Transactions" data-fr="💳 Transactions CMT et BMT">💳 CMT and BMT Transactions</summary>
       <div class="slide-content">
-        <h3>CMT — Container-Managed Transactions (défaut)</h3>
-        <p>Avec <strong>CMT</strong>, le conteneur gère automatiquement le cycle de vie des transactions. Le développeur déclare le comportement via <code>@TransactionAttribute</code>.</p>
+        <h3 data-en="CMT — Container-Managed Transactions (default)" data-fr="CMT — Container-Managed Transactions (défaut)">CMT — Container-Managed Transactions (default)</h3>
+        <p data-en="With <strong>CMT</strong>, the container automatically manages the transaction lifecycle. The developer declares behaviour via <code>@TransactionAttribute</code>." data-fr="Avec <strong>CMT</strong>, le conteneur gère automatiquement le cycle de vie des transactions. Le développeur déclare le comportement via <code>@TransactionAttribute</code>.">With <strong>CMT</strong>, the container automatically manages the transaction lifecycle. The developer declares behaviour via <code>@TransactionAttribute</code>.</p>
         <ul>
-          <li><strong>REQUIRED</strong> — participe à la transaction existante ou en crée une nouvelle (défaut)</li>
-          <li><strong>REQUIRES_NEW</strong> — suspend la transaction courante, crée une transaction indépendante</li>
-          <li><strong>MANDATORY</strong> — exige une transaction active, lance une exception sinon</li>
-          <li><strong>NOT_SUPPORTED</strong> — suspend toute transaction active, s'exécute sans transaction</li>
-          <li><strong>SUPPORTS</strong> — utilise la transaction courante si elle existe, sinon sans transaction</li>
-          <li><strong>NEVER</strong> — lève une exception si une transaction est active</li>
+          <li data-en="<strong>REQUIRED</strong> — participates in existing transaction or creates a new one (default)" data-fr="<strong>REQUIRED</strong> — participe à la transaction existante ou en crée une nouvelle (défaut)"><strong>REQUIRED</strong> — participates in existing transaction or creates a new one (default)</li>
+          <li data-en="<strong>REQUIRES_NEW</strong> — suspends the current transaction, creates an independent one" data-fr="<strong>REQUIRES_NEW</strong> — suspend la transaction courante, crée une transaction indépendante"><strong>REQUIRES_NEW</strong> — suspends the current transaction, creates an independent one</li>
+          <li data-en="<strong>MANDATORY</strong> — requires an active transaction, throws an exception otherwise" data-fr="<strong>MANDATORY</strong> — exige une transaction active, lance une exception sinon"><strong>MANDATORY</strong> — requires an active transaction, throws an exception otherwise</li>
+          <li data-en="<strong>NOT_SUPPORTED</strong> — suspends any active transaction, executes without a transaction" data-fr="<strong>NOT_SUPPORTED</strong> — suspend toute transaction active, s'exécute sans transaction"><strong>NOT_SUPPORTED</strong> — suspends any active transaction, executes without a transaction</li>
+          <li data-en="<strong>SUPPORTS</strong> — uses the current transaction if one exists, otherwise without a transaction" data-fr="<strong>SUPPORTS</strong> — utilise la transaction courante si elle existe, sinon sans transaction"><strong>SUPPORTS</strong> — uses the current transaction if one exists, otherwise without a transaction</li>
+          <li data-en="<strong>NEVER</strong> — throws an exception if a transaction is active" data-fr="<strong>NEVER</strong> — lève une exception si une transaction est active"><strong>NEVER</strong> — throws an exception if a transaction is active</li>
         </ul>
-        <h3>Rollback en CMT</h3>
+        <h3 data-en="Rollback in CMT" data-fr="Rollback en CMT">Rollback in CMT</h3>
         <ul>
-          <li>Automatique sur toute <code>RuntimeException</code> non catchée</li>
-          <li>Programmatique via <code>EJBContext.setRollbackOnly()</code></li>
-          <li>Contrôle fin via <code>@ApplicationException(rollback=true)</code> pour les checked exceptions</li>
+          <li data-en="Automatic on any uncaught <code>RuntimeException</code>" data-fr="Automatique sur toute <code>RuntimeException</code> non catchée">Automatic on any uncaught <code>RuntimeException</code></li>
+          <li data-en="Programmatic via <code>EJBContext.setRollbackOnly()</code>" data-fr="Programmatique via <code>EJBContext.setRollbackOnly()</code>">Programmatic via <code>EJBContext.setRollbackOnly()</code></li>
+          <li data-en="Fine-grained control via <code>@ApplicationException(rollback=true)</code> for checked exceptions" data-fr="Contrôle fin via <code>@ApplicationException(rollback=true)</code> pour les checked exceptions">Fine-grained control via <code>@ApplicationException(rollback=true)</code> for checked exceptions</li>
         </ul>
-        <h3>BMT — Bean-Managed Transactions</h3>
-        <p>Avec <strong>BMT</strong> (<code>@TransactionManagement(BEAN)</code>), le développeur gère manuellement les transactions via l'API <code>UserTransaction</code>.</p>
+        <h3 data-en="BMT — Bean-Managed Transactions" data-fr="BMT — Bean-Managed Transactions">BMT — Bean-Managed Transactions</h3>
+        <p data-en="With <strong>BMT</strong> (<code>@TransactionManagement(BEAN)</code>), the developer manually manages transactions via the <code>UserTransaction</code> API." data-fr="Avec <strong>BMT</strong> (<code>@TransactionManagement(BEAN)</code>), le développeur gère manuellement les transactions via l'API <code>UserTransaction</code>.">With <strong>BMT</strong> (<code>@TransactionManagement(BEAN)</code>), the developer manually manages transactions via the <code>UserTransaction</code> API.</p>
         <ul>
-          <li>Injecter <code>@Resource UserTransaction utx</code> ou obtenir via <code>EJBContext</code></li>
-          <li>Appeler explicitement <code>utx.begin()</code>, <code>utx.commit()</code>, <code>utx.rollback()</code></li>
-          <li>Contrôle total — adapté aux patterns saga, transactions longues, logique conditionnelle</li>
+          <li data-en="Inject <code>@Resource UserTransaction utx</code> or obtain via <code>EJBContext</code>" data-fr="Injecter <code>@Resource UserTransaction utx</code> ou obtenir via <code>EJBContext</code>">Inject <code>@Resource UserTransaction utx</code> or obtain via <code>EJBContext</code></li>
+          <li data-en="Explicitly call <code>utx.begin()</code>, <code>utx.commit()</code>, <code>utx.rollback()</code>" data-fr="Appeler explicitement <code>utx.begin()</code>, <code>utx.commit()</code>, <code>utx.rollback()</code>">Explicitly call <code>utx.begin()</code>, <code>utx.commit()</code>, <code>utx.rollback()</code></li>
+          <li data-en="Total control — suited for saga patterns, long transactions, conditional logic" data-fr="Contrôle total — adapté aux patterns saga, transactions longues, logique conditionnelle">Total control — suited for saga patterns, long transactions, conditional logic</li>
         </ul>
-        <img src="../../images/04b-ejb-enterprise-java-beans-diagram-6.png" alt="Transactions EJB — CMT vs BMT"/>
+        <img src="../../images/04b-ejb-enterprise-java-beans-diagram-6.png" alt="EJB Transactions — CMT vs BMT"/>
       </div>
     </details>
 
     <details>
-      <summary>🔐 Sécurité EJB</summary>
+      <summary data-en="🔐 EJB Security" data-fr="🔐 Sécurité EJB">🔐 EJB Security</summary>
       <div class="slide-content">
-        <h3>Sécurité déclarative</h3>
-        <p>Le conteneur EJB applique des contrôles d'accès basés sur les rôles avant d'invoquer les méthodes du bean.</p>
+        <h3 data-en="Declarative security" data-fr="Sécurité déclarative">Declarative security</h3>
+        <p data-en="The EJB container enforces role-based access controls before invoking the bean's methods." data-fr="Le conteneur EJB applique des contrôles d'accès basés sur les rôles avant d'invoquer les méthodes du bean.">The EJB container enforces role-based access controls before invoking the bean's methods.</p>
         <ul>
-          <li><code>@RolesAllowed({"ADMIN", "EMPLOYEE"})</code> — autorise uniquement les rôles listés</li>
-          <li><code>@PermitAll</code> — autorise tous les appelants authentifiés ou anonymes</li>
-          <li><code>@DenyAll</code> — refuse tous les appels (méthode inaccessible en production)</li>
-          <li><code>@RunAs("SYSTEM")</code> — exécute le bean sous un rôle différent (élévation de privilèges)</li>
+          <li data-en="<code>@RolesAllowed({\"ADMIN\", \"EMPLOYEE\"})</code> — allows only the listed roles" data-fr="<code>@RolesAllowed({\"ADMIN\", \"EMPLOYEE\"})</code> — autorise uniquement les rôles listés"><code>@RolesAllowed({"ADMIN", "EMPLOYEE"})</code> — allows only the listed roles</li>
+          <li data-en="<code>@PermitAll</code> — allows all authenticated or anonymous callers" data-fr="<code>@PermitAll</code> — autorise tous les appelants authentifiés ou anonymes"><code>@PermitAll</code> — allows all authenticated or anonymous callers</li>
+          <li data-en="<code>@DenyAll</code> — denies all calls (method inaccessible in production)" data-fr="<code>@DenyAll</code> — refuse tous les appels (méthode inaccessible en production)"><code>@DenyAll</code> — denies all calls (method inaccessible in production)</li>
+          <li data-en="<code>@RunAs(\"SYSTEM\")</code> — executes the bean under a different role (privilege escalation)" data-fr="<code>@RunAs(\"SYSTEM\")</code> — exécute le bean sous un rôle différent (élévation de privilèges)"><code>@RunAs("SYSTEM")</code> — executes the bean under a different role (privilege escalation)</li>
         </ul>
-        <h3>Application des annotations</h3>
+        <h3 data-en="Applying annotations" data-fr="Application des annotations">Applying annotations</h3>
         <ul>
-          <li>Sur la <strong>classe</strong> — s'applique à toutes les méthodes de la classe</li>
-          <li>Sur la <strong>méthode</strong> — surcharge la déclaration de classe pour cette méthode précise</li>
-          <li>Combinaison possible : classe avec <code>@RolesAllowed("EMPLOYEE")</code>, méthode avec <code>@RolesAllowed("ADMIN")</code></li>
+          <li data-en="On the <strong>class</strong> — applies to all methods of the class" data-fr="Sur la <strong>classe</strong> — s'applique à toutes les méthodes de la classe">On the <strong>class</strong> — applies to all methods of the class</li>
+          <li data-en="On the <strong>method</strong> — overrides the class declaration for that specific method" data-fr="Sur la <strong>méthode</strong> — surcharge la déclaration de classe pour cette méthode précise">On the <strong>method</strong> — overrides the class declaration for that specific method</li>
+          <li data-en="Combination possible: class with <code>@RolesAllowed(\"EMPLOYEE\")</code>, method with <code>@RolesAllowed(\"ADMIN\")</code>" data-fr="Combinaison possible : classe avec <code>@RolesAllowed(\"EMPLOYEE\")</code>, méthode avec <code>@RolesAllowed(\"ADMIN\")</code>">Combination possible: class with <code>@RolesAllowed("EMPLOYEE")</code>, method with <code>@RolesAllowed("ADMIN")</code></li>
         </ul>
-        <h3>Sécurité programmatique</h3>
+        <h3 data-en="Programmatic security" data-fr="Sécurité programmatique">Programmatic security</h3>
         <ul>
-          <li><code>EJBContext.isCallerInRole("ADMIN")</code> — vérifie dynamiquement si l'appelant possède un rôle</li>
-          <li><code>EJBContext.getCallerPrincipal()</code> — obtient le <code>Principal</code> représentant l'utilisateur courant</li>
-          <li>Utile pour des logiques conditionnelles fines selon l'identité de l'appelant</li>
+          <li data-en="<code>EJBContext.isCallerInRole(\"ADMIN\")</code> — dynamically checks if the caller has a role" data-fr="<code>EJBContext.isCallerInRole(\"ADMIN\")</code> — vérifie dynamiquement si l'appelant possède un rôle"><code>EJBContext.isCallerInRole("ADMIN")</code> — dynamically checks if the caller has a role</li>
+          <li data-en="<code>EJBContext.getCallerPrincipal()</code> — gets the <code>Principal</code> representing the current user" data-fr="<code>EJBContext.getCallerPrincipal()</code> — obtient le <code>Principal</code> représentant l'utilisateur courant"><code>EJBContext.getCallerPrincipal()</code> — gets the <code>Principal</code> representing the current user</li>
+          <li data-en="Useful for fine-grained conditional logic based on caller identity" data-fr="Utile pour des logiques conditionnelles fines selon l'identité de l'appelant">Useful for fine-grained conditional logic based on caller identity</li>
         </ul>
       </div>
     </details>
 
     <details>
-      <summary>⏰ Timer Service et Méthodes Asynchrones</summary>
+      <summary data-en="⏰ Timer Service and Asynchronous Methods" data-fr="⏰ Timer Service et Méthodes Asynchrones">⏰ Timer Service and Asynchronous Methods</summary>
       <div class="slide-content">
-        <h3>Timer Service — tâches planifiées</h3>
-        <p>Le <strong>Timer Service EJB</strong> permet de déclencher des méthodes à intervalles réguliers ou à des moments précis, géré entièrement par le conteneur.</p>
+        <h3 data-en="Timer Service — scheduled tasks" data-fr="Timer Service — tâches planifiées">Timer Service — scheduled tasks</h3>
+        <p data-en="The <strong>EJB Timer Service</strong> allows methods to be triggered at regular intervals or at specific times, managed entirely by the container." data-fr="Le <strong>Timer Service EJB</strong> permet de déclencher des méthodes à intervalles réguliers ou à des moments précis, géré entièrement par le conteneur.">The <strong>EJB Timer Service</strong> allows methods to be triggered at regular intervals or at specific times, managed entirely by the container.</p>
         <ul>
-          <li><code>@Schedule(hour="0", minute="0", second="0", persistent=true)</code> — déclenchement automatique selon une expression cron</li>
-          <li><code>@Schedules({@Schedule(...), @Schedule(...)})</code> — plusieurs planifications sur une même méthode</li>
-          <li><code>@Timeout</code> — méthode callback appelée lors de l'expiration d'un timer programmatique</li>
-          <li>Attributs de <code>@Schedule</code> : <code>second</code>, <code>minute</code>, <code>hour</code>, <code>dayOfWeek</code>, <code>dayOfMonth</code>, <code>month</code>, <code>year</code></li>
-          <li><code>persistent=true</code> — le timer survit aux redémarrages du serveur (stocké en base)</li>
+          <li data-en="<code>@Schedule(hour=\"0\", minute=\"0\", second=\"0\", persistent=true)</code> — automatic triggering via a cron expression" data-fr="<code>@Schedule(hour=\"0\", minute=\"0\", second=\"0\", persistent=true)</code> — déclenchement automatique selon une expression cron"><code>@Schedule(hour="0", minute="0", second="0", persistent=true)</code> — automatic triggering via a cron expression</li>
+          <li data-en="<code>@Schedules({@Schedule(...), @Schedule(...)})</code> — multiple schedules on the same method" data-fr="<code>@Schedules({@Schedule(...), @Schedule(...)})</code> — plusieurs planifications sur une même méthode"><code>@Schedules({@Schedule(...), @Schedule(...)})</code> — multiple schedules on the same method</li>
+          <li data-en="<code>@Timeout</code> — callback method invoked when a programmatic timer expires" data-fr="<code>@Timeout</code> — méthode callback appelée lors de l'expiration d'un timer programmatique"><code>@Timeout</code> — callback method invoked when a programmatic timer expires</li>
+          <li data-en="Attributes of <code>@Schedule</code>: <code>second</code>, <code>minute</code>, <code>hour</code>, <code>dayOfWeek</code>, <code>dayOfMonth</code>, <code>month</code>, <code>year</code>" data-fr="Attributs de <code>@Schedule</code> : <code>second</code>, <code>minute</code>, <code>hour</code>, <code>dayOfWeek</code>, <code>dayOfMonth</code>, <code>month</code>, <code>year</code>">Attributes of <code>@Schedule</code>: <code>second</code>, <code>minute</code>, <code>hour</code>, <code>dayOfWeek</code>, <code>dayOfMonth</code>, <code>month</code>, <code>year</code></li>
+          <li data-en="<code>persistent=true</code> — the timer survives server restarts (stored in the database)" data-fr="<code>persistent=true</code> — le timer survit aux redémarrages du serveur (stocké en base)"><code>persistent=true</code> — the timer survives server restarts (stored in the database)</li>
         </ul>
-        <h3>Timers programmatiques</h3>
+        <h3 data-en="Programmatic timers" data-fr="Timers programmatiques">Programmatic timers</h3>
         <ul>
-          <li>Injecter <code>@Resource TimerService timerService</code></li>
-          <li><code>timerService.createTimer(delay, interval, info)</code> — timer à intervalles répétitifs</li>
-          <li><code>timerService.createSingleActionTimer(delay, config)</code> — timer à déclenchement unique</li>
-          <li>La méthode <code>@Timeout</code> reçoit un objet <code>Timer</code> avec les métadonnées</li>
+          <li data-en="Inject <code>@Resource TimerService timerService</code>" data-fr="Injecter <code>@Resource TimerService timerService</code>">Inject <code>@Resource TimerService timerService</code></li>
+          <li data-en="<code>timerService.createTimer(delay, interval, info)</code> — repeating interval timer" data-fr="<code>timerService.createTimer(delay, interval, info)</code> — timer à intervalles répétitifs"><code>timerService.createTimer(delay, interval, info)</code> — repeating interval timer</li>
+          <li data-en="<code>timerService.createSingleActionTimer(delay, config)</code> — single-fire timer" data-fr="<code>timerService.createSingleActionTimer(delay, config)</code> — timer à déclenchement unique"><code>timerService.createSingleActionTimer(delay, config)</code> — single-fire timer</li>
+          <li data-en="The <code>@Timeout</code> method receives a <code>Timer</code> object with metadata" data-fr="La méthode <code>@Timeout</code> reçoit un objet <code>Timer</code> avec les métadonnées">The <code>@Timeout</code> method receives a <code>Timer</code> object with metadata</li>
         </ul>
-        <h3>@Asynchronous — méthodes non bloquantes</h3>
+        <h3 data-en="@Asynchronous — non-blocking methods" data-fr="@Asynchronous — méthodes non bloquantes">@Asynchronous — non-blocking methods</h3>
         <ul>
-          <li><code>@Asynchronous</code> sur une méthode EJB — l'appel retourne immédiatement au client</li>
-          <li>Type de retour <code>void</code> ou <code>Future&lt;T&gt;</code> / <code>CompletableFuture&lt;T&gt;</code></li>
-          <li>Le conteneur exécute la méthode dans un thread séparé du pool</li>
-          <li>Idéal pour les traitements longs découplés : envoi email, génération de rapports, import de données</li>
+          <li data-en="<code>@Asynchronous</code> on an EJB method — the call returns immediately to the client" data-fr="<code>@Asynchronous</code> sur une méthode EJB — l'appel retourne immédiatement au client"><code>@Asynchronous</code> on an EJB method — the call returns immediately to the client</li>
+          <li data-en="Return type <code>void</code> or <code>Future&lt;T&gt;</code> / <code>CompletableFuture&lt;T&gt;</code>" data-fr="Type de retour <code>void</code> ou <code>Future&lt;T&gt;</code> / <code>CompletableFuture&lt;T&gt;</code>">Return type <code>void</code> or <code>Future&lt;T&gt;</code> / <code>CompletableFuture&lt;T&gt;</code></li>
+          <li data-en="The container executes the method in a separate thread from the pool" data-fr="Le conteneur exécute la méthode dans un thread séparé du pool">The container executes the method in a separate thread from the pool</li>
+          <li data-en="Ideal for long decoupled tasks: email sending, report generation, data import" data-fr="Idéal pour les traitements longs découplés : envoi email, génération de rapports, import de données">Ideal for long decoupled tasks: email sending, report generation, data import</li>
+        </ul>
+      </div>
+    </details>
+
+    <details>
+      <summary data-en="🔄 EJB vs CDI — Migration to Modern Jakarta EE" data-fr="🔄 EJB vs CDI — Migration vers Jakarta EE Moderne">🔄 EJB vs CDI — Migration to Modern Jakarta EE</summary>
+      <div class="slide-content">
+        <h3 data-en="Context: EJB deprecation in Jakarta EE 11+" data-fr="Contexte : dépréciation des EJB dans Jakarta EE 11+">Context: EJB deprecation in Jakarta EE 11+</h3>
+        <p data-en="In modern Jakarta EE 11+, <strong>EJBs are deprecated</strong> in favour of CDI Beans + MicroProfile. EJBs remain supported for backward compatibility, but <strong>new projects should use CDI</strong> <code>@ApplicationScoped</code> + <code>@Transactional</code> (Jakarta Transactions)." data-fr="Dans Jakarta EE 11+ moderne, les <strong>EJB sont dépréciés</strong> au profit de CDI Beans + MicroProfile. Les EJB restent supportés pour la rétrocompatibilité, mais les <strong>nouveaux projets devraient utiliser CDI</strong> <code>@ApplicationScoped</code> + <code>@Transactional</code> (Jakarta Transactions).">In modern Jakarta EE 11+, <strong>EJBs are deprecated</strong> in favour of CDI Beans + MicroProfile. EJBs remain supported for backward compatibility, but <strong>new projects should use CDI</strong> <code>@ApplicationScoped</code> + <code>@Transactional</code> (Jakarta Transactions).</p>
+        <h3 data-en="EJB to CDI migration table" data-fr="Tableau de migration EJB vers CDI">EJB to CDI migration table</h3>
+        <div class="cds--data-table-container">
+          <table class="cds--data-table">
+            <thead>
+              <tr>
+                <th data-en="EJB (legacy)" data-fr="EJB (legacy)">EJB (legacy)</th>
+                <th data-en="CDI Modern equivalent" data-fr="Équivalent CDI moderne">CDI Modern equivalent</th>
+                <th data-en="Notes" data-fr="Notes">Notes</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>@Stateless</code></td>
+                <td><code>@ApplicationScoped</code></td>
+                <td data-en="No per-request state; CDI bean is the standard choice for stateless services" data-fr="Pas d'état par requête ; le CDI bean est le choix standard pour les services sans état">No per-request state; CDI bean is the standard choice for stateless services</td>
+              </tr>
+              <tr>
+                <td><code>@Stateful</code></td>
+                <td><code>@SessionScoped</code></td>
+                <td data-en="Conversational state stored in CDI session scope; requires <code>Serializable</code>" data-fr="État conversationnel dans le scope session CDI ; nécessite <code>Serializable</code>">Conversational state stored in CDI session scope; requires <code>Serializable</code></td>
+              </tr>
+              <tr>
+                <td><code>@EJB</code></td>
+                <td><code>@Inject</code></td>
+                <td data-en="Standard CDI injection; works for any bean type" data-fr="Injection CDI standard ; fonctionne pour tout type de bean">Standard CDI injection; works for any bean type</td>
+              </tr>
+              <tr>
+                <td data-en="Container-managed transactions (CMT)" data-fr="Transactions gérées par le conteneur (CMT)">Container-managed transactions (CMT)</td>
+                <td><code>@Transactional</code></td>
+                <td data-en="Jakarta Transactions interceptor; same semantics as CMT <code>@TransactionAttribute</code>" data-fr="Intercepteur Jakarta Transactions ; mêmes sémantiques que CMT <code>@TransactionAttribute</code>">Jakarta Transactions interceptor; same semantics as CMT <code>@TransactionAttribute</code></td>
+              </tr>
+              <tr>
+                <td><code>@MessageDriven</code></td>
+                <td data-en="MicroProfile Reactive Messaging" data-fr="MicroProfile Reactive Messaging">MicroProfile Reactive Messaging</td>
+                <td data-en="<code>@Incoming</code> / <code>@Outgoing</code> on CDI beans; works with Kafka, AMQP, JMS" data-fr="<code>@Incoming</code> / <code>@Outgoing</code> sur des CDI beans ; fonctionne avec Kafka, AMQP, JMS"><code>@Incoming</code> / <code>@Outgoing</code> on CDI beans; works with Kafka, AMQP, JMS</td>
+              </tr>
+              <tr>
+                <td data-en="Timer Service (<code>@Schedule</code>)" data-fr="Timer Service (<code>@Schedule</code>)">Timer Service (<code>@Schedule</code>)</td>
+                <td data-en="MicroProfile Metrics + Quartz / custom CDI producer" data-fr="MicroProfile Metrics + Quartz / CDI producer personnalisé">MicroProfile Metrics + Quartz / custom CDI producer</td>
+                <td data-en="No direct CDI equivalent; use Quartz, Spring Scheduling, or a JEE Timer via CDI wrapper" data-fr="Pas d'équivalent CDI direct ; utiliser Quartz, Spring Scheduling, ou un Timer JEE via wrapper CDI">No direct CDI equivalent; use Quartz, Spring Scheduling, or a JEE Timer via CDI wrapper</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <h3 data-en="When to still use EJBs" data-fr="Quand utiliser encore les EJBs">When to still use EJBs</h3>
+        <ul>
+          <li data-en="Maintaining <strong>legacy applications</strong> that already use EJBs extensively" data-fr="Maintenance d'<strong>applications legacy</strong> qui utilisent déjà les EJBs massivement">Maintaining <strong>legacy applications</strong> that already use EJBs extensively</li>
+          <li data-en="Requirements for <strong>distributed transactions</strong> across multiple resources (XA)" data-fr="Besoin de <strong>transactions distribuées</strong> sur plusieurs ressources (XA)">Requirements for <strong>distributed transactions</strong> across multiple resources (XA)</li>
+          <li data-en="<strong>Remote EJB</strong> calls across JVMs in a tightly coupled cluster" data-fr="Appels <strong>EJB distants</strong> entre JVM dans un cluster fortement couplé">Remote EJB calls across JVMs in a tightly coupled cluster</li>
+          <li data-en="EJB <strong>Timer Service</strong> with persistence requirement and no external scheduler available" data-fr="<strong>Timer Service</strong> EJB avec besoin de persistance et aucun scheduler externe disponible">EJB <strong>Timer Service</strong> with persistence requirement and no external scheduler available</li>
         </ul>
       </div>
     </details>
@@ -250,5 +311,6 @@
   </main>
 </div>
 <footer class="cds--footer">Made with IBM Bob &nbsp;·&nbsp; © 2026 Olivier Planson &nbsp;·&nbsp; ESIPE — Jakarta EE &amp; Microservices</footer>
+<script src="../assets/language-toggle.js"></script>
 </body>
 </html>

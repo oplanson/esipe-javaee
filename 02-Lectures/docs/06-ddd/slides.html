@@ -1,271 +1,273 @@
 <!-- © Copyright 2026 Olivier Planson. All rights reserved. Reproduction prohibited. Made with IBM Bob. -->
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="en">
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-  <title>Cours 06 — Contenu du cours</title>
+  <title>Course 06 — DDD | Jakarta EE Course</title>
   <link rel="stylesheet" href="../assets/carbon.css"/>
 </head>
 <body>
 <header class="cds--header">
-  <a class="cds--header__name" href="index.html">Domain-Driven Design<span>Cours Jakarta EE</span></a>
-  <a class="cds--header__back" href="../index.html">← Tous les Cours</a>
+  <a class="cds--header__name" href="index.html">Domain-Driven Design<span data-en="Jakarta EE Course" data-fr="Cours Jakarta EE">Jakarta EE Course</span></a>
+  <button class="lang-toggle-btn" id="lang-toggle">FR</button>
+  <a class="cds--header__back" href="../index.html" data-en="← All Courses" data-fr="← Tous les Cours">← All Courses</a>
 </header>
 <div class="cds--shell">
   <nav class="cds--side-nav">
-    <p class="cds--side-nav__section-title">Cours 06</p>
-    <a class="cds--side-nav__link" href="index.html">⊙ Vue d'ensemble</a>
-    <a class="cds--side-nav__link active" href="slides.html">☰ Contenu du cours</a>
-    <a class="cds--side-nav__link" href="concepts.html">◈ Concepts clés</a>
-    <a class="cds--side-nav__link" href="code.html">⟨/⟩ Exemples de code</a>
+    <p class="cds--side-nav__section-title" data-en="Course 06" data-fr="Cours 06">Course 06</p>
+    <a class="cds--side-nav__link" href="index.html" data-en="⊙ Overview" data-fr="⊙ Vue d'ensemble">⊙ Overview</a>
+    <a class="cds--side-nav__link active" href="slides.html" data-en="☰ Course Content" data-fr="☰ Contenu du cours">☰ Course Content</a>
+    <a class="cds--side-nav__link" href="concepts.html" data-en="◈ Key Concepts" data-fr="◈ Concepts clés">◈ Key Concepts</a>
+    <a class="cds--side-nav__link" href="code.html" data-en="⟨/⟩ Code Examples" data-fr="⟨/⟩ Exemples de code">⟨/⟩ Code Examples</a>
+    <a class="cds--side-nav__lang-toggle">FR</a>
   </nav>
   <main class="cds--content">
-    <div class="breadcrumb"><a href="../index.html">Cours</a> › <a href="index.html">Cours 06</a> › Contenu</div>
-    <h1>Contenu du cours</h1>
-    <p class="page-lead">Toutes les sections — cliquez sur un titre pour développer.</p>
+    <div class="breadcrumb"><a href="../index.html" data-en="Courses" data-fr="Cours">Courses</a> › <a href="index.html" data-en="Course 06" data-fr="Cours 06">Course 06</a> › <span data-en="Content" data-fr="Contenu">Content</span></div>
+    <h1 data-en="Course Content" data-fr="Contenu du cours">Course Content</h1>
+    <p class="page-lead" data-en="All sections — click a title to expand." data-fr="Toutes les sections — cliquez sur un titre pour développer.">All sections — click a title to expand.</p>
 
     <details open>
-      <summary>🧭 Qu'est-ce que le DDD ?</summary>
+      <summary data-en="🧭 What is DDD?" data-fr="🧭 Qu'est-ce que le DDD ?">🧭 What is DDD?</summary>
       <div class="slide-content">
-        <h3>Philosophie — le code doit refléter le métier</h3>
-        <p>Le Domain-Driven Design (DDD), introduit par Eric Evans en 2003, place le <strong>domaine métier</strong> au cœur de la conception logicielle. Le code ne doit pas être une simple traduction technique de besoins — il doit <em>parler</em> le même langage que les experts métier.</p>
+        <h3 data-en="Philosophy — code must reflect the business" data-fr="Philosophie — le code doit refléter le métier">Philosophy — code must reflect the business</h3>
+        <p data-en="Domain-Driven Design (DDD), introduced by Eric Evans in 2003, places the business domain at the heart of software design. Code must not be a mere technical translation of requirements — it must speak the same language as domain experts." data-fr="Le Domain-Driven Design (DDD), introduit par Eric Evans en 2003, place le domaine métier au cœur de la conception logicielle. Le code ne doit pas être une simple traduction technique de besoins — il doit parler le même langage que les experts métier.">Domain-Driven Design (DDD), introduced by Eric Evans in 2003, places the <strong>business domain</strong> at the heart of software design. Code must not be a mere technical translation of requirements — it must <em>speak</em> the same language as domain experts.</p>
         <ul>
-          <li><strong>Le modèle de domaine</strong> est la représentation vivante du métier dans le code</li>
-          <li><strong>La complexité accidentelle</strong> (infrastructure, frameworks) est séparée de la <strong>complexité essentielle</strong> (règles métier)</li>
-          <li>Le code exprime clairement les invariants, contraintes et comportements du domaine</li>
-          <li>Tout changement de règle métier se traduit directement par un changement dans le modèle</li>
+          <li data-en="The domain model is the living representation of the business in code" data-fr="Le modèle de domaine est la représentation vivante du métier dans le code"><strong data-en="The domain model" data-fr="Le modèle de domaine">The domain model</strong> is the living representation of the business in code</li>
+          <li data-en="Accidental complexity (infrastructure, frameworks) is separated from essential complexity (business rules)" data-fr="La complexité accidentelle (infrastructure, frameworks) est séparée de la complexité essentielle (règles métier)"><strong data-en="Accidental complexity" data-fr="La complexité accidentelle">Accidental complexity</strong> (infrastructure, frameworks) is separated from <strong data-en="essential complexity" data-fr="complexité essentielle">essential complexity</strong> (business rules)</li>
+          <li data-en="Code clearly expresses the invariants, constraints and behaviours of the domain" data-fr="Le code exprime clairement les invariants, contraintes et comportements du domaine">Code clearly expresses the invariants, constraints and behaviours of the domain</li>
+          <li data-en="Every change to a business rule translates directly into a change in the model" data-fr="Tout changement de règle métier se traduit directement par un changement dans le modèle">Every change to a business rule translates directly into a change in the model</li>
         </ul>
-        <h3>Collaboration dev/expert métier</h3>
+        <h3 data-en="Dev/domain expert collaboration" data-fr="Collaboration dev/expert métier">Dev/domain expert collaboration</h3>
         <ul>
-          <li>DDD exige une collaboration continue entre développeurs et experts du domaine</li>
-          <li>Les experts métier apportent la connaissance des règles, des cas limites et des priorités</li>
-          <li>Les développeurs structurent cette connaissance dans un modèle logiciel cohérent</li>
-          <li>Des sessions de <strong>Event Storming</strong> ou de <strong>Domain Storytelling</strong> facilitent cette collaboration</li>
+          <li data-en="DDD requires continuous collaboration between developers and domain experts" data-fr="DDD exige une collaboration continue entre développeurs et experts du domaine">DDD requires continuous collaboration between developers and domain experts</li>
+          <li data-en="Domain experts bring knowledge of rules, edge cases and priorities" data-fr="Les experts métier apportent la connaissance des règles, des cas limites et des priorités">Domain experts bring knowledge of rules, edge cases and priorities</li>
+          <li data-en="Developers structure this knowledge into a coherent software model" data-fr="Les développeurs structurent cette connaissance dans un modèle logiciel cohérent">Developers structure this knowledge into a coherent software model</li>
+          <li data-en="Event Storming or Domain Storytelling sessions facilitate this collaboration" data-fr="Des sessions de Event Storming ou de Domain Storytelling facilitent cette collaboration"><strong>Event Storming</strong> or <strong>Domain Storytelling</strong> sessions facilitate this collaboration</li>
         </ul>
-        <h3>Langage ubiquitaire partagé</h3>
-        <p>Le <strong>Ubiquitous Language</strong> (langage ubiquitaire) est un vocabulaire commun utilisé par tous les membres de l'équipe — développeurs ET experts métier — dans les conversations, la documentation ET le code.</p>
+        <h3 data-en="Shared ubiquitous language" data-fr="Langage ubiquitaire partagé">Shared ubiquitous language</h3>
+        <p data-en="The Ubiquitous Language is a common vocabulary used by all team members — developers AND domain experts — in conversations, documentation AND code." data-fr="Le Ubiquitous Language (langage ubiquitaire) est un vocabulaire commun utilisé par tous les membres de l'équipe — développeurs ET experts métier — dans les conversations, la documentation ET le code.">The <strong>Ubiquitous Language</strong> is a common vocabulary used by all team members — developers AND domain experts — in conversations, documentation AND code.</p>
         <ul>
-          <li>Les noms de classes, méthodes et variables reflètent les termes métier (ex. <code>Account</code>, <code>debitAccount()</code>)</li>
-          <li>Éliminer les termes ambigus et les doubles définitions</li>
-          <li>Évolue avec la compréhension du domaine</li>
+          <li data-en="Class names, methods and variables reflect business terms (e.g. Account, debitAccount())" data-fr="Les noms de classes, méthodes et variables reflètent les termes métier (ex. Account, debitAccount())">Class names, methods and variables reflect business terms (e.g. <code>Account</code>, <code>debitAccount()</code>)</li>
+          <li data-en="Eliminate ambiguous terms and double definitions" data-fr="Éliminer les termes ambigus et les doubles définitions">Eliminate ambiguous terms and double definitions</li>
+          <li data-en="Evolves with the understanding of the domain" data-fr="Évolue avec la compréhension du domaine">Evolves with the understanding of the domain</li>
         </ul>
-        <h3>DDD stratégique vs tactique</h3>
+        <h3 data-en="Strategic vs tactical DDD" data-fr="DDD stratégique vs tactique">Strategic vs tactical DDD</h3>
         <ul>
-          <li><strong>DDD Stratégique</strong> — décomposer le problème en sous-domaines et Bounded Contexts, cartographier leurs relations (Context Map)</li>
-          <li><strong>DDD Tactique</strong> — implémenter chaque Bounded Context avec les building blocks (Entités, Value Objects, Aggregats, Repositories, Domain Services, Domain Events)</li>
+          <li data-en="Strategic DDD — decompose the problem into sub-domains and Bounded Contexts, map their relationships (Context Map)" data-fr="DDD Stratégique — décomposer le problème en sous-domaines et Bounded Contexts, cartographier leurs relations (Context Map)"><strong data-en="Strategic DDD" data-fr="DDD Stratégique">Strategic DDD</strong> — decompose the problem into sub-domains and Bounded Contexts, map their relationships (Context Map)</li>
+          <li data-en="Tactical DDD — implement each Bounded Context with building blocks (Entities, Value Objects, Aggregates, Repositories, Domain Services, Domain Events)" data-fr="DDD Tactique — implémenter chaque Bounded Context avec les building blocks (Entités, Value Objects, Aggregats, Repositories, Domain Services, Domain Events)"><strong data-en="Tactical DDD" data-fr="DDD Tactique">Tactical DDD</strong> — implement each Bounded Context with the building blocks (Entities, Value Objects, Aggregates, Repositories, Domain Services, Domain Events)</li>
         </ul>
-        <img src="../../images/06-domain-driven-design-diagram-1.png" alt="DDD Overview — philosophie et organisation"/>
+        <img src="../../images/06-domain-driven-design-diagram-1.png" alt="DDD Overview — philosophy and organisation"/>
       </div>
     </details>
 
     <details>
-      <summary>🗺️ Pattern Stratégique — Bounded Context</summary>
+      <summary data-en="🗺️ Strategic Pattern — Bounded Context" data-fr="🗺️ Pattern Stratégique — Bounded Context">🗺️ Strategic Pattern — Bounded Context</summary>
       <div class="slide-content">
-        <h3>Sous-domaine avec son propre modèle et langage</h3>
-        <p>Un <strong>Bounded Context</strong> est une frontière explicite à l'intérieur de laquelle un modèle de domaine particulier s'applique. Au sein de cette frontière, chaque terme du langage ubiquitaire a une définition précise et unique.</p>
+        <h3 data-en="Sub-domain with its own model and language" data-fr="Sous-domaine avec son propre modèle et langage">Sub-domain with its own model and language</h3>
+        <p data-en="A Bounded Context is an explicit boundary inside which a particular domain model applies. Within this boundary, every term of the ubiquitous language has a precise and unique definition." data-fr="Un Bounded Context est une frontière explicite à l'intérieur de laquelle un modèle de domaine particulier s'applique. Au sein de cette frontière, chaque terme du langage ubiquitaire a une définition précise et unique.">A <strong>Bounded Context</strong> is an explicit boundary inside which a particular domain model applies. Within this boundary, every term of the ubiquitous language has a precise and unique definition.</p>
         <ul>
-          <li>Le même mot peut avoir des significations différentes dans deux Bounded Contexts (ex. <em>Client</em> dans le contexte Compte vs. Marketing)</li>
-          <li>Chaque Bounded Context a son propre modèle objet, sa propre base de données, ses propres équipes</li>
-          <li>Les frontières évitent la corruption du modèle par des concepts appartenant à d'autres contextes</li>
+          <li data-en="The same word can have different meanings in two Bounded Contexts (e.g. Client in the Account context vs. Marketing)" data-fr="Le même mot peut avoir des significations différentes dans deux Bounded Contexts (ex. Client dans le contexte Compte vs. Marketing)">The same word can have different meanings in two Bounded Contexts (e.g. <em>Client</em> in the Account context vs. Marketing)</li>
+          <li data-en="Each Bounded Context has its own object model, its own database, its own teams" data-fr="Chaque Bounded Context a son propre modèle objet, sa propre base de données, ses propres équipes">Each Bounded Context has its own object model, its own database, its own teams</li>
+          <li data-en="Boundaries prevent model corruption by concepts belonging to other contexts" data-fr="Les frontières évitent la corruption du modèle par des concepts appartenant à d'autres contextes">Boundaries prevent model corruption by concepts belonging to other contexts</li>
         </ul>
-        <h3>Context Map — relations entre contexts</h3>
-        <p>La <strong>Context Map</strong> est un diagramme qui documente les relations entre les différents Bounded Contexts d'un système.</p>
+        <h3 data-en="Context Map — relationships between contexts" data-fr="Context Map — relations entre contexts">Context Map — relationships between contexts</h3>
+        <p data-en="The Context Map is a diagram that documents the relationships between the different Bounded Contexts of a system." data-fr="La Context Map est un diagramme qui documente les relations entre les différents Bounded Contexts d'un système.">The <strong>Context Map</strong> is a diagram that documents the relationships between the different Bounded Contexts of a system.</p>
         <ul>
-          <li>Visualise les dépendances, les flux de données et les points d'intégration</li>
-          <li>Révèle les relations de pouvoir et de priorité entre équipes</li>
-          <li>Guide les décisions d'architecture sur la communication inter-contextes</li>
+          <li data-en="Visualises dependencies, data flows and integration points" data-fr="Visualise les dépendances, les flux de données et les points d'intégration">Visualises dependencies, data flows and integration points</li>
+          <li data-en="Reveals power and priority relationships between teams" data-fr="Révèle les relations de pouvoir et de priorité entre équipes">Reveals power and priority relationships between teams</li>
+          <li data-en="Guides architectural decisions on inter-context communication" data-fr="Guide les décisions d'architecture sur la communication inter-contextes">Guides architectural decisions on inter-context communication</li>
         </ul>
-        <h3>Patterns d'intégration entre contextes</h3>
+        <h3 data-en="Integration patterns between contexts" data-fr="Patterns d'intégration entre contextes">Integration patterns between contexts</h3>
         <ul>
-          <li><strong>ACL (Anti-Corruption Layer)</strong> — couche de traduction qui protège le modèle local des concepts étrangers, évite la contamination du modèle cible</li>
-          <li><strong>Shared Kernel</strong> — sous-ensemble de modèle partagé entre deux équipes, nécessite une coordination forte pour évoluer</li>
-          <li><strong>Partnership</strong> — deux équipes évoluent ensemble en synchronisant leur planning, pour des contexts fortement couplés</li>
-          <li><strong>Customer/Supplier</strong> — une équipe fournit un service, l'autre le consomme</li>
-          <li><strong>Conformist</strong> — l'équipe aval adopte le modèle de l'équipe amont sans adapter</li>
-          <li><strong>Published Language</strong> — langage d'échange formalisé (ex. JSON Schema, OpenAPI)</li>
+          <li data-en="ACL (Anti-Corruption Layer) — translation layer that protects the local model from foreign concepts, avoids contamination of the target model" data-fr="ACL (Anti-Corruption Layer) — couche de traduction qui protège le modèle local des concepts étrangers, évite la contamination du modèle cible"><strong>ACL (Anti-Corruption Layer)</strong> — translation layer that protects the local model from foreign concepts, avoids contamination of the target model</li>
+          <li data-en="Shared Kernel — subset of model shared between two teams, requires strong coordination to evolve" data-fr="Shared Kernel — sous-ensemble de modèle partagé entre deux équipes, nécessite une coordination forte pour évoluer"><strong>Shared Kernel</strong> — subset of model shared between two teams, requires strong coordination to evolve</li>
+          <li data-en="Partnership — two teams evolve together by synchronising their planning, for tightly coupled contexts" data-fr="Partnership — deux équipes évoluent ensemble en synchronisant leur planning, pour des contexts fortement couplés"><strong>Partnership</strong> — two teams evolve together by synchronising their planning, for tightly coupled contexts</li>
+          <li data-en="Customer/Supplier — one team provides a service, the other consumes it" data-fr="Customer/Supplier — une équipe fournit un service, l'autre le consomme"><strong>Customer/Supplier</strong> — one team provides a service, the other consumes it</li>
+          <li data-en="Conformist — the downstream team adopts the upstream team's model without adapting" data-fr="Conformist — l'équipe aval adopte le modèle de l'équipe amont sans adapter"><strong>Conformist</strong> — the downstream team adopts the upstream team's model without adapting</li>
+          <li data-en="Published Language — formalised exchange language (e.g. JSON Schema, OpenAPI)" data-fr="Published Language — langage d'échange formalisé (ex. JSON Schema, OpenAPI)"><strong>Published Language</strong> — formalised exchange language (e.g. JSON Schema, OpenAPI)</li>
         </ul>
-        <img src="../../images/06-domain-driven-design-diagram-2.png" alt="Bounded Context et Context Map"/>
+        <img src="../../images/06-domain-driven-design-diagram-2.png" alt="Bounded Context and Context Map"/>
       </div>
     </details>
 
     <details>
-      <summary>🧱 Patterns Tactiques — Entité et Value Object</summary>
+      <summary data-en="🧱 Tactical Patterns — Entity and Value Object" data-fr="🧱 Patterns Tactiques — Entité et Value Object">🧱 Tactical Patterns — Entity and Value Object</summary>
       <div class="slide-content">
-        <h3>Entity — identité unique, mutabilité</h3>
-        <p>Une <strong>Entité</strong> est un objet de domaine qui possède une <strong>identité unique</strong> persistant dans le temps, même si ses attributs changent.</p>
+        <h3 data-en="Entity — unique identity, mutability" data-fr="Entity — identité unique, mutabilité">Entity — unique identity, mutability</h3>
+        <p data-en="An Entity is a domain object that has a unique identity persisting over time, even if its attributes change." data-fr="Une Entité est un objet de domaine qui possède une identité unique persistant dans le temps, même si ses attributs changent.">An <strong>Entity</strong> is a domain object that has a <strong>unique identity</strong> persisting over time, even if its attributes change.</p>
         <ul>
-          <li>L'identité est représentée par un identifiant explicite (<code>AccountId</code>, <code>ClientId</code>)</li>
-          <li>Deux entités sont <strong>égales si et seulement si</strong> leurs identifiants sont égaux (equals/hashCode basé sur l'id)</li>
-          <li>Une entité peut être <strong>mutable</strong> — son état change au fil du temps (solde d'un compte, statut)</li>
-          <li>Elle encapsule ses invariants métier — les règles qui doivent toujours être respectées</li>
-          <li>Exemples : <code>Account</code>, <code>Client</code>, <code>Order</code>, <code>Employee</code></li>
+          <li data-en="Identity is represented by an explicit identifier (AccountId, ClientId)" data-fr="L'identité est représentée par un identifiant explicite (AccountId, ClientId)">Identity is represented by an explicit identifier (<code>AccountId</code>, <code>ClientId</code>)</li>
+          <li data-en="Two entities are equal if and only if their identifiers are equal (equals/hashCode based on id)" data-fr="Deux entités sont égales si et seulement si leurs identifiants sont égaux (equals/hashCode basé sur l'id)">Two entities are <strong>equal if and only if</strong> their identifiers are equal (equals/hashCode based on id)</li>
+          <li data-en="An entity can be mutable — its state changes over time (account balance, status)" data-fr="Une entité peut être mutable — son état change au fil du temps (solde d'un compte, statut)">An entity can be <strong>mutable</strong> — its state changes over time (account balance, status)</li>
+          <li data-en="It encapsulates its business invariants — rules that must always be respected" data-fr="Elle encapsule ses invariants métier — les règles qui doivent toujours être respectées">It encapsulates its business invariants — the rules that must always be respected</li>
+          <li data-en="Examples: Account, Client, Order, Employee" data-fr="Exemples : Account, Client, Order, Employee">Examples: <code>Account</code>, <code>Client</code>, <code>Order</code>, <code>Employee</code></li>
         </ul>
-        <h3>Value Object — pas d'identité, immuabilité, égalité par valeur</h3>
-        <p>Un <strong>Value Object</strong> est un objet de domaine qui représente un concept sans identité propre — sa valeur <em>est</em> son identité.</p>
+        <h3 data-en="Value Object — no identity, immutability, equality by value" data-fr="Value Object — pas d'identité, immuabilité, égalité par valeur">Value Object — no identity, immutability, equality by value</h3>
+        <p data-en="A Value Object is a domain object that represents a concept without its own identity — its value is its identity." data-fr="Un Value Object est un objet de domaine qui représente un concept sans identité propre — sa valeur est son identité.">A <strong>Value Object</strong> is a domain object that represents a concept without its own identity — its value <em>is</em> its identity.</p>
         <ul>
-          <li><strong>Pas d'identifiant</strong> — deux Value Objects avec les mêmes attributs sont équivalents</li>
-          <li><strong>Immuabilité</strong> — un Value Object ne change jamais après sa création (utiliser <code>final</code>)</li>
-          <li><strong>Égalité par valeur</strong> — equals/hashCode basés sur tous les attributs</li>
-          <li>Remplaçable — on ne modifie pas un VO, on en crée un nouveau</li>
-          <li>Exemples : <code>Money</code>, <code>AccountNumber</code>, <code>Address</code>, <code>DateRange</code>, <code>Email</code></li>
+          <li data-en="No identifier — two Value Objects with the same attributes are equivalent" data-fr="Pas d'identifiant — deux Value Objects avec les mêmes attributs sont équivalents"><strong data-en="No identifier" data-fr="Pas d'identifiant">No identifier</strong> — two Value Objects with the same attributes are equivalent</li>
+          <li data-en="Immutability — a Value Object never changes after creation (use final)" data-fr="Immuabilité — un Value Object ne change jamais après sa création (utiliser final)"><strong data-en="Immutability" data-fr="Immuabilité">Immutability</strong> — a Value Object never changes after creation (use <code>final</code>)</li>
+          <li data-en="Equality by value — equals/hashCode based on all attributes" data-fr="Égalité par valeur — equals/hashCode basés sur tous les attributs"><strong data-en="Equality by value" data-fr="Égalité par valeur">Equality by value</strong> — equals/hashCode based on all attributes</li>
+          <li data-en="Replaceable — you do not modify a VO, you create a new one" data-fr="Remplaçable — on ne modifie pas un VO, on en crée un nouveau">Replaceable — you do not modify a VO, you create a new one</li>
+          <li data-en="Examples: Money, AccountNumber, Address, DateRange, Email" data-fr="Exemples : Money, AccountNumber, Address, DateRange, Email">Examples: <code>Money</code>, <code>AccountNumber</code>, <code>Address</code>, <code>DateRange</code>, <code>Email</code></li>
         </ul>
-        <h3>Comparaison Entité vs Value Object</h3>
+        <h3 data-en="Entity vs Value Object comparison" data-fr="Comparaison Entité vs Value Object">Entity vs Value Object comparison</h3>
         <ul>
-          <li><strong>Entité</strong> : <em>Qui</em> est-il ? — son identité compte</li>
-          <li><strong>Value Object</strong> : <em>Qu'est-ce que c'est</em> ? — sa valeur compte</li>
-          <li>Règle : si vous pouvez remplacer un objet par un autre ayant les mêmes attributs sans impact métier → c'est un Value Object</li>
+          <li data-en="Entity: Who is it? — its identity matters" data-fr="Entité : Qui est-il ? — son identité compte"><strong data-en="Entity" data-fr="Entité">Entity</strong>: <em data-en="Who is it?" data-fr="Qui est-il ?">Who is it?</em> — its identity matters</li>
+          <li data-en="Value Object: What is it? — its value matters" data-fr="Value Object : Qu'est-ce que c'est ? — sa valeur compte"><strong>Value Object</strong>: <em data-en="What is it?" data-fr="Qu'est-ce que c'est ?">What is it?</em> — its value matters</li>
+          <li data-en="Rule: if you can replace an object with another having the same attributes with no business impact → it is a Value Object" data-fr="Règle : si vous pouvez remplacer un objet par un autre ayant les mêmes attributs sans impact métier → c'est un Value Object">Rule: if you can replace an object with another having the same attributes with no business impact → it is a Value Object</li>
         </ul>
         <img src="../../images/06-domain-driven-design-diagram-3.png" alt="Entity vs Value Object"/>
       </div>
     </details>
 
     <details>
-      <summary>🔒 Pattern Tactique — Aggregate</summary>
+      <summary data-en="🔒 Tactical Pattern — Aggregate" data-fr="🔒 Pattern Tactique — Aggregate">🔒 Tactical Pattern — Aggregate</summary>
       <div class="slide-content">
-        <h3>Racine d'agrégat et invariants métier</h3>
-        <p>Un <strong>Aggregate</strong> est un cluster d'objets de domaine (Entités + Value Objects) traité comme une unité cohérente. L'<strong>Aggregate Root</strong> (racine) est l'unique point d'entrée pour toute modification.</p>
+        <h3 data-en="Aggregate Root and business invariants" data-fr="Racine d'agrégat et invariants métier">Aggregate Root and business invariants</h3>
+        <p data-en="An Aggregate is a cluster of domain objects (Entities + Value Objects) treated as a coherent unit. The Aggregate Root is the single entry point for any modification." data-fr="Un Aggregate est un cluster d'objets de domaine (Entités + Value Objects) traité comme une unité cohérente. L'Aggregate Root (racine) est l'unique point d'entrée pour toute modification.">An <strong>Aggregate</strong> is a cluster of domain objects (Entities + Value Objects) treated as a coherent unit. The <strong>Aggregate Root</strong> is the single entry point for any modification.</p>
         <ul>
-          <li>Les invariants métier sont garantis à l'intérieur des frontières de l'aggregate</li>
-          <li>Toute modification passe obligatoirement par la racine — jamais directement sur les objets internes</li>
-          <li>L'aggregate est chargé et sauvegardé comme une seule unité transactionnelle</li>
+          <li data-en="Business invariants are guaranteed inside the aggregate's boundaries" data-fr="Les invariants métier sont garantis à l'intérieur des frontières de l'aggregate">Business invariants are guaranteed inside the aggregate's boundaries</li>
+          <li data-en="Every modification passes mandatorily through the root — never directly on internal objects" data-fr="Toute modification passe obligatoirement par la racine — jamais directement sur les objets internes">Every modification passes mandatorily through the root — never directly on internal objects</li>
+          <li data-en="The aggregate is loaded and saved as a single transactional unit" data-fr="L'aggregate est chargé et sauvegardé comme une seule unité transactionnelle">The aggregate is loaded and saved as a single transactional unit</li>
         </ul>
-        <h3>Référence par ID à d'autres agrégats</h3>
+        <h3 data-en="Reference by ID to other aggregates" data-fr="Référence par ID à d'autres agrégats">Reference by ID to other aggregates</h3>
         <ul>
-          <li>Un aggregate ne doit <strong>jamais</strong> contenir de référence directe à un autre aggregate root</li>
-          <li>On référence un autre aggregate par son identifiant uniquement (<code>ClientId clientId</code>, pas <code>Client client</code>)</li>
-          <li>Cela maintient des frontières transactionnelles claires et évite les couplages implicites</li>
+          <li data-en="An aggregate must never contain a direct reference to another aggregate root" data-fr="Un aggregate ne doit jamais contenir de référence directe à un autre aggregate root">An aggregate must <strong>never</strong> contain a direct reference to another aggregate root</li>
+          <li data-en="Reference another aggregate by its identifier only (ClientId clientId, not Client client)" data-fr="On référence un autre aggregate par son identifiant uniquement (ClientId clientId, pas Client client)">Reference another aggregate by its identifier only (<code>ClientId clientId</code>, not <code>Client client</code>)</li>
+          <li data-en="This maintains clear transactional boundaries and avoids implicit coupling" data-fr="Cela maintient des frontières transactionnelles claires et évite les couplages implicites">This maintains clear transactional boundaries and avoids implicit coupling</li>
         </ul>
-        <h3>Règles de conception des Aggregates</h3>
+        <h3 data-en="Aggregate design rules" data-fr="Règles de conception des Aggregates">Aggregate design rules</h3>
         <ul>
-          <li>✅ <strong>Protéger les invariants métier</strong> — l'aggregate valide ses propres règles</li>
-          <li>✅ <strong>Taille réduite</strong> — un aggregate doit rester petit (éviter les god objects)</li>
-          <li>✅ <strong>Cohérence transactionnelle</strong> — une transaction = un aggregate modifié</li>
-          <li>✅ <strong>Modifier un seul aggregate par transaction</strong> — coordonner plusieurs aggregates via Domain Events</li>
+          <li data-en="✅ Protect business invariants — the aggregate validates its own rules" data-fr="✅ Protéger les invariants métier — l'aggregate valide ses propres règles">✅ <strong data-en="Protect business invariants" data-fr="Protéger les invariants métier">Protect business invariants</strong> — the aggregate validates its own rules</li>
+          <li data-en="✅ Small size — an aggregate must stay small (avoid god objects)" data-fr="✅ Taille réduite — un aggregate doit rester petit (éviter les god objects)">✅ <strong data-en="Small size" data-fr="Taille réduite">Small size</strong> — an aggregate must stay small (avoid god objects)</li>
+          <li data-en="✅ Transactional consistency — one transaction = one modified aggregate" data-fr="✅ Cohérence transactionnelle — une transaction = un aggregate modifié">✅ <strong data-en="Transactional consistency" data-fr="Cohérence transactionnelle">Transactional consistency</strong> — one transaction = one modified aggregate</li>
+          <li data-en="✅ Modify only one aggregate per transaction — coordinate multiple aggregates via Domain Events" data-fr="✅ Modifier un seul aggregate par transaction — coordonner plusieurs aggregates via Domain Events">✅ <strong data-en="Modify only one aggregate per transaction" data-fr="Modifier un seul aggregate par transaction">Modify only one aggregate per transaction</strong> — coordinate multiple aggregates via Domain Events</li>
         </ul>
-        <h3>Aggregate bancaire Account/Transaction</h3>
-        <p>Dans l'application bancaire, <code>Account</code> est l'aggregate root qui contient une liste de <code>Transaction</code>. Toute opération de crédit ou débit passe par <code>Account</code>, qui vérifie les invariants (solde positif, limite de transaction, statut actif).</p>
-        <img src="../../images/06-domain-driven-design-diagram-4.png" alt="Aggregate Account avec Transactions"/>
+        <h3 data-en="Banking aggregate Account/Transaction" data-fr="Aggregate bancaire Account/Transaction">Banking aggregate Account/Transaction</h3>
+        <p data-en="In the banking application, Account is the aggregate root that contains a list of Transaction. Every credit or debit operation passes through Account, which checks the invariants (positive balance, transaction limit, active status)." data-fr="Dans l'application bancaire, Account est l'aggregate root qui contient une liste de Transaction. Toute opération de crédit ou débit passe par Account, qui vérifie les invariants (solde positif, limite de transaction, statut actif).">In the banking application, <code>Account</code> is the aggregate root that contains a list of <code>Transaction</code>. Every credit or debit operation passes through <code>Account</code>, which checks the invariants (positive balance, transaction limit, active status).</p>
+        <img src="../../images/06-domain-driven-design-diagram-4.png" alt="Aggregate Account with Transactions"/>
       </div>
     </details>
 
     <details>
-      <summary>🗄️ Repository Pattern</summary>
+      <summary data-en="🗄️ Repository Pattern" data-fr="🗄️ Repository Pattern">🗄️ Repository Pattern</summary>
       <div class="slide-content">
-        <h3>Abstraction d'accès aux données</h3>
-        <p>Le <strong>Repository</strong> est une abstraction qui simule une collection d'objets en mémoire pour les aggregates. Il sépare la logique métier des détails d'accès aux données.</p>
+        <h3 data-en="Data access abstraction" data-fr="Abstraction d'accès aux données">Data access abstraction</h3>
+        <p data-en="The Repository is an abstraction that simulates an in-memory collection of objects for aggregates. It separates business logic from data access details." data-fr="Le Repository est une abstraction qui simule une collection d'objets en mémoire pour les aggregates. Il sépare la logique métier des détails d'accès aux données.">The <strong>Repository</strong> is an abstraction that simulates an in-memory collection of objects for aggregates. It separates business logic from data access details.</p>
         <ul>
-          <li>Le domaine ne connaît que l'interface du repository — jamais l'implémentation concrète</li>
-          <li>Le repository masque la complexité de la persistance (JPA, NoSQL, API externe)</li>
-          <li>Facilite les tests unitaires — on peut substituer une implémentation en mémoire</li>
+          <li data-en="The domain only knows the repository interface — never the concrete implementation" data-fr="Le domaine ne connaît que l'interface du repository — jamais l'implémentation concrète">The domain only knows the repository interface — never the concrete implementation</li>
+          <li data-en="The repository hides the complexity of persistence (JPA, NoSQL, external API)" data-fr="Le repository masque la complexité de la persistance (JPA, NoSQL, API externe)">The repository hides the complexity of persistence (JPA, NoSQL, external API)</li>
+          <li data-en="Facilitates unit testing — you can substitute an in-memory implementation" data-fr="Facilite les tests unitaires — on peut substituer une implémentation en mémoire">Facilitates unit testing — you can substitute an in-memory implementation</li>
         </ul>
-        <h3>Interface dans le domaine</h3>
+        <h3 data-en="Interface in the domain" data-fr="Interface dans le domaine">Interface in the domain</h3>
         <ul>
-          <li>L'interface est définie dans la couche domaine (<code>domain.port</code> ou <code>domain.repository</code>)</li>
-          <li>Elle parle le langage du domaine : <code>findById(AccountId)</code>, <code>findByClient(ClientId)</code>, <code>save(Account)</code></li>
-          <li>Un repository existe par aggregate root — pas un repository générique pour toutes les entités</li>
+          <li data-en="The interface is defined in the domain layer (domain.port or domain.repository)" data-fr="L'interface est définie dans la couche domaine (domain.port ou domain.repository)">The interface is defined in the domain layer (<code>domain.port</code> or <code>domain.repository</code>)</li>
+          <li data-en="It speaks the domain language: findById(AccountId), findByClient(ClientId), save(Account)" data-fr="Elle parle le langage du domaine : findById(AccountId), findByClient(ClientId), save(Account)">It speaks the domain language: <code>findById(AccountId)</code>, <code>findByClient(ClientId)</code>, <code>save(Account)</code></li>
+          <li data-en="One repository per aggregate root — not a generic repository for all entities" data-fr="Un repository existe par aggregate root — pas un repository générique pour toutes les entités">One repository per aggregate root — not a generic repository for all entities</li>
         </ul>
-        <h3>Implémentation dans l'infrastructure</h3>
+        <h3 data-en="Implementation in the infrastructure" data-fr="Implémentation dans l'infrastructure">Implementation in the infrastructure</h3>
         <ul>
-          <li>L'implémentation concrète (<code>JpaAccountRepository</code>) vit dans la couche infrastructure</li>
-          <li>Elle utilise JPA, JDBC, MongoDB ou tout autre mécanisme de persistance</li>
-          <li>Injectée via CDI — le domaine ne voit jamais l'implémentation concrète</li>
+          <li data-en="The concrete implementation (JpaAccountRepository) lives in the infrastructure layer" data-fr="L'implémentation concrète (JpaAccountRepository) vit dans la couche infrastructure">The concrete implementation (<code>JpaAccountRepository</code>) lives in the infrastructure layer</li>
+          <li data-en="It uses JPA, JDBC, MongoDB or any other persistence mechanism" data-fr="Elle utilise JPA, JDBC, MongoDB ou tout autre mécanisme de persistance">It uses JPA, JDBC, MongoDB or any other persistence mechanism</li>
+          <li data-en="Injected via CDI — the domain never sees the concrete implementation" data-fr="Injectée via CDI — le domaine ne voit jamais l'implémentation concrète">Injected via CDI — the domain never sees the concrete implementation</li>
         </ul>
-        <h3>Patron de collection d'objets</h3>
+        <h3 data-en="Object collection pattern" data-fr="Patron de collection d'objets">Object collection pattern</h3>
         <ul>
-          <li>Le repository se comporte comme un <code>Set</code> ou une <code>Collection</code> d'aggregates</li>
-          <li>Méthodes typiques : <code>findById</code>, <code>findAll</code>, <code>save</code> (add/update), <code>delete</code></li>
-          <li>Pas de méthodes de requête complexe dans l'interface — utiliser des Specifications ou des Query Objects si nécessaire</li>
-        </ul>
-      </div>
-    </details>
-
-    <details>
-      <summary>⚡ Domain Services et Domain Events</summary>
-      <div class="slide-content">
-        <h3>Service de domaine pour opérations sans entité naturelle</h3>
-        <p>Un <strong>Domain Service</strong> encapsule une logique métier qui n'appartient naturellement à aucune Entité ou Value Object — par exemple une opération impliquant plusieurs aggregates.</p>
-        <ul>
-          <li>Un service de domaine est stateless — il ne conserve pas d'état entre les appels</li>
-          <li>Exemple : un transfert d'argent implique deux comptes — ni <code>AccountA</code> ni <code>AccountB</code> n'est responsable de l'opération complète</li>
-          <li>Nommé selon le verbe métier : <code>MoneyTransferService</code>, <code>FraudDetectionService</code></li>
-          <li>À distinguer des Services Applicatifs (orchestration) et des Services Techniques (infrastructure)</li>
-        </ul>
-        <h3>Domain Event — fait métier passé</h3>
-        <p>Un <strong>Domain Event</strong> représente quelque chose d'important qui s'est produit dans le domaine — c'est un fait passé, immuable, nommé au passé : <code>TransferCompleted</code>, <code>AccountOpened</code>, <code>PaymentFailed</code>.</p>
-        <ul>
-          <li>Les Domain Events découplent les aggregates — un aggregate publie un événement, d'autres réagissent</li>
-          <li>Permettent la cohérence éventuelle entre aggregates sans transaction distribuée</li>
-          <li>Immuables — contiennent toutes les informations nécessaires à la réaction</li>
-        </ul>
-        <h3>Publication et observation avec CDI (@ApplicationScoped)</h3>
-        <ul>
-          <li>Jakarta CDI Events (<code>Event&lt;T&gt;</code>) sont le mécanisme naturel en Jakarta EE</li>
-          <li>Le publisher injecte <code>Event&lt;TransferCompletedEvent&gt;</code> et appelle <code>fire()</code></li>
-          <li>Les observateurs utilisent <code>@Observes</code> pour réagir de manière déclarée</li>
-          <li>Pattern adapté pour les événements synchrones intra-JVM</li>
+          <li data-en="The repository behaves like a Set or a Collection of aggregates" data-fr="Le repository se comporte comme un Set ou une Collection d'aggregates">The repository behaves like a <code>Set</code> or a <code>Collection</code> of aggregates</li>
+          <li data-en="Typical methods: findById, findAll, save (add/update), delete" data-fr="Méthodes typiques : findById, findAll, save (add/update), delete">Typical methods: <code>findById</code>, <code>findAll</code>, <code>save</code> (add/update), <code>delete</code></li>
+          <li data-en="No complex query methods in the interface — use Specifications or Query Objects if necessary" data-fr="Pas de méthodes de requête complexe dans l'interface — utiliser des Specifications ou des Query Objects si nécessaire">No complex query methods in the interface — use Specifications or Query Objects if necessary</li>
         </ul>
       </div>
     </details>
 
     <details>
-      <summary>🏗️ Architecture en Couches DDD</summary>
+      <summary data-en="⚡ Domain Services and Domain Events" data-fr="⚡ Domain Services et Domain Events">⚡ Domain Services and Domain Events</summary>
       <div class="slide-content">
-        <h3>Les 4 couches de l'architecture DDD</h3>
+        <h3 data-en="Domain Service for operations without a natural entity" data-fr="Service de domaine pour opérations sans entité naturelle">Domain Service for operations without a natural entity</h3>
+        <p data-en="A Domain Service encapsulates business logic that does not naturally belong to any Entity or Value Object — for example an operation involving multiple aggregates." data-fr="Un Domain Service encapsule une logique métier qui n'appartient naturellement à aucune Entité ou Value Object — par exemple une opération impliquant plusieurs aggregates.">A <strong>Domain Service</strong> encapsulates business logic that does not naturally belong to any Entity or Value Object — for example an operation involving multiple aggregates.</p>
         <ul>
-          <li><strong>Domain</strong> — le cœur : Entités, Value Objects, Aggregates, Domain Services, Interfaces de Repository, Domain Events. Aucune dépendance vers l'extérieur.</li>
-          <li><strong>Application</strong> — orchestre les cas d'usage : Application Services, Command Handlers, DTOs. Coordonne les aggregates et appelle les Domain Services.</li>
-          <li><strong>Infrastructure</strong> — implémentations concrètes : JPA Repositories, Message Brokers, clients HTTP, adaptateurs techniques.</li>
-          <li><strong>Presentation</strong> — points d'entrée : JAX-RS resources, JSF controllers, CLI. Traduit les requêtes en commandes applicatives.</li>
+          <li data-en="A domain service is stateless — it does not retain state between calls" data-fr="Un service de domaine est stateless — il ne conserve pas d'état entre les appels">A domain service is stateless — it does not retain state between calls</li>
+          <li data-en="Example: a money transfer involves two accounts — neither AccountA nor AccountB is responsible for the entire operation" data-fr="Exemple : un transfert d'argent implique deux comptes — ni AccountA ni AccountB n'est responsable de l'opération complète">Example: a money transfer involves two accounts — neither <code>AccountA</code> nor <code>AccountB</code> is responsible for the entire operation</li>
+          <li data-en="Named after the business verb: MoneyTransferService, FraudDetectionService" data-fr="Nommé selon le verbe métier : MoneyTransferService, FraudDetectionService">Named after the business verb: <code>MoneyTransferService</code>, <code>FraudDetectionService</code></li>
+          <li data-en="To be distinguished from Application Services (orchestration) and Technical Services (infrastructure)" data-fr="À distinguer des Services Applicatifs (orchestration) et des Services Techniques (infrastructure)">To be distinguished from Application Services (orchestration) and Technical Services (infrastructure)</li>
         </ul>
-        <h3>Structure de packages recommandée</h3>
+        <h3 data-en="Domain Event — past business fact" data-fr="Domain Event — fait métier passé">Domain Event — past business fact</h3>
+        <p data-en="A Domain Event represents something important that happened in the domain — it is a past, immutable fact, named in the past tense: TransferCompleted, AccountOpened, PaymentFailed." data-fr="Un Domain Event représente quelque chose d'important qui s'est produit dans le domaine — c'est un fait passé, immuable, nommé au passé : TransferCompleted, AccountOpened, PaymentFailed.">A <strong>Domain Event</strong> represents something important that happened in the domain — it is a past, immutable fact, named in the past tense: <code>TransferCompleted</code>, <code>AccountOpened</code>, <code>PaymentFailed</code>.</p>
         <ul>
-          <li><code>com.esipe.bank.domain</code> — entités, VOs, aggregates, interfaces</li>
-          <li><code>com.esipe.bank.domain.event</code> — domain events</li>
-          <li><code>com.esipe.bank.application</code> — application services, use cases</li>
-          <li><code>com.esipe.bank.infrastructure.jpa</code> — repositories JPA</li>
-          <li><code>com.esipe.bank.presentation.rest</code> — JAX-RS resources</li>
+          <li data-en="Domain Events decouple aggregates — one aggregate publishes an event, others react" data-fr="Les Domain Events découplent les aggregates — un aggregate publie un événement, d'autres réagissent">Domain Events decouple aggregates — one aggregate publishes an event, others react</li>
+          <li data-en="Allow eventual consistency between aggregates without distributed transaction" data-fr="Permettent la cohérence éventuelle entre aggregates sans transaction distribuée">Allow eventual consistency between aggregates without distributed transaction</li>
+          <li data-en="Immutable — contain all information necessary for the reaction" data-fr="Immuables — contiennent toutes les informations nécessaires à la réaction">Immutable — contain all information necessary for the reaction</li>
         </ul>
-        <h3>Dépendances vers l'intérieur (Dependency Rule)</h3>
+        <h3 data-en="Publication and observation with CDI (@ApplicationScoped)" data-fr="Publication et observation avec CDI (@ApplicationScoped)">Publication and observation with CDI (@ApplicationScoped)</h3>
         <ul>
-          <li>Le domaine ne dépend de rien — ni de Jakarta EE, ni de JPA, ni d'aucun framework</li>
-          <li>L'application dépend du domaine</li>
-          <li>L'infrastructure dépend du domaine et de l'application (implémente les interfaces)</li>
-          <li>La présentation dépend de l'application</li>
-          <li>L'inversion de dépendances (DIP) permet à l'infrastructure d'implémenter les interfaces du domaine</li>
+          <li data-en="Jakarta CDI Events (Event&lt;T&gt;) are the natural mechanism in Jakarta EE" data-fr="Jakarta CDI Events (Event&lt;T&gt;) sont le mécanisme naturel en Jakarta EE">Jakarta CDI Events (<code>Event&lt;T&gt;</code>) are the natural mechanism in Jakarta EE</li>
+          <li data-en="The publisher injects Event&lt;TransferCompletedEvent&gt; and calls fire()" data-fr="Le publisher injecte Event&lt;TransferCompletedEvent&gt; et appelle fire()">The publisher injects <code>Event&lt;TransferCompletedEvent&gt;</code> and calls <code>fire()</code></li>
+          <li data-en="Observers use @Observes to react in a declarative manner" data-fr="Les observateurs utilisent @Observes pour réagir de manière déclarée">Observers use <code>@Observes</code> to react in a declarative manner</li>
+          <li data-en="Pattern suited for synchronous intra-JVM events" data-fr="Pattern adapté pour les événements synchrones intra-JVM">Pattern suited for synchronous intra-JVM events</li>
         </ul>
       </div>
     </details>
 
     <details>
-      <summary>🔄 Refactorisation vers DDD — Application Bancaire</summary>
+      <summary data-en="🏗️ DDD Layered Architecture" data-fr="🏗️ Architecture en Couches DDD">🏗️ DDD Layered Architecture</summary>
       <div class="slide-content">
-        <h3>Modèle anémique vs modèle riche</h3>
-        <p>Le <strong>Modèle Anémique</strong> (anti-pattern) est un objet qui ne contient que des getters/setters sans logique métier — la logique est éparpillée dans des services. Le <strong>Modèle Riche</strong> encapsule la logique dans les entités elles-mêmes.</p>
+        <h3 data-en="The 4 layers of DDD architecture" data-fr="Les 4 couches de l'architecture DDD">The 4 layers of DDD architecture</h3>
         <ul>
-          <li><strong>Anémique</strong> : <code>account.setBalance(newBalance)</code> — aucune règle vérifiée</li>
-          <li><strong>Riche</strong> : <code>account.debitAccount(amount)</code> — vérifie solde, statut, invariants</li>
+          <li data-en="Domain — the core: Entities, Value Objects, Aggregates, Domain Services, Repository Interfaces, Domain Events. No dependency towards the outside." data-fr="Domain — le cœur : Entités, Value Objects, Aggregates, Domain Services, Interfaces de Repository, Domain Events. Aucune dépendance vers l'extérieur."><strong>Domain</strong> — the core: Entities, Value Objects, Aggregates, Domain Services, Repository Interfaces, Domain Events. No dependency towards the outside.</li>
+          <li data-en="Application — orchestrates use cases: Application Services, Command Handlers, DTOs. Coordinates aggregates and calls Domain Services." data-fr="Application — orchestre les cas d'usage : Application Services, Command Handlers, DTOs. Coordonne les aggregates et appelle les Domain Services."><strong>Application</strong> — orchestrates use cases: Application Services, Command Handlers, DTOs. Coordinates aggregates and calls Domain Services.</li>
+          <li data-en="Infrastructure — concrete implementations: JPA Repositories, Message Brokers, HTTP clients, technical adapters." data-fr="Infrastructure — implémentations concrètes : JPA Repositories, Message Brokers, clients HTTP, adaptateurs techniques."><strong>Infrastructure</strong> — concrete implementations: JPA Repositories, Message Brokers, HTTP clients, technical adapters.</li>
+          <li data-en="Presentation — entry points: Jakarta REST resources, JSF controllers, CLI. Translates requests into application commands." data-fr="Presentation — points d'entrée : JAX-RS resources, JSF controllers, CLI. Traduit les requêtes en commandes applicatives."><strong>Presentation</strong> — entry points: Jakarta REST resources, JSF controllers, CLI. Translates requests into application commands.</li>
         </ul>
-        <h3>Avant refactoring — code procédural</h3>
+        <h3 data-en="Recommended package structure" data-fr="Structure de packages recommandée">Recommended package structure</h3>
         <ul>
-          <li>Classe <code>Account</code> avec uniquement des champs et des getters/setters</li>
-          <li>Service <code>BankingService</code> contenant toute la logique de débit, crédit, validation</li>
-          <li>Duplication de règles métier à travers plusieurs services</li>
-          <li>Règles métier invisibles — pas de méthode exprimant l'intention</li>
+          <li data-en="com.esipe.bank.domain — entities, VOs, aggregates, interfaces" data-fr="com.esipe.bank.domain — entités, VOs, aggregates, interfaces"><code>com.esipe.bank.domain</code> — entities, VOs, aggregates, interfaces</li>
+          <li data-en="com.esipe.bank.domain.event — domain events" data-fr="com.esipe.bank.domain.event — domain events"><code>com.esipe.bank.domain.event</code> — domain events</li>
+          <li data-en="com.esipe.bank.application — application services, use cases" data-fr="com.esipe.bank.application — application services, use cases"><code>com.esipe.bank.application</code> — application services, use cases</li>
+          <li data-en="com.esipe.bank.infrastructure.jpa — JPA repositories" data-fr="com.esipe.bank.infrastructure.jpa — repositories JPA"><code>com.esipe.bank.infrastructure.jpa</code> — JPA repositories</li>
+          <li data-en="com.esipe.bank.presentation.rest — Jakarta REST resources" data-fr="com.esipe.bank.presentation.rest — JAX-RS resources"><code>com.esipe.bank.presentation.rest</code> — Jakarta REST resources</li>
         </ul>
-        <h3>Après refactoring — modèle riche DDD</h3>
+        <h3 data-en="Dependencies towards the inside (Dependency Rule)" data-fr="Dépendances vers l'intérieur (Dependency Rule)">Dependencies towards the inside (Dependency Rule)</h3>
         <ul>
-          <li><code>AccountId</code> — Value Object pour l'identité</li>
-          <li><code>Money</code> — Value Object immuable avec opérations arithmétiques</li>
-          <li><code>AccountNumber</code> — Value Object avec validation et génération</li>
-          <li><code>Account</code> — Entity/Aggregate Root avec méthodes métier (<code>debitAccount</code>, <code>creditAccount</code>)</li>
-          <li>Règles métier centralisées dans l'aggregate — impossibilité de créer un état invalide</li>
+          <li data-en="The domain depends on nothing — not Jakarta EE, not JPA, not any framework" data-fr="Le domaine ne dépend de rien — ni de Jakarta EE, ni de JPA, ni d'aucun framework">The domain depends on nothing — not Jakarta EE, not JPA, not any framework</li>
+          <li data-en="The application depends on the domain" data-fr="L'application dépend du domaine">The application depends on the domain</li>
+          <li data-en="The infrastructure depends on the domain and the application (implements the interfaces)" data-fr="L'infrastructure dépend du domaine et de l'application (implémente les interfaces)">The infrastructure depends on the domain and the application (implements the interfaces)</li>
+          <li data-en="The presentation depends on the application" data-fr="La présentation dépend de l'application">The presentation depends on the application</li>
+          <li data-en="Dependency Inversion (DIP) allows the infrastructure to implement the domain interfaces" data-fr="L'inversion de dépendances (DIP) permet à l'infrastructure d'implémenter les interfaces du domaine">Dependency Inversion (DIP) allows the infrastructure to implement the domain interfaces</li>
         </ul>
-        <h3>Value Objects Money et AccountNumber refactorisés</h3>
+      </div>
+    </details>
+
+    <details>
+      <summary data-en="🔄 Refactoring towards DDD — Banking Application" data-fr="🔄 Refactorisation vers DDD — Application Bancaire">🔄 Refactoring towards DDD — Banking Application</summary>
+      <div class="slide-content">
+        <h3 data-en="Anemic model vs rich model" data-fr="Modèle anémique vs modèle riche">Anemic model vs rich model</h3>
+        <p data-en="The Anemic Model (anti-pattern) is an object that contains only getters/setters with no business logic — the logic is scattered across services. The Rich Model encapsulates the logic in the entities themselves." data-fr="Le Modèle Anémique (anti-pattern) est un objet qui ne contient que des getters/setters sans logique métier — la logique est éparpillée dans des services. Le Modèle Riche encapsule la logique dans les entités elles-mêmes.">The <strong>Anemic Model</strong> (anti-pattern) is an object that contains only getters/setters with no business logic — the logic is scattered across services. The <strong>Rich Model</strong> encapsulates the logic in the entities themselves.</p>
         <ul>
-          <li><code>Money</code> remplace <code>BigDecimal</code> nu — ajoute la devise, les opérations typées et les validations</li>
-          <li><code>AccountNumber</code> remplace <code>String</code> nu — format validé, génération centralisée</li>
-          <li>Impossible de confondre un montant avec un numéro de compte dans le code — type safety maximale</li>
+          <li data-en="Anemic: account.setBalance(newBalance) — no rules checked" data-fr="Anémique : account.setBalance(newBalance) — aucune règle vérifiée"><strong data-en="Anemic" data-fr="Anémique">Anemic</strong>: <code>account.setBalance(newBalance)</code> — no rules checked</li>
+          <li data-en="Rich: account.debitAccount(amount) — checks balance, status, invariants" data-fr="Riche : account.debitAccount(amount) — vérifie solde, statut, invariants"><strong data-en="Rich" data-fr="Riche">Rich</strong>: <code>account.debitAccount(amount)</code> — checks balance, status, invariants</li>
+        </ul>
+        <h3 data-en="Before refactoring — procedural code" data-fr="Avant refactoring — code procédural">Before refactoring — procedural code</h3>
+        <ul>
+          <li data-en="Account class with only fields and getters/setters" data-fr="Classe Account avec uniquement des champs et des getters/setters">Class <code>Account</code> with only fields and getters/setters</li>
+          <li data-en="BankingService service containing all debit, credit, validation logic" data-fr="Service BankingService contenant toute la logique de débit, crédit, validation">Service <code>BankingService</code> containing all debit, credit, validation logic</li>
+          <li data-en="Business rule duplication across multiple services" data-fr="Duplication de règles métier à travers plusieurs services">Business rule duplication across multiple services</li>
+          <li data-en="Invisible business rules — no method expressing intent" data-fr="Règles métier invisibles — pas de méthode exprimant l'intention">Invisible business rules — no method expressing intent</li>
+        </ul>
+        <h3 data-en="After refactoring — rich DDD model" data-fr="Après refactoring — modèle riche DDD">After refactoring — rich DDD model</h3>
+        <ul>
+          <li data-en="AccountId — Value Object for identity" data-fr="AccountId — Value Object pour l'identité"><code>AccountId</code> — Value Object for identity</li>
+          <li data-en="Money — immutable Value Object with arithmetic operations" data-fr="Money — Value Object immuable avec opérations arithmétiques"><code>Money</code> — immutable Value Object with arithmetic operations</li>
+          <li data-en="AccountNumber — Value Object with validation and generation" data-fr="AccountNumber — Value Object avec validation et génération"><code>AccountNumber</code> — Value Object with validation and generation</li>
+          <li data-en="Account — Entity/Aggregate Root with business methods (debitAccount, creditAccount)" data-fr="Account — Entity/Aggregate Root avec méthodes métier (debitAccount, creditAccount)"><code>Account</code> — Entity/Aggregate Root with business methods (<code>debitAccount</code>, <code>creditAccount</code>)</li>
+          <li data-en="Business rules centralised in the aggregate — impossible to create an invalid state" data-fr="Règles métier centralisées dans l'aggregate — impossibilité de créer un état invalide">Business rules centralised in the aggregate — impossible to create an invalid state</li>
+        </ul>
+        <h3 data-en="Refactored Value Objects Money and AccountNumber" data-fr="Value Objects Money et AccountNumber refactorisés">Refactored Value Objects Money and AccountNumber</h3>
+        <ul>
+          <li data-en="Money replaces bare BigDecimal — adds currency, typed operations and validations" data-fr="Money remplace BigDecimal nu — ajoute la devise, les opérations typées et les validations"><code>Money</code> replaces bare <code>BigDecimal</code> — adds currency, typed operations and validations</li>
+          <li data-en="AccountNumber replaces bare String — validated format, centralised generation" data-fr="AccountNumber remplace String nu — format validé, génération centralisée"><code>AccountNumber</code> replaces bare <code>String</code> — validated format, centralised generation</li>
+          <li data-en="Impossible to confuse an amount with an account number in code — maximum type safety" data-fr="Impossible de confondre un montant avec un numéro de compte dans le code — type safety maximale">Impossible to confuse an amount with an account number in code — maximum type safety</li>
         </ul>
       </div>
     </details>
@@ -273,5 +275,6 @@
   </main>
 </div>
 <footer class="cds--footer">Made with IBM Bob &nbsp;·&nbsp; © 2026 Olivier Planson &nbsp;·&nbsp; ESIPE — Jakarta EE &amp; Microservices</footer>
+<script src="../assets/language-toggle.js"></script>
 </body>
 </html>

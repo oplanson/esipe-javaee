@@ -1,29 +1,31 @@
 <!-- © Copyright 2026 Olivier Planson. All rights reserved. Reproduction prohibited. Made with IBM Bob. -->
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="en">
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-  <title>Cours 04b — EJB — Enterprise Java Beans</title>
+  <title>Chapter 04b — EJB — Enterprise Java Beans</title>
   <link rel="stylesheet" href="../assets/carbon.css"/>
 </head>
 <body>
 <header class="cds--header">
-  <a class="cds--header__name" href="index.html">EJB — Enterprise Java Beans<span>Cours Jakarta EE</span></a>
-  <a class="cds--header__back" href="../index.html">← Tous les Cours</a>
+  <a class="cds--header__name" href="index.html" data-en="EJB — Enterprise Java Beans<span>Jakarta EE Course</span>" data-fr="EJB — Enterprise Java Beans<span>Cours Jakarta EE</span>">EJB — Enterprise Java Beans<span>Jakarta EE Course</span></a>
+  <button class="lang-toggle-btn" id="lang-toggle">FR</button>
+  <a class="cds--header__back" href="../index.html" data-en="← All Courses" data-fr="← Tous les Cours">← All Courses</a>
 </header>
 <div class="cds--shell">
   <nav class="cds--side-nav">
-    <p class="cds--side-nav__section-title">Cours 04b</p>
-    <a class="cds--side-nav__link active" href="index.html">⊙ Vue d'ensemble</a>
-    <a class="cds--side-nav__link" href="slides.html">☰ Contenu du cours</a>
-    <a class="cds--side-nav__link" href="concepts.html">◈ Concepts clés</a>
-    <a class="cds--side-nav__link" href="code.html">⟨/⟩ Exemples de code</a>
+    <p class="cds--side-nav__section-title" data-en="Chapter 04b" data-fr="Cours 04b">Chapter 04b</p>
+    <a class="cds--side-nav__link active" href="index.html" data-en="⊙ Overview" data-fr="⊙ Vue d'ensemble">⊙ Overview</a>
+    <a class="cds--side-nav__link" href="slides.html" data-en="☰ Course Content" data-fr="☰ Contenu du cours">☰ Course Content</a>
+    <a class="cds--side-nav__link" href="concepts.html" data-en="◈ Key Concepts" data-fr="◈ Concepts clés">◈ Key Concepts</a>
+    <a class="cds--side-nav__link" href="code.html" data-en="⟨/⟩ Code Examples" data-fr="⟨/⟩ Exemples de code">⟨/⟩ Code Examples</a>
+    <a class="cds--side-nav__lang-toggle">FR</a>
   </nav>
   <main class="cds--content">
-    <div class="breadcrumb"><a href="../index.html">Cours</a> › Cours 04b</div>
-    <h1>EJB — Enterprise Java Beans</h1>
-    <p class="page-lead">Jakarta EE 10 — Durée : 3h · Instructeur : Olivier Planson</p>
+    <div class="breadcrumb"><a href="../index.html" data-en="Courses" data-fr="Cours">Courses</a> › <span data-en="Chapter 04b" data-fr="Cours 04b">Chapter 04b</span></div>
+    <h1 data-en="EJB — Enterprise Java Beans" data-fr="EJB — Enterprise Java Beans">EJB — Enterprise Java Beans</h1>
+    <p class="page-lead" data-en="Jakarta EE 10 — Duration: 3h · Instructor: Olivier Planson" data-fr="Jakarta EE 10 — Durée : 3h · Instructeur : Olivier Planson">Jakarta EE 10 — Duration: 3h · Instructor: Olivier Planson</p>
     <div class="tag-stack">
       <span class="cds--tag cds--tag--blue">EJB</span>
       <span class="cds--tag cds--tag--purple">@Stateless</span>
@@ -32,35 +34,36 @@
       <span class="cds--tag cds--tag--warm-gray">@Singleton</span>
       <span class="cds--tag cds--tag--red">@MessageDriven</span>
     </div>
-    <h2>Objectifs pédagogiques</h2>
+    <h2 data-en="Learning Objectives" data-fr="Objectifs pédagogiques">Learning Objectives</h2>
     <table class="objectives-table"><tbody>
-      <tr><td>✅</td><td>Comprendre l'architecture EJB et les services du conteneur</td></tr>
-      <tr><td>✅</td><td>Implémenter les Session Beans Stateless/Stateful/Singleton</td></tr>
-      <tr><td>✅</td><td>Créer des Message-Driven Beans pour le traitement asynchrone</td></tr>
-      <tr><td>✅</td><td>Gérer les transactions avec CMT et BMT</td></tr>
-      <tr><td>✅</td><td>Implémenter la sécurité déclarative et programmatique</td></tr>
-      <tr><td>✅</td><td>Utiliser le Timer Service pour les tâches planifiées</td></tr>
-      <tr><td>✅</td><td>Créer des méthodes asynchrones</td></tr>
-      <tr><td>✅</td><td>Comparer EJB vs CDI et choisir correctement</td></tr>
+      <tr><td>✅</td><td data-en="Understand EJB architecture and container services" data-fr="Comprendre l'architecture EJB et les services du conteneur">Understand EJB architecture and container services</td></tr>
+      <tr><td>✅</td><td data-en="Implement Stateless/Stateful/Singleton Session Beans" data-fr="Implémenter les Session Beans Stateless/Stateful/Singleton">Implement Stateless/Stateful/Singleton Session Beans</td></tr>
+      <tr><td>✅</td><td data-en="Create Message-Driven Beans for asynchronous processing" data-fr="Créer des Message-Driven Beans pour le traitement asynchrone">Create Message-Driven Beans for asynchronous processing</td></tr>
+      <tr><td>✅</td><td data-en="Manage transactions with CMT and BMT" data-fr="Gérer les transactions avec CMT et BMT">Manage transactions with CMT and BMT</td></tr>
+      <tr><td>✅</td><td data-en="Implement declarative and programmatic security" data-fr="Implémenter la sécurité déclarative et programmatique">Implement declarative and programmatic security</td></tr>
+      <tr><td>✅</td><td data-en="Use the Timer Service for scheduled tasks" data-fr="Utiliser le Timer Service pour les tâches planifiées">Use the Timer Service for scheduled tasks</td></tr>
+      <tr><td>✅</td><td data-en="Create asynchronous methods" data-fr="Créer des méthodes asynchrones">Create asynchronous methods</td></tr>
+      <tr><td>✅</td><td data-en="Compare EJB vs CDI and choose appropriately" data-fr="Comparer EJB vs CDI et choisir correctement">Compare EJB vs CDI and choose appropriately</td></tr>
     </tbody></table>
-    <h2>Plan du cours</h2>
+    <h2 data-en="Course Outline" data-fr="Plan du cours">Course Outline</h2>
     <ol class="course-plan">
-      <li>Architecture EJB et services du conteneur</li>
-      <li>Stateless Session Beans</li>
-      <li>Stateful Session Beans</li>
-      <li>Singleton Session Beans</li>
-      <li>Message-Driven Beans (MDB)</li>
-      <li>Gestion des transactions CMT et BMT</li>
-      <li>Sécurité EJB (déclarative et programmatique)</li>
-      <li>Timer Service et méthodes asynchrones</li>
+      <li data-en="EJB architecture and container services" data-fr="Architecture EJB et services du conteneur">EJB architecture and container services</li>
+      <li data-en="Stateless Session Beans" data-fr="Stateless Session Beans">Stateless Session Beans</li>
+      <li data-en="Stateful Session Beans" data-fr="Stateful Session Beans">Stateful Session Beans</li>
+      <li data-en="Singleton Session Beans" data-fr="Singleton Session Beans">Singleton Session Beans</li>
+      <li data-en="Message-Driven Beans (MDB)" data-fr="Message-Driven Beans (MDB)">Message-Driven Beans (MDB)</li>
+      <li data-en="CMT and BMT transaction management" data-fr="Gestion des transactions CMT et BMT">CMT and BMT transaction management</li>
+      <li data-en="EJB Security (declarative and programmatic)" data-fr="Sécurité EJB (déclarative et programmatique)">EJB Security (declarative and programmatic)</li>
+      <li data-en="Timer Service and asynchronous methods" data-fr="Timer Service et méthodes asynchrones">Timer Service and asynchronous methods</li>
     </ol>
     <div class="tile-grid">
-      <a class="tile-link" href="slides.html"><div class="cds--tile"><h3>☰ Contenu du cours</h3><p>Architecture EJB, Session Beans, MDB, transactions, sécurité et timers avec diagrammes.</p></div></a>
-      <a class="tile-link" href="concepts.html"><div class="cds--tile"><h3>◈ Concepts clés</h3><p>EJB vs CDI, types de beans, attributs de transaction, sécurité déclarative, patterns et glossaire.</p></div></a>
-      <a class="tile-link" href="code.html"><div class="cds--tile"><h3>⟨/⟩ Exemples de code</h3><p>Stateless, Stateful, Singleton, MDB, sécurité déclarative et Timer Service.</p></div></a>
+      <a class="tile-link" href="slides.html"><div class="cds--tile"><h3 data-en="☰ Course Content" data-fr="☰ Contenu du cours">☰ Course Content</h3><p data-en="EJB architecture, Session Beans, MDB, transactions, security and timers with diagrams." data-fr="Architecture EJB, Session Beans, MDB, transactions, sécurité et timers avec diagrammes.">EJB architecture, Session Beans, MDB, transactions, security and timers with diagrams.</p></div></a>
+      <a class="tile-link" href="concepts.html"><div class="cds--tile"><h3 data-en="◈ Key Concepts" data-fr="◈ Concepts clés">◈ Key Concepts</h3><p data-en="EJB vs CDI, bean types, transaction attributes, declarative security, patterns and glossary." data-fr="EJB vs CDI, types de beans, attributs de transaction, sécurité déclarative, patterns et glossaire.">EJB vs CDI, bean types, transaction attributes, declarative security, patterns and glossary.</p></div></a>
+      <a class="tile-link" href="code.html"><div class="cds--tile"><h3 data-en="⟨/⟩ Code Examples" data-fr="⟨/⟩ Exemples de code">⟨/⟩ Code Examples</h3><p data-en="Stateless, Stateful, Singleton, MDB, declarative security and Timer Service." data-fr="Stateless, Stateful, Singleton, MDB, sécurité déclarative et Timer Service.">Stateless, Stateful, Singleton, MDB, declarative security and Timer Service.</p></div></a>
     </div>
   </main>
 </div>
 <footer class="cds--footer">Made with IBM Bob &nbsp;·&nbsp; © 2026 Olivier Planson &nbsp;·&nbsp; ESIPE — Jakarta EE &amp; Microservices</footer>
+<script src="../assets/language-toggle.js"></script>
 </body>
 </html>

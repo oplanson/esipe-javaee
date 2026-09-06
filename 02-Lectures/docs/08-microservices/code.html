@@ -1,6 +1,6 @@
 <!-- © Copyright 2026 Olivier Planson. All rights reserved. Reproduction prohibited. Made with IBM Bob. -->
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="en">
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
@@ -9,24 +9,26 @@
 </head>
 <body>
 <header class="cds--header">
-  <a class="cds--header__name" href="index.html">Microservices<span>Cours Jakarta EE</span></a>
-  <a class="cds--header__back" href="../index.html">← Tous les Cours</a>
+  <a class="cds--header__name" href="index.html">Microservices<span data-en="Jakarta EE Course" data-fr="Cours Jakarta EE">Jakarta EE Course</span></a>
+  <button class="lang-toggle-btn" id="lang-toggle">FR</button>
+  <a class="cds--header__back" href="../index.html" data-en="← All Courses" data-fr="← Tous les Cours">← All Courses</a>
 </header>
 <div class="cds--shell">
   <nav class="cds--side-nav">
-    <p class="cds--side-nav__section-title">Cours 08</p>
-    <a class="cds--side-nav__link" href="index.html">⊙ Vue d'ensemble</a>
-    <a class="cds--side-nav__link" href="slides.html">☰ Contenu du cours</a>
-    <a class="cds--side-nav__link" href="concepts.html">◈ Concepts clés</a>
-    <a class="cds--side-nav__link active" href="code.html">⟨/⟩ Exemples de code</a>
-    <a class="cds--side-nav__link" href="patterns.html">⧫ Patterns Microservices</a>
+    <p class="cds--side-nav__section-title" data-en="Course 08" data-fr="Cours 08">Course 08</p>
+    <a class="cds--side-nav__link" href="index.html" data-en="⊙ Overview" data-fr="⊙ Vue d'ensemble">⊙ Overview</a>
+    <a class="cds--side-nav__link" href="slides.html" data-en="☰ Course Content" data-fr="☰ Contenu du cours">☰ Course Content</a>
+    <a class="cds--side-nav__link" href="concepts.html" data-en="◈ Key Concepts" data-fr="◈ Concepts clés">◈ Key Concepts</a>
+    <a class="cds--side-nav__link active" href="code.html" data-en="⟨/⟩ Code Examples" data-fr="⟨/⟩ Exemples de code">⟨/⟩ Code Examples</a>
+    <a class="cds--side-nav__link" href="patterns.html" data-en="⧫ Microservices Patterns" data-fr="⧫ Patterns Microservices">⧫ Microservices Patterns</a>
+    <a class="cds--side-nav__lang-toggle">FR</a>
   </nav>
   <main class="cds--content">
-    <div class="breadcrumb"><a href="../index.html">Cours</a> › <a href="index.html">Cours 08</a> › Code</div>
-    <h1>Exemples de code</h1>
-    <p class="page-lead">Extraits de code du cours 08 — Fault Tolerance, API Gateway, MicroProfile Config, Health Check, Saga, Docker Compose et corrélation ID.</p>
+    <div class="breadcrumb"><a href="../index.html" data-en="Courses" data-fr="Cours">Courses</a> › <a href="index.html" data-en="Course 08" data-fr="Cours 08">Course 08</a> › <span data-en="Code" data-fr="Code">Code</span></div>
+    <h1 data-en="Code Examples" data-fr="Exemples de code">Code Examples</h1>
+    <p class="page-lead" data-en="Code excerpts from course 08 — Fault Tolerance, API Gateway, MicroProfile Config, Health Check, Saga, Docker Compose and correlation ID." data-fr="Extraits de code du cours 08 — Fault Tolerance, API Gateway, MicroProfile Config, Health Check, Saga, Docker Compose et corrélation ID.">Code excerpts from course 08 — Fault Tolerance, API Gateway, MicroProfile Config, Health Check, Saga, Docker Compose and correlation ID.</p>
 
-    <h2>Client REST inter-services avec Fault Tolerance</h2>
+    <h2 data-en="Inter-service REST client with Fault Tolerance" data-fr="Client REST inter-services avec Fault Tolerance">Inter-service REST client with Fault Tolerance</h2>
     <div class="code-block-wrap">
       <span class="code-lang">java</span>
       <pre><code>import jakarta.enterprise.context.ApplicationScoped;
@@ -85,7 +87,7 @@ public class AccountQueryService {
 // account-service/mp-rest/readTimeout=3000</code></pre>
     </div>
 
-    <h2>API Gateway — Request Routing</h2>
+    <h2 data-en="API Gateway — Request Routing" data-fr="API Gateway — Request Routing">API Gateway — Request Routing</h2>
     <div class="code-block-wrap">
       <span class="code-lang">java</span>
       <pre><code>import jakarta.enterprise.context.ApplicationScoped;
@@ -151,7 +153,7 @@ public class GatewayResource {
 }</code></pre>
     </div>
 
-    <h2>MicroProfile Config — Configuration multi-environnement</h2>
+    <h2 data-en="MicroProfile Config — Multi-environment configuration" data-fr="MicroProfile Config — Configuration multi-environnement">MicroProfile Config — Multi-environment configuration</h2>
     <div class="code-block-wrap">
       <span class="code-lang">java</span>
       <pre><code>import jakarta.enterprise.context.ApplicationScoped;
@@ -206,7 +208,7 @@ public class ServiceConfiguration {
 </code></pre>
     </div>
 
-    <h2>Health Check composite</h2>
+    <h2 data-en="Composite Health Check" data-fr="Health Check composite">Composite Health Check</h2>
     <div class="code-block-wrap">
       <span class="code-lang">java</span>
       <pre><code>import jakarta.enterprise.context.ApplicationScoped;
@@ -289,7 +291,7 @@ public class CompositeHealthCheck implements HealthCheck {
 // }</code></pre>
     </div>
 
-    <h2>Saga — Choreography</h2>
+    <h2 data-en="Saga — Choreography" data-fr="Saga — Choreography">Saga — Choreography</h2>
     <div class="code-block-wrap">
       <span class="code-lang">java</span>
       <pre><code>import jakarta.enterprise.context.ApplicationScoped;
@@ -371,7 +373,7 @@ public class AccountSagaParticipant {
 }</code></pre>
     </div>
 
-    <h2>Docker Compose</h2>
+    <h2 data-en="Docker Compose" data-fr="Docker Compose">Docker Compose</h2>
     <div class="code-block-wrap">
       <span class="code-lang">yaml</span>
       <pre><code>version: "3.8"
@@ -483,7 +485,7 @@ volumes:
   transfer-db-data:</code></pre>
     </div>
 
-    <h2>Corrélation ID pour tracing</h2>
+    <h2 data-en="Correlation ID for tracing" data-fr="Corrélation ID pour tracing">Correlation ID for tracing</h2>
     <div class="code-block-wrap">
       <span class="code-lang">java</span>
       <pre><code>import jakarta.annotation.Priority;
@@ -559,5 +561,6 @@ public class CorrelationIdClientFilter implements jakarta.ws.rs.client.ClientReq
   </main>
 </div>
 <footer class="cds--footer">Made with IBM Bob &nbsp;·&nbsp; © 2026 Olivier Planson &nbsp;·&nbsp; ESIPE — Jakarta EE &amp; Microservices</footer>
+<script src="../assets/language-toggle.js"></script>
 </body>
 </html>

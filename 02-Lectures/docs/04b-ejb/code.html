@@ -1,31 +1,33 @@
 <!-- © Copyright 2026 Olivier Planson. All rights reserved. Reproduction prohibited. Made with IBM Bob. -->
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="en">
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-  <title>Cours 04b — Exemples de code</title>
+  <title>Chapter 04b — Code Examples</title>
   <link rel="stylesheet" href="../assets/carbon.css"/>
 </head>
 <body>
 <header class="cds--header">
-  <a class="cds--header__name" href="index.html">EJB — Enterprise Java Beans<span>Cours Jakarta EE</span></a>
-  <a class="cds--header__back" href="../index.html">← Tous les Cours</a>
+  <a class="cds--header__name" href="index.html" data-en="EJB — Enterprise Java Beans&lt;span&gt;Jakarta EE Course&lt;/span&gt;" data-fr="EJB — Enterprise Java Beans&lt;span&gt;Cours Jakarta EE&lt;/span&gt;">EJB — Enterprise Java Beans<span>Jakarta EE Course</span></a>
+  <button class="lang-toggle-btn" id="lang-toggle">FR</button>
+  <a class="cds--header__back" href="../index.html" data-en="← All Courses" data-fr="← Tous les Cours">← All Courses</a>
 </header>
 <div class="cds--shell">
   <nav class="cds--side-nav">
-    <p class="cds--side-nav__section-title">Cours 04b</p>
-    <a class="cds--side-nav__link" href="index.html">⊙ Vue d'ensemble</a>
-    <a class="cds--side-nav__link" href="slides.html">☰ Contenu du cours</a>
-    <a class="cds--side-nav__link" href="concepts.html">◈ Concepts clés</a>
-    <a class="cds--side-nav__link active" href="code.html">⟨/⟩ Exemples de code</a>
+    <p class="cds--side-nav__section-title" data-en="Chapter 04b" data-fr="Cours 04b">Chapter 04b</p>
+    <a class="cds--side-nav__link" href="index.html" data-en="⊙ Overview" data-fr="⊙ Vue d'ensemble">⊙ Overview</a>
+    <a class="cds--side-nav__link" href="slides.html" data-en="☰ Course Content" data-fr="☰ Contenu du cours">☰ Course Content</a>
+    <a class="cds--side-nav__link" href="concepts.html" data-en="◈ Key Concepts" data-fr="◈ Concepts clés">◈ Key Concepts</a>
+    <a class="cds--side-nav__link active" href="code.html" data-en="⟨/⟩ Code Examples" data-fr="⟨/⟩ Exemples de code">⟨/⟩ Code Examples</a>
+    <a class="cds--side-nav__lang-toggle">FR</a>
   </nav>
   <main class="cds--content">
-    <div class="breadcrumb"><a href="../index.html">Cours</a> › <a href="index.html">Cours 04b</a> › Code</div>
-    <h1>Exemples de code</h1>
-    <p class="page-lead">Extraits de code Java du cours 04b — EJB, Session Beans, MDB, sécurité déclarative et Timer Service.</p>
+    <div class="breadcrumb"><a href="../index.html" data-en="Courses" data-fr="Cours">Courses</a> › <a href="index.html" data-en="Chapter 04b" data-fr="Cours 04b">Chapter 04b</a> › <span data-en="Code" data-fr="Code">Code</span></div>
+    <h1 data-en="Code Examples" data-fr="Exemples de code">Code Examples</h1>
+    <p class="page-lead" data-en="Java code excerpts from Chapter 04b — EJB, Session Beans, MDB, declarative security and Timer Service." data-fr="Extraits de code Java du cours 04b — EJB, Session Beans, MDB, sécurité déclarative et Timer Service.">Java code excerpts from Chapter 04b — EJB, Session Beans, MDB, declarative security and Timer Service.</p>
 
-    <h2>Stateless Session Bean — Service bancaire</h2>
+    <h2 data-en="Stateless Session Bean — Banking Service" data-fr="Stateless Session Bean — Service bancaire">Stateless Session Bean — Banking Service</h2>
     <div class="code-block-wrap">
       <span class="code-lang">java</span>
       <pre><code>import jakarta.ejb.Stateless;
@@ -41,7 +43,7 @@ public class BankingServiceBean {
     @Inject
     private EntityManager em;
 
-    // REQUIRED : participe à la transaction active ou en crée une nouvelle
+    // REQUIRED : participates in active transaction or creates a new one
     @TransactionAttribute(TransactionAttributeType.REQUIRED)
     public void transferFunds(String fromAccountId, String toAccountId,
                               BigDecimal amount) {
@@ -61,7 +63,7 @@ public class BankingServiceBean {
         em.merge(target);
     }
 
-    // MANDATORY : doit être appelée dans le contexte d'une transaction existante
+    // MANDATORY : must be called within an existing transaction context
     @TransactionAttribute(TransactionAttributeType.MANDATORY)
     private void validateTransfer(Account source, BigDecimal amount) {
         if (amount.compareTo(BigDecimal.ZERO) &lt;= 0) {
@@ -76,7 +78,7 @@ public class BankingServiceBean {
 }</code></pre>
     </div>
 
-    <h2>Stateful Session Bean — Panier</h2>
+    <h2 data-en="Stateful Session Bean — Shopping Cart" data-fr="Stateful Session Bean — Panier">Stateful Session Bean — Shopping Cart</h2>
     <div class="code-block-wrap">
       <span class="code-lang">java</span>
       <pre><code>import jakarta.ejb.Remove;
@@ -96,7 +98,7 @@ public class ShoppingCartBean implements Serializable {
     private static final Logger logger =
         Logger.getLogger(ShoppingCartBean.class.getName());
 
-    // État conservé entre les appels du même client
+    // State preserved between calls from the same client
     private final List&lt;Item&gt; items = new ArrayList&lt;&gt;();
 
     public void addItem(Item item) {
@@ -129,7 +131,7 @@ public class ShoppingCartBean implements Serializable {
         return order;
     }
 
-    // @Remove : libère l'instance Stateful après l'appel — fin de la conversation
+    // @Remove : releases the Stateful instance after this call — end of conversation
     @Remove
     public void clearCart() {
         items.clear();
@@ -143,7 +145,7 @@ public class ShoppingCartBean implements Serializable {
 }</code></pre>
     </div>
 
-    <h2>Singleton — Configuration applicative</h2>
+    <h2 data-en="Singleton — Application Configuration" data-fr="Singleton — Configuration applicative">Singleton — Application Configuration</h2>
     <div class="code-block-wrap">
       <span class="code-lang">java</span>
       <pre><code>import jakarta.annotation.PostConstruct;
@@ -157,20 +159,20 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Logger;
 
 @Singleton
-@Startup  // initialisé au démarrage du serveur, avant tout appel client
+@Startup  // initialised at server startup, before any client call
 @ConcurrencyManagement(ConcurrencyManagementType.CONTAINER)
 public class AppConfigBean {
 
     private static final Logger logger =
         Logger.getLogger(AppConfigBean.class.getName());
 
-    // ConcurrentHashMap protégée par @Lock du conteneur
+    // ConcurrentHashMap protected by container @Lock
     private final ConcurrentHashMap&lt;String, String&gt; config =
         new ConcurrentHashMap&lt;&gt;();
 
     @PostConstruct
     public void loadConfig() {
-        // Chargement initial de la configuration au démarrage
+        // Initial configuration loading at startup
         config.put("app.name", "BankingApp");
         config.put("app.version", "3.2.1");
         config.put("max.transfer.amount", "100000");
@@ -178,7 +180,7 @@ public class AppConfigBean {
         logger.info("AppConfigBean initialized with " + config.size() + " properties");
     }
 
-    // @Lock(WRITE) : accès exclusif — un seul thread à la fois peut écrire
+    // @Lock(WRITE) : exclusive access — only one thread at a time can write
     @Lock(LockType.WRITE)
     public void updateConfig(String key, String value) {
         String old = config.put(key, value);
@@ -186,7 +188,7 @@ public class AppConfigBean {
             + " (was: " + old + ")");
     }
 
-    // @Lock(READ) : accès concurrent en lecture — plusieurs threads simultanés autorisés
+    // @Lock(READ) : concurrent read access — multiple simultaneous threads allowed
     @Lock(LockType.READ)
     public String getConfig(String key) {
         return config.getOrDefault(key, "");
@@ -199,7 +201,7 @@ public class AppConfigBean {
 }</code></pre>
     </div>
 
-    <h2>Message-Driven Bean</h2>
+    <h2 data-en="Message-Driven Bean" data-fr="Message-Driven Bean">Message-Driven Bean</h2>
     <div class="code-block-wrap">
       <span class="code-lang">java</span>
       <pre><code>import jakarta.ejb.ActivationConfigProperty;
@@ -238,10 +240,10 @@ public class TransferRequestMDB implements MessageListener {
                 String payload = textMsg.getText();
                 logger.info("Received transfer request: " + payload);
 
-                // Parsing simplifié du payload JSON
+                // Simplified JSON payload parsing
                 TransferRequest request = TransferRequest.fromJson(payload);
 
-                // Traitement du virement via le service bancaire
+                // Process the wire transfer via the banking service
                 bankingService.transferFunds(
                     request.getFromAccountId(),
                     request.getToAccountId(),
@@ -263,7 +265,7 @@ public class TransferRequestMDB implements MessageListener {
 }</code></pre>
     </div>
 
-    <h2>Sécurité Déclarative</h2>
+    <h2 data-en="Declarative Security" data-fr="Sécurité Déclarative">Declarative Security</h2>
     <div class="code-block-wrap">
       <span class="code-lang">java</span>
       <pre><code>import jakarta.annotation.Resource;
@@ -273,7 +275,7 @@ import jakarta.annotation.security.RolesAllowed;
 import jakarta.ejb.EJBContext;
 import jakarta.ejb.Stateless;
 
-// @RolesAllowed au niveau classe : s'applique à toutes les méthodes par défaut
+// @RolesAllowed at class level : applies to all methods by default
 @Stateless
 @RolesAllowed("EMPLOYEE")
 public class SecureBankingService {
@@ -281,43 +283,43 @@ public class SecureBankingService {
     @Resource
     private EJBContext ctx;
 
-    // Surcharge : seuls les ADMIN peuvent supprimer un compte
+    // Override : only ADMIN can delete an account
     @RolesAllowed("ADMIN")
     public void deleteAccount(String accountId) {
-        // Sécurité programmatique supplémentaire : audit de l'action admin
+        // Programmatic security: audit the admin action
         String caller = ctx.getCallerPrincipal().getName();
         auditService.log("DELETE_ACCOUNT", caller, accountId);
         accountRepository.delete(accountId);
     }
 
-    // Surcharge : accessible à tous (authentifiés ou non) — consultation publique
+    // Override : accessible to all (authenticated or not) — public consultation
     @PermitAll
     public AccountInfo getAccountInfo(String accountId) {
         return accountRepository.findPublicInfo(accountId);
     }
 
-    // Surcharge : inaccessible en production — méthode de maintenance désactivée
+    // Override : inaccessible in production — maintenance method disabled
     @DenyAll
     public void deleteAllData() {
-        // Cette méthode ne peut jamais être invoquée via le conteneur
+        // This method can never be invoked via the container
         throw new UnsupportedOperationException("Not accessible");
     }
 
-    // Héritage du @RolesAllowed("EMPLOYEE") de la classe
+    // Inherits @RolesAllowed("EMPLOYEE") from the class
     public void updateAccountBalance(String accountId, java.math.BigDecimal amount) {
-        // Vérification programmatique complémentaire selon le rôle
+        // Complementary programmatic check based on role
         if (ctx.isCallerInRole("ADMIN")) {
-            // Les admins peuvent effectuer des ajustements illimités
+            // Admins can perform unlimited adjustments
             accountRepository.forceUpdateBalance(accountId, amount);
         } else {
-            // Les employés sont soumis aux limites de transfert standard
+            // Employees are subject to standard transfer limits
             bankingService.transferFunds("INTERNAL", accountId, amount);
         }
     }
 }</code></pre>
     </div>
 
-    <h2>Timer Service</h2>
+    <h2 data-en="Timer Service" data-fr="Timer Service">Timer Service</h2>
     <div class="code-block-wrap">
       <span class="code-lang">java</span>
       <pre><code>import jakarta.annotation.Resource;
@@ -338,7 +340,7 @@ public class ReportSchedulerBean {
     @Resource
     private TimerService timerService;
 
-    // Timer automatique : exécuté chaque jour à minuit — persistant (survit aux redémarrages)
+    // Automatic timer : runs every day at midnight — persistent (survives server restarts)
     @Schedule(hour = "0", minute = "0", second = "0",
               persistent = true, info = "DailyReportTimer")
     public void generateDailyReport(Timer timer) {
@@ -351,7 +353,7 @@ public class ReportSchedulerBean {
         }
     }
 
-    // Timer automatique : exécuté chaque lundi à 8h pour le rapport hebdomadaire
+    // Automatic timer : runs every Monday at 8am for the weekly report
     @Schedule(hour = "8", minute = "0", second = "0",
               dayOfWeek = "Mon", persistent = true, info = "WeeklyReportTimer")
     public void generateWeeklyReport(Timer timer) {
@@ -359,7 +361,7 @@ public class ReportSchedulerBean {
         reportService.generateWeeklyReport();
     }
 
-    // Création programmatique d'un timer pour un rapport différé
+    // Programmatic timer creation for a delayed report
     public void scheduleDelayedReport(String reportId, long delayMs) {
         TimerConfig config = new TimerConfig(reportId, true);
         timerService.createSingleActionTimer(delayMs, config);
@@ -367,7 +369,7 @@ public class ReportSchedulerBean {
             + ", delay=" + delayMs + "ms");
     }
 
-    // Callback @Timeout : appelé à l'expiration des timers programmatiques
+    // @Timeout callback : called when a programmatic timer expires
     @Timeout
     public void processTimer(Timer timer) {
         String reportId = (String) timer.getInfo();
@@ -380,5 +382,6 @@ public class ReportSchedulerBean {
   </main>
 </div>
 <footer class="cds--footer">Made with IBM Bob &nbsp;·&nbsp; © 2026 Olivier Planson &nbsp;·&nbsp; ESIPE — Jakarta EE &amp; Microservices</footer>
+<script src="../assets/language-toggle.js"></script>
 </body>
 </html>

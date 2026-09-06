@@ -1,29 +1,31 @@
 <!-- © Copyright 2026 Olivier Planson. All rights reserved. Reproduction prohibited. Made with IBM Bob. -->
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="en">
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-  <title>Cours 04 — CDI — Injection de Dépendances</title>
+  <title>Course 04 — CDI — Contexts and Dependency Injection</title>
   <link rel="stylesheet" href="../assets/carbon.css"/>
 </head>
 <body>
 <header class="cds--header">
-  <a class="cds--header__name" href="index.html">CDI — Injection de Dépendances<span>Cours Jakarta EE</span></a>
-  <a class="cds--header__back" href="../index.html">← Tous les Cours</a>
+  <a class="cds--header__name" href="index.html" data-en="CDI — Contexts and Dependency Injection<span>Jakarta EE Course</span>" data-fr="CDI — Injection de Dépendances<span>Cours Jakarta EE</span>">CDI — Contexts and Dependency Injection<span>Jakarta EE Course</span></a>
+  <button class="lang-toggle-btn" id="lang-toggle">FR</button>
+  <a class="cds--header__back" href="../index.html" data-en="← All Courses" data-fr="← Tous les Cours">← All Courses</a>
 </header>
 <div class="cds--shell">
   <nav class="cds--side-nav">
-    <p class="cds--side-nav__section-title">Cours 04</p>
-    <a class="cds--side-nav__link active" href="index.html">⊙ Vue d'ensemble</a>
-    <a class="cds--side-nav__link" href="slides.html">☰ Contenu du cours</a>
-    <a class="cds--side-nav__link" href="concepts.html">◈ Concepts clés</a>
-    <a class="cds--side-nav__link" href="code.html">⟨/⟩ Exemples de code</a>
+    <p class="cds--side-nav__section-title" data-en="Course 04" data-fr="Cours 04">Course 04</p>
+    <a class="cds--side-nav__link active" href="index.html" data-en="⊙ Overview" data-fr="⊙ Vue d'ensemble">⊙ Overview</a>
+    <a class="cds--side-nav__link" href="slides.html" data-en="☰ Course Content" data-fr="☰ Contenu du cours">☰ Course Content</a>
+    <a class="cds--side-nav__link" href="concepts.html" data-en="◈ Key Concepts" data-fr="◈ Concepts clés">◈ Key Concepts</a>
+    <a class="cds--side-nav__link" href="code.html" data-en="⟨/⟩ Code Examples" data-fr="⟨/⟩ Exemples de code">⟨/⟩ Code Examples</a>
+    <a class="cds--side-nav__lang-toggle">FR</a>
   </nav>
   <main class="cds--content">
-    <div class="breadcrumb"><a href="../index.html">Cours</a> › Cours 04</div>
-    <h1>CDI — Injection de Dépendances</h1>
-    <p class="page-lead">Jakarta Contexts and Dependency Injection — Durée : 3h · Instructeur : Olivier Planson</p>
+    <div class="breadcrumb"><a href="../index.html" data-en="Courses" data-fr="Cours">Courses</a> › <span data-en="Course 04" data-fr="Cours 04">Course 04</span></div>
+    <h1 data-en="CDI — Contexts and Dependency Injection" data-fr="CDI — Injection de Dépendances">CDI — Contexts and Dependency Injection</h1>
+    <p class="page-lead" data-en="Jakarta Contexts and Dependency Injection — Duration: 3h · Instructor: Olivier Planson" data-fr="Jakarta Contexts and Dependency Injection — Durée : 3h · Instructeur : Olivier Planson">Jakarta Contexts and Dependency Injection — Duration: 3h · Instructor: Olivier Planson</p>
     <div class="tag-stack">
       <span class="cds--tag cds--tag--purple">CDI 4.0</span>
       <span class="cds--tag cds--tag--blue">@Inject</span>
@@ -32,33 +34,34 @@
       <span class="cds--tag cds--tag--warm-gray">Events</span>
       <span class="cds--tag cds--tag--red">@Transactional</span>
     </div>
-    <h2>Objectifs pédagogiques</h2>
+    <h2 data-en="Learning Objectives" data-fr="Objectifs pédagogiques">Learning Objectives</h2>
     <table class="objectives-table"><tbody>
-      <tr><td>✅</td><td>Comprendre les principes et bénéfices de l'injection de dépendances</td></tr>
-      <tr><td>✅</td><td>Utiliser les annotations CDI pour gérer le cycle de vie des beans</td></tr>
-      <tr><td>✅</td><td>Appliquer les différents scopes de beans</td></tr>
-      <tr><td>✅</td><td>Implémenter les qualificateurs pour l'injection type-safe</td></tr>
-      <tr><td>✅</td><td>Utiliser les Producer Methods pour la création d'objets complexes</td></tr>
-      <tr><td>✅</td><td>Appliquer la gestion déclarative des transactions avec @Transactional</td></tr>
+      <tr><td>✅</td><td data-en="Understand the principles and benefits of dependency injection" data-fr="Comprendre les principes et bénéfices de l'injection de dépendances">Understand the principles and benefits of dependency injection</td></tr>
+      <tr><td>✅</td><td data-en="Use CDI annotations to manage the bean lifecycle" data-fr="Utiliser les annotations CDI pour gérer le cycle de vie des beans">Use CDI annotations to manage the bean lifecycle</td></tr>
+      <tr><td>✅</td><td data-en="Apply the different bean scopes" data-fr="Appliquer les différents scopes de beans">Apply the different bean scopes</td></tr>
+      <tr><td>✅</td><td data-en="Implement qualifiers for type-safe injection" data-fr="Implémenter les qualificateurs pour l'injection type-safe">Implement qualifiers for type-safe injection</td></tr>
+      <tr><td>✅</td><td data-en="Use Producer Methods for creating complex objects" data-fr="Utiliser les Producer Methods pour la création d'objets complexes">Use Producer Methods for creating complex objects</td></tr>
+      <tr><td>✅</td><td data-en="Apply declarative transaction management with @Transactional" data-fr="Appliquer la gestion déclarative des transactions avec @Transactional">Apply declarative transaction management with @Transactional</td></tr>
     </tbody></table>
-    <h2>Plan du cours</h2>
+    <h2 data-en="Course Outline" data-fr="Plan du cours">Course Outline</h2>
     <ol class="course-plan">
-      <li>Qu'est-ce que l'Injection de Dépendances — problème du new, solution CDI</li>
-      <li>Scopes CDI — @ApplicationScoped, @RequestScoped, @SessionScoped, @Dependent</li>
-      <li>Injection avec @Inject — field, constructor, method injection</li>
-      <li>Qualificateurs CDI — @Qualifier, résolution d'ambiguïté, @Alternative</li>
-      <li>Producer Methods — @Produces, @Disposer, configuration</li>
-      <li>Intercepteurs — @InterceptorBinding, @AroundInvoke, logging, sécurité</li>
-      <li>Transactions @Transactional — REQUIRED, REQUIRES_NEW, rollback strategies</li>
-      <li>CDI Events — @Observes, Event&lt;T&gt;, événements synchrones et asynchrones</li>
+      <li data-en="What is Dependency Injection — the new problem, CDI solution" data-fr="Qu'est-ce que l'Injection de Dépendances — problème du new, solution CDI">What is Dependency Injection — the new problem, CDI solution</li>
+      <li data-en="CDI Scopes — @ApplicationScoped, @RequestScoped, @SessionScoped, @Dependent" data-fr="Scopes CDI — @ApplicationScoped, @RequestScoped, @SessionScoped, @Dependent">CDI Scopes — @ApplicationScoped, @RequestScoped, @SessionScoped, @Dependent</li>
+      <li data-en="Injection with @Inject — field, constructor, method injection" data-fr="Injection avec @Inject — field, constructor, method injection">Injection with @Inject — field, constructor, method injection</li>
+      <li data-en="CDI Qualifiers — @Qualifier, ambiguity resolution, @Alternative" data-fr="Qualificateurs CDI — @Qualifier, résolution d'ambiguïté, @Alternative">CDI Qualifiers — @Qualifier, ambiguity resolution, @Alternative</li>
+      <li data-en="Producer Methods — @Produces, @Disposer, configuration" data-fr="Producer Methods — @Produces, @Disposer, configuration">Producer Methods — @Produces, @Disposer, configuration</li>
+      <li data-en="Interceptors — @InterceptorBinding, @AroundInvoke, logging, security" data-fr="Intercepteurs — @InterceptorBinding, @AroundInvoke, logging, sécurité">Interceptors — @InterceptorBinding, @AroundInvoke, logging, security</li>
+      <li data-en="Transactions @Transactional — REQUIRED, REQUIRES_NEW, rollback strategies" data-fr="Transactions @Transactional — REQUIRED, REQUIRES_NEW, rollback strategies">Transactions @Transactional — REQUIRED, REQUIRES_NEW, rollback strategies</li>
+      <li data-en="CDI Events — @Observes, @ObservesAsync, Event&lt;T&gt;, synchronous and asynchronous events" data-fr="CDI Events — @Observes, @ObservesAsync, Event&lt;T&gt;, événements synchrones et asynchrones">CDI Events — @Observes, @ObservesAsync, Event&lt;T&gt;, synchronous and asynchronous events</li>
     </ol>
     <div class="tile-grid">
-      <a class="tile-link" href="slides.html"><div class="cds--tile"><h3>☰ Contenu du cours</h3><p>Scopes, @Inject, Qualificateurs, Intercepteurs, Transactions et Events avec diagrammes.</p></div></a>
-      <a class="tile-link" href="concepts.html"><div class="cds--tile"><h3>◈ Concepts clés</h3><p>CDI vs EJB, comparatif des scopes, types de transactions, CMT vs BMT, glossaire.</p></div></a>
-      <a class="tile-link" href="code.html"><div class="cds--tile"><h3>⟨/⟩ Exemples de code</h3><p>Services @ApplicationScoped, qualificateurs, producers, intercepteurs, @Transactional, events.</p></div></a>
+      <a class="tile-link" href="slides.html"><div class="cds--tile"><h3 data-en="☰ Course Content" data-fr="☰ Contenu du cours">☰ Course Content</h3><p data-en="Scopes, @Inject, Qualifiers, Interceptors, Transactions and Events with diagrams." data-fr="Scopes, @Inject, Qualificateurs, Intercepteurs, Transactions et Events avec diagrammes.">Scopes, @Inject, Qualifiers, Interceptors, Transactions and Events with diagrams.</p></div></a>
+      <a class="tile-link" href="concepts.html"><div class="cds--tile"><h3 data-en="◈ Key Concepts" data-fr="◈ Concepts clés">◈ Key Concepts</h3><p data-en="CDI vs EJB, scope comparison, transaction types, CMT vs BMT, glossary." data-fr="CDI vs EJB, comparatif des scopes, types de transactions, CMT vs BMT, glossaire.">CDI vs EJB, scope comparison, transaction types, CMT vs BMT, glossary.</p></div></a>
+      <a class="tile-link" href="code.html"><div class="cds--tile"><h3 data-en="⟨/⟩ Code Examples" data-fr="⟨/⟩ Exemples de code">⟨/⟩ Code Examples</h3><p data-en="@ApplicationScoped services, qualifiers, producers, interceptors, @Transactional, events." data-fr="Services @ApplicationScoped, qualificateurs, producers, intercepteurs, @Transactional, events.">@ApplicationScoped services, qualifiers, producers, interceptors, @Transactional, events.</p></div></a>
     </div>
   </main>
 </div>
 <footer class="cds--footer">Made with IBM Bob &nbsp;·&nbsp; © 2026 Olivier Planson &nbsp;·&nbsp; ESIPE — Jakarta EE &amp; Microservices</footer>
+<script src="../assets/language-toggle.js"></script>
 </body>
 </html>

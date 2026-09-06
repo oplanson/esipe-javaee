@@ -1,244 +1,247 @@
 <!-- © Copyright 2026 Olivier Planson. All rights reserved. Reproduction prohibited. Made with IBM Bob. -->
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="en">
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-  <title>Cours 04 — Contenu du cours</title>
+  <title>Course 04 — Course Content</title>
   <link rel="stylesheet" href="../assets/carbon.css"/>
 </head>
 <body>
 <header class="cds--header">
-  <a class="cds--header__name" href="index.html">CDI — Injection de Dépendances<span>Cours Jakarta EE</span></a>
-  <a class="cds--header__back" href="../index.html">← Tous les Cours</a>
+  <a class="cds--header__name" href="index.html" data-en="CDI — Contexts and Dependency Injection<span>Jakarta EE Course</span>" data-fr="CDI — Injection de Dépendances<span>Cours Jakarta EE</span>">CDI — Contexts and Dependency Injection<span>Jakarta EE Course</span></a>
+  <button class="lang-toggle-btn" id="lang-toggle">FR</button>
+  <a class="cds--header__back" href="../index.html" data-en="← All Courses" data-fr="← Tous les Cours">← All Courses</a>
 </header>
 <div class="cds--shell">
   <nav class="cds--side-nav">
-    <p class="cds--side-nav__section-title">Cours 04</p>
-    <a class="cds--side-nav__link" href="index.html">⊙ Vue d'ensemble</a>
-    <a class="cds--side-nav__link active" href="slides.html">☰ Contenu du cours</a>
-    <a class="cds--side-nav__link" href="concepts.html">◈ Concepts clés</a>
-    <a class="cds--side-nav__link" href="code.html">⟨/⟩ Exemples de code</a>
+    <p class="cds--side-nav__section-title" data-en="Course 04" data-fr="Cours 04">Course 04</p>
+    <a class="cds--side-nav__link" href="index.html" data-en="⊙ Overview" data-fr="⊙ Vue d'ensemble">⊙ Overview</a>
+    <a class="cds--side-nav__link active" href="slides.html" data-en="☰ Course Content" data-fr="☰ Contenu du cours">☰ Course Content</a>
+    <a class="cds--side-nav__link" href="concepts.html" data-en="◈ Key Concepts" data-fr="◈ Concepts clés">◈ Key Concepts</a>
+    <a class="cds--side-nav__link" href="code.html" data-en="⟨/⟩ Code Examples" data-fr="⟨/⟩ Exemples de code">⟨/⟩ Code Examples</a>
+    <a class="cds--side-nav__lang-toggle">FR</a>
   </nav>
   <main class="cds--content">
-    <div class="breadcrumb"><a href="../index.html">Cours</a> › <a href="index.html">Cours 04</a> › Contenu</div>
-    <h1>Contenu du cours</h1>
-    <p class="page-lead">Toutes les sections — cliquez sur un titre pour développer.</p>
+    <div class="breadcrumb"><a href="../index.html" data-en="Courses" data-fr="Cours">Courses</a> › <a href="index.html" data-en="Course 04" data-fr="Cours 04">Course 04</a> › <span data-en="Content" data-fr="Contenu">Content</span></div>
+    <h1 data-en="Course Content" data-fr="Contenu du cours">Course Content</h1>
+    <p class="page-lead" data-en="All sections — click a title to expand." data-fr="Toutes les sections — cliquez sur un titre pour développer.">All sections — click a title to expand.</p>
 
     <details open>
-      <summary>💉 Qu'est-ce que l'Injection de Dépendances ?</summary>
+      <summary data-en="💉 What is Dependency Injection?" data-fr="💉 Qu'est-ce que l'Injection de Dépendances ?">💉 What is Dependency Injection?</summary>
       <div class="slide-content">
-        <h3>Le problème sans DI — l'opérateur <code>new</code></h3>
-        <p>Sans injection de dépendances, les classes créent elles-mêmes leurs dépendances avec <code>new</code>, engendrant un couplage fort difficile à tester et à maintenir.</p>
+        <h3 data-en="The problem without DI — the &lt;code&gt;new&lt;/code&gt; operator" data-fr="Le problème sans DI — l'opérateur &lt;code&gt;new&lt;/code&gt;">The problem without DI — the <code>new</code> operator</h3>
+        <p data-en="Without dependency injection, classes create their own dependencies using &lt;code&gt;new&lt;/code&gt;, resulting in tight coupling that is hard to test and maintain." data-fr="Sans injection de dépendances, les classes créent elles-mêmes leurs dépendances avec &lt;code&gt;new&lt;/code&gt;, engendrant un couplage fort difficile à tester et à maintenir.">Without dependency injection, classes create their own dependencies using <code>new</code>, resulting in tight coupling that is hard to test and maintain.</p>
         <ul>
-          <li><strong>Couplage fort</strong> — la classe connaît l'implémentation concrète de chaque dépendance</li>
-          <li><strong>Testabilité nulle</strong> — impossible de substituer une fausse implémentation (mock)</li>
-          <li><strong>Violation du SRP</strong> — la classe gère à la fois sa logique et la création de ses dépendances</li>
-          <li><strong>Rigidité</strong> — changer d'implémentation exige de modifier chaque classe consommatrice</li>
+          <li data-en="<strong>Tight coupling</strong> — the class knows the concrete implementation of each dependency" data-fr="<strong>Couplage fort</strong> — la classe connaît l'implémentation concrète de chaque dépendance"><strong>Tight coupling</strong> — the class knows the concrete implementation of each dependency</li>
+          <li data-en="<strong>No testability</strong> — impossible to substitute a fake implementation (mock)" data-fr="<strong>Testabilité nulle</strong> — impossible de substituer une fausse implémentation (mock)"><strong>No testability</strong> — impossible to substitute a fake implementation (mock)</li>
+          <li data-en="<strong>SRP violation</strong> — the class manages both its logic and dependency creation" data-fr="<strong>Violation du SRP</strong> — la classe gère à la fois sa logique et la création de ses dépendances"><strong>SRP violation</strong> — the class manages both its logic and dependency creation</li>
+          <li data-en="<strong>Rigidity</strong> — changing an implementation requires modifying every consumer class" data-fr="<strong>Rigidité</strong> — changer d'implémentation exige de modifier chaque classe consommatrice"><strong>Rigidity</strong> — changing an implementation requires modifying every consumer class</li>
         </ul>
-        <h3>La solution CDI</h3>
-        <p>CDI (Contexts and Dependency Injection) délègue la création et la gestion des objets au <strong>conteneur Jakarta EE</strong>. Les dépendances sont injectées automatiquement.</p>
+        <h3 data-en="The CDI solution" data-fr="La solution CDI">The CDI solution</h3>
+        <p data-en="CDI (Contexts and Dependency Injection) delegates object creation and management to the &lt;strong&gt;Jakarta EE container&lt;/strong&gt;. Dependencies are injected automatically." data-fr="CDI (Contexts and Dependency Injection) délègue la création et la gestion des objets au &lt;strong&gt;conteneur Jakarta EE&lt;/strong&gt;. Les dépendances sont injectées automatiquement.">CDI (Contexts and Dependency Injection) delegates object creation and management to the <strong>Jakarta EE container</strong>. Dependencies are injected automatically.</p>
         <ul>
-          <li>Le conteneur instancie, configure et injecte chaque bean</li>
-          <li>Le cycle de vie est géré selon le <strong>scope</strong> déclaré</li>
-          <li>L'injection se fait par type — type-safe et vérifié à la compilation</li>
+          <li data-en="The container instantiates, configures and injects each bean" data-fr="Le conteneur instancie, configure et injecte chaque bean">The container instantiates, configures and injects each bean</li>
+          <li data-en="The lifecycle is managed according to the declared &lt;strong&gt;scope&lt;/strong&gt;" data-fr="Le cycle de vie est géré selon le &lt;strong&gt;scope&lt;/strong&gt; déclaré">The lifecycle is managed according to the declared <strong>scope</strong></li>
+          <li data-en="Injection is done by type — type-safe and verified at compile time" data-fr="L'injection se fait par type — type-safe et vérifié à la compilation">Injection is done by type — type-safe and verified at compile time</li>
         </ul>
-        <h3>Bénéfices</h3>
+        <h3 data-en="Benefits" data-fr="Bénéfices">Benefits</h3>
         <ul>
-          <li>✅ <strong>Testabilité</strong> — injection de mocks dans les tests unitaires</li>
-          <li>✅ <strong>Couplage faible</strong> — les classes dépendent d'interfaces, pas d'implémentations</li>
-          <li>✅ <strong>Maintenabilité</strong> — changement d'implémentation sans modifier les consommateurs</li>
-          <li>✅ <strong>Réutilisabilité</strong> — beans partagés et réutilisés à travers l'application</li>
+          <li data-en="✅ &lt;strong&gt;Testability&lt;/strong&gt; — inject mocks in unit tests" data-fr="✅ &lt;strong&gt;Testabilité&lt;/strong&gt; — injection de mocks dans les tests unitaires">✅ <strong>Testability</strong> — inject mocks in unit tests</li>
+          <li data-en="✅ &lt;strong&gt;Loose coupling&lt;/strong&gt; — classes depend on interfaces, not implementations" data-fr="✅ &lt;strong&gt;Couplage faible&lt;/strong&gt; — les classes dépendent d'interfaces, pas d'implémentations">✅ <strong>Loose coupling</strong> — classes depend on interfaces, not implementations</li>
+          <li data-en="✅ &lt;strong&gt;Maintainability&lt;/strong&gt; — change implementation without modifying consumers" data-fr="✅ &lt;strong&gt;Maintenabilité&lt;/strong&gt; — changement d'implémentation sans modifier les consommateurs">✅ <strong>Maintainability</strong> — change implementation without modifying consumers</li>
+          <li data-en="✅ &lt;strong&gt;Reusability&lt;/strong&gt; — beans shared and reused across the application" data-fr="✅ &lt;strong&gt;Réutilisabilité&lt;/strong&gt; — beans partagés et réutilisés à travers l'application">✅ <strong>Reusability</strong> — beans shared and reused across the application</li>
         </ul>
         <img src="../../images/04-cdi-dependency-injection-diagram-1.png" alt="CDI Dependency Injection Overview"/>
       </div>
     </details>
 
     <details>
-      <summary>🔄 Scopes CDI</summary>
+      <summary data-en="🔄 CDI Scopes" data-fr="🔄 Scopes CDI">🔄 CDI Scopes</summary>
       <div class="slide-content">
-        <p>Le <strong>scope</strong> détermine la durée de vie et la portée d'un bean CDI. Choisir le bon scope est essentiel pour la cohérence et les performances.</p>
-        <h3>@ApplicationScoped</h3>
+        <p data-en="The &lt;strong&gt;scope&lt;/strong&gt; determines the lifetime and visibility of a CDI bean. Choosing the right scope is essential for consistency and performance." data-fr="Le &lt;strong&gt;scope&lt;/strong&gt; détermine la durée de vie et la portée d'un bean CDI. Choisir le bon scope est essentiel pour la cohérence et les performances.">The <strong>scope</strong> determines the lifetime and visibility of a CDI bean. Choosing the right scope is essential for consistency and performance.</p>
+        <h3 data-en="@ApplicationScoped" data-fr="@ApplicationScoped">@ApplicationScoped</h3>
         <ul>
-          <li>Une <strong>seule instance</strong> partagée par toute l'application (équivalent singleton)</li>
-          <li>Créée au premier accès, détruite à l'arrêt de l'application</li>
-          <li>Idéal pour : services stateless, caches, configurations globales</li>
+          <li data-en="A &lt;strong&gt;single instance&lt;/strong&gt; shared across the entire application (singleton equivalent)" data-fr="Une &lt;strong&gt;seule instance&lt;/strong&gt; partagée par toute l'application (équivalent singleton)">A <strong>single instance</strong> shared across the entire application (singleton equivalent)</li>
+          <li data-en="Created on first access, destroyed when the application stops" data-fr="Créée au premier accès, détruite à l'arrêt de l'application">Created on first access, destroyed when the application stops</li>
+          <li data-en="Ideal for: stateless services, caches, global configuration" data-fr="Idéal pour : services stateless, caches, configurations globales">Ideal for: stateless services, caches, global configuration</li>
         </ul>
-        <h3>@RequestScoped</h3>
+        <h3 data-en="@RequestScoped" data-fr="@RequestScoped">@RequestScoped</h3>
         <ul>
-          <li>Une nouvelle instance <strong>par requête HTTP</strong></li>
-          <li>Créée au début de la requête, détruite à la fin</li>
-          <li>Idéal pour : traitement de données de formulaire, opérations unitaires</li>
+          <li data-en="A new instance &lt;strong&gt;per HTTP request&lt;/strong&gt;" data-fr="Une nouvelle instance &lt;strong&gt;par requête HTTP&lt;/strong&gt;">A new instance <strong>per HTTP request</strong></li>
+          <li data-en="Created at the start of the request, destroyed at the end" data-fr="Créée au début de la requête, détruite à la fin">Created at the start of the request, destroyed at the end</li>
+          <li data-en="Ideal for: form data processing, single operations" data-fr="Idéal pour : traitement de données de formulaire, opérations unitaires">Ideal for: form data processing, single operations</li>
         </ul>
-        <h3>@SessionScoped</h3>
+        <h3 data-en="@SessionScoped" data-fr="@SessionScoped">@SessionScoped</h3>
         <ul>
-          <li>Une instance <strong>par session utilisateur</strong> (doit implémenter <code>Serializable</code>)</li>
-          <li>Partagée pendant toute la durée de la session HTTP</li>
-          <li>Idéal pour : panier d'achat, préférences utilisateur, état de connexion</li>
+          <li data-en="One instance &lt;strong&gt;per user session&lt;/strong&gt; (must implement &lt;code&gt;Serializable&lt;/code&gt;)" data-fr="Une instance &lt;strong&gt;par session utilisateur&lt;/strong&gt; (doit implémenter &lt;code&gt;Serializable&lt;/code&gt;)">One instance <strong>per user session</strong> (must implement <code>Serializable</code>)</li>
+          <li data-en="Shared for the entire duration of the HTTP session" data-fr="Partagée pendant toute la durée de la session HTTP">Shared for the entire duration of the HTTP session</li>
+          <li data-en="Ideal for: shopping cart, user preferences, login state" data-fr="Idéal pour : panier d'achat, préférences utilisateur, état de connexion">Ideal for: shopping cart, user preferences, login state</li>
         </ul>
-        <h3>@Dependent</h3>
+        <h3 data-en="@Dependent" data-fr="@Dependent">@Dependent</h3>
         <ul>
-          <li>Instance liée au <strong>cycle de vie du bean injecteur</strong> (pseudo-scope)</li>
-          <li>Scope par défaut si aucun scope n'est déclaré</li>
-          <li>Idéal pour : value objects, helpers, beans légers</li>
+          <li data-en="Instance bound to the &lt;strong&gt;lifecycle of the injecting bean&lt;/strong&gt; (pseudo-scope)" data-fr="Instance liée au &lt;strong&gt;cycle de vie du bean injecteur&lt;/strong&gt; (pseudo-scope)">Instance bound to the <strong>lifecycle of the injecting bean</strong> (pseudo-scope)</li>
+          <li data-en="Default scope if no scope is declared" data-fr="Scope par défaut si aucun scope n'est déclaré">Default scope if no scope is declared</li>
+          <li data-en="Ideal for: value objects, helpers, lightweight beans" data-fr="Idéal pour : value objects, helpers, beans légers">Ideal for: value objects, helpers, lightweight beans</li>
         </ul>
-        <h3>Callbacks de cycle de vie</h3>
+        <h3 data-en="Lifecycle callbacks" data-fr="Callbacks de cycle de vie">Lifecycle callbacks</h3>
         <ul>
-          <li><code>@PostConstruct</code> — appelé après l'injection, avant la première utilisation</li>
-          <li><code>@PreDestroy</code> — appelé avant la destruction du bean, pour libérer les ressources</li>
+          <li data-en="&lt;code&gt;@PostConstruct&lt;/code&gt; — called after injection, before first use" data-fr="&lt;code&gt;@PostConstruct&lt;/code&gt; — appelé après l'injection, avant la première utilisation"><code>@PostConstruct</code> — called after injection, before first use</li>
+          <li data-en="&lt;code&gt;@PreDestroy&lt;/code&gt; — called before the bean is destroyed, to release resources" data-fr="&lt;code&gt;@PreDestroy&lt;/code&gt; — appelé avant la destruction du bean, pour libérer les ressources"><code>@PreDestroy</code> — called before the bean is destroyed, to release resources</li>
         </ul>
       </div>
     </details>
 
     <details>
-      <summary>💡 Injection avec @Inject</summary>
+      <summary data-en="💡 Injection with @Inject" data-fr="💡 Injection avec @Inject">💡 Injection with @Inject</summary>
       <div class="slide-content">
-        <h3>Field Injection</h3>
-        <p>L'annotation <code>@Inject</code> est placée directement sur le champ. Simple mais déconseillé pour la testabilité.</p>
-        <h3>Constructor Injection (préféré)</h3>
-        <p>Les dépendances sont déclarées comme paramètres du constructeur. Méthode <strong>recommandée</strong> car :</p>
+        <h3 data-en="Field Injection" data-fr="Field Injection">Field Injection</h3>
+        <p data-en="The &lt;code&gt;@Inject&lt;/code&gt; annotation is placed directly on the field. Simple but discouraged for testability." data-fr="L'annotation &lt;code&gt;@Inject&lt;/code&gt; est placée directement sur le champ. Simple mais déconseillé pour la testabilité.">The <code>@Inject</code> annotation is placed directly on the field. Simple but discouraged for testability.</p>
+        <h3 data-en="Constructor Injection (preferred)" data-fr="Constructor Injection (préféré)">Constructor Injection (preferred)</h3>
+        <p data-en="Dependencies are declared as constructor parameters. The &lt;strong&gt;recommended&lt;/strong&gt; approach because:" data-fr="Les dépendances sont déclarées comme paramètres du constructeur. Méthode &lt;strong&gt;recommandée&lt;/strong&gt; car :">Dependencies are declared as constructor parameters. The <strong>recommended</strong> approach because:</p>
         <ul>
-          <li>Rend les dépendances explicites et obligatoires</li>
-          <li>Facilite les tests unitaires sans conteneur</li>
-          <li>Permet les champs <code>final</code> (immutabilité)</li>
-          <li>Détecte les cycles de dépendances à la compilation</li>
+          <li data-en="Makes dependencies explicit and mandatory" data-fr="Rend les dépendances explicites et obligatoires">Makes dependencies explicit and mandatory</li>
+          <li data-en="Facilitates unit testing without a container" data-fr="Facilite les tests unitaires sans conteneur">Facilitates unit testing without a container</li>
+          <li data-en="Allows &lt;code&gt;final&lt;/code&gt; fields (immutability)" data-fr="Permet les champs &lt;code&gt;final&lt;/code&gt; (immutabilité)">Allows <code>final</code> fields (immutability)</li>
+          <li data-en="Detects dependency cycles at compile time" data-fr="Détecte les cycles de dépendances à la compilation">Detects dependency cycles at compile time</li>
         </ul>
-        <h3>Method Injection</h3>
-        <p>L'injection se fait via une méthode setter annotée <code>@Inject</code>. Utile pour les dépendances optionnelles.</p>
+        <h3 data-en="Method Injection" data-fr="Method Injection">Method Injection</h3>
+        <p data-en="Injection via a setter method annotated &lt;code&gt;@Inject&lt;/code&gt;. Useful for optional dependencies." data-fr="L'injection se fait via une méthode setter annotée &lt;code&gt;@Inject&lt;/code&gt;. Utile pour les dépendances optionnelles.">Injection via a setter method annotated <code>@Inject</code>. Useful for optional dependencies.</p>
         <img src="../../images/04-cdi-dependency-injection-diagram-2.png" alt="CDI Injection Types"/>
       </div>
     </details>
 
     <details>
-      <summary>🏷️ Qualificateurs CDI</summary>
+      <summary data-en="🏷️ CDI Qualifiers" data-fr="🏷️ Qualificateurs CDI">🏷️ CDI Qualifiers</summary>
       <div class="slide-content">
-        <p>Lorsque plusieurs implémentations d'une interface coexistent, CDI ne sait pas laquelle injecter. Les <strong>qualificateurs</strong> résolvent cette ambiguïté.</p>
-        <h3>Annotation @Qualifier personnalisée</h3>
+        <p data-en="When multiple implementations of an interface coexist, CDI does not know which one to inject. &lt;strong&gt;Qualifiers&lt;/strong&gt; resolve this ambiguity." data-fr="Lorsque plusieurs implémentations d'une interface coexistent, CDI ne sait pas laquelle injecter. Les &lt;strong&gt;qualificateurs&lt;/strong&gt; résolvent cette ambiguïté.">When multiple implementations of an interface coexist, CDI does not know which one to inject. <strong>Qualifiers</strong> resolve this ambiguity.</p>
+        <h3 data-en="Custom @Qualifier annotation" data-fr="Annotation @Qualifier personnalisée">Custom @Qualifier annotation</h3>
         <ul>
-          <li>Créer une annotation méta-annotée <code>@Qualifier</code>, <code>@Retention(RUNTIME)</code>, <code>@Target({METHOD, FIELD, PARAMETER, TYPE})</code></li>
-          <li>Appliquer sur l'implémentation <em>et</em> sur le point d'injection</li>
+          <li data-en="Create an annotation meta-annotated &lt;code&gt;@Qualifier&lt;/code&gt;, &lt;code&gt;@Retention(RUNTIME)&lt;/code&gt;, &lt;code&gt;@Target({METHOD, FIELD, PARAMETER, TYPE})&lt;/code&gt;" data-fr="Créer une annotation méta-annotée &lt;code&gt;@Qualifier&lt;/code&gt;, &lt;code&gt;@Retention(RUNTIME)&lt;/code&gt;, &lt;code&gt;@Target({METHOD, FIELD, PARAMETER, TYPE})&lt;/code&gt;">Create an annotation meta-annotated <code>@Qualifier</code>, <code>@Retention(RUNTIME)</code>, <code>@Target({METHOD, FIELD, PARAMETER, TYPE})</code></li>
+          <li data-en="Apply on the implementation &lt;em&gt;and&lt;/em&gt; on the injection point" data-fr="Appliquer sur l'implémentation &lt;em&gt;et&lt;/em&gt; sur le point d'injection">Apply on the implementation <em>and</em> on the injection point</li>
         </ul>
-        <h3>Résolution d'ambiguïté</h3>
+        <h3 data-en="Ambiguity resolution" data-fr="Résolution d'ambiguïté">Ambiguity resolution</h3>
         <ul>
-          <li>CDI résout l'injection par <strong>type + qualificateurs</strong></li>
-          <li>Sans qualificateur, <code>@Default</code> est implicitement appliqué</li>
-          <li>Plusieurs qualificateurs peuvent être combinés sur un même point d'injection</li>
+          <li data-en="CDI resolves injection by &lt;strong&gt;type + qualifiers&lt;/strong&gt;" data-fr="CDI résout l'injection par &lt;strong&gt;type + qualificateurs&lt;/strong&gt;">CDI resolves injection by <strong>type + qualifiers</strong></li>
+          <li data-en="Without a qualifier, &lt;code&gt;@Default&lt;/code&gt; is implicitly applied" data-fr="Sans qualificateur, &lt;code&gt;@Default&lt;/code&gt; est implicitement appliqué">Without a qualifier, <code>@Default</code> is implicitly applied</li>
+          <li data-en="Multiple qualifiers can be combined on the same injection point" data-fr="Plusieurs qualificateurs peuvent être combinés sur un même point d'injection">Multiple qualifiers can be combined on the same injection point</li>
         </ul>
-        <h3>@Alternative pour les implémentations switchables</h3>
+        <h3 data-en="@Alternative for switchable implementations" data-fr="@Alternative pour les implémentations switchables">@Alternative for switchable implementations</h3>
         <ul>
-          <li><code>@Alternative</code> marque une implémentation inactive par défaut</li>
-          <li>Activée dans <code>beans.xml</code> ou via <code>@Priority</code> globalement</li>
-          <li>Idéal pour les implémentations de test, de stub ou par environnement</li>
+          <li data-en="&lt;code&gt;@Alternative&lt;/code&gt; marks an implementation as inactive by default" data-fr="&lt;code&gt;@Alternative&lt;/code&gt; marque une implémentation inactive par défaut"><code>@Alternative</code> marks an implementation as inactive by default</li>
+          <li data-en="Activated in &lt;code&gt;beans.xml&lt;/code&gt; or globally via &lt;code&gt;@Priority&lt;/code&gt;" data-fr="Activée dans &lt;code&gt;beans.xml&lt;/code&gt; ou via &lt;code&gt;@Priority&lt;/code&gt; globalement">Activated in <code>beans.xml</code> or globally via <code>@Priority</code></li>
+          <li data-en="Ideal for test, stub, or environment-specific implementations" data-fr="Idéal pour les implémentations de test, de stub ou par environnement">Ideal for test, stub, or environment-specific implementations</li>
         </ul>
       </div>
     </details>
 
     <details>
-      <summary>🏭 Producer Methods</summary>
+      <summary data-en="🏭 Producer Methods" data-fr="🏭 Producer Methods">🏭 Producer Methods</summary>
       <div class="slide-content">
-        <p>Les <strong>Producer Methods</strong> permettent de créer des beans CDI dont la création nécessite une logique particulière — par exemple un <code>EntityManager</code> ou un objet configuré depuis un fichier externe.</p>
-        <h3>@Produces</h3>
+        <p data-en="&lt;strong&gt;Producer Methods&lt;/strong&gt; allow creation of CDI beans whose instantiation requires special logic — for example an &lt;code&gt;EntityManager&lt;/code&gt; or an object configured from an external file." data-fr="Les &lt;strong&gt;Producer Methods&lt;/strong&gt; permettent de créer des beans CDI dont la création nécessite une logique particulière — par exemple un &lt;code&gt;EntityManager&lt;/code&gt; ou un objet configuré depuis un fichier externe."><strong>Producer Methods</strong> allow creation of CDI beans whose instantiation requires special logic — for example an <code>EntityManager</code> or an object configured from an external file.</p>
+        <h3 data-en="@Produces" data-fr="@Produces">@Produces</h3>
         <ul>
-          <li>Méthode annotée <code>@Produces</code> — le type de retour devient un bean CDI injectable</li>
-          <li>Peut porter un scope (<code>@ApplicationScoped</code>, <code>@RequestScoped</code>…)</li>
-          <li>Peut accepter des paramètres injectés par CDI</li>
+          <li data-en="Method annotated &lt;code&gt;@Produces&lt;/code&gt; — the return type becomes an injectable CDI bean" data-fr="Méthode annotée &lt;code&gt;@Produces&lt;/code&gt; — le type de retour devient un bean CDI injectable">Method annotated <code>@Produces</code> — the return type becomes an injectable CDI bean</li>
+          <li data-en="Can carry a scope (&lt;code&gt;@ApplicationScoped&lt;/code&gt;, &lt;code&gt;@RequestScoped&lt;/code&gt;…)" data-fr="Peut porter un scope (&lt;code&gt;@ApplicationScoped&lt;/code&gt;, &lt;code&gt;@RequestScoped&lt;/code&gt;…)">Can carry a scope (<code>@ApplicationScoped</code>, <code>@RequestScoped</code>…)</li>
+          <li data-en="Can accept parameters injected by CDI" data-fr="Peut accepter des paramètres injectés par CDI">Can accept parameters injected by CDI</li>
         </ul>
-        <h3>Producers avec configuration</h3>
+        <h3 data-en="Producers with configuration" data-fr="Producers avec configuration">Producers with configuration</h3>
         <ul>
-          <li>Permet d'initialiser des ressources tierces (DataSource, Logger, configuration externe)</li>
-          <li>La logique de construction est centralisée dans une seule méthode</li>
+          <li data-en="Allows initialising third-party resources (DataSource, Logger, external configuration)" data-fr="Permet d'initialiser des ressources tierces (DataSource, Logger, configuration externe)">Allows initialising third-party resources (DataSource, Logger, external configuration)</li>
+          <li data-en="The construction logic is centralised in a single method" data-fr="La logique de construction est centralisée dans une seule méthode">The construction logic is centralised in a single method</li>
         </ul>
-        <h3>Producers avec qualificateurs</h3>
+        <h3 data-en="Producers with qualifiers" data-fr="Producers avec qualificateurs">Producers with qualifiers</h3>
         <ul>
-          <li>Un producer peut porter un qualificateur pour distinguer plusieurs instances du même type</li>
+          <li data-en="A producer can carry a qualifier to distinguish multiple instances of the same type" data-fr="Un producer peut porter un qualificateur pour distinguer plusieurs instances du même type">A producer can carry a qualifier to distinguish multiple instances of the same type</li>
         </ul>
-        <h3>@Disposer pour le cleanup</h3>
+        <h3 data-en="@Disposer for cleanup" data-fr="@Disposer pour le cleanup">@Disposer for cleanup</h3>
         <ul>
-          <li>Méthode annotée <code>@Disposes</code> appelée automatiquement lors de la destruction du bean produit</li>
-          <li>Permet de fermer proprement les connexions, flux ou ressources</li>
+          <li data-en="Method annotated &lt;code&gt;@Disposes&lt;/code&gt; called automatically when the produced bean is destroyed" data-fr="Méthode annotée &lt;code&gt;@Disposes&lt;/code&gt; appelée automatiquement lors de la destruction du bean produit">Method annotated <code>@Disposes</code> called automatically when the produced bean is destroyed</li>
+          <li data-en="Allows cleanly closing connections, streams or resources" data-fr="Permet de fermer proprement les connexions, flux ou ressources">Allows cleanly closing connections, streams or resources</li>
         </ul>
       </div>
     </details>
 
     <details>
-      <summary>🔍 Intercepteurs</summary>
+      <summary data-en="🔍 Interceptors" data-fr="🔍 Intercepteurs">🔍 Interceptors</summary>
       <div class="slide-content">
-        <p>Les <strong>intercepteurs CDI</strong> permettent d'ajouter un comportement transversal (cross-cutting concerns) sans modifier le code métier.</p>
-        <h3>@InterceptorBinding</h3>
+        <p data-en="&lt;strong&gt;CDI interceptors&lt;/strong&gt; allow adding cross-cutting behaviour without modifying the business code." data-fr="Les &lt;strong&gt;intercepteurs CDI&lt;/strong&gt; permettent d'ajouter un comportement transversal (cross-cutting concerns) sans modifier le code métier."><strong>CDI interceptors</strong> allow adding cross-cutting behaviour without modifying the business code.</p>
+        <h3 data-en="@InterceptorBinding" data-fr="@InterceptorBinding">@InterceptorBinding</h3>
         <ul>
-          <li>Annotation personnalisée méta-annotée <code>@InterceptorBinding</code>, <code>@Retention(RUNTIME)</code>, <code>@Target({METHOD, TYPE})</code></li>
-          <li>Appliquée sur la méthode ou la classe à intercepter</li>
+          <li data-en="Custom annotation meta-annotated &lt;code&gt;@InterceptorBinding&lt;/code&gt;, &lt;code&gt;@Retention(RUNTIME)&lt;/code&gt;, &lt;code&gt;@Target({METHOD, TYPE})&lt;/code&gt;" data-fr="Annotation personnalisée méta-annotée &lt;code&gt;@InterceptorBinding&lt;/code&gt;, &lt;code&gt;@Retention(RUNTIME)&lt;/code&gt;, &lt;code&gt;@Target({METHOD, TYPE})&lt;/code&gt;">Custom annotation meta-annotated <code>@InterceptorBinding</code>, <code>@Retention(RUNTIME)</code>, <code>@Target({METHOD, TYPE})</code></li>
+          <li data-en="Applied on the method or class to intercept" data-fr="Appliquée sur la méthode ou la classe à intercepter">Applied on the method or class to intercept</li>
         </ul>
-        <h3>Implémentation @Interceptor</h3>
+        <h3 data-en="@Interceptor implementation" data-fr="Implémentation @Interceptor">@Interceptor implementation</h3>
         <ul>
-          <li>Classe annotée <code>@Interceptor</code> + l'annotation de binding</li>
-          <li>Activé dans <code>beans.xml</code> ou via <code>@Priority</code></li>
+          <li data-en="Class annotated &lt;code&gt;@Interceptor&lt;/code&gt; + the binding annotation" data-fr="Classe annotée &lt;code&gt;@Interceptor&lt;/code&gt; + l'annotation de binding">Class annotated <code>@Interceptor</code> + the binding annotation</li>
+          <li data-en="Activated in &lt;code&gt;beans.xml&lt;/code&gt; or via &lt;code&gt;@Priority&lt;/code&gt;" data-fr="Activé dans &lt;code&gt;beans.xml&lt;/code&gt; ou via &lt;code&gt;@Priority&lt;/code&gt;">Activated in <code>beans.xml</code> or via <code>@Priority</code></li>
         </ul>
-        <h3>@AroundInvoke</h3>
+        <h3 data-en="@AroundInvoke" data-fr="@AroundInvoke">@AroundInvoke</h3>
         <ul>
-          <li>Méthode d'interception appelée autour de l'invocation</li>
-          <li>Reçoit un <code>InvocationContext</code> — peut lire/modifier les paramètres, le résultat</li>
-          <li>Doit appeler <code>context.proceed()</code> pour continuer l'invocation</li>
+          <li data-en="Interception method called around the invocation" data-fr="Méthode d'interception appelée autour de l'invocation">Interception method called around the invocation</li>
+          <li data-en="Receives an &lt;code&gt;InvocationContext&lt;/code&gt; — can read/modify parameters and the result" data-fr="Reçoit un &lt;code&gt;InvocationContext&lt;/code&gt; — peut lire/modifier les paramètres, le résultat">Receives an <code>InvocationContext</code> — can read/modify parameters and the result</li>
+          <li data-en="Must call &lt;code&gt;context.proceed()&lt;/code&gt; to continue the invocation" data-fr="Doit appeler &lt;code&gt;context.proceed()&lt;/code&gt; pour continuer l'invocation">Must call <code>context.proceed()</code> to continue the invocation</li>
         </ul>
-        <h3>Exemples d'utilisation</h3>
+        <h3 data-en="Use cases" data-fr="Exemples d'utilisation">Use cases</h3>
         <ul>
-          <li>✅ <strong>Logging</strong> — journaliser l'entrée/sortie de chaque méthode</li>
-          <li>✅ <strong>Performance</strong> — mesurer le temps d'exécution</li>
-          <li>✅ <strong>Sécurité</strong> — vérifier les autorisations avant l'exécution</li>
-          <li>✅ <strong>Cache</strong> — court-circuiter l'appel si le résultat est en cache</li>
+          <li data-en="✅ &lt;strong&gt;Logging&lt;/strong&gt; — log method entry/exit" data-fr="✅ &lt;strong&gt;Logging&lt;/strong&gt; — journaliser l'entrée/sortie de chaque méthode">✅ <strong>Logging</strong> — log method entry/exit</li>
+          <li data-en="✅ &lt;strong&gt;Performance&lt;/strong&gt; — measure execution time" data-fr="✅ &lt;strong&gt;Performance&lt;/strong&gt; — mesurer le temps d'exécution">✅ <strong>Performance</strong> — measure execution time</li>
+          <li data-en="✅ &lt;strong&gt;Security&lt;/strong&gt; — verify authorisations before execution" data-fr="✅ &lt;strong&gt;Sécurité&lt;/strong&gt; — vérifier les autorisations avant l'exécution">✅ <strong>Security</strong> — verify authorisations before execution</li>
+          <li data-en="✅ &lt;strong&gt;Cache&lt;/strong&gt; — short-circuit the call if the result is cached" data-fr="✅ &lt;strong&gt;Cache&lt;/strong&gt; — court-circuiter l'appel si le résultat est en cache">✅ <strong>Cache</strong> — short-circuit the call if the result is cached</li>
         </ul>
       </div>
     </details>
 
     <details>
-      <summary>💳 Transactions @Transactional</summary>
+      <summary data-en="💳 @Transactional Transactions" data-fr="💳 Transactions @Transactional">💳 @Transactional Transactions</summary>
       <div class="slide-content">
-        <p><code>@Transactional</code> (CDI / Jakarta Transactions) permet une <strong>gestion déclarative des transactions</strong> sans code de gestion explicite.</p>
-        <h3>Types de propagation</h3>
+        <p data-en="&lt;code&gt;@Transactional&lt;/code&gt; (CDI / Jakarta Transactions) enables &lt;strong&gt;declarative transaction management&lt;/strong&gt; without explicit management code." data-fr="&lt;code&gt;@Transactional&lt;/code&gt; (CDI / Jakarta Transactions) permet une &lt;strong&gt;gestion déclarative des transactions&lt;/strong&gt; sans code de gestion explicite."><code>@Transactional</code> (CDI / Jakarta Transactions) enables <strong>declarative transaction management</strong> without explicit management code.</p>
+        <h3 data-en="Propagation types" data-fr="Types de propagation">Propagation types</h3>
         <ul>
-          <li><strong>REQUIRED</strong> (défaut) — utilise la transaction existante ou en crée une nouvelle</li>
-          <li><strong>REQUIRES_NEW</strong> — suspend la transaction courante et crée une nouvelle transaction indépendante</li>
-          <li><strong>MANDATORY</strong> — exige qu'une transaction active existe (exception sinon)</li>
-          <li><strong>SUPPORTS</strong> — utilise la transaction courante si elle existe, sinon s'exécute sans</li>
-          <li><strong>NOT_SUPPORTED</strong> — suspend toute transaction active, s'exécute toujours sans transaction</li>
-          <li><strong>NEVER</strong> — lève une exception si une transaction est active</li>
+          <li data-en="&lt;strong&gt;REQUIRED&lt;/strong&gt; (default) — uses the existing transaction or creates a new one" data-fr="&lt;strong&gt;REQUIRED&lt;/strong&gt; (défaut) — utilise la transaction existante ou en crée une nouvelle"><strong>REQUIRED</strong> (default) — uses the existing transaction or creates a new one</li>
+          <li data-en="&lt;strong&gt;REQUIRES_NEW&lt;/strong&gt; — suspends the current transaction and creates a new independent transaction" data-fr="&lt;strong&gt;REQUIRES_NEW&lt;/strong&gt; — suspend la transaction courante et crée une nouvelle transaction indépendante"><strong>REQUIRES_NEW</strong> — suspends the current transaction and creates a new independent transaction</li>
+          <li data-en="&lt;strong&gt;MANDATORY&lt;/strong&gt; — requires an active transaction to exist (exception otherwise)" data-fr="&lt;strong&gt;MANDATORY&lt;/strong&gt; — exige qu'une transaction active existe (exception sinon)"><strong>MANDATORY</strong> — requires an active transaction to exist (exception otherwise)</li>
+          <li data-en="&lt;strong&gt;SUPPORTS&lt;/strong&gt; — uses the current transaction if it exists, otherwise executes without one" data-fr="&lt;strong&gt;SUPPORTS&lt;/strong&gt; — utilise la transaction courante si elle existe, sinon s'exécute sans"><strong>SUPPORTS</strong> — uses the current transaction if it exists, otherwise executes without one</li>
+          <li data-en="&lt;strong&gt;NOT_SUPPORTED&lt;/strong&gt; — suspends any active transaction, always executes without a transaction" data-fr="&lt;strong&gt;NOT_SUPPORTED&lt;/strong&gt; — suspend toute transaction active, s'exécute toujours sans transaction"><strong>NOT_SUPPORTED</strong> — suspends any active transaction, always executes without a transaction</li>
+          <li data-en="&lt;strong&gt;NEVER&lt;/strong&gt; — throws an exception if a transaction is active" data-fr="&lt;strong&gt;NEVER&lt;/strong&gt; — lève une exception si une transaction est active"><strong>NEVER</strong> — throws an exception if a transaction is active</li>
         </ul>
-        <h3>Stratégies de rollback</h3>
+        <h3 data-en="Rollback strategies" data-fr="Stratégies de rollback">Rollback strategies</h3>
         <ul>
-          <li>Rollback automatique sur <code>RuntimeException</code> et <code>Error</code></li>
-          <li><code>rollbackOn</code> — spécifier des exceptions supplémentaires déclenchant le rollback</li>
-          <li><code>dontRollbackOn</code> — exceptions à ne pas considérer pour le rollback</li>
-          <li>Rollback programmatique : <code>context.setRollbackOnly()</code></li>
+          <li data-en="Automatic rollback on &lt;code&gt;RuntimeException&lt;/code&gt; and &lt;code&gt;Error&lt;/code&gt;" data-fr="Rollback automatique sur &lt;code&gt;RuntimeException&lt;/code&gt; et &lt;code&gt;Error&lt;/code&gt;">Automatic rollback on <code>RuntimeException</code> and <code>Error</code></li>
+          <li data-en="&lt;code&gt;rollbackOn&lt;/code&gt; — specify additional exceptions that trigger rollback" data-fr="&lt;code&gt;rollbackOn&lt;/code&gt; — spécifier des exceptions supplémentaires déclenchant le rollback"><code>rollbackOn</code> — specify additional exceptions that trigger rollback</li>
+          <li data-en="&lt;code&gt;dontRollbackOn&lt;/code&gt; — exceptions not to consider for rollback" data-fr="&lt;code&gt;dontRollbackOn&lt;/code&gt; — exceptions à ne pas considérer pour le rollback"><code>dontRollbackOn</code> — exceptions not to consider for rollback</li>
+          <li data-en="Programmatic rollback: &lt;code&gt;context.setRollbackOnly()&lt;/code&gt;" data-fr="Rollback programmatique : &lt;code&gt;context.setRollbackOnly()&lt;/code&gt;">Programmatic rollback: <code>context.setRollbackOnly()</code></li>
         </ul>
         <img src="../../images/04-cdi-dependency-injection-diagram-3.png" alt="CDI Transactional Propagation"/>
       </div>
     </details>
 
     <details>
-      <summary>📡 CDI Events</summary>
+      <summary data-en="📡 CDI Events" data-fr="📡 CDI Events">📡 CDI Events</summary>
       <div class="slide-content">
-        <p>Le système d'<strong>événements CDI</strong> implémente le pattern Observer de façon type-safe et sans couplage direct entre producteur et consommateur.</p>
-        <h3>@Observes</h3>
+        <p data-en="The &lt;strong&gt;CDI event system&lt;/strong&gt; implements the Observer pattern in a type-safe way with no direct coupling between producer and consumer." data-fr="Le système d'&lt;strong&gt;événements CDI&lt;/strong&gt; implémente le pattern Observer de façon type-safe et sans couplage direct entre producteur et consommateur.">The <strong>CDI event system</strong> implements the Observer pattern in a type-safe way with no direct coupling between producer and consumer.</p>
+        <h3 data-en="@Observes — synchronous observer" data-fr="@Observes — observateur synchrone">@Observes — synchronous observer</h3>
         <ul>
-          <li>Méthode observatrice annotée <code>@Observes</code> sur le paramètre de l'événement</li>
-          <li>Appelée automatiquement par CDI lors du déclenchement de l'événement</li>
-          <li>Peut avoir une priorité avec <code>@Priority</code></li>
+          <li data-en="Observer method annotated &lt;code&gt;@Observes&lt;/code&gt; on the event parameter" data-fr="Méthode observatrice annotée &lt;code&gt;@Observes&lt;/code&gt; sur le paramètre de l'événement">Observer method annotated <code>@Observes</code> on the event parameter</li>
+          <li data-en="Called &lt;strong&gt;synchronously&lt;/strong&gt; by CDI when the event is fired — all observers execute in the same thread before &lt;code&gt;fire()&lt;/code&gt; returns" data-fr="Appelée &lt;strong&gt;de façon synchrone&lt;/strong&gt; par CDI lors du déclenchement — tous les observateurs s'exécutent dans le même thread avant le retour de &lt;code&gt;fire()&lt;/code&gt;">Called <strong>synchronously</strong> by CDI when the event is fired — all observers execute in the same thread before <code>fire()</code> returns</li>
+          <li data-en="Can be ordered using &lt;code&gt;@Priority&lt;/code&gt;" data-fr="Peut avoir une priorité avec &lt;code&gt;@Priority&lt;/code&gt;">Can be ordered using <code>@Priority</code></li>
         </ul>
-        <h3>@Inject Event&lt;T&gt;</h3>
+        <h3 data-en="@ObservesAsync — asynchronous observer (CDI 2.0+ / Jakarta CDI 4.0)" data-fr="@ObservesAsync — observateur asynchrone (CDI 2.0+ / Jakarta CDI 4.0)">@ObservesAsync — asynchronous observer (CDI 2.0+ / Jakarta CDI 4.0)</h3>
         <ul>
-          <li>Injecter <code>Event&lt;MonEvent&gt;</code> pour déclencher un événement</li>
-          <li><code>event.fire(payload)</code> — déclenchement synchrone</li>
-          <li><code>event.fireAsync(payload)</code> — déclenchement asynchrone (retourne un <code>CompletionStage</code>)</li>
+          <li data-en="Observer method annotated &lt;code&gt;@ObservesAsync&lt;/code&gt; on the event parameter" data-fr="Méthode observatrice annotée &lt;code&gt;@ObservesAsync&lt;/code&gt; sur le paramètre de l'événement">Observer method annotated <code>@ObservesAsync</code> on the event parameter</li>
+          <li data-en="Executed in a &lt;strong&gt;separate thread&lt;/strong&gt;, non-blocking — triggered via &lt;code&gt;event.fireAsync()&lt;/code&gt; which returns a &lt;code&gt;CompletionStage&lt;/code&gt;" data-fr="S'exécute dans un &lt;strong&gt;thread séparé&lt;/strong&gt;, non bloquant — déclenché via &lt;code&gt;event.fireAsync()&lt;/code&gt; qui retourne un &lt;code&gt;CompletionStage&lt;/code&gt;">Executed in a <strong>separate thread</strong>, non-blocking — triggered via <code>event.fireAsync()</code> which returns a <code>CompletionStage</code></li>
+          <li data-en="Use for notifications, audit logs, and any side-effect that must not block the main transaction" data-fr="À utiliser pour les notifications, journaux d'audit, et tout effet de bord qui ne doit pas bloquer la transaction principale">Use for notifications, audit logs, and any side-effect that must not block the main transaction</li>
         </ul>
-        <h3>Événements synchrones et asynchrones</h3>
+        <h3 data-en="@Inject Event&lt;T&gt;" data-fr="@Inject Event&lt;T&gt;">@Inject Event&lt;T&gt;</h3>
         <ul>
-          <li><strong>Synchrone</strong> — tous les observateurs s'exécutent dans le même thread, avant le retour de <code>fire()</code></li>
-          <li><strong>Asynchrone</strong> — les observateurs s'exécutent dans un thread séparé, non bloquant</li>
+          <li data-en="Inject &lt;code&gt;Event&lt;MyEvent&gt;&lt;/code&gt; to fire an event" data-fr="Injecter &lt;code&gt;Event&lt;MonEvent&gt;&lt;/code&gt; pour déclencher un événement">Inject <code>Event&lt;MyEvent&gt;</code> to fire an event</li>
+          <li data-en="&lt;code&gt;event.fire(payload)&lt;/code&gt; — synchronous, calls &lt;code&gt;@Observes&lt;/code&gt; observers" data-fr="&lt;code&gt;event.fire(payload)&lt;/code&gt; — synchrone, appelle les observateurs &lt;code&gt;@Observes&lt;/code&gt;"><code>event.fire(payload)</code> — synchronous, calls <code>@Observes</code> observers</li>
+          <li data-en="&lt;code&gt;event.fireAsync(payload)&lt;/code&gt; — asynchronous, calls &lt;code&gt;@ObservesAsync&lt;/code&gt; observers, returns a &lt;code&gt;CompletionStage&lt;/code&gt;" data-fr="&lt;code&gt;event.fireAsync(payload)&lt;/code&gt; — asynchrone, appelle les observateurs &lt;code&gt;@ObservesAsync&lt;/code&gt;, retourne un &lt;code&gt;CompletionStage&lt;/code&gt;"><code>event.fireAsync(payload)</code> — asynchronous, calls <code>@ObservesAsync</code> observers, returns a <code>CompletionStage</code></li>
         </ul>
-        <h3>Qualificateurs d'événements</h3>
+        <h3 data-en="Event qualifiers" data-fr="Qualificateurs d'événements">Event qualifiers</h3>
         <ul>
-          <li>Les qualificateurs filtrent les observateurs — un observateur ne reçoit que les événements correspondant à ses qualificateurs</li>
-          <li><code>event.select(new AnnotationLiteral&lt;MonQualificateur&gt;(){}).fire(payload)</code></li>
+          <li data-en="Qualifiers filter observers — an observer only receives events matching its qualifiers" data-fr="Les qualificateurs filtrent les observateurs — un observateur ne reçoit que les événements correspondant à ses qualificateurs">Qualifiers filter observers — an observer only receives events matching its qualifiers</li>
+          <li><code>event.select(new AnnotationLiteral&lt;MyQualifier&gt;(){}).fire(payload)</code></li>
         </ul>
       </div>
     </details>
@@ -246,5 +249,6 @@
   </main>
 </div>
 <footer class="cds--footer">Made with IBM Bob &nbsp;·&nbsp; © 2026 Olivier Planson &nbsp;·&nbsp; ESIPE — Jakarta EE &amp; Microservices</footer>
+<script src="../assets/language-toggle.js"></script>
 </body>
 </html>

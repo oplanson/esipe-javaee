@@ -1,6 +1,6 @@
 <!-- © Copyright 2026 Olivier Planson. All rights reserved. Reproduction prohibited. Made with IBM Bob. -->
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="en">
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
@@ -10,114 +10,128 @@
 <body>
 <header class="cds--header">
   <a class="cds--header__name" href="index.html">JPA &amp; Base de données<span>Cours Jakarta EE</span></a>
+  <button class="lang-toggle-btn" id="lang-toggle">FR</button>
   <a class="cds--header__back" href="../index.html">← Tous les Cours</a>
 </header>
 <div class="cds--shell">
   <nav class="cds--side-nav">
-    <p class="cds--side-nav__section-title">Cours 03</p>
-    <a class="cds--side-nav__link" href="index.html">⊙ Vue d'ensemble</a>
-    <a class="cds--side-nav__link" href="slides.html">☰ Contenu du cours</a>
-    <a class="cds--side-nav__link active" href="concepts.html">◈ Concepts clés</a>
-    <a class="cds--side-nav__link" href="code.html">⟨/⟩ Exemples de code</a>
+    <p class="cds--side-nav__section-title" data-en="Chapter 03" data-fr="Cours 03">Cours 03</p>
+    <a class="cds--side-nav__link" href="index.html" data-en="⊙ Overview" data-fr="⊙ Vue d'ensemble">⊙ Vue d'ensemble</a>
+    <a class="cds--side-nav__link" href="slides.html" data-en="☰ Course Content" data-fr="☰ Contenu du cours">☰ Contenu du cours</a>
+    <a class="cds--side-nav__link active" href="concepts.html" data-en="◈ Key Concepts" data-fr="◈ Concepts clés">◈ Concepts clés</a>
+    <a class="cds--side-nav__link" href="code.html" data-en="⟨/⟩ Code Examples" data-fr="⟨/⟩ Exemples de code">⟨/⟩ Exemples de code</a>
+    <a class="cds--side-nav__lang-toggle">FR</a>
   </nav>
   <main class="cds--content">
-    <div class="breadcrumb"><a href="../index.html">Cours</a> › <a href="index.html">Cours 03</a> › Concepts clés</div>
-    <h1>Concepts clés</h1>
-    <p class="page-lead">Comparatifs, tableaux de référence et glossaire pour JPA &amp; intégration base de données.</p>
+    <div class="breadcrumb"><a href="../index.html" data-en="Courses" data-fr="Cours">Cours</a> › <a href="index.html" data-en="Chapter 03" data-fr="Cours 03">Cours 03</a> › <span data-en="Key Concepts" data-fr="Concepts clés">Concepts clés</span></div>
+    <h1 data-en="Key Concepts" data-fr="Concepts clés">Concepts clés</h1>
+    <p class="page-lead" data-en="Comparisons, reference tables and glossary for JPA &amp; database integration." data-fr="Comparatifs, tableaux de référence et glossaire pour JPA &amp; intégration base de données.">Comparatifs, tableaux de référence et glossaire pour JPA &amp; intégration base de données.</p>
 
-    <h2>JPA vs JDBC</h2>
+    <h2 data-en="JPA vs JDBC" data-fr="JPA vs JDBC">JPA vs JDBC</h2>
     <div class="cds--data-table-container">
       <table class="cds--data-table">
-        <thead><tr><th>Critère</th><th>JDBC</th><th>JPA</th></tr></thead>
+        <thead><tr><th data-en="Criterion" data-fr="Critère">Critère</th><th>JDBC</th><th>JPA</th></tr></thead>
         <tbody>
-          <tr><td><strong>Niveau d'abstraction</strong></td><td>Bas — SQL direct, <code>ResultSet</code> manuel</td><td>Haut — objets Java, mapping automatique</td></tr>
-          <tr><td><strong>Portabilité</strong></td><td>❌ SQL souvent spécifique au SGBD</td><td>✅ Indépendant du SGBD (dialectes)</td></tr>
-          <tr><td><strong>Quantité de code</strong></td><td>❌ Verbeux — try/catch, close(), mapping</td><td>✅ Concis — annotations, génération auto</td></tr>
-          <tr><td><strong>Performances</strong></td><td>✅ Contrôle total sur le SQL</td><td>⚠️ Overhead ORM, mais cache intégré</td></tr>
-          <tr><td><strong>Courbe d'apprentissage</strong></td><td>✅ Simple à apprendre</td><td>⚠️ Concepts avancés (lazy, cascade, contexte)</td></tr>
+          <tr><td><strong data-en="Abstraction level" data-fr="Niveau d'abstraction">Niveau d'abstraction</strong></td><td data-en="Low — direct SQL, manual ResultSet" data-fr="Bas — SQL direct, ResultSet manuel">Bas — SQL direct, <code>ResultSet</code> manuel</td><td data-en="High — Java objects, automatic mapping" data-fr="Haut — objets Java, mapping automatique">Haut — objets Java, mapping automatique</td></tr>
+          <tr><td><strong data-en="Portability" data-fr="Portabilité">Portabilité</strong></td><td data-en="❌ SQL often DBMS-specific" data-fr="❌ SQL souvent spécifique au SGBD">❌ SQL souvent spécifique au SGBD</td><td data-en="✅ DBMS-independent (dialects)" data-fr="✅ Indépendant du SGBD (dialectes)">✅ Indépendant du SGBD (dialectes)</td></tr>
+          <tr><td><strong data-en="Amount of code" data-fr="Quantité de code">Quantité de code</strong></td><td data-en="❌ Verbose — try/catch, close(), mapping" data-fr="❌ Verbeux — try/catch, close(), mapping">❌ Verbeux — try/catch, close(), mapping</td><td data-en="✅ Concise — annotations, auto-generation" data-fr="✅ Concis — annotations, génération auto">✅ Concis — annotations, génération auto</td></tr>
+          <tr><td><strong data-en="Performance" data-fr="Performances">Performances</strong></td><td data-en="✅ Full control over SQL" data-fr="✅ Contrôle total sur le SQL">✅ Contrôle total sur le SQL</td><td data-en="⚠️ ORM overhead, but integrated cache" data-fr="⚠️ Overhead ORM, mais cache intégré">⚠️ Overhead ORM, mais cache intégré</td></tr>
+          <tr><td><strong data-en="Learning curve" data-fr="Courbe d'apprentissage">Courbe d'apprentissage</strong></td><td data-en="✅ Easy to learn" data-fr="✅ Simple à apprendre">✅ Simple à apprendre</td><td data-en="⚠️ Advanced concepts (lazy, cascade, context)" data-fr="⚠️ Concepts avancés (lazy, cascade, contexte)">⚠️ Concepts avancés (lazy, cascade, contexte)</td></tr>
         </tbody>
       </table>
     </div>
 
-    <h2>Stratégies de Génération d'ID</h2>
+    <h2 data-en="ID Generation Strategies" data-fr="Stratégies de Génération d'ID">Stratégies de Génération d'ID</h2>
     <div class="cds--data-table-container">
       <table class="cds--data-table">
-        <thead><tr><th>Stratégie</th><th>Description</th><th>Utilisation recommandée</th></tr></thead>
+        <thead><tr><th data-en="Strategy" data-fr="Stratégie">Stratégie</th><th data-en="Description" data-fr="Description">Description</th><th data-en="Recommended use" data-fr="Utilisation recommandée">Utilisation recommandée</th></tr></thead>
         <tbody>
-          <tr><td><code>AUTO</code></td><td>Le provider JPA choisit la stratégie selon le SGBD</td><td>Prototypage rapide, portabilité maximale</td></tr>
-          <tr><td><code>IDENTITY</code></td><td>Colonne auto-increment gérée par la BD</td><td>PostgreSQL (<code>SERIAL</code>), MySQL (<code>AUTO_INCREMENT</code>)</td></tr>
-          <tr><td><code>SEQUENCE</code></td><td>Séquence base de données dédiée</td><td>PostgreSQL, Oracle — meilleures performances en lot</td></tr>
-          <tr><td><code>TABLE</code></td><td>Table dédiée simulant une séquence</td><td>Portabilité totale entre tous les SGBD</td></tr>
+          <tr><td><code>AUTO</code></td><td data-en="The JPA provider chooses the strategy based on the DBMS" data-fr="Le provider JPA choisit la stratégie selon le SGBD">Le provider JPA choisit la stratégie selon le SGBD</td><td data-en="Quick prototyping, maximum portability" data-fr="Prototypage rapide, portabilité maximale">Prototypage rapide, portabilité maximale</td></tr>
+          <tr><td><code>IDENTITY</code></td><td data-en="Auto-increment column managed by the DB" data-fr="Colonne auto-increment gérée par la BD">Colonne auto-increment gérée par la BD</td><td data-en="PostgreSQL (SERIAL), MySQL (AUTO_INCREMENT)" data-fr="PostgreSQL (SERIAL), MySQL (AUTO_INCREMENT)">PostgreSQL (<code>SERIAL</code>), MySQL (<code>AUTO_INCREMENT</code>)</td></tr>
+          <tr><td><code>SEQUENCE</code></td><td data-en="Dedicated database sequence" data-fr="Séquence base de données dédiée">Séquence base de données dédiée</td><td data-en="PostgreSQL, Oracle — best batch performance" data-fr="PostgreSQL, Oracle — meilleures performances en lot">PostgreSQL, Oracle — meilleures performances en lot</td></tr>
+          <tr><td><code>TABLE</code></td><td data-en="Dedicated table simulating a sequence" data-fr="Table dédiée simulant une séquence">Table dédiée simulant une séquence</td><td data-en="Full portability across all DBMS" data-fr="Portabilité totale entre tous les SGBD">Portabilité totale entre tous les SGBD</td></tr>
         </tbody>
       </table>
     </div>
 
-    <h2>Types de Fetch JPA</h2>
+    <h2 data-en="JPA Fetch Types" data-fr="Types de Fetch JPA">Types de Fetch JPA</h2>
     <div class="cds--data-table-container">
       <table class="cds--data-table">
-        <thead><tr><th>Type</th><th>Comportement</th><th>Défaut pour</th><th>Quand l'utiliser</th></tr></thead>
+        <thead><tr><th>Type</th><th data-en="Behaviour" data-fr="Comportement">Comportement</th><th data-en="Default for" data-fr="Défaut pour">Défaut pour</th><th data-en="When to use" data-fr="Quand l'utiliser">Quand l'utiliser</th></tr></thead>
         <tbody>
-          <tr><td><strong>LAZY</strong></td><td>Chargement différé — données chargées à l'accès</td><td><code>@OneToMany</code>, <code>@ManyToMany</code></td><td>Collections volumineuses, rarement accédées</td></tr>
-          <tr><td><strong>EAGER</strong></td><td>Chargement immédiat — données jointes à la requête</td><td><code>@ManyToOne</code>, <code>@OneToOne</code></td><td>Associations toujours nécessaires</td></tr>
+          <tr><td><strong>LAZY</strong></td><td data-en="Deferred loading — data loaded on access" data-fr="Chargement différé — données chargées à l'accès">Chargement différé — données chargées à l'accès</td><td><code>@OneToMany</code>, <code>@ManyToMany</code></td><td data-en="Large collections, rarely accessed" data-fr="Collections volumineuses, rarement accédées">Collections volumineuses, rarement accédées</td></tr>
+          <tr><td><strong>EAGER</strong></td><td data-en="Immediate loading — data joined in the query" data-fr="Chargement immédiat — données jointes à la requête">Chargement immédiat — données jointes à la requête</td><td><code>@ManyToOne</code>, <code>@OneToOne</code></td><td data-en="Associations always needed" data-fr="Associations toujours nécessaires">Associations toujours nécessaires</td></tr>
         </tbody>
       </table>
     </div>
 
-    <h2>Types de Cascade JPA</h2>
+    <h2 data-en="JPA Cascade Types" data-fr="Types de Cascade JPA">Types de Cascade JPA</h2>
     <div class="cds--data-table-container">
       <table class="cds--data-table">
-        <thead><tr><th>Type</th><th>Description</th></tr></thead>
+        <thead><tr><th>Type</th><th data-en="Description" data-fr="Description">Description</th></tr></thead>
         <tbody>
-          <tr><td><code>PERSIST</code></td><td>La persistance de l'entité parent propage la persistance aux entités liées</td></tr>
-          <tr><td><code>MERGE</code></td><td>Le merge de l'entité parent propage le merge aux entités liées</td></tr>
-          <tr><td><code>REMOVE</code></td><td>La suppression de l'entité parent supprime aussi les entités liées</td></tr>
-          <tr><td><code>REFRESH</code></td><td>Le refresh du parent recharge aussi les entités liées depuis la BD</td></tr>
-          <tr><td><code>DETACH</code></td><td>Le détachement du parent détache aussi les entités liées</td></tr>
-          <tr><td><code>ALL</code></td><td>Applique tous les types de cascade (équivalent de tous les précédents)</td></tr>
+          <tr><td><code>PERSIST</code></td><td data-en="Persisting the parent entity propagates persistence to related entities" data-fr="La persistance de l'entité parent propage la persistance aux entités liées">La persistance de l'entité parent propage la persistance aux entités liées</td></tr>
+          <tr><td><code>MERGE</code></td><td data-en="Merging the parent entity propagates the merge to related entities" data-fr="Le merge de l'entité parent propage le merge aux entités liées">Le merge de l'entité parent propage le merge aux entités liées</td></tr>
+          <tr><td><code>REMOVE</code></td><td data-en="Removing the parent entity also removes related entities" data-fr="La suppression de l'entité parent supprime aussi les entités liées">La suppression de l'entité parent supprime aussi les entités liées</td></tr>
+          <tr><td><code>REFRESH</code></td><td data-en="Refreshing the parent also reloads related entities from the DB" data-fr="Le refresh du parent recharge aussi les entités liées depuis la BD">Le refresh du parent recharge aussi les entités liées depuis la BD</td></tr>
+          <tr><td><code>DETACH</code></td><td data-en="Detaching the parent also detaches related entities" data-fr="Le détachement du parent détache aussi les entités liées">Le détachement du parent détache aussi les entités liées</td></tr>
+          <tr><td><code>ALL</code></td><td data-en="Applies all cascade types (equivalent to all of the above)" data-fr="Applique tous les types de cascade (équivalent de tous les précédents)">Applique tous les types de cascade (équivalent de tous les précédents)</td></tr>
         </tbody>
       </table>
     </div>
 
-    <h2>Transactions CMT vs BMT</h2>
+    <h2 data-en="CMT vs BMT Transactions" data-fr="Transactions CMT vs BMT">Transactions CMT vs BMT</h2>
     <div class="cds--data-table-container">
       <table class="cds--data-table">
-        <thead><tr><th>Critère</th><th>CMT — Container-Managed</th><th>BMT — Bean-Managed</th></tr></thead>
+        <thead><tr><th data-en="Criterion" data-fr="Critère">Critère</th><th>CMT — Container-Managed</th><th>BMT — Bean-Managed</th></tr></thead>
         <tbody>
-          <tr><td><strong>Qui contrôle</strong></td><td>Le conteneur Jakarta EE</td><td>Le développeur</td></tr>
-          <tr><td><strong>Annotation</strong></td><td><code>@Transactional</code> (CDI) ou <code>@TransactionAttribute</code> (EJB)</td><td><code>@Inject UserTransaction ut</code></td></tr>
-          <tr><td><strong>Démarrage</strong></td><td>Automatique à l'entrée de la méthode annotée</td><td>Explicite : <code>ut.begin()</code></td></tr>
-          <tr><td><strong>Commit / Rollback</strong></td><td>Automatique — rollback sur exception non-vérifiée</td><td>Explicite : <code>ut.commit()</code> / <code>ut.rollback()</code></td></tr>
-          <tr><td><strong>Cas d'utilisation</strong></td><td>Cas standard (recommandé)</td><td>Logique transactionnelle complexe, multi-transactions</td></tr>
+          <tr><td><strong data-en="Who controls" data-fr="Qui contrôle">Qui contrôle</strong></td><td data-en="The Jakarta EE container" data-fr="Le conteneur Jakarta EE">Le conteneur Jakarta EE</td><td data-en="The developer" data-fr="Le développeur">Le développeur</td></tr>
+          <tr><td><strong data-en="Annotation" data-fr="Annotation">Annotation</strong></td><td data-en="@Transactional (CDI) or @TransactionAttribute (EJB)" data-fr="@Transactional (CDI) ou @TransactionAttribute (EJB)"><code>@Transactional</code> (CDI) ou <code>@TransactionAttribute</code> (EJB)</td><td><code>@Inject UserTransaction ut</code></td></tr>
+          <tr><td><strong data-en="Start" data-fr="Démarrage">Démarrage</strong></td><td data-en="Automatic on entry to the annotated method" data-fr="Automatique à l'entrée de la méthode annotée">Automatique à l'entrée de la méthode annotée</td><td data-en="Explicit: ut.begin()" data-fr="Explicite : ut.begin()">Explicite : <code>ut.begin()</code></td></tr>
+          <tr><td><strong data-en="Commit / Rollback" data-fr="Commit / Rollback">Commit / Rollback</strong></td><td data-en="Automatic — rollback on unchecked exception" data-fr="Automatique — rollback sur exception non-vérifiée">Automatique — rollback sur exception non-vérifiée</td><td data-en="Explicit: ut.commit() / ut.rollback()" data-fr="Explicite : ut.commit() / ut.rollback()">Explicite : <code>ut.commit()</code> / <code>ut.rollback()</code></td></tr>
+          <tr><td><strong data-en="Use case" data-fr="Cas d'utilisation">Cas d'utilisation</strong></td><td data-en="Standard case (recommended)" data-fr="Cas standard (recommandé)">Cas standard (recommandé)</td><td data-en="Complex transactional logic, multi-transaction" data-fr="Logique transactionnelle complexe, multi-transactions">Logique transactionnelle complexe, multi-transactions</td></tr>
         </tbody>
       </table>
     </div>
 
-    <h2>États d'une Entité JPA</h2>
+    <h2 data-en="JPA Entity States" data-fr="États d'une Entité JPA">États d'une Entité JPA</h2>
     <div class="cds--data-table-container">
       <table class="cds--data-table">
-        <thead><tr><th>État</th><th>Description</th><th>Transition vers Managed</th></tr></thead>
+        <thead><tr><th data-en="State" data-fr="État">État</th><th data-en="Description" data-fr="Description">Description</th><th data-en="Transition to Managed" data-fr="Transition vers Managed">Transition vers Managed</th></tr></thead>
         <tbody>
-          <tr><td><strong>New / Transient</strong></td><td>Objet Java ordinaire, inconnu de l'EntityManager et de la BD</td><td><code>em.persist(entity)</code></td></tr>
-          <tr><td><strong>Managed</strong></td><td>Sous contrôle du contexte de persistance — modifications automatiquement synchronisées</td><td>— (déjà managed)</td></tr>
-          <tr><td><strong>Detached</strong></td><td>Entité qui existait en BD mais dont le contexte est fermé ou explicitement détaché</td><td><code>em.merge(entity)</code></td></tr>
-          <tr><td><strong>Removed</strong></td><td>Marquée pour suppression — sera effacée au prochain flush/commit</td><td><code>em.persist(entity)</code> (annule la suppression)</td></tr>
+          <tr><td><strong>New / Transient</strong></td><td data-en="Ordinary Java object, unknown to the EntityManager and the DB" data-fr="Objet Java ordinaire, inconnu de l'EntityManager et de la BD">Objet Java ordinaire, inconnu de l'EntityManager et de la BD</td><td><code>em.persist(entity)</code></td></tr>
+          <tr><td><strong>Managed</strong></td><td data-en="Under control of the persistence context — changes automatically synchronised" data-fr="Sous contrôle du contexte de persistance — modifications automatiquement synchronisées">Sous contrôle du contexte de persistance — modifications automatiquement synchronisées</td><td data-en="— (already managed)" data-fr="— (déjà managed)">— (déjà managed)</td></tr>
+          <tr><td><strong>Detached</strong></td><td data-en="Entity that existed in the DB but whose context is closed or explicitly detached" data-fr="Entité qui existait en BD mais dont le contexte est fermé ou explicitement détaché">Entité qui existait en BD mais dont le contexte est fermé ou explicitement détaché</td><td><code>em.merge(entity)</code></td></tr>
+          <tr><td><strong>Removed</strong></td><td data-en="Marked for deletion — will be erased at the next flush/commit" data-fr="Marquée pour suppression — sera effacée au prochain flush/commit">Marquée pour suppression — sera effacée au prochain flush/commit</td><td data-en="em.persist(entity) (cancels the removal)" data-fr="em.persist(entity) (annule la suppression)"><code>em.persist(entity)</code> (annule la suppression)</td></tr>
         </tbody>
       </table>
     </div>
 
-    <h2>Glossaire</h2>
+    <h2 data-en="JPA Implementations" data-fr="Implémentations JPA">Implémentations JPA</h2>
     <div class="cds--data-table-container">
       <table class="cds--data-table">
-        <thead><tr><th>Terme</th><th>Définition</th></tr></thead>
+        <thead><tr><th data-en="Provider" data-fr="Provider">Provider</th><th data-en="Role" data-fr="Rôle">Rôle</th><th data-en="Notes" data-fr="Notes">Notes</th></tr></thead>
         <tbody>
-          <tr><td><strong>EntityManager</strong></td><td>Interface principale de JPA — gère le cycle de vie des entités (persist, merge, remove, find, query)</td></tr>
-          <tr><td><strong>PersistenceContext</strong></td><td>Cache de premier niveau associé à l'EntityManager — ensemble des entités managed dans une transaction</td></tr>
-          <tr><td><strong>JPQL</strong></td><td>Jakarta Persistence Query Language — langage de requête orienté objet opérant sur les entités Java, pas sur les tables SQL</td></tr>
-          <tr><td><strong>Criteria API</strong></td><td>API Java type-safe pour construire des requêtes JPA dynamiques programmatiquement, sans concaténation de chaînes</td></tr>
-          <tr><td><strong>Flyway</strong></td><td>Outil de migration de schéma BD — versioning des scripts SQL avec suivi d'exécution et détection de modifications</td></tr>
-          <tr><td><strong>JNDI</strong></td><td>Java Naming and Directory Interface — registre permettant de localiser les ressources (DataSource, JMS) par leur nom logique</td></tr>
-          <tr><td><strong>DataSource</strong></td><td>Pool de connexions JDBC géré par le serveur d'application — plus performant que des connexions directes unitaires</td></tr>
-          <tr><td><strong>JTA</strong></td><td>Jakarta Transactions API — API standard pour les transactions distribuées dans Jakarta EE</td></tr>
+          <tr><td><strong>EclipseLink</strong></td><td data-en="Reference implementation of Jakarta Persistence 3.1" data-fr="Implémentation de référence de Jakarta Persistence 3.1">Implémentation de référence de Jakarta Persistence 3.1</td><td data-en="Default in GlassFish / Payara" data-fr="Par défaut dans GlassFish / Payara">Par défaut dans GlassFish / Payara</td></tr>
+          <tr><td><strong>Hibernate 6.x</strong></td><td data-en="Most widely used JPA implementation in practice" data-fr="Implémentation la plus utilisée en pratique">Implémentation la plus utilisée en pratique</td><td data-en="Implements Jakarta Persistence 3.1 — default in WildFly / Quarkus" data-fr="Implémente Jakarta Persistence 3.1 — par défaut dans WildFly / Quarkus">Implémente Jakarta Persistence 3.1 — par défaut dans WildFly / Quarkus</td></tr>
+          <tr><td><strong>OpenJPA</strong></td><td data-en="Apache implementation, used in Open Liberty" data-fr="Implémentation Apache, utilisée dans Open Liberty">Implémentation Apache, utilisée dans Open Liberty</td><td data-en="Less common for new projects" data-fr="Moins répandu pour les nouveaux projets">Moins répandu pour les nouveaux projets</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h2 data-en="Glossary" data-fr="Glossaire">Glossaire</h2>
+    <div class="cds--data-table-container">
+      <table class="cds--data-table">
+        <thead><tr><th data-en="Term" data-fr="Terme">Terme</th><th data-en="Definition" data-fr="Définition">Définition</th></tr></thead>
+        <tbody>
+          <tr><td><strong>EntityManager</strong></td><td data-en="Main JPA interface — manages the entity lifecycle (persist, merge, remove, find, query)" data-fr="Interface principale de JPA — gère le cycle de vie des entités (persist, merge, remove, find, query)">Interface principale de JPA — gère le cycle de vie des entités (persist, merge, remove, find, query)</td></tr>
+          <tr><td><strong>PersistenceContext</strong></td><td data-en="First-level cache associated with the EntityManager — set of managed entities in a transaction" data-fr="Cache de premier niveau associé à l'EntityManager — ensemble des entités managed dans une transaction">Cache de premier niveau associé à l'EntityManager — ensemble des entités managed dans une transaction</td></tr>
+          <tr><td><strong>JPQL</strong></td><td data-en="Jakarta Persistence Query Language — object-oriented query language operating on Java entities, not SQL tables" data-fr="Jakarta Persistence Query Language — langage de requête orienté objet opérant sur les entités Java, pas sur les tables SQL">Jakarta Persistence Query Language — langage de requête orienté objet opérant sur les entités Java, pas sur les tables SQL</td></tr>
+          <tr><td><strong>Criteria API</strong></td><td data-en="Type-safe Java API for building JPA queries programmatically, without string concatenation" data-fr="API Java type-safe pour construire des requêtes JPA dynamiques programmatiquement, sans concaténation de chaînes">API Java type-safe pour construire des requêtes JPA dynamiques programmatiquement, sans concaténation de chaînes</td></tr>
+          <tr><td><strong>Flyway</strong></td><td data-en="DB schema migration tool — SQL script versioning with execution tracking and change detection" data-fr="Outil de migration de schéma BD — versioning des scripts SQL avec suivi d'exécution et détection de modifications">Outil de migration de schéma BD — versioning des scripts SQL avec suivi d'exécution et détection de modifications</td></tr>
+          <tr><td><strong>JNDI</strong></td><td data-en="Java Naming and Directory Interface — registry for locating resources (DataSource, JMS) by logical name" data-fr="Java Naming and Directory Interface — registre permettant de localiser les ressources (DataSource, JMS) par leur nom logique">Java Naming and Directory Interface — registre permettant de localiser les ressources (DataSource, JMS) par leur nom logique</td></tr>
+          <tr><td><strong>DataSource</strong></td><td data-en="JDBC connection pool managed by the application server — more performant than individual direct connections" data-fr="Pool de connexions JDBC géré par le serveur d'application — plus performant que des connexions directes unitaires">Pool de connexions JDBC géré par le serveur d'application — plus performant que des connexions directes unitaires</td></tr>
+          <tr><td><strong>JTA</strong></td><td data-en="Jakarta Transactions API — standard API for distributed transactions in Jakarta EE" data-fr="Jakarta Transactions API — API standard pour les transactions distribuées dans Jakarta EE">Jakarta Transactions API — API standard pour les transactions distribuées dans Jakarta EE</td></tr>
         </tbody>
       </table>
     </div>
@@ -125,5 +139,6 @@
   </main>
 </div>
 <footer class="cds--footer">Made with IBM Bob &nbsp;·&nbsp; © 2026 Olivier Planson &nbsp;·&nbsp; ESIPE — Jakarta EE &amp; Microservices</footer>
+<script src="../assets/language-toggle.js"></script>
 </body>
 </html>

@@ -1,107 +1,148 @@
 <!-- © Copyright 2026 Olivier Planson. All rights reserved. Reproduction prohibited. Made with IBM Bob. -->
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="en">
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-  <title>Cours 02b — Concepts clés</title>
+  <title>Course 02b — Key Concepts</title>
   <link rel="stylesheet" href="../assets/carbon.css"/>
 </head>
 <body>
 <header class="cds--header">
-  <a class="cds--header__name" href="index.html">JSF — JavaServer Faces<span>Cours Jakarta EE</span></a>
-  <a class="cds--header__back" href="../index.html">← Tous les Cours</a>
+  <a class="cds--header__name" href="index.html" data-en="JSF — JavaServer Faces" data-fr="JSF — JavaServer Faces">JSF — JavaServer Faces<span data-en="Jakarta EE Course" data-fr="Cours Jakarta EE">Jakarta EE Course</span></a>
+  <button class="lang-toggle-btn" id="lang-toggle">FR</button>
+  <a class="cds--header__back" href="../index.html" data-en="← All Courses" data-fr="← Tous les Cours">← All Courses</a>
 </header>
 <div class="cds--shell">
   <nav class="cds--side-nav">
-    <p class="cds--side-nav__section-title">Cours 02b</p>
-    <a class="cds--side-nav__link" href="index.html">⊙ Vue d'ensemble</a>
-    <a class="cds--side-nav__link" href="slides.html">☰ Contenu du cours</a>
-    <a class="cds--side-nav__link active" href="concepts.html">◈ Concepts clés</a>
-    <a class="cds--side-nav__link" href="code.html">⟨/⟩ Exemples de code</a>
+    <p class="cds--side-nav__section-title" data-en="Course 02b" data-fr="Cours 02b">Course 02b</p>
+    <a class="cds--side-nav__link" href="index.html" data-en="⊙ Overview" data-fr="⊙ Vue d'ensemble">⊙ Overview</a>
+    <a class="cds--side-nav__link" href="slides.html" data-en="☰ Lecture Content" data-fr="☰ Contenu du cours">☰ Lecture Content</a>
+    <a class="cds--side-nav__link active" href="concepts.html" data-en="◈ Key Concepts" data-fr="◈ Concepts clés">◈ Key Concepts</a>
+    <a class="cds--side-nav__link" href="code.html" data-en="⟨/⟩ Code Examples" data-fr="⟨/⟩ Exemples de code">⟨/⟩ Code Examples</a>
+    <a class="cds--side-nav__lang-toggle">FR</a>
   </nav>
   <main class="cds--content">
-    <div class="breadcrumb"><a href="../index.html">Cours</a> › <a href="index.html">Cours 02b</a> › Concepts clés</div>
-    <h1>Concepts clés</h1>
-    <p class="page-lead">Comparatifs, scopes CDI, cycle de vie, composants et glossaire JSF.</p>
+    <div class="breadcrumb"><a href="../index.html" data-en="Courses" data-fr="Cours">Courses</a> › <a href="index.html" data-en="Course 02b" data-fr="Cours 02b">Course 02b</a> › <span data-en="Key Concepts" data-fr="Concepts clés">Key Concepts</span></div>
+    <h1 data-en="Key Concepts" data-fr="Concepts clés">Key Concepts</h1>
+    <p class="page-lead" data-en="Comparisons, CDI scopes, lifecycle, components and JSF glossary." data-fr="Comparatifs, scopes CDI, cycle de vie, composants et glossaire JSF.">Comparisons, CDI scopes, lifecycle, components and JSF glossary.</p>
 
-    <h2>JSF vs Technologies Web Traditionnelles</h2>
+    <h2 data-en="JSF vs Traditional Web Technologies" data-fr="JSF vs Technologies Web Traditionnelles">JSF vs Traditional Web Technologies</h2>
     <div class="cds--data-table-container">
       <table class="cds--data-table">
-        <thead><tr><th>Aspect</th><th>JSF</th><th>Servlets / JSP</th><th>Spring MVC</th></tr></thead>
+        <thead><tr><th data-en="Aspect" data-fr="Aspect">Aspect</th><th data-en="JSF" data-fr="JSF">JSF</th><th data-en="Servlets / JSP" data-fr="Servlets / JSP">Servlets / JSP</th><th data-en="Spring MVC" data-fr="Spring MVC">Spring MVC</th></tr></thead>
         <tbody>
-          <tr><td><strong>Paradigme</strong></td><td>Orienté composants</td><td>Orienté requête/réponse</td><td>Orienté action/requête</td></tr>
-          <tr><td><strong>Rendu</strong></td><td>Arbre de composants (UIComponent)</td><td>Scriptlets / JSTL</td><td>Templates (Thymeleaf, etc.)</td></tr>
-          <tr><td><strong>État</strong></td><td>Géré par le framework (ViewState)</td><td>Manuel (session, request)</td><td>Stateless par défaut</td></tr>
-          <tr><td><strong>Complexité initiale</strong></td><td>❌ Élevée</td><td>✅ Faible</td><td>⚠️ Modérée</td></tr>
-          <tr><td><strong>Courbe d'apprentissage</strong></td><td>❌ Importante</td><td>✅ Légère</td><td>⚠️ Modérée</td></tr>
+          <tr><td data-en="Paradigm" data-fr="Paradigme"><strong>Paradigm</strong></td><td data-en="Component-oriented" data-fr="Orienté composants">Component-oriented</td><td data-en="Request/response-oriented" data-fr="Orienté requête/réponse">Request/response-oriented</td><td data-en="Action/request-oriented" data-fr="Orienté action/requête">Action/request-oriented</td></tr>
+          <tr><td data-en="Rendering" data-fr="Rendu"><strong>Rendering</strong></td><td data-en="Component tree (UIComponent)" data-fr="Arbre de composants (UIComponent)">Component tree (UIComponent)</td><td data-en="Scriptlets / JSTL" data-fr="Scriptlets / JSTL">Scriptlets / JSTL</td><td data-en="Templates (Thymeleaf, etc.)" data-fr="Templates (Thymeleaf, etc.)">Templates (Thymeleaf, etc.)</td></tr>
+          <tr><td data-en="State" data-fr="État"><strong>State</strong></td><td data-en="Managed by the framework (ViewState)" data-fr="Géré par le framework (ViewState)">Managed by the framework (ViewState)</td><td data-en="Manual (session, request)" data-fr="Manuel (session, request)">Manual (session, request)</td><td data-en="Stateless by default" data-fr="Stateless par défaut">Stateless by default</td></tr>
+          <tr><td data-en="Initial complexity" data-fr="Complexité initiale"><strong>Initial complexity</strong></td><td data-en="❌ High" data-fr="❌ Élevée">❌ High</td><td data-en="✅ Low" data-fr="✅ Faible">✅ Low</td><td data-en="⚠️ Moderate" data-fr="⚠️ Modérée">⚠️ Moderate</td></tr>
+          <tr><td data-en="Learning curve" data-fr="Courbe d'apprentissage"><strong>Learning curve</strong></td><td data-en="❌ Steep" data-fr="❌ Importante">❌ Steep</td><td data-en="✅ Gentle" data-fr="✅ Légère">✅ Gentle</td><td data-en="⚠️ Moderate" data-fr="⚠️ Modérée">⚠️ Moderate</td></tr>
         </tbody>
       </table>
     </div>
 
-    <h2>Scopes des Beans CDI dans JSF</h2>
+    <h2 data-en="CDI Bean Scopes in JSF" data-fr="Scopes des Beans CDI dans JSF">CDI Bean Scopes in JSF</h2>
     <div class="cds--data-table-container">
       <table class="cds--data-table">
-        <thead><tr><th>Annotation</th><th>Durée de vie</th><th>Usage typique</th></tr></thead>
+        <thead><tr><th data-en="Annotation" data-fr="Annotation">Annotation</th><th data-en="Lifetime" data-fr="Durée de vie">Lifetime</th><th data-en="Typical use" data-fr="Usage typique">Typical use</th></tr></thead>
         <tbody>
-          <tr><td><code>@RequestScoped</code></td><td>Durée d'une requête HTTP</td><td>Actions ponctuelles, formulaires simples</td></tr>
-          <tr><td><code>@ViewScoped</code></td><td>Durée d'une vue JSF</td><td>Formulaires avec AJAX, édition en place</td></tr>
-          <tr><td><code>@SessionScoped</code></td><td>Durée d'une session HTTP</td><td>Utilisateur connecté, panier, préférences</td></tr>
-          <tr><td><code>@ApplicationScoped</code></td><td>Durée de l'application</td><td>Caches globaux, données de référence</td></tr>
-          <tr><td><code>@Dependent</code></td><td>Dépend du bean parent</td><td>Beans utilitaires sans état propre</td></tr>
+          <tr><td><code>@RequestScoped</code></td><td data-en="Duration of an HTTP request" data-fr="Durée d'une requête HTTP">Duration of an HTTP request</td><td data-en="One-off actions, simple forms" data-fr="Actions ponctuelles, formulaires simples">One-off actions, simple forms</td></tr>
+          <tr>
+            <td><code>@ViewScoped</code><br/><small style="color:#57606a">(<code>jakarta.faces.view.ViewScoped</code>)</small></td>
+            <td data-en="Duration of a JSF view" data-fr="Durée d'une vue JSF">Duration of a JSF view</td>
+            <td data-en="Forms with AJAX, in-place editing" data-fr="Formulaires avec AJAX, édition en place">Forms with AJAX, in-place editing</td>
+          </tr>
+          <tr><td><code>@SessionScoped</code></td><td data-en="Duration of an HTTP session" data-fr="Durée d'une session HTTP">Duration of an HTTP session</td><td data-en="Logged-in user, cart, preferences" data-fr="Utilisateur connecté, panier, préférences">Logged-in user, cart, preferences</td></tr>
+          <tr><td><code>@ApplicationScoped</code></td><td data-en="Duration of the application" data-fr="Durée de l'application">Duration of the application</td><td data-en="Global caches, reference data" data-fr="Caches globaux, données de référence">Global caches, reference data</td></tr>
+          <tr><td><code>@Dependent</code></td><td data-en="Depends on the parent bean" data-fr="Dépend du bean parent">Depends on the parent bean</td><td data-en="Utility beans with no own state" data-fr="Beans utilitaires sans état propre">Utility beans with no own state</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="page-lead" style="font-size:0.85rem;margin-top:0.5rem;" data-en="⚠️ Important: use jakarta.faces.view.ViewScoped (CDI-compatible, Jakarta EE 9+), NOT the legacy javax.faces.bean.ViewScoped which was tied to the deprecated @ManagedBean model." data-fr="⚠️ Important : utiliser jakarta.faces.view.ViewScoped (compatible CDI, Jakarta EE 9+), et NON l'ancien javax.faces.bean.ViewScoped qui était lié au modèle déprécié @ManagedBean.">⚠️ <strong>Important:</strong> use <code>jakarta.faces.view.ViewScoped</code> (CDI-compatible, Jakarta EE 9+), NOT the legacy <code>javax.faces.bean.ViewScoped</code> which was tied to the deprecated <code>@ManagedBean</code> model.</p>
+
+    <h2 data-en="@ManagedBean (legacy) vs @Named (CDI)" data-fr="@ManagedBean (legacy) vs @Named (CDI)">@ManagedBean (legacy) vs @Named (CDI)</h2>
+    <div class="cds--data-table-container">
+      <table class="cds--data-table">
+        <thead><tr><th data-en="Feature" data-fr="Caractéristique">Feature</th><th data-en="@ManagedBean (legacy)" data-fr="@ManagedBean (legacy)">@ManagedBean (legacy)</th><th data-en="@Named + CDI (recommended)" data-fr="@Named + CDI (recommandé)">@Named + CDI (recommended)</th></tr></thead>
+        <tbody>
+          <tr>
+            <td data-en="Package" data-fr="Package"><strong>Package</strong></td>
+            <td><code>javax.faces.bean</code> / <code>jakarta.faces.bean</code></td>
+            <td><code>jakarta.inject.Named</code> + CDI scopes</td>
+          </tr>
+          <tr>
+            <td data-en="Status" data-fr="Statut"><strong>Status</strong></td>
+            <td data-en="❌ Deprecated since JSF 2.3 — removed in Jakarta EE 10" data-fr="❌ Déprécié depuis JSF 2.3 — supprimé dans Jakarta EE 10">❌ Deprecated since JSF 2.3 — removed in Jakarta EE 10</td>
+            <td data-en="✅ Standard — recommended approach for all new projects" data-fr="✅ Standard — approche recommandée pour tout nouveau projet">✅ Standard — recommended approach for all new projects</td>
+          </tr>
+          <tr>
+            <td data-en="CDI injection (@Inject)" data-fr="Injection CDI (@Inject)"><strong>CDI injection (@Inject)</strong></td>
+            <td data-en="⚠️ Partial support only" data-fr="⚠️ Support partiel uniquement">⚠️ Partial support only</td>
+            <td data-en="✅ Full CDI integration" data-fr="✅ Intégration CDI complète">✅ Full CDI integration</td>
+          </tr>
+          <tr>
+            <td data-en="Interceptors / Decorators" data-fr="Intercepteurs / Décorateurs"><strong>Interceptors / Decorators</strong></td>
+            <td data-en="❌ Not supported" data-fr="❌ Non supportés">❌ Not supported</td>
+            <td data-en="✅ Fully supported" data-fr="✅ Pleinement supportés">✅ Fully supported</td>
+          </tr>
+          <tr>
+            <td data-en="@ViewScoped annotation" data-fr="Annotation @ViewScoped"><strong>@ViewScoped annotation</strong></td>
+            <td><code>javax.faces.bean.ViewScoped</code> (legacy)</td>
+            <td><code>jakarta.faces.view.ViewScoped</code> (CDI)</td>
+          </tr>
         </tbody>
       </table>
     </div>
 
-    <h2>Phases du Cycle de Vie JSF</h2>
+    <h2 data-en="JSF Lifecycle Phases" data-fr="Phases du Cycle de Vie JSF">JSF Lifecycle Phases</h2>
     <div class="cds--data-table-container">
       <table class="cds--data-table">
-        <thead><tr><th>#</th><th>Phase</th><th>Description</th><th>Ce qui se passe</th></tr></thead>
+        <thead><tr><th data-en="#" data-fr="#">#</th><th data-en="Phase" data-fr="Phase">Phase</th><th data-en="Description" data-fr="Description">Description</th><th data-en="What happens" data-fr="Ce qui se passe">What happens</th></tr></thead>
         <tbody>
-          <tr><td>1</td><td><strong>Restore View</strong></td><td>Restauration ou création de la vue</td><td>Reconstruction de l'arbre UIComponent depuis le ViewState ou création d'un nouvel arbre</td></tr>
-          <tr><td>2</td><td><strong>Apply Request Values</strong></td><td>Application des valeurs de la requête</td><td>Chaque composant lit sa valeur depuis les paramètres HTTP et la stocke localement</td></tr>
-          <tr><td>3</td><td><strong>Process Validations</strong></td><td>Exécution des validations</td><td>Validateurs et convertisseurs s'exécutent ; les erreurs sont ajoutées au FacesContext</td></tr>
-          <tr><td>4</td><td><strong>Update Model Values</strong></td><td>Mise à jour du modèle</td><td>Les valeurs validées sont poussées vers les propriétés des beans via les ValueExpressions</td></tr>
-          <tr><td>5</td><td><strong>Invoke Application</strong></td><td>Invocation de l'application</td><td>Les méthodes d'action et action listeners sont exécutés ; l'outcome détermine la navigation</td></tr>
-          <tr><td>6</td><td><strong>Render Response</strong></td><td>Rendu de la réponse</td><td>L'arbre de composants est encodé en HTML et envoyé au client ; le ViewState est sauvegardé</td></tr>
+          <tr><td>1</td><td data-en="Restore View" data-fr="Restore View"><strong>Restore View</strong></td><td data-en="Restore or create the view" data-fr="Restauration ou création de la vue">Restore or create the view</td><td data-en="Rebuild the UIComponent tree from ViewState or create a new tree" data-fr="Reconstruction de l'arbre UIComponent depuis le ViewState ou création d'un nouvel arbre">Rebuild the UIComponent tree from ViewState or create a new tree</td></tr>
+          <tr><td>2</td><td data-en="Apply Request Values" data-fr="Apply Request Values"><strong>Apply Request Values</strong></td><td data-en="Apply request values" data-fr="Application des valeurs de la requête">Apply request values</td><td data-en="Each component reads its value from the HTTP parameters and stores it locally" data-fr="Chaque composant lit sa valeur depuis les paramètres HTTP et la stocke localement">Each component reads its value from the HTTP parameters and stores it locally</td></tr>
+          <tr><td>3</td><td data-en="Process Validations" data-fr="Process Validations"><strong>Process Validations</strong></td><td data-en="Run validations" data-fr="Exécution des validations">Run validations</td><td data-en="Validators and converters run; errors are added to the FacesContext" data-fr="Validateurs et convertisseurs s'exécutent ; les erreurs sont ajoutées au FacesContext">Validators and converters run; errors are added to the FacesContext</td></tr>
+          <tr><td>4</td><td data-en="Update Model Values" data-fr="Update Model Values"><strong>Update Model Values</strong></td><td data-en="Update the model" data-fr="Mise à jour du modèle">Update the model</td><td data-en="Validated values are pushed to bean properties via ValueExpressions" data-fr="Les valeurs validées sont poussées vers les propriétés des beans via les ValueExpressions">Validated values are pushed to bean properties via ValueExpressions</td></tr>
+          <tr><td>5</td><td data-en="Invoke Application" data-fr="Invoke Application"><strong>Invoke Application</strong></td><td data-en="Invoke the application" data-fr="Invocation de l'application">Invoke the application</td><td data-en="Action methods and action listeners run; the outcome determines navigation" data-fr="Les méthodes d'action et action listeners sont exécutés ; l'outcome détermine la navigation">Action methods and action listeners run; the outcome determines navigation</td></tr>
+          <tr><td>6</td><td data-en="Render Response" data-fr="Render Response"><strong>Render Response</strong></td><td data-en="Render the response" data-fr="Rendu de la réponse">Render the response</td><td data-en="The component tree is encoded to HTML and sent to the client; ViewState is saved" data-fr="L'arbre de composants est encodé en HTML et envoyé au client ; le ViewState est sauvegardé">The component tree is encoded to HTML and sent to the client; ViewState is saved</td></tr>
         </tbody>
       </table>
     </div>
 
-    <h2>Composants Clés JSF</h2>
+    <h2 data-en="Key JSF Components" data-fr="Composants Clés JSF">Key JSF Components</h2>
     <div class="cds--data-table-container">
       <table class="cds--data-table">
-        <thead><tr><th>Tag</th><th>Namespace</th><th>Rôle</th><th>Exemple d'usage</th></tr></thead>
+        <thead><tr><th data-en="Tag" data-fr="Tag">Tag</th><th data-en="Namespace" data-fr="Namespace">Namespace</th><th data-en="Role" data-fr="Rôle">Role</th><th data-en="Usage example" data-fr="Exemple d'usage">Usage example</th></tr></thead>
         <tbody>
-          <tr><td><code>h:form</code></td><td><code>h:</code></td><td>Formulaire HTML JSF</td><td><code>&lt;h:form id="clientForm"&gt;</code></td></tr>
-          <tr><td><code>h:inputText</code></td><td><code>h:</code></td><td>Champ texte lié au modèle</td><td><code>&lt;h:inputText value="#{bean.name}"/&gt;</code></td></tr>
-          <tr><td><code>h:outputLabel</code></td><td><code>h:</code></td><td>Étiquette pour un champ</td><td><code>&lt;h:outputLabel for="name" value="Nom"/&gt;</code></td></tr>
-          <tr><td><code>h:commandButton</code></td><td><code>h:</code></td><td>Bouton déclenchant une action</td><td><code>&lt;h:commandButton action="#{bean.save}" value="Enregistrer"/&gt;</code></td></tr>
-          <tr><td><code>h:dataTable</code></td><td><code>h:</code></td><td>Tableau depuis une collection</td><td><code>&lt;h:dataTable value="#{bean.list}" var="item"&gt;</code></td></tr>
-          <tr><td><code>h:message</code></td><td><code>h:</code></td><td>Message d'erreur d'un composant</td><td><code>&lt;h:message for="name"/&gt;</code></td></tr>
-          <tr><td><code>f:validateRequired</code></td><td><code>f:</code></td><td>Validation champ obligatoire</td><td><code>&lt;f:validateRequired/&gt;</code></td></tr>
-          <tr><td><code>f:validateLength</code></td><td><code>f:</code></td><td>Validation longueur de chaîne</td><td><code>&lt;f:validateLength minimum="2" maximum="50"/&gt;</code></td></tr>
-          <tr><td><code>f:ajax</code></td><td><code>f:</code></td><td>Comportement AJAX partiel</td><td><code>&lt;f:ajax execute="@form" render="panel"/&gt;</code></td></tr>
-          <tr><td><code>ui:composition</code></td><td><code>ui:</code></td><td>Utilisation d'un template</td><td><code>&lt;ui:composition template="/WEB-INF/template.xhtml"&gt;</code></td></tr>
-          <tr><td><code>ui:define</code></td><td><code>ui:</code></td><td>Définit une zone du template</td><td><code>&lt;ui:define name="content"&gt;</code></td></tr>
-          <tr><td><code>ui:insert</code></td><td><code>ui:</code></td><td>Zone à remplir dans le template</td><td><code>&lt;ui:insert name="content"/&gt;</code></td></tr>
+          <tr><td><code>h:form</code></td><td><code>h:</code></td><td data-en="JSF HTML form" data-fr="Formulaire HTML JSF">JSF HTML form</td><td><code>&lt;h:form id="clientForm"&gt;</code></td></tr>
+          <tr><td><code>h:inputText</code></td><td><code>h:</code></td><td data-en="Text field bound to model" data-fr="Champ texte lié au modèle">Text field bound to model</td><td><code>&lt;h:inputText value="#{bean.name}"/&gt;</code></td></tr>
+          <tr><td><code>h:outputLabel</code></td><td><code>h:</code></td><td data-en="Label for a field" data-fr="Étiquette pour un champ">Label for a field</td><td><code>&lt;h:outputLabel for="name" value="Name"/&gt;</code></td></tr>
+          <tr><td><code>h:commandButton</code></td><td><code>h:</code></td><td data-en="Button triggering an action" data-fr="Bouton déclenchant une action">Button triggering an action</td><td><code>&lt;h:commandButton action="#{bean.save}" value="Save"/&gt;</code></td></tr>
+          <tr><td><code>h:dataTable</code></td><td><code>h:</code></td><td data-en="Table from a collection" data-fr="Tableau depuis une collection">Table from a collection</td><td><code>&lt;h:dataTable value="#{bean.list}" var="item"&gt;</code></td></tr>
+          <tr><td><code>h:message</code></td><td><code>h:</code></td><td data-en="Error message for a component" data-fr="Message d'erreur d'un composant">Error message for a component</td><td><code>&lt;h:message for="name"/&gt;</code></td></tr>
+          <tr><td><code>f:validateRequired</code></td><td><code>f:</code></td><td data-en="Required field validation" data-fr="Validation champ obligatoire">Required field validation</td><td><code>&lt;f:validateRequired/&gt;</code></td></tr>
+          <tr><td><code>f:validateLength</code></td><td><code>f:</code></td><td data-en="String length validation" data-fr="Validation longueur de chaîne">String length validation</td><td><code>&lt;f:validateLength minimum="2" maximum="50"/&gt;</code></td></tr>
+          <tr><td><code>f:ajax</code></td><td><code>f:</code></td><td data-en="Partial AJAX behaviour" data-fr="Comportement AJAX partiel">Partial AJAX behaviour</td><td><code>&lt;f:ajax execute="@form" render="panel"/&gt;</code></td></tr>
+          <tr><td><code>ui:composition</code></td><td><code>ui:</code></td><td data-en="Use a template" data-fr="Utilisation d'un template">Use a template</td><td><code>&lt;ui:composition template="/WEB-INF/template.xhtml"&gt;</code></td></tr>
+          <tr><td><code>ui:define</code></td><td><code>ui:</code></td><td data-en="Defines a template zone" data-fr="Définit une zone du template">Defines a template zone</td><td><code>&lt;ui:define name="content"&gt;</code></td></tr>
+          <tr><td><code>ui:insert</code></td><td><code>ui:</code></td><td data-en="Zone to fill in the template" data-fr="Zone à remplir dans le template">Zone to fill in the template</td><td><code>&lt;ui:insert name="content"/&gt;</code></td></tr>
         </tbody>
       </table>
     </div>
 
-    <h2>Glossaire</h2>
+    <h2 data-en="Glossary" data-fr="Glossaire">Glossary</h2>
     <div class="cds--data-table-container">
       <table class="cds--data-table">
-        <thead><tr><th>Terme</th><th>Définition</th></tr></thead>
+        <thead><tr><th data-en="Term" data-fr="Terme">Term</th><th data-en="Definition" data-fr="Définition">Definition</th></tr></thead>
         <tbody>
-          <tr><td><strong>JSF</strong></td><td>JavaServer Faces — framework MVC orienté composants pour la construction d'interfaces web Jakarta EE ; spécification Jakarta Faces depuis EE 9</td></tr>
-          <tr><td><strong>Facelets</strong></td><td>Moteur de templating officiel de JSF depuis JSF 2.0 remplaçant JSP ; les fichiers ont l'extension <code>.xhtml</code> et respectent la syntaxe XML</td></tr>
-          <tr><td><strong>Managed Bean</strong></td><td>Bean CDI annoté <code>@Named</code> servant de contrôleur dans JSF ; expose ses propriétés et méthodes à l'Expression Language des vues Facelets</td></tr>
-          <tr><td><strong>EL</strong></td><td>Expression Language — syntaxe <code>#{...}</code> permettant d'accéder aux beans et leurs propriétés depuis les vues JSF ; supporte navigation de propriétés et appels de méthodes</td></tr>
-          <tr><td><strong>faces-config.xml</strong></td><td>Fichier de configuration XML de JSF dans <code>/WEB-INF/</code> permettant de déclarer des règles de navigation explicites, des convertisseurs, validateurs et managed beans (déprécié pour ces derniers)</td></tr>
-          <tr><td><strong>UIComponent</strong></td><td>Classe de base de tous les composants JSF formant l'arbre de composants (Component Tree) — chaque balise JSF comme <code>h:inputText</code> crée une instance UIComponent</td></tr>
-          <tr><td><strong>ValueExpression</strong></td><td>Expression EL de type <code>#{bean.property}</code> permettant de lire et d'écrire (binding bidirectionnel) une valeur entre un composant JSF et un bean CDI</td></tr>
-          <tr><td><strong>ActionEvent</strong></td><td>Événement déclenché par un composant d'action (<code>h:commandButton</code>, <code>h:commandLink</code>) ; traité par les ActionListeners ou les méthodes d'action retournant un outcome de navigation</td></tr>
+          <tr><td data-en="JSF" data-fr="JSF"><strong>JSF</strong></td><td data-en="JavaServer Faces — component-oriented MVC framework for building Jakarta EE web interfaces; specification renamed Jakarta Faces since EE 9" data-fr="JavaServer Faces — framework MVC orienté composants pour la construction d'interfaces web Jakarta EE ; spécification Jakarta Faces depuis EE 9">JavaServer Faces — component-oriented MVC framework for building Jakarta EE web interfaces; specification renamed Jakarta Faces since EE 9</td></tr>
+          <tr><td data-en="Facelets" data-fr="Facelets"><strong>Facelets</strong></td><td data-en="Official JSF templating engine since JSF 2.0, replacing JSP; files have the .xhtml extension and follow XML syntax" data-fr="Moteur de templating officiel de JSF depuis JSF 2.0 remplaçant JSP ; les fichiers ont l'extension .xhtml et respectent la syntaxe XML">Official JSF templating engine since JSF 2.0, replacing JSP; files have the <code>.xhtml</code> extension and follow XML syntax</td></tr>
+          <tr><td data-en="Managed Bean" data-fr="Managed Bean"><strong>Managed Bean</strong></td><td data-en="CDI bean annotated @Named acting as a controller in JSF; exposes its properties and methods to the Expression Language of Facelets views" data-fr="Bean CDI annoté @Named servant de contrôleur dans JSF ; expose ses propriétés et méthodes à l'Expression Language des vues Facelets">CDI bean annotated <code>@Named</code> acting as a controller in JSF; exposes its properties and methods to the Expression Language of Facelets views</td></tr>
+          <tr><td data-en="EL" data-fr="EL"><strong>EL</strong></td><td data-en="Expression Language — #{...} syntax allowing access to beans and their properties from JSF views; supports property navigation and method calls" data-fr="Expression Language — syntaxe #{...} permettant d'accéder aux beans et leurs propriétés depuis les vues JSF ; supporte navigation de propriétés et appels de méthodes">Expression Language — <code>#{...}</code> syntax allowing access to beans and their properties from JSF views; supports property navigation and method calls</td></tr>
+          <tr><td data-en="faces-config.xml" data-fr="faces-config.xml"><strong>faces-config.xml</strong></td><td data-en="JSF XML configuration file in /WEB-INF/ for declaring explicit navigation rules, converters, validators and managed beans (deprecated for the latter)" data-fr="Fichier de configuration XML de JSF dans /WEB-INF/ permettant de déclarer des règles de navigation explicites, des convertisseurs, validateurs et managed beans (déprécié pour ces derniers)">JSF XML configuration file in <code>/WEB-INF/</code> for declaring explicit navigation rules, converters, validators and managed beans (deprecated for the latter)</td></tr>
+          <tr><td data-en="UIComponent" data-fr="UIComponent"><strong>UIComponent</strong></td><td data-en="Base class of all JSF components forming the component tree — each JSF tag such as h:inputText creates a UIComponent instance" data-fr="Classe de base de tous les composants JSF formant l'arbre de composants (Component Tree) — chaque balise JSF comme h:inputText crée une instance UIComponent">Base class of all JSF components forming the component tree — each JSF tag such as <code>h:inputText</code> creates a UIComponent instance</td></tr>
+          <tr><td data-en="ValueExpression" data-fr="ValueExpression"><strong>ValueExpression</strong></td><td data-en="EL expression #{bean.property} enabling bidirectional binding (read and write) of a value between a JSF component and a CDI bean" data-fr="Expression EL de type #{bean.property} permettant de lire et d'écrire (binding bidirectionnel) une valeur entre un composant JSF et un bean CDI">EL expression <code>#{bean.property}</code> enabling bidirectional binding (read and write) of a value between a JSF component and a CDI bean</td></tr>
+          <tr><td data-en="ActionEvent" data-fr="ActionEvent"><strong>ActionEvent</strong></td><td data-en="Event triggered by an action component (h:commandButton, h:commandLink); handled by ActionListeners or action methods returning a navigation outcome" data-fr="Événement déclenché par un composant d'action (h:commandButton, h:commandLink) ; traité par les ActionListeners ou les méthodes d'action retournant un outcome de navigation">Event triggered by an action component (<code>h:commandButton</code>, <code>h:commandLink</code>); handled by ActionListeners or action methods returning a navigation outcome</td></tr>
         </tbody>
       </table>
     </div>
@@ -109,5 +150,6 @@
   </main>
 </div>
 <footer class="cds--footer">Made with IBM Bob &nbsp;·&nbsp; © 2026 Olivier Planson &nbsp;·&nbsp; ESIPE — Jakarta EE &amp; Microservices</footer>
+<script src="../assets/language-toggle.js"></script>
 </body>
 </html>

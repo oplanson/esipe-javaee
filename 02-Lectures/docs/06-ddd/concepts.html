@@ -1,6 +1,6 @@
 <!-- © Copyright 2026 Olivier Planson. All rights reserved. Reproduction prohibited. Made with IBM Bob. -->
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="en">
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
@@ -9,128 +9,130 @@
 </head>
 <body>
 <header class="cds--header">
-  <a class="cds--header__name" href="index.html">Domain-Driven Design<span>Cours Jakarta EE</span></a>
-  <a class="cds--header__back" href="../index.html">← Tous les Cours</a>
+  <a class="cds--header__name" href="index.html">Domain-Driven Design<span data-en="Jakarta EE Course" data-fr="Cours Jakarta EE">Jakarta EE Course</span></a>
+  <button class="lang-toggle-btn" id="lang-toggle">FR</button>
+  <a class="cds--header__back" href="../index.html" data-en="← All Courses" data-fr="← Tous les Cours">← All Courses</a>
 </header>
 <div class="cds--shell">
   <nav class="cds--side-nav">
-    <p class="cds--side-nav__section-title">Cours 06</p>
-    <a class="cds--side-nav__link" href="index.html">⊙ Vue d'ensemble</a>
-    <a class="cds--side-nav__link" href="slides.html">☰ Contenu du cours</a>
-    <a class="cds--side-nav__link active" href="concepts.html">◈ Concepts clés</a>
-    <a class="cds--side-nav__link" href="code.html">⟨/⟩ Exemples de code</a>
+    <p class="cds--side-nav__section-title" data-en="Course 06" data-fr="Cours 06">Course 06</p>
+    <a class="cds--side-nav__link" href="index.html" data-en="⊙ Overview" data-fr="⊙ Vue d'ensemble">⊙ Overview</a>
+    <a class="cds--side-nav__link" href="slides.html" data-en="☰ Course Content" data-fr="☰ Contenu du cours">☰ Course Content</a>
+    <a class="cds--side-nav__link active" href="concepts.html" data-en="◈ Key Concepts" data-fr="◈ Concepts clés">◈ Key Concepts</a>
+    <a class="cds--side-nav__link" href="code.html" data-en="⟨/⟩ Code Examples" data-fr="⟨/⟩ Exemples de code">⟨/⟩ Code Examples</a>
+    <a class="cds--side-nav__lang-toggle">FR</a>
   </nav>
   <main class="cds--content">
-    <div class="breadcrumb"><a href="../index.html">Cours</a> › <a href="index.html">Cours 06</a> › Concepts clés</div>
-    <h1>Concepts clés</h1>
-    <p class="page-lead">Comparatifs, tableaux de référence et glossaire pour Domain-Driven Design.</p>
+    <div class="breadcrumb"><a href="../index.html" data-en="Courses" data-fr="Cours">Courses</a> › <a href="index.html" data-en="Course 06" data-fr="Cours 06">Course 06</a> › <span data-en="Key Concepts" data-fr="Concepts clés">Key Concepts</span></div>
+    <h1 data-en="Key Concepts" data-fr="Concepts clés">Key Concepts</h1>
+    <p class="page-lead" data-en="Comparisons, reference tables and glossary for Domain-Driven Design." data-fr="Comparatifs, tableaux de référence et glossaire pour Domain-Driven Design.">Comparisons, reference tables and glossary for Domain-Driven Design.</p>
 
-    <h2>DDD Stratégique vs Tactique</h2>
+    <h2 data-en="Strategic vs Tactical DDD" data-fr="DDD Stratégique vs Tactique">Strategic vs Tactical DDD</h2>
     <div class="cds--data-table-container">
       <table class="cds--data-table">
-        <thead><tr><th>Aspect</th><th>DDD Stratégique</th><th>DDD Tactique</th></tr></thead>
+        <thead><tr><th data-en="Aspect" data-fr="Aspect">Aspect</th><th data-en="Strategic DDD" data-fr="DDD Stratégique">Strategic DDD</th><th data-en="Tactical DDD" data-fr="DDD Tactique">Tactical DDD</th></tr></thead>
         <tbody>
-          <tr><td><strong>Scope</strong></td><td>Vision globale du système, découpage en sous-domaines</td><td>Implémentation interne d'un Bounded Context</td></tr>
-          <tr><td><strong>Patterns</strong></td><td>Bounded Context, Context Map, Ubiquitous Language, Sous-domaines</td><td>Entité, Value Object, Aggregate, Repository, Domain Service, Domain Event</td></tr>
-          <tr><td><strong>Objectif</strong></td><td>Identifier les frontières, éviter la corruption de modèle, aligner équipes et domaines</td><td>Construire un modèle de domaine riche, cohérent et expressif</td></tr>
-          <tr><td><strong>Outils</strong></td><td>Event Storming, Domain Storytelling, Context Mapping, Core Domain Chart</td><td>UML de domaine, code Java, tests unitaires de domaine</td></tr>
-          <tr><td><strong>Public</strong></td><td>Architectes, Product Owners, Domain Experts, équipes</td><td>Développeurs, Tech Leads</td></tr>
-          <tr><td><strong>Quand appliquer</strong></td><td>Dès la phase de conception, avant de coder</td><td>Durant l'implémentation de chaque contexte</td></tr>
+          <tr><td><strong>Scope</strong></td><td data-en="Overall system vision, decomposition into sub-domains" data-fr="Vision globale du système, découpage en sous-domaines">Overall system vision, decomposition into sub-domains</td><td data-en="Internal implementation of a Bounded Context" data-fr="Implémentation interne d'un Bounded Context">Internal implementation of a Bounded Context</td></tr>
+          <tr><td><strong>Patterns</strong></td><td data-en="Bounded Context, Context Map, Ubiquitous Language, Sub-domains" data-fr="Bounded Context, Context Map, Ubiquitous Language, Sous-domaines">Bounded Context, Context Map, Ubiquitous Language, Sub-domains</td><td data-en="Entity, Value Object, Aggregate, Repository, Domain Service, Domain Event" data-fr="Entité, Value Object, Aggregate, Repository, Domain Service, Domain Event">Entity, Value Object, Aggregate, Repository, Domain Service, Domain Event</td></tr>
+          <tr><td><strong data-en="Objective" data-fr="Objectif">Objective</strong></td><td data-en="Identify boundaries, avoid model corruption, align teams and domains" data-fr="Identifier les frontières, éviter la corruption de modèle, aligner équipes et domaines">Identify boundaries, avoid model corruption, align teams and domains</td><td data-en="Build a rich, coherent and expressive domain model" data-fr="Construire un modèle de domaine riche, cohérent et expressif">Build a rich, coherent and expressive domain model</td></tr>
+          <tr><td><strong data-en="Tools" data-fr="Outils">Tools</strong></td><td data-en="Event Storming, Domain Storytelling, Context Mapping, Core Domain Chart" data-fr="Event Storming, Domain Storytelling, Context Mapping, Core Domain Chart">Event Storming, Domain Storytelling, Context Mapping, Core Domain Chart</td><td data-en="Domain UML, Java code, domain unit tests" data-fr="UML de domaine, code Java, tests unitaires de domaine">Domain UML, Java code, domain unit tests</td></tr>
+          <tr><td><strong data-en="Audience" data-fr="Public">Audience</strong></td><td data-en="Architects, Product Owners, Domain Experts, teams" data-fr="Architectes, Product Owners, Domain Experts, équipes">Architects, Product Owners, Domain Experts, teams</td><td data-en="Developers, Tech Leads" data-fr="Développeurs, Tech Leads">Developers, Tech Leads</td></tr>
+          <tr><td><strong data-en="When to apply" data-fr="Quand appliquer">When to apply</strong></td><td data-en="From the design phase, before coding" data-fr="Dès la phase de conception, avant de coder">From the design phase, before coding</td><td data-en="During the implementation of each context" data-fr="Durant l'implémentation de chaque contexte">During the implementation of each context</td></tr>
         </tbody>
       </table>
     </div>
 
-    <h2>Entité vs Value Object</h2>
+    <h2 data-en="Entity vs Value Object" data-fr="Entité vs Value Object">Entity vs Value Object</h2>
     <div class="cds--data-table-container">
       <table class="cds--data-table">
-        <thead><tr><th>Caractéristique</th><th>Entité</th><th>Value Object</th></tr></thead>
+        <thead><tr><th data-en="Characteristic" data-fr="Caractéristique">Characteristic</th><th data-en="Entity" data-fr="Entité">Entity</th><th data-en="Value Object" data-fr="Value Object">Value Object</th></tr></thead>
         <tbody>
-          <tr><td><strong>Identité</strong></td><td>Identifiant unique et explicite (<code>AccountId</code>, UUID)</td><td>Aucune identité — définie par ses valeurs</td></tr>
-          <tr><td><strong>Mutabilité</strong></td><td>Mutable — l'état évolue dans le temps</td><td>Immuable — <code>final</code> fields, pas de setters</td></tr>
-          <tr><td><strong>Égalité</strong></td><td>Par identifiant uniquement</td><td>Par valeur de tous les attributs</td></tr>
-          <tr><td><strong>Exemple métier</strong></td><td><code>Account</code>, <code>Client</code>, <code>Order</code></td><td><code>Money</code>, <code>Address</code>, <code>AccountNumber</code></td></tr>
-          <tr><td><strong>Implémentation Java</strong></td><td>Classe avec <code>id</code>, <code>equals</code>/<code>hashCode</code> sur id, méthodes métier</td><td>Classe <code>final</code> ou <code>record</code>, <code>equals</code>/<code>hashCode</code> sur tous les champs</td></tr>
-          <tr><td><strong>Durée de vie</strong></td><td>Persiste dans le temps, suivi d'historique</td><td>Remplacé, pas modifié — crée un nouveau VO</td></tr>
-          <tr><td><strong>Cycle de vie DB</strong></td><td>Table dédiée, clé primaire, historisation possible</td><td>Colonne(s) dans la table de l'entité (<code>@Embedded</code>)</td></tr>
+          <tr><td><strong data-en="Identity" data-fr="Identité">Identity</strong></td><td data-en="Unique and explicit identifier (AccountId, UUID)" data-fr="Identifiant unique et explicite (AccountId, UUID)">Unique and explicit identifier (<code>AccountId</code>, UUID)</td><td data-en="No identity — defined by its values" data-fr="Aucune identité — définie par ses valeurs">No identity — defined by its values</td></tr>
+          <tr><td><strong data-en="Mutability" data-fr="Mutabilité">Mutability</strong></td><td data-en="Mutable — state evolves over time" data-fr="Mutable — l'état évolue dans le temps">Mutable — state evolves over time</td><td data-en="Immutable — final fields, no setters" data-fr="Immuable — final fields, pas de setters">Immutable — <code>final</code> fields, no setters</td></tr>
+          <tr><td><strong data-en="Equality" data-fr="Égalité">Equality</strong></td><td data-en="By identifier only" data-fr="Par identifiant uniquement">By identifier only</td><td data-en="By value of all attributes" data-fr="Par valeur de tous les attributs">By value of all attributes</td></tr>
+          <tr><td><strong data-en="Business example" data-fr="Exemple métier">Business example</strong></td><td><code>Account</code>, <code>Client</code>, <code>Order</code></td><td><code>Money</code>, <code>Address</code>, <code>AccountNumber</code></td></tr>
+          <tr><td><strong data-en="Java implementation" data-fr="Implémentation Java">Java implementation</strong></td><td data-en="Class with id, equals/hashCode on id, business methods" data-fr="Classe avec id, equals/hashCode sur id, méthodes métier">Class with <code>id</code>, <code>equals</code>/<code>hashCode</code> on id, business methods</td><td data-en="final class or record, equals/hashCode on all fields" data-fr="Classe final ou record, equals/hashCode sur tous les champs"><code>final</code> class or <code>record</code>, <code>equals</code>/<code>hashCode</code> on all fields</td></tr>
+          <tr><td><strong data-en="Lifecycle" data-fr="Durée de vie">Lifecycle</strong></td><td data-en="Persists over time, history tracking" data-fr="Persiste dans le temps, suivi d'historique">Persists over time, history tracking</td><td data-en="Replaced, not modified — creates a new VO" data-fr="Remplacé, pas modifié — crée un nouveau VO">Replaced, not modified — creates a new VO</td></tr>
+          <tr><td><strong data-en="DB lifecycle" data-fr="Cycle de vie DB">DB lifecycle</strong></td><td data-en="Dedicated table, primary key, possible historisation" data-fr="Table dédiée, clé primaire, historisation possible">Dedicated table, primary key, possible historisation</td><td data-en="Column(s) in the entity's table (@Embedded)" data-fr="Colonne(s) dans la table de l'entité (@Embedded)">Column(s) in the entity's table (<code>@Embedded</code>)</td></tr>
         </tbody>
       </table>
     </div>
 
-    <h2>Règles de Conception des Aggregates</h2>
+    <h2 data-en="Aggregate Design Rules" data-fr="Règles de Conception des Aggregates">Aggregate Design Rules</h2>
     <div class="cds--data-table-container">
       <table class="cds--data-table">
-        <thead><tr><th>Règle</th><th>Description</th><th>Exemple</th></tr></thead>
+        <thead><tr><th data-en="Rule" data-fr="Règle">Rule</th><th data-en="Description" data-fr="Description">Description</th><th data-en="Example" data-fr="Exemple">Example</th></tr></thead>
         <tbody>
-          <tr><td><strong>Protéger les invariants</strong></td><td>L'aggregate valide ses propres règles à chaque modification</td><td><code>Account</code> refuse un débit si solde insuffisant</td></tr>
-          <tr><td><strong>Accès uniquement par la racine</strong></td><td>Les objets internes ne sont pas accessibles directement depuis l'extérieur</td><td>Pas de <code>account.getTransactions().add(tx)</code> — utiliser <code>account.addTransaction(tx)</code></td></tr>
-          <tr><td><strong>Référence par identifiant</strong></td><td>Un aggregate ne contient pas de référence directe à un autre aggregate root</td><td><code>ClientId clientId</code> dans <code>Account</code>, pas <code>Client client</code></td></tr>
-          <tr><td><strong>Taille réduite</strong></td><td>Un aggregate doit rester petit — éviter les dépendances excessives</td><td><code>Account</code> contient des <code>Transaction</code> récentes seulement</td></tr>
-          <tr><td><strong>Une transaction par aggregate</strong></td><td>Une transaction DB ne modifie qu'un seul aggregate à la fois</td><td>Transfert entre comptes via Domain Events, pas en une seule transaction</td></tr>
-          <tr><td><strong>Cohérence éventuelle</strong></td><td>La cohérence entre aggregates est assurée de manière asynchrone via événements</td><td><code>TransferCompletedEvent</code> déclenche la mise à jour du compte destinataire</td></tr>
+          <tr><td><strong data-en="Protect invariants" data-fr="Protéger les invariants">Protect invariants</strong></td><td data-en="The aggregate validates its own rules at each modification" data-fr="L'aggregate valide ses propres règles à chaque modification">The aggregate validates its own rules at each modification</td><td data-en="Account refuses a debit if the balance is insufficient" data-fr="Account refuse un débit si solde insuffisant"><code>Account</code> refuses a debit if the balance is insufficient</td></tr>
+          <tr><td><strong data-en="Access only through the root" data-fr="Accès uniquement par la racine">Access only through the root</strong></td><td data-en="Internal objects are not directly accessible from outside" data-fr="Les objets internes ne sont pas accessibles directement depuis l'extérieur">Internal objects are not directly accessible from outside</td><td data-en="No account.getTransactions().add(tx) — use account.addTransaction(tx)" data-fr="Pas de account.getTransactions().add(tx) — utiliser account.addTransaction(tx)">No <code>account.getTransactions().add(tx)</code> — use <code>account.addTransaction(tx)</code></td></tr>
+          <tr><td><strong data-en="Reference by identifier" data-fr="Référence par identifiant">Reference by identifier</strong></td><td data-en="An aggregate does not contain a direct reference to another aggregate root" data-fr="Un aggregate ne contient pas de référence directe à un autre aggregate root">An aggregate does not contain a direct reference to another aggregate root</td><td data-en="ClientId clientId in Account, not Client client" data-fr="ClientId clientId dans Account, pas Client client"><code>ClientId clientId</code> in <code>Account</code>, not <code>Client client</code></td></tr>
+          <tr><td><strong data-en="Small size" data-fr="Taille réduite">Small size</strong></td><td data-en="An aggregate must stay small — avoid excessive dependencies" data-fr="Un aggregate doit rester petit — éviter les dépendances excessives">An aggregate must stay small — avoid excessive dependencies</td><td data-en="Account contains only recent Transaction objects" data-fr="Account contient des Transaction récentes seulement"><code>Account</code> contains only recent <code>Transaction</code> objects</td></tr>
+          <tr><td><strong data-en="One transaction per aggregate" data-fr="Une transaction par aggregate">One transaction per aggregate</strong></td><td data-en="A DB transaction modifies only one aggregate at a time" data-fr="Une transaction DB ne modifie qu'un seul aggregate à la fois">A DB transaction modifies only one aggregate at a time</td><td data-en="Transfer between accounts via Domain Events, not in a single transaction" data-fr="Transfert entre comptes via Domain Events, pas en une seule transaction">Transfer between accounts via Domain Events, not in a single transaction</td></tr>
+          <tr><td><strong data-en="Eventual consistency" data-fr="Cohérence éventuelle">Eventual consistency</strong></td><td data-en="Consistency between aggregates is ensured asynchronously via events" data-fr="La cohérence entre aggregates est assurée de manière asynchrone via événements">Consistency between aggregates is ensured asynchronously via events</td><td data-en="TransferCompletedEvent triggers the update of the target account" data-fr="TransferCompletedEvent déclenche la mise à jour du compte destinataire"><code>TransferCompletedEvent</code> triggers the update of the target account</td></tr>
         </tbody>
       </table>
     </div>
 
-    <h2>Couches de l'Architecture DDD</h2>
+    <h2 data-en="DDD Architecture Layers" data-fr="Couches de l'Architecture DDD">DDD Architecture Layers</h2>
     <div class="cds--data-table-container">
       <table class="cds--data-table">
-        <thead><tr><th>Couche</th><th>Responsabilité</th><th>Exemples de classes</th><th>Dépendances autorisées</th></tr></thead>
+        <thead><tr><th data-en="Layer" data-fr="Couche">Layer</th><th data-en="Responsibility" data-fr="Responsabilité">Responsibility</th><th data-en="Example classes" data-fr="Exemples de classes">Example classes</th><th data-en="Allowed dependencies" data-fr="Dépendances autorisées">Allowed dependencies</th></tr></thead>
         <tbody>
-          <tr><td><strong>Domain</strong></td><td>Logique métier pure — invariants, règles, comportements</td><td><code>Account</code>, <code>Money</code>, <code>AccountRepository</code> (interface), <code>MoneyTransferService</code></td><td>Aucune (pur Java)</td></tr>
-          <tr><td><strong>Application</strong></td><td>Orchestration des cas d'usage — pas de logique métier</td><td><code>TransferUseCase</code>, <code>OpenAccountCommand</code>, <code>AccountDTO</code></td><td>Domain uniquement</td></tr>
-          <tr><td><strong>Infrastructure</strong></td><td>Implémentations techniques concrètes</td><td><code>JpaAccountRepository</code>, <code>CdiEventPublisher</code>, <code>RestClientAdapter</code></td><td>Domain + Application + Frameworks</td></tr>
-          <tr><td><strong>Presentation</strong></td><td>Points d'entrée de l'application</td><td><code>AccountResource</code> (JAX-RS), <code>AccountController</code> (JSF)</td><td>Application uniquement</td></tr>
+          <tr><td><strong>Domain</strong></td><td data-en="Pure business logic — invariants, rules, behaviours" data-fr="Logique métier pure — invariants, règles, comportements">Pure business logic — invariants, rules, behaviours</td><td><code>Account</code>, <code>Money</code>, <code>AccountRepository</code> (interface), <code>MoneyTransferService</code></td><td data-en="None (pure Java)" data-fr="Aucune (pur Java)">None (pure Java)</td></tr>
+          <tr><td><strong>Application</strong></td><td data-en="Use case orchestration — no business logic" data-fr="Orchestration des cas d'usage — pas de logique métier">Use case orchestration — no business logic</td><td><code>TransferUseCase</code>, <code>OpenAccountCommand</code>, <code>AccountDTO</code></td><td data-en="Domain only" data-fr="Domain uniquement">Domain only</td></tr>
+          <tr><td><strong>Infrastructure</strong></td><td data-en="Concrete technical implementations" data-fr="Implémentations techniques concrètes">Concrete technical implementations</td><td><code>JpaAccountRepository</code>, <code>CdiEventPublisher</code>, <code>RestClientAdapter</code></td><td data-en="Domain + Application + Frameworks" data-fr="Domain + Application + Frameworks">Domain + Application + Frameworks</td></tr>
+          <tr><td><strong>Presentation</strong></td><td data-en="Application entry points" data-fr="Points d'entrée de l'application">Application entry points</td><td><code>AccountResource</code> (JAX-RS), <code>AccountController</code> (JSF)</td><td data-en="Application only" data-fr="Application uniquement">Application only</td></tr>
         </tbody>
       </table>
     </div>
 
-    <h2>Relations entre Bounded Contexts</h2>
+    <h2 data-en="Relations between Bounded Contexts" data-fr="Relations entre Bounded Contexts">Relations between Bounded Contexts</h2>
     <div class="cds--data-table-container">
       <table class="cds--data-table">
-        <thead><tr><th>Pattern</th><th>Description</th><th>Cas d'usage</th></tr></thead>
+        <thead><tr><th>Pattern</th><th data-en="Description" data-fr="Description">Description</th><th data-en="Use case" data-fr="Cas d'usage">Use case</th></tr></thead>
         <tbody>
-          <tr><td><strong>Anti-Corruption Layer (ACL)</strong></td><td>Couche de traduction protégeant le modèle local des concepts étrangers</td><td>Intégration avec un système legacy, API tierce ou contexte aux conventions différentes</td></tr>
-          <tr><td><strong>Shared Kernel</strong></td><td>Sous-ensemble de modèle partagé entre deux équipes avec coordination forte</td><td>Deux équipes proches partageant quelques Value Objects communs (<code>Money</code>, <code>Currency</code>)</td></tr>
-          <tr><td><strong>Partnership</strong></td><td>Deux équipes évoluent en synchronisant leur planning mutuellement</td><td>Contexts fortement couplés, co-déployés, développés par des équipes très proches</td></tr>
-          <tr><td><strong>Customer/Supplier</strong></td><td>Une équipe fournit une interface, l'autre la consomme</td><td>Relation amont/aval avec un contrat établi et des tests d'acceptation</td></tr>
-          <tr><td><strong>Conformist</strong></td><td>L'équipe aval adopte le modèle de l'équipe amont sans adapter</td><td>Intégration avec un système dominant dont on ne peut pas influencer le modèle</td></tr>
-          <tr><td><strong>Published Language</strong></td><td>Langage d'échange formalisé et documenté (OpenAPI, JSON Schema, Protobuf)</td><td>Communication entre microservices via des contrats publics versionnés</td></tr>
-          <tr><td><strong>Open Host Service</strong></td><td>Service accessible via un protocole bien défini et documenté</td><td>API publique REST consommée par de nombreux contextes différents</td></tr>
+          <tr><td><strong>Anti-Corruption Layer (ACL)</strong></td><td data-en="Translation layer protecting the local model from foreign concepts" data-fr="Couche de traduction protégeant le modèle local des concepts étrangers">Translation layer protecting the local model from foreign concepts</td><td data-en="Integration with a legacy system, third-party API or context with different conventions" data-fr="Intégration avec un système legacy, API tierce ou contexte aux conventions différentes">Integration with a legacy system, third-party API or context with different conventions</td></tr>
+          <tr><td><strong>Shared Kernel</strong></td><td data-en="Subset of model shared between two teams with strong coordination" data-fr="Sous-ensemble de modèle partagé entre deux équipes avec coordination forte">Subset of model shared between two teams with strong coordination</td><td data-en="Two close teams sharing some common Value Objects (Money, Currency)" data-fr="Deux équipes proches partageant quelques Value Objects communs (Money, Currency)">Two close teams sharing some common Value Objects (<code>Money</code>, <code>Currency</code>)</td></tr>
+          <tr><td><strong>Partnership</strong></td><td data-en="Two teams evolve by synchronising their planning mutually" data-fr="Deux équipes évoluent en synchronisant leur planning mutuellement">Two teams evolve by synchronising their planning mutually</td><td data-en="Tightly coupled contexts, co-deployed, developed by very close teams" data-fr="Contexts fortement couplés, co-déployés, développés par des équipes très proches">Tightly coupled contexts, co-deployed, developed by very close teams</td></tr>
+          <tr><td><strong>Customer/Supplier</strong></td><td data-en="One team provides an interface, the other consumes it" data-fr="Une équipe fournit une interface, l'autre la consomme">One team provides an interface, the other consumes it</td><td data-en="Upstream/downstream relationship with an established contract and acceptance tests" data-fr="Relation amont/aval avec un contrat établi et des tests d'acceptation">Upstream/downstream relationship with an established contract and acceptance tests</td></tr>
+          <tr><td><strong>Conformist</strong></td><td data-en="The downstream team adopts the upstream team's model without adapting" data-fr="L'équipe aval adopte le modèle de l'équipe amont sans adapter">The downstream team adopts the upstream team's model without adapting</td><td data-en="Integration with a dominant system whose model cannot be influenced" data-fr="Intégration avec un système dominant dont on ne peut pas influencer le modèle">Integration with a dominant system whose model cannot be influenced</td></tr>
+          <tr><td><strong>Published Language</strong></td><td data-en="Formalised and documented exchange language (OpenAPI, JSON Schema, Protobuf)" data-fr="Langage d'échange formalisé et documenté (OpenAPI, JSON Schema, Protobuf)">Formalised and documented exchange language (OpenAPI, JSON Schema, Protobuf)</td><td data-en="Communication between microservices via versioned public contracts" data-fr="Communication entre microservices via des contrats publics versionnés">Communication between microservices via versioned public contracts</td></tr>
+          <tr><td><strong>Open Host Service</strong></td><td data-en="Service accessible via a well-defined and documented protocol" data-fr="Service accessible via un protocole bien défini et documenté">Service accessible via a well-defined and documented protocol</td><td data-en="REST public API consumed by many different contexts" data-fr="API publique REST consommée par de nombreux contextes différents">REST public API consumed by many different contexts</td></tr>
         </tbody>
       </table>
     </div>
 
-    <h2>Modèle Anémique vs Modèle Riche</h2>
+    <h2 data-en="Anemic Model vs Rich Model" data-fr="Modèle Anémique vs Modèle Riche">Anemic Model vs Rich Model</h2>
     <div class="cds--data-table-container">
       <table class="cds--data-table">
-        <thead><tr><th>Aspect</th><th>Modèle Anémique (anti-pattern)</th><th>Modèle Riche (DDD)</th></tr></thead>
+        <thead><tr><th data-en="Aspect" data-fr="Aspect">Aspect</th><th data-en="Anemic Model (anti-pattern)" data-fr="Modèle Anémique (anti-pattern)">Anemic Model (anti-pattern)</th><th data-en="Rich Model (DDD)" data-fr="Modèle Riche (DDD)">Rich Model (DDD)</th></tr></thead>
         <tbody>
-          <tr><td><strong>Structure</strong></td><td>Objets = données uniquement (getters/setters)</td><td>Objets = données + comportements métier</td></tr>
-          <tr><td><strong>Logique métier</strong></td><td>Éparpillée dans des services transaction-script</td><td>Encapsulée dans les entités et aggregates</td></tr>
-          <tr><td><strong>Invariants</strong></td><td>Vérifiés dans le service — peuvent être oubliés</td><td>Garantis par l'aggregate — impossible de créer un état invalide</td></tr>
-          <tr><td><strong>Testabilité</strong></td><td>Tests d'intégration lourds — logique liée aux services</td><td>Tests unitaires légers — logique dans les entités POJO</td></tr>
-          <tr><td><strong>Lisibilité</strong></td><td><code>account.setBalance(account.getBalance().subtract(amount))</code></td><td><code>account.debitAccount(amount)</code></td></tr>
-          <tr><td><strong>Exemple d'accès</strong></td><td><code>account.getTransactions().add(new Transaction(...))</code></td><td><code>account.addTransaction(amount, description)</code></td></tr>
-          <tr><td><strong>Risque</strong></td><td>Règles métier violées facilement par inadvertance</td><td>Règles garanties par le code — encapsulation forte</td></tr>
+          <tr><td><strong data-en="Structure" data-fr="Structure">Structure</strong></td><td data-en="Objects = data only (getters/setters)" data-fr="Objets = données uniquement (getters/setters)">Objects = data only (getters/setters)</td><td data-en="Objects = data + business behaviours" data-fr="Objets = données + comportements métier">Objects = data + business behaviours</td></tr>
+          <tr><td><strong data-en="Business logic" data-fr="Logique métier">Business logic</strong></td><td data-en="Scattered across transaction-script services" data-fr="Éparpillée dans des services transaction-script">Scattered across transaction-script services</td><td data-en="Encapsulated in entities and aggregates" data-fr="Encapsulée dans les entités et aggregates">Encapsulated in entities and aggregates</td></tr>
+          <tr><td><strong>Invariants</strong></td><td data-en="Checked in the service — can be forgotten" data-fr="Vérifiés dans le service — peuvent être oubliés">Checked in the service — can be forgotten</td><td data-en="Guaranteed by the aggregate — impossible to create an invalid state" data-fr="Garantis par l'aggregate — impossible de créer un état invalide">Guaranteed by the aggregate — impossible to create an invalid state</td></tr>
+          <tr><td><strong data-en="Testability" data-fr="Testabilité">Testability</strong></td><td data-en="Heavy integration tests — logic tied to services" data-fr="Tests d'intégration lourds — logique liée aux services">Heavy integration tests — logic tied to services</td><td data-en="Lightweight unit tests — logic in POJO entities" data-fr="Tests unitaires légers — logique dans les entités POJO">Lightweight unit tests — logic in POJO entities</td></tr>
+          <tr><td><strong data-en="Readability" data-fr="Lisibilité">Readability</strong></td><td><code>account.setBalance(account.getBalance().subtract(amount))</code></td><td><code>account.debitAccount(amount)</code></td></tr>
+          <tr><td><strong data-en="Access example" data-fr="Exemple d'accès">Access example</strong></td><td><code>account.getTransactions().add(new Transaction(...))</code></td><td><code>account.addTransaction(amount, description)</code></td></tr>
+          <tr><td><strong data-en="Risk" data-fr="Risque">Risk</strong></td><td data-en="Business rules easily violated inadvertently" data-fr="Règles métier violées facilement par inadvertance">Business rules easily violated inadvertently</td><td data-en="Rules guaranteed by code — strong encapsulation" data-fr="Règles garanties par le code — encapsulation forte">Rules guaranteed by code — strong encapsulation</td></tr>
         </tbody>
       </table>
     </div>
 
-    <h2>Glossaire</h2>
+    <h2 data-en="Glossary" data-fr="Glossaire">Glossary</h2>
     <div class="cds--data-table-container">
       <table class="cds--data-table">
-        <thead><tr><th>Terme</th><th>Définition</th></tr></thead>
+        <thead><tr><th data-en="Term" data-fr="Terme">Term</th><th data-en="Definition" data-fr="Définition">Definition</th></tr></thead>
         <tbody>
-          <tr><td><strong>DDD</strong></td><td>Domain-Driven Design — approche de conception logicielle plaçant le domaine métier au centre, avec collaboration dev/expert et langage partagé (Eric Evans, 2003)</td></tr>
-          <tr><td><strong>Bounded Context</strong></td><td>Frontière explicite à l'intérieur de laquelle un modèle de domaine cohérent s'applique, avec son propre langage ubiquitaire</td></tr>
-          <tr><td><strong>Aggregate</strong></td><td>Cluster d'objets de domaine traité comme une unité, avec une racine (Aggregate Root) qui garantit les invariants et contrôle l'accès</td></tr>
-          <tr><td><strong>Entity</strong></td><td>Objet de domaine avec une identité unique persistant dans le temps, dont l'égalité est basée sur l'identifiant</td></tr>
-          <tr><td><strong>Value Object</strong></td><td>Objet de domaine immuable sans identité propre, dont l'égalité est basée sur la valeur de tous ses attributs</td></tr>
-          <tr><td><strong>Repository</strong></td><td>Abstraction simulant une collection d'aggregates, avec interface dans le domaine et implémentation dans l'infrastructure</td></tr>
-          <tr><td><strong>Domain Service</strong></td><td>Service stateless encapsulant une logique métier qui n'appartient naturellement à aucune Entité ou Value Object</td></tr>
-          <tr><td><strong>Ubiquitous Language</strong></td><td>Vocabulaire commun partagé par tous les membres de l'équipe (dev + experts métier), utilisé dans les conversations et dans le code</td></tr>
-          <tr><td><strong>Domain Event</strong></td><td>Fait métier immuable passé, nommé au passé (<code>AccountDebited</code>), utilisé pour découpler les aggregates et assurer la cohérence éventuelle</td></tr>
-          <tr><td><strong>Anti-Corruption Layer</strong></td><td>Couche de traduction entre deux Bounded Contexts, protégeant le modèle local de la contamination par les concepts d'un système externe</td></tr>
+          <tr><td><strong>DDD</strong></td><td data-en="Domain-Driven Design — software design approach placing the business domain at the centre, with dev/expert collaboration and shared language (Eric Evans, 2003)" data-fr="Domain-Driven Design — approche de conception logicielle plaçant le domaine métier au centre, avec collaboration dev/expert et langage partagé (Eric Evans, 2003)">Domain-Driven Design — software design approach placing the business domain at the centre, with dev/expert collaboration and shared language (Eric Evans, 2003)</td></tr>
+          <tr><td><strong>Bounded Context</strong></td><td data-en="Explicit boundary inside which a coherent domain model applies, with its own ubiquitous language" data-fr="Frontière explicite à l'intérieur de laquelle un modèle de domaine cohérent s'applique, avec son propre langage ubiquitaire">Explicit boundary inside which a coherent domain model applies, with its own ubiquitous language</td></tr>
+          <tr><td><strong>Aggregate</strong></td><td data-en="Cluster of domain objects treated as a unit, with a root (Aggregate Root) that guarantees invariants and controls access" data-fr="Cluster d'objets de domaine traité comme une unité, avec une racine (Aggregate Root) qui garantit les invariants et contrôle l'accès">Cluster of domain objects treated as a unit, with a root (Aggregate Root) that guarantees invariants and controls access</td></tr>
+          <tr><td><strong>Entity</strong></td><td data-en="Domain object with a unique identity persisting over time, whose equality is based on the identifier" data-fr="Objet de domaine avec une identité unique persistant dans le temps, dont l'égalité est basée sur l'identifiant">Domain object with a unique identity persisting over time, whose equality is based on the identifier</td></tr>
+          <tr><td><strong>Value Object</strong></td><td data-en="Immutable domain object without its own identity, whose equality is based on the value of all its attributes" data-fr="Objet de domaine immuable sans identité propre, dont l'égalité est basée sur la valeur de tous ses attributs">Immutable domain object without its own identity, whose equality is based on the value of all its attributes</td></tr>
+          <tr><td><strong>Repository</strong></td><td data-en="Abstraction simulating a collection of aggregates, with interface in the domain and implementation in the infrastructure" data-fr="Abstraction simulant une collection d'aggregates, avec interface dans le domaine et implémentation dans l'infrastructure">Abstraction simulating a collection of aggregates, with interface in the domain and implementation in the infrastructure</td></tr>
+          <tr><td><strong>Domain Service</strong></td><td data-en="Stateless service encapsulating business logic that does not naturally belong to any Entity or Value Object" data-fr="Service stateless encapsulant une logique métier qui n'appartient naturellement à aucune Entité ou Value Object">Stateless service encapsulating business logic that does not naturally belong to any Entity or Value Object</td></tr>
+          <tr><td><strong>Ubiquitous Language</strong></td><td data-en="Common vocabulary shared by all team members (dev + domain experts), used in conversations and in code" data-fr="Vocabulaire commun partagé par tous les membres de l'équipe (dev + experts métier), utilisé dans les conversations et dans le code">Common vocabulary shared by all team members (dev + domain experts), used in conversations and in code</td></tr>
+          <tr><td><strong>Domain Event</strong></td><td data-en="Immutable past business fact, named in the past tense (AccountDebited), used to decouple aggregates and ensure eventual consistency" data-fr="Fait métier immuable passé, nommé au passé (AccountDebited), utilisé pour découpler les aggregates et assurer la cohérence éventuelle">Immutable past business fact, named in the past tense (<code>AccountDebited</code>), used to decouple aggregates and ensure eventual consistency</td></tr>
+          <tr><td><strong>Anti-Corruption Layer</strong></td><td data-en="Translation layer between two Bounded Contexts, protecting the local model from contamination by concepts of an external system" data-fr="Couche de traduction entre deux Bounded Contexts, protégeant le modèle local de la contamination par les concepts d'un système externe">Translation layer between two Bounded Contexts, protecting the local model from contamination by concepts of an external system</td></tr>
         </tbody>
       </table>
     </div>
@@ -138,5 +140,6 @@
   </main>
 </div>
 <footer class="cds--footer">Made with IBM Bob &nbsp;·&nbsp; © 2026 Olivier Planson &nbsp;·&nbsp; ESIPE — Jakarta EE &amp; Microservices</footer>
+<script src="../assets/language-toggle.js"></script>
 </body>
 </html>

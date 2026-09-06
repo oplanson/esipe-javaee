@@ -1,6 +1,6 @@
 <!-- © Copyright 2026 Olivier Planson. All rights reserved. Reproduction prohibited. Made with IBM Bob. -->
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="en">
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
@@ -9,21 +9,23 @@
 </head>
 <body>
 <header class="cds--header">
-  <a class="cds--header__name" href="index.html">Domain-Driven Design<span>Cours Jakarta EE</span></a>
-  <a class="cds--header__back" href="../index.html">← Tous les Cours</a>
+  <a class="cds--header__name" href="index.html">Domain-Driven Design<span data-en="Jakarta EE Course" data-fr="Cours Jakarta EE">Jakarta EE Course</span></a>
+  <button class="lang-toggle-btn" id="lang-toggle">FR</button>
+  <a class="cds--header__back" href="../index.html" data-en="← All Courses" data-fr="← Tous les Cours">← All Courses</a>
 </header>
 <div class="cds--shell">
   <nav class="cds--side-nav">
-    <p class="cds--side-nav__section-title">Cours 06</p>
-    <a class="cds--side-nav__link active" href="index.html">⊙ Vue d'ensemble</a>
-    <a class="cds--side-nav__link" href="slides.html">☰ Contenu du cours</a>
-    <a class="cds--side-nav__link" href="concepts.html">◈ Concepts clés</a>
-    <a class="cds--side-nav__link" href="code.html">⟨/⟩ Exemples de code</a>
+    <p class="cds--side-nav__section-title" data-en="Course 06" data-fr="Cours 06">Course 06</p>
+    <a class="cds--side-nav__link active" href="index.html" data-en="⊙ Overview" data-fr="⊙ Vue d'ensemble">⊙ Overview</a>
+    <a class="cds--side-nav__link" href="slides.html" data-en="☰ Course Content" data-fr="☰ Contenu du cours">☰ Course Content</a>
+    <a class="cds--side-nav__link" href="concepts.html" data-en="◈ Key Concepts" data-fr="◈ Concepts clés">◈ Key Concepts</a>
+    <a class="cds--side-nav__link" href="code.html" data-en="⟨/⟩ Code Examples" data-fr="⟨/⟩ Exemples de code">⟨/⟩ Code Examples</a>
+    <a class="cds--side-nav__lang-toggle">FR</a>
   </nav>
   <main class="cds--content">
-    <div class="breadcrumb"><a href="../index.html">Cours</a> › Cours 06</div>
-    <h1>Domain-Driven Design</h1>
-    <p class="page-lead">Patterns stratégiques et tactiques pour applications enterprise — Durée : 3h · Instructeur : Olivier Planson</p>
+    <div class="breadcrumb"><a href="../index.html" data-en="Courses" data-fr="Cours">Courses</a> › <span data-en="Course 06" data-fr="Cours 06">Course 06</span></div>
+    <h1 data-en="Domain-Driven Design" data-fr="Domain-Driven Design">Domain-Driven Design</h1>
+    <p class="page-lead" data-en="Strategic and tactical patterns for enterprise applications — Duration: 3h · Instructor: Olivier Planson" data-fr="Patterns stratégiques et tactiques pour applications enterprise — Durée : 3h · Instructeur : Olivier Planson">Strategic and tactical patterns for enterprise applications — Duration: 3h · Instructor: Olivier Planson</p>
     <div class="tag-stack">
       <span class="cds--tag cds--tag--purple">DDD</span>
       <span class="cds--tag cds--tag--blue">Bounded Context</span>
@@ -32,34 +34,35 @@
       <span class="cds--tag cds--tag--warm">Value Objects</span>
       <span class="cds--tag cds--tag--red">Repositories</span>
     </div>
-    <h2>Objectifs pédagogiques</h2>
+    <h2 data-en="Learning Objectives" data-fr="Objectifs pédagogiques">Learning Objectives</h2>
     <table class="objectives-table"><tbody>
-      <tr><td>✅</td><td>Comprendre la philosophie DDD et ses bénéfices</td></tr>
-      <tr><td>✅</td><td>Appliquer les patterns stratégiques (Bounded Contexts, Context Maps)</td></tr>
-      <tr><td>✅</td><td>Implémenter les patterns tactiques (Entités, Value Objects, Aggregats)</td></tr>
-      <tr><td>✅</td><td>Concevoir des modèles de domaine avec le langage ubiquitaire</td></tr>
-      <tr><td>✅</td><td>Refactoriser du code existant vers l'architecture DDD</td></tr>
-      <tr><td>✅</td><td>Appliquer DDD à l'application bancaire</td></tr>
+      <tr><td>✅</td><td data-en="Understand the DDD philosophy and its benefits" data-fr="Comprendre la philosophie DDD et ses bénéfices">Understand the DDD philosophy and its benefits</td></tr>
+      <tr><td>✅</td><td data-en="Apply strategic patterns (Bounded Contexts, Context Maps)" data-fr="Appliquer les patterns stratégiques (Bounded Contexts, Context Maps)">Apply strategic patterns (Bounded Contexts, Context Maps)</td></tr>
+      <tr><td>✅</td><td data-en="Implement tactical patterns (Entities, Value Objects, Aggregates)" data-fr="Implémenter les patterns tactiques (Entités, Value Objects, Aggregats)">Implement tactical patterns (Entities, Value Objects, Aggregates)</td></tr>
+      <tr><td>✅</td><td data-en="Design domain models with the ubiquitous language" data-fr="Concevoir des modèles de domaine avec le langage ubiquitaire">Design domain models with the ubiquitous language</td></tr>
+      <tr><td>✅</td><td data-en="Refactor existing code towards DDD architecture" data-fr="Refactoriser du code existant vers l'architecture DDD">Refactor existing code towards DDD architecture</td></tr>
+      <tr><td>✅</td><td data-en="Apply DDD to the banking application" data-fr="Appliquer DDD à l'application bancaire">Apply DDD to the banking application</td></tr>
     </tbody></table>
-    <h2>Plan du cours</h2>
+    <h2 data-en="Course Outline" data-fr="Plan du cours">Course Outline</h2>
     <ol class="course-plan">
-      <li>Introduction DDD — philosophie et bénéfices</li>
-      <li>Patterns Stratégiques — Bounded Contexts</li>
-      <li>Langage Ubiquitaire</li>
-      <li>Patterns Tactiques — Entité</li>
-      <li>Patterns Tactiques — Value Object</li>
-      <li>Patterns Tactiques — Aggregate</li>
-      <li>Repository pattern</li>
-      <li>Domain Services et Events</li>
-      <li>Refactorisation vers DDD — Application bancaire</li>
+      <li data-en="Introduction to DDD — philosophy and benefits" data-fr="Introduction DDD — philosophie et bénéfices">Introduction to DDD — philosophy and benefits</li>
+      <li data-en="Strategic Patterns — Bounded Contexts" data-fr="Patterns Stratégiques — Bounded Contexts">Strategic Patterns — Bounded Contexts</li>
+      <li data-en="Ubiquitous Language" data-fr="Langage Ubiquitaire">Ubiquitous Language</li>
+      <li data-en="Tactical Patterns — Entity" data-fr="Patterns Tactiques — Entité">Tactical Patterns — Entity</li>
+      <li data-en="Tactical Patterns — Value Object" data-fr="Patterns Tactiques — Value Object">Tactical Patterns — Value Object</li>
+      <li data-en="Tactical Patterns — Aggregate" data-fr="Patterns Tactiques — Aggregate">Tactical Patterns — Aggregate</li>
+      <li data-en="Repository pattern" data-fr="Repository pattern">Repository pattern</li>
+      <li data-en="Domain Services and Events" data-fr="Domain Services et Events">Domain Services and Events</li>
+      <li data-en="Refactoring towards DDD — Banking application" data-fr="Refactorisation vers DDD — Application bancaire">Refactoring towards DDD — Banking application</li>
     </ol>
     <div class="tile-grid">
-      <a class="tile-link" href="slides.html"><div class="cds--tile"><h3>☰ Contenu du cours</h3><p>Philosophie DDD, Bounded Contexts, Entités, Value Objects, Aggregats, Domain Events et architecture en couches.</p></div></a>
-      <a class="tile-link" href="concepts.html"><div class="cds--tile"><h3>◈ Concepts clés</h3><p>DDD stratégique vs tactique, Entité vs Value Object, règles des Aggregates, architecture en couches, glossaire.</p></div></a>
-      <a class="tile-link" href="code.html"><div class="cds--tile"><h3>⟨/⟩ Exemples de code</h3><p>Account, Money, AccountNumber, Aggregate complet, Repository JPA, TransferService, Domain Events CDI, Records Java 17.</p></div></a>
+      <a class="tile-link" href="slides.html"><div class="cds--tile"><h3 data-en="☰ Course Content" data-fr="☰ Contenu du cours">☰ Course Content</h3><p data-en="DDD philosophy, Bounded Contexts, Entities, Value Objects, Aggregates, Domain Events and layered architecture." data-fr="Philosophie DDD, Bounded Contexts, Entités, Value Objects, Aggregats, Domain Events et architecture en couches.">DDD philosophy, Bounded Contexts, Entities, Value Objects, Aggregates, Domain Events and layered architecture.</p></div></a>
+      <a class="tile-link" href="concepts.html"><div class="cds--tile"><h3 data-en="◈ Key Concepts" data-fr="◈ Concepts clés">◈ Key Concepts</h3><p data-en="Strategic vs tactical DDD, Entity vs Value Object, Aggregate rules, layered architecture, glossary." data-fr="DDD stratégique vs tactique, Entité vs Value Object, règles des Aggregates, architecture en couches, glossaire.">Strategic vs tactical DDD, Entity vs Value Object, Aggregate rules, layered architecture, glossary.</p></div></a>
+      <a class="tile-link" href="code.html"><div class="cds--tile"><h3 data-en="⟨/⟩ Code Examples" data-fr="⟨/⟩ Exemples de code">⟨/⟩ Code Examples</h3><p data-en="Account, Money, AccountNumber, complete Aggregate, JPA Repository, TransferService, CDI Domain Events, Java 17 Records." data-fr="Account, Money, AccountNumber, Aggregate complet, Repository JPA, TransferService, Domain Events CDI, Records Java 17.">Account, Money, AccountNumber, complete Aggregate, JPA Repository, TransferService, CDI Domain Events, Java 17 Records.</p></div></a>
     </div>
   </main>
 </div>
 <footer class="cds--footer">Made with IBM Bob &nbsp;·&nbsp; © 2026 Olivier Planson &nbsp;·&nbsp; ESIPE — Jakarta EE &amp; Microservices</footer>
+<script src="../assets/language-toggle.js"></script>
 </body>
 </html>

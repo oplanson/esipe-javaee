@@ -1,89 +1,91 @@
 <!-- © Copyright 2026 Olivier Planson. All rights reserved. Reproduction prohibited. Made with IBM Bob. -->
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="en">
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-  <title>Cours 01 — Contenu du cours</title>
+  <title>Cours 01 — Lecture Content</title>
   <link rel="stylesheet" href="../assets/carbon.css"/>
 </head>
 <body>
 <header class="cds--header">
-  <a class="cds--header__name" href="index.html">Introduction Jakarta EE<span>Cours Jakarta EE</span></a>
-  <a class="cds--header__back" href="../index.html">← Tous les Cours</a>
+  <button class="lang-toggle-btn" id="lang-toggle">FR</button>
+  <a class="cds--header__name" href="index.html" data-en="Introduction Jakarta EE<span>Jakarta EE Course</span>" data-fr="Introduction Jakarta EE<span>Cours Jakarta EE</span>">Introduction Jakarta EE<span>Jakarta EE Course</span></a>
+  <a class="cds--header__back" href="../index.html" data-en="← All Courses" data-fr="← Tous les Cours">← All Courses</a>
 </header>
 <div class="cds--shell">
   <nav class="cds--side-nav">
-    <p class="cds--side-nav__section-title">Cours 01</p>
-    <a class="cds--side-nav__link" href="index.html">⊙ Vue d'ensemble</a>
-    <a class="cds--side-nav__link active" href="slides.html">☰ Contenu du cours</a>
-    <a class="cds--side-nav__link" href="concepts.html">◈ Concepts clés</a>
-    <a class="cds--side-nav__link" href="code.html">⟨/⟩ Exemples de code</a>
+    <p class="cds--side-nav__section-title" data-en="Course 01" data-fr="Cours 01">Course 01</p>
+    <a class="cds--side-nav__link" href="index.html" data-en="⊙ Overview" data-fr="⊙ Vue d'ensemble">⊙ Overview</a>
+    <a class="cds--side-nav__link active" href="slides.html" data-en="☰ Lecture Content" data-fr="☰ Contenu du cours">☰ Lecture Content</a>
+    <a class="cds--side-nav__link" href="concepts.html" data-en="◈ Key Concepts" data-fr="◈ Concepts clés">◈ Key Concepts</a>
+    <a class="cds--side-nav__link" href="code.html" data-en="⟨/⟩ Code Examples" data-fr="⟨/⟩ Exemples de code">⟨/⟩ Code Examples</a>
+    <a class="cds--side-nav__lang-toggle">FR</a>
   </nav>
   <main class="cds--content">
-    <div class="breadcrumb"><a href="../index.html">Cours</a> › <a href="index.html">Cours 01</a> › Contenu</div>
-    <h1>Contenu du cours</h1>
-    <p class="page-lead">Toutes les sections du cours — cliquez sur un titre pour développer son contenu.</p>
+    <div class="breadcrumb"><a href="../index.html" data-en="Courses" data-fr="Cours">Courses</a> › <a href="index.html" data-en="Course 01" data-fr="Cours 01">Course 01</a> › <span data-en="Content" data-fr="Contenu">Content</span></div>
+    <h1 data-en="Lecture Content" data-fr="Contenu du cours">Lecture Content</h1>
+    <p class="page-lead" data-en="All course sections — click a title to expand its content." data-fr="Toutes les sections du cours — cliquez sur un titre pour développer son contenu.">All course sections — click a title to expand its content.</p>
 
     <details open>
-      <summary>📋 Objectifs d'apprentissage</summary>
+      <summary data-en="📋 Learning Objectives" data-fr="📋 Objectifs d'apprentissage">📋 Learning Objectives</summary>
       <div class="slide-content">
-        <p>À la fin de ce cours, vous serez capable de :</p>
+        <p data-en="By the end of this course, you will be able to:" data-fr="À la fin de ce cours, vous serez capable de :">By the end of this course, you will be able to:</p>
         <ul>
-          <li>Comprendre les écosystèmes Jakarta EE et MicroProfile</li>
-          <li>Différencier Jakarta EE et MicroProfile</li>
-          <li>Identifier les spécifications et APIs clés</li>
-          <li>Configurer l'environnement de développement Open Liberty</li>
-          <li>Créer et déployer une première application avec Podman</li>
-          <li>Comprendre le rôle des serveurs d'applications</li>
+          <li data-en="Understand the Jakarta EE and MicroProfile ecosystems" data-fr="Comprendre les écosystèmes Jakarta EE et MicroProfile">Understand the Jakarta EE and MicroProfile ecosystems</li>
+          <li data-en="Differentiate Jakarta EE and MicroProfile" data-fr="Différencier Jakarta EE et MicroProfile">Differentiate Jakarta EE and MicroProfile</li>
+          <li data-en="Identify key specifications and APIs" data-fr="Identifier les spécifications et APIs clés">Identify key specifications and APIs</li>
+          <li data-en="Set up the Open Liberty development environment" data-fr="Configurer l'environnement de développement Open Liberty">Set up the Open Liberty development environment</li>
+          <li data-en="Create and deploy a first application with Podman" data-fr="Créer et déployer une première application avec Podman">Create and deploy a first application with Podman</li>
+          <li data-en="Understand the role of application servers" data-fr="Comprendre le rôle des serveurs d'applications">Understand the role of application servers</li>
         </ul>
       </div>
     </details>
 
     <details>
-      <summary>🎯 Qu'est-ce que Jakarta EE ?</summary>
+      <summary data-en="🎯 What is Jakarta EE?" data-fr="🎯 Qu'est-ce que Jakarta EE ?">🎯 What is Jakarta EE?</summary>
       <div class="slide-content">
-        <p><strong>Jakarta EE</strong> (anciennement Java EE) est un ensemble de spécifications pour la construction d'applications d'entreprise en Java.</p>
-        <h3>Caractéristiques clés :</h3>
+        <p data-en="<strong>Jakarta EE</strong> (formerly Java EE) is a set of specifications for building enterprise Java applications." data-fr="<strong>Jakarta EE</strong> (anciennement Java EE) est un ensemble de spécifications pour la construction d'applications d'entreprise en Java."><strong>Jakarta EE</strong> (formerly Java EE) is a set of specifications for building enterprise Java applications.</p>
+        <h3 data-en="Key characteristics:" data-fr="Caractéristiques clés :">Key characteristics:</h3>
         <ul>
-          <li><strong>Basé sur des standards :</strong> Spécifications industrielles</li>
-          <li><strong>Indépendant des fournisseurs :</strong> Plusieurs implémentations disponibles</li>
-          <li><strong>Enterprise-ready :</strong> Conçu pour la scalabilité et la fiabilité</li>
-          <li><strong>Open-source :</strong> Développement communautaire sous Eclipse Foundation</li>
+          <li data-en="<strong>Standards-based:</strong> Industry specifications" data-fr="<strong>Basé sur des standards :</strong> Spécifications industrielles"><strong>Standards-based:</strong> Industry specifications</li>
+          <li data-en="<strong>Vendor-independent:</strong> Multiple implementations available" data-fr="<strong>Indépendant des fournisseurs :</strong> Plusieurs implémentations disponibles"><strong>Vendor-independent:</strong> Multiple implementations available</li>
+          <li data-en="<strong>Enterprise-ready:</strong> Designed for scalability and reliability" data-fr="<strong>Enterprise-ready :</strong> Conçu pour la scalabilité et la fiabilité"><strong>Enterprise-ready:</strong> Designed for scalability and reliability</li>
+          <li data-en="<strong>Open-source:</strong> Community development under Eclipse Foundation" data-fr="<strong>Open-source :</strong> Développement communautaire sous Eclipse Foundation"><strong>Open-source:</strong> Community development under Eclipse Foundation</li>
         </ul>
-        <h3>Ligne du temps :</h3>
-        <img src="../../images/01-intro-jakartaee-microprofile-diagram-1.png" alt="Evolution Jakarta EE"/>
+        <h3 data-en="Timeline:" data-fr="Ligne du temps :">Timeline:</h3>
+        <img src="../../images/01-intro-jakartaee-microprofile-diagram-1.png" alt="Jakarta EE Evolution" data-en="Evolution Jakarta EE" data-fr="Évolution de Jakarta EE"/>
       </div>
     </details>
 
     <details>
-      <summary>🚀 Qu'est-ce que MicroProfile ?</summary>
+      <summary data-en="🚀 What is MicroProfile?" data-fr="🚀 Qu'est-ce que MicroProfile ?">🚀 What is MicroProfile?</summary>
       <div class="slide-content">
-        <p><strong>Eclipse MicroProfile</strong> est un ensemble de spécifications optimisées pour l'architecture microservices.</p>
-        <h3>Caractéristiques clés :</h3>
+        <p data-en="<strong>Eclipse MicroProfile</strong> is a set of specifications optimised for microservices architecture." data-fr="<strong>Eclipse MicroProfile</strong> est un ensemble de spécifications optimisées pour l'architecture microservices."><strong>Eclipse MicroProfile</strong> is a set of specifications optimised for microservices architecture.</p>
+        <h3 data-en="Key characteristics:" data-fr="Caractéristiques clés :">Key characteristics:</h3>
         <ul>
-          <li><strong>Cloud-native :</strong> Conçu pour le cloud et les conteneurs</li>
-          <li><strong>Orienté microservices :</strong> Léger et modulaire</li>
-          <li><strong>Complémentaire à Jakarta EE :</strong> Étend les capacités Jakarta EE</li>
-          <li><strong>Innovation rapide :</strong> Cycles de release plus courts que Jakarta EE</li>
+          <li data-en="<strong>Cloud-native:</strong> Designed for the cloud and containers" data-fr="<strong>Cloud-native :</strong> Conçu pour le cloud et les conteneurs"><strong>Cloud-native:</strong> Designed for the cloud and containers</li>
+          <li data-en="<strong>Microservices-oriented:</strong> Lightweight and modular" data-fr="<strong>Orienté microservices :</strong> Léger et modulaire"><strong>Microservices-oriented:</strong> Lightweight and modular</li>
+          <li data-en="<strong>Complementary to Jakarta EE:</strong> Extends Jakarta EE capabilities" data-fr="<strong>Complémentaire à Jakarta EE :</strong> Étend les capacités Jakarta EE"><strong>Complementary to Jakarta EE:</strong> Extends Jakarta EE capabilities</li>
+          <li data-en="<strong>Rapid innovation:</strong> Shorter release cycles than Jakarta EE" data-fr="<strong>Innovation rapide :</strong> Cycles de release plus courts que Jakarta EE"><strong>Rapid innovation:</strong> Shorter release cycles than Jakarta EE</li>
         </ul>
         <img src="../../images/01-intro-jakartaee-microprofile-diagram-2.png" alt="MicroProfile Timeline"/>
       </div>
     </details>
 
     <details>
-      <summary>🔄 Jakarta EE vs MicroProfile</summary>
+      <summary data-en="🔄 Jakarta EE vs MicroProfile" data-fr="🔄 Jakarta EE vs MicroProfile">🔄 Jakarta EE vs MicroProfile</summary>
       <div class="slide-content">
         <div class="cds--data-table-container">
           <table class="cds--data-table">
-            <thead><tr><th>Aspect</th><th>Jakarta EE</th><th>MicroProfile</th></tr></thead>
+            <thead><tr><th data-en="Aspect" data-fr="Aspect">Aspect</th><th>Jakarta EE</th><th>MicroProfile</th></tr></thead>
             <tbody>
-              <tr><td><strong>Focus</strong></td><td>Applications enterprise</td><td>Microservices</td></tr>
-              <tr><td><strong>Scope</strong></td><td>Plateforme complète</td><td>Spécifications ciblées</td></tr>
-              <tr><td><strong>Cycle de release</strong></td><td>Lent, stable</td><td>Rapide, innovant</td></tr>
-              <tr><td><strong>Taille</strong></td><td>Full-featured</td><td>Léger</td></tr>
-              <tr><td><strong>Cas d'usage</strong></td><td>Monolithes et services</td><td>Apps cloud-native</td></tr>
-              <tr><td><strong>Gouvernance</strong></td><td>Eclipse Foundation</td><td>Eclipse Foundation</td></tr>
+              <tr><td data-en="<strong>Focus</strong>" data-fr="<strong>Focus</strong>"><strong>Focus</strong></td><td data-en="Enterprise applications" data-fr="Applications enterprise">Enterprise applications</td><td data-en="Microservices" data-fr="Microservices">Microservices</td></tr>
+              <tr><td data-en="<strong>Scope</strong>" data-fr="<strong>Portée</strong>"><strong>Scope</strong></td><td data-en="Full platform" data-fr="Plateforme complète">Full platform</td><td data-en="Targeted specifications" data-fr="Spécifications ciblées">Targeted specifications</td></tr>
+              <tr><td data-en="<strong>Release cycle</strong>" data-fr="<strong>Cycle de release</strong>"><strong>Release cycle</strong></td><td data-en="Slow, stable" data-fr="Lent, stable">Slow, stable</td><td data-en="Fast, innovative" data-fr="Rapide, innovant">Fast, innovative</td></tr>
+              <tr><td data-en="<strong>Size</strong>" data-fr="<strong>Taille</strong>"><strong>Size</strong></td><td data-en="Full-featured" data-fr="Full-featured">Full-featured</td><td data-en="Lightweight" data-fr="Léger">Lightweight</td></tr>
+              <tr><td data-en="<strong>Use cases</strong>" data-fr="<strong>Cas d'usage</strong>"><strong>Use cases</strong></td><td data-en="Monoliths and services" data-fr="Monolithes et services">Monoliths and services</td><td data-en="Cloud-native apps" data-fr="Apps cloud-native">Cloud-native apps</td></tr>
+              <tr><td data-en="<strong>Governance</strong>" data-fr="<strong>Gouvernance</strong>"><strong>Governance</strong></td><td>Eclipse Foundation</td><td>Eclipse Foundation</td></tr>
             </tbody>
           </table>
         </div>
@@ -91,60 +93,60 @@
     </details>
 
     <details>
-      <summary>📦 Spécifications Jakarta EE</summary>
+      <summary data-en="📦 Jakarta EE Specifications" data-fr="📦 Spécifications Jakarta EE">📦 Jakarta EE Specifications</summary>
       <div class="slide-content">
-        <h3>Technologies Web</h3>
+        <h3 data-en="Web Technologies" data-fr="Technologies Web">Web Technologies</h3>
         <ul>
-          <li><strong>Jakarta Servlet</strong> — Gestion des requêtes/réponses HTTP</li>
-          <li><strong>Jakarta Server Pages (JSP)</strong> — Pages web dynamiques</li>
-          <li><strong>Jakarta Server Faces (JSF)</strong> — Framework UI orienté composants</li>
+          <li data-en="<strong>Jakarta Servlet</strong> — HTTP request/response handling" data-fr="<strong>Jakarta Servlet</strong> — Gestion des requêtes/réponses HTTP"><strong>Jakarta Servlet</strong> — HTTP request/response handling</li>
+          <li data-en="<strong>Jakarta Server Pages (JSP)</strong> — Dynamic web pages" data-fr="<strong>Jakarta Server Pages (JSP)</strong> — Pages web dynamiques"><strong>Jakarta Server Pages (JSP)</strong> — Dynamic web pages</li>
+          <li data-en="<strong>Jakarta Server Faces (JSF)</strong> — Component-oriented UI framework" data-fr="<strong>Jakarta Server Faces (JSF)</strong> — Framework UI orienté composants"><strong>Jakarta Server Faces (JSF)</strong> — Component-oriented UI framework</li>
         </ul>
-        <h3>Logique métier</h3>
+        <h3 data-en="Business Logic" data-fr="Logique métier">Business Logic</h3>
         <ul>
-          <li><strong>Jakarta CDI</strong> — Injection de dépendances</li>
-          <li><strong>Jakarta EJB</strong> — Composants métier</li>
+          <li data-en="<strong>Jakarta CDI</strong> — Dependency injection" data-fr="<strong>Jakarta CDI</strong> — Injection de dépendances"><strong>Jakarta CDI</strong> — Dependency injection</li>
+          <li data-en="<strong>Jakarta EJB</strong> — Business components" data-fr="<strong>Jakarta EJB</strong> — Composants métier"><strong>Jakarta EJB</strong> — Business components</li>
         </ul>
-        <h3>Persistance des données</h3>
+        <h3 data-en="Data Persistence" data-fr="Persistance des données">Data Persistence</h3>
         <ul>
-          <li><strong>Jakarta JPA</strong> — Mapping objet-relationnel</li>
-          <li><strong>Jakarta JTA</strong> — Gestion des transactions</li>
+          <li data-en="<strong>Jakarta JPA</strong> — Object-relational mapping" data-fr="<strong>Jakarta JPA</strong> — Mapping objet-relationnel"><strong>Jakarta JPA</strong> — Object-relational mapping</li>
+          <li data-en="<strong>Jakarta JTA</strong> — Transaction management" data-fr="<strong>Jakarta JTA</strong> — Gestion des transactions"><strong>Jakarta JTA</strong> — Transaction management</li>
         </ul>
       </div>
     </details>
 
     <details>
-      <summary>⚡ Spécifications MicroProfile</summary>
+      <summary data-en="⚡ MicroProfile Specifications" data-fr="⚡ Spécifications MicroProfile">⚡ MicroProfile Specifications</summary>
       <div class="slide-content">
-        <h3>Configuration</h3>
+        <h3 data-en="Configuration" data-fr="Configuration">Configuration</h3>
         <ul>
-          <li><strong>MP Config</strong> — Configuration externalisée, mise à jour dynamique</li>
+          <li data-en="<strong>MP Config</strong> — Externalised configuration, dynamic updates" data-fr="<strong>MP Config</strong> — Configuration externalisée, mise à jour dynamique"><strong>MP Config</strong> — Externalised configuration, dynamic updates</li>
         </ul>
-        <h3>Observabilité</h3>
+        <h3 data-en="Observability" data-fr="Observabilité">Observability</h3>
         <ul>
-          <li><strong>MP Health</strong> — Endpoints de santé</li>
-          <li><strong>MP Metrics</strong> — Métriques de l'application</li>
-          <li><strong>MP OpenTracing</strong> — Tracing distribué</li>
+          <li data-en="<strong>MP Health</strong> — Health endpoints" data-fr="<strong>MP Health</strong> — Endpoints de santé"><strong>MP Health</strong> — Health endpoints</li>
+          <li data-en="<strong>MP Metrics</strong> — Application metrics" data-fr="<strong>MP Metrics</strong> — Métriques de l'application"><strong>MP Metrics</strong> — Application metrics</li>
+          <li data-en="<strong>MP OpenTracing</strong> — Distributed tracing" data-fr="<strong>MP OpenTracing</strong> — Tracing distribué"><strong>MP OpenTracing</strong> — Distributed tracing</li>
         </ul>
-        <h3>Résilience</h3>
+        <h3 data-en="Resilience" data-fr="Résilience">Resilience</h3>
         <ul>
-          <li><strong>MP Fault Tolerance</strong> — Circuit breakers, retries, timeouts</li>
-          <li><strong>MP Rest Client</strong> — Clients REST type-safe</li>
+          <li data-en="<strong>MP Fault Tolerance</strong> — Circuit breakers, retries, timeouts" data-fr="<strong>MP Fault Tolerance</strong> — Circuit breakers, retries, timeouts"><strong>MP Fault Tolerance</strong> — Circuit breakers, retries, timeouts</li>
+          <li data-en="<strong>MP Rest Client</strong> — Type-safe REST clients" data-fr="<strong>MP Rest Client</strong> — Clients REST type-safe"><strong>MP Rest Client</strong> — Type-safe REST clients</li>
         </ul>
       </div>
     </details>
 
     <details>
-      <summary>🦅 Open Liberty — Le Runtime</summary>
+      <summary data-en="🦅 Open Liberty — The Runtime" data-fr="🦅 Open Liberty — Le Runtime">🦅 Open Liberty — The Runtime</summary>
       <div class="slide-content">
-        <p><strong>Open Liberty</strong> est le runtime open-source d'IBM pour Jakarta EE et MicroProfile.</p>
+        <p data-en="<strong>Open Liberty</strong> provides full MicroProfile support and is the reference implementation for many specifications." data-fr="<strong>Open Liberty</strong> offre une prise en charge complète de MicroProfile et est l'implémentation de référence de nombreuses spécifications."><strong>Open Liberty</strong> provides full MicroProfile support and is the reference implementation for many specifications.</p>
         <div class="cds--data-table-container">
           <table class="cds--data-table">
-            <thead><tr><th>Fonctionnalité</th><th>Open Liberty</th><th>WildFly</th><th>Payara</th></tr></thead>
+            <thead><tr><th data-en="Feature" data-fr="Fonctionnalité">Feature</th><th>Open Liberty</th><th>WildFly</th><th>Payara</th></tr></thead>
             <tbody>
-              <tr><td><strong>Démarrage</strong></td><td>⚡ Très rapide</td><td>Rapide</td><td>Moyen</td></tr>
-              <tr><td><strong>Mémoire</strong></td><td>💚 Faible</td><td>Moyen</td><td>Moyen</td></tr>
-              <tr><td><strong>MicroProfile</strong></td><td>✅ Complet</td><td>Partiel</td><td>Complet</td></tr>
-              <tr><td><strong>Container-ready</strong></td><td>✅ Excellent</td><td>Bon</td><td>Bon</td></tr>
+              <tr><td data-en="<strong>Startup</strong>" data-fr="<strong>Démarrage</strong>"><strong>Startup</strong></td><td data-en="⚡ Very fast" data-fr="⚡ Très rapide">⚡ Very fast</td><td data-en="Fast" data-fr="Rapide">Fast</td><td data-en="Medium" data-fr="Moyen">Medium</td></tr>
+              <tr><td data-en="<strong>Memory</strong>" data-fr="<strong>Mémoire</strong>"><strong>Memory</strong></td><td data-en="💚 Low" data-fr="💚 Faible">💚 Low</td><td data-en="Medium" data-fr="Moyen">Medium</td><td data-en="Medium" data-fr="Moyen">Medium</td></tr>
+              <tr><td>MicroProfile</td><td data-en="✅ Full" data-fr="✅ Complet">✅ Full</td><td data-en="Partial" data-fr="Partiel">Partial</td><td data-en="✅ Full" data-fr="✅ Complet">✅ Full</td></tr>
+              <tr><td data-en="<strong>Container-ready</strong>" data-fr="<strong>Container-ready</strong>"><strong>Container-ready</strong></td><td data-en="✅ Excellent" data-fr="✅ Excellent">✅ Excellent</td><td data-en="Good" data-fr="Bon">Good</td><td data-en="Good" data-fr="Bon">Good</td></tr>
             </tbody>
           </table>
         </div>
@@ -152,48 +154,48 @@
     </details>
 
     <details>
-      <summary>🐳 Podman vs Docker</summary>
+      <summary data-en="🐳 Podman vs Docker" data-fr="🐳 Podman vs Docker">🐳 Podman vs Docker</summary>
       <div class="slide-content">
         <div class="cds--data-table-container">
           <table class="cds--data-table">
-            <thead><tr><th>Fonctionnalité</th><th>Podman</th><th>Docker</th></tr></thead>
+            <thead><tr><th data-en="Feature" data-fr="Fonctionnalité">Feature</th><th>Podman</th><th>Docker</th></tr></thead>
             <tbody>
-              <tr><td><strong>Daemon</strong></td><td>❌ Non</td><td>✅ Oui</td></tr>
-              <tr><td><strong>Root requis</strong></td><td>❌ Non</td><td>⚠️ Souvent</td></tr>
-              <tr><td><strong>Compatibilité CLI</strong></td><td>✅ Compatible Docker</td><td>N/A</td></tr>
-              <tr><td><strong>Systemd</strong></td><td>✅ Natif</td><td>⚠️ Limité</td></tr>
-              <tr><td><strong>Sécurité</strong></td><td>✅ Meilleure</td><td>Bonne</td></tr>
+              <tr><td data-en="<strong>Daemon</strong>" data-fr="<strong>Daemon</strong>"><strong>Daemon</strong></td><td data-en="❌ No" data-fr="❌ Non">❌ No</td><td data-en="✅ Yes" data-fr="✅ Oui">✅ Yes</td></tr>
+              <tr><td data-en="<strong>Root required</strong>" data-fr="<strong>Root requis</strong>"><strong>Root required</strong></td><td data-en="❌ No" data-fr="❌ Non">❌ No</td><td data-en="⚠️ Often" data-fr="⚠️ Souvent">⚠️ Often</td></tr>
+              <tr><td data-en="<strong>CLI compatibility</strong>" data-fr="<strong>Compatibilité CLI</strong>"><strong>CLI compatibility</strong></td><td data-en="✅ Docker-compatible" data-fr="✅ Compatible Docker">✅ Docker-compatible</td><td>N/A</td></tr>
+              <tr><td>Systemd</td><td data-en="✅ Native" data-fr="✅ Natif">✅ Native</td><td data-en="⚠️ Limited" data-fr="⚠️ Limité">⚠️ Limited</td></tr>
+              <tr><td data-en="<strong>Security</strong>" data-fr="<strong>Sécurité</strong>"><strong>Security</strong></td><td data-en="✅ Better" data-fr="✅ Meilleure">✅ Better</td><td data-en="Good" data-fr="Bonne">Good</td></tr>
             </tbody>
           </table>
         </div>
-        <p><strong>Note :</strong> <code>alias docker=podman</code> rend la transition transparente !</p>
+        <p data-en="<strong>Note:</strong> <code>alias docker=podman</code> makes the transition transparent!" data-fr="<strong>Note :</strong> <code>alias docker=podman</code> rend la transition transparente !"><strong>Note:</strong> <code>alias docker=podman</code> makes the transition transparent!</p>
       </div>
     </details>
 
     <details>
-      <summary>🏦 Architecture de l'Application Bancaire</summary>
+      <summary data-en="🏦 Banking Application Architecture" data-fr="🏦 Architecture de l'Application Bancaire">🏦 Banking Application Architecture</summary>
       <div class="slide-content">
-        <img src="../../images/01-intro-jakartaee-microprofile-diagram-2.png" alt="Architecture bancaire"/>
-        <p>Architecture en couches avec MicroProfile — Client → JAX-RS → CDI Services → JPA → PostgreSQL, avec MP Config, Health et Metrics en couche transverse.</p>
+        <img src="../../images/01-intro-jakartaee-microprofile-diagram-2.png" alt="Banking architecture" data-en="Banking architecture" data-fr="Architecture bancaire"/>
+        <p data-en="Layered architecture with MicroProfile — Client → JAX-RS → CDI Services → JPA → PostgreSQL, with MP Config, Health and Metrics as a cross-cutting layer." data-fr="Architecture en couches avec MicroProfile — Client → JAX-RS → CDI Services → JPA → PostgreSQL, avec MP Config, Health et Metrics en couche transverse.">Layered architecture with MicroProfile — Client → JAX-RS → CDI Services → JPA → PostgreSQL, with MP Config, Health and Metrics as a cross-cutting layer.</p>
       </div>
     </details>
 
     <details>
-      <summary>📊 Feuille de route du cours</summary>
+      <summary data-en="📊 Course Roadmap" data-fr="📊 Feuille de route du cours">📊 Course Roadmap</summary>
       <div class="slide-content">
-        <h3>Semaine 1 : Fondations</h3>
+        <h3 data-en="Week 1: Foundations" data-fr="Semaine 1 : Fondations">Week 1: Foundations</h3>
         <ol>
-          <li><strong>Aujourd'hui :</strong> Jakarta EE, MicroProfile &amp; Open Liberty ✅</li>
-          <li><strong>Suivant :</strong> Servlets et JSP (3h)</li>
-          <li><strong>Puis :</strong> JPA et Base de données (4h)</li>
-          <li><strong>Enfin :</strong> CDI et couche service (3h)</li>
+          <li data-en="<strong>Today:</strong> Jakarta EE, MicroProfile &amp; Open Liberty ✅" data-fr="<strong>Aujourd'hui :</strong> Jakarta EE, MicroProfile &amp; Open Liberty ✅"><strong>Today:</strong> Jakarta EE, MicroProfile &amp; Open Liberty ✅</li>
+          <li data-en="<strong>Next:</strong> Servlets and JSP (3h)" data-fr="<strong>Suivant :</strong> Servlets et JSP (3h)"><strong>Next:</strong> Servlets and JSP (3h)</li>
+          <li data-en="<strong>Then:</strong> JPA and Database (4h)" data-fr="<strong>Puis :</strong> JPA et Base de données (4h)"><strong>Then:</strong> JPA and Database (4h)</li>
+          <li data-en="<strong>Finally:</strong> CDI and service layer (3h)" data-fr="<strong>Enfin :</strong> CDI et couche service (3h)"><strong>Finally:</strong> CDI and service layer (3h)</li>
         </ol>
-        <h3>Semaine 2 : Cloud-Native &amp; Microservices</h3>
+        <h3 data-en="Week 2: Cloud-Native &amp; Microservices" data-fr="Semaine 2 : Cloud-Native &amp; Microservices">Week 2: Cloud-Native &amp; Microservices</h3>
         <ol start="5">
-          <li>JAX-RS et APIs REST + MP Rest Client (3h)</li>
-          <li>Domain-Driven Design (3h)</li>
-          <li>Architecture Hexagonale + MP Config (2h)</li>
-          <li>Microservices avec MP Health, Metrics, Fault Tolerance (4h)</li>
+          <li data-en="JAX-RS and REST APIs + MP Rest Client (3h)" data-fr="JAX-RS et APIs REST + MP Rest Client (3h)">JAX-RS and REST APIs + MP Rest Client (3h)</li>
+          <li data-en="Domain-Driven Design (3h)" data-fr="Domain-Driven Design (3h)">Domain-Driven Design (3h)</li>
+          <li data-en="Hexagonal Architecture + MP Config (2h)" data-fr="Architecture Hexagonale + MP Config (2h)">Hexagonal Architecture + MP Config (2h)</li>
+          <li data-en="Microservices with MP Health, Metrics, Fault Tolerance (4h)" data-fr="Microservices avec MP Health, Metrics, Fault Tolerance (4h)">Microservices with MP Health, Metrics, Fault Tolerance (4h)</li>
         </ol>
       </div>
     </details>
@@ -201,5 +203,6 @@
   </main>
 </div>
 <footer class="cds--footer">Made with IBM Bob &nbsp;·&nbsp; © 2026 Olivier Planson &nbsp;·&nbsp; ESIPE — Jakarta EE &amp; Microservices</footer>
+<script src="../assets/language-toggle.js"></script>
 </body>
 </html>

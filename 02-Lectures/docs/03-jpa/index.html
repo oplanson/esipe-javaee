@@ -1,29 +1,31 @@
 <!-- © Copyright 2026 Olivier Planson. All rights reserved. Reproduction prohibited. Made with IBM Bob. -->
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="en">
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-  <title>Cours 03 — JPA &amp; Intégration Base de données</title>
+  <title>Course 03 — JPA &amp; Database Integration</title>
   <link rel="stylesheet" href="../assets/carbon.css"/>
 </head>
 <body>
 <header class="cds--header">
-  <a class="cds--header__name" href="index.html">JPA &amp; Base de données<span>Cours Jakarta EE</span></a>
-  <a class="cds--header__back" href="../index.html">← Tous les Cours</a>
+  <a class="cds--header__name" href="index.html" data-en="JPA &amp; Database" data-fr="JPA &amp; Base de données"><span data-en="Jakarta EE Course" data-fr="Cours Jakarta EE">Jakarta EE Course</span></a>
+  <button class="lang-toggle-btn" id="lang-toggle">FR</button>
+  <a class="cds--header__back" href="../index.html" data-en="← All Courses" data-fr="← Tous les Cours">← All Courses</a>
 </header>
 <div class="cds--shell">
   <nav class="cds--side-nav">
-    <p class="cds--side-nav__section-title">Cours 03</p>
-    <a class="cds--side-nav__link active" href="index.html">⊙ Vue d'ensemble</a>
-    <a class="cds--side-nav__link" href="slides.html">☰ Contenu du cours</a>
-    <a class="cds--side-nav__link" href="concepts.html">◈ Concepts clés</a>
-    <a class="cds--side-nav__link" href="code.html">⟨/⟩ Exemples de code</a>
+    <p class="cds--side-nav__section-title" data-en="Course 03" data-fr="Cours 03">Course 03</p>
+    <a class="cds--side-nav__link active" href="index.html" data-en="⊙ Overview" data-fr="⊙ Vue d'ensemble">⊙ Overview</a>
+    <a class="cds--side-nav__link" href="slides.html" data-en="☰ Course Content" data-fr="☰ Contenu du cours">☰ Course Content</a>
+    <a class="cds--side-nav__link" href="concepts.html" data-en="◈ Key Concepts" data-fr="◈ Concepts clés">◈ Key Concepts</a>
+    <a class="cds--side-nav__link" href="code.html" data-en="⟨/⟩ Code Examples" data-fr="⟨/⟩ Exemples de code">⟨/⟩ Code Examples</a>
+    <a class="cds--side-nav__lang-toggle">FR</a>
   </nav>
   <main class="cds--content">
-    <div class="breadcrumb"><a href="../index.html">Cours</a> › Cours 03</div>
-    <h1>JPA &amp; Intégration Base de données</h1>
-    <p class="page-lead">Jakarta Persistence API — Durée : 4h · Instructeur : Olivier Planson</p>
+    <div class="breadcrumb"><a href="../index.html" data-en="Courses" data-fr="Cours">Courses</a> › <span data-en="Course 03" data-fr="Cours 03">Course 03</span></div>
+    <h1 data-en="JPA &amp; Database Integration" data-fr="JPA &amp; Intégration Base de données">JPA &amp; Database Integration</h1>
+    <p class="page-lead" data-en="Jakarta Persistence API — Duration: 4h · Instructor: Olivier Planson" data-fr="Jakarta Persistence API — Durée : 4h · Instructeur : Olivier Planson">Jakarta Persistence API — Duration: 4h · Instructor: Olivier Planson</p>
     <div class="tag-stack">
       <span class="cds--tag cds--tag--blue">JPA 3.1</span>
       <span class="cds--tag cds--tag--blue">JPQL</span>
@@ -32,34 +34,35 @@
       <span class="cds--tag cds--tag--teal">EntityManager</span>
       <span class="cds--tag cds--tag--warm-gray">Migrations</span>
     </div>
-    <h2>Objectifs pédagogiques</h2>
+    <h2 data-en="Learning Objectives" data-fr="Objectifs pédagogiques">Learning Objectives</h2>
     <table class="objectives-table"><tbody>
-      <tr><td>✅</td><td>Comprendre le mapping Objet-Relationnel (ORM)</td></tr>
-      <tr><td>✅</td><td>Créer et configurer des entités JPA</td></tr>
-      <tr><td>✅</td><td>Définir les relations entre entités (1-1, 1-N, N-N)</td></tr>
-      <tr><td>✅</td><td>Écrire des requêtes JPQL et Criteria API</td></tr>
-      <tr><td>✅</td><td>Gérer les transactions efficacement</td></tr>
-      <tr><td>✅</td><td>Gérer les migrations de base de données</td></tr>
-      <tr><td>✅</td><td>Utiliser JNDI pour les ressources</td></tr>
+      <tr><td>✅</td><td data-en="Understand Object-Relational Mapping (ORM)" data-fr="Comprendre le mapping Objet-Relationnel (ORM)">Understand Object-Relational Mapping (ORM)</td></tr>
+      <tr><td>✅</td><td data-en="Create and configure JPA entities" data-fr="Créer et configurer des entités JPA">Create and configure JPA entities</td></tr>
+      <tr><td>✅</td><td data-en="Define relationships between entities (1-1, 1-N, N-N)" data-fr="Définir les relations entre entités (1-1, 1-N, N-N)">Define relationships between entities (1-1, 1-N, N-N)</td></tr>
+      <tr><td>✅</td><td data-en="Write JPQL and Criteria API queries" data-fr="Écrire des requêtes JPQL et Criteria API">Write JPQL and Criteria API queries</td></tr>
+      <tr><td>✅</td><td data-en="Manage transactions effectively (JTA vs resource-local)" data-fr="Gérer les transactions efficacement (JTA vs resource-local)">Manage transactions effectively (JTA vs resource-local)</td></tr>
+      <tr><td>✅</td><td data-en="Manage database schema migrations" data-fr="Gérer les migrations de base de données">Manage database schema migrations</td></tr>
+      <tr><td>✅</td><td data-en="Use JNDI for resources" data-fr="Utiliser JNDI pour les ressources">Use JNDI for resources</td></tr>
     </tbody></table>
-    <h2>Plan du cours</h2>
+    <h2 data-en="Course Outline" data-fr="Plan du cours">Course Outline</h2>
     <ol class="course-plan">
-      <li>ORM et architecture JPA</li>
-      <li>Annotations de base (@Entity, @Table, @Id)</li>
-      <li>Relations entre entités</li>
-      <li>JPQL — requêtes orientées objets</li>
-      <li>Criteria API — requêtes dynamiques</li>
-      <li>Gestion des transactions (CMT et BMT)</li>
-      <li>Migrations avec Flyway</li>
-      <li>Configuration JNDI et DataSource</li>
+      <li data-en="ORM and JPA architecture" data-fr="ORM et architecture JPA">ORM and JPA architecture</li>
+      <li data-en="Basic annotations (@Entity, @Table, @Id)" data-fr="Annotations de base (@Entity, @Table, @Id)">Basic annotations (@Entity, @Table, @Id)</li>
+      <li data-en="Relationships between entities" data-fr="Relations entre entités">Relationships between entities</li>
+      <li data-en="JPQL — object-oriented queries" data-fr="JPQL — requêtes orientées objets">JPQL — object-oriented queries</li>
+      <li data-en="Criteria API — dynamic queries" data-fr="Criteria API — requêtes dynamiques">Criteria API — dynamic queries</li>
+      <li data-en="Transaction management (JTA and resource-local)" data-fr="Gestion des transactions (JTA et resource-local)">Transaction management (JTA and resource-local)</li>
+      <li data-en="Migrations with Flyway" data-fr="Migrations avec Flyway">Migrations with Flyway</li>
+      <li data-en="JNDI and DataSource configuration" data-fr="Configuration JNDI et DataSource">JNDI and DataSource configuration</li>
     </ol>
     <div class="tile-grid">
-      <a class="tile-link" href="slides.html"><div class="cds--tile"><h3>☰ Contenu du cours</h3><p>ORM, annotations JPA, relations, transactions et JNDI avec diagrammes.</p></div></a>
-      <a class="tile-link" href="concepts.html"><div class="cds--tile"><h3>◈ Concepts clés</h3><p>JPA vs JDBC, fetch types, cascade, états d'entité, CMT vs BMT, glossaire.</p></div></a>
-      <a class="tile-link" href="code.html"><div class="cds--tile"><h3>⟨/⟩ Exemples de code</h3><p>Entités JPA, relations, JPQL, Criteria API, Repository, persistence.xml, Flyway.</p></div></a>
+      <a class="tile-link" href="slides.html"><div class="cds--tile"><h3 data-en="☰ Course Content" data-fr="☰ Contenu du cours">☰ Course Content</h3><p data-en="ORM, JPA annotations, relationships, transactions and JNDI with diagrams." data-fr="ORM, annotations JPA, relations, transactions et JNDI avec diagrammes.">ORM, JPA annotations, relationships, transactions and JNDI with diagrams.</p></div></a>
+      <a class="tile-link" href="concepts.html"><div class="cds--tile"><h3 data-en="◈ Key Concepts" data-fr="◈ Concepts clés">◈ Key Concepts</h3><p data-en="JPA vs JDBC, fetch types, cascade, entity states, JTA vs resource-local, glossary." data-fr="JPA vs JDBC, fetch types, cascade, états d'entité, JTA vs resource-local, glossaire.">JPA vs JDBC, fetch types, cascade, entity states, JTA vs resource-local, glossary.</p></div></a>
+      <a class="tile-link" href="code.html"><div class="cds--tile"><h3 data-en="⟨/⟩ Code Examples" data-fr="⟨/⟩ Exemples de code">⟨/⟩ Code Examples</h3><p data-en="JPA entities, relationships, JPQL, Criteria API, Repository, persistence.xml, Flyway." data-fr="Entités JPA, relations, JPQL, Criteria API, Repository, persistence.xml, Flyway.">JPA entities, relationships, JPQL, Criteria API, Repository, persistence.xml, Flyway.</p></div></a>
     </div>
   </main>
 </div>
-<footer class="cds--footer">Made with IBM Bob &nbsp;·&nbsp; © 2026 Olivier Planson &nbsp;·&nbsp; ESIPE — Jakarta EE &amp; Microservices</footer>
+<footer class="cds--footer" data-en="Made with IBM Bob · © 2026 Olivier Planson · ESIPE — Jakarta EE &amp; Microservices" data-fr="Réalisé avec IBM Bob · © 2026 Olivier Planson · ESIPE — Jakarta EE &amp; Microservices">Made with IBM Bob &nbsp;·&nbsp; © 2026 Olivier Planson &nbsp;·&nbsp; ESIPE — Jakarta EE &amp; Microservices</footer>
+<script src="../assets/language-toggle.js"></script>
 </body>
 </html>

@@ -1,6 +1,6 @@
 <!-- © Copyright 2026 Olivier Planson. All rights reserved. Reproduction prohibited. Made with IBM Bob. -->
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="en">
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
@@ -9,21 +9,23 @@
 </head>
 <body>
 <header class="cds--header">
-  <a class="cds--header__name" href="index.html">Servlets &amp; JSP<span>Cours Jakarta EE</span></a>
-  <a class="cds--header__back" href="../index.html">← Tous les Cours</a>
+  <button class="lang-toggle-btn" id="lang-toggle">FR</button>
+  <a class="cds--header__name" href="index.html" data-en="Servlets &amp; JSP<span>Jakarta EE Course</span>" data-fr="Servlets &amp; JSP<span>Cours Jakarta EE</span>">Servlets &amp; JSP<span>Jakarta EE Course</span></a>
+  <a class="cds--header__back" href="../index.html" data-en="← All Courses" data-fr="← Tous les Cours">← All Courses</a>
 </header>
 <div class="cds--shell">
   <nav class="cds--side-nav">
-    <p class="cds--side-nav__section-title">Cours 02</p>
-    <a class="cds--side-nav__link active" href="index.html">⊙ Vue d'ensemble</a>
-    <a class="cds--side-nav__link" href="slides.html">☰ Contenu du cours</a>
-    <a class="cds--side-nav__link" href="concepts.html">◈ Concepts clés</a>
-    <a class="cds--side-nav__link" href="code.html">⟨/⟩ Exemples de code</a>
+    <p class="cds--side-nav__section-title" data-en="Course 02" data-fr="Cours 02">Course 02</p>
+    <a class="cds--side-nav__link active" href="index.html" data-en="⊙ Overview" data-fr="⊙ Vue d'ensemble">⊙ Overview</a>
+    <a class="cds--side-nav__link" href="slides.html" data-en="☰ Lecture Content" data-fr="☰ Contenu du cours">☰ Lecture Content</a>
+    <a class="cds--side-nav__link" href="concepts.html" data-en="◈ Key Concepts" data-fr="◈ Concepts clés">◈ Key Concepts</a>
+    <a class="cds--side-nav__link" href="code.html" data-en="⟨/⟩ Code Examples" data-fr="⟨/⟩ Exemples de code">⟨/⟩ Code Examples</a>
+    <a class="cds--side-nav__lang-toggle">FR</a>
   </nav>
   <main class="cds--content">
-    <div class="breadcrumb"><a href="../index.html">Cours</a> › Cours 02</div>
-    <h1>Servlets, JSP &amp; MicroProfile</h1>
-    <p class="page-lead">Construction d'applications web dynamiques — Durée : 3h · Instructeur : Olivier Planson</p>
+    <div class="breadcrumb"><a href="../index.html" data-en="Courses" data-fr="Cours">Courses</a> › <span data-en="Course 02" data-fr="Cours 02">Course 02</span></div>
+    <h1 data-en="Servlets, JSP &amp; MicroProfile" data-fr="Servlets, JSP et MicroProfile">Servlets, JSP &amp; MicroProfile</h1>
+    <p class="page-lead" data-en="Building dynamic web applications — Duration: 3h · Instructor: Olivier Planson" data-fr="Construction d'applications web dynamiques — Durée : 3h · Instructeur : Olivier Planson">Building dynamic web applications — Duration: 3h · Instructor: Olivier Planson</p>
     <div class="tag-stack">
       <span class="cds--tag cds--tag--blue">Servlet 6.0</span>
       <span class="cds--tag cds--tag--blue">JSP</span>
@@ -33,35 +35,36 @@
       <span class="cds--tag cds--tag--purple">MP Config</span>
       <span class="cds--tag cds--tag--purple">MP Health</span>
     </div>
-    <h2>Objectifs pédagogiques</h2>
+    <h2 data-en="Learning Objectives" data-fr="Objectifs pédagogiques">Learning Objectives</h2>
     <table class="objectives-table"><tbody>
-      <tr><td>✅</td><td>Comprendre le cycle de vie complet d'un servlet</td></tr>
-      <tr><td>✅</td><td>Créer des pages web dynamiques avec JSP et JSTL</td></tr>
-      <tr><td>✅</td><td>Implémenter le pattern MVC dans les applications web</td></tr>
-      <tr><td>✅</td><td>Utiliser MicroProfile Config dans la couche web</td></tr>
-      <tr><td>✅</td><td>Ajouter des health checks pour les composants web</td></tr>
-      <tr><td>✅</td><td>Construire une interface web bancaire complète</td></tr>
+      <tr><td>✅</td><td data-en="Understand the complete servlet lifecycle" data-fr="Comprendre le cycle de vie complet d'un servlet">Understand the complete servlet lifecycle</td></tr>
+      <tr><td>✅</td><td data-en="Create dynamic web pages with JSP and JSTL" data-fr="Créer des pages web dynamiques avec JSP et JSTL">Create dynamic web pages with JSP and JSTL</td></tr>
+      <tr><td>✅</td><td data-en="Implement the MVC pattern in web applications" data-fr="Implémenter le pattern MVC dans les applications web">Implement the MVC pattern in web applications</td></tr>
+      <tr><td>✅</td><td data-en="Use MicroProfile Config in the web layer" data-fr="Utiliser MicroProfile Config dans la couche web">Use MicroProfile Config in the web layer</td></tr>
+      <tr><td>✅</td><td data-en="Add health checks for web components" data-fr="Ajouter des health checks pour les composants web">Add health checks for web components</td></tr>
+      <tr><td>✅</td><td data-en="Build a complete banking web interface" data-fr="Construire une interface web bancaire complète">Build a complete banking web interface</td></tr>
     </tbody></table>
-    <h2>Plan du cours</h2>
+    <h2 data-en="Course Outline" data-fr="Plan du cours">Course Outline</h2>
     <ol class="course-plan">
-      <li>Cycle de vie des Servlets — init, service, destroy</li>
-      <li>Méthodes HTTP — doGet, doPost, doPut, doDelete</li>
-      <li>Configuration des Servlets — annotations et web.xml</li>
-      <li>Objets Request et Response</li>
-      <li>JavaServer Pages (JSP) — syntaxe, EL, JSTL</li>
-      <li>Pattern MVC — Model, View, Controller</li>
-      <li>MicroProfile Config dans la couche web</li>
-      <li>Health Checks pour les applications web</li>
-      <li>Session HTTP — gestion d'état, sécurité</li>
-      <li>Filtres et Listeners Servlet</li>
+      <li data-en="Servlet lifecycle — init, service, destroy" data-fr="Cycle de vie des Servlets — init, service, destroy">Servlet lifecycle — init, service, destroy</li>
+      <li data-en="HTTP methods — doGet, doPost, doPut, doDelete" data-fr="Méthodes HTTP — doGet, doPost, doPut, doDelete">HTTP methods — doGet, doPost, doPut, doDelete</li>
+      <li data-en="Servlet configuration — annotations and web.xml" data-fr="Configuration des Servlets — annotations et web.xml">Servlet configuration — annotations and web.xml</li>
+      <li data-en="Request and Response objects" data-fr="Objets Request et Response">Request and Response objects</li>
+      <li data-en="JavaServer Pages (JSP) — syntax, EL, JSTL" data-fr="JavaServer Pages (JSP) — syntaxe, EL, JSTL">JavaServer Pages (JSP) — syntax, EL, JSTL</li>
+      <li data-en="MVC pattern — Model, View, Controller" data-fr="Pattern MVC — Model, View, Controller">MVC pattern — Model, View, Controller</li>
+      <li data-en="MicroProfile Config in the web layer" data-fr="MicroProfile Config dans la couche web">MicroProfile Config in the web layer</li>
+      <li data-en="Health Checks for web applications" data-fr="Health Checks pour les applications web">Health Checks for web applications</li>
+      <li data-en="HTTP Session — state management, security" data-fr="Session HTTP — gestion d'état, sécurité">HTTP Session — state management, security</li>
+      <li data-en="Servlet Filters and Listeners" data-fr="Filtres et Listeners Servlet">Servlet Filters and Listeners</li>
     </ol>
     <div class="tile-grid">
-      <a class="tile-link" href="slides.html"><div class="cds--tile"><h3>☰ Contenu du cours</h3><p>Cycle de vie, JSP, MVC, Filtres, Listeners avec images de diagrammes.</p></div></a>
-      <a class="tile-link" href="concepts.html"><div class="cds--tile"><h3>◈ Concepts clés</h3><p>Servlet vs JSP, MVC pattern, JSTL vs scriptlets, Filters ordering.</p></div></a>
-      <a class="tile-link" href="code.html"><div class="cds--tile"><h3>⟨/⟩ Exemples de code</h3><p>Servlets complets, JSP avec JSTL, Filtres, Health checks, session.</p></div></a>
+      <a class="tile-link" href="slides.html"><div class="cds--tile"><h3 data-en="☰ Lecture Content" data-fr="☰ Contenu du cours">☰ Lecture Content</h3><p data-en="Lifecycle, JSP, MVC, Filters, Listeners with diagram images." data-fr="Cycle de vie, JSP, MVC, Filtres, Listeners avec images de diagrammes.">Lifecycle, JSP, MVC, Filters, Listeners with diagram images.</p></div></a>
+      <a class="tile-link" href="concepts.html"><div class="cds--tile"><h3 data-en="◈ Key Concepts" data-fr="◈ Concepts clés">◈ Key Concepts</h3><p data-en="Servlet vs JSP, MVC pattern, JSTL vs scriptlets, Filters ordering." data-fr="Servlet vs JSP, MVC pattern, JSTL vs scriptlets, Filters ordering.">Servlet vs JSP, MVC pattern, JSTL vs scriptlets, Filters ordering.</p></div></a>
+      <a class="tile-link" href="code.html"><div class="cds--tile"><h3 data-en="⟨/⟩ Code Examples" data-fr="⟨/⟩ Exemples de code">⟨/⟩ Code Examples</h3><p data-en="Complete Servlets, JSP with JSTL, Filters, Health checks, session." data-fr="Servlets complets, JSP avec JSTL, Filtres, Health checks, session.">Complete Servlets, JSP with JSTL, Filters, Health checks, session.</p></div></a>
     </div>
   </main>
 </div>
 <footer class="cds--footer">Made with IBM Bob &nbsp;·&nbsp; © 2026 Olivier Planson &nbsp;·&nbsp; ESIPE — Jakarta EE &amp; Microservices</footer>
+<script src="../assets/language-toggle.js"></script>
 </body>
 </html>

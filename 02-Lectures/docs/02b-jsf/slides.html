@@ -1,62 +1,64 @@
 <!-- © Copyright 2026 Olivier Planson. All rights reserved. Reproduction prohibited. Made with IBM Bob. -->
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="en">
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-  <title>Cours 02b — Contenu du cours</title>
+  <title>Course 02b — Lecture Content</title>
   <link rel="stylesheet" href="../assets/carbon.css"/>
 </head>
 <body>
 <header class="cds--header">
-  <a class="cds--header__name" href="index.html">JSF — JavaServer Faces<span>Cours Jakarta EE</span></a>
-  <a class="cds--header__back" href="../index.html">← Tous les Cours</a>
+  <a class="cds--header__name" href="index.html" data-en="JSF — JavaServer Faces" data-fr="JSF — JavaServer Faces">JSF — JavaServer Faces<span data-en="Jakarta EE Course" data-fr="Cours Jakarta EE">Jakarta EE Course</span></a>
+  <button class="lang-toggle-btn" id="lang-toggle">FR</button>
+  <a class="cds--header__back" href="../index.html" data-en="← All Courses" data-fr="← Tous les Cours">← All Courses</a>
 </header>
 <div class="cds--shell">
   <nav class="cds--side-nav">
-    <p class="cds--side-nav__section-title">Cours 02b</p>
-    <a class="cds--side-nav__link" href="index.html">⊙ Vue d'ensemble</a>
-    <a class="cds--side-nav__link active" href="slides.html">☰ Contenu du cours</a>
-    <a class="cds--side-nav__link" href="concepts.html">◈ Concepts clés</a>
-    <a class="cds--side-nav__link" href="code.html">⟨/⟩ Exemples de code</a>
+    <p class="cds--side-nav__section-title" data-en="Course 02b" data-fr="Cours 02b">Course 02b</p>
+    <a class="cds--side-nav__link" href="index.html" data-en="⊙ Overview" data-fr="⊙ Vue d'ensemble">⊙ Overview</a>
+    <a class="cds--side-nav__link active" href="slides.html" data-en="☰ Lecture Content" data-fr="☰ Contenu du cours">☰ Lecture Content</a>
+    <a class="cds--side-nav__link" href="concepts.html" data-en="◈ Key Concepts" data-fr="◈ Concepts clés">◈ Key Concepts</a>
+    <a class="cds--side-nav__link" href="code.html" data-en="⟨/⟩ Code Examples" data-fr="⟨/⟩ Exemples de code">⟨/⟩ Code Examples</a>
+    <a class="cds--side-nav__lang-toggle">FR</a>
   </nav>
   <main class="cds--content">
-    <div class="breadcrumb"><a href="../index.html">Cours</a> › <a href="index.html">Cours 02b</a> › Contenu</div>
-    <h1>Contenu du cours</h1>
-    <p class="page-lead">Toutes les sections — cliquez sur un titre pour développer.</p>
+    <div class="breadcrumb"><a href="../index.html" data-en="Courses" data-fr="Cours">Courses</a> › <a href="index.html" data-en="Course 02b" data-fr="Cours 02b">Course 02b</a> › <span data-en="Content" data-fr="Contenu">Content</span></div>
+    <h1 data-en="Lecture Content" data-fr="Contenu du cours">Lecture Content</h1>
+    <p class="page-lead" data-en="All sections — click a title to expand." data-fr="Toutes les sections — cliquez sur un titre pour développer.">All sections — click a title to expand.</p>
 
     <details open>
-      <summary>🏗️ Architecture JSF et Cycle de vie</summary>
+      <summary data-en="🏗️ JSF Architecture and Lifecycle" data-fr="🏗️ Architecture JSF et Cycle de vie">🏗️ JSF Architecture and Lifecycle</summary>
       <div class="slide-content">
-        <p>JSF (<strong>JavaServer Faces</strong>) est un framework MVC orienté composants pour la construction d'interfaces utilisateur web en Java EE/Jakarta EE.</p>
-        <img src="../../images/02b-jsf-javaserver-faces-diagram-1.png" alt="JSF Lifecycle Diagram"/>
-        <h3>Les 6 phases du cycle de vie JSF :</h3>
+        <p data-en="JSF (JavaServer Faces) is a component-oriented MVC framework for building web user interfaces in Java EE/Jakarta EE." data-fr="JSF (JavaServer Faces) est un framework MVC orienté composants pour la construction d'interfaces utilisateur web en Java EE/Jakarta EE.">JSF (<strong>JavaServer Faces</strong>) is a component-oriented MVC framework for building web user interfaces in Java EE/Jakarta EE.</p>
+        <img src="../../images/02b-jsf-javaserver-faces-diagram-1.png" alt="JSF Lifecycle Diagram" data-en-alt="JSF Lifecycle Diagram" data-fr-alt="Diagramme du cycle de vie JSF"/>
+        <h3 data-en="The 6 phases of the JSF lifecycle:" data-fr="Les 6 phases du cycle de vie JSF :">The 6 phases of the JSF lifecycle:</h3>
         <ol>
-          <li><strong>Restore View</strong> — reconstruit ou crée l'arbre de composants (UIViewRoot) pour la requête courante</li>
-          <li><strong>Apply Request Values</strong> — chaque composant extrait et stocke sa valeur depuis les paramètres de la requête</li>
-          <li><strong>Process Validations</strong> — les validateurs et convertisseurs sont exécutés sur les valeurs soumises ; les erreurs sont enregistrées</li>
-          <li><strong>Update Model Values</strong> — les valeurs validées sont propagées vers les propriétés des Managed Beans via les ValueExpressions</li>
-          <li><strong>Invoke Application</strong> — les action listeners et les méthodes d'action (ex : commandButton) sont invoqués</li>
-          <li><strong>Render Response</strong> — la vue est rendue (HTML généré) et envoyée au navigateur</li>
+          <li data-en="Restore View — rebuilds or creates the component tree (UIViewRoot) for the current request" data-fr="Restore View — reconstruit ou crée l'arbre de composants (UIViewRoot) pour la requête courante"><strong>Restore View</strong> — rebuilds or creates the component tree (UIViewRoot) for the current request</li>
+          <li data-en="Apply Request Values — each component extracts and stores its value from the request parameters" data-fr="Apply Request Values — chaque composant extrait et stocke sa valeur depuis les paramètres de la requête"><strong>Apply Request Values</strong> — each component extracts and stores its value from the request parameters</li>
+          <li data-en="Process Validations — validators and converters run on submitted values; errors are recorded" data-fr="Process Validations — les validateurs et convertisseurs sont exécutés sur les valeurs soumises ; les erreurs sont enregistrées"><strong>Process Validations</strong> — validators and converters run on submitted values; errors are recorded</li>
+          <li data-en="Update Model Values — validated values are pushed to Managed Bean properties via ValueExpressions" data-fr="Update Model Values — les valeurs validées sont propagées vers les propriétés des Managed Beans via les ValueExpressions"><strong>Update Model Values</strong> — validated values are pushed to Managed Bean properties via ValueExpressions</li>
+          <li data-en="Invoke Application — action listeners and action methods (e.g. commandButton) are invoked" data-fr="Invoke Application — les action listeners et les méthodes d'action (ex : commandButton) sont invoqués"><strong>Invoke Application</strong> — action listeners and action methods (e.g. commandButton) are invoked</li>
+          <li data-en="Render Response — the view is rendered (HTML generated) and sent to the browser" data-fr="Render Response — la vue est rendue (HTML généré) et envoyée au navigateur"><strong>Render Response</strong> — the view is rendered (HTML generated) and sent to the browser</li>
         </ol>
-        <p><strong>Court-circuit :</strong> si des erreurs de validation surviennent en phase 3, le cycle saute directement à la phase 6 (Render Response) pour afficher les messages d'erreur.</p>
+        <p data-en="Short-circuit: if validation errors occur in phase 3, the cycle jumps directly to phase 6 (Render Response) to display error messages." data-fr="Court-circuit : si des erreurs de validation surviennent en phase 3, le cycle saute directement à la phase 6 (Render Response) pour afficher les messages d'erreur."><strong>Short-circuit:</strong> if validation errors occur in phase 3, the cycle jumps directly to phase 6 (Render Response) to display error messages.</p>
       </div>
     </details>
 
     <details>
-      <summary>🫘 Managed Beans avec CDI</summary>
+      <summary data-en="🫘 Managed Beans with CDI" data-fr="🫘 Managed Beans avec CDI">🫘 Managed Beans with CDI</summary>
       <div class="slide-content">
-        <p>Dans JSF moderne (Jakarta EE 9+), les <strong>Managed Beans</strong> sont des beans CDI annotés avec <code>@Named</code> pour les rendre accessibles depuis l'Expression Language.</p>
-        <h3>Scopes des beans CDI :</h3>
+        <p data-en="In modern JSF (Jakarta EE 9+), Managed Beans are CDI beans annotated with @Named to make them accessible from Expression Language." data-fr="Dans JSF moderne (Jakarta EE 9+), les Managed Beans sont des beans CDI annotés avec @Named pour les rendre accessibles depuis l'Expression Language.">In modern JSF (Jakarta EE 9+), <strong>Managed Beans</strong> are CDI beans annotated with <code>@Named</code> to make them accessible from Expression Language.</p>
+        <h3 data-en="CDI bean scopes:" data-fr="Scopes des beans CDI :">CDI bean scopes:</h3>
         <ul>
-          <li><strong>@RequestScoped</strong> — bean créé pour chaque requête HTTP, détruit à la fin de la requête. Idéal pour les actions ponctuelles.</li>
-          <li><strong>@ViewScoped</strong> (<code>jakarta.faces.view.ViewScoped</code>) — bean vivant tant que l'utilisateur reste sur la même vue JSF. Parfait pour les formulaires avec AJAX.</li>
-          <li><strong>@SessionScoped</strong> — bean lié à la session HTTP de l'utilisateur. Pour les données persistant entre les pages (ex : panier, utilisateur connecté).</li>
-          <li><strong>@ApplicationScoped</strong> — une seule instance partagée par toute l'application. Pour les caches et données globales.</li>
-          <li><strong>@Dependent</strong> (défaut CDI) — le bean a le même scope que le bean qui l'injecte.</li>
+          <li data-en="@RequestScoped — bean created for each HTTP request, destroyed at request end. Ideal for one-off actions." data-fr="@RequestScoped — bean créé pour chaque requête HTTP, détruit à la fin de la requête. Idéal pour les actions ponctuelles."><strong>@RequestScoped</strong> — bean created for each HTTP request, destroyed at request end. Ideal for one-off actions.</li>
+          <li data-en="@ViewScoped (jakarta.faces.view.ViewScoped) — bean alive as long as the user stays on the same JSF view. Perfect for forms with AJAX." data-fr="@ViewScoped (jakarta.faces.view.ViewScoped) — bean vivant tant que l'utilisateur reste sur la même vue JSF. Parfait pour les formulaires avec AJAX."><strong>@ViewScoped</strong> (<code>jakarta.faces.view.ViewScoped</code>) — bean alive as long as the user stays on the same JSF view. Perfect for forms with AJAX.</li>
+          <li data-en="@SessionScoped — bean tied to the user's HTTP session. For data persisting across pages (e.g. cart, logged-in user)." data-fr="@SessionScoped — bean lié à la session HTTP de l'utilisateur. Pour les données persistant entre les pages (ex : panier, utilisateur connecté)."><strong>@SessionScoped</strong> — bean tied to the user's HTTP session. For data persisting across pages (e.g. cart, logged-in user).</li>
+          <li data-en="@ApplicationScoped — single instance shared across the whole application. For caches and global data." data-fr="@ApplicationScoped — une seule instance partagée par toute l'application. Pour les caches et données globales."><strong>@ApplicationScoped</strong> — single instance shared across the whole application. For caches and global data.</li>
+          <li data-en="@Dependent (CDI default) — the bean has the same scope as the bean that injects it." data-fr="@Dependent (défaut CDI) — le bean a le même scope que le bean qui l'injecte."><strong>@Dependent</strong> (CDI default) — the bean has the same scope as the bean that injects it.</li>
         </ul>
-        <h3>Annotation @Named :</h3>
-        <p><code>@Named("clientBean")</code> expose le bean sous le nom <code>clientBean</code> dans l'EL. Sans valeur, le nom dérivé de la classe est utilisé (ex : <code>ClientBean</code> → <code>clientBean</code>).</p>
+        <h3 data-en="@Named annotation:" data-fr="Annotation @Named :">@Named annotation:</h3>
+        <p data-en='@Named("clientBean") exposes the bean under the name clientBean in EL. Without a value, the name is derived from the class (e.g. ClientBean → clientBean).' data-fr='@Named("clientBean") expose le bean sous le nom clientBean dans l'EL. Sans valeur, le nom dérivé de la classe est utilisé (ex : ClientBean → clientBean).'><code>@Named("clientBean")</code> exposes the bean under the name <code>clientBean</code> in EL. Without a value, the name is derived from the class (e.g. <code>ClientBean</code> → <code>clientBean</code>).</p>
         <div class="code-block-wrap">
           <span class="code-lang">java</span>
           <pre><code>@Named
@@ -71,75 +73,75 @@ public class ClientBean {
     </details>
 
     <details>
-      <summary>📄 Facelets et Templates</summary>
+      <summary data-en="📄 Facelets and Templates" data-fr="📄 Facelets et Templates">📄 Facelets and Templates</summary>
       <div class="slide-content">
-        <p><strong>Facelets</strong> est le moteur de templating officiel de JSF depuis JSF 2.0, remplaçant définitivement JSP. Les fichiers Facelets ont l'extension <code>.xhtml</code>.</p>
-        <h3>Avantages de Facelets sur JSP :</h3>
+        <p data-en="Facelets is the official JSF templating engine since JSF 2.0, definitively replacing JSP. Facelets files have the .xhtml extension." data-fr="Facelets est le moteur de templating officiel de JSF depuis JSF 2.0, remplaçant définitivement JSP. Les fichiers Facelets ont l'extension .xhtml."><strong>Facelets</strong> is the official JSF templating engine since JSF 2.0, definitively replacing JSP. Facelets files have the <code>.xhtml</code> extension.</p>
+        <h3 data-en="Advantages of Facelets over JSP:" data-fr="Avantages de Facelets sur JSP :">Advantages of Facelets over JSP:</h3>
         <ul>
-          <li>Syntaxe XML stricte — les pages sont du HTML5 valide consultable directement dans un navigateur</li>
-          <li>Héritage de templates via <code>ui:composition</code>, <code>ui:define</code>, <code>ui:insert</code></li>
-          <li>Meilleure intégration avec l'Expression Language (EL)</li>
-          <li>Pas de compilation séparée nécessaire</li>
+          <li data-en="Strict XML syntax — pages are valid HTML5 viewable directly in a browser" data-fr="Syntaxe XML stricte — les pages sont du HTML5 valide consultable directement dans un navigateur">Strict XML syntax — pages are valid HTML5 viewable directly in a browser</li>
+          <li data-en="Template inheritance via ui:composition, ui:define, ui:insert" data-fr="Héritage de templates via ui:composition, ui:define, ui:insert">Template inheritance via <code>ui:composition</code>, <code>ui:define</code>, <code>ui:insert</code></li>
+          <li data-en="Better integration with Expression Language (EL)" data-fr="Meilleure intégration avec l'Expression Language (EL)">Better integration with Expression Language (EL)</li>
+          <li data-en="No separate compilation needed" data-fr="Pas de compilation séparée nécessaire">No separate compilation needed</li>
         </ul>
-        <h3>Tags principaux pour le templating :</h3>
+        <h3 data-en="Main templating tags:" data-fr="Tags principaux pour le templating :">Main templating tags:</h3>
         <ul>
-          <li><strong><code>ui:composition template="..."</code></strong> — déclare qu'une page utilise un template et délimite le contenu à inclure</li>
-          <li><strong><code>ui:define name="..."</code></strong> — dans une page cliente, définit le contenu d'une zone du template</li>
-          <li><strong><code>ui:insert name="..."</code></strong> — dans le template, marque l'emplacement où le contenu d'une page sera inséré</li>
-          <li><strong><code>ui:include src="..."</code></strong> — inclut un fragment Facelets réutilisable</li>
-          <li><strong><code>ui:repeat</code></strong> — itère sur une collection (alternative à <code>h:dataTable</code>)</li>
+          <li data-en='ui:composition template="..." — declares that a page uses a template and delimits the content to include' data-fr='ui:composition template="..." — déclare qu'une page utilise un template et délimite le contenu à inclure'><strong><code>ui:composition template="..."</code></strong> — declares that a page uses a template and delimits the content to include</li>
+          <li data-en='ui:define name="..." — in a client page, defines the content for a template zone' data-fr='ui:define name="..." — dans une page cliente, définit le contenu d'une zone du template'><strong><code>ui:define name="..."</code></strong> — in a client page, defines the content for a template zone</li>
+          <li data-en='ui:insert name="..." — in the template, marks the location where a page's content will be inserted' data-fr='ui:insert name="..." — dans le template, marque l'emplacement où le contenu d'une page sera inséré'><strong><code>ui:insert name="..."</code></strong> — in the template, marks the location where a page's content will be inserted</li>
+          <li data-en='ui:include src="..." — includes a reusable Facelets fragment' data-fr='ui:include src="..." — inclut un fragment Facelets réutilisable'><strong><code>ui:include src="..."</code></strong> — includes a reusable Facelets fragment</li>
+          <li data-en="ui:repeat — iterates over a collection (alternative to h:dataTable)" data-fr="ui:repeat — itère sur une collection (alternative à h:dataTable)"><strong><code>ui:repeat</code></strong> — iterates over a collection (alternative to <code>h:dataTable</code>)</li>
         </ul>
       </div>
     </details>
 
     <details>
-      <summary>🧩 Composants JSF Core</summary>
+      <summary data-en="🧩 JSF Core Components" data-fr="🧩 Composants JSF Core">🧩 JSF Core Components</summary>
       <div class="slide-content">
-        <p>JSF fournit une riche bibliothèque de composants d'interface répartis dans deux espaces de noms principaux : <code>h:</code> (HTML) et <code>f:</code> (Core).</p>
-        <h3>Composants de saisie et affichage :</h3>
+        <p data-en="JSF provides a rich library of UI components split across two main namespaces: h: (HTML) and f: (Core)." data-fr="JSF fournit une riche bibliothèque de composants d'interface répartis dans deux espaces de noms principaux : h: (HTML) et f: (Core).">JSF provides a rich library of UI components split across two main namespaces: <code>h:</code> (HTML) and <code>f:</code> (Core).</p>
+        <h3 data-en="Input and output components:" data-fr="Composants de saisie et affichage :">Input and output components:</h3>
         <ul>
-          <li><strong><code>h:inputText</code></strong> — champ de saisie texte, lié à une propriété via <code>value="#{bean.prop}"</code></li>
-          <li><strong><code>h:inputSecret</code></strong> — champ mot de passe</li>
-          <li><strong><code>h:inputTextarea</code></strong> — zone de texte multiligne</li>
-          <li><strong><code>h:outputLabel</code></strong> — étiquette liée à un composant via <code>for="componentId"</code></li>
-          <li><strong><code>h:outputText</code></strong> — affichage d'une valeur avec encodage HTML automatique</li>
-          <li><strong><code>h:message</code></strong> — affiche les messages d'erreur pour un composant identifié par <code>for</code></li>
-          <li><strong><code>h:messages</code></strong> — affiche tous les messages JSF de la page</li>
+          <li data-en="h:inputText — text input field, bound to a property via value=&quot;#{bean.prop}&quot;" data-fr="h:inputText — champ de saisie texte, lié à une propriété via value=&quot;#{bean.prop}&quot;"><strong><code>h:inputText</code></strong> — text input field, bound to a property via <code>value="#{bean.prop}"</code></li>
+          <li data-en="h:inputSecret — password field" data-fr="h:inputSecret — champ mot de passe"><strong><code>h:inputSecret</code></strong> — password field</li>
+          <li data-en="h:inputTextarea — multi-line text area" data-fr="h:inputTextarea — zone de texte multiligne"><strong><code>h:inputTextarea</code></strong> — multi-line text area</li>
+          <li data-en='h:outputLabel — label linked to a component via for="componentId"' data-fr='h:outputLabel — étiquette liée à un composant via for="componentId"'><strong><code>h:outputLabel</code></strong> — label linked to a component via <code>for="componentId"</code></li>
+          <li data-en="h:outputText — displays a value with automatic HTML encoding" data-fr="h:outputText — affichage d'une valeur avec encodage HTML automatique"><strong><code>h:outputText</code></strong> — displays a value with automatic HTML encoding</li>
+          <li data-en="h:message — displays error messages for a component identified by for" data-fr="h:message — affiche les messages d'erreur pour un composant identifié par for"><strong><code>h:message</code></strong> — displays error messages for a component identified by <code>for</code></li>
+          <li data-en="h:messages — displays all JSF messages on the page" data-fr="h:messages — affiche tous les messages JSF de la page"><strong><code>h:messages</code></strong> — displays all JSF messages on the page</li>
         </ul>
-        <h3>Composants d'action et navigation :</h3>
+        <h3 data-en="Action and navigation components:" data-fr="Composants d'action et navigation :">Action and navigation components:</h3>
         <ul>
-          <li><strong><code>h:commandButton</code></strong> — bouton de soumission de formulaire, déclenche une action ou un action listener</li>
-          <li><strong><code>h:commandLink</code></strong> — lien hypertexte déclenchant une action</li>
-          <li><strong><code>h:form</code></strong> — formulaire HTML, obligatoire pour tout composant interactif JSF</li>
+          <li data-en="h:commandButton — form submit button, triggers an action or action listener" data-fr="h:commandButton — bouton de soumission de formulaire, déclenche une action ou un action listener"><strong><code>h:commandButton</code></strong> — form submit button, triggers an action or action listener</li>
+          <li data-en="h:commandLink — hyperlink triggering an action" data-fr="h:commandLink — lien hypertexte déclenchant une action"><strong><code>h:commandLink</code></strong> — hyperlink triggering an action</li>
+          <li data-en="h:form — HTML form, required for any interactive JSF component" data-fr="h:form — formulaire HTML, obligatoire pour tout composant interactif JSF"><strong><code>h:form</code></strong> — HTML form, required for any interactive JSF component</li>
         </ul>
-        <h3>Composants de liste :</h3>
+        <h3 data-en="List components:" data-fr="Composants de liste :">List components:</h3>
         <ul>
-          <li><strong><code>h:dataTable</code></strong> — tableau HTML généré dynamiquement depuis une collection</li>
-          <li><strong><code>h:selectOneMenu</code></strong> — liste déroulante à sélection unique</li>
-          <li><strong><code>h:selectManyCheckbox</code></strong> — cases à cocher à sélection multiple</li>
+          <li data-en="h:dataTable — HTML table generated dynamically from a collection" data-fr="h:dataTable — tableau HTML généré dynamiquement depuis une collection"><strong><code>h:dataTable</code></strong> — HTML table generated dynamically from a collection</li>
+          <li data-en="h:selectOneMenu — single-selection dropdown list" data-fr="h:selectOneMenu — liste déroulante à sélection unique"><strong><code>h:selectOneMenu</code></strong> — single-selection dropdown list</li>
+          <li data-en="h:selectManyCheckbox — multiple-selection checkboxes" data-fr="h:selectManyCheckbox — cases à cocher à sélection multiple"><strong><code>h:selectManyCheckbox</code></strong> — multiple-selection checkboxes</li>
         </ul>
       </div>
     </details>
 
     <details>
-      <summary>✅ Validation et Converters</summary>
+      <summary data-en="✅ Validation and Converters" data-fr="✅ Validation et Converters">✅ Validation and Converters</summary>
       <div class="slide-content">
-        <p>JSF intègre un mécanisme de validation et de conversion qui s'exécute en phase 3 du cycle de vie. En cas d'erreur, le cycle court-circuite vers la phase 6.</p>
-        <h3>Validateurs intégrés :</h3>
+        <p data-en="JSF includes a validation and conversion mechanism that runs in phase 3 of the lifecycle. On error, the cycle short-circuits to phase 6." data-fr="JSF intègre un mécanisme de validation et de conversion qui s'exécute en phase 3 du cycle de vie. En cas d'erreur, le cycle court-circuite vers la phase 6.">JSF includes a validation and conversion mechanism that runs in phase 3 of the lifecycle. On error, the cycle short-circuits to phase 6.</p>
+        <h3 data-en="Built-in validators:" data-fr="Validateurs intégrés :">Built-in validators:</h3>
         <ul>
-          <li><strong><code>f:validateRequired</code></strong> — vérifie que le champ n'est pas vide</li>
-          <li><strong><code>f:validateLength</code></strong> — contrôle la longueur minimale et/ou maximale d'une chaîne</li>
-          <li><strong><code>f:validateLongRange</code></strong> — valide qu'un nombre entier est dans un intervalle donné</li>
-          <li><strong><code>f:validateDoubleRange</code></strong> — valide un nombre décimal dans un intervalle</li>
-          <li><strong><code>f:validateRegex</code></strong> — valide une chaîne par rapport à une expression régulière</li>
+          <li data-en="f:validateRequired — checks that the field is not empty" data-fr="f:validateRequired — vérifie que le champ n'est pas vide"><strong><code>f:validateRequired</code></strong> — checks that the field is not empty</li>
+          <li data-en="f:validateLength — controls the minimum and/or maximum length of a string" data-fr="f:validateLength — contrôle la longueur minimale et/ou maximale d'une chaîne"><strong><code>f:validateLength</code></strong> — controls the minimum and/or maximum length of a string</li>
+          <li data-en="f:validateLongRange — validates that an integer is within a given range" data-fr="f:validateLongRange — valide qu'un nombre entier est dans un intervalle donné"><strong><code>f:validateLongRange</code></strong> — validates that an integer is within a given range</li>
+          <li data-en="f:validateDoubleRange — validates a decimal number within a range" data-fr="f:validateDoubleRange — valide un nombre décimal dans un intervalle"><strong><code>f:validateDoubleRange</code></strong> — validates a decimal number within a range</li>
+          <li data-en="f:validateRegex — validates a string against a regular expression" data-fr="f:validateRegex — valide une chaîne par rapport à une expression régulière"><strong><code>f:validateRegex</code></strong> — validates a string against a regular expression</li>
         </ul>
-        <h3>Validateurs personnalisés :</h3>
-        <p>Créer une classe annotée <code>@FacesValidator("id")</code> implémentant <code>jakarta.faces.validator.Validator</code> et sa méthode <code>validate()</code>. Lancer une <code>ValidatorException</code> avec un <code>FacesMessage</code> en cas d'erreur.</p>
-        <h3>Converters :</h3>
+        <h3 data-en="Custom validators:" data-fr="Validateurs personnalisés :">Custom validators:</h3>
+        <p data-en="Create a class annotated @FacesValidator(&quot;id&quot;) implementing jakarta.faces.validator.Validator and its validate() method. Throw a ValidatorException with a FacesMessage on error." data-fr="Créer une classe annotée @FacesValidator(&quot;id&quot;) implémentant jakarta.faces.validator.Validator et sa méthode validate(). Lancer une ValidatorException avec un FacesMessage en cas d'erreur.">Create a class annotated <code>@FacesValidator("id")</code> implementing <code>jakarta.faces.validator.Validator</code> and its <code>validate()</code> method. Throw a <code>ValidatorException</code> with a <code>FacesMessage</code> on error.</p>
+        <h3 data-en="Converters:" data-fr="Converters :">Converters:</h3>
         <ul>
-          <li><strong><code>f:convertNumber</code></strong> — conversion de nombres avec format, locale et type (number, currency, percent)</li>
-          <li><strong><code>f:convertDateTime</code></strong> — conversion de dates et heures avec pattern et timezone</li>
-          <li>Converters personnalisés via <code>@FacesConverter</code> implémentant <code>Converter&lt;T&gt;</code></li>
+          <li data-en="f:convertNumber — number conversion with format, locale and type (number, currency, percent)" data-fr="f:convertNumber — conversion de nombres avec format, locale et type (number, currency, percent)"><strong><code>f:convertNumber</code></strong> — number conversion with format, locale and type (number, currency, percent)</li>
+          <li data-en="f:convertDateTime — date and time conversion with pattern and timezone" data-fr="f:convertDateTime — conversion de dates et heures avec pattern et timezone"><strong><code>f:convertDateTime</code></strong> — date and time conversion with pattern and timezone</li>
+          <li data-en="Custom converters via @FacesConverter implementing Converter&lt;T&gt;" data-fr="Converters personnalisés via @FacesConverter implémentant Converter&lt;T&gt;">Custom converters via <code>@FacesConverter</code> implementing <code>Converter&lt;T&gt;</code></li>
         </ul>
         <div class="code-block-wrap">
           <span class="code-lang">xhtml</span>
@@ -153,69 +155,69 @@ public class ClientBean {
     </details>
 
     <details>
-      <summary>⚡ AJAX avec JSF</summary>
+      <summary data-en="⚡ AJAX with JSF" data-fr="⚡ AJAX avec JSF">⚡ AJAX with JSF</summary>
       <div class="slide-content">
-        <p>JSF intègre nativement le support AJAX via le composant <code>f:ajax</code>, sans nécessiter de bibliothèque JavaScript externe. Les requêtes partielles mettent à jour uniquement une portion de la page.</p>
-        <img src="../../images/02b-jsf-javaserver-faces-diagram-2.png" alt="JSF AJAX Diagram"/>
-        <h3>Attributs clés de f:ajax :</h3>
+        <p data-en="JSF natively supports AJAX via the f:ajax component, without requiring an external JavaScript library. Partial requests update only a portion of the page." data-fr="JSF intègre nativement le support AJAX via le composant f:ajax, sans nécessiter de bibliothèque JavaScript externe. Les requêtes partielles mettent à jour uniquement une portion de la page.">JSF natively supports AJAX via the <code>f:ajax</code> component, without requiring an external JavaScript library. Partial requests update only a portion of the page.</p>
+        <img src="../../images/02b-jsf-javaserver-faces-diagram-2.png" alt="JSF AJAX Diagram" data-en-alt="JSF AJAX Diagram" data-fr-alt="Diagramme AJAX JSF"/>
+        <h3 data-en="Key attributes of f:ajax:" data-fr="Attributs clés de f:ajax :">Key attributes of f:ajax:</h3>
         <ul>
-          <li><strong><code>execute</code></strong> — liste des IDs de composants dont les valeurs sont soumises lors de la requête AJAX. <code>@form</code> soumet tout le formulaire, <code>@this</code> seulement le composant courant.</li>
-          <li><strong><code>render</code></strong> — liste des IDs de composants à re-rendre dans la réponse AJAX. <code>@all</code> re-rend toute la page.</li>
-          <li><strong><code>event</code></strong> — événement DOM déclencheur (ex : <code>click</code>, <code>change</code>, <code>keyup</code>, <code>blur</code>). Par défaut : <code>action</code> pour les boutons, <code>valueChange</code> pour les inputs.</li>
-          <li><strong><code>listener</code></strong> — méthode bean à invoquer en plus de l'action normale (signature : <code>void method(AjaxBehaviorEvent)</code>)</li>
-          <li><strong><code>onevent</code></strong> — callback JavaScript exécuté à chaque étape de la requête AJAX</li>
+          <li data-en="execute — list of component IDs whose values are submitted during the AJAX request. @form submits the whole form, @this only the current component." data-fr="execute — liste des IDs de composants dont les valeurs sont soumises lors de la requête AJAX. @form soumet tout le formulaire, @this seulement le composant courant."><strong><code>execute</code></strong> — list of component IDs whose values are submitted during the AJAX request. <code>@form</code> submits the whole form, <code>@this</code> only the current component.</li>
+          <li data-en="render — list of component IDs to re-render in the AJAX response. @all re-renders the whole page." data-fr="render — liste des IDs de composants à re-rendre dans la réponse AJAX. @all re-rend toute la page."><strong><code>render</code></strong> — list of component IDs to re-render in the AJAX response. <code>@all</code> re-renders the whole page.</li>
+          <li data-en="event — triggering DOM event (e.g. click, change, keyup, blur). Default: action for buttons, valueChange for inputs." data-fr="event — événement DOM déclencheur (ex : click, change, keyup, blur). Par défaut : action pour les boutons, valueChange pour les inputs."><strong><code>event</code></strong> — triggering DOM event (e.g. <code>click</code>, <code>change</code>, <code>keyup</code>, <code>blur</code>). Default: <code>action</code> for buttons, <code>valueChange</code> for inputs.</li>
+          <li data-en="listener — bean method to invoke in addition to the normal action (signature: void method(AjaxBehaviorEvent))" data-fr="listener — méthode bean à invoquer en plus de l'action normale (signature : void method(AjaxBehaviorEvent))"><strong><code>listener</code></strong> — bean method to invoke in addition to the normal action (signature: <code>void method(AjaxBehaviorEvent)</code>)</li>
+          <li data-en="onevent — JavaScript callback executed at each step of the AJAX request" data-fr="onevent — callback JavaScript exécuté à chaque étape de la requête AJAX"><strong><code>onevent</code></strong> — JavaScript callback executed at each step of the AJAX request</li>
         </ul>
         <div class="code-block-wrap">
           <span class="code-lang">xhtml</span>
-          <pre><code>&lt;h:commandButton value="Rechercher" action="#{clientBean.search}"&gt;
+          <pre><code>&lt;h:commandButton value="Search" action="#{clientBean.search}"&gt;
     &lt;f:ajax execute="@form" render="resultPanel" event="click"/&gt;
 &lt;/h:commandButton&gt;
 
 &lt;h:panelGroup id="resultPanel"&gt;
-    &lt;!-- contenu mis à jour par AJAX --&gt;
+    &lt;!-- content updated by AJAX --&gt;
 &lt;/h:panelGroup&gt;</code></pre>
         </div>
       </div>
     </details>
 
     <details>
-      <summary>🧭 Navigation Rules</summary>
+      <summary data-en="🧭 Navigation Rules" data-fr="🧭 Navigation Rules">🧭 Navigation Rules</summary>
       <div class="slide-content">
-        <p>JSF gère la navigation entre vues en résolvant la valeur retournée par une méthode d'action (<strong>outcome</strong>).</p>
-        <h3>Navigation implicite (JSF 2.0+) :</h3>
-        <p>Par défaut, si une méthode retourne la chaîne <code>"clients"</code>, JSF cherche la vue <code>/clients.xhtml</code>. C'est la méthode recommandée — simple et sans configuration XML.</p>
+        <p data-en="JSF manages navigation between views by resolving the value returned by an action method (outcome)." data-fr="JSF gère la navigation entre vues en résolvant la valeur retournée par une méthode d'action (outcome).">JSF manages navigation between views by resolving the value returned by an action method (<strong>outcome</strong>).</p>
+        <h3 data-en="Implicit navigation (JSF 2.0+):" data-fr="Navigation implicite (JSF 2.0+) :">Implicit navigation (JSF 2.0+):</h3>
+        <p data-en='By default, if a method returns the string "clients", JSF looks for the view /clients.xhtml. This is the recommended approach — simple and without XML configuration.' data-fr='Par défaut, si une méthode retourne la chaîne "clients", JSF cherche la vue /clients.xhtml. C'est la méthode recommandée — simple et sans configuration XML.'>By default, if a method returns the string <code>"clients"</code>, JSF looks for the view <code>/clients.xhtml</code>. This is the recommended approach — simple and without XML configuration.</p>
         <ul>
-          <li>Retourner <code>null</code> ou <code>void</code> — reste sur la vue courante</li>
-          <li>Retourner <code>"clients?faces-redirect=true"</code> — redirige (pattern PRG)</li>
-          <li>Retourner <code>"clients"</code> — forward interne vers <code>/clients.xhtml</code></li>
+          <li data-en="Return null or void — stays on the current view" data-fr="Retourner null ou void — reste sur la vue courante">Return <code>null</code> or <code>void</code> — stays on the current view</li>
+          <li data-en='Return "clients?faces-redirect=true" — redirects (PRG pattern)' data-fr='Retourner "clients?faces-redirect=true" — redirige (pattern PRG)'>Return <code>"clients?faces-redirect=true"</code> — redirects (PRG pattern)</li>
+          <li data-en='Return "clients" — internal forward to /clients.xhtml' data-fr='Retourner "clients" — forward interne vers /clients.xhtml'>Return <code>"clients"</code> — internal forward to <code>/clients.xhtml</code></li>
         </ul>
-        <h3>Navigation explicite (faces-config.xml) :</h3>
-        <p>Définie dans <code>/WEB-INF/faces-config.xml</code> — utile pour des règles complexes ou conditionnelles qui ne sont pas facilement exprimables en navigation implicite.</p>
-        <h3>Redirect vs Forward :</h3>
+        <h3 data-en="Explicit navigation (faces-config.xml):" data-fr="Navigation explicite (faces-config.xml) :">Explicit navigation (faces-config.xml):</h3>
+        <p data-en="Defined in /WEB-INF/faces-config.xml — useful for complex or conditional rules that are not easily expressed with implicit navigation." data-fr="Définie dans /WEB-INF/faces-config.xml — utile pour des règles complexes ou conditionnelles qui ne sont pas facilement exprimables en navigation implicite.">Defined in <code>/WEB-INF/faces-config.xml</code> — useful for complex or conditional rules that are not easily expressed with implicit navigation.</p>
+        <h3 data-en="Redirect vs Forward:" data-fr="Redirect vs Forward :">Redirect vs Forward:</h3>
         <ul>
-          <li><strong>Forward (défaut)</strong> — le serveur transmet la requête en interne, l'URL navigateur ne change pas</li>
-          <li><strong>Redirect</strong> — une réponse 302 est envoyée, le navigateur effectue une nouvelle requête GET — l'URL change</li>
+          <li data-en="Forward (default) — the server passes the request internally, the browser URL does not change" data-fr="Forward (défaut) — le serveur transmet la requête en interne, l'URL navigateur ne change pas"><strong>Forward (default)</strong> — the server passes the request internally, the browser URL does not change</li>
+          <li data-en="Redirect — a 302 response is sent, the browser makes a new GET request — the URL changes" data-fr="Redirect — une réponse 302 est envoyée, le navigateur effectue une nouvelle requête GET — l'URL change"><strong>Redirect</strong> — a 302 response is sent, the browser makes a new GET request — the URL changes</li>
         </ul>
       </div>
     </details>
 
     <details>
-      <summary>💡 Bonnes pratiques JSF</summary>
+      <summary data-en="💡 JSF Best Practices" data-fr="💡 Bonnes pratiques JSF">💡 JSF Best Practices</summary>
       <div class="slide-content">
-        <h3>Architecture et conception :</h3>
+        <h3 data-en="Architecture and design:" data-fr="Architecture et conception :">Architecture and design:</h3>
         <ul>
-          <li><strong>Éviter la logique métier dans les beans</strong> — les Managed Beans sont des contrôleurs MVC ; déléguer la logique aux services CDI injectés</li>
-          <li><strong>Utiliser les scopes CDI correctement</strong> — préférer <code>@RequestScoped</code> ou <code>@ViewScoped</code> par défaut ; éviter <code>@SessionScoped</code> pour les données non liées à la session utilisateur</li>
-          <li><strong>Préférer la navigation implicite</strong> — éviter les règles <code>faces-config.xml</code> sauf nécessité absolue</li>
-          <li><strong>Éviter le scope session profond</strong> — stocker en session uniquement ce qui est strictement nécessaire ; préférer les paramètres de vue (<code>@ViewScoped</code>)</li>
+          <li data-en="Avoid business logic in beans — Managed Beans are MVC controllers; delegate logic to injected CDI services" data-fr="Éviter la logique métier dans les beans — les Managed Beans sont des contrôleurs MVC ; déléguer la logique aux services CDI injectés"><strong>Avoid business logic in beans</strong> — Managed Beans are MVC controllers; delegate logic to injected CDI services</li>
+          <li data-en="Use CDI scopes correctly — prefer @RequestScoped or @ViewScoped by default; avoid @SessionScoped for data not tied to the user session" data-fr="Utiliser les scopes CDI correctement — préférer @RequestScoped ou @ViewScoped par défaut ; éviter @SessionScoped pour les données non liées à la session utilisateur"><strong>Use CDI scopes correctly</strong> — prefer <code>@RequestScoped</code> or <code>@ViewScoped</code> by default; avoid <code>@SessionScoped</code> for data not tied to the user session</li>
+          <li data-en="Prefer implicit navigation — avoid faces-config.xml rules unless strictly necessary" data-fr="Préférer la navigation implicite — éviter les règles faces-config.xml sauf nécessité absolue"><strong>Prefer implicit navigation</strong> — avoid <code>faces-config.xml</code> rules unless strictly necessary</li>
+          <li data-en="Avoid deep session scope — store in session only what is strictly necessary; prefer view parameters (@ViewScoped)" data-fr="Éviter le scope session profond — stocker en session uniquement ce qui est strictement nécessaire ; préférer les paramètres de vue (@ViewScoped)"><strong>Avoid deep session scope</strong> — store in session only what is strictly necessary; prefer view parameters (<code>@ViewScoped</code>)</li>
         </ul>
-        <h3>Performance et maintenabilité :</h3>
+        <h3 data-en="Performance and maintainability:" data-fr="Performance et maintenabilité :">Performance and maintainability:</h3>
         <ul>
-          <li>Utiliser <code>f:ajax</code> pour les mises à jour partielles plutôt que de recharger la page entière</li>
-          <li>Organiser les vues avec des templates Facelets (header, footer, layout commun)</li>
-          <li>Utiliser <code>h:outputText</code> plutôt que <code>#{...}</code> direct pour l'encodage HTML automatique (prévention XSS)</li>
-          <li>Activer le mode développement JSF (<code>ProjectStage.Development</code>) pendant le développement pour des messages d'erreur détaillés</li>
-          <li>Désactiver le ViewState côté client en production si non nécessaire, ou utiliser le ViewState côté serveur</li>
+          <li data-en="Use f:ajax for partial updates rather than reloading the whole page" data-fr="Utiliser f:ajax pour les mises à jour partielles plutôt que de recharger la page entière">Use <code>f:ajax</code> for partial updates rather than reloading the whole page</li>
+          <li data-en="Organise views with Facelets templates (header, footer, common layout)" data-fr="Organiser les vues avec des templates Facelets (header, footer, layout commun)">Organise views with Facelets templates (header, footer, common layout)</li>
+          <li data-en="Use h:outputText instead of direct #{...} for automatic HTML encoding (XSS prevention)" data-fr="Utiliser h:outputText plutôt que #{...} direct pour l'encodage HTML automatique (prévention XSS)">Use <code>h:outputText</code> rather than direct <code>#{...}</code> for automatic HTML encoding (XSS prevention)</li>
+          <li data-en="Enable JSF development mode (ProjectStage.Development) during development for detailed error messages" data-fr="Activer le mode développement JSF (ProjectStage.Development) pendant le développement pour des messages d'erreur détaillés">Enable JSF development mode (<code>ProjectStage.Development</code>) during development for detailed error messages</li>
+          <li data-en="Disable client-side ViewState in production if not needed, or use server-side ViewState" data-fr="Désactiver le ViewState côté client en production si non nécessaire, ou utiliser le ViewState côté serveur">Disable client-side ViewState in production if not needed, or use server-side ViewState</li>
         </ul>
       </div>
     </details>
@@ -223,5 +225,6 @@ public class ClientBean {
   </main>
 </div>
 <footer class="cds--footer">Made with IBM Bob &nbsp;·&nbsp; © 2026 Olivier Planson &nbsp;·&nbsp; ESIPE — Jakarta EE &amp; Microservices</footer>
+<script src="../assets/language-toggle.js"></script>
 </body>
 </html>

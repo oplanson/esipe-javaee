@@ -1,6 +1,6 @@
 <!-- © Copyright 2026 Olivier Planson. All rights reserved. Reproduction prohibited. Made with IBM Bob. -->
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="en">
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
@@ -9,23 +9,25 @@
 </head>
 <body>
 <header class="cds--header">
-  <a class="cds--header__name" href="index.html">Domain-Driven Design<span>Cours Jakarta EE</span></a>
-  <a class="cds--header__back" href="../index.html">← Tous les Cours</a>
+  <a class="cds--header__name" href="index.html">Domain-Driven Design<span data-en="Jakarta EE Course" data-fr="Cours Jakarta EE">Jakarta EE Course</span></a>
+  <button class="lang-toggle-btn" id="lang-toggle">FR</button>
+  <a class="cds--header__back" href="../index.html" data-en="← All Courses" data-fr="← Tous les Cours">← All Courses</a>
 </header>
 <div class="cds--shell">
   <nav class="cds--side-nav">
-    <p class="cds--side-nav__section-title">Cours 06</p>
-    <a class="cds--side-nav__link" href="index.html">⊙ Vue d'ensemble</a>
-    <a class="cds--side-nav__link" href="slides.html">☰ Contenu du cours</a>
-    <a class="cds--side-nav__link" href="concepts.html">◈ Concepts clés</a>
-    <a class="cds--side-nav__link active" href="code.html">⟨/⟩ Exemples de code</a>
+    <p class="cds--side-nav__section-title" data-en="Course 06" data-fr="Cours 06">Course 06</p>
+    <a class="cds--side-nav__link" href="index.html" data-en="⊙ Overview" data-fr="⊙ Vue d'ensemble">⊙ Overview</a>
+    <a class="cds--side-nav__link" href="slides.html" data-en="☰ Course Content" data-fr="☰ Contenu du cours">☰ Course Content</a>
+    <a class="cds--side-nav__link" href="concepts.html" data-en="◈ Key Concepts" data-fr="◈ Concepts clés">◈ Key Concepts</a>
+    <a class="cds--side-nav__link active" href="code.html" data-en="⟨/⟩ Code Examples" data-fr="⟨/⟩ Exemples de code">⟨/⟩ Code Examples</a>
+    <a class="cds--side-nav__lang-toggle">FR</a>
   </nav>
   <main class="cds--content">
-    <div class="breadcrumb"><a href="../index.html">Cours</a> › <a href="index.html">Cours 06</a> › Code</div>
-    <h1>Exemples de code</h1>
-    <p class="page-lead">Extraits de code Java du cours 06 — Entités, Value Objects, Aggregates, Repositories, Domain Services et Events DDD.</p>
+    <div class="breadcrumb"><a href="../index.html" data-en="Courses" data-fr="Cours">Courses</a> › <a href="index.html" data-en="Course 06" data-fr="Cours 06">Course 06</a> › <span data-en="Code" data-fr="Code">Code</span></div>
+    <h1 data-en="Code Examples" data-fr="Exemples de code">Code Examples</h1>
+    <p class="page-lead" data-en="Java code excerpts from course 06 — Entities, Value Objects, Aggregates, Repositories, Domain Services and DDD Events." data-fr="Extraits de code Java du cours 06 — Entités, Value Objects, Aggregates, Repositories, Domain Services et Events DDD.">Java code excerpts from course 06 — Entities, Value Objects, Aggregates, Repositories, Domain Services and DDD Events.</p>
 
-    <h2>Entité — Account</h2>
+    <h2 data-en="Entity — Account" data-fr="Entité — Account">Entity — Account</h2>
     <div class="code-block-wrap">
       <span class="code-lang">java</span>
       <pre><code>import java.util.Objects;
@@ -113,7 +115,7 @@ public class Account {
 }</code></pre>
     </div>
 
-    <h2>Value Object — Money</h2>
+    <h2 data-en="Value Object — Money" data-fr="Value Object — Money">Value Object — Money</h2>
     <div class="code-block-wrap">
       <span class="code-lang">java</span>
       <pre><code>import java.math.BigDecimal;
@@ -209,7 +211,7 @@ public final class Money {
 }</code></pre>
     </div>
 
-    <h2>Value Object — AccountNumber</h2>
+    <h2 data-en="Value Object — AccountNumber" data-fr="Value Object — AccountNumber">Value Object — AccountNumber</h2>
     <div class="code-block-wrap">
       <span class="code-lang">java</span>
       <pre><code>import java.util.Objects;
@@ -283,7 +285,7 @@ public final class AccountNumber {
 }</code></pre>
     </div>
 
-    <h2>Aggregate complet — Account</h2>
+    <h2 data-en="Complete Aggregate — Account" data-fr="Aggregate complet — Account">Complete Aggregate — Account</h2>
     <div class="code-block-wrap">
       <span class="code-lang">java</span>
       <pre><code>import java.util.ArrayList;
@@ -387,7 +389,7 @@ public class Account {
 }</code></pre>
     </div>
 
-    <h2>Repository — Interface domaine + Implémentation JPA</h2>
+    <h2 data-en="Repository — Domain interface + JPA Implementation" data-fr="Repository — Interface domaine + Implémentation JPA">Repository — Domain interface + JPA Implementation</h2>
     <div class="code-block-wrap">
       <span class="code-lang">java</span>
       <pre><code>import java.util.List;
@@ -470,7 +472,7 @@ public class JpaAccountRepository implements AccountRepository {
 }</code></pre>
     </div>
 
-    <h2>Domain Service — TransferService</h2>
+    <h2 data-en="Domain Service — TransferService" data-fr="Domain Service — TransferService">Domain Service — TransferService</h2>
     <div class="code-block-wrap">
       <span class="code-lang">java</span>
       <pre><code>import jakarta.enterprise.context.ApplicationScoped;
@@ -547,7 +549,7 @@ public class CdiDomainEventPublisher implements DomainEventPublisher {
 }</code></pre>
     </div>
 
-    <h2>Domain Event avec CDI</h2>
+    <h2 data-en="Domain Event with CDI" data-fr="Domain Event avec CDI">Domain Event with CDI</h2>
     <div class="code-block-wrap">
       <span class="code-lang">java</span>
       <pre><code>import java.time.Instant;
@@ -631,7 +633,9 @@ public class NotificationObserver {
 }</code></pre>
     </div>
 
-    <h2>Records Java 17 dans DDD</h2>
+    <h2 data-en="Java 17 Records in DDD" data-fr="Records Java 17 dans DDD">Java 17 Records in DDD</h2>
+    <p data-en="Java Records are ideal for Value Objects: immutable and concise. They automatically generate constructor, accessors, equals/hashCode and toString — based on all components." data-fr="Les Records Java sont idéaux pour les Value Objects : immuables et concis. Ils génèrent automatiquement le constructeur, les accesseurs, equals/hashCode et toString — basés sur tous les composants.">Java Records are ideal for Value Objects: immutable and concise. They automatically generate constructor, accessors, equals/hashCode and toString — based on all components.</p>
+    <p data-en="Note: Java Records support as @Embeddable has been added experimentally in Hibernate 6.x and EclipseLink 4.x. Check your JPA provider documentation for current support status." data-fr="Note : La prise en charge des Records Java comme @Embeddable a été ajoutée expérimentalement dans Hibernate 6.x et EclipseLink 4.x. Consultez la documentation de votre fournisseur JPA pour le statut actuel.">Note: Java Records support as @Embeddable has been added experimentally in Hibernate 6.x and EclipseLink 4.x. Check your JPA provider documentation for current support status.</p>
     <div class="code-block-wrap">
       <span class="code-lang">java</span>
       <pre><code>import java.math.BigDecimal;
@@ -727,5 +731,6 @@ public record Money(BigDecimal amount, Currency currency) {
   </main>
 </div>
 <footer class="cds--footer">Made with IBM Bob &nbsp;·&nbsp; © 2026 Olivier Planson &nbsp;·&nbsp; ESIPE — Jakarta EE &amp; Microservices</footer>
+<script src="../assets/language-toggle.js"></script>
 </body>
 </html>

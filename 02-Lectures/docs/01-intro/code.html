@@ -1,31 +1,33 @@
 <!-- © Copyright 2026 Olivier Planson. All rights reserved. Reproduction prohibited. Made with IBM Bob. -->
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="en">
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-  <title>Cours 01 — Exemples de code</title>
+  <title>Cours 01 — Code Examples</title>
   <link rel="stylesheet" href="../assets/carbon.css"/>
 </head>
 <body>
 <header class="cds--header">
-  <a class="cds--header__name" href="index.html">Introduction Jakarta EE<span>Cours Jakarta EE</span></a>
-  <a class="cds--header__back" href="../index.html">← Tous les Cours</a>
+  <button class="lang-toggle-btn" id="lang-toggle">FR</button>
+  <a class="cds--header__name" href="index.html" data-en="Introduction Jakarta EE<span>Jakarta EE Course</span>" data-fr="Introduction Jakarta EE<span>Cours Jakarta EE</span>">Introduction Jakarta EE<span>Jakarta EE Course</span></a>
+  <a class="cds--header__back" href="../index.html" data-en="← All Courses" data-fr="← Tous les Cours">← All Courses</a>
 </header>
 <div class="cds--shell">
   <nav class="cds--side-nav">
-    <p class="cds--side-nav__section-title">Cours 01</p>
-    <a class="cds--side-nav__link" href="index.html">⊙ Vue d'ensemble</a>
-    <a class="cds--side-nav__link" href="slides.html">☰ Contenu du cours</a>
-    <a class="cds--side-nav__link" href="concepts.html">◈ Concepts clés</a>
-    <a class="cds--side-nav__link active" href="code.html">⟨/⟩ Exemples de code</a>
+    <p class="cds--side-nav__section-title" data-en="Course 01" data-fr="Cours 01">Course 01</p>
+    <a class="cds--side-nav__link" href="index.html" data-en="⊙ Overview" data-fr="⊙ Vue d'ensemble">⊙ Overview</a>
+    <a class="cds--side-nav__link" href="slides.html" data-en="☰ Lecture Content" data-fr="☰ Contenu du cours">☰ Lecture Content</a>
+    <a class="cds--side-nav__link" href="concepts.html" data-en="◈ Key Concepts" data-fr="◈ Concepts clés">◈ Key Concepts</a>
+    <a class="cds--side-nav__link active" href="code.html" data-en="⟨/⟩ Code Examples" data-fr="⟨/⟩ Exemples de code">⟨/⟩ Code Examples</a>
+    <a class="cds--side-nav__lang-toggle">FR</a>
   </nav>
   <main class="cds--content">
-    <div class="breadcrumb"><a href="../index.html">Cours</a> › <a href="index.html">Cours 01</a> › Code</div>
-    <h1>Exemples de code</h1>
-    <p class="page-lead">Extraits de code Java, XML et Bash du cours 01 — Jakarta EE, MicroProfile et Open Liberty.</p>
+    <div class="breadcrumb"><a href="../index.html" data-en="Courses" data-fr="Cours">Courses</a> › <a href="index.html" data-en="Course 01" data-fr="Cours 01">Course 01</a> › <span data-en="Code" data-fr="Code">Code</span></div>
+    <h1 data-en="Code Examples" data-fr="Exemples de code">Code Examples</h1>
+    <p class="page-lead" data-en="Java, XML and Bash code snippets from course 01 — Jakarta EE, MicroProfile and Open Liberty." data-fr="Extraits de code Java, XML et Bash du cours 01 — Jakarta EE, MicroProfile et Open Liberty.">Java, XML and Bash code snippets from course 01 — Jakarta EE, MicroProfile and Open Liberty.</p>
 
-    <h2>JAX-RS — Ressource REST</h2>
+    <h2 data-en="JAX-RS — REST Resource" data-fr="JAX-RS — Ressource REST">JAX-RS — REST Resource</h2>
     <div class="code-block-wrap">
       <span class="code-lang">java</span>
       <pre><code>@Path("/clients")
@@ -46,10 +48,15 @@ public class ClientResource {
 }</code></pre>
     </div>
 
-    <h2>MicroProfile Config</h2>
+    <h2 data-en="MicroProfile Config" data-fr="MicroProfile Config">MicroProfile Config</h2>
     <div class="code-block-wrap">
       <span class="code-lang">java</span>
-      <pre><code>@ApplicationScoped
+      <pre><code>// Required imports for MicroProfile Config:
+// import jakarta.enterprise.context.ApplicationScoped;
+// import jakarta.inject.Inject;
+// import org.eclipse.microprofile.config.inject.ConfigProperty;
+
+@ApplicationScoped
 public class BankingService {
     
     @Inject
@@ -75,10 +82,17 @@ public class BankingService {
 bank.max.transfer=50000</code></pre>
     </div>
 
-    <h2>MicroProfile Health Check</h2>
+    <h2 data-en="MicroProfile Health Check" data-fr="MicroProfile Health Check">MicroProfile Health Check</h2>
     <div class="code-block-wrap">
       <span class="code-lang">java</span>
-      <pre><code>@Health
+      <pre><code>// Required imports for MicroProfile Health:
+// import jakarta.enterprise.context.ApplicationScoped;
+// import jakarta.inject.Inject;
+// import org.eclipse.microprofile.health.Health;
+// import org.eclipse.microprofile.health.HealthCheck;
+// import org.eclipse.microprofile.health.HealthCheckResponse;
+
+@Health
 @ApplicationScoped
 public class DatabaseHealthCheck implements HealthCheck {
     
@@ -105,10 +119,17 @@ public class DatabaseHealthCheck implements HealthCheck {
 }</code></pre>
     </div>
 
-    <h2>MicroProfile Metrics</h2>
+    <h2 data-en="MicroProfile Metrics" data-fr="MicroProfile Metrics">MicroProfile Metrics</h2>
     <div class="code-block-wrap">
       <span class="code-lang">java</span>
-      <pre><code>@ApplicationScoped
+      <pre><code>// Required imports for MicroProfile Metrics:
+// import jakarta.enterprise.context.ApplicationScoped;
+// import jakarta.inject.Inject;
+// import org.eclipse.microprofile.metrics.Counter;
+// import org.eclipse.microprofile.metrics.annotation.Metric;
+// import org.eclipse.microprofile.metrics.annotation.Timed;
+
+@ApplicationScoped
 public class TransferService {
     
     @Inject
@@ -124,7 +145,7 @@ public class TransferService {
 }</code></pre>
     </div>
 
-    <h2>Premier Servlet Jakarta EE</h2>
+    <h2 data-en="First Jakarta EE Servlet" data-fr="Premier Servlet Jakarta EE">First Jakarta EE Servlet</h2>
     <div class="code-block-wrap">
       <span class="code-lang">java</span>
       <pre><code>@WebServlet("/hello")
@@ -149,7 +170,7 @@ public class HelloServlet extends HttpServlet {
 }</code></pre>
     </div>
 
-    <h2>Configuration server.xml Open Liberty</h2>
+    <h2 data-en="Open Liberty server.xml Configuration" data-fr="Configuration server.xml Open Liberty">Open Liberty server.xml Configuration</h2>
     <div class="code-block-wrap">
       <span class="code-lang">xml</span>
       <pre><code>&lt;server description="Banking Application Server"&gt;
@@ -178,7 +199,7 @@ public class HelloServlet extends HttpServlet {
 &lt;/server&gt;</code></pre>
     </div>
 
-    <h2>Configuration Maven pom.xml</h2>
+    <h2 data-en="Maven pom.xml Configuration" data-fr="Configuration Maven pom.xml">Maven pom.xml Configuration</h2>
     <div class="code-block-wrap">
       <span class="code-lang">xml</span>
       <pre><code>&lt;dependencies&gt;
@@ -201,7 +222,7 @@ public class HelloServlet extends HttpServlet {
 &lt;/dependencies&gt;</code></pre>
     </div>
 
-    <h2>Containerfile Podman</h2>
+    <h2 data-en="Podman Containerfile" data-fr="Containerfile Podman">Podman Containerfile</h2>
     <div class="code-block-wrap">
       <span class="code-lang">dockerfile</span>
       <pre><code>FROM icr.io/appcafe/open-liberty:full-java17-openj9-ubi
@@ -219,33 +240,33 @@ EXPOSE 9080 9443
 CMD ["/opt/ol/wlp/bin/server", "run", "defaultServer"]</code></pre>
     </div>
 
-    <h2>Commandes Podman / Maven</h2>
+    <h2 data-en="Podman / Maven Commands" data-fr="Commandes Podman / Maven">Podman / Maven Commands</h2>
     <div class="code-block-wrap">
       <span class="code-lang">bash</span>
-      <pre><code># Dev mode avec hot reload
+      <pre><code># Dev mode with hot reload
 mvn liberty:dev
 
 # Packaging
 mvn liberty:package
 
-# Build image Podman
+# Build Podman image
 podman build -t banking-app:latest .
 
-# Lancer le conteneur
+# Run the container
 podman run -d -p 9080:9080 -p 9443:9443 banking-app:latest
 
-# Voir les logs
+# View logs
 podman logs -f &lt;container-id&gt;</code></pre>
     </div>
 
-    <h2>Annotations de référence</h2>
+    <h2 data-en="Reference Annotations" data-fr="Annotations de référence">Reference Annotations</h2>
     <div class="code-block-wrap">
       <span class="code-lang">java</span>
       <pre><code>// Jakarta EE
-@WebServlet("/path")           // Mapping de servlet
-@Path("/resource")             // Ressource JAX-RS
-@Entity                        // Entité JPA
-@Inject                        // Injection CDI
+@WebServlet("/path")           // Servlet mapping
+@Path("/resource")             // JAX-RS resource
+@Entity                        // JPA entity
+@Inject                        // CDI injection
 
 // MicroProfile
 @ConfigProperty(name="key")    // MP Config
@@ -257,5 +278,6 @@ podman logs -f &lt;container-id&gt;</code></pre>
   </main>
 </div>
 <footer class="cds--footer">Made with IBM Bob &nbsp;·&nbsp; © 2026 Olivier Planson &nbsp;·&nbsp; ESIPE — Jakarta EE &amp; Microservices</footer>
+<script src="../assets/language-toggle.js"></script>
 </body>
 </html>

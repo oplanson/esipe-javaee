@@ -1,6 +1,6 @@
 <!-- © Copyright 2026 Olivier Planson. All rights reserved. Reproduction prohibited. Made with IBM Bob. -->
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="en">
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
@@ -9,226 +9,229 @@
 </head>
 <body>
 <header class="cds--header">
-  <a class="cds--header__name" href="index.html">Jakarta EE Security<span>Cours Jakarta EE</span></a>
-  <a class="cds--header__back" href="../index.html">← Tous les Cours</a>
+  <a class="cds--header__name" href="index.html">Jakarta EE Security<span data-en="Jakarta EE Course" data-fr="Cours Jakarta EE">Jakarta EE Course</span></a>
+  <button class="lang-toggle-btn" id="lang-toggle">FR</button>
+  <a class="cds--header__back" href="../index.html" data-en="← All Courses" data-fr="← Tous les Cours">← All Courses</a>
 </header>
 <div class="cds--shell">
   <nav class="cds--side-nav">
-    <p class="cds--side-nav__section-title">Cours 09</p>
-    <a class="cds--side-nav__link" href="index.html">⊙ Vue d'ensemble</a>
-    <a class="cds--side-nav__link" href="slides.html">☰ Contenu du cours</a>
-    <a class="cds--side-nav__link active" href="concepts.html">◈ Concepts clés</a>
-    <a class="cds--side-nav__link" href="code.html">⟨/⟩ Exemples de code</a>
+    <p class="cds--side-nav__section-title" data-en="Course 09" data-fr="Cours 09">Course 09</p>
+    <a class="cds--side-nav__link" href="index.html" data-en="⊙ Overview" data-fr="⊙ Vue d'ensemble">⊙ Overview</a>
+    <a class="cds--side-nav__link" href="slides.html" data-en="☰ Course Content" data-fr="☰ Contenu du cours">☰ Course Content</a>
+    <a class="cds--side-nav__link active" href="concepts.html" data-en="◈ Key Concepts" data-fr="◈ Concepts clés">◈ Key Concepts</a>
+    <a class="cds--side-nav__link" href="code.html" data-en="⟨/⟩ Code Examples" data-fr="⟨/⟩ Exemples de code">⟨/⟩ Code Examples</a>
+    <a class="cds--side-nav__lang-toggle">FR</a>
   </nav>
   <main class="cds--content">
-    <div class="breadcrumb"><a href="../index.html">Cours</a> › <a href="index.html">Cours 09</a> › Concepts clés</div>
-    <h1>Concepts clés</h1>
-    <p class="page-lead">Définitions, tableaux comparatifs et références essentielles de Jakarta EE Security.</p>
+    <div class="breadcrumb"><a href="../index.html" data-en="Courses" data-fr="Cours">Courses</a> › <a href="index.html" data-en="Course 09" data-fr="Cours 09">Course 09</a> › <span data-en="Key Concepts" data-fr="Concepts clés">Key Concepts</span></div>
+    <h1 data-en="Key Concepts" data-fr="Concepts clés">Key Concepts</h1>
+    <p class="page-lead" data-en="Definitions, comparison tables and essential references for Jakarta EE Security." data-fr="Définitions, tableaux comparatifs et références essentielles de Jakarta EE Security.">Definitions, comparison tables and essential references for Jakarta EE Security.</p>
 
-    <h2>Méthodes d'Authentification — Comparaison</h2>
+    <h2 data-en="Authentication Methods — Comparison" data-fr="Méthodes d'Authentification — Comparaison">Authentication Methods — Comparison</h2>
     <div class="cds--data-table-container">
       <table class="cds--data-table">
-        <thead><tr><th>Méthode</th><th>Protocole</th><th>Sécurité</th><th>État</th><th>Use Case</th><th>Risques</th></tr></thead>
+        <thead><tr><th data-en="Method" data-fr="Méthode">Method</th><th data-en="Protocol" data-fr="Protocole">Protocol</th><th data-en="Security" data-fr="Sécurité">Security</th><th data-en="State" data-fr="État">State</th><th>Use Case</th><th data-en="Risks" data-fr="Risques">Risks</th></tr></thead>
         <tbody>
           <tr>
             <td><strong>Basic Auth</strong></td>
             <td>HTTP RFC 7617</td>
-            <td>⚠️ Faible sans TLS</td>
+            <td data-en="⚠️ Weak without TLS" data-fr="⚠️ Faible sans TLS">⚠️ Weak without TLS</td>
             <td>Stateless</td>
-            <td>APIs dev, outils internes</td>
-            <td>Credentials en clair (Base64) sans HTTPS, rejeu possible</td>
+            <td data-en="Dev APIs, internal tools" data-fr="APIs dev, outils internes">Dev APIs, internal tools</td>
+            <td data-en="Credentials in clear (Base64) without HTTPS, replay possible" data-fr="Credentials en clair (Base64) sans HTTPS, rejeu possible">Credentials in clear (Base64) without HTTPS, replay possible</td>
           </tr>
           <tr>
             <td><strong>Form-Based</strong></td>
             <td>HTTP POST + Session</td>
-            <td>✅ Bonne</td>
+            <td data-en="✅ Good" data-fr="✅ Bonne">✅ Good</td>
             <td>Stateful</td>
-            <td>Applications web traditionnelles</td>
-            <td>CSRF, session fixation, session hijacking</td>
+            <td data-en="Traditional web applications" data-fr="Applications web traditionnelles">Traditional web applications</td>
+            <td data-en="CSRF, session fixation, session hijacking" data-fr="CSRF, session fixation, session hijacking">CSRF, session fixation, session hijacking</td>
           </tr>
           <tr>
             <td><strong>Token (JWT)</strong></td>
             <td>RFC 7519 / Bearer</td>
-            <td>✅ Bonne</td>
+            <td data-en="✅ Good" data-fr="✅ Bonne">✅ Good</td>
             <td>Stateless</td>
-            <td>APIs REST, microservices, SPAs</td>
-            <td>XSS si stocké en localStorage, token theft, pas de révocation immédiate</td>
+            <td data-en="REST APIs, microservices, SPAs" data-fr="APIs REST, microservices, SPAs">REST APIs, microservices, SPAs</td>
+            <td data-en="XSS if stored in localStorage, token theft, no immediate revocation" data-fr="XSS si stocké en localStorage, token theft, pas de révocation immédiate">XSS if stored in localStorage, token theft, no immediate revocation</td>
           </tr>
           <tr>
             <td><strong>Certificate (mTLS)</strong></td>
             <td>TLS/X.509 RFC 5246</td>
-            <td>✅✅ Excellente</td>
+            <td data-en="✅✅ Excellent" data-fr="✅✅ Excellente">✅✅ Excellent</td>
             <td>Stateless</td>
-            <td>Service-to-service, systèmes critiques</td>
-            <td>Complexité de gestion des certificats, PKI nécessaire</td>
+            <td data-en="Service-to-service, critical systems" data-fr="Service-to-service, systèmes critiques">Service-to-service, critical systems</td>
+            <td data-en="Certificate management complexity, PKI required" data-fr="Complexité de gestion des certificats, PKI nécessaire">Certificate management complexity, PKI required</td>
           </tr>
           <tr>
             <td><strong>OAuth2 / OIDC</strong></td>
             <td>RFC 6749 / OIDC</td>
-            <td>✅✅ Excellente</td>
+            <td data-en="✅✅ Excellent" data-fr="✅✅ Excellente">✅✅ Excellent</td>
             <td>Stateless</td>
-            <td>Délégation, login social, fédération d'identité</td>
-            <td>Complexité du protocole, misconfiguration du redirect_uri</td>
+            <td data-en="Delegation, social login, identity federation" data-fr="Délégation, login social, fédération d'identité">Delegation, social login, identity federation</td>
+            <td data-en="Protocol complexity, redirect_uri misconfiguration" data-fr="Complexité du protocole, misconfiguration du redirect_uri">Protocol complexity, redirect_uri misconfiguration</td>
           </tr>
         </tbody>
       </table>
     </div>
 
-    <h2>RBAC vs ABAC</h2>
+    <h2 data-en="RBAC vs ABAC" data-fr="RBAC vs ABAC">RBAC vs ABAC</h2>
     <div class="cds--data-table-container">
       <table class="cds--data-table">
         <thead><tr><th>Feature</th><th>RBAC</th><th>ABAC</th></tr></thead>
         <tbody>
-          <tr><td><strong>Flexibilité</strong></td><td>Faible — basé sur des rôles prédéfinis</td><td>Élevée — combinaison de multiples attributs</td></tr>
-          <tr><td><strong>Complexité</strong></td><td>Simple à comprendre et administrer</td><td>Complexe — politique XACML, règles conditionnelles</td></tr>
-          <tr><td><strong>Scalabilité</strong></td><td>Bonne pour peu de rôles</td><td>Excellente pour de nombreux cas d'accès</td></tr>
-          <tr><td><strong>Use Case</strong></td><td>Applications avec rôles métier clairs (ADMIN, USER, VIEWER)</td><td>Systèmes multi-tenant, contrôle fin (heure, IP, classification)</td></tr>
-          <tr><td><strong>Jakarta EE Support</strong></td><td>✅ Natif — <code>@RolesAllowed</code>, <code>SecurityContext.isCallerInRole()</code></td><td>⚠️ Partiel — nécessite implémentation personnalisée</td></tr>
-          <tr><td><strong>Audit</strong></td><td>Facile — qui a accès à quoi par rôle</td><td>Difficile — décisions contextuelles dynamiques</td></tr>
-          <tr><td><strong>Exemple</strong></td><td>L'utilisateur "alice" a le rôle ADMIN</td><td>L'utilisateur "alice" peut accéder si département=RH et heure entre 8h-18h</td></tr>
+          <tr><td><strong data-en="Flexibility" data-fr="Flexibilité">Flexibility</strong></td><td data-en="Low — based on predefined roles" data-fr="Faible — basé sur des rôles prédéfinis">Low — based on predefined roles</td><td data-en="High — combination of multiple attributes" data-fr="Élevée — combinaison de multiples attributs">High — combination of multiple attributes</td></tr>
+          <tr><td><strong data-en="Complexity" data-fr="Complexité">Complexity</strong></td><td data-en="Simple to understand and administer" data-fr="Simple à comprendre et administrer">Simple to understand and administer</td><td data-en="Complex — XACML policy, conditional rules" data-fr="Complexe — politique XACML, règles conditionnelles">Complex — XACML policy, conditional rules</td></tr>
+          <tr><td><strong data-en="Scalability" data-fr="Scalabilité">Scalability</strong></td><td data-en="Good for few roles" data-fr="Bonne pour peu de rôles">Good for few roles</td><td data-en="Excellent for many access cases" data-fr="Excellente pour de nombreux cas d'accès">Excellent for many access cases</td></tr>
+          <tr><td><strong>Use Case</strong></td><td data-en="Applications with clear business roles (ADMIN, USER, VIEWER)" data-fr="Applications avec rôles métier clairs (ADMIN, USER, VIEWER)">Applications with clear business roles (ADMIN, USER, VIEWER)</td><td data-en="Multi-tenant systems, fine control (time, IP, classification)" data-fr="Systèmes multi-tenant, contrôle fin (heure, IP, classification)">Multi-tenant systems, fine control (time, IP, classification)</td></tr>
+          <tr><td><strong>Jakarta EE Support</strong></td><td data-en="✅ Native — " data-fr="✅ Natif — ">✅ Native — <code>@RolesAllowed</code>, <code>SecurityContext.isCallerInRole()</code></td><td data-en="⚠️ Partial — requires custom implementation" data-fr="⚠️ Partiel — nécessite implémentation personnalisée">⚠️ Partial — requires custom implementation</td></tr>
+          <tr><td><strong data-en="Audit" data-fr="Audit">Audit</strong></td><td data-en="Easy — who has access to what by role" data-fr="Facile — qui a accès à quoi par rôle">Easy — who has access to what by role</td><td data-en="Difficult — dynamic contextual decisions" data-fr="Difficile — décisions contextuelles dynamiques">Difficult — dynamic contextual decisions</td></tr>
+          <tr><td><strong data-en="Example" data-fr="Exemple">Example</strong></td><td data-en="User &quot;alice&quot; has the ADMIN role" data-fr="L'utilisateur &quot;alice&quot; a le rôle ADMIN">User "alice" has the ADMIN role</td><td data-en="User &quot;alice&quot; can access if department=HR and time between 8am-6pm" data-fr="L'utilisateur &quot;alice&quot; peut accéder si département=RH et heure entre 8h-18h">User "alice" can access if department=HR and time between 8am-6pm</td></tr>
         </tbody>
       </table>
     </div>
 
-    <h2>Vulnérabilités OWASP Top 10 (2021)</h2>
+    <h2 data-en="OWASP Top 10 Vulnerabilities (2021)" data-fr="Vulnérabilités OWASP Top 10 (2021)">OWASP Top 10 Vulnerabilities (2021)</h2>
     <div class="cds--data-table-container">
       <table class="cds--data-table">
-        <thead><tr><th>Rang</th><th>Vulnérabilité</th><th>Description</th><th>Mitigation Jakarta EE</th></tr></thead>
+        <thead><tr><th data-en="Rank" data-fr="Rang">Rank</th><th data-en="Vulnerability" data-fr="Vulnérabilité">Vulnerability</th><th data-en="Description" data-fr="Description">Description</th><th data-en="Jakarta EE Mitigation" data-fr="Mitigation Jakarta EE">Jakarta EE Mitigation</th></tr></thead>
         <tbody>
           <tr>
             <td>A01</td>
             <td><strong>Broken Access Control</strong></td>
-            <td>Accès non autorisé à des ressources ou fonctionnalités</td>
-            <td><code>@RolesAllowed</code>, <code>SecurityContext</code>, test des autorisations côté serveur</td>
+            <td data-en="Unauthorized access to resources or features" data-fr="Accès non autorisé à des ressources ou fonctionnalités">Unauthorized access to resources or features</td>
+            <td><code>@RolesAllowed</code>, <code>SecurityContext</code>, <span data-en="server-side authorization testing" data-fr="test des autorisations côté serveur">server-side authorization testing</span></td>
           </tr>
           <tr>
             <td>A02</td>
             <td><strong>Cryptographic Failures</strong></td>
-            <td>Données sensibles transmises ou stockées en clair</td>
-            <td>TLS obligatoire, bcrypt/Argon2 pour les mots de passe, chiffrement JCE</td>
+            <td data-en="Sensitive data transmitted or stored in clear" data-fr="Données sensibles transmises ou stockées en clair">Sensitive data transmitted or stored in clear</td>
+            <td data-en="Mandatory TLS, bcrypt/Argon2 for passwords, JCE encryption" data-fr="TLS obligatoire, bcrypt/Argon2 pour les mots de passe, chiffrement JCE">Mandatory TLS, bcrypt/Argon2 for passwords, JCE encryption</td>
           </tr>
           <tr>
             <td>A03</td>
             <td><strong>Injection</strong></td>
-            <td>Injection SQL, LDAP, OS via des données non validées</td>
-            <td>JPQL paramétré, Jakarta Validation (<code>@NotNull</code>, <code>@Size</code>), critères JPA</td>
+            <td data-en="SQL, LDAP, OS injection via unvalidated data" data-fr="Injection SQL, LDAP, OS via des données non validées">SQL, LDAP, OS injection via unvalidated data</td>
+            <td data-en="Parameterized JPQL, Jakarta Validation (" data-fr="JPQL paramétré, Jakarta Validation (">Parameterized JPQL, Jakarta Validation (<code>@NotNull</code>, <code>@Size</code>), <span data-en="JPA criteria" data-fr="critères JPA">JPA criteria</span></td>
           </tr>
           <tr>
             <td>A04</td>
             <td><strong>Insecure Design</strong></td>
-            <td>Absence de modèle de menace, contrôles de sécurité insuffisants dès la conception</td>
-            <td>Threat modeling, defense-in-depth, principe du moindre privilège</td>
+            <td data-en="Absence of threat model, insufficient security controls from design" data-fr="Absence de modèle de menace, contrôles de sécurité insuffisants dès la conception">Absence of threat model, insufficient security controls from design</td>
+            <td data-en="Threat modeling, defense-in-depth, principle of least privilege" data-fr="Threat modeling, defense-in-depth, principe du moindre privilège">Threat modeling, defense-in-depth, principle of least privilege</td>
           </tr>
           <tr>
             <td>A05</td>
             <td><strong>Security Misconfiguration</strong></td>
-            <td>Configurations par défaut non sécurisées, erreurs détaillées exposées</td>
-            <td>Désactiver les endpoints de debug, configurer les error pages, renforcer server.xml</td>
+            <td data-en="Insecure default configurations, detailed errors exposed" data-fr="Configurations par défaut non sécurisées, erreurs détaillées exposées">Insecure default configurations, detailed errors exposed</td>
+            <td data-en="Disable debug endpoints, configure error pages, harden server.xml" data-fr="Désactiver les endpoints de debug, configurer les error pages, renforcer server.xml">Disable debug endpoints, configure error pages, harden server.xml</td>
           </tr>
           <tr>
             <td>A07</td>
             <td><strong>Identification &amp; Auth Failures</strong></td>
-            <td>Authentification faible, sessions non invalidées, mots de passe faibles</td>
-            <td>Jakarta Security API, HTTPS, expiration des tokens, <code>@RememberMe</code> sécurisé</td>
+            <td data-en="Weak authentication, non-invalidated sessions, weak passwords" data-fr="Authentification faible, sessions non invalidées, mots de passe faibles">Weak authentication, non-invalidated sessions, weak passwords</td>
+            <td data-en="Jakarta Security API, HTTPS, token expiration, secure " data-fr="Jakarta Security API, HTTPS, expiration des tokens, ">Jakarta Security API, HTTPS, token expiration, secure <code>@RememberMe</code></td>
           </tr>
           <tr>
             <td>A03</td>
             <td><strong>XSS (Cross-Site Scripting)</strong></td>
-            <td>Injection de scripts malveillants dans les pages web</td>
-            <td>Encodage HTML des outputs, CSP header, validation côté serveur</td>
+            <td data-en="Injection of malicious scripts into web pages" data-fr="Injection de scripts malveillants dans les pages web">Injection of malicious scripts into web pages</td>
+            <td data-en="HTML encoding of outputs, CSP header, server-side validation" data-fr="Encodage HTML des outputs, CSP header, validation côté serveur">HTML encoding of outputs, CSP header, server-side validation</td>
           </tr>
           <tr>
             <td>A08</td>
             <td><strong>Software &amp; Data Integrity Failures</strong></td>
-            <td>Mise à jour de dépendances non signées, désérialisation non sécurisée</td>
-            <td>Vérifier les checksums Maven, éviter la désérialisation Java native</td>
+            <td data-en="Updates with unsigned dependencies, insecure deserialization" data-fr="Mise à jour de dépendances non signées, désérialisation non sécurisée">Updates with unsigned dependencies, insecure deserialization</td>
+            <td data-en="Verify Maven checksums, avoid native Java deserialization" data-fr="Vérifier les checksums Maven, éviter la désérialisation Java native">Verify Maven checksums, avoid native Java deserialization</td>
           </tr>
         </tbody>
       </table>
     </div>
 
-    <h2>Structure d'un Token JWT</h2>
+    <h2 data-en="JWT Token Structure" data-fr="Structure d'un Token JWT">JWT Token Structure</h2>
+    <p data-en="Tip: MicroProfile JWT Propagation (MP-JWT) standardizes JWT-based authentication across microservices. Annotate your JAX-RS application with @LoginConfig(authMethod=&quot;MP-JWT&quot;) and inject claims with @Claim." data-fr="Conseil : MicroProfile JWT Propagation (MP-JWT) standardise l'authentification JWT entre microservices. Annotez votre application JAX-RS avec @LoginConfig(authMethod=&quot;MP-JWT&quot;) et injectez les claims avec @Claim." class="cds--inline-notification cds--inline-notification--info">Tip: MicroProfile JWT Propagation (MP-JWT) standardizes JWT-based authentication across microservices. Annotate your JAX-RS application with @LoginConfig(authMethod="MP-JWT") and inject claims with @Claim.</p>
     <div class="cds--data-table-container">
       <table class="cds--data-table">
-        <thead><tr><th>Partie</th><th>Description</th><th>Exemple de contenu</th></tr></thead>
+        <thead><tr><th data-en="Part" data-fr="Partie">Part</th><th data-en="Description" data-fr="Description">Description</th><th data-en="Example content" data-fr="Exemple de contenu">Example content</th></tr></thead>
         <tbody>
           <tr>
             <td><strong>Header</strong></td>
-            <td>Métadonnées du token : algorithme de signature (<code>alg</code>) et type (<code>typ</code>)</td>
+            <td data-en="Token metadata: signature algorithm (alg) and type (typ)" data-fr="Métadonnées du token : algorithme de signature (alg) et type (typ)">Token metadata: signature algorithm (<code>alg</code>) and type (<code>typ</code>)</td>
             <td><code>{"alg": "RS256", "typ": "JWT", "kid": "rsa-key-2026"}</code></td>
           </tr>
           <tr>
             <td><strong>Payload</strong></td>
-            <td>Claims : identité, rôles, dates d'émission et d'expiration, émetteur, audience</td>
+            <td data-en="Claims: identity, roles, issuance and expiration dates, issuer, audience" data-fr="Claims : identité, rôles, dates d'émission et d'expiration, émetteur, audience">Claims: identity, roles, issuance and expiration dates, issuer, audience</td>
             <td><code>{"iss": "https://auth.bank.com", "sub": "alice", "aud": "banking-api", "exp": 1735689600, "iat": 1735686000, "groups": ["USER", "MANAGER"], "upn": "alice@bank.com"}</code></td>
           </tr>
           <tr>
             <td><strong>Signature</strong></td>
-            <td>Hash cryptographique de (Base64URL(header) + "." + Base64URL(payload)) signé avec la clé privée</td>
-            <td>RSA-SHA256 ou HMAC-SHA256 — vérifiable avec la clé publique</td>
+            <td data-en="Cryptographic hash of (Base64URL(header) + &quot;.&quot; + Base64URL(payload)) signed with the private key" data-fr="Hash cryptographique de (Base64URL(header) + &quot;.&quot; + Base64URL(payload)) signé avec la clé privée">Cryptographic hash of (Base64URL(header) + "." + Base64URL(payload)) signed with the private key</td>
+            <td data-en="RSA-SHA256 or HMAC-SHA256 — verifiable with the public key" data-fr="RSA-SHA256 ou HMAC-SHA256 — vérifiable avec la clé publique">RSA-SHA256 or HMAC-SHA256 — verifiable with the public key</td>
           </tr>
           <tr>
-            <td><strong>Format final</strong></td>
-            <td>Les trois parties encodées en Base64URL, séparées par des points</td>
+            <td><strong data-en="Final format" data-fr="Format final">Final format</strong></td>
+            <td data-en="The three parts Base64URL-encoded, separated by dots" data-fr="Les trois parties encodées en Base64URL, séparées par des points">The three parts Base64URL-encoded, separated by dots</td>
             <td><code>eyJhbGciOiJSUzI1NiJ9.eyJzdWIiOiJhbGljZSJ9.SflKxwRJSMeKKF2QT4fwpMeJf36</code></td>
           </tr>
         </tbody>
       </table>
     </div>
 
-    <h2>Bonnes Pratiques de Sécurité</h2>
+    <h2 data-en="Security Best Practices" data-fr="Bonnes Pratiques de Sécurité">Security Best Practices</h2>
     <div class="cds--data-table-container">
       <table class="cds--data-table">
-        <thead><tr><th>Catégorie</th><th>Pratique</th><th>Implémentation Jakarta EE</th></tr></thead>
+        <thead><tr><th data-en="Category" data-fr="Catégorie">Category</th><th data-en="Practice" data-fr="Pratique">Practice</th><th data-en="Jakarta EE Implementation" data-fr="Implémentation Jakarta EE">Jakarta EE Implementation</th></tr></thead>
         <tbody>
-          <tr><td><strong>Transport</strong></td><td>Toujours HTTPS en production, redirection HTTP → HTTPS</td><td>Liberty <code>&lt;ssl&gt;</code>, HSTS header, désactiver HTTP port</td></tr>
-          <tr><td><strong>Authentification</strong></td><td>Utiliser des algorithmes de hachage adaptés (bcrypt, Argon2)</td><td>IdentityStore avec BCrypt, ne jamais stocker les mots de passe en clair</td></tr>
-          <tr><td><strong>Autorisation</strong></td><td>Principe du moindre privilège — accorder le minimum nécessaire</td><td><code>@DenyAll</code> par défaut, <code>@RolesAllowed</code> explicite</td></tr>
-          <tr><td><strong>Tokens</strong></td><td>Durée de vie courte pour les access tokens (15-60 min)</td><td>Claim <code>exp</code> dans JWT, refresh tokens longue durée séparés</td></tr>
-          <tr><td><strong>Entrées</strong></td><td>Valider et sanitiser toutes les entrées utilisateur</td><td>Jakarta Validation, <code>@Pattern</code>, <code>@Size</code>, <code>@Valid</code></td></tr>
-          <tr><td><strong>Erreurs</strong></td><td>Ne pas exposer les détails techniques dans les messages d'erreur</td><td>ExceptionMapper JAX-RS retournant des messages génériques</td></tr>
-          <tr><td><strong>Secrets</strong></td><td>Ne jamais coder en dur les credentials et clés dans le code</td><td>MicroProfile Config depuis env vars, Kubernetes Secrets</td></tr>
-          <tr><td><strong>Headers</strong></td><td>Ajouter les security headers HTTP dans toutes les réponses</td><td>Filter JAX-RS ou Servlet ajoutant CSP, HSTS, X-Frame-Options</td></tr>
-          <tr><td><strong>Logs</strong></td><td>Journaliser les accès et les échecs d'authentification</td><td>Eviter de logger les données sensibles (passwords, tokens)</td></tr>
+          <tr><td><strong>Transport</strong></td><td data-en="Always HTTPS in production, HTTP → HTTPS redirect" data-fr="Toujours HTTPS en production, redirection HTTP → HTTPS">Always HTTPS in production, HTTP → HTTPS redirect</td><td data-en="Liberty &lt;ssl&gt;, HSTS header, disable HTTP port" data-fr="Liberty &lt;ssl&gt;, HSTS header, désactiver HTTP port">Liberty <code>&lt;ssl&gt;</code>, HSTS header, <span data-en="disable HTTP port" data-fr="désactiver HTTP port">disable HTTP port</span></td></tr>
+          <tr><td><strong data-en="Authentication" data-fr="Authentification">Authentication</strong></td><td data-en="Use appropriate hashing algorithms (bcrypt, Argon2)" data-fr="Utiliser des algorithmes de hachage adaptés (bcrypt, Argon2)">Use appropriate hashing algorithms (bcrypt, Argon2)</td><td data-en="IdentityStore with BCrypt, never store passwords in clear" data-fr="IdentityStore avec BCrypt, ne jamais stocker les mots de passe en clair">IdentityStore with BCrypt, never store passwords in clear</td></tr>
+          <tr><td><strong data-en="Authorization" data-fr="Autorisation">Authorization</strong></td><td data-en="Principle of least privilege — grant the minimum necessary" data-fr="Principe du moindre privilège — accorder le minimum nécessaire">Principle of least privilege — grant the minimum necessary</td><td><code>@DenyAll</code> <span data-en="by default," data-fr="par défaut,">by default,</span> <code>@RolesAllowed</code> <span data-en="explicit" data-fr="explicite">explicit</span></td></tr>
+          <tr><td><strong data-en="Tokens" data-fr="Jetons">Tokens</strong></td><td data-en="Short lifetime for access tokens (15-60 min)" data-fr="Durée de vie courte pour les access tokens (15-60 min)">Short lifetime for access tokens (15-60 min)</td><td data-en="Claim exp in JWT, separate long-lived refresh tokens" data-fr="Claim exp dans JWT, refresh tokens longue durée séparés">Claim <code>exp</code> in JWT, separate long-lived refresh tokens</td></tr>
+          <tr><td><strong data-en="Inputs" data-fr="Entrées">Inputs</strong></td><td data-en="Validate and sanitize all user inputs" data-fr="Valider et sanitiser toutes les entrées utilisateur">Validate and sanitize all user inputs</td><td>Jakarta Validation, <code>@Pattern</code>, <code>@Size</code>, <code>@Valid</code></td></tr>
+          <tr><td><strong data-en="Errors" data-fr="Erreurs">Errors</strong></td><td data-en="Do not expose technical details in error messages" data-fr="Ne pas exposer les détails techniques dans les messages d'erreur">Do not expose technical details in error messages</td><td data-en="JAX-RS ExceptionMapper returning generic messages" data-fr="ExceptionMapper JAX-RS retournant des messages génériques">JAX-RS ExceptionMapper returning generic messages</td></tr>
+          <tr><td><strong data-en="Secrets" data-fr="Secrets">Secrets</strong></td><td data-en="Never hard-code credentials and keys in code" data-fr="Ne jamais coder en dur les credentials et clés dans le code">Never hard-code credentials and keys in code</td><td data-en="MicroProfile Config from env vars, Kubernetes Secrets" data-fr="MicroProfile Config depuis env vars, Kubernetes Secrets">MicroProfile Config from env vars, Kubernetes Secrets</td></tr>
+          <tr><td><strong>Headers</strong></td><td data-en="Add HTTP security headers in all responses" data-fr="Ajouter les security headers HTTP dans toutes les réponses">Add HTTP security headers in all responses</td><td data-en="JAX-RS or Servlet Filter adding CSP, HSTS, X-Frame-Options" data-fr="Filter JAX-RS ou Servlet ajoutant CSP, HSTS, X-Frame-Options">JAX-RS or Servlet Filter adding CSP, HSTS, X-Frame-Options</td></tr>
+          <tr><td><strong>Logs</strong></td><td data-en="Log access and authentication failures" data-fr="Journaliser les accès et les échecs d'authentification">Log access and authentication failures</td><td data-en="Avoid logging sensitive data (passwords, tokens)" data-fr="Eviter de logger les données sensibles (passwords, tokens)">Avoid logging sensitive data (passwords, tokens)</td></tr>
         </tbody>
       </table>
     </div>
 
-    <h2>Codes HTTP liés à la Sécurité</h2>
+    <h2 data-en="HTTP Codes Related to Security" data-fr="Codes HTTP liés à la Sécurité">HTTP Codes Related to Security</h2>
     <div class="cds--data-table-container">
       <table class="cds--data-table">
-        <thead><tr><th>Code</th><th>Signification</th><th>Quand l'utiliser</th></tr></thead>
+        <thead><tr><th data-en="Code" data-fr="Code">Code</th><th data-en="Meaning" data-fr="Signification">Meaning</th><th data-en="When to use" data-fr="Quand l'utiliser">When to use</th></tr></thead>
         <tbody>
-          <tr><td><strong>200 OK</strong></td><td>Succès</td><td>Requête authentifiée et autorisée traitée avec succès</td></tr>
-          <tr><td><strong>400 Bad Request</strong></td><td>Requête malformée</td><td>Token JWT malformé, paramètres invalides, validation échouée</td></tr>
-          <tr><td><strong>401 Unauthorized</strong></td><td>Non authentifié</td><td>Aucun token fourni, token expiré ou invalide — relancer l'authentification</td></tr>
-          <tr><td><strong>403 Forbidden</strong></td><td>Non autorisé</td><td>Authentifié mais ne possède pas le rôle requis (RBAC refus)</td></tr>
-          <tr><td><strong>404 Not Found</strong></td><td>Ressource introuvable</td><td>À utiliser à la place de 403 pour masquer l'existence d'une ressource privée</td></tr>
-          <tr><td><strong>405 Method Not Allowed</strong></td><td>Méthode HTTP non autorisée</td><td>Tentative d'accès par une méthode non permise sur la ressource</td></tr>
-          <tr><td><strong>429 Too Many Requests</strong></td><td>Rate limit dépassé</td><td>Trop de requêtes depuis une même IP/token — renvoyer <code>Retry-After</code></td></tr>
-          <tr><td><strong>498 Invalid Token</strong></td><td>Token invalide (non-standard)</td><td>Certaines APIs utilisent ce code pour les tokens expirés ou révoqués</td></tr>
-          <tr><td><strong>500 Internal Server Error</strong></td><td>Erreur serveur</td><td>Erreur de traitement — ne pas exposer les détails dans le body</td></tr>
+          <tr><td><strong>200 OK</strong></td><td data-en="Success" data-fr="Succès">Success</td><td data-en="Authenticated and authorized request processed successfully" data-fr="Requête authentifiée et autorisée traitée avec succès">Authenticated and authorized request processed successfully</td></tr>
+          <tr><td><strong>400 Bad Request</strong></td><td data-en="Malformed request" data-fr="Requête malformée">Malformed request</td><td data-en="Malformed JWT token, invalid parameters, validation failed" data-fr="Token JWT malformé, paramètres invalides, validation échouée">Malformed JWT token, invalid parameters, validation failed</td></tr>
+          <tr><td><strong>401 Unauthorized</strong></td><td data-en="Not authenticated" data-fr="Non authentifié">Not authenticated</td><td data-en="No token provided, token expired or invalid — restart authentication" data-fr="Aucun token fourni, token expiré ou invalide — relancer l'authentification">No token provided, token expired or invalid — restart authentication</td></tr>
+          <tr><td><strong>403 Forbidden</strong></td><td data-en="Not authorized" data-fr="Non autorisé">Not authorized</td><td data-en="Authenticated but does not have the required role (RBAC denial)" data-fr="Authentifié mais ne possède pas le rôle requis (RBAC refus)">Authenticated but does not have the required role (RBAC denial)</td></tr>
+          <tr><td><strong>404 Not Found</strong></td><td data-en="Resource not found" data-fr="Ressource introuvable">Resource not found</td><td data-en="Use instead of 403 to hide the existence of a private resource" data-fr="À utiliser à la place de 403 pour masquer l'existence d'une ressource privée">Use instead of 403 to hide the existence of a private resource</td></tr>
+          <tr><td><strong>405 Method Not Allowed</strong></td><td data-en="HTTP method not allowed" data-fr="Méthode HTTP non autorisée">HTTP method not allowed</td><td data-en="Attempt to access via a method not permitted on the resource" data-fr="Tentative d'accès par une méthode non permise sur la ressource">Attempt to access via a method not permitted on the resource</td></tr>
+          <tr><td><strong>429 Too Many Requests</strong></td><td data-en="Rate limit exceeded" data-fr="Rate limit dépassé">Rate limit exceeded</td><td data-en="Too many requests from the same IP/token — return " data-fr="Trop de requêtes depuis une même IP/token — renvoyer ">Too many requests from the same IP/token — return <code>Retry-After</code></td></tr>
+          <tr><td><strong>498 Invalid Token</strong></td><td data-en="Invalid token (non-standard)" data-fr="Token invalide (non-standard)">Invalid token (non-standard)</td><td data-en="Some APIs use this code for expired or revoked tokens" data-fr="Certaines APIs utilisent ce code pour les tokens expirés ou révoqués">Some APIs use this code for expired or revoked tokens</td></tr>
+          <tr><td><strong>500 Internal Server Error</strong></td><td data-en="Server error" data-fr="Erreur serveur">Server error</td><td data-en="Processing error — do not expose details in the body" data-fr="Erreur de traitement — ne pas exposer les détails dans le body">Processing error — do not expose details in the body</td></tr>
         </tbody>
       </table>
     </div>
 
-    <h2>Glossaire</h2>
+    <h2 data-en="Glossary" data-fr="Glossaire">Glossary</h2>
     <div class="cds--data-table-container">
       <table class="cds--data-table">
-        <thead><tr><th>Terme</th><th>Définition</th></tr></thead>
+        <thead><tr><th data-en="Term" data-fr="Terme">Term</th><th data-en="Definition" data-fr="Définition">Definition</th></tr></thead>
         <tbody>
-          <tr><td><strong>CIA Triad</strong></td><td>Les trois piliers de la sécurité : Confidentiality (confidentialité), Integrity (intégrité), Availability (disponibilité)</td></tr>
-          <tr><td><strong>JWT</strong></td><td>JSON Web Token — standard RFC 7519 pour les tokens auto-porteurs signés, composés d'un header, payload et signature en Base64URL</td></tr>
-          <tr><td><strong>OAuth2</strong></td><td>Protocole de délégation d'autorisation (RFC 6749) permettant à une application d'accéder aux ressources d'un utilisateur sans connaître ses credentials</td></tr>
-          <tr><td><strong>OIDC</strong></td><td>OpenID Connect — couche d'identité au-dessus d'OAuth2 ajoutant un ID Token (JWT) pour l'authentification des utilisateurs</td></tr>
-          <tr><td><strong>RBAC</strong></td><td>Role-Based Access Control — contrôle d'accès basé sur des rôles prédéfinis assignés aux utilisateurs</td></tr>
-          <tr><td><strong>ABAC</strong></td><td>Attribute-Based Access Control — contrôle d'accès basé sur des attributs dynamiques (utilisateur, ressource, environnement)</td></tr>
-          <tr><td><strong>mTLS</strong></td><td>Mutual TLS — authentification TLS bidirectionnelle où le client et le serveur présentent chacun un certificat X.509</td></tr>
-          <tr><td><strong>OWASP</strong></td><td>Open Web Application Security Project — organisation produisant le Top 10 des vulnérabilités web les plus critiques</td></tr>
-          <tr><td><strong>CSP</strong></td><td>Content Security Policy — en-tête HTTP définissant les sources de contenu autorisées pour prévenir le XSS</td></tr>
-          <tr><td><strong>CORS</strong></td><td>Cross-Origin Resource Sharing — mécanisme navigateur contrôlant les requêtes HTTP vers un domaine différent de l'origine</td></tr>
-          <tr><td><strong>CSRF</strong></td><td>Cross-Site Request Forgery — attaque forçant un utilisateur authentifié à exécuter une action non désirée sur un site tiers</td></tr>
-          <tr><td><strong>HSTS</strong></td><td>HTTP Strict Transport Security — en-tête forçant le navigateur à utiliser HTTPS exclusivement pour un domaine donné</td></tr>
+          <tr><td><strong>CIA Triad</strong></td><td data-en="The three pillars of security: Confidentiality, Integrity, Availability" data-fr="Les trois piliers de la sécurité : Confidentiality (confidentialité), Integrity (intégrité), Availability (disponibilité)">The three pillars of security: Confidentiality, Integrity, Availability</td></tr>
+          <tr><td><strong>JWT</strong></td><td data-en="JSON Web Token — RFC 7519 standard for self-contained signed tokens, composed of a header, payload and Base64URL signature" data-fr="JSON Web Token — standard RFC 7519 pour les tokens auto-porteurs signés, composés d'un header, payload et signature en Base64URL">JSON Web Token — RFC 7519 standard for self-contained signed tokens, composed of a header, payload and Base64URL signature</td></tr>
+          <tr><td><strong>OAuth2</strong></td><td data-en="Authorization delegation protocol (RFC 6749) allowing an application to access a user's resources without knowing their credentials" data-fr="Protocole de délégation d'autorisation (RFC 6749) permettant à une application d'accéder aux ressources d'un utilisateur sans connaître ses credentials">Authorization delegation protocol (RFC 6749) allowing an application to access a user's resources without knowing their credentials</td></tr>
+          <tr><td><strong>OIDC</strong></td><td data-en="OpenID Connect — identity layer on top of OAuth2 adding an ID Token (JWT) for user authentication" data-fr="OpenID Connect — couche d'identité au-dessus d'OAuth2 ajoutant un ID Token (JWT) pour l'authentification des utilisateurs">OpenID Connect — identity layer on top of OAuth2 adding an ID Token (JWT) for user authentication</td></tr>
+          <tr><td><strong>RBAC</strong></td><td data-en="Role-Based Access Control — access control based on predefined roles assigned to users" data-fr="Role-Based Access Control — contrôle d'accès basé sur des rôles prédéfinis assignés aux utilisateurs">Role-Based Access Control — access control based on predefined roles assigned to users</td></tr>
+          <tr><td><strong>ABAC</strong></td><td data-en="Attribute-Based Access Control — access control based on dynamic attributes (user, resource, environment)" data-fr="Attribute-Based Access Control — contrôle d'accès basé sur des attributs dynamiques (utilisateur, ressource, environnement)">Attribute-Based Access Control — access control based on dynamic attributes (user, resource, environment)</td></tr>
+          <tr><td><strong>mTLS</strong></td><td data-en="Mutual TLS — bidirectional TLS authentication where both client and server present an X.509 certificate" data-fr="Mutual TLS — authentification TLS bidirectionnelle où le client et le serveur présentent chacun un certificat X.509">Mutual TLS — bidirectional TLS authentication where both client and server present an X.509 certificate</td></tr>
+          <tr><td><strong>OWASP</strong></td><td data-en="Open Web Application Security Project — organization producing the Top 10 most critical web vulnerabilities" data-fr="Open Web Application Security Project — organisation produisant le Top 10 des vulnérabilités web les plus critiques">Open Web Application Security Project — organization producing the Top 10 most critical web vulnerabilities</td></tr>
+          <tr><td><strong>CSP</strong></td><td data-en="Content Security Policy — HTTP header defining authorized content sources to prevent XSS" data-fr="Content Security Policy — en-tête HTTP définissant les sources de contenu autorisées pour prévenir le XSS">Content Security Policy — HTTP header defining authorized content sources to prevent XSS</td></tr>
+          <tr><td><strong>CORS</strong></td><td data-en="Cross-Origin Resource Sharing — browser mechanism controlling HTTP requests toward a domain different from the origin" data-fr="Cross-Origin Resource Sharing — mécanisme navigateur contrôlant les requêtes HTTP vers un domaine différent de l'origine">Cross-Origin Resource Sharing — browser mechanism controlling HTTP requests toward a domain different from the origin</td></tr>
+          <tr><td><strong>CSRF</strong></td><td data-en="Cross-Site Request Forgery — attack forcing an authenticated user to execute an undesired action on a third-party site" data-fr="Cross-Site Request Forgery — attaque forçant un utilisateur authentifié à exécuter une action non désirée sur un site tiers">Cross-Site Request Forgery — attack forcing an authenticated user to execute an undesired action on a third-party site</td></tr>
+          <tr><td><strong>HSTS</strong></td><td data-en="HTTP Strict Transport Security — header forcing the browser to use HTTPS exclusively for a given domain" data-fr="HTTP Strict Transport Security — en-tête forçant le navigateur à utiliser HTTPS exclusivement pour un domaine donné">HTTP Strict Transport Security — header forcing the browser to use HTTPS exclusively for a given domain</td></tr>
         </tbody>
       </table>
     </div>
@@ -236,5 +239,6 @@
   </main>
 </div>
 <footer class="cds--footer">Made with IBM Bob &nbsp;·&nbsp; © 2026 Olivier Planson &nbsp;·&nbsp; ESIPE — Jakarta EE &amp; Microservices</footer>
+<script src="../assets/language-toggle.js"></script>
 </body>
 </html>

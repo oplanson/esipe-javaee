@@ -1,6 +1,6 @@
 <!-- © Copyright 2026 Olivier Planson. All rights reserved. Reproduction prohibited. Made with IBM Bob. -->
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="en">
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
@@ -9,22 +9,24 @@
 </head>
 <body>
 <header class="cds--header">
-  <a class="cds--header__name" href="index.html">Jakarta EE Security<span>Cours Jakarta EE</span></a>
-  <a class="cds--header__back" href="../index.html">← Tous les Cours</a>
+  <a class="cds--header__name" href="index.html">Jakarta EE Security<span data-en="Jakarta EE Course" data-fr="Cours Jakarta EE">Jakarta EE Course</span></a>
+  <button class="lang-toggle-btn" id="lang-toggle">FR</button>
+  <a class="cds--header__back" href="../index.html" data-en="← All Courses" data-fr="← Tous les Cours">← All Courses</a>
 </header>
 <div class="cds--shell">
   <nav class="cds--side-nav">
-    <p class="cds--side-nav__section-title">Cours 09</p>
-    <a class="cds--side-nav__link active" href="index.html">⊙ Vue d'ensemble</a>
-    <a class="cds--side-nav__link" href="slides.html">☰ Contenu du cours</a>
-    <a class="cds--side-nav__link" href="concepts.html">◈ Concepts clés</a>
-    <a class="cds--side-nav__link" href="code.html">⟨/⟩ Exemples de code</a>
+    <p class="cds--side-nav__section-title" data-en="Course 09" data-fr="Cours 09">Course 09</p>
+    <a class="cds--side-nav__link active" href="index.html" data-en="⊙ Overview" data-fr="⊙ Vue d'ensemble">⊙ Overview</a>
+    <a class="cds--side-nav__link" href="slides.html" data-en="☰ Course Content" data-fr="☰ Contenu du cours">☰ Course Content</a>
+    <a class="cds--side-nav__link" href="concepts.html" data-en="◈ Key Concepts" data-fr="◈ Concepts clés">◈ Key Concepts</a>
+    <a class="cds--side-nav__link" href="code.html" data-en="⟨/⟩ Code Examples" data-fr="⟨/⟩ Exemples de code">⟨/⟩ Code Examples</a>
+    <a class="cds--side-nav__lang-toggle">FR</a>
   </nav>
   <main class="cds--content">
-    <div class="breadcrumb"><a href="../index.html">Cours</a> › Cours 09</div>
+    <div class="breadcrumb"><a href="../index.html" data-en="Courses" data-fr="Cours">Courses</a> › <span data-en="Course 09" data-fr="Cours 09">Course 09</span></div>
 
-    <h1>Jakarta EE Security</h1>
-    <p class="page-lead">Authentification, autorisation et bonnes pratiques de sécurité — Durée : 3h · Instructeur : Olivier Planson</p>
+    <h1 data-en="Jakarta EE Security" data-fr="Jakarta EE Security">Jakarta EE Security</h1>
+    <p class="page-lead" data-en="Authentication, authorization and security best practices — Duration: 3h · Instructor: Olivier Planson" data-fr="Authentification, autorisation et bonnes pratiques de sécurité — Durée : 3h · Instructeur : Olivier Planson">Authentication, authorization and security best practices — Duration: 3h · Instructor: Olivier Planson</p>
 
     <div class="tag-stack">
       <span class="cds--tag cds--tag--red">Security</span>
@@ -35,46 +37,47 @@
       <span class="cds--tag cds--tag--warm-gray">OWASP</span>
     </div>
 
-    <h2>Objectifs pédagogiques</h2>
+    <h2 data-en="Learning Objectives" data-fr="Objectifs pédagogiques">Learning Objectives</h2>
     <table class="objectives-table">
       <tbody>
-        <tr><td>✅</td><td>Comprendre les fondamentaux de sécurité (authentication, authorization, chiffrement)</td></tr>
-        <tr><td>✅</td><td>Implémenter Jakarta Security API dans des applications enterprise</td></tr>
-        <tr><td>✅</td><td>Appliquer la sécurité déclarative et programmatique</td></tr>
-        <tr><td>✅</td><td>Sécuriser les APIs REST avec les tokens JWT</td></tr>
-        <tr><td>✅</td><td>Intégrer OAuth2 et OpenID Connect</td></tr>
-        <tr><td>✅</td><td>Suivre les bonnes pratiques de sécurité</td></tr>
-        <tr><td>✅</td><td>Sécuriser les architectures microservices</td></tr>
+        <tr><td>✅</td><td data-en="Understand security fundamentals (authentication, authorization, encryption)" data-fr="Comprendre les fondamentaux de sécurité (authentication, authorization, chiffrement)">Understand security fundamentals (authentication, authorization, encryption)</td></tr>
+        <tr><td>✅</td><td data-en="Implement Jakarta Security API in enterprise applications" data-fr="Implémenter Jakarta Security API dans des applications enterprise">Implement Jakarta Security API in enterprise applications</td></tr>
+        <tr><td>✅</td><td data-en="Apply declarative and programmatic security" data-fr="Appliquer la sécurité déclarative et programmatique">Apply declarative and programmatic security</td></tr>
+        <tr><td>✅</td><td data-en="Secure REST APIs with JWT tokens" data-fr="Sécuriser les APIs REST avec les tokens JWT">Secure REST APIs with JWT tokens</td></tr>
+        <tr><td>✅</td><td data-en="Integrate OAuth2 and OpenID Connect" data-fr="Intégrer OAuth2 et OpenID Connect">Integrate OAuth2 and OpenID Connect</td></tr>
+        <tr><td>✅</td><td data-en="Follow security best practices" data-fr="Suivre les bonnes pratiques de sécurité">Follow security best practices</td></tr>
+        <tr><td>✅</td><td data-en="Secure microservices architectures" data-fr="Sécuriser les architectures microservices">Secure microservices architectures</td></tr>
       </tbody>
     </table>
 
-    <h2>Plan du cours</h2>
+    <h2 data-en="Course Outline" data-fr="Plan du cours">Course Outline</h2>
     <ol class="course-plan">
-      <li>Principes de sécurité — CIA Triad, menaces OWASP Top 10</li>
-      <li>Authentification vs Autorisation</li>
-      <li>Méthodes d'authentification (Basic, Form, Token, Certificate)</li>
-      <li>Modèles d'autorisation (RBAC, ABAC)</li>
-      <li>Jakarta Security API</li>
-      <li>JWT avec MicroProfile JWT</li>
-      <li>HTTPS/TLS — configuration</li>
-      <li>Sécurité des APIs REST</li>
-      <li>Sécurité des microservices</li>
+      <li data-en="Security Principles — CIA Triad, OWASP Top 10 threats" data-fr="Principes de sécurité — CIA Triad, menaces OWASP Top 10">Security Principles — CIA Triad, OWASP Top 10 threats</li>
+      <li data-en="Authentication vs Authorization" data-fr="Authentification vs Autorisation">Authentication vs Authorization</li>
+      <li data-en="Authentication Methods (Basic, Form, Token, Certificate)" data-fr="Méthodes d'authentification (Basic, Form, Token, Certificate)">Authentication Methods (Basic, Form, Token, Certificate)</li>
+      <li data-en="Authorization Models (RBAC, ABAC)" data-fr="Modèles d'autorisation (RBAC, ABAC)">Authorization Models (RBAC, ABAC)</li>
+      <li data-en="Jakarta Security API" data-fr="Jakarta Security API">Jakarta Security API</li>
+      <li data-en="JWT with MicroProfile JWT" data-fr="JWT avec MicroProfile JWT">JWT with MicroProfile JWT</li>
+      <li data-en="HTTPS/TLS — configuration" data-fr="HTTPS/TLS — configuration">HTTPS/TLS — configuration</li>
+      <li data-en="REST API Security" data-fr="Sécurité des APIs REST">REST API Security</li>
+      <li data-en="Microservices Security" data-fr="Sécurité des microservices">Microservices Security</li>
     </ol>
 
-    <h2>Navigation</h2>
+    <h2 data-en="Navigation" data-fr="Navigation">Navigation</h2>
     <div class="tile-grid">
       <a class="tile-link" href="slides.html">
-        <div class="cds--tile"><h3>☰ Contenu du cours</h3><p>Toutes les sections du cours en accordéon — CIA Triad, OWASP, JWT, HTTPS/TLS, Jakarta Security API.</p></div>
+        <div class="cds--tile"><h3 data-en="☰ Course Content" data-fr="☰ Contenu du cours">☰ Course Content</h3><p data-en="All course sections in accordion — CIA Triad, OWASP, JWT, HTTPS/TLS, Jakarta Security API." data-fr="Toutes les sections du cours en accordéon — CIA Triad, OWASP, JWT, HTTPS/TLS, Jakarta Security API.">All course sections in accordion — CIA Triad, OWASP, JWT, HTTPS/TLS, Jakarta Security API.</p></div>
       </a>
       <a class="tile-link" href="concepts.html">
-        <div class="cds--tile"><h3>◈ Concepts clés</h3><p>Tableaux comparatifs : méthodes d'authentification, RBAC vs ABAC, OWASP Top 10, structure JWT, glossaire.</p></div>
+        <div class="cds--tile"><h3 data-en="◈ Key Concepts" data-fr="◈ Concepts clés">◈ Key Concepts</h3><p data-en="Comparison tables: authentication methods, RBAC vs ABAC, OWASP Top 10, JWT structure, glossary." data-fr="Tableaux comparatifs : méthodes d'authentification, RBAC vs ABAC, OWASP Top 10, structure JWT, glossaire.">Comparison tables: authentication methods, RBAC vs ABAC, OWASP Top 10, JWT structure, glossary.</p></div>
       </a>
       <a class="tile-link" href="code.html">
-        <div class="cds--tile"><h3>⟨/⟩ Exemples de code</h3><p>HttpAuthenticationMechanism, IdentityStore, MicroProfile JWT, TLS Liberty, filtre CORS, protection CSRF.</p></div>
+        <div class="cds--tile"><h3 data-en="⟨/⟩ Code Examples" data-fr="⟨/⟩ Exemples de code">⟨/⟩ Code Examples</h3><p data-en="HttpAuthenticationMechanism, IdentityStore, MicroProfile JWT, TLS Liberty, CORS filter, CSRF protection." data-fr="HttpAuthenticationMechanism, IdentityStore, MicroProfile JWT, TLS Liberty, filtre CORS, protection CSRF.">HttpAuthenticationMechanism, IdentityStore, MicroProfile JWT, TLS Liberty, CORS filter, CSRF protection.</p></div>
       </a>
     </div>
   </main>
 </div>
 <footer class="cds--footer">Made with IBM Bob &nbsp;·&nbsp; © 2026 Olivier Planson &nbsp;·&nbsp; ESIPE — Jakarta EE &amp; Microservices</footer>
+<script src="../assets/language-toggle.js"></script>
 </body>
 </html>

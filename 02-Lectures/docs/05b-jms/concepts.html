@@ -1,6 +1,6 @@
 <!-- © Copyright 2026 Olivier Planson. All rights reserved. Reproduction prohibited. Made with IBM Bob. -->
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="en">
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
@@ -9,111 +9,114 @@
 </head>
 <body>
 <header class="cds--header">
-  <a class="cds--header__name" href="index.html">JMS — Messagerie Enterprise<span>Cours Jakarta EE</span></a>
-  <a class="cds--header__back" href="../index.html">← Tous les Cours</a>
+  <a class="cds--header__name" href="index.html" data-en="JMS — Enterprise Messaging" data-fr="JMS — Messagerie Enterprise">JMS — Enterprise Messaging<span data-en="Jakarta EE Course" data-fr="Cours Jakarta EE">Jakarta EE Course</span></a>
+  <button class="lang-toggle-btn" id="lang-toggle">FR</button>
+  <a class="cds--header__back" href="../index.html" data-en="← All Courses" data-fr="← Tous les Cours">← All Courses</a>
 </header>
 <div class="cds--shell">
   <nav class="cds--side-nav">
-    <p class="cds--side-nav__section-title">Cours 05b</p>
-    <a class="cds--side-nav__link" href="index.html">⊙ Vue d'ensemble</a>
-    <a class="cds--side-nav__link" href="slides.html">☰ Contenu du cours</a>
-    <a class="cds--side-nav__link active" href="concepts.html">◈ Concepts clés</a>
-    <a class="cds--side-nav__link" href="code.html">⟨/⟩ Exemples de code</a>
+    <p class="cds--side-nav__section-title" data-en="Course 05b" data-fr="Cours 05b">Course 05b</p>
+    <a class="cds--side-nav__link" href="index.html" data-en="⊙ Overview" data-fr="⊙ Vue d'ensemble">⊙ Overview</a>
+    <a class="cds--side-nav__link" href="slides.html" data-en="☰ Course Content" data-fr="☰ Contenu du cours">☰ Course Content</a>
+    <a class="cds--side-nav__link active" href="concepts.html" data-en="◈ Key Concepts" data-fr="◈ Concepts clés">◈ Key Concepts</a>
+    <a class="cds--side-nav__link" href="code.html" data-en="⟨/⟩ Code Examples" data-fr="⟨/⟩ Exemples de code">⟨/⟩ Code Examples</a>
+    <a class="cds--side-nav__lang-toggle">FR</a>
   </nav>
   <main class="cds--content">
-    <div class="breadcrumb"><a href="../index.html">Cours</a> › <a href="index.html">Cours 05b</a> › Concepts clés</div>
-    <h1>Concepts clés</h1>
-    <p class="page-lead">Comparatifs, tableaux de référence et glossaire pour JMS et la messagerie enterprise.</p>
+    <div class="breadcrumb"><a href="../index.html" data-en="Courses" data-fr="Cours">Courses</a> › <a href="index.html" data-en="Course 05b" data-fr="Cours 05b">Course 05b</a> › <span data-en="Key Concepts" data-fr="Concepts clés">Key Concepts</span></div>
+    <h1 data-en="Key Concepts" data-fr="Concepts clés">Key Concepts</h1>
+    <p class="page-lead" data-en="Comparisons, reference tables and glossary for JMS and enterprise messaging." data-fr="Comparatifs, tableaux de référence et glossaire pour JMS et la messagerie enterprise.">Comparisons, reference tables and glossary for JMS and enterprise messaging.</p>
 
-    <h2>Messagerie vs Appels Directs</h2>
+    <h2 data-en="Messaging vs Direct Calls" data-fr="Messagerie vs Appels Directs">Messaging vs Direct Calls</h2>
+    <p class="page-note" data-en="Note: JMS 3.0 is included in Jakarta EE 10+" data-fr="Note : JMS 3.0 est inclus dans Jakarta EE 10+">Note: JMS 3.0 is included in Jakarta EE 10+</p>
     <div class="cds--data-table-container">
       <table class="cds--data-table">
-        <thead><tr><th>Aspect</th><th>Appels Directs (REST/EJB)</th><th>Messagerie JMS</th></tr></thead>
+        <thead><tr><th data-en="Aspect" data-fr="Aspect">Aspect</th><th data-en="Direct Calls (REST/EJB)" data-fr="Appels Directs (REST/EJB)">Direct Calls (REST/EJB)</th><th data-en="JMS Messaging" data-fr="Messagerie JMS">JMS Messaging</th></tr></thead>
         <tbody>
-          <tr><td><strong>Couplage</strong></td><td>Fort — l'émetteur connaît le récepteur</td><td>Faible — via broker de messages</td></tr>
-          <tr><td><strong>Disponibilité</strong></td><td>Les deux services doivent être actifs</td><td>Découplage temporel — tolérance aux pannes</td></tr>
-          <tr><td><strong>Ordre</strong></td><td>Séquentiel garanti dans un appel</td><td>FIFO par Queue, non garanti sur Topic</td></tr>
-          <tr><td><strong>Scalabilité</strong></td><td>Limitée par le service le plus lent</td><td>Naturelle — plusieurs consommateurs sur une Queue</td></tr>
-          <tr><td><strong>Complexité</strong></td><td>Simple à implémenter</td><td>Infrastructure broker requise</td></tr>
-          <tr><td><strong>Use Case</strong></td><td>Requête/réponse synchrone, CRUD API</td><td>Traitement asynchrone, intégration, événements</td></tr>
+          <tr><td><strong data-en="Coupling" data-fr="Couplage">Coupling</strong></td><td data-en="Tight — the sender knows the receiver" data-fr="Fort — l'émetteur connaît le récepteur">Tight — the sender knows the receiver</td><td data-en="Loose — via message broker" data-fr="Faible — via broker de messages">Loose — via message broker</td></tr>
+          <tr><td><strong data-en="Availability" data-fr="Disponibilité">Availability</strong></td><td data-en="Both services must be active" data-fr="Les deux services doivent être actifs">Both services must be active</td><td data-en="Temporal decoupling — fault tolerance" data-fr="Découplage temporel — tolérance aux pannes">Temporal decoupling — fault tolerance</td></tr>
+          <tr><td><strong data-en="Order" data-fr="Ordre">Order</strong></td><td data-en="Sequential guaranteed within a call" data-fr="Séquentiel garanti dans un appel">Sequential guaranteed within a call</td><td data-en="FIFO per Queue, not guaranteed on Topic" data-fr="FIFO par Queue, non garanti sur Topic">FIFO per Queue, not guaranteed on Topic</td></tr>
+          <tr><td><strong data-en="Scalability" data-fr="Scalabilité">Scalability</strong></td><td data-en="Limited by the slowest service" data-fr="Limitée par le service le plus lent">Limited by the slowest service</td><td data-en="Natural — multiple consumers on a Queue" data-fr="Naturelle — plusieurs consommateurs sur une Queue">Natural — multiple consumers on a Queue</td></tr>
+          <tr><td><strong data-en="Complexity" data-fr="Complexité">Complexity</strong></td><td data-en="Simple to implement" data-fr="Simple à implémenter">Simple to implement</td><td data-en="Broker infrastructure required" data-fr="Infrastructure broker requise">Broker infrastructure required</td></tr>
+          <tr><td><strong>Use Case</strong></td><td data-en="Synchronous request/response, CRUD API" data-fr="Requête/réponse synchrone, CRUD API">Synchronous request/response, CRUD API</td><td data-en="Asynchronous processing, integration, events" data-fr="Traitement asynchrone, intégration, événements">Asynchronous processing, integration, events</td></tr>
         </tbody>
       </table>
     </div>
 
-    <h2>Queue vs Topic</h2>
+    <h2 data-en="Queue vs Topic" data-fr="Queue vs Topic">Queue vs Topic</h2>
     <div class="cds--data-table-container">
       <table class="cds--data-table">
-        <thead><tr><th>Feature</th><th>Queue (Point-à-Point)</th><th>Topic (Pub/Sub)</th></tr></thead>
+        <thead><tr><th>Feature</th><th data-en="Queue (Point-to-Point)" data-fr="Queue (Point-à-Point)">Queue (Point-to-Point)</th><th data-en="Topic (Pub/Sub)" data-fr="Topic (Pub/Sub)">Topic (Pub/Sub)</th></tr></thead>
         <tbody>
-          <tr><td><strong>Modèle</strong></td><td>Point-à-Point</td><td>Publish/Subscribe</td></tr>
-          <tr><td><strong>Consommateurs</strong></td><td>Un seul consommateur par message</td><td>Tous les abonnés reçoivent le message</td></tr>
-          <tr><td><strong>Persistance</strong></td><td>Messages conservés jusqu'à consommation</td><td>Dépend du type d'abonnement</td></tr>
-          <tr><td><strong>Abonnement durable</strong></td><td>Non applicable</td><td>Oui — <code>subscriptionDurability="Durable"</code></td></tr>
-          <tr><td><strong>Load balancing</strong></td><td>✅ Naturel entre consommateurs</td><td>❌ Chaque abonné traite tous les messages</td></tr>
-          <tr><td><strong>Rejoue</strong></td><td>Non (message supprimé après ACK)</td><td>Possible avec durable subscription</td></tr>
-          <tr><td><strong>Use Case</strong></td><td>File de tâches, commandes, workflow</td><td>Notifications, broadcast, événements métier</td></tr>
+          <tr><td><strong data-en="Model" data-fr="Modèle">Model</strong></td><td data-en="Point-to-Point" data-fr="Point-à-Point">Point-to-Point</td><td>Publish/Subscribe</td></tr>
+          <tr><td><strong data-en="Consumers" data-fr="Consommateurs">Consumers</strong></td><td data-en="One consumer per message" data-fr="Un seul consommateur par message">One consumer per message</td><td data-en="All subscribers receive the message" data-fr="Tous les abonnés reçoivent le message">All subscribers receive the message</td></tr>
+          <tr><td><strong data-en="Persistence" data-fr="Persistance">Persistence</strong></td><td data-en="Messages retained until consumed" data-fr="Messages conservés jusqu'à consommation">Messages retained until consumed</td><td data-en="Depends on subscription type" data-fr="Dépend du type d'abonnement">Depends on subscription type</td></tr>
+          <tr><td><strong data-en="Durable subscription" data-fr="Abonnement durable">Durable subscription</strong></td><td data-en="Not applicable" data-fr="Non applicable">Not applicable</td><td>Oui — <code>subscriptionDurability="Durable"</code></td></tr>
+          <tr><td><strong>Load balancing</strong></td><td data-en="✅ Natural between consumers" data-fr="✅ Naturel entre consommateurs">✅ Natural between consumers</td><td data-en="❌ Each subscriber processes all messages" data-fr="❌ Chaque abonné traite tous les messages">❌ Each subscriber processes all messages</td></tr>
+          <tr><td><strong data-en="Replay" data-fr="Rejoue">Replay</strong></td><td data-en="No (message deleted after ACK)" data-fr="Non (message supprimé après ACK)">No (message deleted after ACK)</td><td data-en="Possible with durable subscription" data-fr="Possible avec durable subscription">Possible with durable subscription</td></tr>
+          <tr><td><strong>Use Case</strong></td><td data-en="Task queue, orders, workflow" data-fr="File de tâches, commandes, workflow">Task queue, orders, workflow</td><td data-en="Notifications, broadcast, business events" data-fr="Notifications, broadcast, événements métier">Notifications, broadcast, business events</td></tr>
         </tbody>
       </table>
     </div>
 
-    <h2>Types de Messages JMS</h2>
+    <h2 data-en="JMS Message Types" data-fr="Types de Messages JMS">JMS Message Types</h2>
     <div class="cds--data-table-container">
       <table class="cds--data-table">
-        <thead><tr><th>Type</th><th>Description</th><th>Use Case</th></tr></thead>
+        <thead><tr><th data-en="Type" data-fr="Type">Type</th><th data-en="Description" data-fr="Description">Description</th><th>Use Case</th></tr></thead>
         <tbody>
-          <tr><td><strong>TextMessage</strong></td><td>Corps de type <code>String</code></td><td>JSON, XML, texte — le plus utilisé</td></tr>
-          <tr><td><strong>ObjectMessage</strong></td><td>Objet Java <code>Serializable</code></td><td>Transfert interne Java-to-Java uniquement</td></tr>
-          <tr><td><strong>MapMessage</strong></td><td>Paires clé/valeur <code>String → primitif</code></td><td>Données structurées portables</td></tr>
-          <tr><td><strong>BytesMessage</strong></td><td>Tableau d'octets <code>byte[]</code></td><td>Données binaires, images, protocoles custom</td></tr>
-          <tr><td><strong>StreamMessage</strong></td><td>Flux de primitifs Java séquentiels</td><td>Protocoles séquentiels, données numériques</td></tr>
+          <tr><td><strong>TextMessage</strong></td><td data-en="Body of type" data-fr="Corps de type"><span data-en="Body of type " data-fr="Corps de type ">Body of type </span><code>String</code></td><td data-en="JSON, XML, text — most commonly used" data-fr="JSON, XML, texte — le plus utilisé">JSON, XML, text — most commonly used</td></tr>
+          <tr><td><strong>ObjectMessage</strong></td><td><span data-en="Java " data-fr="Objet Java ">Java </span><code>Serializable</code><span data-en=" object" data-fr=""> object</span></td><td data-en="Internal Java-to-Java transfer only" data-fr="Transfert interne Java-to-Java uniquement">Internal Java-to-Java transfer only</td></tr>
+          <tr><td><strong>MapMessage</strong></td><td data-en="Key/value pairs" data-fr="Paires clé/valeur"><span data-en="Key/value pairs " data-fr="Paires clé/valeur ">Key/value pairs </span><code>String → primitif</code></td><td data-en="Portable structured data" data-fr="Données structurées portables">Portable structured data</td></tr>
+          <tr><td><strong>BytesMessage</strong></td><td data-en="Byte array" data-fr="Tableau d'octets"><span data-en="Byte array " data-fr="Tableau d'octets ">Byte array </span><code>byte[]</code></td><td data-en="Binary data, images, custom protocols" data-fr="Données binaires, images, protocoles custom">Binary data, images, custom protocols</td></tr>
+          <tr><td><strong>StreamMessage</strong></td><td data-en="Sequential stream of Java primitives" data-fr="Flux de primitifs Java séquentiels">Sequential stream of Java primitives</td><td data-en="Sequential protocols, numeric data" data-fr="Protocoles séquentiels, données numériques">Sequential protocols, numeric data</td></tr>
         </tbody>
       </table>
     </div>
 
-    <h2>API JMS 2.0 vs 1.x</h2>
+    <h2 data-en="JMS 2.0 API vs 1.x" data-fr="API JMS 2.0 vs 1.x">JMS 2.0 API vs 1.x</h2>
     <div class="cds--data-table-container">
       <table class="cds--data-table">
-        <thead><tr><th>Opération</th><th>JMS 1.x (ancienne API)</th><th>JMS 2.0 — JMSContext (simplifiée)</th></tr></thead>
+        <thead><tr><th data-en="Operation" data-fr="Opération">Operation</th><th data-en="JMS 1.x (legacy API)" data-fr="JMS 1.x (ancienne API)">JMS 1.x (legacy API)</th><th data-en="JMS 2.0 — JMSContext (simplified)" data-fr="JMS 2.0 — JMSContext (simplifiée)">JMS 2.0 — JMSContext (simplified)</th></tr></thead>
         <tbody>
-          <tr><td><strong>Obtenir la connexion</strong></td><td><code>ConnectionFactory.createConnection()</code></td><td><code>@Inject JMSContext jmsContext</code></td></tr>
-          <tr><td><strong>Créer une session</strong></td><td><code>connection.createSession(false, AUTO_ACKNOWLEDGE)</code></td><td>Inclus dans <code>JMSContext</code></td></tr>
-          <tr><td><strong>Envoyer un message</strong></td><td><code>session.createProducer(dest).send(msg)</code></td><td><code>jmsContext.createProducer().send(dest, body)</code></td></tr>
-          <tr><td><strong>Recevoir un message</strong></td><td><code>session.createConsumer(dest).receive()</code></td><td><code>jmsContext.createConsumer(dest).receiveBody(String.class)</code></td></tr>
-          <tr><td><strong>Fermeture</strong></td><td>Manuelle — <code>producer.close(); session.close(); connection.close()</code></td><td>Automatique — gérée par le conteneur</td></tr>
-          <tr><td><strong>Injection CDI</strong></td><td>❌ Non supportée directement</td><td>✅ <code>@Inject</code> + <code>@JMSConnectionFactory</code></td></tr>
-          <tr><td><strong>Lignes de code (envoi)</strong></td><td>~10 lignes</td><td>1–2 lignes</td></tr>
+          <tr><td><strong data-en="Get connection" data-fr="Obtenir la connexion">Get connection</strong></td><td><code>ConnectionFactory.createConnection()</code></td><td><code>@Inject JMSContext jmsContext</code></td></tr>
+          <tr><td><strong data-en="Create session" data-fr="Créer une session">Create session</strong></td><td><code>connection.createSession(false, AUTO_ACKNOWLEDGE)</code></td><td data-en="Included in" data-fr="Inclus dans"><span data-en="Included in " data-fr="Inclus dans ">Included in </span><code>JMSContext</code></td></tr>
+          <tr><td><strong data-en="Send message" data-fr="Envoyer un message">Send message</strong></td><td><code>session.createProducer(dest).send(msg)</code></td><td><code>jmsContext.createProducer().send(dest, body)</code></td></tr>
+          <tr><td><strong data-en="Receive message" data-fr="Recevoir un message">Receive message</strong></td><td><code>session.createConsumer(dest).receive()</code></td><td><code>jmsContext.createConsumer(dest).receiveBody(String.class)</code></td></tr>
+          <tr><td><strong data-en="Close" data-fr="Fermeture">Close</strong></td><td data-en="Manual —" data-fr="Manuelle —"><span data-en="Manual — " data-fr="Manuelle — ">Manual — </span><code>producer.close(); session.close(); connection.close()</code></td><td data-en="Automatic — managed by the container" data-fr="Automatique — gérée par le conteneur">Automatic — managed by the container</td></tr>
+          <tr><td><strong>CDI Injection</strong></td><td data-en="❌ Not directly supported" data-fr="❌ Non supportée directement">❌ Not directly supported</td><td>✅ <code>@Inject</code> + <code>@JMSConnectionFactory</code></td></tr>
+          <tr><td><strong data-en="Lines of code (send)" data-fr="Lignes de code (envoi)">Lines of code (send)</strong></td><td data-en="~10 lines" data-fr="~10 lignes">~10 lines</td><td data-en="1–2 lines" data-fr="1–2 lignes">1–2 lines</td></tr>
         </tbody>
       </table>
     </div>
 
-    <h2>Transactions JMS dans un MDB</h2>
+    <h2 data-en="JMS Transactions in an MDB" data-fr="Transactions JMS dans un MDB">JMS Transactions in an MDB</h2>
     <div class="cds--data-table-container">
       <table class="cds--data-table">
-        <thead><tr><th>Aspect</th><th>CMT — Container-Managed Transactions</th><th>BMT — Bean-Managed Transactions</th></tr></thead>
+        <thead><tr><th data-en="Aspect" data-fr="Aspect">Aspect</th><th data-en="CMT — Container-Managed Transactions" data-fr="CMT — Container-Managed Transactions">CMT — Container-Managed Transactions</th><th data-en="BMT — Bean-Managed Transactions" data-fr="BMT — Bean-Managed Transactions">BMT — Bean-Managed Transactions</th></tr></thead>
         <tbody>
-          <tr><td><strong>Gestion</strong></td><td>Déléguée au conteneur — automatique</td><td>Manuelle via <code>UserTransaction</code></td></tr>
-          <tr><td><strong>Annotation</strong></td><td><code>@TransactionAttribute(REQUIRED)</code> (défaut MDB)</td><td><code>@TransactionManagement(BEAN)</code></td></tr>
-          <tr><td><strong>ACK JMS</strong></td><td>Inclus dans la transaction conteneur</td><td>Séparé — géré par <code>ut.begin()/commit()</code></td></tr>
-          <tr><td><strong>Rollback</strong></td><td>Automatique sur exception — message rélivré</td><td>Explicite — <code>ut.rollback()</code> dans le catch</td></tr>
-          <tr><td><strong>Poison message</strong></td><td>Géré par le broker après N tentatives → DLQ</td><td>À gérer manuellement dans le code</td></tr>
-          <tr><td><strong>Recommandé</strong></td><td>✅ Oui — grande majorité des cas</td><td>Cas avancés uniquement</td></tr>
+          <tr><td><strong data-en="Management" data-fr="Gestion">Management</strong></td><td data-en="Delegated to the container — automatic" data-fr="Déléguée au conteneur — automatique">Delegated to the container — automatic</td><td data-en="Manual via" data-fr="Manuelle via"><span data-en="Manual via " data-fr="Manuelle via "><code>UserTransaction</code></span></td></tr>
+          <tr><td><strong data-en="Annotation" data-fr="Annotation">Annotation</strong></td><td><code>@TransactionAttribute(REQUIRED)</code> <span data-en="(MDB default)" data-fr="(défaut MDB)">(MDB default)</span></td><td><code>@TransactionManagement(BEAN)</code></td></tr>
+          <tr><td><strong>JMS ACK</strong></td><td data-en="Included in the container transaction" data-fr="Inclus dans la transaction conteneur">Included in the container transaction</td><td data-en="Separate — managed by" data-fr="Séparé — géré par"><span data-en="Separate — managed by " data-fr="Séparé — géré par "><code>ut.begin()/commit()</code></span></td></tr>
+          <tr><td><strong>Rollback</strong></td><td data-en="Automatic on exception — message redelivered" data-fr="Automatique sur exception — message rélivré">Automatic on exception — message redelivered</td><td data-en="Explicit —" data-fr="Explicite —"><span data-en="Explicit — " data-fr="Explicite — "><code>ut.rollback()</code></span><span data-en=" in the catch" data-fr=" dans le catch"> in the catch</span></td></tr>
+          <tr><td><strong>Poison message</strong></td><td data-en="Handled by the broker after N attempts → DLQ" data-fr="Géré par le broker après N tentatives → DLQ">Handled by the broker after N attempts → DLQ</td><td data-en="Must be handled manually in code" data-fr="À gérer manuellement dans le code">Must be handled manually in code</td></tr>
+          <tr><td><strong data-en="Recommended" data-fr="Recommandé">Recommended</strong></td><td data-en="✅ Yes — vast majority of cases" data-fr="✅ Oui — grande majorité des cas">✅ Yes — vast majority of cases</td><td data-en="Advanced cases only" data-fr="Cas avancés uniquement">Advanced cases only</td></tr>
         </tbody>
       </table>
     </div>
 
-    <h2>Glossaire</h2>
+    <h2 data-en="Glossary" data-fr="Glossaire">Glossary</h2>
     <div class="cds--data-table-container">
       <table class="cds--data-table">
-        <thead><tr><th>Terme</th><th>Définition</th></tr></thead>
+        <thead><tr><th data-en="Term" data-fr="Terme">Term</th><th data-en="Definition" data-fr="Définition">Definition</th></tr></thead>
         <tbody>
-          <tr><td><strong>JMS</strong></td><td>Jakarta Messaging Service — spécification Jakarta EE définissant une API standard pour la communication asynchrone par messages entre applications</td></tr>
-          <tr><td><strong>Queue</strong></td><td>Destination JMS du modèle Point-à-Point — chaque message est consommé par un seul consommateur ; les messages sont persistés jusqu'à consommation</td></tr>
-          <tr><td><strong>Topic</strong></td><td>Destination JMS du modèle Publish/Subscribe — chaque message publié est distribué à tous les abonnés actifs (ou durables)</td></tr>
-          <tr><td><strong>MDB</strong></td><td>Message-Driven Bean — EJB déclenché automatiquement par l'arrivée d'un message JMS ; implémente <code>MessageListener</code></td></tr>
-          <tr><td><strong>@MessageDriven</strong></td><td>Annotation Jakarta EE déclarant un EJB comme MDB et configurant son abonnement JMS via <code>activationConfig</code></td></tr>
-          <tr><td><strong>Dead Letter Queue</strong></td><td>File de messages non-traitables — reçoit les messages qui ont échoué N fois consécutives ; permet l'analyse et la reprise sans perte</td></tr>
-          <tr><td><strong>JMSContext</strong></td><td>Interface JMS 2.0 combinant Connection et Session en un seul objet injectable — simplifie drastiquement le code producteur/consommateur</td></tr>
-          <tr><td><strong>MessageSelector</strong></td><td>Filtre SQL-like appliqué sur les propriétés des messages pour ne consommer que les messages correspondant à des critères précis</td></tr>
+          <tr><td><strong>JMS</strong></td><td data-en="Jakarta Messaging Service — Jakarta EE specification defining a standard API for asynchronous message-based communication between applications" data-fr="Jakarta Messaging Service — spécification Jakarta EE définissant une API standard pour la communication asynchrone par messages entre applications">Jakarta Messaging Service — Jakarta EE specification defining a standard API for asynchronous message-based communication between applications</td></tr>
+          <tr><td><strong>Queue</strong></td><td data-en="JMS destination for the Point-to-Point model — each message is consumed by a single consumer; messages are persisted until consumed" data-fr="Destination JMS du modèle Point-à-Point — chaque message est consommé par un seul consommateur ; les messages sont persistés jusqu'à consommation">JMS destination for the Point-to-Point model — each message is consumed by a single consumer; messages are persisted until consumed</td></tr>
+          <tr><td><strong>Topic</strong></td><td data-en="JMS destination for the Publish/Subscribe model — each published message is distributed to all active (or durable) subscribers" data-fr="Destination JMS du modèle Publish/Subscribe — chaque message publié est distribué à tous les abonnés actifs (ou durables)">JMS destination for the Publish/Subscribe model — each published message is distributed to all active (or durable) subscribers</td></tr>
+          <tr><td><strong>MDB</strong></td><td data-en="Message-Driven Bean — EJB automatically triggered by the arrival of a JMS message; implements" data-fr="Message-Driven Bean — EJB déclenché automatiquement par l'arrivée d'un message JMS ; implémente"><span data-en="Message-Driven Bean — EJB automatically triggered by the arrival of a JMS message; implements " data-fr="Message-Driven Bean — EJB déclenché automatiquement par l'arrivée d'un message JMS ; implémente ">Message-Driven Bean — EJB automatically triggered by the arrival of a JMS message; implements </span><code>MessageListener</code></td></tr>
+          <tr><td><strong>@MessageDriven</strong></td><td data-en="Jakarta EE annotation declaring an EJB as an MDB and configuring its JMS subscription via" data-fr="Annotation Jakarta EE déclarant un EJB comme MDB et configurant son abonnement JMS via"><span data-en="Jakarta EE annotation declaring an EJB as an MDB and configuring its JMS subscription via " data-fr="Annotation Jakarta EE déclarant un EJB comme MDB et configurant son abonnement JMS via ">Jakarta EE annotation declaring an EJB as an MDB and configuring its JMS subscription via </span><code>activationConfig</code></td></tr>
+          <tr><td><strong>Dead Letter Queue</strong></td><td data-en="Queue for unprocessable messages — receives messages that have failed N consecutive times; enables analysis and recovery without data loss" data-fr="File de messages non-traitables — reçoit les messages qui ont échoué N fois consécutives ; permet l'analyse et la reprise sans perte">Queue for unprocessable messages — receives messages that have failed N consecutive times; enables analysis and recovery without data loss</td></tr>
+          <tr><td><strong>JMSContext</strong></td><td data-en="JMS 2.0 interface combining Connection and Session into a single injectable object — drastically simplifies producer/consumer code" data-fr="Interface JMS 2.0 combinant Connection et Session en un seul objet injectable — simplifie drastiquement le code producteur/consommateur">JMS 2.0 interface combining Connection and Session into a single injectable object — drastically simplifies producer/consumer code</td></tr>
+          <tr><td><strong>MessageSelector</strong></td><td data-en="SQL-like filter applied on message properties to consume only messages matching specific criteria" data-fr="Filtre SQL-like appliqué sur les propriétés des messages pour ne consommer que les messages correspondant à des critères précis">SQL-like filter applied on message properties to consume only messages matching specific criteria</td></tr>
         </tbody>
       </table>
     </div>
@@ -121,5 +124,6 @@
   </main>
 </div>
 <footer class="cds--footer">Made with IBM Bob &nbsp;·&nbsp; © 2026 Olivier Planson &nbsp;·&nbsp; ESIPE — Jakarta EE &amp; Microservices</footer>
+<script src="../assets/language-toggle.js"></script>
 </body>
 </html>

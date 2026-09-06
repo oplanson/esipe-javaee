@@ -1,106 +1,108 @@
 <!-- © Copyright 2026 Olivier Planson. All rights reserved. Reproduction prohibited. Made with IBM Bob. -->
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="en">
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-  <title>Cours 03 — Contenu du cours</title>
+  <title>Course 03 — Course Content</title>
   <link rel="stylesheet" href="../assets/carbon.css"/>
 </head>
 <body>
 <header class="cds--header">
-  <a class="cds--header__name" href="index.html">JPA &amp; Base de données<span>Cours Jakarta EE</span></a>
-  <a class="cds--header__back" href="../index.html">← Tous les Cours</a>
+  <a class="cds--header__name" href="index.html" data-en="JPA &amp; Database" data-fr="JPA &amp; Base de données"><span data-en="Jakarta EE Course" data-fr="Cours Jakarta EE">Jakarta EE Course</span></a>
+  <button class="lang-toggle-btn" id="lang-toggle">FR</button>
+  <a class="cds--header__back" href="../index.html" data-en="← All Courses" data-fr="← Tous les Cours">← All Courses</a>
 </header>
 <div class="cds--shell">
   <nav class="cds--side-nav">
-    <p class="cds--side-nav__section-title">Cours 03</p>
-    <a class="cds--side-nav__link" href="index.html">⊙ Vue d'ensemble</a>
-    <a class="cds--side-nav__link active" href="slides.html">☰ Contenu du cours</a>
-    <a class="cds--side-nav__link" href="concepts.html">◈ Concepts clés</a>
-    <a class="cds--side-nav__link" href="code.html">⟨/⟩ Exemples de code</a>
+    <p class="cds--side-nav__section-title" data-en="Course 03" data-fr="Cours 03">Course 03</p>
+    <a class="cds--side-nav__link" href="index.html" data-en="⊙ Overview" data-fr="⊙ Vue d'ensemble">⊙ Overview</a>
+    <a class="cds--side-nav__link active" href="slides.html" data-en="☰ Course Content" data-fr="☰ Contenu du cours">☰ Course Content</a>
+    <a class="cds--side-nav__link" href="concepts.html" data-en="◈ Key Concepts" data-fr="◈ Concepts clés">◈ Key Concepts</a>
+    <a class="cds--side-nav__link" href="code.html" data-en="⟨/⟩ Code Examples" data-fr="⟨/⟩ Exemples de code">⟨/⟩ Code Examples</a>
+    <a class="cds--side-nav__lang-toggle">FR</a>
   </nav>
   <main class="cds--content">
-    <div class="breadcrumb"><a href="../index.html">Cours</a> › <a href="index.html">Cours 03</a> › Contenu</div>
-    <h1>Contenu du cours</h1>
-    <p class="page-lead">Toutes les sections — cliquez sur un titre pour développer.</p>
+    <div class="breadcrumb"><a href="../index.html" data-en="Courses" data-fr="Cours">Courses</a> › <a href="index.html" data-en="Course 03" data-fr="Cours 03">Course 03</a> › <span data-en="Content" data-fr="Contenu">Content</span></div>
+    <h1 data-en="Course Content" data-fr="Contenu du cours">Course Content</h1>
+    <p class="page-lead" data-en="All sections — click a title to expand." data-fr="Toutes les sections — cliquez sur un titre pour développer.">All sections — click a title to expand.</p>
 
     <details open>
-      <summary>🗄️ Qu'est-ce que JPA / ORM ?</summary>
+      <summary data-en="🗄️ What is JPA / ORM?" data-fr="🗄️ Qu'est-ce que JPA / ORM ?">🗄️ What is JPA / ORM?</summary>
       <div class="slide-content">
-        <p><strong>ORM (Object-Relational Mapping)</strong> mappe automatiquement les objets Java en tables SQL, éliminant le code JDBC répétitif et les conversions manuelles.</p>
+        <p><strong data-en="ORM (Object-Relational Mapping)" data-fr="ORM (Object-Relational Mapping)">ORM (Object-Relational Mapping)</strong> <span data-en="automatically maps Java objects to SQL tables, eliminating repetitive JDBC code and manual conversions." data-fr="mappe automatiquement les objets Java en tables SQL, éliminant le code JDBC répétitif et les conversions manuelles.">automatically maps Java objects to SQL tables, eliminating repetitive JDBC code and manual conversions.</span></p>
         <img src="../../images/03-jpa-database-integration-diagram-1.png" alt="JPA / ORM Architecture"/>
-        <h3>Avantages de l'ORM avec JPA :</h3>
+        <h3 data-en="Benefits of ORM with JPA:" data-fr="Avantages de l'ORM avec JPA :">Benefits of ORM with JPA:</h3>
         <ul>
-          <li><strong>Portabilité</strong> — changer de base de données sans modifier le code métier</li>
-          <li><strong>Productivité</strong> — moins de code boilerplate, focus sur la logique</li>
-          <li><strong>Maintenabilité</strong> — modèle objet cohérent, pas de duplication SQL/Java</li>
-          <li><strong>Sécurité</strong> — requêtes paramétrées par défaut, protection contre les injections SQL</li>
-          <li><strong>Cache</strong> — cache de premier et second niveau pour les performances</li>
+          <li><strong data-en="Portability" data-fr="Portabilité">Portability</strong> — <span data-en="switch databases without modifying business code" data-fr="changer de base de données sans modifier le code métier">switch databases without modifying business code</span></li>
+          <li><strong data-en="Productivity" data-fr="Productivité">Productivity</strong> — <span data-en="less boilerplate code, focus on logic" data-fr="moins de code boilerplate, focus sur la logique">less boilerplate code, focus on logic</span></li>
+          <li><strong data-en="Maintainability" data-fr="Maintenabilité">Maintainability</strong> — <span data-en="consistent object model, no SQL/Java duplication" data-fr="modèle objet cohérent, pas de duplication SQL/Java">consistent object model, no SQL/Java duplication</span></li>
+          <li><strong data-en="Security" data-fr="Sécurité">Security</strong> — <span data-en="parameterised queries by default, protection against SQL injections" data-fr="requêtes paramétrées par défaut, protection contre les injections SQL">parameterised queries by default, protection against SQL injections</span></li>
+          <li><strong data-en="Cache" data-fr="Cache">Cache</strong> — <span data-en="first and second level cache for performance" data-fr="cache de premier et second niveau pour les performances">first and second level cache for performance</span></li>
         </ul>
-        <p><strong>JPA (Jakarta Persistence API)</strong> est la spécification standard — Hibernate, EclipseLink et OpenJPA en sont les implémentations.</p>
+        <p><strong>JPA (Jakarta Persistence API)</strong> <span data-en="is the standard specification — Hibernate, EclipseLink, and OpenJPA are its implementations." data-fr="est la spécification standard — Hibernate, EclipseLink et OpenJPA en sont les implémentations.">is the standard specification — Hibernate, EclipseLink, and OpenJPA are its implementations.</span></p>
       </div>
     </details>
 
     <details>
-      <summary>🏷️ Annotations JPA de base</summary>
+      <summary data-en="🏷️ Basic JPA Annotations" data-fr="🏷️ Annotations JPA de base">🏷️ Basic JPA Annotations</summary>
       <div class="slide-content">
-        <h3>Annotations essentielles :</h3>
+        <h3 data-en="Essential annotations:" data-fr="Annotations essentielles :">Essential annotations:</h3>
         <ul>
-          <li><strong><code>@Entity</code></strong> — déclare la classe comme entité persistante JPA</li>
-          <li><strong><code>@Table(name="...")</code></strong> — spécifie le nom de la table SQL correspondante</li>
-          <li><strong><code>@Id</code></strong> — désigne le champ clé primaire</li>
-          <li><strong><code>@GeneratedValue</code></strong> — stratégie de génération de la clé primaire :
+          <li><strong><code>@Entity</code></strong> — <span data-en="declares the class as a persistent JPA entity" data-fr="déclare la classe comme entité persistante JPA">declares the class as a persistent JPA entity</span></li>
+          <li><strong><code>@Table(name="...")</code></strong> — <span data-en="specifies the corresponding SQL table name" data-fr="spécifie le nom de la table SQL correspondante">specifies the corresponding SQL table name</span></li>
+          <li><strong><code>@Id</code></strong> — <span data-en="designates the primary key field" data-fr="désigne le champ clé primaire">designates the primary key field</span></li>
+          <li><strong><code>@GeneratedValue</code></strong> — <span data-en="primary key generation strategy:" data-fr="stratégie de génération de la clé primaire :">primary key generation strategy:</span>
             <ul>
-              <li><code>AUTO</code> — le provider choisit la stratégie</li>
-              <li><code>IDENTITY</code> — colonne auto-increment (PostgreSQL, MySQL)</li>
-              <li><code>SEQUENCE</code> — séquence base de données (PostgreSQL, Oracle)</li>
-              <li><code>TABLE</code> — table dédiée à la génération d'ID (portable)</li>
+              <li><code>AUTO</code> — <span data-en="provider chooses the strategy" data-fr="le provider choisit la stratégie">provider chooses the strategy</span></li>
+              <li><code>IDENTITY</code> — <span data-en="auto-increment column (PostgreSQL, MySQL)" data-fr="colonne auto-increment (PostgreSQL, MySQL)">auto-increment column (PostgreSQL, MySQL)</span></li>
+              <li><code>SEQUENCE</code> — <span data-en="database sequence (PostgreSQL, Oracle)" data-fr="séquence base de données (PostgreSQL, Oracle)">database sequence (PostgreSQL, Oracle)</span></li>
+              <li><code>TABLE</code> — <span data-en="dedicated generation table (portable)" data-fr="table dédiée à la génération d'ID (portable)">dedicated generation table (portable)</span></li>
             </ul>
           </li>
-          <li><strong><code>@Column</code></strong> — personnalise la colonne (name, nullable, length, unique)</li>
-          <li><strong><code>@Temporal</code></strong> — précise le type temporel (DATE, TIME, TIMESTAMP)</li>
-          <li><strong><code>@Transient</code></strong> — champ exclu de la persistance</li>
-          <li><strong><code>@Lob</code></strong> — champ de grande taille (CLOB / BLOB)</li>
+          <li><strong><code>@Column</code></strong> — <span data-en="customises the column (name, nullable, length, unique)" data-fr="personnalise la colonne (name, nullable, length, unique)">customises the column (name, nullable, length, unique)</span></li>
+          <li><strong><code>@Temporal</code></strong> — <span data-en="specifies the temporal type (DATE, TIME, TIMESTAMP)" data-fr="précise le type temporel (DATE, TIME, TIMESTAMP)">specifies the temporal type (DATE, TIME, TIMESTAMP)</span></li>
+          <li><strong><code>@Transient</code></strong> — <span data-en="field excluded from persistence" data-fr="champ exclu de la persistance">field excluded from persistence</span></li>
+          <li><strong><code>@Lob</code></strong> — <span data-en="large object field (CLOB / BLOB)" data-fr="champ de grande taille (CLOB / BLOB)">large object field (CLOB / BLOB)</span></li>
         </ul>
       </div>
     </details>
 
     <details>
-      <summary>🔗 Relations entre Entités</summary>
+      <summary data-en="🔗 Entity Relationships" data-fr="🔗 Relations entre Entités">🔗 Entity Relationships</summary>
       <div class="slide-content">
         <img src="../../images/03-jpa-database-integration-diagram-2.png" alt="JPA Entity Relations"/>
-        <h3>Types de relations :</h3>
+        <h3 data-en="Relationship types:" data-fr="Types de relations :">Relationship types:</h3>
         <ul>
-          <li><strong><code>@OneToMany</code> / <code>@ManyToOne</code></strong> — relation bidirectionnelle (ex. Client → Comptes)</li>
-          <li><strong><code>@ManyToMany</code></strong> avec <code>@JoinTable</code> — table d'association (ex. Utilisateurs ↔ Rôles)</li>
-          <li><strong><code>@OneToOne</code></strong> — relation exclusive (ex. Client ↔ Profil)</li>
+          <li><strong><code>@OneToMany</code> / <code>@ManyToOne</code></strong> — <span data-en="bidirectional relationship (e.g. Client → Accounts)" data-fr="relation bidirectionnelle (ex. Client → Comptes)">bidirectional relationship (e.g. Client → Accounts)</span></li>
+          <li><strong><code>@ManyToMany</code></strong> <span data-en="with" data-fr="avec">with</span> <code>@JoinTable</code> — <span data-en="association table (e.g. Users ↔ Roles)" data-fr="table d'association (ex. Utilisateurs ↔ Rôles)">association table (e.g. Users ↔ Roles)</span></li>
+          <li><strong><code>@OneToOne</code></strong> — <span data-en="exclusive relationship (e.g. Client ↔ Profile)" data-fr="relation exclusive (ex. Client ↔ Profil)">exclusive relationship (e.g. Client ↔ Profile)</span></li>
         </ul>
-        <h3>Fetch types :</h3>
+        <h3 data-en="Fetch types:" data-fr="Fetch types :">Fetch types:</h3>
         <ul>
-          <li><strong>LAZY</strong> (par défaut pour <code>@OneToMany</code>, <code>@ManyToMany</code>) — chargement à la demande</li>
-          <li><strong>EAGER</strong> (par défaut pour <code>@ManyToOne</code>, <code>@OneToOne</code>) — chargement immédiat</li>
+          <li><strong>LAZY</strong> <span data-en="(default for @OneToMany, @ManyToMany) — load on demand" data-fr="(par défaut pour @OneToMany, @ManyToMany) — chargement à la demande">(default for @OneToMany, @ManyToMany) — load on demand</span></li>
+          <li><strong>EAGER</strong> <span data-en="(default for @ManyToOne, @OneToOne) — immediate loading" data-fr="(par défaut pour @ManyToOne, @OneToOne) — chargement immédiat">(default for @ManyToOne, @OneToOne) — immediate loading</span></li>
         </ul>
-        <h3>Types de cascade :</h3>
+        <h3 data-en="Cascade types:" data-fr="Types de cascade :">Cascade types:</h3>
         <ul>
           <li><code>PERSIST</code>, <code>MERGE</code>, <code>REMOVE</code>, <code>REFRESH</code>, <code>DETACH</code>, <code>ALL</code></li>
         </ul>
-        <p><strong>Attention :</strong> le problème N+1 — utiliser <code>JOIN FETCH</code> en JPQL pour les associations LAZY.</p>
+        <p><strong data-en="Warning:" data-fr="Attention :">Warning:</strong> <span data-en="the N+1 problem — use JOIN FETCH in JPQL for LAZY associations." data-fr="le problème N+1 — utiliser JOIN FETCH en JPQL pour les associations LAZY.">the N+1 problem — use JOIN FETCH in JPQL for LAZY associations.</span></p>
       </div>
     </details>
 
     <details>
-      <summary>🔍 JPQL — Requêtes Orientées Objet</summary>
+      <summary data-en="🔍 JPQL — Object-Oriented Queries" data-fr="🔍 JPQL — Requêtes Orientées Objet">🔍 JPQL — Object-Oriented Queries</summary>
       <div class="slide-content">
-        <p><strong>JPQL (Jakarta Persistence Query Language)</strong> opère sur les entités Java, pas sur les tables SQL.</p>
-        <h3>Syntaxe clé :</h3>
+        <p><strong>JPQL (Jakarta Persistence Query Language)</strong> <span data-en="operates on Java entities, not on SQL tables." data-fr="opère sur les entités Java, pas sur les tables SQL.">operates on Java entities, not on SQL tables.</span></p>
+        <h3 data-en="Key syntax:" data-fr="Syntaxe clé :">Key syntax:</h3>
         <ul>
           <li><code>SELECT c FROM Client c WHERE c.email = :email</code></li>
           <li><code>SELECT c FROM Client c JOIN FETCH c.accounts WHERE c.id = :id</code></li>
-          <li><strong>Paramètres nommés</strong> — <code>:param</code> via <code>query.setParameter("param", value)</code></li>
-          <li><strong>Requêtes nommées</strong> — <code>@NamedQuery</code> sur l'entité, compilées au démarrage</li>
+          <li><strong data-en="Named parameters" data-fr="Paramètres nommés">Named parameters</strong> — <code>:param</code> <span data-en="via" data-fr="via">via</span> <code>query.setParameter("param", value)</code></li>
+          <li><strong data-en="Named queries" data-fr="Requêtes nommées">Named queries</strong> — <code>@NamedQuery</code> <span data-en="on the entity, compiled at startup" data-fr="sur l'entité, compilées au démarrage">on the entity, compiled at startup</span></li>
         </ul>
-        <h3>Fonctions d'agrégation :</h3>
+        <h3 data-en="Aggregation functions:" data-fr="Fonctions d'agrégation :">Aggregation functions:</h3>
         <ul>
           <li><code>COUNT(c)</code>, <code>SUM(a.balance)</code>, <code>AVG(a.balance)</code>, <code>MIN</code>, <code>MAX</code></li>
           <li><code>GROUP BY</code>, <code>HAVING</code>, <code>ORDER BY</code></li>
@@ -109,91 +111,92 @@
     </details>
 
     <details>
-      <summary>⚙️ Criteria API</summary>
+      <summary data-en="⚙️ Criteria API" data-fr="⚙️ Criteria API">⚙️ Criteria API</summary>
       <div class="slide-content">
-        <p>La <strong>Criteria API</strong> permet de construire des requêtes dynamiques type-safe en Java, sans concaténation de chaînes.</p>
-        <h3>Éléments principaux :</h3>
+        <p data-en="The Criteria API builds dynamic type-safe queries in Java, without string concatenation." data-fr="La Criteria API permet de construire des requêtes dynamiques type-safe en Java, sans concaténation de chaînes.">The <strong>Criteria API</strong> builds dynamic type-safe queries in Java, without string concatenation.</p>
+        <h3 data-en="Main elements:" data-fr="Éléments principaux :">Main elements:</h3>
         <ul>
-          <li><strong><code>CriteriaBuilder</code></strong> — fabrique d'éléments de requête (obtenu via <code>em.getCriteriaBuilder()</code>)</li>
-          <li><strong><code>CriteriaQuery&lt;T&gt;</code></strong> — définit le type du résultat</li>
-          <li><strong><code>Root&lt;T&gt;</code></strong> — point de départ de la requête (représente l'entité)</li>
-          <li><strong><code>Predicate</code></strong> — condition (<code>cb.equal</code>, <code>cb.like</code>, <code>cb.between</code>...)</li>
-          <li><strong><code>Join&lt;T, V&gt;</code></strong> — jointure entre entités</li>
+          <li><strong><code>CriteriaBuilder</code></strong> — <span data-en="query element factory (obtained via em.getCriteriaBuilder())" data-fr="fabrique d'éléments de requête (obtenu via em.getCriteriaBuilder())">query element factory (obtained via <code>em.getCriteriaBuilder()</code>)</span></li>
+          <li><strong><code>CriteriaQuery&lt;T&gt;</code></strong> — <span data-en="defines the result type" data-fr="définit le type du résultat">defines the result type</span></li>
+          <li><strong><code>Root&lt;T&gt;</code></strong> — <span data-en="query starting point (represents the entity)" data-fr="point de départ de la requête (représente l'entité)">query starting point (represents the entity)</span></li>
+          <li><strong><code>Predicate</code></strong> — <span data-en="condition (cb.equal, cb.like, cb.between…)" data-fr="condition (cb.equal, cb.like, cb.between…)">condition (<code>cb.equal</code>, <code>cb.like</code>, <code>cb.between</code>…)</span></li>
+          <li><strong><code>Join&lt;T, V&gt;</code></strong> — <span data-en="join between entities" data-fr="jointure entre entités">join between entities</span></li>
         </ul>
-        <p><strong>Avantage :</strong> idéal pour les recherches filtrées dynamiquement (formulaires de recherche avancée).</p>
+        <p><strong data-en="Benefit:" data-fr="Avantage :">Benefit:</strong> <span data-en="ideal for dynamically filtered searches (advanced search forms)." data-fr="idéal pour les recherches filtrées dynamiquement (formulaires de recherche avancée).">ideal for dynamically filtered searches (advanced search forms).</span></p>
       </div>
     </details>
 
     <details>
-      <summary>🔄 Gestion des Transactions</summary>
+      <summary data-en="🔄 Transaction Management" data-fr="🔄 Gestion des Transactions">🔄 Transaction Management</summary>
       <div class="slide-content">
         <img src="../../images/03-jpa-database-integration-diagram-3.png" alt="JPA Entity Lifecycle"/>
-        <h3>États d'une entité JPA :</h3>
+        <h3 data-en="JPA entity states:" data-fr="États d'une entité JPA :">JPA entity states:</h3>
         <ul>
-          <li><strong>New / Transient</strong> — objet créé, non connu du contexte de persistance</li>
-          <li><strong>Managed</strong> — entité sous contrôle de l'EntityManager (contexte actif)</li>
-          <li><strong>Detached</strong> — entité déconnectée du contexte (après fermeture ou <code>detach()</code>)</li>
-          <li><strong>Removed</strong> — entité marquée pour suppression</li>
+          <li><strong data-en="New / Transient" data-fr="New / Transient">New / Transient</strong> — <span data-en="object created, unknown to the persistence context" data-fr="objet créé, non connu du contexte de persistance">object created, unknown to the persistence context</span></li>
+          <li><strong data-en="Managed" data-fr="Managed">Managed</strong> — <span data-en="entity under EntityManager control (active context)" data-fr="entité sous contrôle de l'EntityManager (contexte actif)">entity under EntityManager control (active context)</span></li>
+          <li><strong data-en="Detached" data-fr="Detached">Detached</strong> — <span data-en="entity disconnected from context (after close or detach())" data-fr="entité déconnectée du contexte (après fermeture ou detach())">entity disconnected from context (after close or <code>detach()</code>)</span></li>
+          <li><strong data-en="Removed" data-fr="Removed">Removed</strong> — <span data-en="entity marked for deletion" data-fr="entité marquée pour suppression">entity marked for deletion</span></li>
         </ul>
-        <h3>Opérations EntityManager :</h3>
+        <h3 data-en="EntityManager operations:" data-fr="Opérations EntityManager :">EntityManager operations:</h3>
         <ul>
           <li><code>em.persist(entity)</code> — New → Managed</li>
-          <li><code>em.merge(entity)</code> — Detached → Managed (copie)</li>
+          <li><code>em.merge(entity)</code> — Detached → Managed (<span data-en="copy" data-fr="copie">copy</span>)</li>
           <li><code>em.remove(entity)</code> — Managed → Removed</li>
-          <li><code>em.find(Class, id)</code> — récupération par clé primaire</li>
-          <li><code>em.flush()</code> — synchronisation immédiate avec la BD</li>
+          <li><code>em.find(Class, id)</code> — <span data-en="retrieval by primary key" data-fr="récupération par clé primaire">retrieval by primary key</span></li>
+          <li><code>em.flush()</code> — <span data-en="immediate synchronisation with DB" data-fr="synchronisation immédiate avec la BD">immediate synchronisation with DB</span></li>
         </ul>
-        <h3>CMT vs BMT :</h3>
+        <h3 data-en="JTA vs resource-local:" data-fr="JTA vs resource-local :">JTA vs resource-local:</h3>
         <ul>
-          <li><strong>CMT (Container-Managed Transactions)</strong> — <code>@Transactional</code>, le conteneur gère les limites</li>
-          <li><strong>BMT (Bean-Managed Transactions)</strong> — <code>UserTransaction</code> injecté, contrôle manuel</li>
+          <li><strong data-en="JTA (Jakarta Transactions — Container-Managed)" data-fr="JTA (Jakarta Transactions — géré par le conteneur)">JTA (Jakarta Transactions — Container-Managed)</strong> — <span data-en="@Transactional or @TransactionAttribute, the container manages boundaries. Use transaction-type='JTA' in persistence.xml. Standard for Jakarta EE server deployments." data-fr="@Transactional ou @TransactionAttribute, le conteneur gère les limites. Utiliser transaction-type='JTA' dans persistence.xml. Standard pour les déploiements sur serveur Jakarta EE.">use <code>@Transactional</code> or <code>@TransactionAttribute</code>, the container manages boundaries. Set <code>transaction-type="JTA"</code> in <code>persistence.xml</code>. Standard for Jakarta EE server deployments.</span></li>
+          <li><strong data-en="Resource-local (Application-Managed)" data-fr="Resource-local (géré par l'application)">Resource-local (Application-Managed)</strong> — <span data-en="EntityManager.getTransaction() managed manually by the developer. Use transaction-type='RESOURCE_LOCAL'. Suitable for standalone Java SE or integration tests." data-fr="EntityManager.getTransaction() géré manuellement par le développeur. Utiliser transaction-type='RESOURCE_LOCAL'. Adapté au Java SE standalone ou aux tests d'intégration.">use <code>EntityManager.getTransaction()</code> managed manually. Set <code>transaction-type="RESOURCE_LOCAL"</code>. Suitable for standalone Java SE or integration tests.</span></li>
         </ul>
       </div>
     </details>
 
     <details>
-      <summary>🚀 Migrations avec Flyway</summary>
+      <summary data-en="🚀 Migrations with Flyway" data-fr="🚀 Migrations avec Flyway">🚀 Migrations with Flyway</summary>
       <div class="slide-content">
-        <p><strong>Flyway</strong> gère le versioning du schéma de base de données via des scripts SQL versionnés et traçables.</p>
-        <h3>Convention de nommage :</h3>
+        <p><strong>Flyway</strong> <span data-en="manages database schema versioning via versioned, traceable SQL scripts." data-fr="gère le versioning du schéma de base de données via des scripts SQL versionnés et traçables.">manages database schema versioning via versioned, traceable SQL scripts.</span></p>
+        <h3 data-en="Naming convention:" data-fr="Convention de nommage :">Naming convention:</h3>
         <ul>
-          <li><code>V1__init.sql</code> — version initiale du schéma</li>
-          <li><code>V2__add_accounts.sql</code> — ajout de la table accounts</li>
-          <li><code>V3__add_index_email.sql</code> — ajout d'index</li>
+          <li><code>V1__init.sql</code> — <span data-en="initial schema version" data-fr="version initiale du schéma">initial schema version</span></li>
+          <li><code>V2__add_accounts.sql</code> — <span data-en="add accounts table" data-fr="ajout de la table accounts">add accounts table</span></li>
+          <li><code>V3__add_index_email.sql</code> — <span data-en="add index" data-fr="ajout d'index">add index</span></li>
         </ul>
-        <h3>Ordre d'exécution :</h3>
+        <h3 data-en="Execution order:" data-fr="Ordre d'exécution :">Execution order:</h3>
         <ul>
-          <li>Les migrations sont exécutées dans l'ordre numérique croissant</li>
-          <li>Chaque migration exécutée est enregistrée dans la table <code>flyway_schema_history</code></li>
-          <li>Une migration déjà appliquée ne sera jamais ré-exécutée</li>
-          <li>Toute modification d'un fichier déjà appliqué provoque une erreur de checksum</li>
+          <li data-en="Migrations are executed in ascending numeric order" data-fr="Les migrations sont exécutées dans l'ordre numérique croissant">Migrations are executed in ascending numeric order</li>
+          <li data-en="Each executed migration is recorded in the flyway_schema_history table" data-fr="Chaque migration exécutée est enregistrée dans la table flyway_schema_history">Each executed migration is recorded in the <code>flyway_schema_history</code> table</li>
+          <li data-en="An already-applied migration will never be re-executed" data-fr="Une migration déjà appliquée ne sera jamais ré-exécutée">An already-applied migration will never be re-executed</li>
+          <li data-en="Any modification to an already-applied file causes a checksum error" data-fr="Toute modification d'un fichier déjà appliqué provoque une erreur de checksum">Any modification to an already-applied file causes a checksum error</li>
         </ul>
-        <p><strong>Bonne pratique :</strong> Toujours créer un nouveau fichier de migration, ne jamais modifier l'existant.</p>
+        <p><strong data-en="Best practice:" data-fr="Bonne pratique :">Best practice:</strong> <span data-en="always create a new migration file, never modify an existing one." data-fr="toujours créer un nouveau fichier de migration, ne jamais modifier l'existant.">always create a new migration file, never modify an existing one.</span></p>
       </div>
     </details>
 
     <details>
-      <summary>🔌 JNDI et DataSource</summary>
+      <summary data-en="🔌 JNDI and DataSource" data-fr="🔌 JNDI et DataSource">🔌 JNDI and DataSource</summary>
       <div class="slide-content">
-        <p><strong>JNDI (Java Naming and Directory Interface)</strong> permet de localiser les ressources (DataSource, queues JMS) par leur nom logique.</p>
-        <h3>Lookup JNDI :</h3>
+        <p><strong>JNDI (Java Naming and Directory Interface)</strong> <span data-en="allows locating resources (DataSource, JMS queues) by their logical name." data-fr="permet de localiser les ressources (DataSource, queues JMS) par leur nom logique.">allows locating resources (DataSource, JMS queues) by their logical name.</span></p>
+        <h3 data-en="JNDI lookup:" data-fr="Lookup JNDI :">JNDI lookup:</h3>
         <ul>
-          <li>Nom standard : <code>java:comp/env/jdbc/bankDB</code></li>
-          <li>Lookup programmatique : <code>InitialContext ctx = new InitialContext(); DataSource ds = (DataSource) ctx.lookup("java:comp/env/jdbc/bankDB");</code></li>
-          <li>Injection : <code>@Resource(name="jdbc/bankDB") private DataSource ds;</code></li>
+          <li data-en="Standard name:" data-fr="Nom standard :"><span data-en="Standard name:" data-fr="Nom standard :">Standard name:</span> <code>java:comp/env/jdbc/bankDB</code></li>
+          <li data-en="Programmatic lookup: InitialContext ctx = new InitialContext(); DataSource ds = (DataSource) ctx.lookup('java:comp/env/jdbc/bankDB');" data-fr="Lookup programmatique : InitialContext ctx = new InitialContext(); DataSource ds = (DataSource) ctx.lookup('java:comp/env/jdbc/bankDB');"><span data-en="Programmatic lookup:" data-fr="Lookup programmatique :">Programmatic lookup:</span> <code>InitialContext ctx = new InitialContext(); DataSource ds = (DataSource) ctx.lookup("java:comp/env/jdbc/bankDB");</code></li>
+          <li data-en="Injection:" data-fr="Injection :"><span data-en="Injection:" data-fr="Injection :">Injection:</span> <code>@Resource(name="jdbc/bankDB") private DataSource ds;</code></li>
         </ul>
-        <h3>Configuration Liberty server.xml :</h3>
+        <h3 data-en="Liberty server.xml configuration:" data-fr="Configuration Liberty server.xml :">Liberty server.xml configuration:</h3>
         <ul>
-          <li><code>&lt;dataSource jndiName="jdbc/bankDB"&gt;</code> — déclare la DataSource</li>
-          <li><code>&lt;jdbcDriver libraryRef="PostgreSQLLib"/&gt;</code> — driver JDBC</li>
+          <li><code>&lt;dataSource jndiName="jdbc/bankDB"&gt;</code> — <span data-en="declares the DataSource" data-fr="déclare la DataSource">declares the DataSource</span></li>
+          <li><code>&lt;jdbcDriver libraryRef="PostgreSQLLib"/&gt;</code> — <span data-en="JDBC driver" data-fr="driver JDBC">JDBC driver</span></li>
           <li><code>&lt;properties.postgresql serverName="..." portNumber="5432" databaseName="..."/&gt;</code></li>
-          <li>Pool de connexions configurable : <code>minPoolSize</code>, <code>maxPoolSize</code>, <code>connectionTimeout</code></li>
+          <li data-en="Connection pool configurable: minPoolSize, maxPoolSize, connectionTimeout" data-fr="Pool de connexions configurable : minPoolSize, maxPoolSize, connectionTimeout"><span data-en="Configurable connection pool:" data-fr="Pool de connexions configurable :">Configurable connection pool:</span> <code>minPoolSize</code>, <code>maxPoolSize</code>, <code>connectionTimeout</code></li>
         </ul>
       </div>
     </details>
 
   </main>
 </div>
-<footer class="cds--footer">Made with IBM Bob &nbsp;·&nbsp; © 2026 Olivier Planson &nbsp;·&nbsp; ESIPE — Jakarta EE &amp; Microservices</footer>
+<footer class="cds--footer" data-en="Made with IBM Bob · © 2026 Olivier Planson · ESIPE — Jakarta EE &amp; Microservices" data-fr="Réalisé avec IBM Bob · © 2026 Olivier Planson · ESIPE — Jakarta EE &amp; Microservices">Made with IBM Bob &nbsp;·&nbsp; © 2026 Olivier Planson &nbsp;·&nbsp; ESIPE — Jakarta EE &amp; Microservices</footer>
+<script src="../assets/language-toggle.js"></script>
 </body>
 </html>

@@ -1,64 +1,67 @@
 <!-- © Copyright 2026 Olivier Planson. All rights reserved. Reproduction prohibited. Made with IBM Bob. -->
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="en">
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-  <title>Cours 05 — JAX-RS — Services RESTful</title>
+  <title>Course 05 — Jakarta REST — RESTful Web Services</title>
   <link rel="stylesheet" href="../assets/carbon.css"/>
 </head>
 <body>
 <header class="cds--header">
-  <a class="cds--header__name" href="index.html">JAX-RS — Services RESTful<span>Cours Jakarta EE</span></a>
-  <a class="cds--header__back" href="../index.html">← Tous les Cours</a>
+  <a class="cds--header__name" href="index.html" data-en="Jakarta REST — RESTful Web Services" data-fr="Jakarta REST — Services RESTful">Jakarta REST — RESTful Web Services<span data-en="Jakarta EE Course" data-fr="Cours Jakarta EE">Jakarta EE Course</span></a>
+  <button class="lang-toggle-btn" id="lang-toggle">FR</button>
+  <a class="cds--header__back" href="../index.html" data-en="← All Courses" data-fr="← Tous les Cours">← All Courses</a>
 </header>
 <div class="cds--shell">
   <nav class="cds--side-nav">
-    <p class="cds--side-nav__section-title">Cours 05</p>
-    <a class="cds--side-nav__link active" href="index.html">⊙ Vue d'ensemble</a>
-    <a class="cds--side-nav__link" href="slides.html">☰ Contenu du cours</a>
-    <a class="cds--side-nav__link" href="concepts.html">◈ Concepts clés</a>
-    <a class="cds--side-nav__link" href="code.html">⟨/⟩ Exemples de code</a>
+    <p class="cds--side-nav__section-title" data-en="Course 05" data-fr="Cours 05">Course 05</p>
+    <a class="cds--side-nav__link active" href="index.html" data-en="⊙ Overview" data-fr="⊙ Vue d'ensemble">⊙ Overview</a>
+    <a class="cds--side-nav__link" href="slides.html" data-en="☰ Course Content" data-fr="☰ Contenu du cours">☰ Course Content</a>
+    <a class="cds--side-nav__link" href="concepts.html" data-en="◈ Key Concepts" data-fr="◈ Concepts clés">◈ Key Concepts</a>
+    <a class="cds--side-nav__link" href="code.html" data-en="⟨/⟩ Code Examples" data-fr="⟨/⟩ Exemples de code">⟨/⟩ Code Examples</a>
+    <a class="cds--side-nav__lang-toggle">FR</a>
   </nav>
   <main class="cds--content">
-    <div class="breadcrumb"><a href="../index.html">Cours</a> › Cours 05</div>
-    <h1>JAX-RS — Services RESTful</h1>
-    <p class="page-lead">Jakarta RESTful Web Services — Durée : 3h · Instructeur : Olivier Planson</p>
+    <div class="breadcrumb"><a href="../index.html" data-en="Courses" data-fr="Cours">Courses</a> › <span data-en="Course 05" data-fr="Cours 05">Course 05</span></div>
+    <h1 data-en="Jakarta REST — RESTful Web Services" data-fr="Jakarta REST — Services RESTful">Jakarta REST — RESTful Web Services</h1>
+    <p class="page-lead" data-en="Jakarta RESTful Web Services (formerly JAX-RS) — Duration: 3h · Instructor: Olivier Planson" data-fr="Jakarta RESTful Web Services (anciennement JAX-RS) — Durée : 3h · Instructeur : Olivier Planson">Jakarta RESTful Web Services (formerly JAX-RS) — Duration: 3h · Instructor: Olivier Planson</p>
     <div class="tag-stack">
-      <span class="cds--tag cds--tag--blue">JAX-RS 3.1</span>
+      <span class="cds--tag cds--tag--blue">Jakarta REST 3.1</span>
       <span class="cds--tag cds--tag--teal">JSON-B</span>
       <span class="cds--tag cds--tag--green">OpenAPI</span>
       <span class="cds--tag cds--tag--purple">Fault Tolerance</span>
       <span class="cds--tag cds--tag--blue">Rest Client</span>
       <span class="cds--tag cds--tag--warm-gray">CDI Integration</span>
     </div>
-    <h2>Objectifs pédagogiques</h2>
+    <h2 data-en="Learning Objectives" data-fr="Objectifs pédagogiques">Learning Objectives</h2>
     <table class="objectives-table"><tbody>
-      <tr><td>✅</td><td>Comprendre les principes REST</td></tr>
-      <tr><td>✅</td><td>Créer des ressources RESTful avec JAX-RS</td></tr>
-      <tr><td>✅</td><td>Gérer JSON avec JSON-B</td></tr>
-      <tr><td>✅</td><td>Implémenter la gestion des exceptions et validation</td></tr>
-      <tr><td>✅</td><td>Utiliser MicroProfile Rest Client</td></tr>
-      <tr><td>✅</td><td>Intégrer REST avec CDI</td></tr>
+      <tr><td>✅</td><td data-en="Understand REST principles" data-fr="Comprendre les principes REST">Understand REST principles</td></tr>
+      <tr><td>✅</td><td data-en="Create RESTful resources with Jakarta REST" data-fr="Créer des ressources RESTful avec Jakarta REST">Create RESTful resources with Jakarta REST</td></tr>
+      <tr><td>✅</td><td data-en="Handle JSON with JSON-B" data-fr="Gérer JSON avec JSON-B">Handle JSON with JSON-B</td></tr>
+      <tr><td>✅</td><td data-en="Implement exception handling and validation" data-fr="Implémenter la gestion des exceptions et validation">Implement exception handling and validation</td></tr>
+      <tr><td>✅</td><td data-en="Use MicroProfile Rest Client (type-safe)" data-fr="Utiliser MicroProfile Rest Client (type-safe)">Use MicroProfile Rest Client (type-safe)</td></tr>
+      <tr><td>✅</td><td data-en="Integrate REST with CDI" data-fr="Intégrer REST avec CDI">Integrate REST with CDI</td></tr>
     </tbody></table>
-    <h2>Plan du cours</h2>
+    <h2 data-en="Course Outline" data-fr="Plan du cours">Course Outline</h2>
     <ol class="course-plan">
-      <li>Principes REST et modèle de maturité Richardson</li>
-      <li>Annotations JAX-RS (@Path @GET @POST @PUT @DELETE)</li>
-      <li>JSON-B et sérialisation</li>
-      <li>Gestion des exceptions et validation</li>
-      <li>MicroProfile Rest Client (type-safe)</li>
-      <li>Intégration REST + CDI</li>
-      <li>OpenAPI et documentation</li>
-      <li>Tests REST</li>
+      <li data-en="REST principles and Richardson Maturity Model" data-fr="Principes REST et modèle de maturité Richardson">REST principles and Richardson Maturity Model</li>
+      <li data-en="Jakarta REST annotations (@Path @GET @POST @PUT @DELETE)" data-fr="Annotations Jakarta REST (@Path @GET @POST @PUT @DELETE)">Jakarta REST annotations (@Path @GET @POST @PUT @DELETE)</li>
+      <li data-en="JSON-B and serialization" data-fr="JSON-B et sérialisation">JSON-B and serialization</li>
+      <li data-en="Exception handling and validation" data-fr="Gestion des exceptions et validation">Exception handling and validation</li>
+      <li data-en="MicroProfile Rest Client (type-safe)" data-fr="MicroProfile Rest Client (type-safe)">MicroProfile Rest Client (type-safe)</li>
+      <li data-en="REST + CDI integration" data-fr="Intégration REST + CDI">REST + CDI integration</li>
+      <li data-en="OpenAPI and documentation" data-fr="OpenAPI et documentation">OpenAPI and documentation</li>
+      <li data-en="REST testing" data-fr="Tests REST">REST testing</li>
     </ol>
     <div class="tile-grid">
-      <a class="tile-link" href="slides.html"><div class="cds--tile"><h3>☰ Contenu du cours</h3><p>Richardson Maturity Model, annotations JAX-RS, JSON-B, exceptions, Rest Client, CDI, OpenAPI avec diagrammes.</p></div></a>
-      <a class="tile-link" href="concepts.html"><div class="cds--tile"><h3>◈ Concepts clés</h3><p>REST vs SOAP, modèle Richardson, annotations clés, codes HTTP, comparaison des clients, glossaire.</p></div></a>
-      <a class="tile-link" href="code.html"><div class="cds--tile"><h3>⟨/⟩ Exemples de code</h3><p>Ressource JAX-RS complète, JSON-B, ExceptionMapper, Bean Validation, MicroProfile Rest Client, Circuit Breaker.</p></div></a>
+      <a class="tile-link" href="slides.html"><div class="cds--tile"><h3 data-en="☰ Course Content" data-fr="☰ Contenu du cours">☰ Course Content</h3><p data-en="Richardson Maturity Model, Jakarta REST annotations, JSON-B, exceptions, Rest Client, CDI, OpenAPI with diagrams." data-fr="Richardson Maturity Model, annotations Jakarta REST, JSON-B, exceptions, Rest Client, CDI, OpenAPI avec diagrammes.">Richardson Maturity Model, Jakarta REST annotations, JSON-B, exceptions, Rest Client, CDI, OpenAPI with diagrams.</p></div></a>
+      <a class="tile-link" href="concepts.html"><div class="cds--tile"><h3 data-en="◈ Key Concepts" data-fr="◈ Concepts clés">◈ Key Concepts</h3><p data-en="REST vs SOAP, Richardson model, key annotations, HTTP codes, client comparison, glossary." data-fr="REST vs SOAP, modèle Richardson, annotations clés, codes HTTP, comparaison des clients, glossaire.">REST vs SOAP, Richardson model, key annotations, HTTP codes, client comparison, glossary.</p></div></a>
+      <a class="tile-link" href="code.html"><div class="cds--tile"><h3 data-en="⟨/⟩ Code Examples" data-fr="⟨/⟩ Exemples de code">⟨/⟩ Code Examples</h3><p data-en="Complete Jakarta REST resource, JSON-B, ExceptionMapper, Bean Validation, MicroProfile Rest Client, Circuit Breaker." data-fr="Ressource Jakarta REST complète, JSON-B, ExceptionMapper, Bean Validation, MicroProfile Rest Client, Circuit Breaker.">Complete Jakarta REST resource, JSON-B, ExceptionMapper, Bean Validation, MicroProfile Rest Client, Circuit Breaker.</p></div></a>
     </div>
   </main>
 </div>
 <footer class="cds--footer">Made with IBM Bob &nbsp;·&nbsp; © 2026 Olivier Planson &nbsp;·&nbsp; ESIPE — Jakarta EE &amp; Microservices</footer>
+<script src="../assets/language-toggle.js"></script>
 </body>
 </html>

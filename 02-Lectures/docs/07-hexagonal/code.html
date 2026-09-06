@@ -1,6 +1,6 @@
 <!-- © Copyright 2026 Olivier Planson. All rights reserved. Reproduction prohibited. Made with IBM Bob. -->
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="en">
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
@@ -9,24 +9,26 @@
 </head>
 <body>
 <header class="cds--header">
-  <a class="cds--header__name" href="index.html">Architecture Hexagonale<span>Cours Jakarta EE</span></a>
-  <a class="cds--header__back" href="../index.html">← Tous les Cours</a>
+  <a class="cds--header__name" href="index.html" data-en="Hexagonal Architecture" data-fr="Architecture Hexagonale">Hexagonal Architecture<span data-en="Jakarta EE Course" data-fr="Cours Jakarta EE">Jakarta EE Course</span></a>
+  <button class="lang-toggle-btn" id="lang-toggle">FR</button>
+  <a class="cds--header__back" href="../index.html" data-en="← All Courses" data-fr="← Tous les Cours">← All Courses</a>
 </header>
 <div class="cds--shell">
   <nav class="cds--side-nav">
-    <p class="cds--side-nav__section-title">Cours 07</p>
-    <a class="cds--side-nav__link" href="index.html">⊙ Vue d'ensemble</a>
-    <a class="cds--side-nav__link" href="slides.html">☰ Contenu du cours</a>
-    <a class="cds--side-nav__link" href="concepts.html">◈ Concepts clés</a>
-    <a class="cds--side-nav__link active" href="code.html">⟨/⟩ Exemples de code</a>
-    <a class="cds--side-nav__link" href="architecture.html">⬡ Architecture Hexagonale</a>
+    <p class="cds--side-nav__section-title" data-en="Course 07" data-fr="Cours 07">Course 07</p>
+    <a class="cds--side-nav__link" href="index.html" data-en="⊙ Overview" data-fr="⊙ Vue d'ensemble">⊙ Overview</a>
+    <a class="cds--side-nav__link" href="slides.html" data-en="☰ Course Content" data-fr="☰ Contenu du cours">☰ Course Content</a>
+    <a class="cds--side-nav__link" href="concepts.html" data-en="◈ Key Concepts" data-fr="◈ Concepts clés">◈ Key Concepts</a>
+    <a class="cds--side-nav__link active" href="code.html" data-en="⟨/⟩ Code Examples" data-fr="⟨/⟩ Exemples de code">⟨/⟩ Code Examples</a>
+    <a class="cds--side-nav__link" href="architecture.html" data-en="⬡ Hexagonal Architecture" data-fr="⬡ Architecture Hexagonale">⬡ Hexagonal Architecture</a>
+    <a class="cds--side-nav__lang-toggle">FR</a>
   </nav>
   <main class="cds--content">
-    <div class="breadcrumb"><a href="../index.html">Cours</a> › <a href="index.html">Cours 07</a> › Code</div>
-    <h1>Exemples de code</h1>
-    <p class="page-lead">Extraits de code Java illustrant les ports primaires et secondaires, les adapters REST et JPA, le service applicatif et les tests avec mock adapter.</p>
+    <div class="breadcrumb"><a href="../index.html" data-en="Courses" data-fr="Cours">Courses</a> › <a href="index.html" data-en="Course 07" data-fr="Cours 07">Course 07</a> › <span data-en="Code" data-fr="Code">Code</span></div>
+    <h1 data-en="Code Examples" data-fr="Exemples de code">Code Examples</h1>
+    <p class="page-lead" data-en="Java code excerpts illustrating primary and secondary ports, REST and JPA adapters, application service and tests with mock adapter." data-fr="Extraits de code Java illustrant les ports primaires et secondaires, les adapters REST et JPA, le service applicatif et les tests avec mock adapter.">Java code excerpts illustrating primary and secondary ports, REST and JPA adapters, application service and tests with mock adapter.</p>
 
-    <h2>Port Primaire — Interface Use Case</h2>
+    <h2 data-en="Primary Port — Use Case Interface" data-fr="Port Primaire — Interface Use Case">Primary Port — Use Case Interface</h2>
     <div class="code-block-wrap">
       <span class="code-lang">java</span>
       <pre><code>// Package : com.bank.domain.transfer
@@ -76,7 +78,7 @@ record TransferResult(
 </code></pre>
     </div>
 
-    <h2>Port Secondaire — Interface Repository</h2>
+    <h2 data-en="Secondary Port — Repository Interface" data-fr="Port Secondaire — Interface Repository">Secondary Port — Repository Interface</h2>
     <div class="code-block-wrap">
       <span class="code-lang">java</span>
       <pre><code>// Package : com.bank.domain.account
@@ -119,7 +121,7 @@ public interface AccountPort {
 </code></pre>
     </div>
 
-    <h2>Adapter Primaire — REST Resource</h2>
+    <h2 data-en="Primary Adapter — REST Resource" data-fr="Adapter Primaire — REST Resource">Primary Adapter — REST Resource</h2>
     <div class="code-block-wrap">
       <span class="code-lang">java</span>
       <pre><code>// Package : com.bank.infrastructure.web
@@ -183,7 +185,7 @@ record TransferRequest(
 </code></pre>
     </div>
 
-    <h2>Adapter Secondaire — JPA Repository</h2>
+    <h2 data-en="Secondary Adapter — JPA Repository" data-fr="Adapter Secondaire — JPA Repository">Secondary Adapter — JPA Repository</h2>
     <div class="code-block-wrap">
       <span class="code-lang">java</span>
       <pre><code>// Package : com.bank.infrastructure.persistence
@@ -262,7 +264,7 @@ public class JpaAccountAdapter implements AccountPort {
 </code></pre>
     </div>
 
-    <h2>Service Application — Use Case</h2>
+    <h2 data-en="Application Service — Use Case" data-fr="Service Application — Use Case">Application Service — Use Case</h2>
     <div class="code-block-wrap">
       <span class="code-lang">java</span>
       <pre><code>// Package : com.bank.application
@@ -321,7 +323,7 @@ public class MoneyTransferService implements MoneyTransferUseCase {
 </code></pre>
     </div>
 
-    <h2>Tests avec Mock Adapter</h2>
+    <h2 data-en="Tests with Mock Adapter" data-fr="Tests avec Mock Adapter">Tests with Mock Adapter</h2>
     <div class="code-block-wrap">
       <span class="code-lang">java</span>
       <pre><code>// Mock adapter in-memory — implémente AccountPort sans JPA, sans base de données
@@ -453,7 +455,7 @@ class MoneyTransferServiceTest {
 </code></pre>
     </div>
 
-    <h2>Structure de Packages</h2>
+    <h2 data-en="Package Structure" data-fr="Structure de Packages">Package Structure</h2>
     <div class="code-block-wrap">
       <span class="code-lang">text</span>
       <pre><code>src/main/java/com/bank/
@@ -492,8 +494,34 @@ class MoneyTransferServiceTest {
 </code></pre>
     </div>
 
+    <h2 data-en="Testing Domain Logic Without Infrastructure" data-fr="Tester la logique métier sans infrastructure">Testing Domain Logic Without Infrastructure</h2>
+    <p data-en="A key benefit of Hexagonal Architecture is the ability to test domain logic as plain Java objects, without starting a CDI container or database." data-fr="Un avantage clé de l'architecture hexagonale est la possibilité de tester la logique métier comme de simples objets Java, sans démarrer un conteneur CDI ni une base de données.">A key benefit of Hexagonal Architecture is the ability to test domain logic as plain Java objects, without starting a CDI container or database.</p>
+    <div class="code-block-wrap">
+      <span class="code-lang">java</span>
+      <pre><code class="language-java">// Plain JUnit 5 test — no @QuarkusTest, no @Inject, no database
+class OrderServiceTest {
+
+    @Test
+    void shouldRejectOrderWhenStockInsufficient() {
+        // Arrange — use in-memory stub, no real repository
+        InMemoryProductRepository repo = new InMemoryProductRepository();
+        repo.save(new Product("P1", "Widget", 2));
+        OrderService service = new OrderService(repo);
+
+        // Act
+        Exception ex = assertThrows(IllegalStateException.class,
+            () -> service.placeOrder("P1", 10));
+
+        // Assert
+        assertTrue(ex.getMessage().contains("insufficient stock"));
+    }
+}</code></pre>
+    </div>
+    <p data-en="The InMemoryProductRepository implements the port interface and keeps data in a simple Map — no JPA, no transactions needed." data-fr="L'InMemoryProductRepository implémente l'interface de port et conserve les données dans une simple Map — aucun JPA ni transaction nécessaire.">The InMemoryProductRepository implements the port interface and keeps data in a simple Map — no JPA, no transactions needed.</p>
+
   </main>
 </div>
 <footer class="cds--footer">Made with IBM Bob &nbsp;·&nbsp; © 2026 Olivier Planson &nbsp;·&nbsp; ESIPE — Jakarta EE &amp; Microservices</footer>
+<script src="../assets/language-toggle.js"></script>
 </body>
 </html>

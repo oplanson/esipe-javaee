@@ -1,34 +1,41 @@
 <!-- © Copyright 2026 Olivier Planson. All rights reserved. Reproduction prohibited. Made with IBM Bob. -->
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="en">
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-  <title>Cours 02 — Exemples de code</title>
+  <title>Cours 02 — Code Examples</title>
   <link rel="stylesheet" href="../assets/carbon.css"/>
 </head>
 <body>
 <header class="cds--header">
-  <a class="cds--header__name" href="index.html">Servlets &amp; JSP<span>Cours Jakarta EE</span></a>
-  <a class="cds--header__back" href="../index.html">← Tous les Cours</a>
+  <button class="lang-toggle-btn" id="lang-toggle">FR</button>
+  <a class="cds--header__name" href="index.html" data-en="Servlets &amp; JSP<span>Jakarta EE Course</span>" data-fr="Servlets &amp; JSP<span>Cours Jakarta EE</span>">Servlets &amp; JSP<span>Jakarta EE Course</span></a>
+  <a class="cds--header__back" href="../index.html" data-en="← All Courses" data-fr="← Tous les Cours">← All Courses</a>
 </header>
 <div class="cds--shell">
   <nav class="cds--side-nav">
-    <p class="cds--side-nav__section-title">Cours 02</p>
-    <a class="cds--side-nav__link" href="index.html">⊙ Vue d'ensemble</a>
-    <a class="cds--side-nav__link" href="slides.html">☰ Contenu du cours</a>
-    <a class="cds--side-nav__link" href="concepts.html">◈ Concepts clés</a>
-    <a class="cds--side-nav__link active" href="code.html">⟨/⟩ Exemples de code</a>
+    <p class="cds--side-nav__section-title" data-en="Course 02" data-fr="Cours 02">Course 02</p>
+    <a class="cds--side-nav__link" href="index.html" data-en="⊙ Overview" data-fr="⊙ Vue d'ensemble">⊙ Overview</a>
+    <a class="cds--side-nav__link" href="slides.html" data-en="☰ Lecture Content" data-fr="☰ Contenu du cours">☰ Lecture Content</a>
+    <a class="cds--side-nav__link" href="concepts.html" data-en="◈ Key Concepts" data-fr="◈ Concepts clés">◈ Key Concepts</a>
+    <a class="cds--side-nav__link active" href="code.html" data-en="⟨/⟩ Code Examples" data-fr="⟨/⟩ Exemples de code">⟨/⟩ Code Examples</a>
+    <a class="cds--side-nav__lang-toggle">FR</a>
   </nav>
   <main class="cds--content">
-    <div class="breadcrumb"><a href="../index.html">Cours</a> › <a href="index.html">Cours 02</a> › Code</div>
-    <h1>Exemples de code</h1>
-    <p class="page-lead">Extraits de code Java et JSP du cours 02 — Servlets, JSP, Filtres et Health Checks.</p>
+    <div class="breadcrumb"><a href="../index.html" data-en="Courses" data-fr="Cours">Courses</a> › <a href="index.html" data-en="Course 02" data-fr="Cours 02">Course 02</a> › <span data-en="Code" data-fr="Code">Code</span></div>
+    <h1 data-en="Code Examples" data-fr="Exemples de code">Code Examples</h1>
+    <p class="page-lead" data-en="Java and JSP code snippets from course 02 — Servlets, JSP, Filters and Health Checks." data-fr="Extraits de code Java et JSP du cours 02 — Servlets, JSP, Filtres et Health Checks.">Java and JSP code snippets from course 02 — Servlets, JSP, Filters and Health Checks.</p>
 
-    <h2>Cycle de vie complet d'un Servlet</h2>
+    <h2 data-en="Complete Servlet Lifecycle" data-fr="Cycle de vie complet d'un Servlet">Complete Servlet Lifecycle</h2>
     <div class="code-block-wrap">
       <span class="code-lang">java</span>
-      <pre><code>@WebServlet(
+      <pre><code>import jakarta.servlet.*;
+import jakarta.servlet.http.*;
+import java.io.IOException;
+import java.util.List;
+
+@WebServlet(
     name = "ClientServlet",
     urlPatterns = {"/clients", "/client"},
     loadOnStartup = 1
@@ -61,10 +68,16 @@ public class ClientServlet extends HttpServlet {
 }</code></pre>
     </div>
 
-    <h2>doPost avec validation et PRG</h2>
+    <h2 data-en="doPost with Validation and PRG" data-fr="doPost avec validation et PRG">doPost with Validation and PRG</h2>
     <div class="code-block-wrap">
       <span class="code-lang">java</span>
-      <pre><code>@Override
+      <pre><code>import jakarta.servlet.*;
+import jakarta.servlet.http.*;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+
+@Override
 protected void doPost(HttpServletRequest req, HttpServletResponse resp)
         throws ServletException, IOException {
     
@@ -92,7 +105,7 @@ protected void doPost(HttpServletRequest req, HttpServletResponse resp)
 }</code></pre>
     </div>
 
-    <h2>JSP avec JSTL — Liste de clients</h2>
+    <h2 data-en="JSP with JSTL — Client List" data-fr="JSP avec JSTL — Liste de clients">JSP with JSTL — Client List</h2>
     <div class="code-block-wrap">
       <span class="code-lang">jsp</span>
       <pre><code>&lt;%@ page contentType="text/html; charset=UTF-8" %&gt;
@@ -120,10 +133,14 @@ protected void doPost(HttpServletRequest req, HttpServletResponse resp)
 &lt;/html&gt;</code></pre>
     </div>
 
-    <h2>Filtre d'Authentification</h2>
+    <h2 data-en="Authentication Filter" data-fr="Filtre d'Authentification">Authentication Filter</h2>
     <div class="code-block-wrap">
       <span class="code-lang">java</span>
-      <pre><code>@WebFilter(urlPatterns = {"/dashboard/*", "/account/*", "/admin/*"})
+      <pre><code>import jakarta.servlet.*;
+import jakarta.servlet.http.*;
+import java.io.IOException;
+
+@WebFilter(urlPatterns = {"/dashboard/*", "/account/*", "/admin/*"})
 public class AuthenticationFilter implements Filter {
     
     @Override
@@ -147,10 +164,17 @@ public class AuthenticationFilter implements Filter {
 }</code></pre>
     </div>
 
-    <h2>Health Check — Readiness</h2>
+    <h2 data-en="Health Check — Readiness" data-fr="Health Check — Readiness">Health Check — Readiness</h2>
     <div class="code-block-wrap">
       <span class="code-lang">java</span>
-      <pre><code>@Readiness
+      <pre><code>import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
+import org.eclipse.microprofile.config.inject.ConfigProperty;
+import org.eclipse.microprofile.health.HealthCheck;
+import org.eclipse.microprofile.health.HealthCheckResponse;
+import org.eclipse.microprofile.health.Readiness;
+
+@Readiness
 @ApplicationScoped
 public class WebAppReadinessCheck implements HealthCheck {
     
@@ -179,10 +203,10 @@ public class WebAppReadinessCheck implements HealthCheck {
 }</code></pre>
     </div>
 
-    <h2>Gestion de la Session HTTP</h2>
+    <h2 data-en="HTTP Session Management" data-fr="Gestion de la Session HTTP">HTTP Session Management</h2>
     <div class="code-block-wrap">
       <span class="code-lang">java</span>
-      <pre><code>// Connexion : créer une nouvelle session (prévention session fixation)
+      <pre><code>// Login: create a new session (session fixation prevention)
 HttpSession oldSession = req.getSession(false);
 if (oldSession != null) oldSession.invalidate();
 
@@ -190,18 +214,21 @@ HttpSession newSession = req.getSession(true);
 newSession.setAttribute("username", username);
 newSession.setAttribute("authenticated", true);
 newSession.setMaxInactiveInterval(30 * 60); // 30 minutes
-req.changeSessionId(); // régénération de l'ID
+req.changeSessionId(); // ID regeneration
 
-// Déconnexion
+// Logout
 HttpSession session = req.getSession(false);
 if (session != null) session.invalidate();
 resp.sendRedirect(req.getContextPath() + "/login");</code></pre>
     </div>
 
-    <h2>Listener de Cycle de vie</h2>
+    <h2 data-en="Lifecycle Listener" data-fr="Listener de Cycle de vie">Lifecycle Listener</h2>
     <div class="code-block-wrap">
       <span class="code-lang">java</span>
-      <pre><code>@WebListener
+      <pre><code>import jakarta.servlet.*;
+import java.util.logging.Logger;
+
+@WebListener
 public class ApplicationLifecycleListener implements ServletContextListener {
     
     private static final Logger logger = 
@@ -210,7 +237,7 @@ public class ApplicationLifecycleListener implements ServletContextListener {
     @Override
     public void contextInitialized(ServletContextEvent sce) {
         logger.info("=== Application started ===");
-        // Initialiser les ressources partagées
+        // Initialise shared resources
         sce.getServletContext().setAttribute("startTime", 
             System.currentTimeMillis());
     }
@@ -218,7 +245,7 @@ public class ApplicationLifecycleListener implements ServletContextListener {
     @Override
     public void contextDestroyed(ServletContextEvent sce) {
         logger.info("=== Application stopped ===");
-        // Libérer les ressources
+        // Release resources
     }
 }</code></pre>
     </div>
@@ -226,5 +253,6 @@ public class ApplicationLifecycleListener implements ServletContextListener {
   </main>
 </div>
 <footer class="cds--footer">Made with IBM Bob &nbsp;·&nbsp; © 2026 Olivier Planson &nbsp;·&nbsp; ESIPE — Jakarta EE &amp; Microservices</footer>
+<script src="../assets/language-toggle.js"></script>
 </body>
 </html>

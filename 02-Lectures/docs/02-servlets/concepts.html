@@ -1,110 +1,112 @@
 <!-- © Copyright 2026 Olivier Planson. All rights reserved. Reproduction prohibited. Made with IBM Bob. -->
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="en">
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-  <title>Cours 02 — Concepts clés</title>
+  <title>Cours 02 — Key Concepts</title>
   <link rel="stylesheet" href="../assets/carbon.css"/>
 </head>
 <body>
 <header class="cds--header">
-  <a class="cds--header__name" href="index.html">Servlets &amp; JSP<span>Cours Jakarta EE</span></a>
-  <a class="cds--header__back" href="../index.html">← Tous les Cours</a>
+  <button class="lang-toggle-btn" id="lang-toggle">FR</button>
+  <a class="cds--header__name" href="index.html" data-en="Servlets &amp; JSP<span>Jakarta EE Course</span>" data-fr="Servlets &amp; JSP<span>Cours Jakarta EE</span>">Servlets &amp; JSP<span>Jakarta EE Course</span></a>
+  <a class="cds--header__back" href="../index.html" data-en="← All Courses" data-fr="← Tous les Cours">← All Courses</a>
 </header>
 <div class="cds--shell">
   <nav class="cds--side-nav">
-    <p class="cds--side-nav__section-title">Cours 02</p>
-    <a class="cds--side-nav__link" href="index.html">⊙ Vue d'ensemble</a>
-    <a class="cds--side-nav__link" href="slides.html">☰ Contenu du cours</a>
-    <a class="cds--side-nav__link active" href="concepts.html">◈ Concepts clés</a>
-    <a class="cds--side-nav__link" href="code.html">⟨/⟩ Exemples de code</a>
+    <p class="cds--side-nav__section-title" data-en="Course 02" data-fr="Cours 02">Course 02</p>
+    <a class="cds--side-nav__link" href="index.html" data-en="⊙ Overview" data-fr="⊙ Vue d'ensemble">⊙ Overview</a>
+    <a class="cds--side-nav__link" href="slides.html" data-en="☰ Lecture Content" data-fr="☰ Contenu du cours">☰ Lecture Content</a>
+    <a class="cds--side-nav__link active" href="concepts.html" data-en="◈ Key Concepts" data-fr="◈ Concepts clés">◈ Key Concepts</a>
+    <a class="cds--side-nav__link" href="code.html" data-en="⟨/⟩ Code Examples" data-fr="⟨/⟩ Exemples de code">⟨/⟩ Code Examples</a>
+    <a class="cds--side-nav__lang-toggle">FR</a>
   </nav>
   <main class="cds--content">
-    <div class="breadcrumb"><a href="../index.html">Cours</a> › <a href="index.html">Cours 02</a> › Concepts clés</div>
-    <h1>Concepts clés</h1>
-    <p class="page-lead">Comparatifs, définitions et bonnes pratiques pour Servlets, JSP et MVC.</p>
+    <div class="breadcrumb"><a href="../index.html" data-en="Courses" data-fr="Cours">Courses</a> › <a href="index.html" data-en="Course 02" data-fr="Cours 02">Course 02</a> › <span data-en="Key Concepts" data-fr="Concepts clés">Key Concepts</span></div>
+    <h1 data-en="Key Concepts" data-fr="Concepts clés">Key Concepts</h1>
+    <p class="page-lead" data-en="Comparisons, definitions and best practices for Servlets, JSP and MVC." data-fr="Comparatifs, définitions et bonnes pratiques pour Servlets, JSP et MVC.">Comparisons, definitions and best practices for Servlets, JSP and MVC.</p>
 
-    <h2>Servlet vs JSP</h2>
+    <h2 data-en="Servlet vs JSP" data-fr="Servlet vs JSP">Servlet vs JSP</h2>
     <div class="cds--data-table-container">
       <table class="cds--data-table">
-        <thead><tr><th>Aspect</th><th>Servlet</th><th>JSP</th></tr></thead>
+        <thead><tr><th data-en="Aspect" data-fr="Aspect">Aspect</th><th>Servlet</th><th>JSP</th></tr></thead>
         <tbody>
-          <tr><td><strong>Focus</strong></td><td>Code Java</td><td>Balisage HTML</td></tr>
-          <tr><td><strong>Idéal pour</strong></td><td>Logique métier, contrôle</td><td>Présentation</td></tr>
-          <tr><td><strong>Syntaxe</strong></td><td>Java pur</td><td>HTML + Java</td></tr>
-          <tr><td><strong>Compilation</strong></td><td>Explicite</td><td>Automatique</td></tr>
-          <tr><td><strong>Rôle MVC</strong></td><td>Controller</td><td>View</td></tr>
+          <tr><td data-en="<strong>Focus</strong>" data-fr="<strong>Focus</strong>"><strong>Focus</strong></td><td data-en="Java code" data-fr="Code Java">Java code</td><td data-en="HTML markup" data-fr="Balisage HTML">HTML markup</td></tr>
+          <tr><td data-en="<strong>Ideal for</strong>" data-fr="<strong>Idéal pour</strong>"><strong>Ideal for</strong></td><td data-en="Business logic, control" data-fr="Logique métier, contrôle">Business logic, control</td><td data-en="Presentation" data-fr="Présentation">Presentation</td></tr>
+          <tr><td data-en="<strong>Syntax</strong>" data-fr="<strong>Syntaxe</strong>"><strong>Syntax</strong></td><td data-en="Pure Java" data-fr="Java pur">Pure Java</td><td data-en="HTML + Java" data-fr="HTML + Java">HTML + Java</td></tr>
+          <tr><td data-en="<strong>Compilation</strong>" data-fr="<strong>Compilation</strong>"><strong>Compilation</strong></td><td data-en="Explicit" data-fr="Explicite">Explicit</td><td data-en="Automatic" data-fr="Automatique">Automatic</td></tr>
+          <tr><td data-en="<strong>MVC role</strong>" data-fr="<strong>Rôle MVC</strong>"><strong>MVC role</strong></td><td>Controller</td><td>View</td></tr>
         </tbody>
       </table>
     </div>
 
-    <h2>JSTL vs Scriptlets JSP</h2>
+    <h2 data-en="JSTL vs JSP Scriptlets" data-fr="JSTL vs Scriptlets JSP">JSTL vs JSP Scriptlets</h2>
     <div class="cds--data-table-container">
       <table class="cds--data-table">
-        <thead><tr><th>Critère</th><th>Scriptlets <code>&lt;% %&gt;</code></th><th>JSTL + EL</th></tr></thead>
+        <thead><tr><th data-en="Criterion" data-fr="Critère">Criterion</th><th data-en="Scriptlets <code>&lt;% %&gt;</code>" data-fr="Scriptlets <code>&lt;% %&gt;</code>">Scriptlets <code>&lt;% %&gt;</code></th><th>JSTL + EL</th></tr></thead>
         <tbody>
-          <tr><td>Lisibilité</td><td>❌ Mauvaise</td><td>✅ Excellente</td></tr>
-          <tr><td>Séparation présentation/logique</td><td>❌ Mélangée</td><td>✅ Séparée</td></tr>
-          <tr><td>Testabilité</td><td>❌ Difficile</td><td>✅ Facile</td></tr>
-          <tr><td>Maintenance</td><td>❌ Complexe</td><td>✅ Simple</td></tr>
-          <tr><td>Recommandé</td><td>❌ Non</td><td>✅ Oui</td></tr>
+          <tr><td data-en="Readability" data-fr="Lisibilité">Readability</td><td data-en="❌ Poor" data-fr="❌ Mauvaise">❌ Poor</td><td data-en="✅ Excellent" data-fr="✅ Excellente">✅ Excellent</td></tr>
+          <tr><td data-en="Presentation/logic separation" data-fr="Séparation présentation/logique">Presentation/logic separation</td><td data-en="❌ Mixed" data-fr="❌ Mélangée">❌ Mixed</td><td data-en="✅ Separated" data-fr="✅ Séparée">✅ Separated</td></tr>
+          <tr><td data-en="Testability" data-fr="Testabilité">Testability</td><td data-en="❌ Difficult" data-fr="❌ Difficile">❌ Difficult</td><td data-en="✅ Easy" data-fr="✅ Facile">✅ Easy</td></tr>
+          <tr><td data-en="Maintenance" data-fr="Maintenance">Maintenance</td><td data-en="❌ Complex" data-fr="❌ Complexe">❌ Complex</td><td data-en="✅ Simple" data-fr="✅ Simple">✅ Simple</td></tr>
+          <tr><td data-en="Recommended" data-fr="Recommandé">Recommended</td><td data-en="❌ No" data-fr="❌ Non">❌ No</td><td data-en="✅ Yes" data-fr="✅ Oui">✅ Yes</td></tr>
         </tbody>
       </table>
     </div>
 
-    <h2>Méthodes HTTP et opérations CRUD</h2>
+    <h2 data-en="HTTP Methods and CRUD Operations" data-fr="Méthodes HTTP et opérations CRUD">HTTP Methods and CRUD Operations</h2>
     <div class="cds--data-table-container">
       <table class="cds--data-table">
-        <thead><tr><th>Méthode HTTP</th><th>Opération CRUD</th><th>Idempotent</th><th>Corps</th></tr></thead>
+        <thead><tr><th data-en="HTTP Method" data-fr="Méthode HTTP">HTTP Method</th><th data-en="CRUD Operation" data-fr="Opération CRUD">CRUD Operation</th><th data-en="Idempotent" data-fr="Idempotent">Idempotent</th><th data-en="Body" data-fr="Corps">Body</th></tr></thead>
         <tbody>
-          <tr><td><code>GET</code></td><td>Read (lecture)</td><td>✅ Oui</td><td>Non</td></tr>
-          <tr><td><code>POST</code></td><td>Create (création)</td><td>❌ Non</td><td>Oui</td></tr>
-          <tr><td><code>PUT</code></td><td>Update complet</td><td>✅ Oui</td><td>Oui</td></tr>
-          <tr><td><code>PATCH</code></td><td>Update partiel</td><td>❌ Non</td><td>Oui</td></tr>
-          <tr><td><code>DELETE</code></td><td>Delete (suppression)</td><td>✅ Oui</td><td>Non</td></tr>
-          <tr><td><code>HEAD</code></td><td>Metadata seulement</td><td>✅ Oui</td><td>Non</td></tr>
+          <tr><td><code>GET</code></td><td data-en="Read" data-fr="Read (lecture)">Read</td><td data-en="✅ Yes" data-fr="✅ Oui">✅ Yes</td><td data-en="No" data-fr="Non">No</td></tr>
+          <tr><td><code>POST</code></td><td data-en="Create" data-fr="Create (création)">Create</td><td data-en="❌ No" data-fr="❌ Non">❌ No</td><td data-en="Yes" data-fr="Oui">Yes</td></tr>
+          <tr><td><code>PUT</code></td><td data-en="Full update" data-fr="Update complet">Full update</td><td data-en="✅ Yes" data-fr="✅ Oui">✅ Yes</td><td data-en="Yes" data-fr="Oui">Yes</td></tr>
+          <tr><td><code>PATCH</code></td><td data-en="Partial update" data-fr="Update partiel">Partial update</td><td data-en="❌ No" data-fr="❌ Non">❌ No</td><td data-en="Yes" data-fr="Oui">Yes</td></tr>
+          <tr><td><code>DELETE</code></td><td data-en="Delete" data-fr="Delete (suppression)">Delete</td><td data-en="✅ Yes" data-fr="✅ Oui">✅ Yes</td><td data-en="No" data-fr="Non">No</td></tr>
+          <tr><td><code>HEAD</code></td><td data-en="Metadata only" data-fr="Metadata seulement">Metadata only</td><td data-en="✅ Yes" data-fr="✅ Oui">✅ Yes</td><td data-en="No" data-fr="Non">No</td></tr>
         </tbody>
       </table>
     </div>
 
-    <h2>Types de Health Checks MicroProfile</h2>
+    <h2 data-en="MicroProfile Health Check Types" data-fr="Types de Health Checks MicroProfile">MicroProfile Health Check Types</h2>
     <div class="cds--data-table-container">
       <table class="cds--data-table">
-        <thead><tr><th>Type</th><th>Annotation</th><th>Endpoint</th><th>Question</th></tr></thead>
+        <thead><tr><th data-en="Type" data-fr="Type">Type</th><th data-en="Annotation" data-fr="Annotation">Annotation</th><th data-en="Endpoint" data-fr="Endpoint">Endpoint</th><th data-en="Question" data-fr="Question">Question</th></tr></thead>
         <tbody>
-          <tr><td>Liveness</td><td><code>@Liveness</code></td><td><code>/health/live</code></td><td>L'app est-elle vivante ?</td></tr>
-          <tr><td>Readiness</td><td><code>@Readiness</code></td><td><code>/health/ready</code></td><td>L'app est-elle prête ?</td></tr>
-          <tr><td>Startup</td><td><code>@Startup</code></td><td><code>/health/started</code></td><td>L'app a-t-elle démarré ?</td></tr>
-          <tr><td>Global</td><td>—</td><td><code>/health</code></td><td>Tous les checks</td></tr>
+          <tr><td>Liveness</td><td><code>@Liveness</code></td><td><code>/health/live</code></td><td data-en="Is the app alive?" data-fr="L'app est-elle vivante ?">Is the app alive?</td></tr>
+          <tr><td>Readiness</td><td><code>@Readiness</code></td><td><code>/health/ready</code></td><td data-en="Is the app ready?" data-fr="L'app est-elle prête ?">Is the app ready?</td></tr>
+          <tr><td>Startup</td><td><code>@Startup</code></td><td><code>/health/started</code></td><td data-en="Has the app started?" data-fr="L'app a-t-elle démarré ?">Has the app started?</td></tr>
+          <tr><td data-en="Global" data-fr="Global">Global</td><td>—</td><td><code>/health</code></td><td data-en="All checks" data-fr="Tous les checks">All checks</td></tr>
         </tbody>
       </table>
     </div>
 
-    <h2>Ordonnancement des Filtres</h2>
+    <h2 data-en="Filter Ordering" data-fr="Ordonnancement des Filtres">Filter Ordering</h2>
     <div class="cds--data-table-container">
       <table class="cds--data-table">
-        <thead><tr><th>Méthode</th><th>Garantie d'ordre</th><th>Recommandé pour</th></tr></thead>
+        <thead><tr><th data-en="Method" data-fr="Méthode">Method</th><th data-en="Order guarantee" data-fr="Garantie d'ordre">Order guarantee</th><th data-en="Recommended for" data-fr="Recommandé pour">Recommended for</th></tr></thead>
         <tbody>
-          <tr><td>Annotation <code>@WebFilter</code></td><td>❌ Non garanti</td><td>Filtres simples</td></tr>
-          <tr><td>Déclaration <code>web.xml</code></td><td>✅ Ordre explicite</td><td>Configuration complexe</td></tr>
+          <tr><td data-en="Annotation <code>@WebFilter</code>" data-fr="Annotation <code>@WebFilter</code>">Annotation <code>@WebFilter</code></td><td data-en="❌ Not guaranteed" data-fr="❌ Non garanti">❌ Not guaranteed</td><td data-en="Simple filters" data-fr="Filtres simples">Simple filters</td></tr>
+          <tr><td data-en="Declaration <code>web.xml</code>" data-fr="Déclaration <code>web.xml</code>">Declaration <code>web.xml</code></td><td data-en="✅ Explicit order" data-fr="✅ Ordre explicite">✅ Explicit order</td><td data-en="Complex configuration" data-fr="Configuration complexe">Complex configuration</td></tr>
         </tbody>
       </table>
     </div>
 
-    <h2>Glossaire</h2>
+    <h2 data-en="Glossary" data-fr="Glossaire">Glossary</h2>
     <div class="cds--data-table-container">
       <table class="cds--data-table">
-        <thead><tr><th>Terme</th><th>Définition</th></tr></thead>
+        <thead><tr><th data-en="Term" data-fr="Terme">Term</th><th data-en="Definition" data-fr="Définition">Definition</th></tr></thead>
         <tbody>
-          <tr><td><strong>Servlet</strong></td><td>Classe Java qui gère des requêtes HTTP côté serveur, compilée et exécutée dans un conteneur web</td></tr>
-          <tr><td><strong>JSP</strong></td><td>JavaServer Pages — technologie permettant de créer des pages HTML dynamiques avec du Java embarqué, compilées en servlets</td></tr>
-          <tr><td><strong>EL</strong></td><td>Expression Language — syntaxe simplifiée <code>${expression}</code> pour accéder aux données dans JSP</td></tr>
-          <tr><td><strong>JSTL</strong></td><td>JSP Standard Tag Library — bibliothèque de tags pour l'itération, les conditions, le formatage (alternative aux scriptlets)</td></tr>
-          <tr><td><strong>MVC</strong></td><td>Model-View-Controller — pattern architectural séparant données (Model), présentation (View) et contrôle (Controller)</td></tr>
-          <tr><td><strong>PRG</strong></td><td>Post-Redirect-Get — pattern évitant les doubles soumissions de formulaire en redirigeant après un POST</td></tr>
-          <tr><td><strong>Filter Chain</strong></td><td>Chaîne de filtres traversée dans l'ordre avant/après le servlet — chaque filtre appelle <code>chain.doFilter()</code></td></tr>
-          <tr><td><strong>JSESSIONID</strong></td><td>Nom du cookie standard Jakarta EE stockant l'identifiant de session côté client</td></tr>
+          <tr><td><strong>Servlet</strong></td><td data-en="Java class that handles HTTP requests server-side, compiled and executed in a web container" data-fr="Classe Java qui gère des requêtes HTTP côté serveur, compilée et exécutée dans un conteneur web">Java class that handles HTTP requests server-side, compiled and executed in a web container</td></tr>
+          <tr><td><strong>JSP</strong></td><td data-en="JavaServer Pages — technology for creating dynamic HTML pages with embedded Java, compiled into servlets" data-fr="JavaServer Pages — technologie permettant de créer des pages HTML dynamiques avec du Java embarqué, compilées en servlets">JavaServer Pages — technology for creating dynamic HTML pages with embedded Java, compiled into servlets</td></tr>
+          <tr><td><strong>EL</strong></td><td data-en="Expression Language — simplified syntax <code>${expression}</code> for data access in JSP" data-fr="Expression Language — syntaxe simplifiée <code>${expression}</code> pour accéder aux données dans JSP">Expression Language — simplified syntax <code>${expression}</code> for data access in JSP</td></tr>
+          <tr><td><strong>JSTL</strong></td><td data-en="JSP Standard Tag Library — tag library for iteration, conditions, formatting (alternative to scriptlets)" data-fr="JSP Standard Tag Library — bibliothèque de tags pour l'itération, les conditions, le formatage (alternative aux scriptlets)">JSP Standard Tag Library — tag library for iteration, conditions, formatting (alternative to scriptlets)</td></tr>
+          <tr><td><strong>MVC</strong></td><td data-en="Model-View-Controller — architectural pattern separating data (Model), presentation (View) and control (Controller)" data-fr="Model-View-Controller — pattern architectural séparant données (Model), présentation (View) et contrôle (Controller)">Model-View-Controller — architectural pattern separating data (Model), presentation (View) and control (Controller)</td></tr>
+          <tr><td><strong>PRG</strong></td><td data-en="Post-Redirect-Get — pattern avoiding double form submissions by redirecting after a POST" data-fr="Post-Redirect-Get — pattern évitant les doubles soumissions de formulaire en redirigeant après un POST">Post-Redirect-Get — pattern avoiding double form submissions by redirecting after a POST</td></tr>
+          <tr><td><strong>Filter Chain</strong></td><td data-en="Chain of filters traversed in order before/after the servlet — each filter calls <code>chain.doFilter()</code>" data-fr="Chaîne de filtres traversée dans l'ordre avant/après le servlet — chaque filtre appelle <code>chain.doFilter()</code>">Chain of filters traversed in order before/after the servlet — each filter calls <code>chain.doFilter()</code></td></tr>
+          <tr><td><strong>JSESSIONID</strong></td><td data-en="Name of the standard Jakarta EE cookie storing the session identifier client-side" data-fr="Nom du cookie standard Jakarta EE stockant l'identifiant de session côté client">Name of the standard Jakarta EE cookie storing the session identifier client-side</td></tr>
         </tbody>
       </table>
     </div>
@@ -112,5 +114,6 @@
   </main>
 </div>
 <footer class="cds--footer">Made with IBM Bob &nbsp;·&nbsp; © 2026 Olivier Planson &nbsp;·&nbsp; ESIPE — Jakarta EE &amp; Microservices</footer>
+<script src="../assets/language-toggle.js"></script>
 </body>
 </html>

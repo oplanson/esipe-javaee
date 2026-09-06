@@ -1,379 +1,383 @@
 <!-- © Copyright 2026 Olivier Planson. All rights reserved. Reproduction prohibited. Made with IBM Bob. -->
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="en">
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-  <title>Cours 08 — Contenu du cours</title>
+  <title>Course 08 — Microservices | Jakarta EE Course</title>
   <link rel="stylesheet" href="../assets/carbon.css"/>
 </head>
 <body>
 <header class="cds--header">
-  <a class="cds--header__name" href="index.html">Microservices<span>Cours Jakarta EE</span></a>
-  <a class="cds--header__back" href="../index.html">← Tous les Cours</a>
+  <a class="cds--header__name" href="index.html">Microservices<span data-en="Jakarta EE Course" data-fr="Cours Jakarta EE">Jakarta EE Course</span></a>
+  <button class="lang-toggle-btn" id="lang-toggle">FR</button>
+  <a class="cds--header__back" href="../index.html" data-en="← All Courses" data-fr="← Tous les Cours">← All Courses</a>
 </header>
 <div class="cds--shell">
   <nav class="cds--side-nav">
-    <p class="cds--side-nav__section-title">Cours 08</p>
-    <a class="cds--side-nav__link" href="index.html">⊙ Vue d'ensemble</a>
-    <a class="cds--side-nav__link active" href="slides.html">☰ Contenu du cours</a>
-    <a class="cds--side-nav__link" href="concepts.html">◈ Concepts clés</a>
-    <a class="cds--side-nav__link" href="code.html">⟨/⟩ Exemples de code</a>
-    <a class="cds--side-nav__link" href="patterns.html">⧫ Patterns Microservices</a>
+    <p class="cds--side-nav__section-title" data-en="Course 08" data-fr="Cours 08">Course 08</p>
+    <a class="cds--side-nav__link" href="index.html" data-en="⊙ Overview" data-fr="⊙ Vue d'ensemble">⊙ Overview</a>
+    <a class="cds--side-nav__link active" href="slides.html" data-en="☰ Course Content" data-fr="☰ Contenu du cours">☰ Course Content</a>
+    <a class="cds--side-nav__link" href="concepts.html" data-en="◈ Key Concepts" data-fr="◈ Concepts clés">◈ Key Concepts</a>
+    <a class="cds--side-nav__link" href="code.html" data-en="⟨/⟩ Code Examples" data-fr="⟨/⟩ Exemples de code">⟨/⟩ Code Examples</a>
+    <a class="cds--side-nav__link" href="patterns.html" data-en="⧫ Microservices Patterns" data-fr="⧫ Patterns Microservices">⧫ Microservices Patterns</a>
+    <a class="cds--side-nav__lang-toggle">FR</a>
   </nav>
   <main class="cds--content">
-    <div class="breadcrumb"><a href="../index.html">Cours</a> › <a href="index.html">Cours 08</a> › Contenu</div>
-    <h1>Contenu du cours</h1>
-    <p class="page-lead">Toutes les sections — cliquez sur un titre pour développer.</p>
+    <div class="breadcrumb"><a href="../index.html" data-en="Courses" data-fr="Cours">Courses</a> › <a href="index.html" data-en="Course 08" data-fr="Cours 08">Course 08</a> › <span data-en="Content" data-fr="Contenu">Content</span></div>
+    <h1 data-en="Course Content" data-fr="Contenu du cours">Course Content</h1>
+    <p class="page-lead" data-en="All sections — click a title to expand." data-fr="Toutes les sections — cliquez sur un titre pour développer.">All sections — click a title to expand.</p>
 
     <details open>
-      <summary>🏗️ Qu'est-ce que les Microservices ?</summary>
+      <summary data-en="🏗️ What are Microservices?" data-fr="🏗️ Qu'est-ce que les Microservices ?">🏗️ What are Microservices?</summary>
       <div class="slide-content">
-        <h3>Définition</h3>
-        <p><strong>Les microservices</strong> sont un style architectural dans lequel une application est découpée en services petits, indépendants, possédant chacun une responsabilité unique et clairement délimitée. Chaque service est déployable indépendamment, communique via des interfaces légères (HTTP/REST ou messagerie asynchrone) et peut être développé, mis à jour et scalé de façon autonome.</p>
-        <h3>Caractéristiques fondamentales</h3>
+        <h3 data-en="Definition" data-fr="Définition">Definition</h3>
+        <p><strong data-en="Microservices" data-fr="Les microservices">Microservices</strong> <span data-en="are an architectural style in which an application is split into small, independent services, each with a single, clearly delimited responsibility. Each service is independently deployable, communicates via lightweight interfaces (HTTP/REST or asynchronous messaging) and can be developed, updated and scaled autonomously." data-fr="sont un style architectural dans lequel une application est découpée en services petits, indépendants, possédant chacun une responsabilité unique et clairement délimitée. Chaque service est déployable indépendamment, communique via des interfaces légères (HTTP/REST ou messagerie asynchrone) et peut être développé, mis à jour et scalé de façon autonome.">are an architectural style in which an application is split into small, independent services, each with a single, clearly delimited responsibility. Each service is independently deployable, communicates via lightweight interfaces (HTTP/REST or asynchronous messaging) and can be developed, updated and scaled autonomously.</span></p>
+        <h3 data-en="Fundamental Characteristics" data-fr="Caractéristiques fondamentales">Fundamental Characteristics</h3>
         <ul>
-          <li><strong>Responsabilité unique</strong> — chaque service se concentre sur un domaine métier précis (Single Responsibility Principle étendu à l'architecture)</li>
-          <li><strong>Déploiement indépendant</strong> — un service peut être mis en production sans toucher aux autres</li>
-          <li><strong>Base de données par service</strong> — chaque service est seul propriétaire de ses données (Database per Service pattern)</li>
-          <li><strong>Communication via interfaces définies</strong> — les services ne partagent pas de code interne, uniquement des contrats API</li>
-          <li><strong>Technologie hétérogène possible</strong> — chaque service peut utiliser le langage et le framework les mieux adaptés à son besoin</li>
+          <li><strong data-en="Single Responsibility" data-fr="Responsabilité unique">Single Responsibility</strong> — <span data-en="each service focuses on a precise business domain (Single Responsibility Principle extended to architecture)" data-fr="chaque service se concentre sur un domaine métier précis (Single Responsibility Principle étendu à l'architecture)">each service focuses on a precise business domain (Single Responsibility Principle extended to architecture)</span></li>
+          <li><strong data-en="Independent Deployment" data-fr="Déploiement indépendant">Independent Deployment</strong> — <span data-en="a service can be put into production without touching the others" data-fr="un service peut être mis en production sans toucher aux autres">a service can be put into production without touching the others</span></li>
+          <li><strong data-en="Database per Service" data-fr="Base de données par service">Database per Service</strong> — <span data-en="each service is the sole owner of its data (Database per Service pattern)" data-fr="chaque service est seul propriétaire de ses données (Database per Service pattern)">each service is the sole owner of its data (Database per Service pattern)</span></li>
+          <li><strong data-en="Communication via defined interfaces" data-fr="Communication via interfaces définies">Communication via defined interfaces</strong> — <span data-en="services do not share internal code, only API contracts" data-fr="les services ne partagent pas de code interne, uniquement des contrats API">services do not share internal code, only API contracts</span></li>
+          <li><strong data-en="Heterogeneous technology possible" data-fr="Technologie hétérogène possible">Heterogeneous technology possible</strong> — <span data-en="each service can use the language and framework best suited to its needs" data-fr="chaque service peut utiliser le langage et le framework les mieux adaptés à son besoin">each service can use the language and framework best suited to its needs</span></li>
         </ul>
-        <h3>Monolithe vs Microservices</h3>
+        <h3 data-en="Monolith vs Microservices" data-fr="Monolithe vs Microservices">Monolith vs Microservices</h3>
         <ul>
-          <li><strong>Monolithe</strong> — toute la logique métier, la couche de données et la présentation sont compilées et déployées dans un seul artefact (WAR/EAR)</li>
-          <li><strong>Microservices</strong> — l'application est divisée en N services autonomes, chacun avec son propre cycle de vie</li>
-          <li>Le monolithe est plus simple à développer au départ, mais devient difficile à maintenir et à scaler à grande échelle</li>
-          <li>Les microservices introduisent une complexité opérationnelle (réseau, observabilité) mais offrent une plus grande agilité à long terme</li>
+          <li><strong data-en="Monolith" data-fr="Monolithe">Monolith</strong> — <span data-en="all business logic, data layer and presentation are compiled and deployed in a single artifact (WAR/EAR)" data-fr="toute la logique métier, la couche de données et la présentation sont compilées et déployées dans un seul artefact (WAR/EAR)">all business logic, data layer and presentation are compiled and deployed in a single artifact (WAR/EAR)</span></li>
+          <li><strong>Microservices</strong> — <span data-en="the application is divided into N autonomous services, each with its own lifecycle" data-fr="l'application est divisée en N services autonomes, chacun avec son propre cycle de vie">the application is divided into N autonomous services, each with its own lifecycle</span></li>
+          <li data-en="The monolith is simpler to develop initially, but becomes difficult to maintain and scale at large scale" data-fr="Le monolithe est plus simple à développer au départ, mais devient difficile à maintenir et à scaler à grande échelle">The monolith is simpler to develop initially, but becomes difficult to maintain and scale at large scale</li>
+          <li data-en="Microservices introduce operational complexity (network, observability) but offer greater agility in the long run" data-fr="Les microservices introduisent une complexité opérationnelle (réseau, observabilité) mais offrent une plus grande agilité à long terme">Microservices introduce operational complexity (network, observability) but offer greater agility in the long run</li>
         </ul>
-        <h3>Loi de Conway</h3>
-        <p>« Les organisations qui conçoivent des systèmes sont contraintes de produire des designs qui copient la structure de communication de ces organisations. » — Melvin Conway, 1967. En pratique, les équipes qui travaillent sur des microservices doivent être organisées autour de domaines métier autonomes (<em>team topology</em>), et non par couche technique.</p>
-        <img src="../../images/08-microservices-architecture-diagram-1.png" alt="Monolithe vs Architecture Microservices"/>
+        <h3 data-en="Conway's Law" data-fr="Loi de Conway">Conway's Law</h3>
+        <p data-en="&quot;Organizations which design systems are constrained to produce designs which are copies of the communication structures of these organizations.&quot; — Melvin Conway, 1967. In practice, teams working on microservices must be organized around autonomous business domains (team topology), not by technical layer." data-fr="« Les organisations qui conçoivent des systèmes sont contraintes de produire des designs qui copient la structure de communication de ces organisations. » — Melvin Conway, 1967. En pratique, les équipes qui travaillent sur des microservices doivent être organisées autour de domaines métier autonomes (team topology), et non par couche technique.">"Organizations which design systems are constrained to produce designs which are copies of the communication structures of these organizations." — Melvin Conway, 1967. In practice, teams working on microservices must be organized around autonomous business domains (team topology), not by technical layer.</p>
+        <img src="../../images/08-microservices-architecture-diagram-1.png" alt="Monolith vs Microservices Architecture"/>
       </div>
     </details>
 
     <details>
-      <summary>⚖️ Bénéfices et Défis</summary>
+      <summary data-en="⚖️ Benefits and Challenges" data-fr="⚖️ Bénéfices et Défis">⚖️ Benefits and Challenges</summary>
       <div class="slide-content">
-        <h3>Bénéfices des microservices</h3>
+        <h3 data-en="Benefits of microservices" data-fr="Bénéfices des microservices">Benefits of microservices</h3>
         <ul>
-          <li><strong>Scalabilité indépendante</strong> — seul le service sous charge est répliqué, économie de ressources par rapport au scaling horizontal d'un monolithe entier</li>
-          <li><strong>Déploiement indépendant</strong> — livraison continue plus rapide, réduction du risque de chaque déploiement</li>
-          <li><strong>Diversité technologique</strong> — chaque service choisit le stack le mieux adapté à son besoin (JVM, Node, Go, Python…)</li>
-          <li><strong>Résilience</strong> — la panne d'un service n'entraîne pas l'arrêt total de l'application si les patterns de résilience sont appliqués</li>
-          <li><strong>Équipes autonomes</strong> — chaque équipe est propriétaire de son service de bout en bout (code, déploiement, supervision)</li>
-          <li><strong>Meilleure testabilité</strong> — chaque service est plus petit, les tests d'intégration ont un périmètre réduit</li>
+          <li><strong data-en="Independent scalability" data-fr="Scalabilité indépendante">Independent scalability</strong> — <span data-en="only the service under load is replicated, saving resources compared to horizontal scaling of an entire monolith" data-fr="seul le service sous charge est répliqué, économie de ressources par rapport au scaling horizontal d'un monolithe entier">only the service under load is replicated, saving resources compared to horizontal scaling of an entire monolith</span></li>
+          <li><strong data-en="Independent deployment" data-fr="Déploiement indépendant">Independent deployment</strong> — <span data-en="faster continuous delivery, reduced risk per deployment" data-fr="livraison continue plus rapide, réduction du risque de chaque déploiement">faster continuous delivery, reduced risk per deployment</span></li>
+          <li><strong data-en="Technological diversity" data-fr="Diversité technologique">Technological diversity</strong> — <span data-en="each service chooses the stack best suited to its needs (JVM, Node, Go, Python…)" data-fr="chaque service choisit le stack le mieux adapté à son besoin (JVM, Node, Go, Python…)">each service chooses the stack best suited to its needs (JVM, Node, Go, Python…)</span></li>
+          <li><strong data-en="Resilience" data-fr="Résilience">Resilience</strong> — <span data-en="the failure of one service does not stop the entire application if resilience patterns are applied" data-fr="la panne d'un service n'entraîne pas l'arrêt total de l'application si les patterns de résilience sont appliqués">the failure of one service does not stop the entire application if resilience patterns are applied</span></li>
+          <li><strong data-en="Autonomous teams" data-fr="Équipes autonomes">Autonomous teams</strong> — <span data-en="each team owns its service end-to-end (code, deployment, monitoring)" data-fr="chaque équipe est propriétaire de son service de bout en bout (code, déploiement, supervision)">each team owns its service end-to-end (code, deployment, monitoring)</span></li>
+          <li><strong data-en="Better testability" data-fr="Meilleure testabilité">Better testability</strong> — <span data-en="each service is smaller, integration tests have a reduced scope" data-fr="chaque service est plus petit, les tests d'intégration ont un périmètre réduit">each service is smaller, integration tests have a reduced scope</span></li>
         </ul>
-        <h3>Défis et complexités</h3>
+        <h3 data-en="Challenges and complexities" data-fr="Défis et complexités">Challenges and complexities</h3>
         <ul>
-          <li><strong>Complexité réseau</strong> — les appels inter-services introduisent latence, timeouts, pannes réseau et nécessitent des patterns de résilience</li>
-          <li><strong>Cohérence des données</strong> — pas de transaction ACID distribuée — il faut accepter l'eventual consistency et implémenter des patterns comme Saga</li>
-          <li><strong>Tests distribués</strong> — les tests d'intégration et de bout en bout sont significativement plus complexes</li>
-          <li><strong>Observabilité</strong> — une requête traverse N services — il faut une infrastructure de tracing distribué, logging centralisé et métriques</li>
-          <li><strong>Surcharge opérationnelle</strong> — N services à déployer, surveiller, mettre à jour, versionner</li>
-          <li><strong>Duplication de code possible</strong> — les utilitaires partagés doivent être extraits en librairies ou en services communs</li>
+          <li><strong data-en="Network complexity" data-fr="Complexité réseau">Network complexity</strong> — <span data-en="inter-service calls introduce latency, timeouts, network failures and require resilience patterns" data-fr="les appels inter-services introduisent latence, timeouts, pannes réseau et nécessitent des patterns de résilience">inter-service calls introduce latency, timeouts, network failures and require resilience patterns</span></li>
+          <li><strong data-en="Data consistency" data-fr="Cohérence des données">Data consistency</strong> — <span data-en="no distributed ACID transaction — you must accept eventual consistency and implement patterns like Saga" data-fr="pas de transaction ACID distribuée — il faut accepter l'eventual consistency et implémenter des patterns comme Saga">no distributed ACID transaction — you must accept eventual consistency and implement patterns like Saga</span></li>
+          <li><strong data-en="Distributed testing" data-fr="Tests distribués">Distributed testing</strong> — <span data-en="integration and end-to-end tests are significantly more complex" data-fr="les tests d'intégration et de bout en bout sont significativement plus complexes">integration and end-to-end tests are significantly more complex</span></li>
+          <li><strong data-en="Observability" data-fr="Observabilité">Observability</strong> — <span data-en="a request traverses N services — distributed tracing infrastructure, centralized logging and metrics are required" data-fr="une requête traverse N services — il faut une infrastructure de tracing distribué, logging centralisé et métriques">a request traverses N services — distributed tracing infrastructure, centralized logging and metrics are required</span></li>
+          <li><strong data-en="Operational overhead" data-fr="Surcharge opérationnelle">Operational overhead</strong> — <span data-en="N services to deploy, monitor, update, version" data-fr="N services à déployer, surveiller, mettre à jour, versionner">N services to deploy, monitor, update, version</span></li>
+          <li><strong data-en="Possible code duplication" data-fr="Duplication de code possible">Possible code duplication</strong> — <span data-en="shared utilities must be extracted into libraries or common services" data-fr="les utilitaires partagés doivent être extraits en librairies ou en services communs">shared utilities must be extracted into libraries or common services</span></li>
         </ul>
-        <img src="../../images/08-microservices-architecture-diagram-2.png" alt="Bénéfices et défis des microservices"/>
+        <img src="../../images/08-microservices-architecture-diagram-2.png" alt="Benefits and challenges of microservices"/>
       </div>
     </details>
 
     <details>
-      <summary>✂️ Décomposition — Stratégies</summary>
+      <summary data-en="✂️ Decomposition — Strategies" data-fr="✂️ Décomposition — Stratégies">✂️ Decomposition — Strategies</summary>
       <div class="slide-content">
-        <h3>Décomposition par capacité métier (Business Capability)</h3>
-        <p>Chaque service correspond à une capacité métier stable dans l'organisation. Les capacités métier sont identifiées à travers un atelier d'<em>Event Storming</em> ou de modélisation DDD.</p>
+        <h3 data-en="Decomposition by Business Capability" data-fr="Décomposition par capacité métier (Business Capability)">Decomposition by Business Capability</h3>
+        <p data-en="Each service corresponds to a stable business capability in the organization. Business capabilities are identified through an Event Storming or DDD modelling workshop." data-fr="Chaque service correspond à une capacité métier stable dans l'organisation. Les capacités métier sont identifiées à travers un atelier d'Event Storming ou de modélisation DDD.">Each service corresponds to a stable business capability in the organization. Business capabilities are identified through an Event Storming or DDD modelling workshop.</p>
         <ul>
-          <li>Exemple bancaire : Gestion des clients, Gestion des comptes, Virements, Notifications, Reporting</li>
-          <li>Avantage : les services restent stables même si les technologies ou les processus changent</li>
-          <li>Les frontières (<em>bounded contexts</em> DDD) délimitent la responsabilité de chaque service</li>
+          <li data-en="Banking example: Customer Management, Account Management, Transfers, Notifications, Reporting" data-fr="Exemple bancaire : Gestion des clients, Gestion des comptes, Virements, Notifications, Reporting">Banking example: Customer Management, Account Management, Transfers, Notifications, Reporting</li>
+          <li data-en="Advantage: services remain stable even if technologies or processes change" data-fr="Avantage : les services restent stables même si les technologies ou les processus changent">Advantage: services remain stable even if technologies or processes change</li>
+          <li data-en="DDD bounded contexts delimit the responsibility of each service" data-fr="Les frontières (bounded contexts DDD) délimitent la responsabilité de chaque service">DDD bounded contexts delimit the responsibility of each service</li>
         </ul>
-        <h3>Décomposition par sous-domaine (Subdomain)</h3>
+        <h3 data-en="Decomposition by Subdomain" data-fr="Décomposition par sous-domaine (Subdomain)">Decomposition by Subdomain</h3>
         <ul>
-          <li><strong>Core domain</strong> — domaine principal, source de valeur différenciante — investissement maximal</li>
-          <li><strong>Supporting subdomain</strong> — nécessaire mais pas différenciant — peut être développé en interne ou externalisé</li>
-          <li><strong>Generic subdomain</strong> — fonctionnalité générique (authentification, facturation) — utiliser un produit existant ou SaaS</li>
+          <li><strong>Core domain</strong> — <span data-en="main domain, source of differentiating value — maximum investment" data-fr="domaine principal, source de valeur différenciante — investissement maximal">main domain, source of differentiating value — maximum investment</span></li>
+          <li><strong>Supporting subdomain</strong> — <span data-en="necessary but not differentiating — can be developed internally or outsourced" data-fr="nécessaire mais pas différenciant — peut être développé en interne ou externalisé">necessary but not differentiating — can be developed internally or outsourced</span></li>
+          <li><strong>Generic subdomain</strong> — <span data-en="generic functionality (authentication, billing) — use an existing product or SaaS" data-fr="fonctionnalité générique (authentification, facturation) — utiliser un produit existant ou SaaS">generic functionality (authentication, billing) — use an existing product or SaaS</span></li>
         </ul>
-        <h3>Pattern Database per Service</h3>
+        <h3 data-en="Database per Service Pattern" data-fr="Pattern Database per Service">Database per Service Pattern</h3>
         <ul>
-          <li>Chaque service possède sa propre base de données — inaccessible directement par les autres services</li>
-          <li>Les services ne peuvent accéder aux données des autres que via leurs APIs exposées</li>
-          <li>Permet le choix de la technologie de stockage la plus adaptée : PostgreSQL, MongoDB, Redis, Cassandra…</li>
-          <li>Implique de gérer l'eventual consistency pour les lectures croisées</li>
+          <li data-en="Each service owns its own database — not directly accessible by other services" data-fr="Chaque service possède sa propre base de données — inaccessible directement par les autres services">Each service owns its own database — not directly accessible by other services</li>
+          <li data-en="Services can only access other services' data via their exposed APIs" data-fr="Les services ne peuvent accéder aux données des autres que via leurs APIs exposées">Services can only access other services' data via their exposed APIs</li>
+          <li data-en="Allows choosing the most suitable storage technology: PostgreSQL, MongoDB, Redis, Cassandra…" data-fr="Permet le choix de la technologie de stockage la plus adaptée : PostgreSQL, MongoDB, Redis, Cassandra…">Allows choosing the most suitable storage technology: PostgreSQL, MongoDB, Redis, Cassandra…</li>
+          <li data-en="Requires managing eventual consistency for cross-service reads" data-fr="Implique de gérer l'eventual consistency pour les lectures croisées">Requires managing eventual consistency for cross-service reads</li>
         </ul>
-        <h3>Application bancaire — Découpage en microservices</h3>
+        <h3 data-en="Banking application — Microservices decomposition" data-fr="Application bancaire — Découpage en microservices">Banking application — Microservices decomposition</h3>
         <ul>
-          <li><strong>client-service</strong> — gestion du profil client (CRUD, KYC)</li>
-          <li><strong>account-service</strong> — gestion des comptes bancaires et des soldes</li>
-          <li><strong>transfer-service</strong> — orchestration des virements inter-comptes</li>
-          <li><strong>notification-service</strong> — envoi de notifications (email, SMS, push)</li>
+          <li><strong>client-service</strong> — <span data-en="customer profile management (CRUD, KYC)" data-fr="gestion du profil client (CRUD, KYC)">customer profile management (CRUD, KYC)</span></li>
+          <li><strong>account-service</strong> — <span data-en="bank account and balance management" data-fr="gestion des comptes bancaires et des soldes">bank account and balance management</span></li>
+          <li><strong>transfer-service</strong> — <span data-en="inter-account transfer orchestration" data-fr="orchestration des virements inter-comptes">inter-account transfer orchestration</span></li>
+          <li><strong>notification-service</strong> — <span data-en="notification sending (email, SMS, push)" data-fr="envoi de notifications (email, SMS, push)">notification sending (email, SMS, push)</span></li>
         </ul>
-        <img src="../../images/08-microservices-architecture-diagram-3.png" alt="Décomposition par bounded contexts DDD"/>
+        <img src="../../images/08-microservices-architecture-diagram-3.png" alt="Decomposition by DDD bounded contexts"/>
         <img src="../../images/08-microservices-architecture-diagram-4.png" alt="Database per Service pattern"/>
       </div>
     </details>
 
     <details>
-      <summary>🔗 Communication Inter-Services</summary>
+      <summary data-en="🔗 Inter-Service Communication" data-fr="🔗 Communication Inter-Services">🔗 Inter-Service Communication</summary>
       <div class="slide-content">
-        <h3>Communication synchrone — REST avec MicroProfile Rest Client</h3>
-        <p>La communication synchrone est adaptée aux requêtes qui nécessitent une réponse immédiate. Elle utilise HTTP/REST avec le MicroProfile Rest Client pour un client type-safe.</p>
+        <h3 data-en="Synchronous communication — REST with MicroProfile Rest Client" data-fr="Communication synchrone — REST avec MicroProfile Rest Client">Synchronous communication — REST with MicroProfile Rest Client</h3>
+        <p data-en="Synchronous communication is suitable for requests that require an immediate response. It uses HTTP/REST with the MicroProfile Rest Client for a type-safe client." data-fr="La communication synchrone est adaptée aux requêtes qui nécessitent une réponse immédiate. Elle utilise HTTP/REST avec le MicroProfile Rest Client pour un client type-safe.">Synchronous communication is suitable for requests that require an immediate response. It uses HTTP/REST with the MicroProfile Rest Client for a type-safe client.</p>
         <ul>
-          <li><code>@RegisterRestClient(configKey="account-service")</code> — enregistre l'interface comme client REST</li>
-          <li>URL configurée via MicroProfile Config : <code>account-service/mp-rest/url=http://account-service:8080</code></li>
-          <li><code>@Inject @RestClient AccountServiceClient accountClient</code> — injection CDI du client</li>
+          <li><code>@RegisterRestClient(configKey="account-service")</code> — <span data-en="registers the interface as a REST client" data-fr="enregistre l'interface comme client REST">registers the interface as a REST client</span></li>
+          <li data-en="URL configured via MicroProfile Config: " data-fr="URL configurée via MicroProfile Config : ">URL configured via MicroProfile Config: <code>account-service/mp-rest/url=http://account-service:8080</code></li>
+          <li><code>@Inject @RestClient AccountServiceClient accountClient</code> — <span data-en="CDI injection of the client" data-fr="injection CDI du client">CDI injection of the client</span></li>
         </ul>
-        <h3>Communication asynchrone — JMS / Kafka</h3>
+        <h3 data-en="Asynchronous communication — Jakarta Messaging / Kafka" data-fr="Communication asynchrone — JMS / Kafka">Asynchronous communication — Jakarta Messaging / Kafka</h3>
         <ul>
-          <li>Adaptée aux traitements qui ne nécessitent pas de réponse immédiate (notifications, événements métier)</li>
-          <li><strong>JMS</strong> (Jakarta Messaging) — broker de messagerie intégré au serveur Jakarta EE (ActiveMQ, IBM MQ)</li>
-          <li><strong>Kafka</strong> — plateforme de streaming événementiel — MicroProfile Reactive Messaging pour l'intégration</li>
-          <li>Avantages : découplage temporel, buffer en cas de surcharge, replay des événements</li>
+          <li data-en="Suitable for processing that does not require an immediate response (notifications, business events)" data-fr="Adaptée aux traitements qui ne nécessitent pas de réponse immédiate (notifications, événements métier)">Suitable for processing that does not require an immediate response (notifications, business events)</li>
+          <li><strong>JMS</strong> (Jakarta Messaging) — <span data-en="message broker integrated into the Jakarta EE server (ActiveMQ, IBM MQ)" data-fr="broker de messagerie intégré au serveur Jakarta EE (ActiveMQ, IBM MQ)">message broker integrated into the Jakarta EE server (ActiveMQ, IBM MQ)</span></li>
+          <li><strong>Kafka</strong> — <span data-en="event streaming platform — MicroProfile Reactive Messaging for integration" data-fr="plateforme de streaming événementiel — MicroProfile Reactive Messaging pour l'intégration">event streaming platform — MicroProfile Reactive Messaging for integration</span></li>
+          <li data-en="Advantages: temporal decoupling, buffer under load, event replay" data-fr="Avantages : découplage temporel, buffer en cas de surcharge, replay des événements">Advantages: temporal decoupling, buffer under load, event replay</li>
         </ul>
-        <h3>MicroProfile Fault Tolerance</h3>
+        <h3 data-en="MicroProfile Fault Tolerance" data-fr="MicroProfile Fault Tolerance">MicroProfile Fault Tolerance</h3>
         <ul>
-          <li><code>@Retry(maxRetries=3, delay=500)</code> — réessaie l'appel en cas d'échec avec délai entre tentatives</li>
-          <li><code>@CircuitBreaker(requestVolumeThreshold=4, failureRatio=0.75, delay=1000)</code> — ouvre le circuit si trop d'échecs</li>
-          <li><code>@Timeout(value=2000)</code> — lève une exception si l'appel dure plus de 2 secondes</li>
-          <li><code>@Fallback(fallbackMethod="getFallback")</code> — méthode de secours en cas d'échec ou circuit ouvert</li>
-          <li><code>@Bulkhead(value=10)</code> — limite le nombre d'appels concurrents pour éviter la saturation</li>
+          <li><code>@Retry(maxRetries=3, delay=500)</code> — <span data-en="retries the call on failure with delay between attempts" data-fr="réessaie l'appel en cas d'échec avec délai entre tentatives">retries the call on failure with delay between attempts</span></li>
+          <li><code>@CircuitBreaker(requestVolumeThreshold=4, failureRatio=0.75, delay=1000)</code> — <span data-en="opens the circuit if too many failures" data-fr="ouvre le circuit si trop d'échecs">opens the circuit if too many failures</span></li>
+          <li><code>@Timeout(value=2000)</code> — <span data-en="throws an exception if the call takes more than 2 seconds" data-fr="lève une exception si l'appel dure plus de 2 secondes">throws an exception if the call takes more than 2 seconds</span></li>
+          <li><code>@Fallback(fallbackMethod="getFallback")</code> — <span data-en="fallback method in case of failure or open circuit" data-fr="méthode de secours en cas d'échec ou circuit ouvert">fallback method in case of failure or open circuit</span></li>
+          <li><code>@Bulkhead(value=10)</code> — <span data-en="limits the number of concurrent calls to prevent saturation" data-fr="limite le nombre d'appels concurrents pour éviter la saturation">limits the number of concurrent calls to prevent saturation</span></li>
         </ul>
-        <h3>Circuit Breaker — États</h3>
+        <h3 data-en="Circuit Breaker — States" data-fr="Circuit Breaker — États">Circuit Breaker — States</h3>
         <ul>
-          <li><strong>CLOSED</strong> — état normal, les requêtes passent — comptabilisation des échecs</li>
-          <li><strong>OPEN</strong> — seuil d'échec dépassé, les requêtes échouent immédiatement sans appel réseau — délai d'attente avant passage en HALF-OPEN</li>
-          <li><strong>HALF-OPEN</strong> — quelques requêtes tests sont autorisées — si succès : retour à CLOSED, si échec : retour à OPEN</li>
+          <li><strong>CLOSED</strong> — <span data-en="normal state, requests pass through — failure accounting" data-fr="état normal, les requêtes passent — comptabilisation des échecs">normal state, requests pass through — failure accounting</span></li>
+          <li><strong>OPEN</strong> — <span data-en="failure threshold exceeded, requests fail immediately without network call — wait delay before switching to HALF-OPEN" data-fr="seuil d'échec dépassé, les requêtes échouent immédiatement sans appel réseau — délai d'attente avant passage en HALF-OPEN">failure threshold exceeded, requests fail immediately without network call — wait delay before switching to HALF-OPEN</span></li>
+          <li><strong>HALF-OPEN</strong> — <span data-en="a few test requests are allowed — if success: back to CLOSED, if failure: back to OPEN" data-fr="quelques requêtes tests sont autorisées — si succès : retour à CLOSED, si échec : retour à OPEN">a few test requests are allowed — if success: back to CLOSED, if failure: back to OPEN</span></li>
         </ul>
-        <img src="../../images/08-microservices-architecture-diagram-5.png" alt="Communication inter-services synchrone et asynchrone"/>
-        <img src="../../images/08-microservices-architecture-diagram-6.png" alt="Circuit Breaker — états CLOSED/OPEN/HALF-OPEN"/>
+        <img src="../../images/08-microservices-architecture-diagram-5.png" alt="Synchronous and asynchronous inter-service communication"/>
+        <img src="../../images/08-microservices-architecture-diagram-6.png" alt="Circuit Breaker — CLOSED/OPEN/HALF-OPEN states"/>
       </div>
     </details>
 
     <details>
-      <summary>🚪 API Gateway</summary>
+      <summary data-en="🚪 API Gateway" data-fr="🚪 API Gateway">🚪 API Gateway</summary>
       <div class="slide-content">
-        <h3>Définition et rôle</h3>
-        <p>L'<strong>API Gateway</strong> est le point d'entrée unique (single entry point) de l'architecture microservices. Les clients externes n'ont pas connaissance des services internes — ils dialoguent exclusivement avec la Gateway.</p>
-        <h3>Responsabilités de la Gateway</h3>
+        <h3 data-en="Definition and role" data-fr="Définition et rôle">Definition and role</h3>
+        <p data-en="The API Gateway is the single entry point of the microservices architecture. External clients have no knowledge of internal services — they communicate exclusively with the Gateway." data-fr="L'API Gateway est le point d'entrée unique (single entry point) de l'architecture microservices. Les clients externes n'ont pas connaissance des services internes — ils dialoguent exclusivement avec la Gateway.">The <strong>API Gateway</strong> is the single entry point of the microservices architecture. External clients have no knowledge of internal services — they communicate exclusively with the Gateway.</p>
+        <h3 data-en="Gateway Responsibilities" data-fr="Responsabilités de la Gateway">Gateway Responsibilities</h3>
         <ul>
-          <li><strong>Routing</strong> — aiguille chaque requête vers le service interne approprié selon le chemin ou le domaine</li>
-          <li><strong>Authentification &amp; autorisation</strong> — valide les tokens JWT/OAuth2 avant de transmettre la requête</li>
-          <li><strong>Rate limiting</strong> — protège les services internes contre les abus et les pics de charge</li>
-          <li><strong>Agrégation de réponses</strong> — peut appeler plusieurs services et fusionner les réponses en un seul payload (BFF — Backend for Frontend)</li>
-          <li><strong>SSL termination</strong> — gère le HTTPS vers les clients, les appels internes peuvent rester en HTTP</li>
-          <li><strong>Logging &amp; monitoring</strong> — point centralisé pour les métriques et les traces des appels entrants</li>
+          <li><strong>Routing</strong> — <span data-en="routes each request to the appropriate internal service based on path or domain" data-fr="aiguille chaque requête vers le service interne approprié selon le chemin ou le domaine">routes each request to the appropriate internal service based on path or domain</span></li>
+          <li><strong data-en="Authentication &amp; authorization" data-fr="Authentification &amp; autorisation">Authentication &amp; authorization</strong> — <span data-en="validates JWT/OAuth2 tokens before forwarding the request" data-fr="valide les tokens JWT/OAuth2 avant de transmettre la requête">validates JWT/OAuth2 tokens before forwarding the request</span></li>
+          <li><strong>Rate limiting</strong> — <span data-en="protects internal services against abuse and load spikes" data-fr="protège les services internes contre les abus et les pics de charge">protects internal services against abuse and load spikes</span></li>
+          <li><strong data-en="Response aggregation" data-fr="Agrégation de réponses">Response aggregation</strong> — <span data-en="can call multiple services and merge responses into a single payload (BFF — Backend for Frontend)" data-fr="peut appeler plusieurs services et fusionner les réponses en un seul payload (BFF — Backend for Frontend)">can call multiple services and merge responses into a single payload (BFF — Backend for Frontend)</span></li>
+          <li><strong>SSL termination</strong> — <span data-en="handles HTTPS to clients, internal calls can remain in HTTP" data-fr="gère le HTTPS vers les clients, les appels internes peuvent rester en HTTP">handles HTTPS to clients, internal calls can remain in HTTP</span></li>
+          <li><strong data-en="Logging &amp; monitoring" data-fr="Logging &amp; monitoring">Logging &amp; monitoring</strong> — <span data-en="centralized point for metrics and traces of incoming calls" data-fr="point centralisé pour les métriques et les traces des appels entrants">centralized point for metrics and traces of incoming calls</span></li>
         </ul>
-        <h3>Routing des requêtes</h3>
+        <h3 data-en="Request Routing" data-fr="Routing des requêtes">Request Routing</h3>
         <ul>
           <li><code>GET /api/accounts/{id}</code> → <code>account-service:8080/accounts/{id}</code></li>
           <li><code>POST /api/transfers</code> → <code>transfer-service:8080/transfers</code></li>
           <li><code>GET /api/clients/{id}</code> → <code>client-service:8080/clients/{id}</code></li>
         </ul>
-        <h3>Agrégation de réponses</h3>
+        <h3 data-en="Response aggregation" data-fr="Agrégation de réponses">Response aggregation</h3>
         <ul>
-          <li>La Gateway peut appeler en parallèle account-service et client-service pour construire un dashboard complet</li>
-          <li>Utilisation de <code>CompletableFuture</code> ou de MicroProfile Reactive pour les appels parallèles</li>
-          <li>Réduit le nombre d'aller-retours réseau pour les clients mobiles (chattiness)</li>
+          <li data-en="The Gateway can call account-service and client-service in parallel to build a complete dashboard" data-fr="La Gateway peut appeler en parallèle account-service et client-service pour construire un dashboard complet">The Gateway can call account-service and client-service in parallel to build a complete dashboard</li>
+          <li data-en="Use of CompletableFuture or MicroProfile Reactive for parallel calls" data-fr="Utilisation de CompletableFuture ou de MicroProfile Reactive pour les appels parallèles">Use of <code>CompletableFuture</code> or MicroProfile Reactive for parallel calls</li>
+          <li data-en="Reduces the number of network round-trips for mobile clients (chattiness)" data-fr="Réduit le nombre d'aller-retours réseau pour les clients mobiles (chattiness)">Reduces the number of network round-trips for mobile clients (chattiness)</li>
         </ul>
-        <img src="../../images/08-microservices-architecture-diagram-7.png" alt="API Gateway — point d'entrée unique"/>
-        <img src="../../images/08-microservices-architecture-diagram-8.png" alt="API Gateway — routing et agrégation"/>
+        <img src="../../images/08-microservices-architecture-diagram-7.png" alt="API Gateway — single entry point"/>
+        <img src="../../images/08-microservices-architecture-diagram-8.png" alt="API Gateway — routing and aggregation"/>
       </div>
     </details>
 
     <details>
-      <summary>🔍 Découverte de Services et Configuration</summary>
+      <summary data-en="🔍 Service Discovery and Configuration" data-fr="🔍 Découverte de Services et Configuration">🔍 Service Discovery and Configuration</summary>
       <div class="slide-content">
-        <h3>Service Discovery — Problème</h3>
-        <p>Dans un environnement dynamique (cloud, containers), les adresses IP des services changent. Le Service Discovery permet à un service de trouver l'adresse d'un autre service sans la coder en dur.</p>
-        <h3>Client-side Service Discovery</h3>
+        <h3 data-en="Service Discovery — Problem" data-fr="Service Discovery — Problème">Service Discovery — Problem</h3>
+        <p data-en="In a dynamic environment (cloud, containers), service IP addresses change. Service Discovery allows a service to find the address of another service without hard-coding it." data-fr="Dans un environnement dynamique (cloud, containers), les adresses IP des services changent. Le Service Discovery permet à un service de trouver l'adresse d'un autre service sans la coder en dur.">In a dynamic environment (cloud, containers), service IP addresses change. Service Discovery allows a service to find the address of another service without hard-coding it.</p>
+        <h3 data-en="Client-side Service Discovery" data-fr="Client-side Service Discovery">Client-side Service Discovery</h3>
         <ul>
-          <li>Le client interroge le registre de services (ex. Consul, Eureka) pour obtenir l'adresse du service cible</li>
-          <li>Le client choisit lui-même l'instance (load balancing côté client)</li>
-          <li>Avantage : flexibilité dans les stratégies de load balancing</li>
-          <li>Inconvénient : logique de discovery dans chaque client</li>
+          <li data-en="The client queries the service registry (e.g. Consul, Eureka) to get the address of the target service" data-fr="Le client interroge le registre de services (ex. Consul, Eureka) pour obtenir l'adresse du service cible">The client queries the service registry (e.g. Consul, Eureka) to get the address of the target service</li>
+          <li data-en="The client itself chooses the instance (client-side load balancing)" data-fr="Le client choisit lui-même l'instance (load balancing côté client)">The client itself chooses the instance (client-side load balancing)</li>
+          <li data-en="Advantage: flexibility in load balancing strategies" data-fr="Avantage : flexibilité dans les stratégies de load balancing">Advantage: flexibility in load balancing strategies</li>
+          <li data-en="Disadvantage: discovery logic in every client" data-fr="Inconvénient : logique de discovery dans chaque client">Disadvantage: discovery logic in every client</li>
         </ul>
-        <h3>Server-side Service Discovery</h3>
+        <h3 data-en="Server-side Service Discovery" data-fr="Server-side Service Discovery">Server-side Service Discovery</h3>
         <ul>
-          <li>Le client envoie la requête à un load balancer ou à la Gateway</li>
-          <li>C'est le load balancer qui interroge le registre et route vers une instance disponible</li>
-          <li>Avantage : simplicité côté client</li>
-          <li>Exemple : DNS interne de Docker Compose, Kubernetes Service</li>
+          <li data-en="The client sends the request to a load balancer or the Gateway" data-fr="Le client envoie la requête à un load balancer ou à la Gateway">The client sends the request to a load balancer or the Gateway</li>
+          <li data-en="The load balancer queries the registry and routes to an available instance" data-fr="C'est le load balancer qui interroge le registre et route vers une instance disponible">The load balancer queries the registry and routes to an available instance</li>
+          <li data-en="Advantage: simplicity on the client side" data-fr="Avantage : simplicité côté client">Advantage: simplicity on the client side</li>
+          <li data-en="Example: Docker Compose internal DNS, Kubernetes Service" data-fr="Exemple : DNS interne de Docker Compose, Kubernetes Service">Example: Docker Compose internal DNS, Kubernetes Service</li>
         </ul>
-        <h3>DNS Docker Compose</h3>
+        <h3 data-en="Docker Compose DNS" data-fr="DNS Docker Compose">Docker Compose DNS</h3>
         <ul>
-          <li>Dans Docker Compose, chaque service est accessible par son nom de service via DNS interne</li>
-          <li><code>account-service</code> est joignable à <code>http://account-service:8080</code> depuis n'importe quel container du même réseau</li>
-          <li>Configuration MicroProfile : <code>account-service/mp-rest/url=http://account-service:8080</code></li>
+          <li data-en="In Docker Compose, each service is accessible by its service name via internal DNS" data-fr="Dans Docker Compose, chaque service est accessible par son nom de service via DNS interne">In Docker Compose, each service is accessible by its service name via internal DNS</li>
+          <li data-en="account-service is reachable at http://account-service:8080 from any container on the same network" data-fr="account-service est joignable à http://account-service:8080 depuis n'importe quel container du même réseau"><code>account-service</code> is reachable at <code>http://account-service:8080</code> from any container on the same network</li>
+          <li data-en="MicroProfile Config: " data-fr="Configuration MicroProfile : ">MicroProfile Config: <code>account-service/mp-rest/url=http://account-service:8080</code></li>
         </ul>
-        <h3>MicroProfile Config — Configuration multi-environnement</h3>
+        <h3 data-en="MicroProfile Config — Multi-environment configuration" data-fr="MicroProfile Config — Configuration multi-environnement">MicroProfile Config — Multi-environment configuration</h3>
         <ul>
-          <li>Injection des propriétés via <code>@ConfigProperty(name="account.service.url")</code></li>
-          <li>Priorité des sources : Variables d'environnement &gt; System properties &gt; <code>microprofile-config.properties</code></li>
-          <li>Overrides sans recompilation — idéal pour les déploiements Docker/Kubernetes</li>
-          <li><code>defaultValue</code> sur <code>@ConfigProperty</code> pour les valeurs de développement local</li>
+          <li data-en="Property injection via @ConfigProperty(name=&quot;account.service.url&quot;)" data-fr="Injection des propriétés via @ConfigProperty(name=&quot;account.service.url&quot;)">Property injection via <code>@ConfigProperty(name="account.service.url")</code></li>
+          <li data-en="Source priority: Environment variables &gt; System properties &gt; microprofile-config.properties" data-fr="Priorité des sources : Variables d'environnement &gt; System properties &gt; microprofile-config.properties">Source priority: Environment variables &gt; System properties &gt; <code>microprofile-config.properties</code></li>
+          <li data-en="Overrides without recompilation — ideal for Docker/Kubernetes deployments" data-fr="Overrides sans recompilation — idéal pour les déploiements Docker/Kubernetes">Overrides without recompilation — ideal for Docker/Kubernetes deployments</li>
+          <li data-en="defaultValue on @ConfigProperty for local development values" data-fr="defaultValue sur @ConfigProperty pour les valeurs de développement local"><code>defaultValue</code> on <code>@ConfigProperty</code> for local development values</li>
         </ul>
         <img src="../../images/08-microservices-architecture-diagram-9.png" alt="Service Discovery — client-side vs server-side"/>
-        <img src="../../images/08-microservices-architecture-diagram-10.png" alt="MicroProfile Config — sources et priorités"/>
+        <img src="../../images/08-microservices-architecture-diagram-10.png" alt="MicroProfile Config — sources and priorities"/>
       </div>
     </details>
 
     <details>
-      <summary>📊 Observabilité — Les 3 Piliers</summary>
+      <summary data-en="📊 Observability — The 3 Pillars" data-fr="📊 Observabilité — Les 3 Piliers">📊 Observability — The 3 Pillars</summary>
       <div class="slide-content">
-        <h3>Métriques — MicroProfile Metrics + Prometheus</h3>
-        <p>Les métriques permettent de mesurer quantitativement le comportement du système dans le temps.</p>
+        <h3 data-en="Metrics — MicroProfile Metrics + Prometheus" data-fr="Métriques — MicroProfile Metrics + Prometheus">Metrics — MicroProfile Metrics + Prometheus</h3>
+        <p data-en="Metrics allow quantitative measurement of system behaviour over time." data-fr="Les métriques permettent de mesurer quantitativement le comportement du système dans le temps.">Metrics allow quantitative measurement of system behaviour over time.</p>
         <ul>
-          <li><code>@Counted</code> — comptage du nombre d'appels d'une méthode</li>
-          <li><code>@Timed</code> — mesure de la durée d'exécution</li>
-          <li><code>@Gauge</code> — valeur instantanée (taille d'une file, solde de connexions)</li>
-          <li>Endpoint <code>/metrics</code> exposé automatiquement au format Prometheus</li>
-          <li>Prometheus scrape les métriques, Grafana les visualise</li>
+          <li><code>@Counted</code> — <span data-en="count the number of method invocations" data-fr="comptage du nombre d'appels d'une méthode">count the number of method invocations</span></li>
+          <li><code>@Timed</code> — <span data-en="measure execution duration" data-fr="mesure de la durée d'exécution">measure execution duration</span></li>
+          <li><code>@Gauge</code> — <span data-en="instantaneous value (queue size, connection pool balance)" data-fr="valeur instantanée (taille d'une file, solde de connexions)">instantaneous value (queue size, connection pool balance)</span></li>
+          <li data-en="Endpoint /metrics exposed automatically in Prometheus format" data-fr="Endpoint /metrics exposé automatiquement au format Prometheus">Endpoint <code>/metrics</code> exposed automatically in Prometheus format</li>
+          <li data-en="Prometheus scrapes the metrics, Grafana visualizes them" data-fr="Prometheus scrape les métriques, Grafana les visualise">Prometheus scrapes the metrics, Grafana visualizes them</li>
         </ul>
-        <h3>Logging structuré — ELK Stack</h3>
+        <h3 data-en="Structured Logging — ELK Stack" data-fr="Logging structuré — ELK Stack">Structured Logging — ELK Stack</h3>
         <ul>
-          <li>Les logs doivent être structurés (JSON) pour être indexables par Elasticsearch</li>
-          <li>Chaque log doit inclure le <strong>correlation ID</strong> pour relier les logs de différents services pour une même requête</li>
-          <li>Logstash collecte et transforme les logs, Elasticsearch les indexe, Kibana les visualise</li>
-          <li>MDC (Mapped Diagnostic Context) avec SLF4J : <code>MDC.put("correlationId", id)</code></li>
+          <li data-en="Logs must be structured (JSON) to be indexable by Elasticsearch" data-fr="Les logs doivent être structurés (JSON) pour être indexables par Elasticsearch">Logs must be structured (JSON) to be indexable by Elasticsearch</li>
+          <li data-en="Each log must include the correlation ID to link logs from different services for the same request" data-fr="Chaque log doit inclure le correlation ID pour relier les logs de différents services pour une même requête">Each log must include the <strong>correlation ID</strong> to link logs from different services for the same request</li>
+          <li data-en="Logstash collects and transforms logs, Elasticsearch indexes them, Kibana visualizes them" data-fr="Logstash collecte et transforme les logs, Elasticsearch les indexe, Kibana les visualise">Logstash collects and transforms logs, Elasticsearch indexes them, Kibana visualizes them</li>
+          <li data-en="MDC (Mapped Diagnostic Context) with SLF4J: MDC.put(&quot;correlationId&quot;, id)" data-fr="MDC (Mapped Diagnostic Context) avec SLF4J : MDC.put(&quot;correlationId&quot;, id)">MDC (Mapped Diagnostic Context) with SLF4J: <code>MDC.put("correlationId", id)</code></li>
         </ul>
-        <h3>Tracing distribué — MicroProfile OpenTracing + Jaeger</h3>
+        <h3 data-en="Distributed Tracing — MicroProfile Telemetry (OpenTelemetry) + Jaeger" data-fr="Traçage distribué — MicroProfile Telemetry (OpenTelemetry) + Jaeger">Distributed Tracing — MicroProfile Telemetry (OpenTelemetry) + Jaeger</h3>
         <ul>
-          <li>Le tracing distribué permet de suivre une requête à travers tous les services qu'elle traverse</li>
-          <li><strong>Span</strong> — unité de travail dans un service (appel DB, appel REST) avec durée et métadonnées</li>
-          <li><strong>Trace</strong> — arbre de spans représentant le parcours complet d'une requête</li>
-          <li><strong>Correlation ID</strong> — identifiant unique propagé via les headers HTTP (<code>X-Correlation-ID</code>, <code>traceparent</code>)</li>
-          <li>Jaeger ou Zipkin collectent et visualisent les traces</li>
-          <li>MicroProfile OpenTracing instrumente automatiquement les appels JAX-RS et Rest Client</li>
+          <li data-en="Distributed tracing allows following a request through all the services it traverses" data-fr="Le tracing distribué permet de suivre une requête à travers tous les services qu'elle traverse">Distributed tracing allows following a request through all the services it traverses</li>
+          <li><strong>Span</strong> — <span data-en="unit of work in a service (DB call, REST call) with duration and metadata" data-fr="unité de travail dans un service (appel DB, appel REST) avec durée et métadonnées">unit of work in a service (DB call, REST call) with duration and metadata</span></li>
+          <li><strong>Trace</strong> — <span data-en="tree of spans representing the complete path of a request" data-fr="arbre de spans représentant le parcours complet d'une requête">tree of spans representing the complete path of a request</span></li>
+          <li><strong>Correlation ID</strong> — <span data-en="unique identifier propagated via HTTP headers (X-Correlation-ID, traceparent)" data-fr="identifiant unique propagé via les headers HTTP (X-Correlation-ID, traceparent)">unique identifier propagated via HTTP headers (<code>X-Correlation-ID</code>, <code>traceparent</code>)</span></li>
+          <li data-en="Jaeger or Zipkin collect and visualize traces" data-fr="Jaeger ou Zipkin collectent et visualisent les traces">Jaeger or Zipkin collect and visualize traces</li>
+          <li data-en="MicroProfile Telemetry (OpenTelemetry) automatically instruments Jakarta REST and Rest Client calls" data-fr="MicroProfile Telemetry (OpenTelemetry) instrumente automatiquement les appels JAX-RS et Rest Client">MicroProfile Telemetry (OpenTelemetry) automatically instruments Jakarta REST and Rest Client calls</li>
         </ul>
-        <img src="../../images/08-microservices-architecture-diagram-11.png" alt="Observabilité — métriques, logging, tracing"/>
-        <img src="../../images/08-microservices-architecture-diagram-12.png" alt="Tracing distribué avec Jaeger"/>
+        <p class="cds--inline-notification cds--inline-notification--warning" data-en="Note: MicroProfile OpenTracing is deprecated since January 2023. Use MicroProfile Telemetry 1.0+ with OpenTelemetry instead." data-fr="Note : MicroProfile OpenTracing est déprécié depuis janvier 2023. Utilisez MicroProfile Telemetry 1.0+ avec OpenTelemetry à la place.">Note: MicroProfile OpenTracing is deprecated since January 2023. Use MicroProfile Telemetry 1.0+ with OpenTelemetry instead.</p>
+        <img src="../../images/08-microservices-architecture-diagram-11.png" alt="Observability — metrics, logging, tracing"/>
+        <img src="../../images/08-microservices-architecture-diagram-12.png" alt="Distributed tracing with Jaeger"/>
       </div>
     </details>
 
     <details>
-      <summary>🔄 Cohérence des Données</summary>
+      <summary data-en="🔄 Data Consistency" data-fr="🔄 Cohérence des Données">🔄 Data Consistency</summary>
       <div class="slide-content">
-        <h3>Théorème CAP</h3>
-        <p>Le théorème CAP (Brewer, 2000) stipule qu'un système distribué ne peut garantir simultanément que 2 des 3 propriétés suivantes :</p>
+        <h3 data-en="CAP Theorem" data-fr="Théorème CAP">CAP Theorem</h3>
+        <p data-en="The CAP theorem (Brewer, 2000) states that a distributed system cannot simultaneously guarantee more than 2 of the following 3 properties:" data-fr="Le théorème CAP (Brewer, 2000) stipule qu'un système distribué ne peut garantir simultanément que 2 des 3 propriétés suivantes :">The CAP theorem (Brewer, 2000) states that a distributed system cannot simultaneously guarantee more than 2 of the following 3 properties:</p>
         <ul>
-          <li><strong>Consistency (C)</strong> — tous les nœuds voient les mêmes données au même moment</li>
-          <li><strong>Availability (A)</strong> — chaque requête reçoit une réponse (sans garantie d'être la plus récente)</li>
-          <li><strong>Partition Tolerance (P)</strong> — le système continue à fonctionner malgré des partitions réseau</li>
+          <li><strong>Consistency (C)</strong> — <span data-en="all nodes see the same data at the same time" data-fr="tous les nœuds voient les mêmes données au même moment">all nodes see the same data at the same time</span></li>
+          <li><strong>Availability (A)</strong> — <span data-en="every request receives a response (without guarantee of being the most recent)" data-fr="chaque requête reçoit une réponse (sans garantie d'être la plus récente)">every request receives a response (without guarantee of being the most recent)</span></li>
+          <li><strong>Partition Tolerance (P)</strong> — <span data-en="the system continues to operate despite network partitions" data-fr="le système continue à fonctionner malgré des partitions réseau">the system continues to operate despite network partitions</span></li>
         </ul>
-        <p>En pratique, dans un réseau distribué, P est toujours présent — le choix est donc entre C et A (CP ou AP).</p>
-        <h3>Eventual Consistency</h3>
+        <p data-en="In practice, in a distributed network, P is always present — the choice is therefore between C and A (CP or AP)." data-fr="En pratique, dans un réseau distribué, P est toujours présent — le choix est donc entre C et A (CP ou AP).">In practice, in a distributed network, P is always present — the choice is therefore between C and A (CP or AP).</p>
+        <h3 data-en="Eventual Consistency" data-fr="Eventual Consistency">Eventual Consistency</h3>
         <ul>
-          <li>Le système finit par converger vers un état cohérent, sans garantie de cohérence immédiate</li>
-          <li>Pattern courant dans les architectures microservices — les services propagent les changements via des événements</li>
-          <li>Les lectures peuvent retourner des données légèrement obsolètes pendant la période de propagation</li>
+          <li data-en="The system eventually converges to a consistent state, without guarantee of immediate consistency" data-fr="Le système finit par converger vers un état cohérent, sans garantie de cohérence immédiate">The system eventually converges to a consistent state, without guarantee of immediate consistency</li>
+          <li data-en="Common pattern in microservices architectures — services propagate changes via events" data-fr="Pattern courant dans les architectures microservices — les services propagent les changements via des événements">Common pattern in microservices architectures — services propagate changes via events</li>
+          <li data-en="Reads may return slightly stale data during the propagation period" data-fr="Les lectures peuvent retourner des données légèrement obsolètes pendant la période de propagation">Reads may return slightly stale data during the propagation period</li>
         </ul>
-        <h3>Pattern Saga</h3>
+        <h3 data-en="Saga Pattern" data-fr="Pattern Saga">Saga Pattern</h3>
         <ul>
-          <li>Remplace les transactions ACID distribuées par une séquence de transactions locales compensables</li>
-          <li><strong>Choreography</strong> — chaque service publie des événements et réagit aux événements des autres (pas de coordinateur central)</li>
-          <li><strong>Orchestration</strong> — un orchestrateur central (saga orchestrator) coordonne les étapes et gère les compensations</li>
-          <li>Chaque étape doit avoir une <strong>transaction compensatoire</strong> en cas d'échec (ex. annuler un débit si le crédit échoue)</li>
+          <li data-en="Replaces distributed ACID transactions with a sequence of compensatable local transactions" data-fr="Remplace les transactions ACID distribuées par une séquence de transactions locales compensables">Replaces distributed ACID transactions with a sequence of compensatable local transactions</li>
+          <li><strong>Choreography</strong> — <span data-en="each service publishes events and reacts to events from others (no central coordinator)" data-fr="chaque service publie des événements et réagit aux événements des autres (pas de coordinateur central)">each service publishes events and reacts to events from others (no central coordinator)</span></li>
+          <li><strong>Orchestration</strong> — <span data-en="a central orchestrator (saga orchestrator) coordinates the steps and manages compensations" data-fr="un orchestrateur central (saga orchestrator) coordonne les étapes et gère les compensations">a central orchestrator (saga orchestrator) coordinates the steps and manages compensations</span></li>
+          <li data-en="Each step must have a compensatory transaction in case of failure (e.g. cancel a debit if the credit fails)" data-fr="Chaque étape doit avoir une transaction compensatoire en cas d'échec (ex. annuler un débit si le crédit échoue)">Each step must have a <strong data-en="compensatory transaction" data-fr="transaction compensatoire">compensatory transaction</strong> in case of failure (e.g. cancel a debit if the credit fails)</li>
         </ul>
-        <h3>Event Sourcing</h3>
+        <h3 data-en="Event Sourcing" data-fr="Event Sourcing">Event Sourcing</h3>
         <ul>
-          <li>L'état d'une entité est dérivé de la liste de tous les événements qui l'ont modifiée</li>
-          <li>L'<em>Event Store</em> est la source de vérité — les événements sont immuables</li>
-          <li>Avantage : audit trail complet, possibilité de rejouer les événements, reconstruction de l'état à tout instant</li>
+          <li data-en="The state of an entity is derived from the list of all events that modified it" data-fr="L'état d'une entité est dérivé de la liste de tous les événements qui l'ont modifiée">The state of an entity is derived from the list of all events that modified it</li>
+          <li data-en="The Event Store is the source of truth — events are immutable" data-fr="L'Event Store est la source de vérité — les événements sont immuables">The <em>Event Store</em> is the source of truth — events are immutable</li>
+          <li data-en="Advantage: complete audit trail, ability to replay events, reconstruction of state at any point in time" data-fr="Avantage : audit trail complet, possibilité de rejouer les événements, reconstruction de l'état à tout instant">Advantage: complete audit trail, ability to replay events, reconstruction of state at any point in time</li>
         </ul>
-        <h3>CQRS — Command Query Responsibility Segregation</h3>
+        <h3 data-en="CQRS — Command Query Responsibility Segregation" data-fr="CQRS — Command Query Responsibility Segregation">CQRS — Command Query Responsibility Segregation</h3>
         <ul>
-          <li>Séparation du modèle d'écriture (Commands) et du modèle de lecture (Queries)</li>
-          <li>Le modèle d'écriture garantit la cohérence, le modèle de lecture est optimisé pour les performances</li>
-          <li>Les projections (read models) sont mises à jour de façon asynchrone depuis les événements</li>
+          <li data-en="Separation of the write model (Commands) and the read model (Queries)" data-fr="Séparation du modèle d'écriture (Commands) et du modèle de lecture (Queries)">Separation of the write model (Commands) and the read model (Queries)</li>
+          <li data-en="The write model guarantees consistency, the read model is optimized for performance" data-fr="Le modèle d'écriture garantit la cohérence, le modèle de lecture est optimisé pour les performances">The write model guarantees consistency, the read model is optimized for performance</li>
+          <li data-en="Projections (read models) are updated asynchronously from events" data-fr="Les projections (read models) sont mises à jour de façon asynchrone depuis les événements">Projections (read models) are updated asynchronously from events</li>
         </ul>
-        <img src="../../images/08-microservices-architecture-diagram-13.png" alt="Théorème CAP"/>
-        <img src="../../images/08-microservices-architecture-diagram-14.png" alt="Pattern Saga — choreography vs orchestration"/>
-        <img src="../../images/08-microservices-architecture-diagram-15.png" alt="CQRS et Event Sourcing"/>
+        <img src="../../images/08-microservices-architecture-diagram-13.png" alt="CAP Theorem"/>
+        <img src="../../images/08-microservices-architecture-diagram-14.png" alt="Saga Pattern — choreography vs orchestration"/>
+        <img src="../../images/08-microservices-architecture-diagram-15.png" alt="CQRS and Event Sourcing"/>
       </div>
     </details>
 
     <details>
-      <summary>🐳 Déploiement avec Docker Compose</summary>
+      <summary data-en="🐳 Deployment with Docker Compose" data-fr="🐳 Déploiement avec Docker Compose">🐳 Deployment with Docker Compose</summary>
       <div class="slide-content">
-        <h3>Structure d'un fichier Docker Compose</h3>
+        <h3 data-en="Structure of a Docker Compose file" data-fr="Structure d'un fichier Docker Compose">Structure of a Docker Compose file</h3>
         <ul>
-          <li><code>version</code> — version du format Docker Compose (3.8 recommandé)</li>
-          <li><code>services</code> — définition de chaque container : image, ports, variables d'environnement, réseaux, volumes</li>
-          <li><code>networks</code> — réseaux internes isolant les services (bridge par défaut)</li>
-          <li><code>volumes</code> — stockage persistant partagé entre containers ou entre container et hôte</li>
+          <li><code>version</code> — <span data-en="Docker Compose format version (3.8 recommended)" data-fr="version du format Docker Compose (3.8 recommandé)">Docker Compose format version (3.8 recommended)</span></li>
+          <li><code>services</code> — <span data-en="definition of each container: image, ports, environment variables, networks, volumes" data-fr="définition de chaque container : image, ports, variables d'environnement, réseaux, volumes">definition of each container: image, ports, environment variables, networks, volumes</span></li>
+          <li><code>networks</code> — <span data-en="internal networks isolating services (bridge by default)" data-fr="réseaux internes isolant les services (bridge par défaut)">internal networks isolating services (bridge by default)</span></li>
+          <li><code>volumes</code> — <span data-en="persistent storage shared between containers or between container and host" data-fr="stockage persistant partagé entre containers ou entre container et hôte">persistent storage shared between containers or between container and host</span></li>
         </ul>
-        <h3>Définition des services</h3>
+        <h3 data-en="Service definitions" data-fr="Définition des services">Service definitions</h3>
         <ul>
-          <li><code>image</code> — image Docker à utiliser (depuis Docker Hub ou registry privé)</li>
-          <li><code>build</code> — chemin vers un Dockerfile pour construire l'image localement</li>
-          <li><code>ports</code> — mapping hôte:container (ex. <code>"8080:8080"</code>)</li>
-          <li><code>environment</code> — variables d'environnement overridant MicroProfile Config</li>
-          <li><code>depends_on</code> — ordre de démarrage (ne garantit pas la readiness)</li>
-          <li><code>healthcheck</code> — vérification périodique que le service est opérationnel</li>
-          <li><code>networks</code> — liste des réseaux auxquels le service appartient</li>
+          <li><code>image</code> — <span data-en="Docker image to use (from Docker Hub or private registry)" data-fr="image Docker à utiliser (depuis Docker Hub ou registry privé)">Docker image to use (from Docker Hub or private registry)</span></li>
+          <li><code>build</code> — <span data-en="path to a Dockerfile to build the image locally" data-fr="chemin vers un Dockerfile pour construire l'image localement">path to a Dockerfile to build the image locally</span></li>
+          <li><code>ports</code> — <span data-en='host:container mapping (e.g. "8080:8080")' data-fr='mapping hôte:container (ex. "8080:8080")'>host:container mapping (e.g. <code>"8080:8080"</code>)</span></li>
+          <li><code>environment</code> — <span data-en="environment variables overriding MicroProfile Config" data-fr="variables d'environnement overridant MicroProfile Config">environment variables overriding MicroProfile Config</span></li>
+          <li><code>depends_on</code> — <span data-en="startup order (does not guarantee readiness)" data-fr="ordre de démarrage (ne garantit pas la readiness)">startup order (does not guarantee readiness)</span></li>
+          <li><code>healthcheck</code> — <span data-en="periodic verification that the service is operational" data-fr="vérification périodique que le service est opérationnel">periodic verification that the service is operational</span></li>
+          <li><code>networks</code> — <span data-en="list of networks the service belongs to" data-fr="liste des réseaux auxquels le service appartient">list of networks the service belongs to</span></li>
         </ul>
-        <h3>Exécution locale de tous les microservices</h3>
+        <h3 data-en="Local execution of all microservices" data-fr="Exécution locale de tous les microservices">Local execution of all microservices</h3>
         <ul>
-          <li><code>docker compose up -d</code> — démarre tous les services en arrière-plan</li>
-          <li><code>docker compose logs -f account-service</code> — suit les logs d'un service</li>
-          <li><code>docker compose ps</code> — statut de tous les containers</li>
-          <li><code>docker compose down</code> — arrête et supprime les containers</li>
-          <li><code>docker compose down -v</code> — supprime aussi les volumes</li>
+          <li><code>docker compose up -d</code> — <span data-en="starts all services in the background" data-fr="démarre tous les services en arrière-plan">starts all services in the background</span></li>
+          <li><code>docker compose logs -f account-service</code> — <span data-en="follows the logs of a service" data-fr="suit les logs d'un service">follows the logs of a service</span></li>
+          <li><code>docker compose ps</code> — <span data-en="status of all containers" data-fr="statut de tous les containers">status of all containers</span></li>
+          <li><code>docker compose down</code> — <span data-en="stops and removes containers" data-fr="arrête et supprime les containers">stops and removes containers</span></li>
+          <li><code>docker compose down -v</code> — <span data-en="also removes volumes" data-fr="supprime aussi les volumes">also removes volumes</span></li>
         </ul>
-        <img src="../../images/08-microservices-architecture-diagram-16.png" alt="Docker Compose — architecture de déploiement local"/>
-        <img src="../../images/08-microservices-architecture-diagram-17.png" alt="Docker Compose — réseau interne et communication"/>
+        <img src="../../images/08-microservices-architecture-diagram-16.png" alt="Docker Compose — local deployment architecture"/>
+        <img src="../../images/08-microservices-architecture-diagram-17.png" alt="Docker Compose — internal network and communication"/>
       </div>
     </details>
 
     <details>
-      <summary>🚀 Stratégies de Déploiement</summary>
+      <summary data-en="🚀 Deployment Strategies" data-fr="🚀 Stratégies de Déploiement">🚀 Deployment Strategies</summary>
       <div class="slide-content">
-        <h3>Blue-Green Deployment</h3>
+        <h3 data-en="Blue-Green Deployment" data-fr="Blue-Green Deployment">Blue-Green Deployment</h3>
         <ul>
-          <li>Deux environnements de production identiques : <strong>Blue</strong> (version courante) et <strong>Green</strong> (nouvelle version)</li>
-          <li>Le trafic est basculé instantanément du Blue vers le Green via le load balancer</li>
-          <li>Rollback immédiat en cas de problème — rebasculer vers Blue</li>
-          <li>Inconvénient : double infrastructure (coût doublé pendant la transition)</li>
+          <li data-en="Two identical production environments: Blue (current version) and Green (new version)" data-fr="Deux environnements de production identiques : Blue (version courante) et Green (nouvelle version)">Two identical production environments: <strong>Blue</strong> (current version) and <strong>Green</strong> (new version)</li>
+          <li data-en="Traffic is switched instantly from Blue to Green via the load balancer" data-fr="Le trafic est basculé instantanément du Blue vers le Green via le load balancer">Traffic is switched instantly from Blue to Green via the load balancer</li>
+          <li data-en="Immediate rollback in case of problem — switch back to Blue" data-fr="Rollback immédiat en cas de problème — rebasculer vers Blue">Immediate rollback in case of problem — switch back to Blue</li>
+          <li data-en="Drawback: double infrastructure (doubled cost during transition)" data-fr="Inconvénient : double infrastructure (coût doublé pendant la transition)">Drawback: double infrastructure (doubled cost during transition)</li>
         </ul>
-        <h3>Canary Deployment</h3>
+        <h3 data-en="Canary Deployment" data-fr="Canary Deployment">Canary Deployment</h3>
         <ul>
-          <li>La nouvelle version est déployée et reçoit un pourcentage faible du trafic (ex. 5%)</li>
-          <li>Surveillance des métriques d'erreur et de latence sur le Canary</li>
-          <li>Si tout va bien : augmentation progressive du pourcentage de trafic jusqu'à 100%</li>
-          <li>Permet de détecter les régressions sur un échantillon réel avant un déploiement complet</li>
+          <li data-en="The new version is deployed and receives a small percentage of traffic (e.g. 5%)" data-fr="La nouvelle version est déployée et reçoit un pourcentage faible du trafic (ex. 5%)">The new version is deployed and receives a small percentage of traffic (e.g. 5%)</li>
+          <li data-en="Monitoring of error and latency metrics on the Canary" data-fr="Surveillance des métriques d'erreur et de latence sur le Canary">Monitoring of error and latency metrics on the Canary</li>
+          <li data-en="If all goes well: progressive increase of traffic percentage up to 100%" data-fr="Si tout va bien : augmentation progressive du pourcentage de trafic jusqu'à 100%">If all goes well: progressive increase of traffic percentage up to 100%</li>
+          <li data-en="Detects regressions on a real sample before a full deployment" data-fr="Permet de détecter les régressions sur un échantillon réel avant un déploiement complet">Detects regressions on a real sample before a full deployment</li>
         </ul>
-        <h3>Rolling Update</h3>
+        <h3 data-en="Rolling Update" data-fr="Rolling Update">Rolling Update</h3>
         <ul>
-          <li>Les instances sont mises à jour une par une (ou par lot) sans interruption de service</li>
-          <li>Stratégie par défaut dans Kubernetes (<code>maxUnavailable</code>, <code>maxSurge</code>)</li>
-          <li>Pendant la mise à jour, les deux versions coexistent — les APIs doivent être rétrocompatibles</li>
+          <li data-en="Instances are updated one by one (or in batches) without service interruption" data-fr="Les instances sont mises à jour une par une (ou par lot) sans interruption de service">Instances are updated one by one (or in batches) without service interruption</li>
+          <li data-en="Default strategy in Kubernetes (maxUnavailable, maxSurge)" data-fr="Stratégie par défaut dans Kubernetes (maxUnavailable, maxSurge)">Default strategy in Kubernetes (<code>maxUnavailable</code>, <code>maxSurge</code>)</li>
+          <li data-en="During the update, both versions coexist — APIs must be backwards compatible" data-fr="Pendant la mise à jour, les deux versions coexistent — les APIs doivent être rétrocompatibles">During the update, both versions coexist — APIs must be backwards compatible</li>
         </ul>
-        <h3>CI/CD Pipeline pour microservices</h3>
+        <h3 data-en="CI/CD Pipeline for microservices" data-fr="CI/CD Pipeline pour microservices">CI/CD Pipeline for microservices</h3>
         <ul>
-          <li><strong>Build</strong> — compilation, tests unitaires, analyse statique (Sonar)</li>
-          <li><strong>Test</strong> — tests d'intégration, contract tests (Pact), tests de composants</li>
-          <li><strong>Package</strong> — construction de l'image Docker, push vers le registry</li>
-          <li><strong>Deploy</strong> — déploiement automatique en staging, promotion manuelle ou automatique en production</li>
+          <li><strong>Build</strong> — <span data-en="compilation, unit tests, static analysis (Sonar)" data-fr="compilation, tests unitaires, analyse statique (Sonar)">compilation, unit tests, static analysis (Sonar)</span></li>
+          <li><strong>Test</strong> — <span data-en="integration tests, contract tests (Pact), component tests" data-fr="tests d'intégration, contract tests (Pact), tests de composants">integration tests, contract tests (Pact), component tests</span></li>
+          <li><strong>Package</strong> — <span data-en="Docker image build, push to registry" data-fr="construction de l'image Docker, push vers le registry">Docker image build, push to registry</span></li>
+          <li><strong>Deploy</strong> — <span data-en="automatic deployment to staging, manual or automatic promotion to production" data-fr="déploiement automatique en staging, promotion manuelle ou automatique en production">automatic deployment to staging, manual or automatic promotion to production</span></li>
         </ul>
-        <h3>Kubernetes — introduction</h3>
+        <h3 data-en="Kubernetes — introduction" data-fr="Kubernetes — introduction">Kubernetes — introduction</h3>
         <ul>
-          <li>Orchestrateur de containers — gestion automatique du scheduling, scaling, self-healing</li>
-          <li><strong>Pod</strong> — unité de déploiement (1 ou plusieurs containers)</li>
-          <li><strong>Service</strong> — abstraction réseau stable devant un ensemble de pods</li>
-          <li><strong>Deployment</strong> — déclare l'état désiré (N replicas de telle image)</li>
-          <li><strong>ConfigMap / Secret</strong> — configuration externalisée compatible MicroProfile Config</li>
+          <li data-en="Container orchestrator — automatic management of scheduling, scaling, self-healing" data-fr="Orchestrateur de containers — gestion automatique du scheduling, scaling, self-healing">Container orchestrator — automatic management of scheduling, scaling, self-healing</li>
+          <li><strong>Pod</strong> — <span data-en="deployment unit (1 or more containers)" data-fr="unité de déploiement (1 ou plusieurs containers)">deployment unit (1 or more containers)</span></li>
+          <li><strong>Service</strong> — <span data-en="stable network abstraction in front of a set of pods" data-fr="abstraction réseau stable devant un ensemble de pods">stable network abstraction in front of a set of pods</span></li>
+          <li><strong>Deployment</strong> — <span data-en="declares the desired state (N replicas of a given image)" data-fr="déclare l'état désiré (N replicas de telle image)">declares the desired state (N replicas of a given image)</span></li>
+          <li><strong>ConfigMap / Secret</strong> — <span data-en="externalized configuration compatible with MicroProfile Config" data-fr="configuration externalisée compatible MicroProfile Config">externalized configuration compatible with MicroProfile Config</span></li>
         </ul>
-        <h3>Health Checks</h3>
+        <h3 data-en="Health Checks" data-fr="Health Checks">Health Checks</h3>
         <ul>
-          <li><strong>Liveness probe</strong> — est-ce que le service est vivant ? (sinon redémarrage)</li>
-          <li><strong>Readiness probe</strong> — est-ce que le service est prêt à recevoir du trafic ? (sinon retiré du load balancer)</li>
-          <li>MicroProfile Health expose <code>/health/live</code> et <code>/health/ready</code> — consommables directement par Kubernetes</li>
+          <li><strong>Liveness probe</strong> — <span data-en="is the service alive? (otherwise restart)" data-fr="est-ce que le service est vivant ? (sinon redémarrage)">is the service alive? (otherwise restart)</span></li>
+          <li><strong>Readiness probe</strong> — <span data-en="is the service ready to receive traffic? (otherwise removed from load balancer)" data-fr="est-ce que le service est prêt à recevoir du trafic ? (sinon retiré du load balancer)">is the service ready to receive traffic? (otherwise removed from load balancer)</span></li>
+          <li data-en="MicroProfile Health exposes /health/live and /health/ready — directly consumable by Kubernetes" data-fr="MicroProfile Health expose /health/live et /health/ready — consommables directement par Kubernetes">MicroProfile Health exposes <code>/health/live</code> and <code>/health/ready</code> — directly consumable by Kubernetes</li>
         </ul>
-        <img src="../../images/08-microservices-architecture-diagram-18.png" alt="Stratégies de déploiement — Blue-Green, Canary, Rolling Update"/>
+        <img src="../../images/08-microservices-architecture-diagram-18.png" alt="Deployment strategies — Blue-Green, Canary, Rolling Update"/>
       </div>
     </details>
 
   </main>
 </div>
 <footer class="cds--footer">Made with IBM Bob &nbsp;·&nbsp; © 2026 Olivier Planson &nbsp;·&nbsp; ESIPE — Jakarta EE &amp; Microservices</footer>
+<script src="../assets/language-toggle.js"></script>
 </body>
 </html>

@@ -1,65 +1,68 @@
 <!-- © Copyright 2026 Olivier Planson. All rights reserved. Reproduction prohibited. Made with IBM Bob. -->
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="en">
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-  <title>Cours 05b — JMS — Messagerie Enterprise</title>
+  <title>Course 05b — Jakarta Messaging — Enterprise Messaging</title>
   <link rel="stylesheet" href="../assets/carbon.css"/>
 </head>
 <body>
 <header class="cds--header">
-  <a class="cds--header__name" href="index.html">JMS — Messagerie Enterprise<span>Cours Jakarta EE</span></a>
-  <a class="cds--header__back" href="../index.html">← Tous les Cours</a>
+  <a class="cds--header__name" href="index.html" data-en="Jakarta Messaging — Enterprise Messaging" data-fr="JMS — Messagerie Enterprise">Jakarta Messaging — Enterprise Messaging<span data-en="Jakarta EE Course" data-fr="Cours Jakarta EE">Jakarta EE Course</span></a>
+  <button class="lang-toggle-btn" id="lang-toggle">FR</button>
+  <a class="cds--header__back" href="../index.html" data-en="← All Courses" data-fr="← Tous les Cours">← All Courses</a>
 </header>
 <div class="cds--shell">
   <nav class="cds--side-nav">
-    <p class="cds--side-nav__section-title">Cours 05b</p>
-    <a class="cds--side-nav__link active" href="index.html">⊙ Vue d'ensemble</a>
-    <a class="cds--side-nav__link" href="slides.html">☰ Contenu du cours</a>
-    <a class="cds--side-nav__link" href="concepts.html">◈ Concepts clés</a>
-    <a class="cds--side-nav__link" href="code.html">⟨/⟩ Exemples de code</a>
+    <p class="cds--side-nav__section-title" data-en="Course 05b" data-fr="Cours 05b">Course 05b</p>
+    <a class="cds--side-nav__link active" href="index.html" data-en="⊙ Overview" data-fr="⊙ Vue d'ensemble">⊙ Overview</a>
+    <a class="cds--side-nav__link" href="slides.html" data-en="☰ Course Content" data-fr="☰ Contenu du cours">☰ Course Content</a>
+    <a class="cds--side-nav__link" href="concepts.html" data-en="◈ Key Concepts" data-fr="◈ Concepts clés">◈ Key Concepts</a>
+    <a class="cds--side-nav__link" href="code.html" data-en="⟨/⟩ Code Examples" data-fr="⟨/⟩ Exemples de code">⟨/⟩ Code Examples</a>
+    <a class="cds--side-nav__lang-toggle">FR</a>
   </nav>
   <main class="cds--content">
-    <div class="breadcrumb"><a href="../index.html">Cours</a> › Cours 05b</div>
-    <h1>JMS — Messagerie Enterprise</h1>
-    <p class="page-lead">Jakarta Messaging Service — Durée : 2h · Instructeur : Olivier Planson</p>
+    <div class="breadcrumb"><a href="../index.html" data-en="Courses" data-fr="Cours">Courses</a> › <span data-en="Course 05b" data-fr="Cours 05b">Course 05b</span></div>
+    <h1 data-en="Jakarta Messaging — Enterprise Messaging" data-fr="Jakarta Messaging — Messagerie Enterprise">Jakarta Messaging — Enterprise Messaging</h1>
+    <p class="page-lead" data-en="Jakarta Messaging (formerly JMS) — Duration: 2h · Instructor: Olivier Planson" data-fr="Jakarta Messaging (anciennement JMS) — Durée : 2h · Instructeur : Olivier Planson">Jakarta Messaging (formerly JMS) — Duration: 2h · Instructor: Olivier Planson</p>
     <div class="tag-stack">
-      <span class="cds--tag cds--tag--blue">JMS 3.0</span>
+      <span class="cds--tag cds--tag--blue" data-en="Jakarta Messaging 3.1" data-fr="Jakarta Messaging 3.1">Jakarta Messaging 3.1</span>
       <span class="cds--tag cds--tag--purple">@MessageDriven</span>
       <span class="cds--tag cds--tag--teal">Queue</span>
       <span class="cds--tag cds--tag--green">Topic</span>
       <span class="cds--tag cds--tag--warm-gray">Pub/Sub</span>
       <span class="cds--tag cds--tag--red">Dead Letter Queue</span>
     </div>
-    <h2>Objectifs pédagogiques</h2>
+    <h2 data-en="Learning Objectives" data-fr="Objectifs pédagogiques">Learning Objectives</h2>
     <table class="objectives-table"><tbody>
-      <tr><td>✅</td><td>Comprendre la messagerie enterprise et les bénéfices</td></tr>
-      <tr><td>✅</td><td>Utiliser les modèles Point-à-Point (Queue) et Pub/Sub (Topic)</td></tr>
-      <tr><td>✅</td><td>Implémenter des Message-Driven Beans</td></tr>
-      <tr><td>✅</td><td>Gérer les transactions avec JMS</td></tr>
-      <tr><td>✅</td><td>Traiter les messages défaillants avec Dead Letter Queue</td></tr>
-      <tr><td>✅</td><td>Optimiser les performances JMS</td></tr>
+      <tr><td>✅</td><td data-en="Understand enterprise messaging and its benefits" data-fr="Comprendre la messagerie enterprise et les bénéfices">Understand enterprise messaging and its benefits</td></tr>
+      <tr><td>✅</td><td data-en="Use Point-to-Point (Queue) and Pub/Sub (Topic) models" data-fr="Utiliser les modèles Point-à-Point (Queue) et Pub/Sub (Topic)">Use Point-to-Point (Queue) and Pub/Sub (Topic) models</td></tr>
+      <tr><td>✅</td><td data-en="Implement Message-Driven Beans" data-fr="Implémenter des Message-Driven Beans">Implement Message-Driven Beans</td></tr>
+      <tr><td>✅</td><td data-en="Manage transactions with Jakarta Messaging" data-fr="Gérer les transactions avec Jakarta Messaging">Manage transactions with Jakarta Messaging</td></tr>
+      <tr><td>✅</td><td data-en="Handle failed messages with Dead Letter Queue" data-fr="Traiter les messages défaillants avec Dead Letter Queue">Handle failed messages with Dead Letter Queue</td></tr>
+      <tr><td>✅</td><td data-en="Optimize messaging performance" data-fr="Optimiser les performances de messagerie">Optimize messaging performance</td></tr>
     </tbody></table>
-    <h2>Plan du cours</h2>
+    <h2 data-en="Course Outline" data-fr="Plan du cours">Course Outline</h2>
     <ol class="course-plan">
-      <li>Concepts de messagerie enterprise</li>
-      <li>Architecture JMS et composants</li>
-      <li>Point-à-Point avec Queue</li>
-      <li>Pub/Sub avec Topic</li>
-      <li>Types de messages JMS</li>
-      <li>Producteurs et consommateurs de messages</li>
-      <li>Message-Driven Beans (MDB)</li>
-      <li>Transactions JMS</li>
-      <li>Dead Letter Queue et gestion des erreurs</li>
+      <li data-en="Enterprise messaging concepts" data-fr="Concepts de messagerie enterprise">Enterprise messaging concepts</li>
+      <li data-en="Jakarta Messaging architecture and components" data-fr="Architecture Jakarta Messaging et composants">Jakarta Messaging architecture and components</li>
+      <li data-en="Point-to-Point with Queue" data-fr="Point-à-Point avec Queue">Point-to-Point with Queue</li>
+      <li data-en="Pub/Sub with Topic" data-fr="Pub/Sub avec Topic">Pub/Sub with Topic</li>
+      <li data-en="Jakarta Messaging message types" data-fr="Types de messages Jakarta Messaging">Jakarta Messaging message types</li>
+      <li data-en="Message producers and consumers" data-fr="Producteurs et consommateurs de messages">Message producers and consumers</li>
+      <li data-en="Message-Driven Beans (MDB)" data-fr="Message-Driven Beans (MDB)">Message-Driven Beans (MDB)</li>
+      <li data-en="Jakarta Messaging transactions" data-fr="Transactions Jakarta Messaging">Jakarta Messaging transactions</li>
+      <li data-en="Dead Letter Queue and error handling" data-fr="Dead Letter Queue et gestion des erreurs">Dead Letter Queue and error handling</li>
     </ol>
     <div class="tile-grid">
-      <a class="tile-link" href="slides.html"><div class="cds--tile"><h3>☰ Contenu du cours</h3><p>Architecture JMS, Queue, Topic, MDB, transactions et gestion des erreurs avec diagrammes.</p></div></a>
-      <a class="tile-link" href="concepts.html"><div class="cds--tile"><h3>◈ Concepts clés</h3><p>Messagerie vs appels directs, Queue vs Topic, types de messages, API JMS 2.0, glossaire.</p></div></a>
-      <a class="tile-link" href="code.html"><div class="cds--tile"><h3>⟨/⟩ Exemples de code</h3><p>Producteur JMSContext, consommateur async, MDB Queue/Topic, Dead Letter Queue, sélecteurs, Liberty.</p></div></a>
+      <a class="tile-link" href="slides.html"><div class="cds--tile"><h3 data-en="☰ Course Content" data-fr="☰ Contenu du cours">☰ Course Content</h3><p data-en="Jakarta Messaging architecture, Queue, Topic, MDB, transactions and error handling with diagrams." data-fr="Architecture Jakarta Messaging, Queue, Topic, MDB, transactions et gestion des erreurs avec diagrammes.">Jakarta Messaging architecture, Queue, Topic, MDB, transactions and error handling with diagrams.</p></div></a>
+      <a class="tile-link" href="concepts.html"><div class="cds--tile"><h3 data-en="◈ Key Concepts" data-fr="◈ Concepts clés">◈ Key Concepts</h3><p data-en="Messaging vs direct calls, Queue vs Topic, message types, JMSContext API, glossary." data-fr="Messagerie vs appels directs, Queue vs Topic, types de messages, API JMSContext, glossaire.">Messaging vs direct calls, Queue vs Topic, message types, JMSContext API, glossary.</p></div></a>
+      <a class="tile-link" href="code.html"><div class="cds--tile"><h3 data-en="⟨/⟩ Code Examples" data-fr="⟨/⟩ Exemples de code">⟨/⟩ Code Examples</h3><p data-en="JMSContext producer, async consumer, MDB Queue/Topic, Dead Letter Queue, selectors, Liberty config." data-fr="Producteur JMSContext, consommateur async, MDB Queue/Topic, Dead Letter Queue, sélecteurs, Liberty.">JMSContext producer, async consumer, MDB Queue/Topic, Dead Letter Queue, selectors, Liberty config.</p></div></a>
     </div>
   </main>
 </div>
 <footer class="cds--footer">Made with IBM Bob &nbsp;·&nbsp; © 2026 Olivier Planson &nbsp;·&nbsp; ESIPE — Jakarta EE &amp; Microservices</footer>
+<script src="../assets/language-toggle.js"></script>
 </body>
 </html>
