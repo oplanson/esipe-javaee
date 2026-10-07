@@ -50,7 +50,7 @@
         </ul>
         <h3 data-en="Conway's Law" data-fr="Loi de Conway">Conway's Law</h3>
         <p data-en="&quot;Organizations which design systems are constrained to produce designs which are copies of the communication structures of these organizations.&quot; — Melvin Conway, 1967. In practice, teams working on microservices must be organized around autonomous business domains (team topology), not by technical layer." data-fr="« Les organisations qui conçoivent des systèmes sont contraintes de produire des designs qui copient la structure de communication de ces organisations. » — Melvin Conway, 1967. En pratique, les équipes qui travaillent sur des microservices doivent être organisées autour de domaines métier autonomes (team topology), et non par couche technique.">"Organizations which design systems are constrained to produce designs which are copies of the communication structures of these organizations." — Melvin Conway, 1967. In practice, teams working on microservices must be organized around autonomous business domains (team topology), not by technical layer.</p>
-        <img src="../../images/08-microservices-architecture-diagram-1.png" alt="Monolith vs Microservices Architecture"/>
+        <img src="../images/08-microservices-architecture-diagram-1.png" alt="Monolith vs Microservices Architecture"/>
       </div>
     </details>
 
@@ -75,7 +75,7 @@
           <li><strong data-en="Operational overhead" data-fr="Surcharge opérationnelle">Operational overhead</strong> — <span data-en="N services to deploy, monitor, update, version" data-fr="N services à déployer, surveiller, mettre à jour, versionner">N services to deploy, monitor, update, version</span></li>
           <li><strong data-en="Possible code duplication" data-fr="Duplication de code possible">Possible code duplication</strong> — <span data-en="shared utilities must be extracted into libraries or common services" data-fr="les utilitaires partagés doivent être extraits en librairies ou en services communs">shared utilities must be extracted into libraries or common services</span></li>
         </ul>
-        <img src="../../images/08-microservices-architecture-diagram-2.png" alt="Benefits and challenges of microservices"/>
+        <img src="../images/08-microservices-architecture-diagram-2.png" alt="Benefits and challenges of microservices"/>
       </div>
     </details>
 
@@ -109,8 +109,8 @@
           <li><strong>transfer-service</strong> — <span data-en="inter-account transfer orchestration" data-fr="orchestration des virements inter-comptes">inter-account transfer orchestration</span></li>
           <li><strong>notification-service</strong> — <span data-en="notification sending (email, SMS, push)" data-fr="envoi de notifications (email, SMS, push)">notification sending (email, SMS, push)</span></li>
         </ul>
-        <img src="../../images/08-microservices-architecture-diagram-3.png" alt="Decomposition by DDD bounded contexts"/>
-        <img src="../../images/08-microservices-architecture-diagram-4.png" alt="Database per Service pattern"/>
+        <img src="../images/08-microservices-architecture-diagram-3.png" alt="Decomposition by DDD bounded contexts"/>
+        <img src="../images/08-microservices-architecture-diagram-4.png" alt="Database per Service pattern"/>
       </div>
     </details>
 
@@ -145,8 +145,8 @@
           <li><strong>OPEN</strong> — <span data-en="failure threshold exceeded, requests fail immediately without network call — wait delay before switching to HALF-OPEN" data-fr="seuil d'échec dépassé, les requêtes échouent immédiatement sans appel réseau — délai d'attente avant passage en HALF-OPEN">failure threshold exceeded, requests fail immediately without network call — wait delay before switching to HALF-OPEN</span></li>
           <li><strong>HALF-OPEN</strong> — <span data-en="a few test requests are allowed — if success: back to CLOSED, if failure: back to OPEN" data-fr="quelques requêtes tests sont autorisées — si succès : retour à CLOSED, si échec : retour à OPEN">a few test requests are allowed — if success: back to CLOSED, if failure: back to OPEN</span></li>
         </ul>
-        <img src="../../images/08-microservices-architecture-diagram-5.png" alt="Synchronous and asynchronous inter-service communication"/>
-        <img src="../../images/08-microservices-architecture-diagram-6.png" alt="Circuit Breaker — CLOSED/OPEN/HALF-OPEN states"/>
+        <img src="../images/08-microservices-architecture-diagram-5.png" alt="Synchronous and asynchronous inter-service communication"/>
+        <img src="../images/08-microservices-architecture-diagram-6.png" alt="Circuit Breaker — CLOSED/OPEN/HALF-OPEN states"/>
       </div>
     </details>
 
@@ -176,8 +176,8 @@
           <li data-en="Use of CompletableFuture or MicroProfile Reactive for parallel calls" data-fr="Utilisation de CompletableFuture ou de MicroProfile Reactive pour les appels parallèles">Use of <code>CompletableFuture</code> or MicroProfile Reactive for parallel calls</li>
           <li data-en="Reduces the number of network round-trips for mobile clients (chattiness)" data-fr="Réduit le nombre d'aller-retours réseau pour les clients mobiles (chattiness)">Reduces the number of network round-trips for mobile clients (chattiness)</li>
         </ul>
-        <img src="../../images/08-microservices-architecture-diagram-7.png" alt="API Gateway — single entry point"/>
-        <img src="../../images/08-microservices-architecture-diagram-8.png" alt="API Gateway — routing and aggregation"/>
+        <img src="../images/08-microservices-architecture-diagram-7.png" alt="API Gateway — single entry point"/>
+        <img src="../images/08-microservices-architecture-diagram-8.png" alt="API Gateway — routing and aggregation"/>
       </div>
     </details>
 
@@ -213,8 +213,8 @@
           <li data-en="Overrides without recompilation — ideal for Docker/Kubernetes deployments" data-fr="Overrides sans recompilation — idéal pour les déploiements Docker/Kubernetes">Overrides without recompilation — ideal for Docker/Kubernetes deployments</li>
           <li data-en="defaultValue on @ConfigProperty for local development values" data-fr="defaultValue sur @ConfigProperty pour les valeurs de développement local"><code>defaultValue</code> on <code>@ConfigProperty</code> for local development values</li>
         </ul>
-        <img src="../../images/08-microservices-architecture-diagram-9.png" alt="Service Discovery — client-side vs server-side"/>
-        <img src="../../images/08-microservices-architecture-diagram-10.png" alt="MicroProfile Config — sources and priorities"/>
+        <img src="../images/08-microservices-architecture-diagram-9.png" alt="Service Discovery — client-side vs server-side"/>
+        <img src="../images/08-microservices-architecture-diagram-10.png" alt="MicroProfile Config — sources and priorities"/>
       </div>
     </details>
 
@@ -247,8 +247,8 @@
           <li data-en="MicroProfile Telemetry (OpenTelemetry) automatically instruments Jakarta REST and Rest Client calls" data-fr="MicroProfile Telemetry (OpenTelemetry) instrumente automatiquement les appels JAX-RS et Rest Client">MicroProfile Telemetry (OpenTelemetry) automatically instruments Jakarta REST and Rest Client calls</li>
         </ul>
         <p class="cds--inline-notification cds--inline-notification--warning" data-en="Note: MicroProfile OpenTracing is deprecated since January 2023. Use MicroProfile Telemetry 1.0+ with OpenTelemetry instead." data-fr="Note : MicroProfile OpenTracing est déprécié depuis janvier 2023. Utilisez MicroProfile Telemetry 1.0+ avec OpenTelemetry à la place.">Note: MicroProfile OpenTracing is deprecated since January 2023. Use MicroProfile Telemetry 1.0+ with OpenTelemetry instead.</p>
-        <img src="../../images/08-microservices-architecture-diagram-11.png" alt="Observability — metrics, logging, tracing"/>
-        <img src="../../images/08-microservices-architecture-diagram-12.png" alt="Distributed tracing with Jaeger"/>
+        <img src="../images/08-microservices-architecture-diagram-11.png" alt="Observability — metrics, logging, tracing"/>
+        <img src="../images/08-microservices-architecture-diagram-12.png" alt="Distributed tracing with Jaeger"/>
       </div>
     </details>
 
@@ -288,9 +288,9 @@
           <li data-en="The write model guarantees consistency, the read model is optimized for performance" data-fr="Le modèle d'écriture garantit la cohérence, le modèle de lecture est optimisé pour les performances">The write model guarantees consistency, the read model is optimized for performance</li>
           <li data-en="Projections (read models) are updated asynchronously from events" data-fr="Les projections (read models) sont mises à jour de façon asynchrone depuis les événements">Projections (read models) are updated asynchronously from events</li>
         </ul>
-        <img src="../../images/08-microservices-architecture-diagram-13.png" alt="CAP Theorem"/>
-        <img src="../../images/08-microservices-architecture-diagram-14.png" alt="Saga Pattern — choreography vs orchestration"/>
-        <img src="../../images/08-microservices-architecture-diagram-15.png" alt="CQRS and Event Sourcing"/>
+        <img src="../images/08-microservices-architecture-diagram-13.png" alt="CAP Theorem"/>
+        <img src="../images/08-microservices-architecture-diagram-14.png" alt="Saga Pattern — choreography vs orchestration"/>
+        <img src="../images/08-microservices-architecture-diagram-15.png" alt="CQRS and Event Sourcing"/>
       </div>
     </details>
 
@@ -322,8 +322,8 @@
           <li><code>docker compose down</code> — <span data-en="stops and removes containers" data-fr="arrête et supprime les containers">stops and removes containers</span></li>
           <li><code>docker compose down -v</code> — <span data-en="also removes volumes" data-fr="supprime aussi les volumes">also removes volumes</span></li>
         </ul>
-        <img src="../../images/08-microservices-architecture-diagram-16.png" alt="Docker Compose — local deployment architecture"/>
-        <img src="../../images/08-microservices-architecture-diagram-17.png" alt="Docker Compose — internal network and communication"/>
+        <img src="../images/08-microservices-architecture-diagram-16.png" alt="Docker Compose — local deployment architecture"/>
+        <img src="../images/08-microservices-architecture-diagram-17.png" alt="Docker Compose — internal network and communication"/>
       </div>
     </details>
 
@@ -371,7 +371,7 @@
           <li><strong>Readiness probe</strong> — <span data-en="is the service ready to receive traffic? (otherwise removed from load balancer)" data-fr="est-ce que le service est prêt à recevoir du trafic ? (sinon retiré du load balancer)">is the service ready to receive traffic? (otherwise removed from load balancer)</span></li>
           <li data-en="MicroProfile Health exposes /health/live and /health/ready — directly consumable by Kubernetes" data-fr="MicroProfile Health expose /health/live et /health/ready — consommables directement par Kubernetes">MicroProfile Health exposes <code>/health/live</code> and <code>/health/ready</code> — directly consumable by Kubernetes</li>
         </ul>
-        <img src="../../images/08-microservices-architecture-diagram-18.png" alt="Deployment strategies — Blue-Green, Canary, Rolling Update"/>
+        <img src="../images/08-microservices-architecture-diagram-18.png" alt="Deployment strategies — Blue-Green, Canary, Rolling Update"/>
       </div>
     </details>
 

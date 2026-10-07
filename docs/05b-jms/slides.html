@@ -57,7 +57,7 @@
             <tr><td data-en="Resilience" data-fr="Résilience">Resilience</td><td data-en="Failure propagation" data-fr="Propagation des pannes">Failure propagation</td><td data-en="Isolation and retention" data-fr="Isolation et rétention">Isolation and retention</td></tr>
           </tbody>
         </table>
-        <img src="../../images/05b-jms-enterprise-messaging-diagram-1.png" alt="Enterprise Messaging — Why?"/>
+        <img src="../images/05b-jms-enterprise-messaging-diagram-1.png" alt="Enterprise Messaging — Why?"/>
       </div>
     </details>
 
@@ -82,7 +82,7 @@
           <li data-en="jmsContext.createProducer().send(destination, body) — send in one line" data-fr="jmsContext.createProducer().send(destination, body) — envoi en une ligne"><code>jmsContext.createProducer().send(destination, body)</code> — send in one line</li>
           <li data-en="Automatic connection management by the container" data-fr="Gestion automatique de la connexion par le conteneur">Automatic connection management by the container</li>
         </ul>
-        <img src="../../images/05b-jms-enterprise-messaging-diagram-2.png" alt="Jakarta Messaging Architecture — Components"/>
+        <img src="../images/05b-jms-enterprise-messaging-diagram-2.png" alt="Jakarta Messaging Architecture — Components"/>
       </div>
     </details>
 
@@ -105,7 +105,7 @@
           <li data-en="Job queue — email sending, report generation" data-fr="File de tâches (job queue) — envoi d'emails, génération de rapports">Job queue — email sending, report generation</li>
           <li data-en="Microservice integration (order → stock → billing)" data-fr="Intégration entre microservices (commande → stock → facturation)">Microservice integration (order → stock → billing)</li>
         </ul>
-        <img src="../../images/05b-jms-enterprise-messaging-diagram-3.png" alt="Point-to-Point Queue"/>
+        <img src="../images/05b-jms-enterprise-messaging-diagram-3.png" alt="Point-to-Point Queue"/>
       </div>
     </details>
 
@@ -134,7 +134,7 @@
           <li data-en="Cache synchronization between instances" data-fr="Synchronisation de cache entre instances">Cache synchronization between instances</li>
           <li data-en="Publishing stock quotes, real-time metrics" data-fr="Publication de cours boursiers, de métriques temps réel">Publishing stock quotes, real-time metrics</li>
         </ul>
-        <img src="../../images/05b-jms-enterprise-messaging-diagram-4.png" alt="Pub/Sub Topic"/>
+        <img src="../images/05b-jms-enterprise-messaging-diagram-4.png" alt="Pub/Sub Topic"/>
       </div>
     </details>
 
@@ -194,7 +194,7 @@
           <li data-en="The receiver sends its response to the JMSReplyTo Queue" data-fr="Le récepteur envoie sa réponse sur la Queue JMSReplyTo">The receiver sends its response to the <code>JMSReplyTo</code> Queue</li>
           <li data-en="The sender consumes the response by filtering on JMSCorrelationID" data-fr="L'émetteur consomme la réponse en filtrant sur JMSCorrelationID">The sender consumes the response by filtering on <code>JMSCorrelationID</code></li>
         </ul>
-        <img src="../../images/05b-jms-enterprise-messaging-diagram-5.png" alt="Producers and Consumers"/>
+        <img src="../images/05b-jms-enterprise-messaging-diagram-5.png" alt="Producers and Consumers"/>
       </div>
     </details>
 
@@ -260,7 +260,7 @@
           <li data-en="A dedicated MDB (DLQ Handler) consumes this queue to alert, log, fix or archive" data-fr="Un MDB dédié (DLQ Handler) consomme cette file pour alerter, journaliser, corriger ou archiver">A dedicated MDB (<em>DLQ Handler</em>) consumes this queue to alert, log, fix or archive</li>
           <li data-en="Prevents silent message loss" data-fr="Évite la perte silencieuse de messages">Prevents silent message loss</li>
         </ul>
-        <img src="../../images/05b-jms-enterprise-messaging-diagram-6.png" alt="Transactions and Dead Letter Queue"/>
+        <img src="../images/05b-jms-enterprise-messaging-diagram-6.png" alt="Transactions and Dead Letter Queue"/>
       </div>
     </details>
 
