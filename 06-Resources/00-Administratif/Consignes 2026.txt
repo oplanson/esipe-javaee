@@ -1,0 +1,53 @@
+Libellé anglais
+Si le libellé de cet ECUE est en français, donner ici le libellé en anglais tel qu’il pourrait apparaître sur un relevé de notes en anglais par exemple.
+
+Compétences visées
+Supprimez les intitulés qui ne s'appliquent pas à votre cours. Je recopierai les intitulés restants.
+
+Formaliser les besoins et attentes liés à un projet □ Traduire les demandes en une description de livrables
+□ Décrire les enjeux d'une proposition
+□ Vérifier l'adéquation entre l'offre et la demande
+Concevoir des systèmes, des applications ou des solutions d’ingénierie complexes □ Intégrer les contraintes contextuelles
+□ Schématiser conceptuellement les solutions
+□ Évaluer la pertinence de différentes solutions Réaliser des systèmes, applications ou solutions d’ingénierie complexes □ Créer, choisir ou adapter un composant d'un système, d'une application ou d'une solution d'ingénierie complexe
+□ Tester et valider des composants d'un système, d'une application ou d'une solution d'ingénierie complexe
+□ Intégrer des composants dans des systèmes, applications ou solutions d'ingénierie plus complexes
+□ Valider un système, une application ou une solution d'ingénierie complexe
+Gérer un projet □ Définir les objectifs, les tâches et étapes d'un projet
+□ Affecter les ressources aux tâches en fonction des contraintes
+□ S'adapter aux aléas du projet
+□ Rendre compte des avancées et du résultat du projet
+□ Contribuer efficacement à la dynamique du groupe
+Agir avec une démarche scientifique et éthique □ Formaliser une problématique
+□ Expliciter des préoccupations et des raisonnements liés à l'éthique et à la responsabilité sociétale et environnementale
+□ Apporter les arguments principaux pour justifier les choix
+□ Adopter des méthodes permettant de résoudre un problème
+Communiquer avec pertinence et efficacité □ Présenter un projet conséquent à un public composite
+□ Interagir de manière efficiente à l'oral et à l'écrit
+□ Argumenter le bien fondé des choix
+□ Utiliser de manière appropriée les moyens de communication digitaux
+Intervenir dans un contexte international et multiculturel □ Vivre et travailler dans un pays étranger pendant une durée conséquente
+□ Travailler dans un contexte multiculturel
+□ S'adapter à l'identité de l'entreprise
+□ Interagir de manière appropriée avec des personnes de cultures différentes
+Être innovant et créatif □ Se différencier par rapport à un état de l'art
+□ Prendre des risques pour innover
+□ Explorer les possibles
+□ Mesurer les enjeux de création de valeur
+
+AAV — Acquis d'apprentissage visés
+Décrire ici ce que l’étudiant sera capable de faire concrètement à l’issue du cours. Utiliser un verbe d'action observable (ex: concevoir, calculer, modéliser, argumenter).
+Éviter les verbes vagues comme "Connaître" ou "Comprendre".
+Pour aller plus loin sur la rédaction des AAV, vous pouvez consulter le document 
+https://www.fa2l.be/wp-content/uploads/2022/10/FA2L_cahier03.pdf 
+Contenu de l'enseignement
+Décrire ici succinctement les notions abordées dans cet ECUE. 
+Prérequis
+Préciser ici si des prérequis sont nécessaires pour suivre cet ECUE. 
+Méthodes pédagogiques
+Préciser ici les méthodes pédagogiques utilisées : approche par projet, classe inversée, etc.
+
+Modalités d'évaluation
+Préciser ici comment sera évalué cet ECUE : nombre, forme et coefficients des évaluations prévues. 
+Ressources et bibliographie
+Donner ici d’éventuelles références utiles aux élèves (les URLs ne seront pas cliquables).
