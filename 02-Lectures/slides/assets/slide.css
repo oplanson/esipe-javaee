@@ -257,6 +257,9 @@ header.site-header {
 .slide code { font-family: "Courier New",Courier,monospace; font-size: .85em; background: #f0f0f0; color: #1f2328; padding: .1em .3em; border-radius: 2px; }
 .slide blockquote { border-left: 3px solid var(--interactive); padding: .5rem 1rem; color: var(--muted); font-style: italic; margin: .75rem 0; }
 .slide img { max-width: 85%; max-height: 380px; display: block; margin: .75rem auto; }
+/* Portrait timelines: keep full height so the text stays readable when projected */
+.slide img[src*="01-intro-jakartaee-microprofile-diagram-1."],
+.slide img[src*="01-intro-jakartaee-microprofile-diagram-2."] { max-width: 100%; max-height: none; }
 
 /* Meta block on title slide */
 .slide-meta { margin-top: 1.5rem; display: flex; flex-wrap: wrap; gap: .5rem 2rem; font-size: .875rem; color: var(--muted); }

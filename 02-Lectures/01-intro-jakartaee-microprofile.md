@@ -166,7 +166,7 @@ By the end of this lecture, you will be able to:
 
 ```mermaid
 timeline
-    title Jakarta EE — Evolution from J2EE to Jakarta EE 11
+    title Jakarta EE — Evolution from J2EE to Jakarta EE 12
     section J2EE era
         1999 : J2EE 1.2
              : Servlets, JSP, EJB 1.1
@@ -194,9 +194,16 @@ timeline
         2022 : Jakarta EE 10 ⭐
              : CDI Lite, Core Profile, Java 11+
     section Latest
-        2024 : Jakarta EE 11
+        2024 : Core Profile 11
+             : Jakarta EE 11 first release (December 2024)
+        2025 : Jakarta EE 11
+             : Platform (June 2025)
              : Virtual threads, Java 21+
              : Data API, Concurrency 3.1
+    section Next (in progress)
+        2026 : Jakarta EE 12 (WIP)
+             : Persistence 4.0, CDI 5.0
+             : Data 1.1, NoSQL, Query
 ```
 
 </details>
@@ -226,7 +233,7 @@ timeline
 
 ```mermaid
 timeline
-    title MicroProfile — Major Releases (2016–2025)
+    title MicroProfile — Major Releases (2016–2026)
     section Origins (Java EE)
         2016 : MP 1.0
              : Config, Health, Metrics
@@ -255,7 +262,11 @@ timeline
         2024 : MP 7.0
              : Telemetry 2.0 replaces Metrics
         2025 : MP 7.1
+             : June 2025
              : Telemetry 2.1, OpenAPI 4.1
+    section Next (not announced)
+        2026 : No new release
+             : MP 7.1 is still the latest
 ```
 
 </details>
