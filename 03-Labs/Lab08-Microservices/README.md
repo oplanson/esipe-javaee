@@ -402,7 +402,7 @@ Note: client_id in accounts table is a reference, not a foreign key
         <dependency>
             <groupId>org.postgresql</groupId>
             <artifactId>postgresql</artifactId>
-            <version>42.7.1</version>
+            <version>42.7.14</version>
         </dependency>
 
         <!-- Flyway -->

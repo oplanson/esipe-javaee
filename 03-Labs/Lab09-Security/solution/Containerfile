@@ -30,8 +30,8 @@ COPY --chown=1001:0 --from=builder /app/target/bank-security.war /config/apps/
 # Download PostgreSQL JDBC driver
 USER root
 RUN mkdir -p /opt/ol/wlp/usr/shared/resources/lib && \
-    curl -o /opt/ol/wlp/usr/shared/resources/lib/postgresql-42.7.1.jar \
-    https://jdbc.postgresql.org/download/postgresql-42.7.1.jar && \
+    curl -o /opt/ol/wlp/usr/shared/resources/lib/postgresql-42.7.14.jar \
+    https://jdbc.postgresql.org/download/postgresql-42.7.14.jar && \
     chown -R 1001:0 /opt/ol/wlp/usr/shared/resources/lib
 USER 1001
 

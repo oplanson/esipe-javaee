@@ -28,7 +28,7 @@
         <jjwt.version>0.12.5</jjwt.version>
         
         <!-- PostgreSQL -->
-        <postgresql.version>42.7.1</postgresql.version>
+        <postgresql.version>42.7.14</postgresql.version>
         
         <!-- Liberty -->
         <liberty.runtime.version>24.0.0.1</liberty.runtime.version>
