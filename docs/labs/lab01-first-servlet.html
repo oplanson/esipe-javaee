@@ -1,0 +1,1075 @@
+<!-- © Copyright 2026 Olivier Planson. All rights reserved. Reproduction prohibited. Made with IBM Bob. -->
+<!DOCTYPE html>
+<html lang="fr" data-lang="fr">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title data-title-en="ESIPE — Lab 01: First Servlet — Lab guide" data-title-fr="ESIPE — Lab 01 : Première Servlet — Guide du lab">ESIPE — Lab 01 : Première Servlet — Guide du lab</title>
+  <link rel="stylesheet" href="assets/slide.css"/>
+  <link rel="stylesheet" href="assets/lab-guide.css"/>
+  <script src="assets/lab-guide.js"></script>
+</head>
+<body>
+<header class="site-header">
+  <a class="brand" href="index.html">ESIPE<span>Jakarta EE &amp; Microservices — Labs</span></a>
+  <div class="lang-toggle" id="lang-toggle">
+    <button type="button" id="btn-en" data-set-lang="en">EN</button>
+    <span class="sep">|</span>
+    <button type="button" id="btn-fr" data-set-lang="fr" class="active">FR</button>
+  </div>
+  <a class="back-link" href="index.html">&#8592; Labs</a>
+  <a class="back-link" href="../index.html"><span lang="en">Course site</span><span lang="fr">Site du cours</span></a>
+</header>
+
+<div class="lg-shell">
+
+  <nav class="lg-toc" aria-label="Table of contents">
+    <div class="lg-toc-title"><span lang="en">In this guide</span><span lang="fr">Dans ce guide</span></div>
+    <a href="#hero"><span lang="en">Overview</span><span lang="fr">Vue d'ensemble</span></a>
+    <a href="#goal"><span lang="en">1. Goal</span><span lang="fr">1. Objectif</span></a>
+    <a href="#starter"><span lang="en">2. What the starter gives you</span><span lang="fr">2. Ce que fournit le starter</span></a>
+    <a href="#target"><span lang="en">3. Target structure</span><span lang="fr">3. Structure cible</span></a>
+    <a href="#setup"><span lang="en">4. Setup</span><span lang="fr">4. Préparation</span></a>
+    <a href="#steps"><span lang="en">5. Step by step</span><span lang="fr">5. Pas à pas</span></a>
+    <a class="sub" href="#step-1"><span lang="en">1 · Build the starter</span><span lang="fr">1 · Compiler le starter</span></a>
+    <a class="sub" href="#step-2"><span lang="en">2 · Container packaging</span><span lang="fr">2 · Packaging conteneur</span></a>
+    <a class="sub" href="#step-3"><span lang="en">3 · Deploy the baseline</span><span lang="fr">3 · Déployer l'existant</span></a>
+    <a class="sub" href="#step-4"><span lang="en">4 · Open the metrics</span><span lang="fr">4 · Ouvrir les métriques</span></a>
+    <a class="sub" href="#step-5"><span lang="en">5 · Client model</span><span lang="fr">5 · Modèle Client</span></a>
+    <a class="sub" href="#step-6"><span lang="en">6 · WelcomeServlet</span><span lang="fr">6 · WelcomeServlet</span></a>
+    <a class="sub" href="#step-7"><span lang="en">7 · Client list (GET)</span><span lang="fr">7 · Liste des clients (GET)</span></a>
+    <a class="sub" href="#step-8"><span lang="en">8 · Add-client form</span><span lang="fr">8 · Formulaire d'ajout</span></a>
+    <a class="sub" href="#step-9"><span lang="en">9 · Handle POST</span><span lang="fr">9 · Traiter le POST</span></a>
+    <a href="#run"><span lang="en">6. Run</span><span lang="fr">6. Exécution</span></a>
+    <a href="#validate"><span lang="en">7. Validate</span><span lang="fr">7. Validation</span></a>
+    <a href="#compare"><span lang="en">8. Compare with solution</span><span lang="fr">8. Comparer à la solution</span></a>
+    <a href="#trouble"><span lang="en">9. Troubleshooting</span><span lang="fr">9. Dépannage</span></a>
+    <a href="#bonus"><span lang="en">10. Go further</span><span lang="fr">10. Pour aller plus loin</span></a>
+  </nav>
+
+  <main class="lg-main">
+
+    <!-- ═════════════ HERO ═════════════ -->
+    <section class="lg-hero" id="hero">
+      <div class="lg-kicker">Lab 01</div>
+      <h1><span lang="en">First Servlet Application</span><span lang="fr">Première application Servlet</span></h1>
+      <p class="lg-lead">
+        <span lang="en">Starting from a configured but empty Maven project, you write your first Jakarta EE servlets, package the application in a container and run it on Open Liberty.</span>
+        <span lang="fr">À partir d'un projet Maven configuré mais vide, vous écrivez vos premières servlets Jakarta EE, vous empaquetez l'application dans un conteneur et vous l'exécutez sur Open Liberty.</span>
+      </p>
+      <div class="badge-row">
+        <span class="badge badge-blue">Jakarta EE 10</span>
+        <span class="badge badge-teal">Servlet 6.0</span>
+        <span class="badge badge-green">MicroProfile 6</span>
+        <span class="badge badge-purple">Open Liberty</span>
+        <span class="badge badge-warm">Podman</span>
+      </div>
+      <div class="lg-facts">
+        <div><strong><span lang="en">about 2 hours</span><span lang="fr">environ 2 h</span></strong><span lang="en">Duration</span><span lang="fr">Durée</span></div>
+        <div><strong><span lang="en">Beginner</span><span lang="fr">Débutant</span></strong><span lang="en">Level</span><span lang="fr">Niveau</span></div>
+        <div><strong>JDK 17+ · Maven · Podman</strong><span lang="en">Prerequisites</span><span lang="fr">Prérequis</span></div>
+        <div><strong>http://localhost:9080</strong><span lang="en">Application URL</span><span lang="fr">URL de l'application</span></div>
+      </div>
+      <div class="lg-hero-links">
+        <a href="../../02-Lectures/slides/02-servlets/slides.html#slide-3"><span lang="en">Course slides (Servlets)</span><span lang="fr">Slides du cours (Servlets)</span></a>
+        <a class="secondary" href="../02-servlets/index.html"><span lang="en">Course page</span><span lang="fr">Page du cours</span></a>
+        <a class="secondary" href="https://github.com/oplanson/esipe-javaee/blob/master/03-Labs/Lab01-FirstServlet/README.md"><span lang="en">Original README</span><span lang="fr">README d'origine</span></a>
+        <a class="secondary" href="https://github.com/oplanson/esipe-javaee/tree/master/03-Labs/Lab01-FirstServlet/solution"><span lang="en">Solution folder</span><span lang="fr">Dossier solution</span></a>
+      </div>
+    </section>
+
+    <!-- ═════════════ 1. GOAL ═════════════ -->
+    <section class="lg-section" id="goal">
+      <h2><span class="lg-sec-num">01</span><span lang="en">Goal of the lab</span><span lang="fr">Objectif du lab</span></h2>
+      <p>
+        <span lang="en">You build a small <strong>client management</strong> web application for the banking case study that runs through the whole course. It is deliberately simple: no database and no framework, only servlets, so that you see exactly what the Servlet API does.</span>
+        <span lang="fr">Vous construisez une petite application web de <strong>gestion de clients</strong> pour le cas d'étude bancaire qui sert de fil rouge au cours. Elle est volontairement simple : pas de base de données ni de framework, uniquement des servlets, pour voir précisément ce que fait l'API Servlet.</span>
+      </p>
+
+      <h3><span lang="en">What the finished application exposes</span><span lang="fr">Ce que l'application terminée expose</span></h3>
+      <table class="slide-table">
+        <thead><tr>
+          <th>URL</th>
+          <th><span lang="en">Served by</span><span lang="fr">Servi par</span></th>
+          <th><span lang="en">Behaviour</span><span lang="fr">Comportement</span></th>
+        </tr></thead>
+        <tbody>
+          <tr><td><code>/</code></td><td><code>index.html</code> <span class="lg-tag lg-tag--ok"><span lang="en">provided</span><span lang="fr">fourni</span></span></td><td><span lang="en">Home page with links</span><span lang="fr">Page d'accueil avec liens</span></td></tr>
+          <tr><td><code>/welcome</code></td><td><code>WelcomeServlet</code></td><td><span lang="en">Greeting page with the current date and time</span><span lang="fr">Page d'accueil dynamique avec date et heure courantes</span></td></tr>
+          <tr><td><code>/clients</code></td><td><code>ClientListServlet</code></td><td><span lang="en"><code>GET</code> lists the clients, <code>POST</code> adds one</span><span lang="fr"><code>GET</code> liste les clients, <code>POST</code> en ajoute un</span></td></tr>
+          <tr><td><code>/add-client.html</code></td><td><code>add-client.html</code></td><td><span lang="en">Form that posts to <code>/clients</code></span><span lang="fr">Formulaire qui poste vers <code>/clients</code></span></td></tr>
+          <tr><td><code>/health</code>, <code>/metrics</code>, <code>/openapi</code></td><td>Open Liberty <span class="lg-tag lg-tag--chg"><span lang="en">no Java code</span><span lang="fr">aucun code Java</span></span></td><td><span lang="en">MicroProfile endpoints enabled by <code>server.xml</code> features</span><span lang="fr">Endpoints MicroProfile activés par les features de <code>server.xml</code></span></td></tr>
+        </tbody>
+      </table>
+
+      <h3><span lang="en">Concepts you practise</span><span lang="fr">Concepts mis en pratique</span></h3>
+      <ul>
+        <li>
+          <span lang="en">Servlet lifecycle — <code>init()</code>, <code>doGet()</code>, <code>doPost()</code> — <a href="../../02-Lectures/slides/02-servlets/slides.html#slide-5">slide 5</a></span>
+          <span lang="fr">Cycle de vie d'une servlet — <code>init()</code>, <code>doGet()</code>, <code>doPost()</code> — <a href="../../02-Lectures/slides/02-servlets/slides.html#slide-5">slide 5</a></span>
+        </li>
+        <li>
+          <span lang="en"><code>@WebServlet</code> mapping instead of <code>web.xml</code> — <a href="../../02-Lectures/slides/02-servlets/slides.html#slide-11">slide 11</a></span>
+          <span lang="fr">Mapping par <code>@WebServlet</code> plutôt que par <code>web.xml</code> — <a href="../../02-Lectures/slides/02-servlets/slides.html#slide-11">slide 11</a></span>
+        </li>
+        <li>
+          <span lang="en">Request and response objects, content type, <code>PrintWriter</code> — <a href="../../02-Lectures/slides/02-servlets/slides.html#slide-13">slides 13–14</a></span>
+          <span lang="fr">Objets requête et réponse, type de contenu, <code>PrintWriter</code> — <a href="../../02-Lectures/slides/02-servlets/slides.html#slide-13">slides 13–14</a></span>
+        </li>
+        <li>
+          <span lang="en">One servlet instance serves all requests, so shared state must be thread-safe — <a href="../../02-Lectures/slides/02-servlets/slides.html#slide-3">slide 3</a></span>
+          <span lang="fr">Une seule instance de servlet sert toutes les requêtes : l'état partagé doit être thread-safe — <a href="../../02-Lectures/slides/02-servlets/slides.html#slide-3">slide 3</a></span>
+        </li>
+        <li>
+          <span lang="en">Post-Redirect-Get after a form submission — <a href="../../02-Lectures/slides/02-servlets/slides.html#slide-8">slide 8</a></span>
+          <span lang="fr">Post-Redirect-Get après la soumission d'un formulaire — <a href="../../02-Lectures/slides/02-servlets/slides.html#slide-8">slide 8</a></span>
+        </li>
+        <li>
+          <span lang="en">Escaping user data before writing HTML — <a href="../../02-Lectures/slides/02-servlets/slides.html#slide-41">slide 41</a></span>
+          <span lang="fr">Échappement des données utilisateur avant écriture du HTML — <a href="../../02-Lectures/slides/02-servlets/slides.html#slide-41">slide 41</a></span>
+        </li>
+        <li>
+          <span lang="en">Open Liberty configuration and container packaging — <a href="../../02-Lectures/slides/01-intro/slides.html#slide-19">slides 19</a> and <a href="../../02-Lectures/slides/01-intro/slides.html#slide-21">21</a> of the introduction</span>
+          <span lang="fr">Configuration Open Liberty et packaging conteneur — <a href="../../02-Lectures/slides/01-intro/slides.html#slide-19">slides 19</a> et <a href="../../02-Lectures/slides/01-intro/slides.html#slide-21">21</a> de l'introduction</span>
+        </li>
+      </ul>
+    </section>
+
+    <!-- ═════════════ 2. STARTER ═════════════ -->
+    <section class="lg-section" id="starter">
+      <h2><span class="lg-sec-num">02</span><span lang="en">What the starter gives you</span><span lang="fr">Ce que fournit le starter</span></h2>
+      <p>
+        <span lang="en">The folder <code>03-Labs/Lab01-FirstServlet/starter/</code> is a project that already builds, but it contains <strong>no Java class at all</strong>. Everything under <code>src/main/java</code> is for you to write.</span>
+        <span lang="fr">Le dossier <code>03-Labs/Lab01-FirstServlet/starter/</code> est un projet qui compile déjà, mais qui ne contient <strong>aucune classe Java</strong>. Tout ce qui est sous <code>src/main/java</code> est à écrire par vous.</span>
+      </p>
+      <table class="slide-table">
+        <thead><tr>
+          <th><span lang="en">File (in <code>starter/</code>)</span><span lang="fr">Fichier (dans <code>starter/</code>)</span></th>
+          <th><span lang="en">Status</span><span lang="fr">Statut</span></th>
+          <th><span lang="en">What it contains</span><span lang="fr">Contenu</span></th>
+        </tr></thead>
+        <tbody>
+          <tr>
+            <td><code>pom.xml</code></td>
+            <td><span class="lg-tag lg-tag--ok"><span lang="en">provided</span><span lang="fr">fourni</span></span></td>
+            <td><span lang="en">WAR packaging, Java 17, Jakarta EE API 10.0.0 and MicroProfile 6.0 (scope <code>provided</code>), JUnit 5, Liberty Maven plugin 3.9 bound to the <code>package</code> phase. Final name: <code>banking-app</code>.</span><span lang="fr">Packaging WAR, Java 17, API Jakarta EE 10.0.0 et MicroProfile 6.0 (scope <code>provided</code>), JUnit 5, plugin Maven Liberty 3.9 lié à la phase <code>package</code>. Nom final : <code>banking-app</code>.</span></td>
+          </tr>
+          <tr>
+            <td><code>src/main/liberty/config/server.xml</code></td>
+            <td><span class="lg-tag lg-tag--chg"><span lang="en">to modify</span><span lang="fr">à modifier</span></span></td>
+            <td><span lang="en">Features <code>servlet-6.0</code>, <code>cdi-4.0</code>, <code>jsonb-3.0</code>, <code>jsonp-2.1</code>, <code>mpConfig-3.0</code>, <code>mpHealth-4.0</code>, <code>mpMetrics-5.0</code>, <code>mpOpenAPI-3.1</code>; HTTP endpoint; the <code>banking-app</code> web application at context root <code>/</code>. One line is missing (step 4).</span><span lang="fr">Features <code>servlet-6.0</code>, <code>cdi-4.0</code>, <code>jsonb-3.0</code>, <code>jsonp-2.1</code>, <code>mpConfig-3.0</code>, <code>mpHealth-4.0</code>, <code>mpMetrics-5.0</code>, <code>mpOpenAPI-3.1</code> ; endpoint HTTP ; application web <code>banking-app</code> au context root <code>/</code>. Il manque une ligne (étape 4).</span></td>
+          </tr>
+          <tr>
+            <td><code>src/main/liberty/config/bootstrap.properties</code></td>
+            <td><span class="lg-tag lg-tag--ok"><span lang="en">provided</span><span lang="fr">fourni</span></span></td>
+            <td><span lang="en">Ports <code>9080</code> (HTTP) and <code>9443</code> (HTTPS), context root <code>/</code>.</span><span lang="fr">Ports <code>9080</code> (HTTP) et <code>9443</code> (HTTPS), context root <code>/</code>.</span></td>
+          </tr>
+          <tr>
+            <td><code>src/main/webapp/WEB-INF/web.xml</code></td>
+            <td><span class="lg-tag lg-tag--ok"><span lang="en">provided</span><span lang="fr">fourni</span></span></td>
+            <td><span lang="en">Welcome file <code>index.html</code>, 30-minute session timeout, <code>HttpOnly</code> session cookie, and error pages <code>/error-404.html</code> and <code>/error-500.html</code> (these two files do not exist yet).</span><span lang="fr">Fichier d'accueil <code>index.html</code>, session de 30 minutes, cookie de session <code>HttpOnly</code>, et pages d'erreur <code>/error-404.html</code> et <code>/error-500.html</code> (ces deux fichiers n'existent pas encore).</span></td>
+          </tr>
+          <tr>
+            <td><code>src/main/webapp/index.html</code></td>
+            <td><span class="lg-tag lg-tag--ok"><span lang="en">provided</span><span lang="fr">fourni</span></span></td>
+            <td><span lang="en">Home page linking to <code>welcome</code>, <code>clients</code> and <code>add-client.html</code>.</span><span lang="fr">Page d'accueil avec liens vers <code>welcome</code>, <code>clients</code> et <code>add-client.html</code>.</span></td>
+          </tr>
+          <tr>
+            <td><code>src/main/webapp/css/style.css</code></td>
+            <td><span class="lg-tag lg-tag--ok"><span lang="en">provided</span><span lang="fr">fourni</span></span></td>
+            <td><span lang="en">Styles you will reuse: <code>.container</code>, <code>.subtitle</code>, <code>.card</code>, <code>.btn</code>, <code>.btn-secondary</code>, <code>.form-group</code>, <code>.message</code> (<code>.success</code>, <code>.error</code>, <code>.info</code>), <code>.mt-20</code>, <code>.text-center</code>.</span><span lang="fr">Styles à réutiliser : <code>.container</code>, <code>.subtitle</code>, <code>.card</code>, <code>.btn</code>, <code>.btn-secondary</code>, <code>.form-group</code>, <code>.message</code> (<code>.success</code>, <code>.error</code>, <code>.info</code>), <code>.mt-20</code>, <code>.text-center</code>.</span></td>
+          </tr>
+          <tr>
+            <td><code>Containerfile</code></td>
+            <td><span class="lg-tag lg-tag--new"><span lang="en">to create</span><span lang="fr">à créer</span></span></td>
+            <td><span lang="en">Missing: builds the container image (step 2).</span><span lang="fr">Absent : construit l'image du conteneur (étape 2).</span></td>
+          </tr>
+          <tr>
+            <td><code>src/main/resources/META-INF/microprofile-config.properties</code></td>
+            <td><span class="lg-tag lg-tag--new"><span lang="en">to create</span><span lang="fr">à créer</span></span></td>
+            <td><span lang="en">Missing: the <code>Containerfile</code> copies it into the image (step 2).</span><span lang="fr">Absent : le <code>Containerfile</code> le copie dans l'image (étape 2).</span></td>
+          </tr>
+          <tr>
+            <td><code>src/main/java/com/bank/model/Client.java</code></td>
+            <td><span class="lg-tag lg-tag--new"><span lang="en">to create</span><span lang="fr">à créer</span></span></td>
+            <td><span lang="en">The client data class (step 5).</span><span lang="fr">La classe de données client (étape 5).</span></td>
+          </tr>
+          <tr>
+            <td><code>src/main/java/com/bank/web/WelcomeServlet.java</code></td>
+            <td><span class="lg-tag lg-tag--new"><span lang="en">to create</span><span lang="fr">à créer</span></span></td>
+            <td><span lang="en">The greeting servlet (step 6).</span><span lang="fr">La servlet de bienvenue (étape 6).</span></td>
+          </tr>
+          <tr>
+            <td><code>src/main/java/com/bank/web/ClientListServlet.java</code></td>
+            <td><span class="lg-tag lg-tag--new"><span lang="en">to create</span><span lang="fr">à créer</span></span></td>
+            <td><span lang="en">The list and creation servlet (steps 7 and 9).</span><span lang="fr">La servlet de liste et de création (étapes 7 et 9).</span></td>
+          </tr>
+          <tr>
+            <td><code>src/main/webapp/add-client.html</code></td>
+            <td><span class="lg-tag lg-tag--new"><span lang="en">to create</span><span lang="fr">à créer</span></span></td>
+            <td><span lang="en">The add-client form (step 8).</span><span lang="fr">Le formulaire d'ajout de client (étape 8).</span></td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="lg-callout lg-callout--warn">
+        <div lang="en"><div class="lg-callout-title">Do not copy <code>solution/pom.xml</code></div><p>The solution's <code>pom.xml</code> still targets the WildFly Maven plugin, whereas the lab runs on Open Liberty. Keep the <code>pom.xml</code> of the starter.</p></div>
+        <div lang="fr"><div class="lg-callout-title">Ne copiez pas <code>solution/pom.xml</code></div><p>Le <code>pom.xml</code> de la solution cible encore le plugin Maven WildFly, alors que le lab s'exécute sur Open Liberty. Conservez le <code>pom.xml</code> du starter.</p></div>
+      </div>
+    </section>
+
+    <!-- ═════════════ 3. TARGET ═════════════ -->
+    <section class="lg-section" id="target">
+      <h2><span class="lg-sec-num">03</span><span lang="en">Target structure</span><span lang="fr">Structure cible</span></h2>
+      <p>
+        <span lang="en">When you are done, <code>starter/</code> must contain the same application as <code>solution/</code>. Legend: <code>[=]</code> provided, <code>[~]</code> modified by you, <code>[+]</code> created by you.</span>
+        <span lang="fr">À la fin, <code>starter/</code> doit contenir la même application que <code>solution/</code>. Légende : <code>[=]</code> fourni, <code>[~]</code> modifié par vous, <code>[+]</code> créé par vous.</span>
+      </p>
+      <div class="lg-tree"><span class="t-note">Lab01-FirstServlet/starter/</span>
+├── <span class="t-new">[+] Containerfile</span>
+├── <span class="t-ok">[=] pom.xml</span>
+└── src/main/
+    ├── java/com/bank/
+    │   ├── model/
+    │   │   └── <span class="t-new">[+] Client.java</span>
+    │   └── web/
+    │       ├── <span class="t-new">[+] WelcomeServlet.java</span>
+    │       └── <span class="t-new">[+] ClientListServlet.java</span>
+    ├── liberty/config/
+    │   ├── <span class="t-chg">[~] server.xml</span>
+    │   └── <span class="t-ok">[=] bootstrap.properties</span>
+    ├── resources/META-INF/
+    │   └── <span class="t-new">[+] microprofile-config.properties</span>
+    └── webapp/
+        ├── <span class="t-ok">[=] index.html</span>
+        ├── <span class="t-new">[+] add-client.html</span>
+        ├── css/<span class="t-ok">[=] style.css</span>
+        └── WEB-INF/<span class="t-ok">[=] web.xml</span></div>
+      <p>
+        <span lang="en">Reference files: <a href="https://github.com/oplanson/esipe-javaee/blob/master/03-Labs/Lab01-FirstServlet/solution/src/main/java/com/bank/model/Client.java"><code>Client.java</code></a>, <a href="https://github.com/oplanson/esipe-javaee/blob/master/03-Labs/Lab01-FirstServlet/solution/src/main/java/com/bank/web/WelcomeServlet.java"><code>WelcomeServlet.java</code></a>, <a href="https://github.com/oplanson/esipe-javaee/blob/master/03-Labs/Lab01-FirstServlet/solution/src/main/java/com/bank/web/ClientListServlet.java"><code>ClientListServlet.java</code></a>. Try each step on your own before opening them.</span>
+        <span lang="fr">Fichiers de référence : <a href="https://github.com/oplanson/esipe-javaee/blob/master/03-Labs/Lab01-FirstServlet/solution/src/main/java/com/bank/model/Client.java"><code>Client.java</code></a>, <a href="https://github.com/oplanson/esipe-javaee/blob/master/03-Labs/Lab01-FirstServlet/solution/src/main/java/com/bank/web/WelcomeServlet.java"><code>WelcomeServlet.java</code></a>, <a href="https://github.com/oplanson/esipe-javaee/blob/master/03-Labs/Lab01-FirstServlet/solution/src/main/java/com/bank/web/ClientListServlet.java"><code>ClientListServlet.java</code></a>. Essayez chaque étape par vous-même avant de les ouvrir.</span>
+      </p>
+    </section>
+
+    <!-- ═════════════ 4. SETUP ═════════════ -->
+    <section class="lg-section" id="setup">
+      <h2><span class="lg-sec-num">04</span><span lang="en">Setup</span><span lang="fr">Préparation</span></h2>
+      <h3><span lang="en">Tools</span><span lang="fr">Outils</span></h3>
+      <table class="slide-table">
+        <thead><tr><th><span lang="en">Tool</span><span lang="fr">Outil</span></th><th><span lang="en">Check with</span><span lang="fr">Vérifier avec</span></th></tr></thead>
+        <tbody>
+          <tr><td>JDK 17+</td><td><code>java -version</code></td></tr>
+          <tr><td>Maven 3.x</td><td><code>mvn -v</code></td></tr>
+          <tr><td>Podman <span lang="en">(Docker works with the same commands)</span><span lang="fr">(Docker fonctionne avec les mêmes commandes)</span></td><td><code>podman --version</code></td></tr>
+          <tr><td>curl</td><td><code>curl --version</code></td></tr>
+        </tbody>
+      </table>
+      <div class="lg-callout lg-callout--note">
+        <div lang="en"><div class="lg-callout-title">macOS and Windows</div><p>Podman runs containers in a virtual machine. If <code>podman</code> cannot connect, run <code>podman machine list</code> and start it with <code>podman machine start</code>.</p></div>
+        <div lang="fr"><div class="lg-callout-title">macOS et Windows</div><p>Podman exécute les conteneurs dans une machine virtuelle. Si <code>podman</code> ne se connecte pas, lancez <code>podman machine list</code> puis démarrez-la avec <code>podman machine start</code>.</p></div>
+      </div>
+
+      <h3><span lang="en">Your working folder</span><span lang="fr">Votre dossier de travail</span></h3>
+      <p>
+        <span lang="en">Work directly in <code>starter/</code>. All commands below start from the repository root.</span>
+        <span lang="fr">Travaillez directement dans <code>starter/</code>. Toutes les commandes ci-dessous partent de la racine du dépôt.</span>
+      </p>
+      <pre class="dark"><code>cd 03-Labs/Lab01-FirstServlet/starter</code></pre>
+
+      <h3><span lang="en">The redeploy loop</span><span lang="fr">La boucle de redéploiement</span></h3>
+      <p>
+        <span lang="en">The WAR is baked into the container image, so after <strong>every</strong> change you rebuild and restart. You will use these commands many times:</span>
+        <span lang="fr">Le WAR est embarqué dans l'image du conteneur : après <strong>chaque</strong> modification, vous reconstruisez et relancez. Vous utiliserez ces commandes de nombreuses fois :</span>
+      </p>
+      <pre class="dark"><code>mvn clean package -DskipTests
+podman rm -f banking-lab01 2&gt;/dev/null
+podman build -t banking-app:lab01 -f Containerfile .
+podman run -d --name banking-lab01 -p 127.0.0.1:9080:9080 banking-app:lab01
+until curl -fs http://localhost:9080/ &gt;/dev/null; do sleep 2; done; echo "ready"</code></pre>
+      <p>
+        <span lang="en">The container is bound to <code>127.0.0.1</code> so the application is reachable from your machine only. The first <code>mvn package</code> downloads Open Liberty and may take several minutes; later builds are faster. This loop works from step 2 on, once the <code>Containerfile</code> exists.</span>
+        <span lang="fr">Le conteneur est lié à <code>127.0.0.1</code> : l'application n'est accessible que depuis votre machine. Le premier <code>mvn package</code> télécharge Open Liberty et peut prendre plusieurs minutes ; les suivants sont plus rapides. Cette boucle fonctionne à partir de l'étape 2, une fois le <code>Containerfile</code> créé.</span>
+      </p>
+    </section>
+
+    <!-- ═════════════ 5. STEPS ═════════════ -->
+    <section class="lg-section" id="steps">
+      <h2><span class="lg-sec-num">05</span><span lang="en">Step by step</span><span lang="fr">Pas à pas</span></h2>
+      <p>
+        <span lang="en">Each step gives the task, then two levels of hints and a link to the solution file. Try first, open the hints only if you are stuck, and always run the checkpoint before moving on.</span>
+        <span lang="fr">Chaque étape donne la consigne, puis deux niveaux d'indices et un lien vers le fichier solution. Essayez d'abord, n'ouvrez les indices qu'en cas de blocage, et lancez toujours le point de contrôle avant de continuer.</span>
+      </p>
+      <ol class="lg-steps-overview">
+        <li><a href="#step-1"><span lang="en">Build the starter</span><span lang="fr">Compiler le starter</span></a><span class="lg-dur">10 min</span></li>
+        <li><a href="#step-2"><span lang="en">Container packaging</span><span lang="fr">Packaging conteneur</span></a><span class="lg-dur">15 min</span></li>
+        <li><a href="#step-3"><span lang="en">Deploy the baseline</span><span lang="fr">Déployer l'existant</span></a><span class="lg-dur">10 min</span></li>
+        <li><a href="#step-4"><span lang="en">Open the metrics endpoint</span><span lang="fr">Ouvrir l'endpoint de métriques</span></a><span class="lg-dur">5 min</span></li>
+        <li><a href="#step-5"><span lang="en">The <code>Client</code> model</span><span lang="fr">Le modèle <code>Client</code></span></a><span class="lg-dur">10 min</span></li>
+        <li><a href="#step-6"><span lang="en"><code>WelcomeServlet</code></span><span lang="fr"><code>WelcomeServlet</code></span></a><span class="lg-dur">20 min</span></li>
+        <li><a href="#step-7"><span lang="en">Client list with <code>GET</code></span><span lang="fr">Liste des clients avec <code>GET</code></span></a><span class="lg-dur">25 min</span></li>
+        <li><a href="#step-8"><span lang="en">The add-client form</span><span lang="fr">Le formulaire d'ajout</span></a><span class="lg-dur">15 min</span></li>
+        <li><a href="#step-9"><span lang="en">Handle <code>POST</code></span><span lang="fr">Traiter le <code>POST</code></span></a><span class="lg-dur">20 min</span></li>
+      </ol>
+
+      <!-- ───────── STEP 1 ───────── -->
+      <article class="lg-step" id="step-1">
+        <div class="lg-step-head">
+          <div class="lg-step-num">1</div>
+          <div>
+            <h3><span lang="en">Build the starter</span><span lang="fr">Compiler le starter</span></h3>
+            <div class="lg-step-meta">
+              <span class="lg-chip">10 min</span>
+              <span class="lg-chip"><span lang="en">Maven WAR packaging</span><span lang="fr">Packaging WAR avec Maven</span></span>
+            </div>
+          </div>
+        </div>
+        <div class="lg-step-body">
+          <p class="lg-files"><span lang="en">File to read:</span><span lang="fr">Fichier à lire :</span> <code>pom.xml</code></p>
+          <div class="lg-task-label"><span lang="en">Task</span><span lang="fr">À faire</span></div>
+          <ol>
+            <li><span lang="en">Build the project with Maven, skipping tests.</span><span lang="fr">Compilez le projet avec Maven, sans les tests.</span></li>
+            <li><span lang="en">Open <code>pom.xml</code> and find: the packaging, the name of the produced file, why the Jakarta EE dependency has the scope <code>provided</code>, and which phase runs the Liberty plugin.</span><span lang="fr">Ouvrez <code>pom.xml</code> et repérez : le packaging, le nom du fichier produit, pourquoi la dépendance Jakarta EE a le scope <code>provided</code>, et quelle phase exécute le plugin Liberty.</span></li>
+          </ol>
+          <details class="lg-hint lg-hint--1">
+            <summary><span lang="en">Hint 1 — where to look</span><span lang="fr">Indice 1 — où chercher</span></summary>
+            <div class="lg-hint-body">
+              <p><span lang="en">The answers are in the elements <code>&lt;packaging&gt;</code>, <code>&lt;finalName&gt;</code>, the dependency scope, and the plugin <code>&lt;executions&gt;</code>. Remember that Open Liberty already contains the Jakarta EE implementation.</span><span lang="fr">Les réponses se trouvent dans les éléments <code>&lt;packaging&gt;</code>, <code>&lt;finalName&gt;</code>, le scope de la dépendance, et les <code>&lt;executions&gt;</code> du plugin. Rappelez-vous qu'Open Liberty contient déjà l'implémentation Jakarta EE.</span></p>
+            </div>
+          </details>
+          <details class="lg-hint lg-hint--2">
+            <summary><span lang="en">Hint 2 — the answers</span><span lang="fr">Indice 2 — les réponses</span></summary>
+            <div class="lg-hint-body">
+              <ul>
+                <li><span lang="en">Packaging <code>war</code>, final name <code>banking-app</code>, so the file is <code>target/banking-app.war</code>.</span><span lang="fr">Packaging <code>war</code>, nom final <code>banking-app</code>, donc le fichier est <code>target/banking-app.war</code>.</span></li>
+                <li><span lang="en">Scope <code>provided</code>: the API is needed to compile but the server supplies it at runtime, so it must not be packaged in the WAR.</span><span lang="fr">Scope <code>provided</code> : l'API est nécessaire à la compilation mais le serveur la fournit à l'exécution, elle ne doit donc pas être dans le WAR.</span></li>
+                <li><span lang="en">The Liberty plugin runs at <code>package</code> (goals <code>create</code>, <code>install-feature</code>, <code>deploy</code>).</span><span lang="fr">Le plugin Liberty s'exécute à la phase <code>package</code> (goals <code>create</code>, <code>install-feature</code>, <code>deploy</code>).</span></li>
+              </ul>
+            </div>
+          </details>
+          <div class="lg-checkpoint">
+            <div class="lg-check-label"><span lang="en">Checkpoint</span><span lang="fr">Point de contrôle</span></div>
+            <pre class="dark"><code>mvn clean package -DskipTests
+unzip -l target/banking-app.war</code></pre>
+            <p><span lang="en">Expected: <code>BUILD SUCCESS</code>. The WAR lists <code>index.html</code>, <code>css/style.css</code> and <code>WEB-INF/web.xml</code>, and <strong>no <code>.class</code> file</strong>, since you have not written any Java yet.</span><span lang="fr">Attendu : <code>BUILD SUCCESS</code>. Le WAR contient <code>index.html</code>, <code>css/style.css</code> et <code>WEB-INF/web.xml</code>, et <strong>aucun fichier <code>.class</code></strong>, puisque vous n'avez pas encore écrit de Java.</span></p>
+          </div>
+        </div>
+      </article>
+
+      <!-- ───────── STEP 2 ───────── -->
+      <article class="lg-step" id="step-2">
+        <div class="lg-step-head">
+          <div class="lg-step-num">2</div>
+          <div>
+            <h3><span lang="en">Container packaging</span><span lang="fr">Packaging conteneur</span></h3>
+            <div class="lg-step-meta">
+              <span class="lg-chip">15 min</span>
+              <span class="lg-chip"><span lang="en">Course:</span><span lang="fr">Cours :</span> <a href="../../02-Lectures/slides/01-intro/slides.html#slide-21"><span lang="en">intro, slide 21</span><span lang="fr">intro, slide 21</span></a></span>
+            </div>
+          </div>
+        </div>
+        <div class="lg-step-body">
+          <p class="lg-files"><span lang="en">Files to create:</span><span lang="fr">Fichiers à créer :</span> <code>src/main/resources/META-INF/microprofile-config.properties</code>, <code>Containerfile</code></p>
+          <div class="lg-task-label"><span lang="en">Task</span><span lang="fr">À faire</span></div>
+          <ol>
+            <li>
+              <span lang="en">Create <code>microprofile-config.properties</code> in <code>src/main/resources/META-INF/</code>. It is a MicroProfile Config source: application information, server settings, flags for health, metrics and OpenAPI, and placeholders for later labs. No Lab 01 class reads it; it exists because the <code>Containerfile</code> copies it and later labs use it.</span>
+              <span lang="fr">Créez <code>microprofile-config.properties</code> dans <code>src/main/resources/META-INF/</code>. C'est une source MicroProfile Config : informations sur l'application, paramètres serveur, drapeaux pour health, metrics et OpenAPI, et réservations pour les labs suivants. Aucune classe du Lab 01 ne le lit ; il existe parce que le <code>Containerfile</code> le copie et que les labs suivants l'utilisent.</span>
+            </li>
+            <li>
+              <span lang="en">Create the <code>Containerfile</code> at the project root. It must start from the Open Liberty image, copy the WAR into <code>/config/apps/</code> (not <code>dropins</code>), copy the three configuration files into <code>/config/</code>, run <code>configure.sh</code>, expose the two ports and start the server.</span>
+              <span lang="fr">Créez le <code>Containerfile</code> à la racine du projet. Il doit partir de l'image Open Liberty, copier le WAR dans <code>/config/apps/</code> (et non <code>dropins</code>), copier les trois fichiers de configuration dans <code>/config/</code>, exécuter <code>configure.sh</code>, exposer les deux ports et démarrer le serveur.</span>
+            </li>
+          </ol>
+          <details class="lg-hint lg-hint--1">
+            <summary><span lang="en">Hint 1 — why <code>apps</code> and not <code>dropins</code></span><span lang="fr">Indice 1 — pourquoi <code>apps</code> et pas <code>dropins</code></span></summary>
+            <div class="lg-hint-body">
+              <p><span lang="en"><code>server.xml</code> declares the application explicitly with <code>&lt;webApplication location="banking-app.war"&gt;</code>. Liberty therefore looks for that file in <code>/config/apps/</code>. Slide 21 of the introduction shows the structure of a <code>Containerfile</code>.</span><span lang="fr"><code>server.xml</code> déclare l'application explicitement avec <code>&lt;webApplication location="banking-app.war"&gt;</code>. Liberty cherche donc ce fichier dans <code>/config/apps/</code>. La slide 21 de l'introduction montre la structure d'un <code>Containerfile</code>.</span></p>
+            </div>
+          </details>
+          <details class="lg-hint lg-hint--2">
+            <summary><span lang="en">Hint 2 — the instructions to use</span><span lang="fr">Indice 2 — les instructions à utiliser</span></summary>
+            <div class="lg-hint-body">
+<pre class="dark"><code>FROM icr.io/appcafe/open-liberty:full-java17-openj9-ubi
+COPY --chown=1001:0 target/banking-app.war /config/apps/
+COPY --chown=1001:0 src/main/liberty/config/server.xml /config/
+COPY --chown=1001:0 src/main/liberty/config/bootstrap.properties /config/
+COPY --chown=1001:0 src/main/resources/META-INF/microprofile-config.properties /config/
+RUN configure.sh
+EXPOSE 9080 9443
+CMD ["/opt/ol/wlp/bin/server", "run", "defaultServer"]</code></pre>
+              <p><span lang="en"><code>--chown=1001:0</code> gives the files to the non-root user the image runs as.</span><span lang="fr"><code>--chown=1001:0</code> attribue les fichiers à l'utilisateur non-root sous lequel l'image s'exécute.</span></p>
+            </div>
+          </details>
+          <details class="lg-hint lg-hint--sol">
+            <summary><span lang="en">Solution files</span><span lang="fr">Fichiers solution</span></summary>
+            <div class="lg-hint-body">
+              <p><a href="https://github.com/oplanson/esipe-javaee/blob/master/03-Labs/Lab01-FirstServlet/solution/Containerfile"><code>solution/Containerfile</code></a> · <a href="https://github.com/oplanson/esipe-javaee/blob/master/03-Labs/Lab01-FirstServlet/solution/src/main/resources/META-INF/microprofile-config.properties"><code>solution/…/microprofile-config.properties</code></a></p>
+            </div>
+          </details>
+          <div class="lg-checkpoint">
+            <div class="lg-check-label"><span lang="en">Checkpoint</span><span lang="fr">Point de contrôle</span></div>
+            <pre class="dark"><code>mvn clean package -DskipTests
+podman build -t banking-app:lab01 -f Containerfile .
+podman images banking-app</code></pre>
+            <p><span lang="en">Expected: the build finishes without error and the image <code>banking-app</code> with tag <code>lab01</code> is listed. If it stops on a <code>COPY</code> step, a file is missing or misnamed.</span><span lang="fr">Attendu : le build se termine sans erreur et l'image <code>banking-app</code> avec le tag <code>lab01</code> est listée. S'il s'arrête sur une étape <code>COPY</code>, un fichier est manquant ou mal nommé.</span></p>
+          </div>
+        </div>
+      </article>
+
+      <!-- ───────── STEP 3 ───────── -->
+      <article class="lg-step" id="step-3">
+        <div class="lg-step-head">
+          <div class="lg-step-num">3</div>
+          <div>
+            <h3><span lang="en">Deploy the baseline</span><span lang="fr">Déployer l'existant</span></h3>
+            <div class="lg-step-meta">
+              <span class="lg-chip">10 min</span>
+              <span class="lg-chip"><span lang="en">Open Liberty features</span><span lang="fr">Features Open Liberty</span></span>
+            </div>
+          </div>
+        </div>
+        <div class="lg-step-body">
+          <p class="lg-files"><span lang="en">Files:</span><span lang="fr">Fichiers :</span> <code>Containerfile</code></p>
+          <div class="lg-task-label"><span lang="en">Task</span><span lang="fr">À faire</span></div>
+          <ol>
+            <li><span lang="en">Run the redeploy loop from the <a href="#setup">Setup</a> section.</span><span lang="fr">Lancez la boucle de redéploiement de la section <a href="#setup">Préparation</a>.</span></li>
+            <li><span lang="en">Request each URL of the table below and note the HTTP status. Explain each result.</span><span lang="fr">Appelez chaque URL du tableau ci-dessous et notez le statut HTTP. Expliquez chaque résultat.</span></li>
+          </ol>
+          <table class="slide-table">
+            <thead><tr><th>URL</th><th><span lang="en">Expected status</span><span lang="fr">Statut attendu</span></th><th><span lang="en">Why</span><span lang="fr">Pourquoi</span></th></tr></thead>
+            <tbody>
+              <tr><td><code>/</code></td><td>200</td><td><span lang="en">Provided <code>index.html</code></span><span lang="fr"><code>index.html</code> fourni</span></td></tr>
+              <tr><td><code>/css/style.css</code></td><td>200</td><td><span lang="en">Provided static file</span><span lang="fr">Fichier statique fourni</span></td></tr>
+              <tr><td><code>/health</code></td><td>200</td><td><span lang="en">Feature <code>mpHealth-4.0</code></span><span lang="fr">Feature <code>mpHealth-4.0</code></span></td></tr>
+              <tr><td><code>/openapi</code></td><td>200</td><td><span lang="en">Feature <code>mpOpenAPI-3.1</code></span><span lang="fr">Feature <code>mpOpenAPI-3.1</code></span></td></tr>
+              <tr><td><code>/welcome</code></td><td>404</td><td><span lang="en">No servlet is mapped yet</span><span lang="fr">Aucune servlet n'est encore mappée</span></td></tr>
+              <tr><td><code>/clients</code></td><td>404</td><td><span lang="en">No servlet is mapped yet</span><span lang="fr">Aucune servlet n'est encore mappée</span></td></tr>
+              <tr><td><code>/add-client.html</code></td><td>404</td><td><span lang="en">The file does not exist yet</span><span lang="fr">Le fichier n'existe pas encore</span></td></tr>
+              <tr><td><code>/metrics</code></td><td>403</td><td><span lang="en">Metrics require a secure connection by default: fixed in step 4</span><span lang="fr">Les métriques exigent une connexion sécurisée par défaut : corrigé à l'étape 4</span></td></tr>
+            </tbody>
+          </table>
+          <details class="lg-hint lg-hint--2">
+            <summary><span lang="en">Hint — one command for all URLs</span><span lang="fr">Indice — une commande pour toutes les URL</span></summary>
+            <div class="lg-hint-body">
+<pre class="dark"><code>for u in "" css/style.css health openapi welcome clients add-client.html metrics; do
+  printf "%-18s %s\n" "/$u" "$(curl -s -o /dev/null -w '%{http_code}' http://localhost:9080/$u)"
+done</code></pre>
+            </div>
+          </details>
+          <div class="lg-checkpoint">
+            <div class="lg-check-label"><span lang="en">Checkpoint</span><span lang="fr">Point de contrôle</span></div>
+            <p><span lang="en">Your statuses match the table: 200 for the first four URLs, 404 for the next three and 403 for <code>/metrics</code>. Open <a href="http://localhost:9080/">http://localhost:9080/</a> in a browser: the home page appears with its styling, but the links to the servlets lead to a 404 page.</span><span lang="fr">Vos statuts correspondent au tableau : 200 pour les quatre premières URL, 404 pour les trois suivantes et 403 pour <code>/metrics</code>. Ouvrez <a href="http://localhost:9080/">http://localhost:9080/</a> dans un navigateur : la page d'accueil s'affiche avec son style, mais les liens vers les servlets mènent à une page 404.</span></p>
+          </div>
+        </div>
+      </article>
+
+      <!-- ───────── STEP 4 ───────── -->
+      <article class="lg-step" id="step-4">
+        <div class="lg-step-head">
+          <div class="lg-step-num">4</div>
+          <div>
+            <h3><span lang="en">Open the metrics endpoint</span><span lang="fr">Ouvrir l'endpoint de métriques</span></h3>
+            <div class="lg-step-meta">
+              <span class="lg-chip">5 min</span>
+              <span class="lg-chip"><span lang="en">Course:</span><span lang="fr">Cours :</span> <a href="../../02-Lectures/slides/01-intro/slides.html#slide-19"><span lang="en">intro, slide 19</span><span lang="fr">intro, slide 19</span></a></span>
+            </div>
+          </div>
+        </div>
+        <div class="lg-step-body">
+          <p class="lg-files"><span lang="en">File to modify:</span><span lang="fr">Fichier à modifier :</span> <code>src/main/liberty/config/server.xml</code></p>
+          <div class="lg-task-label"><span lang="en">Task</span><span lang="fr">À faire</span></div>
+          <p><span lang="en">Make <code>/metrics</code> answer with status 200 over plain HTTP, so that this lab can be tested with <code>curl</code>. Add one element to <code>server.xml</code>, then redeploy.</span><span lang="fr">Faites répondre <code>/metrics</code> avec le statut 200 en HTTP simple, pour pouvoir tester ce lab avec <code>curl</code>. Ajoutez un élément à <code>server.xml</code>, puis redéployez.</span></p>
+          <details class="lg-hint lg-hint--1">
+            <summary><span lang="en">Hint 1</span><span lang="fr">Indice 1</span></summary>
+            <div class="lg-hint-body">
+              <p><span lang="en">The element is named after the feature that exposes the endpoint, <code>mpMetrics</code>, and has an <code>authentication</code> attribute.</span><span lang="fr">L'élément porte le nom de la feature qui expose l'endpoint, <code>mpMetrics</code>, et possède un attribut <code>authentication</code>.</span></p>
+            </div>
+          </details>
+          <details class="lg-hint lg-hint--2">
+            <summary><span lang="en">Hint 2 — the line to add</span><span lang="fr">Indice 2 — la ligne à ajouter</span></summary>
+            <div class="lg-hint-body">
+<pre class="dark"><code>&lt;mpMetrics authentication="false"/&gt;</code></pre>
+              <p><span lang="en">Put it inside <code>&lt;server&gt;</code>, for example just after the <code>&lt;logging&gt;</code> element.</span><span lang="fr">Placez-la dans <code>&lt;server&gt;</code>, par exemple juste après l'élément <code>&lt;logging&gt;</code>.</span></p>
+            </div>
+          </details>
+          <div class="lg-callout lg-callout--warn">
+            <div lang="en"><div class="lg-callout-title">The solution also declares demo credentials</div><p><a href="https://github.com/oplanson/esipe-javaee/blob/master/03-Labs/Lab01-FirstServlet/solution/src/main/liberty/config/server.xml"><code>solution/…/server.xml</code></a> adds a <code>&lt;quickStartSecurity&gt;</code> element with a hard-coded user and password. It is <strong>not needed</strong> for this lab: <code>authentication="false"</code> is enough. Such credentials are for a local demo only and must never be reused or committed in a real project.</p></div>
+            <div lang="fr"><div class="lg-callout-title">La solution déclare aussi des identifiants de démo</div><p><a href="https://github.com/oplanson/esipe-javaee/blob/master/03-Labs/Lab01-FirstServlet/solution/src/main/liberty/config/server.xml"><code>solution/…/server.xml</code></a> ajoute un élément <code>&lt;quickStartSecurity&gt;</code> avec un utilisateur et un mot de passe en dur. Il n'est <strong>pas nécessaire</strong> pour ce lab : <code>authentication="false"</code> suffit. De tels identifiants servent uniquement à une démo locale et ne doivent jamais être réutilisés ni versionnés dans un vrai projet.</p></div>
+          </div>
+          <div class="lg-checkpoint">
+            <div class="lg-check-label"><span lang="en">Checkpoint</span><span lang="fr">Point de contrôle</span></div>
+            <pre class="dark"><code># redeploy loop, then:
+curl -s -o /dev/null -w '%{http_code}\n' http://localhost:9080/metrics
+curl -s http://localhost:9080/metrics | head -3</code></pre>
+            <p><span lang="en">Expected: <code>200</code>, then lines starting with <code># HELP</code> and <code># TYPE</code> (Prometheus format).</span><span lang="fr">Attendu : <code>200</code>, puis des lignes commençant par <code># HELP</code> et <code># TYPE</code> (format Prometheus).</span></p>
+          </div>
+        </div>
+      </article>
+
+      <!-- ───────── STEP 5 ───────── -->
+      <article class="lg-step" id="step-5">
+        <div class="lg-step-head">
+          <div class="lg-step-num">5</div>
+          <div>
+            <h3><span lang="en">The <code>Client</code> model</span><span lang="fr">Le modèle <code>Client</code></span></h3>
+            <div class="lg-step-meta">
+              <span class="lg-chip">10 min</span>
+              <span class="lg-chip"><span lang="en">Plain Java object (POJO)</span><span lang="fr">Objet Java simple (POJO)</span></span>
+            </div>
+          </div>
+        </div>
+        <div class="lg-step-body">
+          <p class="lg-files"><span lang="en">File to create:</span><span lang="fr">Fichier à créer :</span> <code>src/main/java/com/bank/model/Client.java</code></p>
+          <div class="lg-task-label"><span lang="en">Task</span><span lang="fr">À faire</span></div>
+          <p><span lang="en">Create the class <code>com.bank.model.Client</code> with these characteristics:</span><span lang="fr">Créez la classe <code>com.bank.model.Client</code> avec ces caractéristiques :</span></p>
+          <ul>
+            <li><span lang="en">Implements <code>Serializable</code>, with <code>serialVersionUID = 1L</code>.</span><span lang="fr">Implémente <code>Serializable</code>, avec <code>serialVersionUID = 1L</code>.</span></li>
+            <li><span lang="en">Four private fields: <code>Long id</code>, <code>String name</code>, <code>String email</code>, <code>String phone</code>.</span><span lang="fr">Quatre champs privés : <code>Long id</code>, <code>String name</code>, <code>String email</code>, <code>String phone</code>.</span></li>
+            <li><span lang="en">A no-argument constructor and a constructor <code>(Long id, String name, String email, String phone)</code>, in that order.</span><span lang="fr">Un constructeur sans argument et un constructeur <code>(Long id, String name, String email, String phone)</code>, dans cet ordre.</span></li>
+            <li><span lang="en">A getter and a setter for each field.</span><span lang="fr">Un getter et un setter pour chaque champ.</span></li>
+            <li><span lang="en"><code>equals</code> and <code>hashCode</code> based on <code>id</code> only.</span><span lang="fr"><code>equals</code> et <code>hashCode</code> basés uniquement sur <code>id</code>.</span></li>
+            <li><span lang="en"><code>toString</code> returning <code>Client{id=1, name='John', email='j@x.com', phone='123'}</code>.</span><span lang="fr"><code>toString</code> retournant <code>Client{id=1, name='John', email='j@x.com', phone='123'}</code>.</span></li>
+          </ul>
+          <details class="lg-hint lg-hint--1">
+            <summary><span lang="en">Hint 1</span><span lang="fr">Indice 1</span></summary>
+            <div class="lg-hint-body">
+              <p><span lang="en">Your IDE can generate constructors, accessors, <code>equals</code>/<code>hashCode</code> and <code>toString</code>. The no-argument constructor is required by the JavaBeans convention: later labs (JPA, JSON-B) rely on it.</span><span lang="fr">Votre IDE peut générer constructeurs, accesseurs, <code>equals</code>/<code>hashCode</code> et <code>toString</code>. Le constructeur sans argument est exigé par la convention JavaBeans : les labs suivants (JPA, JSON-B) s'appuient dessus.</span></p>
+            </div>
+          </details>
+          <details class="lg-hint lg-hint--2">
+            <summary><span lang="en">Hint 2 — skeleton</span><span lang="fr">Indice 2 — squelette</span></summary>
+            <div class="lg-hint-body">
+<pre class="dark"><code>package com.bank.model;
+
+import java.io.Serializable;
+import java.util.Objects;
+
+public class Client implements Serializable {
+    private static final long serialVersionUID = 1L;
+
+    private Long id;
+    private String name;
+    private String email;
+    private String phone;
+
+    public Client() { }
+
+    public Client(Long id, String name, String email, String phone) { /* assign the 4 fields */ }
+
+    // getters and setters ...
+
+    @Override
+    public boolean equals(Object o) { /* same instance? same class? Objects.equals(id, other.id) */ }
+
+    @Override
+    public int hashCode() { return Objects.hash(id); }
+
+    @Override
+    public String toString() { /* "Client{id=" + id + ", name='" + name + "' ..." */ }
+}</code></pre>
+            </div>
+          </details>
+          <details class="lg-hint lg-hint--sol">
+            <summary><span lang="en">Solution file</span><span lang="fr">Fichier solution</span></summary>
+            <div class="lg-hint-body">
+              <p><a href="https://github.com/oplanson/esipe-javaee/blob/master/03-Labs/Lab01-FirstServlet/solution/src/main/java/com/bank/model/Client.java"><code>solution/…/model/Client.java</code></a></p>
+            </div>
+          </details>
+          <div class="lg-checkpoint">
+            <div class="lg-check-label"><span lang="en">Checkpoint</span><span lang="fr">Point de contrôle</span></div>
+            <pre class="dark"><code>mvn -q compile</code></pre>
+            <p><span lang="en">Expected: no output and no error (with <code>-q</code>, Maven prints only problems).</span><span lang="fr">Attendu : aucune sortie et aucune erreur (avec <code>-q</code>, Maven n'affiche que les problèmes).</span></p>
+          </div>
+        </div>
+      </article>
+
+      <!-- ───────── STEP 6 ───────── -->
+      <article class="lg-step" id="step-6">
+        <div class="lg-step-head">
+          <div class="lg-step-num">6</div>
+          <div>
+            <h3>WelcomeServlet</h3>
+            <div class="lg-step-meta">
+              <span class="lg-chip">20 min</span>
+              <span class="lg-chip"><span lang="en">Course:</span><span lang="fr">Cours :</span> <a href="../../02-Lectures/slides/02-servlets/slides.html#slide-7"><span lang="en">servlets, slides 7 and 13–14</span><span lang="fr">servlets, slides 7 et 13–14</span></a></span>
+            </div>
+          </div>
+        </div>
+        <div class="lg-step-body">
+          <p class="lg-files"><span lang="en">File to create:</span><span lang="fr">Fichier à créer :</span> <code>src/main/java/com/bank/web/WelcomeServlet.java</code></p>
+          <div class="lg-task-label"><span lang="en">Task</span><span lang="fr">À faire</span></div>
+          <ol>
+            <li><span lang="en">Create <code>WelcomeServlet</code> in <code>com.bank.web</code>, extending <code>HttpServlet</code> and mapped to <code>/welcome</code> with <code>@WebServlet(name = "WelcomeServlet", urlPatterns = {"/welcome"})</code>.</span><span lang="fr">Créez <code>WelcomeServlet</code> dans <code>com.bank.web</code>, qui étend <code>HttpServlet</code> et est mappée sur <code>/welcome</code> avec <code>@WebServlet(name = "WelcomeServlet", urlPatterns = {"/welcome"})</code>.</span></li>
+            <li><span lang="en">Override <code>doGet</code>: set the content type to <code>text/html;charset=UTF-8</code>, format the current date and time with the pattern <code>EEEE, MMMM dd, yyyy 'at' HH:mm:ss</code>, and write a full HTML page with a <code>PrintWriter</code> opened in a try-with-resources.</span><span lang="fr">Surchargez <code>doGet</code> : fixez le type de contenu à <code>text/html;charset=UTF-8</code>, formatez la date et l'heure courantes avec le motif <code>EEEE, MMMM dd, yyyy 'at' HH:mm:ss</code>, et écrivez une page HTML complète avec un <code>PrintWriter</code> ouvert dans un try-with-resources.</span></li>
+            <li><span lang="en">The page must contain: the title <code>Welcome - Banking Application</code>, a link to <code>css/style.css</code>, a heading <code>Welcome to Banking Application</code>, a card with <code>Hello!</code> and the formatted date, and a navigation list linking to <code>index.html</code>, <code>clients</code> and <code>add-client.html</code>.</span><span lang="fr">La page doit contenir : le titre <code>Welcome - Banking Application</code>, un lien vers <code>css/style.css</code>, un titre <code>Welcome to Banking Application</code>, une carte avec <code>Hello!</code> et la date formatée, et une liste de navigation vers <code>index.html</code>, <code>clients</code> et <code>add-client.html</code>.</span></li>
+            <li><span lang="en">Also override <code>getServletInfo()</code> with a short description.</span><span lang="fr">Surchargez aussi <code>getServletInfo()</code> avec une courte description.</span></li>
+          </ol>
+          <details class="lg-hint lg-hint--1">
+            <summary><span lang="en">Hint 1</span><span lang="fr">Indice 1</span></summary>
+            <div class="lg-hint-body">
+              <ul>
+                <li><span lang="en">Use the Jakarta namespace: <code>jakarta.servlet.*</code>, not <code>javax.servlet.*</code>.</span><span lang="fr">Utilisez l'espace de noms Jakarta : <code>jakarta.servlet.*</code>, pas <code>javax.servlet.*</code>.</span></li>
+                <li><span lang="en">Set the content type <strong>before</strong> calling <code>getWriter()</code>, otherwise the charset is ignored.</span><span lang="fr">Fixez le type de contenu <strong>avant</strong> d'appeler <code>getWriter()</code>, sinon le jeu de caractères est ignoré.</span></li>
+                <li><span lang="en">Use relative URLs (<code>css/style.css</code>, <code>clients</code>) without a leading slash, like <code>index.html</code> does.</span><span lang="fr">Utilisez des URL relatives (<code>css/style.css</code>, <code>clients</code>) sans slash initial, comme le fait <code>index.html</code>.</span></li>
+                <li><span lang="en">Reuse the CSS classes of <code>style.css</code>: <code>container</code>, <code>subtitle</code>, <code>card</code>, <code>text-center</code>, <code>mt-20</code>.</span><span lang="fr">Réutilisez les classes CSS de <code>style.css</code> : <code>container</code>, <code>subtitle</code>, <code>card</code>, <code>text-center</code>, <code>mt-20</code>.</span></li>
+              </ul>
+            </div>
+          </details>
+          <details class="lg-hint lg-hint--2">
+            <summary><span lang="en">Hint 2 — skeleton</span><span lang="fr">Indice 2 — squelette</span></summary>
+            <div class="lg-hint-body">
+<pre class="dark"><code>@WebServlet(name = "WelcomeServlet", urlPatterns = {"/welcome"})
+public class WelcomeServlet extends HttpServlet {
+
+    private static final long serialVersionUID = 1L;
+
+    @Override
+    protected void doGet(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+
+        response.setContentType("text/html;charset=UTF-8");
+
+        DateTimeFormatter formatter =
+            DateTimeFormatter.ofPattern("EEEE, MMMM dd, yyyy 'at' HH:mm:ss");
+        String formattedDateTime = LocalDateTime.now().format(formatter);
+
+        try (PrintWriter out = response.getWriter()) {
+            out.println("&lt;!DOCTYPE html&gt;");
+            // ... html, head (meta charset, title, link css), body, container, card ...
+            out.println("   " + formattedDateTime);
+            // ... navigation list, footer, closing tags ...
+        }
+    }
+
+    @Override
+    public String getServletInfo() { return "..."; }
+}</code></pre>
+            </div>
+          </details>
+          <details class="lg-hint lg-hint--sol">
+            <summary><span lang="en">Solution file</span><span lang="fr">Fichier solution</span></summary>
+            <div class="lg-hint-body">
+              <p><a href="https://github.com/oplanson/esipe-javaee/blob/master/03-Labs/Lab01-FirstServlet/solution/src/main/java/com/bank/web/WelcomeServlet.java"><code>solution/…/web/WelcomeServlet.java</code></a></p>
+            </div>
+          </details>
+          <div class="lg-checkpoint">
+            <div class="lg-check-label"><span lang="en">Checkpoint</span><span lang="fr">Point de contrôle</span></div>
+            <pre class="dark"><code># redeploy loop, then:
+curl -s -o /dev/null -w '%{http_code}\n' http://localhost:9080/welcome
+curl -s http://localhost:9080/welcome | grep -E "Welcome|Current Date"</code></pre>
+            <p><span lang="en">Expected: <code>200</code>, then your heading and the date line. Reload <a href="http://localhost:9080/welcome">/welcome</a> in the browser: the seconds change on every request, proving the page is generated dynamically.</span><span lang="fr">Attendu : <code>200</code>, puis votre titre et la ligne de date. Rechargez <a href="http://localhost:9080/welcome">/welcome</a> dans le navigateur : les secondes changent à chaque requête, ce qui prouve que la page est générée dynamiquement.</span></p>
+          </div>
+        </div>
+      </article>
+
+      <!-- ───────── STEP 7 ───────── -->
+      <article class="lg-step" id="step-7">
+        <div class="lg-step-head">
+          <div class="lg-step-num">7</div>
+          <div>
+            <h3><span lang="en">Client list with <code>GET</code></span><span lang="fr">Liste des clients avec <code>GET</code></span></h3>
+            <div class="lg-step-meta">
+              <span class="lg-chip">25 min</span>
+              <span class="lg-chip"><span lang="en">Course:</span><span lang="fr">Cours :</span> <a href="../../02-Lectures/slides/02-servlets/slides.html#slide-3"><span lang="en">servlets, slides 3, 5 and 41</span><span lang="fr">servlets, slides 3, 5 et 41</span></a></span>
+            </div>
+          </div>
+        </div>
+        <div class="lg-step-body">
+          <p class="lg-files"><span lang="en">File to create:</span><span lang="fr">Fichier à créer :</span> <code>src/main/java/com/bank/web/ClientListServlet.java</code></p>
+          <div class="lg-task-label"><span lang="en">Task</span><span lang="fr">À faire</span></div>
+          <ol>
+            <li><span lang="en">Create <code>ClientListServlet</code> in <code>com.bank.web</code>, extending <code>HttpServlet</code> and mapped to <code>/clients</code> with <code>@WebServlet(name = "ClientListServlet", urlPatterns = {"/clients"})</code>.</span><span lang="fr">Créez <code>ClientListServlet</code> dans <code>com.bank.web</code>, qui étend <code>HttpServlet</code> et est mappée sur <code>/clients</code> avec <code>@WebServlet(name = "ClientListServlet", urlPatterns = {"/clients"})</code>.</span></li>
+            <li><span lang="en">Store the clients in a field <code>private final List&lt;Client&gt; clients = new CopyOnWriteArrayList&lt;&gt;()</code>. Explain in a comment why a thread-safe list is required.</span><span lang="fr">Stockez les clients dans un champ <code>private final List&lt;Client&gt; clients = new CopyOnWriteArrayList&lt;&gt;()</code>. Expliquez dans un commentaire pourquoi une liste thread-safe est nécessaire.</span></li>
+            <li><span lang="en">Override <code>init()</code> to add the five sample clients of the table below (call <code>super.init()</code> first).</span><span lang="fr">Surchargez <code>init()</code> pour ajouter les cinq clients d'exemple du tableau ci-dessous (appelez d'abord <code>super.init()</code>).</span></li>
+            <li><span lang="en">Override <code>doGet</code> to write an HTML page with: the heading <code>Client Management</code>, the subtitle <code>Total Clients: N</code>, a green success message <code>Client added successfully!</code> when the query parameter <code>message</code> equals <code>success</code>, a link to <code>add-client.html</code>, and a table with columns ID, Name, Email, Phone (or the message <code>No clients found.</code> if the list is empty).</span><span lang="fr">Surchargez <code>doGet</code> pour écrire une page HTML avec : le titre <code>Client Management</code>, le sous-titre <code>Total Clients: N</code>, un message de succès vert <code>Client added successfully!</code> lorsque le paramètre <code>message</code> vaut <code>success</code>, un lien vers <code>add-client.html</code>, et un tableau avec les colonnes ID, Name, Email, Phone (ou le message <code>No clients found.</code> si la liste est vide).</span></li>
+            <li><span lang="en">Write a private method <code>escapeHtml(String)</code> that replaces <code>&amp;</code>, <code>&lt;</code>, <code>&gt;</code>, <code>"</code> and <code>'</code> (and returns an empty string for <code>null</code>), and apply it to every client field you print.</span><span lang="fr">Écrivez une méthode privée <code>escapeHtml(String)</code> qui remplace <code>&amp;</code>, <code>&lt;</code>, <code>&gt;</code>, <code>"</code> et <code>'</code> (et retourne une chaîne vide pour <code>null</code>), et appliquez-la à chaque champ client affiché.</span></li>
+          </ol>
+          <table class="slide-table">
+            <thead><tr><th>ID</th><th>Name</th><th>Email</th><th>Phone</th></tr></thead>
+            <tbody>
+              <tr><td>1</td><td>John Smith</td><td>john.smith@email.com</td><td>+1-555-0101</td></tr>
+              <tr><td>2</td><td>Emma Johnson</td><td>emma.j@email.com</td><td>+1-555-0102</td></tr>
+              <tr><td>3</td><td>Michael Brown</td><td>m.brown@email.com</td><td>+1-555-0103</td></tr>
+              <tr><td>4</td><td>Sarah Davis</td><td>sarah.davis@email.com</td><td>+1-555-0104</td></tr>
+              <tr><td>5</td><td>James Wilson</td><td>james.w@email.com</td><td>+1-555-0105</td></tr>
+            </tbody>
+          </table>
+          <details class="lg-hint lg-hint--1">
+            <summary><span lang="en">Hint 1</span><span lang="fr">Indice 1</span></summary>
+            <div class="lg-hint-body">
+              <ul>
+                <li><span lang="en">The container creates <strong>one instance</strong> of the servlet and calls <code>doGet</code>/<code>doPost</code> from several threads at once. A plain <code>ArrayList</code> could fail while one request iterates and another adds.</span><span lang="fr">Le conteneur crée <strong>une seule instance</strong> de la servlet et appelle <code>doGet</code>/<code>doPost</code> depuis plusieurs threads en même temps. Une simple <code>ArrayList</code> pourrait échouer pendant qu'une requête itère et qu'une autre ajoute.</span></li>
+                <li><span lang="en"><code>init()</code> runs once, when the servlet is first used (the first request to <code>/clients</code>), not at server startup.</span><span lang="fr"><code>init()</code> s'exécute une seule fois, au premier usage de la servlet (la première requête vers <code>/clients</code>), et non au démarrage du serveur.</span></li>
+                <li><span lang="en">Read a query parameter with <code>request.getParameter("message")</code>. Compare with <code>"success".equals(message)</code> to stay null-safe.</span><span lang="fr">Lisez un paramètre de requête avec <code>request.getParameter("message")</code>. Comparez avec <code>"success".equals(message)</code> pour rester null-safe.</span></li>
+                <li><span lang="en">Table styles come from <code>style.css</code>; the message uses the classes <code>message success</code> and <code>message info</code>.</span><span lang="fr">Les styles du tableau viennent de <code>style.css</code> ; le message utilise les classes <code>message success</code> et <code>message info</code>.</span></li>
+              </ul>
+            </div>
+          </details>
+          <details class="lg-hint lg-hint--2">
+            <summary><span lang="en">Hint 2 — skeleton</span><span lang="fr">Indice 2 — squelette</span></summary>
+            <div class="lg-hint-body">
+<pre class="dark"><code>@WebServlet(name = "ClientListServlet", urlPatterns = {"/clients"})
+public class ClientListServlet extends HttpServlet {
+
+    private static final long serialVersionUID = 1L;
+    private final List&lt;Client&gt; clients = new CopyOnWriteArrayList&lt;&gt;();
+
+    @Override
+    public void init() throws ServletException {
+        super.init();
+        clients.add(new Client(1L, "John Smith", "john.smith@email.com", "+1-555-0101"));
+        // ... the 4 other clients ...
+        log("ClientListServlet initialized with " + clients.size() + " sample clients");
+    }
+
+    @Override
+    protected void doGet(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        response.setContentType("text/html;charset=UTF-8");
+        try (PrintWriter out = response.getWriter()) {
+            // ... page header, "Total Clients: " + clients.size() ...
+            String message = request.getParameter("message");
+            // if ("success".equals(message)) -> success banner
+            // for (Client client : clients) -> one &lt;tr&gt; with escapeHtml(...) on each text field
+        }
+    }
+
+    private String escapeHtml(String text) {
+        if (text == null) return "";
+        return text.replace("&amp;", "&amp;amp;") /* then &lt; &gt; &quot; &#39; */;
+    }
+}</code></pre>
+              <p><span lang="en">Replace <code>&amp;</code> first, otherwise you would escape the <code>&amp;</code> of the entities you just produced.</span><span lang="fr">Remplacez <code>&amp;</code> en premier, sinon vous échapperiez le <code>&amp;</code> des entités que vous venez de produire.</span></p>
+            </div>
+          </details>
+          <details class="lg-hint lg-hint--sol">
+            <summary><span lang="en">Solution file</span><span lang="fr">Fichier solution</span></summary>
+            <div class="lg-hint-body">
+              <p><a href="https://github.com/oplanson/esipe-javaee/blob/master/03-Labs/Lab01-FirstServlet/solution/src/main/java/com/bank/web/ClientListServlet.java"><code>solution/…/web/ClientListServlet.java</code></a></p>
+            </div>
+          </details>
+          <div class="lg-checkpoint">
+            <div class="lg-check-label"><span lang="en">Checkpoint</span><span lang="fr">Point de contrôle</span></div>
+            <pre class="dark"><code># redeploy loop, then:
+curl -s http://localhost:9080/clients | grep -E "Total Clients|John Smith"</code></pre>
+            <p><span lang="en">Expected: a line containing <code>Total Clients: 5</code> and one containing <code>John Smith</code>. In the browser, <a href="http://localhost:9080/clients">/clients</a> shows a table of five rows.</span><span lang="fr">Attendu : une ligne contenant <code>Total Clients: 5</code> et une contenant <code>John Smith</code>. Dans le navigateur, <a href="http://localhost:9080/clients">/clients</a> affiche un tableau de cinq lignes.</span></p>
+          </div>
+        </div>
+      </article>
+
+      <!-- ───────── STEP 8 ───────── -->
+      <article class="lg-step" id="step-8">
+        <div class="lg-step-head">
+          <div class="lg-step-num">8</div>
+          <div>
+            <h3><span lang="en">The add-client form</span><span lang="fr">Le formulaire d'ajout</span></h3>
+            <div class="lg-step-meta">
+              <span class="lg-chip">15 min</span>
+              <span class="lg-chip"><span lang="en">HTML form, client-side validation</span><span lang="fr">Formulaire HTML, validation côté client</span></span>
+            </div>
+          </div>
+        </div>
+        <div class="lg-step-body">
+          <p class="lg-files"><span lang="en">File to create:</span><span lang="fr">Fichier à créer :</span> <code>src/main/webapp/add-client.html</code></p>
+          <div class="lg-task-label"><span lang="en">Task</span><span lang="fr">À faire</span></div>
+          <ol>
+            <li><span lang="en">Create a static page <code>add-client.html</code> that reuses <code>css/style.css</code>, with a title <code>Add New Client</code> and a card containing a form.</span><span lang="fr">Créez une page statique <code>add-client.html</code> qui réutilise <code>css/style.css</code>, avec un titre <code>Add New Client</code> et une carte contenant un formulaire.</span></li>
+            <li><span lang="en">The form posts to <code>clients</code>: <code>action="clients" method="POST"</code>. It has three fields, each in a <code>form-group</code> with a <code>label</code>:</span><span lang="fr">Le formulaire poste vers <code>clients</code> : <code>action="clients" method="POST"</code>. Il a trois champs, chacun dans un <code>form-group</code> avec un <code>label</code> :</span>
+              <table class="slide-table">
+                <thead><tr><th><code>name</code></th><th><code>type</code></th><th><span lang="en">Constraints</span><span lang="fr">Contraintes</span></th></tr></thead>
+                <tbody>
+                  <tr><td><code>name</code></td><td><code>text</code></td><td><code>required</code>, <code>minlength="2"</code>, <code>maxlength="100"</code></td></tr>
+                  <tr><td><code>email</code></td><td><code>email</code></td><td><code>required</code>, <code>maxlength="100"</code></td></tr>
+                  <tr><td><code>phone</code></td><td><code>tel</code></td><td><code>required</code>, <code>maxlength="20"</code></td></tr>
+                </tbody>
+              </table>
+            </li>
+            <li><span lang="en">Add a <code>Save Client</code> submit button (class <code>btn</code>) and a <code>Cancel</code> link to <code>clients</code> (classes <code>btn btn-secondary</code>).</span><span lang="fr">Ajoutez un bouton d'envoi <code>Save Client</code> (classe <code>btn</code>) et un lien <code>Cancel</code> vers <code>clients</code> (classes <code>btn btn-secondary</code>).</span></li>
+            <li><span lang="en">Optional comfort: a small script that rejects empty fields and malformed emails before submitting, and shows an error banner when the URL contains <code>?error=missing</code>.</span><span lang="fr">Confort optionnel : un petit script qui refuse les champs vides et les emails mal formés avant l'envoi, et affiche une bannière d'erreur quand l'URL contient <code>?error=missing</code>.</span></li>
+          </ol>
+          <details class="lg-hint lg-hint--1">
+            <summary><span lang="en">Hint 1</span><span lang="fr">Indice 1</span></summary>
+            <div class="lg-hint-body">
+              <ul>
+                <li><span lang="en">The <code>name</code> attribute of each input is the parameter name the servlet will read with <code>getParameter</code>. Use exactly <code>name</code>, <code>email</code>, <code>phone</code>.</span><span lang="fr">L'attribut <code>name</code> de chaque champ est le nom du paramètre que la servlet lira avec <code>getParameter</code>. Utilisez exactement <code>name</code>, <code>email</code>, <code>phone</code>.</span></li>
+                <li><span lang="en">Link each <code>label for="…"</code> to the <code>id</code> of its input, so clicking the label focuses the field.</span><span lang="fr">Reliez chaque <code>label for="…"</code> à l'<code>id</code> de son champ, pour que cliquer sur le libellé donne le focus au champ.</span></li>
+                <li><span lang="en">Browser validation (<code>required</code>, <code>type="email"</code>) is only a convenience: anyone can bypass it with <code>curl</code>. Step 9 therefore validates on the server too.</span><span lang="fr">La validation du navigateur (<code>required</code>, <code>type="email"</code>) n'est qu'un confort : n'importe qui peut la contourner avec <code>curl</code>. L'étape 9 valide donc aussi côté serveur.</span></li>
+              </ul>
+            </div>
+          </details>
+          <details class="lg-hint lg-hint--2">
+            <summary><span lang="en">Hint 2 — one field and the form tag</span><span lang="fr">Indice 2 — un champ et la balise form</span></summary>
+            <div class="lg-hint-body">
+<pre class="dark"><code>&lt;form action="clients" method="POST"&gt;
+  &lt;div class="form-group"&gt;
+    &lt;label for="name"&gt;Full Name *&lt;/label&gt;
+    &lt;input type="text" id="name" name="name" required minlength="2" maxlength="100"&gt;
+  &lt;/div&gt;
+  &lt;!-- email and phone follow the same pattern --&gt;
+  &lt;div class="form-group"&gt;
+    &lt;button type="submit" class="btn"&gt;Save Client&lt;/button&gt;
+    &lt;a href="clients" class="btn btn-secondary"&gt;Cancel&lt;/a&gt;
+  &lt;/div&gt;
+&lt;/form&gt;</code></pre>
+            </div>
+          </details>
+          <details class="lg-hint lg-hint--sol">
+            <summary><span lang="en">Solution file</span><span lang="fr">Fichier solution</span></summary>
+            <div class="lg-hint-body">
+              <p><a href="https://github.com/oplanson/esipe-javaee/blob/master/03-Labs/Lab01-FirstServlet/solution/src/main/webapp/add-client.html"><code>solution/…/webapp/add-client.html</code></a></p>
+            </div>
+          </details>
+          <div class="lg-checkpoint">
+            <div class="lg-check-label"><span lang="en">Checkpoint</span><span lang="fr">Point de contrôle</span></div>
+            <pre class="dark"><code># redeploy loop, then:
+curl -s -o /dev/null -w '%{http_code}\n' http://localhost:9080/add-client.html
+curl -s http://localhost:9080/add-client.html | grep -E 'action="clients"|name="(name|email|phone)"'</code></pre>
+            <p><span lang="en">Expected: <code>200</code> and four matching lines (the form action and the three field names). Open the page in a browser and try to submit it empty: the browser itself blocks the submission. Do not submit a valid form yet; the servlet does not handle <code>POST</code> until step 9.</span><span lang="fr">Attendu : <code>200</code> et quatre lignes correspondantes (l'action du formulaire et les trois noms de champs). Ouvrez la page dans un navigateur et essayez de l'envoyer vide : le navigateur bloque lui-même l'envoi. N'envoyez pas encore de formulaire valide ; la servlet ne gère pas le <code>POST</code> avant l'étape 9.</span></p>
+          </div>
+        </div>
+      </article>
+
+      <!-- ───────── STEP 9 ───────── -->
+      <article class="lg-step" id="step-9">
+        <div class="lg-step-head">
+          <div class="lg-step-num">9</div>
+          <div>
+            <h3><span lang="en">Handle <code>POST</code></span><span lang="fr">Traiter le <code>POST</code></span></h3>
+            <div class="lg-step-meta">
+              <span class="lg-chip">20 min</span>
+              <span class="lg-chip"><span lang="en">Course:</span><span lang="fr">Cours :</span> <a href="../../02-Lectures/slides/02-servlets/slides.html#slide-8"><span lang="en">servlets, slide 8 (PRG)</span><span lang="fr">servlets, slide 8 (PRG)</span></a></span>
+            </div>
+          </div>
+        </div>
+        <div class="lg-step-body">
+          <p class="lg-files"><span lang="en">File to modify:</span><span lang="fr">Fichier à modifier :</span> <code>src/main/java/com/bank/web/ClientListServlet.java</code></p>
+          <div class="lg-task-label"><span lang="en">Task</span><span lang="fr">À faire</span></div>
+          <p><span lang="en">Add <code>doPost</code> to <code>ClientListServlet</code>:</span><span lang="fr">Ajoutez <code>doPost</code> à <code>ClientListServlet</code> :</span></p>
+          <ol>
+            <li><span lang="en">Read the parameters <code>name</code>, <code>email</code> and <code>phone</code>.</span><span lang="fr">Lisez les paramètres <code>name</code>, <code>email</code> et <code>phone</code>.</span></li>
+            <li><span lang="en">If any of them is <code>null</code> or blank, redirect to <code>add-client.html?error=missing</code> and stop.</span><span lang="fr">Si l'un d'eux est <code>null</code> ou vide, redirigez vers <code>add-client.html?error=missing</code> et arrêtez-vous.</span></li>
+            <li><span lang="en">Otherwise compute the new id as the highest existing id plus one (<code>1</code> if the list is empty), create the <code>Client</code> with trimmed values, add it to the list and log it with <code>log(...)</code>.</span><span lang="fr">Sinon calculez le nouvel id comme l'id le plus élevé plus un (<code>1</code> si la liste est vide), créez le <code>Client</code> avec des valeurs sans espaces superflus, ajoutez-le à la liste et journalisez-le avec <code>log(...)</code>.</span></li>
+            <li><span lang="en">Redirect to <code>clients?message=success</code> instead of writing a page (Post-Redirect-Get).</span><span lang="fr">Redirigez vers <code>clients?message=success</code> au lieu d'écrire une page (Post-Redirect-Get).</span></li>
+          </ol>
+          <details class="lg-hint lg-hint--1">
+            <summary><span lang="en">Hint 1</span><span lang="fr">Indice 1</span></summary>
+            <div class="lg-hint-body">
+              <ul>
+                <li><span lang="en">Why redirect after a POST? If the servlet answered with a page, pressing F5 would resubmit the form and create a duplicate client. A redirect makes the browser reload with a harmless <code>GET</code>.</span><span lang="fr">Pourquoi rediriger après un POST ? Si la servlet répondait par une page, appuyer sur F5 renverrait le formulaire et créerait un doublon. Une redirection fait recharger le navigateur avec un <code>GET</code> sans danger.</span></li>
+                <li><span lang="en">A <code>stream</code> over the list, <code>mapToLong(Client::getId)</code>, <code>max()</code> and <code>orElse(0L)</code> give the highest id.</span><span lang="fr">Un <code>stream</code> sur la liste, <code>mapToLong(Client::getId)</code>, <code>max()</code> et <code>orElse(0L)</code> donnent l'id le plus élevé.</span></li>
+                <li><span lang="en">The blank check must be done <strong>on the server</strong>, even though the form already has <code>required</code>.</span><span lang="fr">Le contrôle des valeurs vides doit être fait <strong>côté serveur</strong>, même si le formulaire a déjà <code>required</code>.</span></li>
+              </ul>
+            </div>
+          </details>
+          <details class="lg-hint lg-hint--2">
+            <summary><span lang="en">Hint 2 — skeleton</span><span lang="fr">Indice 2 — squelette</span></summary>
+            <div class="lg-hint-body">
+<pre class="dark"><code>@Override
+protected void doPost(HttpServletRequest request, HttpServletResponse response)
+        throws ServletException, IOException {
+    String name  = request.getParameter("name");
+    String email = request.getParameter("email");
+    String phone = request.getParameter("phone");
+
+    if (name == null || name.trim().isEmpty() /* same for email and phone */) {
+        response.sendRedirect("add-client.html?error=missing");
+        return;
+    }
+
+    Long newId = clients.stream().mapToLong(Client::getId).max().orElse(0L) + 1;
+    Client newClient = new Client(newId, name.trim(), email.trim(), phone.trim());
+    clients.add(newClient);
+    log("New client added: " + newClient);
+    response.sendRedirect("clients?message=success");
+}</code></pre>
+            </div>
+          </details>
+          <details class="lg-hint lg-hint--sol">
+            <summary><span lang="en">Solution file</span><span lang="fr">Fichier solution</span></summary>
+            <div class="lg-hint-body">
+              <p><a href="https://github.com/oplanson/esipe-javaee/blob/master/03-Labs/Lab01-FirstServlet/solution/src/main/java/com/bank/web/ClientListServlet.java"><code>solution/…/web/ClientListServlet.java</code></a></p>
+            </div>
+          </details>
+          <div class="lg-checkpoint">
+            <div class="lg-check-label"><span lang="en">Checkpoint</span><span lang="fr">Point de contrôle</span></div>
+            <pre class="dark"><code># redeploy loop, then a valid submission:
+curl -si -X POST -d "name=Alice+Martin&amp;email=alice@email.com&amp;phone=%2B33-1-0000" \
+  http://localhost:9080/clients | grep -iE "^HTTP|^location"
+
+# a submission with an empty name:
+curl -si -X POST -d "name=&amp;email=a@b.c&amp;phone=1" \
+  http://localhost:9080/clients | grep -iE "^HTTP|^location"
+
+curl -s http://localhost:9080/clients | grep -E "Total Clients|Alice"</code></pre>
+            <p><span lang="en">Expected: the first call answers <code>302 Found</code> with a <code>Location</code> ending in <code>/clients?message=success</code>; the second answers <code>302</code> with a <code>Location</code> ending in <code>/add-client.html?error=missing</code>; the list now shows <code>Total Clients: 6</code> and <code>Alice Martin</code>. Then use the real form in the browser: after saving, you land on the list with the green message, and F5 does not add a duplicate.</span><span lang="fr">Attendu : le premier appel répond <code>302 Found</code> avec un <code>Location</code> se terminant par <code>/clients?message=success</code> ; le second répond <code>302</code> avec un <code>Location</code> se terminant par <code>/add-client.html?error=missing</code> ; la liste affiche maintenant <code>Total Clients: 6</code> et <code>Alice Martin</code>. Utilisez ensuite le vrai formulaire dans le navigateur : après l'enregistrement, vous arrivez sur la liste avec le message vert, et F5 n'ajoute pas de doublon.</span></p>
+          </div>
+        </div>
+      </article>
+    </section>
+
+    <!-- ═════════════ 6. RUN ═════════════ -->
+    <section class="lg-section" id="run">
+      <h2><span class="lg-sec-num">06</span><span lang="en">Run and operate</span><span lang="fr">Exécution</span></h2>
+      <table class="slide-table">
+        <thead><tr><th><span lang="en">Purpose</span><span lang="fr">Usage</span></th><th><span lang="en">Command</span><span lang="fr">Commande</span></th></tr></thead>
+        <tbody>
+          <tr><td><span lang="en">Start (or restart after a change)</span><span lang="fr">Démarrer (ou redémarrer après un changement)</span></td><td><span lang="en">the redeploy loop of the <a href="#setup">Setup</a> section</span><span lang="fr">la boucle de redéploiement de la section <a href="#setup">Préparation</a></span></td></tr>
+          <tr><td><span lang="en">Follow the server logs</span><span lang="fr">Suivre les logs du serveur</span></td><td><code>podman logs -f banking-lab01</code></td></tr>
+          <tr><td><span lang="en">Stop and clean up</span><span lang="fr">Arrêter et nettoyer</span></td><td><code>podman rm -f banking-lab01</code> <span lang="en">then</span><span lang="fr">puis</span> <code>podman rmi banking-app:lab01</code></td></tr>
+        </tbody>
+      </table>
+      <table class="slide-table">
+        <thead><tr><th>URL</th><th><span lang="en">What you get</span><span lang="fr">Ce que vous obtenez</span></th></tr></thead>
+        <tbody>
+          <tr><td><a href="http://localhost:9080/">http://localhost:9080/</a></td><td><span lang="en">Home page</span><span lang="fr">Page d'accueil</span></td></tr>
+          <tr><td><a href="http://localhost:9080/welcome">http://localhost:9080/welcome</a></td><td><span lang="en">Greeting page</span><span lang="fr">Page de bienvenue</span></td></tr>
+          <tr><td><a href="http://localhost:9080/clients">http://localhost:9080/clients</a></td><td><span lang="en">Client list</span><span lang="fr">Liste des clients</span></td></tr>
+          <tr><td><a href="http://localhost:9080/add-client.html">http://localhost:9080/add-client.html</a></td><td><span lang="en">Add-client form</span><span lang="fr">Formulaire d'ajout</span></td></tr>
+          <tr><td><a href="http://localhost:9080/health">http://localhost:9080/health</a></td><td><span lang="en">MicroProfile Health</span><span lang="fr">MicroProfile Health</span></td></tr>
+          <tr><td><a href="http://localhost:9080/metrics">http://localhost:9080/metrics</a></td><td><span lang="en">MicroProfile Metrics</span><span lang="fr">MicroProfile Metrics</span></td></tr>
+          <tr><td><a href="http://localhost:9080/openapi">http://localhost:9080/openapi</a></td><td><span lang="en">MicroProfile OpenAPI document</span><span lang="fr">Document MicroProfile OpenAPI</span></td></tr>
+        </tbody>
+      </table>
+      <div class="lg-callout lg-callout--note">
+        <div lang="en"><div class="lg-callout-title">Data lives in memory</div><p>The client list is a Java field. Restarting the container brings it back to the five sample clients. A database comes in Lab 03.</p></div>
+        <div lang="fr"><div class="lg-callout-title">Les données sont en mémoire</div><p>La liste de clients est un champ Java. Redémarrer le conteneur la ramène aux cinq clients d'exemple. Une base de données arrive au Lab 03.</p></div>
+      </div>
+      <div class="lg-callout lg-callout--warn">
+        <div lang="en"><div class="lg-callout-title">About the provided scripts</div><p>The folder contains <code>podman-test.sh</code>, which can build and test your work with <code>./podman-test.sh -dir starter</code>. Be careful: before starting, it <strong>stops and removes any container that already uses port 9080</strong>, including containers of other labs.</p></div>
+        <div lang="fr"><div class="lg-callout-title">À propos des scripts fournis</div><p>Le dossier contient <code>podman-test.sh</code>, qui peut construire et tester votre travail avec <code>./podman-test.sh -dir starter</code>. Attention : avant de démarrer, il <strong>arrête et supprime tout conteneur qui utilise déjà le port 9080</strong>, y compris ceux d'autres labs.</p></div>
+      </div>
+    </section>
+
+    <!-- ═════════════ 7. VALIDATE ═════════════ -->
+    <section class="lg-section" id="validate">
+      <h2><span class="lg-sec-num">07</span><span lang="en">Validate your work</span><span lang="fr">Valider votre travail</span></h2>
+      <p>
+        <span lang="en">Run these checks once everything is deployed. Each line shows the expected result.</span>
+        <span lang="fr">Lancez ces vérifications une fois tout déployé. Chaque ligne indique le résultat attendu.</span>
+      </p>
+      <pre class="dark"><code>B=http://localhost:9080
+
+for u in "" welcome clients add-client.html health metrics css/style.css; do
+  printf "%-18s %s\n" "/$u" "$(curl -s -o /dev/null -w '%{http_code}' $B/$u)"
+done
+
+curl -s $B/clients | grep "Total Clients"
+
+# special characters must be escaped, never executed
+curl -s -o /dev/null -X POST --data-urlencode "name=&lt;script&gt;alert(1)&lt;/script&gt;" \
+  -d "email=x@y.z&amp;phone=123" $B/clients
+curl -s $B/clients | grep "script"</code></pre>
+      <table class="slide-table">
+        <thead><tr><th><span lang="en">Check</span><span lang="fr">Contrôle</span></th><th><span lang="en">Expected result</span><span lang="fr">Résultat attendu</span></th></tr></thead>
+        <tbody>
+          <tr><td><span lang="en">Seven URLs</span><span lang="fr">Sept URL</span></td><td><span lang="en"><code>200</code> for each</span><span lang="fr"><code>200</code> pour chacune</span></td></tr>
+          <tr><td><code>Total Clients</code></td><td><code>Total Clients: 5</code> <span lang="en">on a fresh container</span><span lang="fr">sur un conteneur neuf</span></td></tr>
+          <tr><td><span lang="en"><code>script</code> payload</span><span lang="fr">Charge <code>script</code></span></td><td><code>&amp;lt;script&amp;gt;alert(1)&amp;lt;/script&amp;gt;</code> <span lang="en">(escaped text, not a live tag)</span><span lang="fr">(texte échappé, pas une balise active)</span></td></tr>
+        </tbody>
+      </table>
+      <h3><span lang="en">Validation checklist</span><span lang="fr">Checklist de validation</span></h3>
+      <ul class="lg-checklist">
+        <li><label><input type="checkbox"/><span lang="en">The project builds with <code>mvn clean package</code> and the image builds from my <code>Containerfile</code></span><span lang="fr">Le projet se construit avec <code>mvn clean package</code> et l'image se construit depuis mon <code>Containerfile</code></span></label></li>
+        <li><label><input type="checkbox"/><span lang="en"><code>/metrics</code> answers 200 thanks to my <code>server.xml</code> change</span><span lang="fr"><code>/metrics</code> répond 200 grâce à ma modification de <code>server.xml</code></span></label></li>
+        <li><label><input type="checkbox"/><span lang="en"><code>/welcome</code> shows a date that changes on each reload</span><span lang="fr"><code>/welcome</code> affiche une date qui change à chaque rechargement</span></label></li>
+        <li><label><input type="checkbox"/><span lang="en"><code>/clients</code> lists the five sample clients with the right total</span><span lang="fr"><code>/clients</code> liste les cinq clients d'exemple avec le bon total</span></label></li>
+        <li><label><input type="checkbox"/><span lang="en">The form adds a client and I land on the list with the green message</span><span lang="fr">Le formulaire ajoute un client et j'arrive sur la liste avec le message vert</span></label></li>
+        <li><label><input type="checkbox"/><span lang="en">Pressing F5 after saving does not create a duplicate</span><span lang="fr">Appuyer sur F5 après l'enregistrement ne crée pas de doublon</span></label></li>
+        <li><label><input type="checkbox"/><span lang="en">A <code>curl</code> POST with an empty field is redirected to <code>add-client.html?error=missing</code></span><span lang="fr">Un POST <code>curl</code> avec un champ vide est redirigé vers <code>add-client.html?error=missing</code></span></label></li>
+        <li><label><input type="checkbox"/><span lang="en">HTML special characters in a name are escaped in the table</span><span lang="fr">Les caractères spéciaux HTML d'un nom sont échappés dans le tableau</span></label></li>
+        <li><label><input type="checkbox"/><span lang="en">I can explain why the client list is a <code>CopyOnWriteArrayList</code> and why the servlet redirects after a POST</span><span lang="fr">Je sais expliquer pourquoi la liste de clients est une <code>CopyOnWriteArrayList</code> et pourquoi la servlet redirige après un POST</span></label></li>
+      </ul>
+    </section>
+
+    <!-- ═════════════ 8. COMPARE ═════════════ -->
+    <section class="lg-section" id="compare">
+      <h2><span class="lg-sec-num">08</span><span lang="en">Compare with the solution</span><span lang="fr">Comparer à la solution</span></h2>
+      <p>
+        <span lang="en">Your code does not have to match the solution character by character: comments, formatting and the exact HTML may differ. Behaviour must match. To see where you differ:</span>
+        <span lang="fr">Votre code n'a pas à être identique à la solution caractère par caractère : commentaires, mise en forme et HTML exact peuvent différer. Le comportement doit être le même. Pour voir où vous différez :</span>
+      </p>
+      <pre class="dark"><code>cd 03-Labs/Lab01-FirstServlet
+diff -rq starter solution -x target -x docs
+diff -u solution/src/main/java/com/bank/web/ClientListServlet.java \
+        starter/src/main/java/com/bank/web/ClientListServlet.java</code></pre>
+      <h3><span lang="en">Differences that are expected</span><span lang="fr">Différences attendues</span></h3>
+      <ul>
+        <li><span lang="en"><code>pom.xml</code>: the solution targets WildFly; keep yours (see the warning in section 2).</span><span lang="fr"><code>pom.xml</code> : la solution cible WildFly ; gardez le vôtre (voir l'avertissement de la section 2).</span></li>
+        <li><span lang="en"><code>src/main/liberty/config/server.xml</code>: the solution also has the demo <code>&lt;quickStartSecurity&gt;</code> element (see step 4).</span><span lang="fr"><code>src/main/liberty/config/server.xml</code> : la solution contient aussi l'élément de démo <code>&lt;quickStartSecurity&gt;</code> (voir l'étape 4).</span></li>
+        <li><span lang="en">Documentation files that exist only in the solution: <code>CONTAINERFILE.md</code>, <code>prompt_doc.txt</code>, and the two <code>README.md</code> files under <code>src/main/liberty/config</code> and <code>src/main/resources/META-INF</code>.</span><span lang="fr">Fichiers de documentation présents uniquement dans la solution : <code>CONTAINERFILE.md</code>, <code>prompt_doc.txt</code>, et les deux <code>README.md</code> sous <code>src/main/liberty/config</code> et <code>src/main/resources/META-INF</code>.</span></li>
+        <li><span lang="en">Your <code>starter/</code> may also contain a <code>target/</code> folder: it is a build output, ignored by Git.</span><span lang="fr">Votre <code>starter/</code> peut aussi contenir un dossier <code>target/</code> : c'est un résultat de build, ignoré par Git.</span></li>
+      </ul>
+      <h3><span lang="en">Points to look for in your code</span><span lang="fr">Points à examiner dans votre code</span></h3>
+      <ul>
+        <li><span lang="en">Is the list thread-safe, and can you say why?</span><span lang="fr">La liste est-elle thread-safe, et pouvez-vous dire pourquoi ?</span></li>
+        <li><span lang="en">Is every printed client field escaped?</span><span lang="fr">Chaque champ client affiché est-il échappé ?</span></li>
+        <li><span lang="en">Does <code>doPost</code> redirect instead of writing a page?</span><span lang="fr"><code>doPost</code> redirige-t-elle au lieu d'écrire une page ?</span></li>
+        <li><span lang="en">Are the URLs in the pages relative (no leading slash)?</span><span lang="fr">Les URL des pages sont-elles relatives (sans slash initial) ?</span></li>
+      </ul>
+    </section>
+
+    <!-- ═════════════ 9. TROUBLESHOOTING ═════════════ -->
+    <section class="lg-section" id="trouble">
+      <h2><span class="lg-sec-num">09</span><span lang="en">Troubleshooting</span><span lang="fr">Dépannage</span></h2>
+      <table class="slide-table">
+        <thead><tr><th><span lang="en">Symptom</span><span lang="fr">Symptôme</span></th><th><span lang="en">Cause and fix</span><span lang="fr">Cause et correction</span></th></tr></thead>
+        <tbody>
+          <tr>
+            <td><code>cannot bind tcp port :9080: address already in use</code></td>
+            <td><span lang="en">Another program or container uses port 9080. Find it with <code>lsof -i :9080</code> (macOS/Linux), or publish on another port with <code>-p 127.0.0.1:9081:9080</code> and use <code>localhost:9081</code>.</span><span lang="fr">Un autre programme ou conteneur utilise le port 9080. Trouvez-le avec <code>lsof -i :9080</code> (macOS/Linux), ou publiez sur un autre port avec <code>-p 127.0.0.1:9081:9080</code> et utilisez <code>localhost:9081</code>.</span></td>
+          </tr>
+          <tr>
+            <td><code>the container name "banking-lab01" is already in use</code></td>
+            <td><span lang="en">A previous container still exists. Run <code>podman rm -f banking-lab01</code> (the redeploy loop already does it).</span><span lang="fr">Un conteneur précédent existe encore. Lancez <code>podman rm -f banking-lab01</code> (la boucle de redéploiement le fait déjà).</span></td>
+          </tr>
+          <tr>
+            <td><code>COPY … no such file or directory</code></td>
+            <td><span lang="en">A file named in the <code>Containerfile</code> is missing: usually <code>target/banking-app.war</code> (run <code>mvn clean package</code> first) or <code>microprofile-config.properties</code> (check the path and spelling).</span><span lang="fr">Un fichier cité dans le <code>Containerfile</code> est absent : souvent <code>target/banking-app.war</code> (lancez d'abord <code>mvn clean package</code>) ou <code>microprofile-config.properties</code> (vérifiez le chemin et l'orthographe).</span></td>
+          </tr>
+          <tr>
+            <td><span lang="en"><code>/welcome</code> or <code>/clients</code> still return 404</span><span lang="fr"><code>/welcome</code> ou <code>/clients</code> renvoient encore 404</span></td>
+            <td><span lang="en">The running container is an old image. Run the whole redeploy loop. Also check the <code>@WebServlet</code> pattern, the package folder (<code>com/bank/web</code>) and that <code>mvn</code> compiled without error.</span><span lang="fr">Le conteneur en cours est une ancienne image. Relancez toute la boucle de redéploiement. Vérifiez aussi le motif <code>@WebServlet</code>, le dossier du package (<code>com/bank/web</code>) et que <code>mvn</code> a compilé sans erreur.</span></td>
+          </tr>
+          <tr>
+            <td><code>/metrics</code> → 403 <code>must be accessed with a secure connection</code></td>
+            <td><span lang="en">The <code>mpMetrics</code> element is missing or misplaced in <code>server.xml</code> (step 4). It must be a direct child of <code>&lt;server&gt;</code>; rebuild the image after editing.</span><span lang="fr">L'élément <code>mpMetrics</code> manque ou est mal placé dans <code>server.xml</code> (étape 4). Il doit être un enfant direct de <code>&lt;server&gt;</code> ; reconstruisez l'image après modification.</span></td>
+          </tr>
+          <tr>
+            <td><code>package javax.servlet does not exist</code> / <code>package jakarta.servlet does not exist</code></td>
+            <td><span lang="en">Servlet 6.0 uses the <code>jakarta.*</code> namespace; replace any <code>javax.servlet</code> import. If <code>jakarta.servlet</code> is not found, the dependency in <code>pom.xml</code> was altered.</span><span lang="fr">Servlet 6.0 utilise l'espace de noms <code>jakarta.*</code> ; remplacez tout import <code>javax.servlet</code>. Si <code>jakarta.servlet</code> est introuvable, la dépendance du <code>pom.xml</code> a été modifiée.</span></td>
+          </tr>
+          <tr>
+            <td><span lang="en">Accents or emoji are garbled</span><span lang="fr">Accents ou emoji illisibles</span></td>
+            <td><span lang="en">Set the content type with the charset (<code>text/html;charset=UTF-8</code>) <strong>before</strong> <code>getWriter()</code>, and save your source files as UTF-8.</span><span lang="fr">Fixez le type de contenu avec le jeu de caractères (<code>text/html;charset=UTF-8</code>) <strong>avant</strong> <code>getWriter()</code>, et enregistrez vos fichiers source en UTF-8.</span></td>
+          </tr>
+          <tr>
+            <td><code>Cannot connect to Podman</code></td>
+            <td><span lang="en">On macOS and Windows the Podman virtual machine is stopped: <code>podman machine start</code>.</span><span lang="fr">Sur macOS et Windows la machine virtuelle Podman est arrêtée : <code>podman machine start</code>.</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- ═════════════ 10. BONUS ═════════════ -->
+    <section class="lg-section" id="bonus">
+      <h2><span class="lg-sec-num">10</span><span lang="en">Go further</span><span lang="fr">Pour aller plus loin</span></h2>
+      <ul>
+        <li><span lang="en"><strong>Error pages.</strong> <code>web.xml</code> already points to <code>/error-404.html</code> and <code>/error-500.html</code>, but neither file exists. Create them and check what <code>/nope</code> now returns.</span><span lang="fr"><strong>Pages d'erreur.</strong> <code>web.xml</code> référence déjà <code>/error-404.html</code> et <code>/error-500.html</code>, mais aucun des deux fichiers n'existe. Créez-les et vérifiez ce que renvoie maintenant <code>/nope</code>.</span></li>
+        <li><span lang="en"><strong>Search.</strong> Add a <code>?q=</code> parameter to <code>/clients</code> that filters by name or email.</span><span lang="fr"><strong>Recherche.</strong> Ajoutez un paramètre <code>?q=</code> à <code>/clients</code> qui filtre par nom ou email.</span></li>
+        <li><span lang="en"><strong>Details page.</strong> A servlet at <code>/client?id=1</code> showing one client.</span><span lang="fr"><strong>Page de détail.</strong> Une servlet sur <code>/client?id=1</code> qui affiche un client.</span></li>
+        <li><span lang="en"><strong>Delete.</strong> A delete button per row. Which HTTP method should it use, and why?</span><span lang="fr"><strong>Suppression.</strong> Un bouton de suppression par ligne. Quelle méthode HTTP utiliser, et pourquoi ?</span></li>
+        <li><span lang="en"><strong>Server-side validation.</strong> Reject names shorter than 2 characters and malformed emails or phones in <code>doPost</code>.</span><span lang="fr"><strong>Validation côté serveur.</strong> Refusez dans <code>doPost</code> les noms de moins de 2 caractères et les emails ou téléphones mal formés.</span></li>
+        <li><span lang="en"><strong>Session counter.</strong> Use <code>HttpSession</code> to show how many times the visitor viewed the list.</span><span lang="fr"><strong>Compteur de session.</strong> Utilisez <code>HttpSession</code> pour afficher combien de fois le visiteur a consulté la liste.</span></li>
+        <li><span lang="en"><strong>A subtle race.</strong> The list is thread-safe, yet two simultaneous POSTs can compute the same new id. Why? How would you fix it (hint: <code>AtomicLong</code>, or <code>synchronized</code>)?</span><span lang="fr"><strong>Une course subtile.</strong> La liste est thread-safe, pourtant deux POST simultanés peuvent calculer le même nouvel id. Pourquoi ? Comment corriger (indice : <code>AtomicLong</code>, ou <code>synchronized</code>) ?</span></li>
+      </ul>
+      <div class="lg-callout lg-callout--tip">
+        <div lang="en"><div class="lg-callout-title">Next</div><p>Lab 02 turns these servlets into a clean MVC application with JSP views, filters and listeners.</p></div>
+        <div lang="fr"><div class="lg-callout-title">Suite</div><p>Le Lab 02 transforme ces servlets en une application MVC propre avec des vues JSP, des filtres et des listeners.</p></div>
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<footer class="site-footer">Made with IBM Bob &nbsp;&middot;&nbsp; &copy; 2026 Olivier Planson</footer>
+</body>
+</html>

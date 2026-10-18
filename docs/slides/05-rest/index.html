@@ -1,0 +1,90 @@
+<!-- © Copyright 2026 Olivier Planson. All rights reserved. Reproduction prohibited. Made with IBM Bob. -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>ESIPE — Lecture 5: JAX-RS and RESTful Web Services</title>
+  <link rel="stylesheet" href="../assets/slide.css"/>
+</head>
+<body>
+<header class="site-header">
+  <a class="brand" href="../index.html">ESIPE<span>Jakarta EE &amp; Microservices</span></a>
+  <a class="back-link" href="../index.html">&#8592; All Courses</a>
+</header>
+<main class="course-overview">
+  <h1>Lecture 5: JAX-RS and RESTful Web Services</h1>
+  <p class="subtitle">Lecture 5: JAX-RS and RESTful Services</p>
+  <div class="meta-tile">
+    
+    
+    
+    <span><strong>Slides:</strong> 88 slides</span>
+  </div>
+  <h2 style="font-size:1rem;font-weight:600;margin:1.5rem 0 .75rem;">&#128218; Course outline</h2>
+  <ol class="plan-list">
+    <li><a href="slides.html#slide-1">Jakarta EE and Microservices Course</a></li>
+    <li><a href="slides.html#slide-2">📋 Lecture Outline</a></li>
+    <li><a href="slides.html#slide-4">📚 Prerequisites</a></li>
+    <li><a href="slides.html#slide-7">REST Architectural Constraints</a></li>
+    <li><a href="slides.html#slide-8">REST Architectural Constraints (cont.)</a></li>
+    <li><a href="slides.html#slide-9">Richardson Maturity Model</a></li>
+    <li><a href="slides.html#slide-10">Level 0: The Swamp of POX</a></li>
+    <li><a href="slides.html#slide-11">Level 1: Resources</a></li>
+    <li><a href="slides.html#slide-12">Level 2: HTTP Verbs</a></li>
+    <li><a href="slides.html#slide-13">Level 3: Hypermedia Controls (HATEOAS)</a></li>
+    <li><a href="slides.html#slide-16">Which Level Should You Target?</a></li>
+    <li><a href="slides.html#slide-17">REST Architectural Constraints (cont.)</a></li>
+    <li><a href="slides.html#slide-18">HTTP Methods and CRUD</a></li>
+    <li><a href="slides.html#slide-19">HTTP Status Codes</a></li>
+    <li><a href="slides.html#slide-20">RESTful Resource Design</a></li>
+    <li><a href="slides.html#slide-21">REST vs SOAP</a></li>
+    <li><a href="slides.html#slide-26">JAX-RS Key Annotations</a></li>
+    <li><a href="slides.html#slide-27">Simple JAX-RS Resource</a></li>
+    <li><a href="slides.html#slide-28">JAX-RS Application Configuration</a></li>
+    <li><a href="slides.html#slide-30">Complete Client Resource (cont.)</a></li>
+    <li><a href="slides.html#slide-32">Response Building</a></li>
+    <li><a href="slides.html#slide-33">Sub-Resources</a></li>
+    <li><a href="slides.html#slide-34">Jakarta JSON Binding</a></li>
+    <li><a href="slides.html#slide-36">JSON-B Features</a></li>
+    <li><a href="slides.html#slide-37">Basic JSON-B Usage</a></li>
+    <li><a href="slides.html#slide-38">JSON-B Annotations</a></li>
+    <li><a href="slides.html#slide-39">JSON-B Naming Strategies</a></li>
+    <li><a href="slides.html#slide-40">JSON-B with JAX-RS</a></li>
+    <li><a href="slides.html#slide-41">Custom JSON-B Adapters</a></li>
+    <li><a href="slides.html#slide-42">JSON-B Collections</a></li>
+    <li><a href="slides.html#slide-43">Handling Circular References with JSON-B</a></li>
+    <li><a href="slides.html#slide-44">Circular Reference Solutions</a></li>
+    <li><a href="slides.html#slide-45">Circular Reference Solutions (cont.)</a></li>
+    <li><a href="slides.html#slide-46">Circular Reference Solutions (cont.)</a></li>
+    <li><a href="slides.html#slide-48">Robust REST APIs</a></li>
+    <li><a href="slides.html#slide-50">Custom Exception Classes</a></li>
+    <li><a href="slides.html#slide-51">Error Response DTO</a></li>
+    <li><a href="slides.html#slide-53">Bean Validation (Jakarta Validation)</a></li>
+    <li><a href="slides.html#slide-54">Validation in JAX-RS</a></li>
+    <li><a href="slides.html#slide-55">Validation Exception Mapper</a></li>
+    <li><a href="slides.html#slide-56">Global Exception Mapper</a></li>
+    <li><a href="slides.html#slide-57">Type-Safe REST Client</a></li>
+    <li><a href="slides.html#slide-59">Rest Client Interface</a></li>
+    <li><a href="slides.html#slide-60">Rest Client Configuration</a></li>
+    <li><a href="slides.html#slide-63">Rest Client with Headers</a></li>
+    <li><a href="slides.html#slide-64">Rest Client Programmatic Creation</a></li>
+    <li><a href="slides.html#slide-65">Combining Technologies</a></li>
+    <li><a href="slides.html#slide-66">CDI Producers for Rest Clients</a></li>
+    <li><a href="slides.html#slide-67">CDI Interceptors with REST</a></li>
+    <li><a href="slides.html#slide-68">CDI Events with REST</a></li>
+    <li><a href="slides.html#slide-69">CDI Qualifiers with REST Clients</a></li>
+    <li><a href="slides.html#slide-74">Lab 5 Architecture</a></li>
+    <li><a href="slides.html#slide-75">Lab 5 REST Endpoints</a></li>
+    <li><a href="slides.html#slide-76">Lab 5 REST Endpoints (cont.)</a></li>
+    <li><a href="slides.html#slide-78">Lab 5 Deliverables</a></li>
+    <li><a href="slides.html#slide-80">What We Learned Today</a></li>
+    <li><a href="slides.html#slide-81">What We Learned Today (cont.)</a></li>
+    <li><a href="slides.html#slide-83">Common Pitfalls to Avoid</a></li>
+    <li><a href="slides.html#slide-86">Questions?</a></li>
+  </ol>
+  <a class="start-btn" href="slides.html#slide-1">&#9654; Start course</a>
+</main>
+<footer class="site-footer">Made with IBM Bob &nbsp;&middot;&nbsp; &copy; 2026 Olivier Planson</footer>
+</body>
+</html>

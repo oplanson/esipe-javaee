@@ -1,0 +1,2461 @@
+<!-- © Copyright 2026 Olivier Planson. All rights reserved. Reproduction prohibited. Made with IBM Bob. -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>ESIPE — Lecture 7: Hexagonal Architecture — Slides</title>
+  <link rel="stylesheet" href="../assets/slide.css"/>
+  <style>
+/* suppress static .current when a slide is targeted */
+body:has(.slide:target) .progress-bar a.current { background: var(--bg); color: var(--muted); border-color: var(--border); }
+body:has(#slide-1:target) .progress-bar a[href="#slide-1"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-2:target) .progress-bar a[href="#slide-2"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-3:target) .progress-bar a[href="#slide-3"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-4:target) .progress-bar a[href="#slide-4"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-5:target) .progress-bar a[href="#slide-5"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-6:target) .progress-bar a[href="#slide-6"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-7:target) .progress-bar a[href="#slide-7"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-8:target) .progress-bar a[href="#slide-8"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-9:target) .progress-bar a[href="#slide-9"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-10:target) .progress-bar a[href="#slide-10"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-11:target) .progress-bar a[href="#slide-11"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-12:target) .progress-bar a[href="#slide-12"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-13:target) .progress-bar a[href="#slide-13"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-14:target) .progress-bar a[href="#slide-14"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-15:target) .progress-bar a[href="#slide-15"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-16:target) .progress-bar a[href="#slide-16"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-17:target) .progress-bar a[href="#slide-17"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-18:target) .progress-bar a[href="#slide-18"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-19:target) .progress-bar a[href="#slide-19"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-20:target) .progress-bar a[href="#slide-20"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-21:target) .progress-bar a[href="#slide-21"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-22:target) .progress-bar a[href="#slide-22"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-23:target) .progress-bar a[href="#slide-23"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-24:target) .progress-bar a[href="#slide-24"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-25:target) .progress-bar a[href="#slide-25"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-26:target) .progress-bar a[href="#slide-26"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-27:target) .progress-bar a[href="#slide-27"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-28:target) .progress-bar a[href="#slide-28"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-29:target) .progress-bar a[href="#slide-29"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-30:target) .progress-bar a[href="#slide-30"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-31:target) .progress-bar a[href="#slide-31"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-32:target) .progress-bar a[href="#slide-32"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-33:target) .progress-bar a[href="#slide-33"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-34:target) .progress-bar a[href="#slide-34"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-35:target) .progress-bar a[href="#slide-35"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-36:target) .progress-bar a[href="#slide-36"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-37:target) .progress-bar a[href="#slide-37"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-38:target) .progress-bar a[href="#slide-38"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-39:target) .progress-bar a[href="#slide-39"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-40:target) .progress-bar a[href="#slide-40"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-41:target) .progress-bar a[href="#slide-41"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-42:target) .progress-bar a[href="#slide-42"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-43:target) .progress-bar a[href="#slide-43"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-44:target) .progress-bar a[href="#slide-44"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-45:target) .progress-bar a[href="#slide-45"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-46:target) .progress-bar a[href="#slide-46"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-47:target) .progress-bar a[href="#slide-47"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-48:target) .progress-bar a[href="#slide-48"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-49:target) .progress-bar a[href="#slide-49"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-50:target) .progress-bar a[href="#slide-50"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-51:target) .progress-bar a[href="#slide-51"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-52:target) .progress-bar a[href="#slide-52"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-53:target) .progress-bar a[href="#slide-53"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-54:target) .progress-bar a[href="#slide-54"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-55:target) .progress-bar a[href="#slide-55"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-56:target) .progress-bar a[href="#slide-56"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-57:target) .progress-bar a[href="#slide-57"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-58:target) .progress-bar a[href="#slide-58"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-59:target) .progress-bar a[href="#slide-59"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-60:target) .progress-bar a[href="#slide-60"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-61:target) .progress-bar a[href="#slide-61"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-62:target) .progress-bar a[href="#slide-62"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-63:target) .progress-bar a[href="#slide-63"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-64:target) .progress-bar a[href="#slide-64"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-65:target) .progress-bar a[href="#slide-65"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-66:target) .progress-bar a[href="#slide-66"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-67:target) .progress-bar a[href="#slide-67"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-68:target) .progress-bar a[href="#slide-68"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-69:target) .progress-bar a[href="#slide-69"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-70:target) .progress-bar a[href="#slide-70"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-71:target) .progress-bar a[href="#slide-71"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+  </style>
+</head>
+<body>
+<header class="site-header">
+  <a class="brand" href="../index.html">ESIPE<span>Jakarta EE &amp; Microservices</span></a>
+  <!-- EN/FR language toggle -->
+  <div class="lang-toggle" id="lang-toggle">
+    <button id="btn-en" class="active">EN</button>
+    <span class="sep">|</span>
+    <button id="btn-fr">FR</button>
+  </div>
+  <a class="back-link" href="../index.html">&#8592; All Courses</a>
+</header>
+<!-- Thin trigger strip at top: hover to reveal progress bar -->
+<div class="progress-bar-trigger" id="pb-trigger"></div>
+<!-- Progress bar — hidden by default, revealed on hover -->
+<div class="progress-bar-wrap" id="pb-wrap">
+  <div class="progress-bar">
+    <a href="#slide-1" class="current">1</a>
+      <a href="#slide-2">2</a>
+      <a href="#slide-3">3</a>
+      <a href="#slide-4">4</a>
+      <a href="#slide-5">5</a>
+      <a href="#slide-6">6</a>
+      <a href="#slide-7">7</a>
+      <a href="#slide-8">8</a>
+      <a href="#slide-9">9</a>
+      <a href="#slide-10">10</a>
+      <a href="#slide-11">11</a>
+      <a href="#slide-12">12</a>
+      <a href="#slide-13">13</a>
+      <a href="#slide-14">14</a>
+      <a href="#slide-15">15</a>
+      <a href="#slide-16">16</a>
+      <a href="#slide-17">17</a>
+      <a href="#slide-18">18</a>
+      <a href="#slide-19">19</a>
+      <a href="#slide-20">20</a>
+      <a href="#slide-21">21</a>
+      <a href="#slide-22">22</a>
+      <a href="#slide-23">23</a>
+      <a href="#slide-24">24</a>
+      <a href="#slide-25">25</a>
+      <a href="#slide-26">26</a>
+      <a href="#slide-27">27</a>
+      <a href="#slide-28">28</a>
+      <a href="#slide-29">29</a>
+      <a href="#slide-30">30</a>
+      <a href="#slide-31">31</a>
+      <a href="#slide-32">32</a>
+      <a href="#slide-33">33</a>
+      <a href="#slide-34">34</a>
+      <a href="#slide-35">35</a>
+      <a href="#slide-36">36</a>
+      <a href="#slide-37">37</a>
+      <a href="#slide-38">38</a>
+      <a href="#slide-39">39</a>
+      <a href="#slide-40">40</a>
+      <a href="#slide-41">41</a>
+      <a href="#slide-42">42</a>
+      <a href="#slide-43">43</a>
+      <a href="#slide-44">44</a>
+      <a href="#slide-45">45</a>
+      <a href="#slide-46">46</a>
+      <a href="#slide-47">47</a>
+      <a href="#slide-48">48</a>
+      <a href="#slide-49">49</a>
+      <a href="#slide-50">50</a>
+      <a href="#slide-51">51</a>
+      <a href="#slide-52">52</a>
+      <a href="#slide-53">53</a>
+      <a href="#slide-54">54</a>
+      <a href="#slide-55">55</a>
+      <a href="#slide-56">56</a>
+      <a href="#slide-57">57</a>
+      <a href="#slide-58">58</a>
+      <a href="#slide-59">59</a>
+      <a href="#slide-60">60</a>
+      <a href="#slide-61">61</a>
+      <a href="#slide-62">62</a>
+      <a href="#slide-63">63</a>
+      <a href="#slide-64">64</a>
+      <a href="#slide-65">65</a>
+      <a href="#slide-66">66</a>
+      <a href="#slide-67">67</a>
+      <a href="#slide-68">68</a>
+      <a href="#slide-69">69</a>
+      <a href="#slide-70">70</a>
+      <a href="#slide-71">71</a>
+  </div>
+</div>
+<!-- Thin trigger strip at left: hover to reveal sidenav -->
+<div class="sidenav-trigger" id="sidenav-trigger"></div>
+<div class="shell">
+  <nav class="sidenav" id="sidenav">
+    <div class="sidenav-section">Course outline</div>
+    <a href="#slide-1" class="active">Ports and Adapters for Clean, Testable Applications</a>
+    <a href="#slide-4">🏛️ Architecture Evolution</a>
+    <a href="#slide-5">🔄 Dependency Inversion Principle (DIP)</a>
+    <a href="#slide-6">🔄 Dependency Inversion Principle (DIP)</a>
+    <a href="#slide-8">🔌 Ports and Adapters Explained</a>
+    <a href="#slide-9">🔌 Ports and Adapters Explained</a>
+    <a href="#slide-13">🎯 Primary vs Secondary Ports</a>
+    <a href="#slide-14">🎯 Primary vs Secondary Ports</a>
+    <a href="#slide-15">🏗️ Package Structure</a>
+    <a href="#slide-16">🔄 Dependency Flow</a>
+    <a href="#slide-17">🔄 Dependency Flow</a>
+    <a href="#slide-18">💡 Dependency Inversion in Practice</a>
+    <a href="#slide-19">💡 Dependency Inversion in Practice</a>
+    <a href="#slide-27">🗺️ Domain-Infrastructure Mapping</a>
+    <a href="#slide-28">🗺️ Domain-Infrastructure Mapping</a>
+    <a href="#slide-29">🗺️ Domain-Infrastructure Mapping</a>
+    <a href="#slide-30">🎭 Multiple Adapters for Same Port</a>
+    <a href="#slide-31">🎭 Multiple Adapters for Same Port</a>
+    <a href="#slide-32">🧩 Clean Architecture Principles</a>
+    <a href="#slide-33">🧩 Clean Architecture Principles</a>
+    <a href="#slide-34">🔄 Refactoring from DDD to Hexagonal</a>
+    <a href="#slide-35">🔄 Refactoring from DDD to Hexagonal</a>
+    <a href="#slide-36">🔄 Refactoring Steps</a>
+    <a href="#slide-37">🔄 Refactoring Steps</a>
+    <a href="#slide-38">🔄 Refactoring Steps</a>
+    <a href="#slide-39">🔄 Refactoring Steps</a>
+    <a href="#slide-40">🔄 Refactoring Steps</a>
+    <a href="#slide-41">🔄 Refactoring Steps</a>
+    <a href="#slide-47">⚠️ Common Pitfalls</a>
+    <a href="#slide-48">⚠️ Common Pitfalls</a>
+    <a href="#slide-49">⚠️ Common Pitfalls</a>
+    <a href="#slide-50">⚠️ Common Pitfalls</a>
+    <a href="#slide-51">⚠️ Common Pitfalls</a>
+    <a href="#slide-59">🔄 Migration Strategy</a>
+    <a href="#slide-60">🛠️ Tools and Frameworks</a>
+    <a href="#slide-66">🎯 Lab 07 Preview</a>
+    <a href="#slide-67">📖 Further Reading</a>
+    <a href="#slide-69">❓ Questions &amp; Discussion</a>
+    <hr>
+    <div class="sidenav-section">Navigation</div>
+    <a href="index.html">&#9675; Overview</a>
+  </nav>
+  <main class="content">
+    <div class="slide-wrapper">
+<section id="slide-1" class="slide slide--title">
+<h1 data-en="Lecture 7: Hexagonal Architecture" data-fr="Lecture 7: Architecture hexagonale">Lecture 7: Hexagonal Architecture</h1>
+<h2>Ports and Adapters for Clean, Testable Applications</h2>
+<div class="slide-meta"><span><strong>Duration:</strong> 3 hours</span><span><strong>Instructor:</strong> Olivier Planson</span><span><strong>Date:</strong> January 2026</span><span><strong>Course:</strong> Jakarta EE, MicroProfile and Microservices</span></div>
+<span class="slide-counter">1 / 71</span>
+<div class="slide-nav">
+  <a class="disabled">&#8592; Previous</a>
+  <span class="slide-info">Slide 1 / 71 &nbsp;&middot;&nbsp; Lecture 7: Hexagonal Architecture</span>
+  <a href="#slide-2">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-2" class="slide">
+<h2 data-en="📋 Learning Objectives" data-fr="📋 Objectifs pédagogiques">📋 Learning Objectives</h2>
+<p data-en="By the end of this lecture, you will be able to:" data-fr="À la fin de cette leçon, vous serez en mesure de:">By the end of this lecture, you will be able to:</p>
+<table class="slide-table"><thead><tr><th></th><th></th></tr></thead><tbody>
+<tr><td>✅</td><td>Understand hexagonal architecture principles and benefits</td></tr>
+<tr><td>✅</td><td>Apply the Ports and Adapters pattern</td></tr>
+<tr><td>✅</td><td>Implement Dependency Inversion Principle (DIP)</td></tr>
+<tr><td>✅</td><td>Design clean architecture with proper layer separation</td></tr>
+<tr><td>✅</td><td>Create testable applications with mock adapters</td></tr>
+<tr><td>✅</td><td>Refactor DDD code to hexagonal architecture</td></tr>
+</tbody></table>
+
+<span class="slide-counter">2 / 71</span>
+<div class="slide-nav">
+  <a href="#slide-1">&#8592; Previous</a>
+  <span class="slide-info">Slide 2 / 71 &nbsp;&middot;&nbsp; Lecture 7: Hexagonal Architecture</span>
+  <a href="#slide-3">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-3" class="slide">
+<h2 data-en="🎯 What is Hexagonal Architecture?" data-fr="🎯 Qu'est-ce que Architecture hexagonale?">🎯 What is Hexagonal Architecture?</h2>
+<p data-en="<strong>Hexagonal Architecture</strong> (also known as <strong>Ports and Adapters</strong>) is an architectural pattern that aims to create loosely coupled application components that can be easily connected to their software environment through ports and adapters." data-fr="Architecture hexagonale (also known as Ports and Adapters) is an architectural pattern that aims to create loosely coupled application components that can be easily connected to their software environment through ports and adapters."><strong>Hexagonal Architecture</strong> (also known as <strong>Ports and Adapters</strong>) is an architectural pattern that aims to create loosely coupled application components that can be easily connected to their software environment through ports and adapters.</p>
+<h3>Core Philosophy:</h3>
+<ul>
+<li><strong>Domain logic is independent</strong> of external concerns</li>
+<li><strong>Technology decisions are deferred</strong> to the edges</li>
+<li><strong>Business rules don't depend</strong> on frameworks or databases</li>
+<li data-en="<strong>Testing is easier</strong> with mock adapters" data-fr="Tests is easier with mock adapters"><strong>Testing is easier</strong> with mock adapters</li>
+</ul>
+<h3>Key Benefits:</h3>
+<ul>
+<li><strong>Testability:</strong> Easy to test business logic in isolation</li>
+<li><strong>Flexibility:</strong> Swap implementations without changing core logic</li>
+<li><strong>Maintainability:</strong> Clear separation of concerns</li>
+<li><strong>Technology independence:</strong> Not tied to specific frameworks</li>
+</ul>
+
+<span class="slide-counter">3 / 71</span>
+<div class="slide-nav">
+  <a href="#slide-2">&#8592; Previous</a>
+  <span class="slide-info">Slide 3 / 71 &nbsp;&middot;&nbsp; Lecture 7: Hexagonal Architecture</span>
+  <a href="#slide-4">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-4" class="slide">
+<h2>🏛️ Architecture Evolution</h2>
+<h3>Traditional Layered Architecture</h3>
+<p><img src="../../images/07-hexagonal-architecture-diagram-1.png" alt="width:70%"></p>
+<p><strong>Problem:</strong> Dependencies flow downward, making business logic depend on infrastructure.</p>
+
+<span class="slide-counter">4 / 71</span>
+<div class="slide-nav">
+  <a href="#slide-3">&#8592; Previous</a>
+  <span class="slide-info">Slide 4 / 71 &nbsp;&middot;&nbsp; Lecture 7: Hexagonal Architecture</span>
+  <a href="#slide-5">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-5" class="slide">
+<h2>🔄 Dependency Inversion Principle (DIP)</h2>
+<p><strong>Traditional Dependency:</strong></p>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>// Business logic depends on infrastructure
+public class AccountService {
+    private AccountRepository repository;  // Concrete class
+    
+    public void transfer(Long from, Long to, BigDecimal amount) {
+        Account source = repository.findById(from);  // Depends on DB
+        Account target = repository.findById(to);
+        // Business logic...
+    }
+}</code></pre>
+<p><strong>Problem:</strong> Business logic is tightly coupled to database implementation.</p>
+
+<span class="slide-counter">5 / 71</span>
+<div class="slide-nav">
+  <a href="#slide-4">&#8592; Previous</a>
+  <span class="slide-info">Slide 5 / 71 &nbsp;&middot;&nbsp; Lecture 7: Hexagonal Architecture</span>
+  <a href="#slide-6">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-6" class="slide">
+<h2>🔄 Dependency Inversion Principle (DIP)</h2>
+<p><strong>Inverted Dependency:</strong></p>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>// Business logic defines interface (port)
+public interface AccountPort {
+    Account findById(Long id);
+    void save(Account account);
+}
+
+// Business logic depends on abstraction
+public class TransferUseCase {
+    private AccountPort accountPort;  // Interface, not implementation
+    
+    public void execute(Long from, Long to, BigDecimal amount) {
+        Account source = accountPort.findById(from);  // No DB dependency
+        Account target = accountPort.findById(to);
+        // Business logic...
+    }
+}</code></pre>
+<p><strong>Solution:</strong> Infrastructure implements business-defined interfaces.</p>
+
+<span class="slide-counter">6 / 71</span>
+<div class="slide-nav">
+  <a href="#slide-5">&#8592; Previous</a>
+  <span class="slide-info">Slide 6 / 71 &nbsp;&middot;&nbsp; Lecture 7: Hexagonal Architecture</span>
+  <a href="#slide-7">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-7" class="slide">
+<h2 data-en="🏗️ Hexagonal Architecture Structure" data-fr="🏗️ Architecture hexagonale Structure">🏗️ Hexagonal Architecture Structure</h2>
+<p><img src="../../images/07-hexagonal-architecture-diagram-2.png" alt="width:70%"></p>
+
+<span class="slide-counter">7 / 71</span>
+<div class="slide-nav">
+  <a href="#slide-6">&#8592; Previous</a>
+  <span class="slide-info">Slide 7 / 71 &nbsp;&middot;&nbsp; Lecture 7: Hexagonal Architecture</span>
+  <a href="#slide-8">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-8" class="slide">
+<h2>🔌 Ports and Adapters Explained</h2>
+<h3>Ports (Interfaces)</h3>
+<p><strong>Ports</strong> are the application's boundary - they define how the outside world can interact with the application.</p>
+<p><strong>Two types:</strong></p>
+<ol>
+<li><strong>Primary (Driving) Ports:</strong> How external actors use the application</li>
+</ol>
+<ul>
+<li data-en="Example: <code>AccountManagementUseCase</code> interface" data-fr="Exemple: AccountManagementUseCase interface">Example: <code>AccountManagementUseCase</code> interface</li>
+</ul>
+<ol>
+<li><strong>Secondary (Driven) Ports:</strong> How the application uses external services</li>
+</ol>
+<ul>
+<li data-en="Example: <code>AccountRepository</code> interface" data-fr="Exemple: AccountRepository interface">Example: <code>AccountRepository</code> interface</li>
+</ul>
+
+<span class="slide-counter">8 / 71</span>
+<div class="slide-nav">
+  <a href="#slide-7">&#8592; Previous</a>
+  <span class="slide-info">Slide 8 / 71 &nbsp;&middot;&nbsp; Lecture 7: Hexagonal Architecture</span>
+  <a href="#slide-9">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-9" class="slide">
+<h2>🔌 Ports and Adapters Explained</h2>
+<h3>Adapters (Implementations)</h3>
+<p><strong>Adapters</strong> are concrete implementations that connect ports to the real world.</p>
+<p><strong>Two types:</strong></p>
+<ol>
+<li><strong>Primary (Driving) Adapters:</strong> Receive requests from outside</li>
+</ol>
+<ul>
+<li>REST API adapter</li>
+<li>Web UI adapter</li>
+<li>CLI adapter</li>
+</ul>
+<ol>
+<li><strong>Secondary (Driven) Adapters:</strong> Implement infrastructure concerns</li>
+</ol>
+<ul>
+<li>JPA database adapter</li>
+<li>File system adapter</li>
+<li>External API adapter</li>
+</ul>
+
+<span class="slide-counter">9 / 71</span>
+<div class="slide-nav">
+  <a href="#slide-8">&#8592; Previous</a>
+  <span class="slide-info">Slide 9 / 71 &nbsp;&middot;&nbsp; Lecture 7: Hexagonal Architecture</span>
+  <a href="#slide-10">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-10" class="slide">
+<h2 data-en="📦 Hexagonal Architecture Layers" data-fr="📦 Architecture hexagonale Layers">📦 Hexagonal Architecture Layers</h2>
+<h3>1. Domain Layer (Center)</h3>
+<p><strong>Pure business logic, no dependencies:</strong></p>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>// Domain entities and value objects
+public class Account {
+    private AccountNumber accountNumber;
+    private Money balance;
+    
+    public void deposit(Money amount) {
+        // Pure business logic
+        if (amount.isNegative()) {
+            throw new IllegalArgumentException(&quot;Amount must be positive&quot;);
+        }
+        this.balance = this.balance.add(amount);
+    }
+}</code></pre>
+<p><strong>No imports from:</strong> Jakarta EE, JPA, JAX-RS, or any framework</p>
+
+<span class="slide-counter">10 / 71</span>
+<div class="slide-nav">
+  <a href="#slide-9">&#8592; Previous</a>
+  <span class="slide-info">Slide 10 / 71 &nbsp;&middot;&nbsp; Lecture 7: Hexagonal Architecture</span>
+  <a href="#slide-11">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-11" class="slide">
+<h2 data-en="📦 Hexagonal Architecture Layers" data-fr="📦 Architecture hexagonale Layers">📦 Hexagonal Architecture Layers</h2>
+<h3>2. Application Layer (Use Cases)</h3>
+<p><strong>Orchestrates domain objects, defines ports:</strong></p>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>// Use case with port dependencies
+public class DepositMoneyUseCase {
+    private final AccountPort accountPort;  // Secondary port
+    
+    public void execute(DepositCommand command) {
+        Account account = accountPort.findByNumber(command.accountNumber());
+        account.deposit(command.amount());
+        accountPort.save(account);
+    }
+}
+
+// Secondary port (defined by application)
+public interface AccountPort {
+    Account findByNumber(AccountNumber number);
+    void save(Account account);
+}</code></pre>
+
+<span class="slide-counter">11 / 71</span>
+<div class="slide-nav">
+  <a href="#slide-10">&#8592; Previous</a>
+  <span class="slide-info">Slide 11 / 71 &nbsp;&middot;&nbsp; Lecture 7: Hexagonal Architecture</span>
+  <a href="#slide-12">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-12" class="slide">
+<h2 data-en="📦 Hexagonal Architecture Layers" data-fr="📦 Architecture hexagonale Layers">📦 Hexagonal Architecture Layers</h2>
+<h3>3. Infrastructure Layer (Adapters)</h3>
+<p><strong>Implements ports, handles technical concerns:</strong></p>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>// Secondary adapter (implements port)
+@ApplicationScoped
+public class JpaAccountAdapter implements AccountPort {
+    @PersistenceContext
+    private EntityManager em;
+    
+    @Override
+    public Account findByNumber(AccountNumber number) {
+        AccountEntity entity = em.createQuery(
+            &quot;SELECT a FROM AccountEntity a WHERE a.number = :number&quot;,
+            AccountEntity.class)
+            .setParameter(&quot;number&quot;, number.getValue())
+            .getSingleResult();
+        return AccountMapper.toDomain(entity);
+    }
+}</code></pre>
+
+<span class="slide-counter">12 / 71</span>
+<div class="slide-nav">
+  <a href="#slide-11">&#8592; Previous</a>
+  <span class="slide-info">Slide 12 / 71 &nbsp;&middot;&nbsp; Lecture 7: Hexagonal Architecture</span>
+  <a href="#slide-13">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-13" class="slide">
+<h2>🎯 Primary vs Secondary Ports</h2>
+<h3>Primary Ports (Driving)</h3>
+<p><strong>Application exposes functionality:</strong></p>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>// Primary port - defines what application can do
+public interface AccountManagementUseCase {
+    void openAccount(OpenAccountCommand command);
+    void closeAccount(CloseAccountCommand command);
+    AccountDTO getAccountDetails(AccountNumber number);
+}
+
+// Primary adapter - REST API
+@Path(&quot;/api/accounts&quot;)
+public class AccountResource {
+    @Inject
+    private AccountManagementUseCase useCase;  // Uses primary port
+    
+    @POST
+    public Response openAccount(OpenAccountRequest request) {
+        useCase.openAccount(toCommand(request));
+        return Response.ok().build();
+    }
+}</code></pre>
+
+<span class="slide-counter">13 / 71</span>
+<div class="slide-nav">
+  <a href="#slide-12">&#8592; Previous</a>
+  <span class="slide-info">Slide 13 / 71 &nbsp;&middot;&nbsp; Lecture 7: Hexagonal Architecture</span>
+  <a href="#slide-14">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-14" class="slide">
+<h2>🎯 Primary vs Secondary Ports</h2>
+<h3>Secondary Ports (Driven)</h3>
+<p><strong>Application needs external services:</strong></p>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>// Secondary port - defines what application needs
+public interface AccountRepository {
+    Account findById(Long id);
+    void save(Account account);
+    List&lt;Account&gt; findByClientId(Long clientId);
+}
+
+// Secondary adapter - JPA implementation
+@ApplicationScoped
+public class JpaAccountRepository implements AccountRepository {
+    @PersistenceContext
+    private EntityManager em;
+    
+    @Override
+    public Account findById(Long id) {
+        AccountEntity entity = em.find(AccountEntity.class, id);
+        return AccountMapper.toDomain(entity);
+    }
+}</code></pre>
+
+<span class="slide-counter">14 / 71</span>
+<div class="slide-nav">
+  <a href="#slide-13">&#8592; Previous</a>
+  <span class="slide-info">Slide 14 / 71 &nbsp;&middot;&nbsp; Lecture 7: Hexagonal Architecture</span>
+  <a href="#slide-15">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-15" class="slide">
+<h2>🏗️ Package Structure</h2>
+<h3 data-en="Hexagonal Architecture Packages" data-fr="Architecture hexagonale Packages">Hexagonal Architecture Packages</h3>
+<pre class="dark"><code>com.bank/
+├── domain/                          # Domain Layer (no dependencies)
+│   ├── model/
+│   │   ├── Account.java            # Aggregate root
+│   │   └── Client.java             # Aggregate root
+│   ├── valueobject/
+│   │   ├── Money.java              # Value object
+│   │   ├── AccountNumber.java      # Value object
+│   │   └── Email.java              # Value object
+│   └── service/
+│       └── TransferService.java    # Domain service
+│
+├── application/                     # Application Layer (use cases)
+│   ├── port/
+│   │   ├── in/                     # Primary ports (driving)
+│   │   │   ├── AccountManagementUseCase.java
+│   │   │   └── ClientManagementUseCase.java
+│   │   └── out/                    # Secondary ports (driven)
+│   │       ├── AccountRepository.java
+│   │       └── ClientRepository.java
+│   ├── usecase/
+│   │   ├── OpenAccountUseCase.java
+│   │   ├── DepositMoneyUseCase.java
+│   │   └── TransferMoneyUseCase.java
+│   └── dto/
+│       ├── AccountDTO.java
+│       └── ClientDTO.java
+│
+└── infrastructure/                  # Infrastructure Layer (adapters)
+    ├── adapter/
+    │   ├── in/                     # Primary adapters (driving)
+    │   │   ├── rest/
+    │   │   │   ├── AccountResource.java
+    │   │   │   └── ClientResource.java
+    │   │   └── web/
+    │   │       ├── AccountController.java
+    │   │       └── ClientController.java
+    │   └── out/                    # Secondary adapters (driven)
+    │       ├── persistence/
+    │       │   ├── JpaAccountRepository.java
+    │       │   ├── JpaClientRepository.java
+    │       │   ├── entity/
+    │       │   │   ├── AccountEntity.java
+    │       │   │   └── ClientEntity.java
+    │       │   └── mapper/
+    │       │       ├── AccountMapper.java
+    │       │       └── ClientMapper.java
+    │       └── event/
+    │           └── EventPublisherAdapter.java
+    └── config/
+        └── CDIConfiguration.java</code></pre>
+
+<span class="slide-counter">15 / 71</span>
+<div class="slide-nav">
+  <a href="#slide-14">&#8592; Previous</a>
+  <span class="slide-info">Slide 15 / 71 &nbsp;&middot;&nbsp; Lecture 7: Hexagonal Architecture</span>
+  <a href="#slide-16">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-16" class="slide">
+<h2>🔄 Dependency Flow</h2>
+<h3>Traditional Layered Architecture</h3>
+<p><img src="../../images/07-hexagonal-architecture-diagram-3.png" alt="width:70%"></p>
+<p><strong>Problem:</strong> Business logic depends on infrastructure</p>
+
+<span class="slide-counter">16 / 71</span>
+<div class="slide-nav">
+  <a href="#slide-15">&#8592; Previous</a>
+  <span class="slide-info">Slide 16 / 71 &nbsp;&middot;&nbsp; Lecture 7: Hexagonal Architecture</span>
+  <a href="#slide-17">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-17" class="slide">
+<h2>🔄 Dependency Flow</h2>
+<h3 data-en="Hexagonal Architecture" data-fr="Architecture hexagonale">Hexagonal Architecture</h3>
+<p><img src="../../images/07-hexagonal-architecture-diagram-4.png" alt="width:70%"></p>
+<p><strong>Solution:</strong> All dependencies point inward toward domain</p>
+
+<span class="slide-counter">17 / 71</span>
+<div class="slide-nav">
+  <a href="#slide-16">&#8592; Previous</a>
+  <span class="slide-info">Slide 17 / 71 &nbsp;&middot;&nbsp; Lecture 7: Hexagonal Architecture</span>
+  <a href="#slide-18">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-18" class="slide">
+<h2>💡 Dependency Inversion in Practice</h2>
+<h3>Before (Traditional)</h3>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>// Service depends on concrete repository
+public class AccountService {
+    private JpaAccountRepository repository;  // Concrete class
+    
+    public AccountService() {
+        this.repository = new JpaAccountRepository();  // Tight coupling
+    }
+    
+    public Account getAccount(Long id) {
+        return repository.findById(id);  // Depends on JPA
+    }
+}</code></pre>
+<p><strong>Problems:</strong></p>
+<ul>
+<li>Cannot test without database</li>
+<li>Cannot swap implementations</li>
+<li>Business logic tied to JPA</li>
+</ul>
+
+<span class="slide-counter">18 / 71</span>
+<div class="slide-nav">
+  <a href="#slide-17">&#8592; Previous</a>
+  <span class="slide-info">Slide 18 / 71 &nbsp;&middot;&nbsp; Lecture 7: Hexagonal Architecture</span>
+  <a href="#slide-19">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-19" class="slide">
+<h2>💡 Dependency Inversion in Practice</h2>
+<h3>After (Hexagonal)</h3>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>// Use case depends on port (interface)
+public class GetAccountUseCase {
+    private final AccountRepository repository;  // Interface (port)
+    
+    @Inject
+    public GetAccountUseCase(AccountRepository repository) {
+        this.repository = repository;  // Injected
+    }
+    
+    public AccountDTO execute(Long id) {
+        Account account = repository.findById(id);  // No JPA dependency
+        return AccountMapper.toDTO(account);
+    }
+}
+
+// Port defined by application
+public interface AccountRepository {
+    Account findById(Long id);
+}
+
+// Adapter implements port
+@ApplicationScoped
+public class JpaAccountRepository implements AccountRepository {
+    @PersistenceContext
+    private EntityManager em;
+    
+    @Override
+    public Account findById(Long id) {
+        // JPA implementation details
+    }
+}</code></pre>
+
+<span class="slide-counter">19 / 71</span>
+<div class="slide-nav">
+  <a href="#slide-18">&#8592; Previous</a>
+  <span class="slide-info">Slide 19 / 71 &nbsp;&middot;&nbsp; Lecture 7: Hexagonal Architecture</span>
+  <a href="#slide-20">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-20" class="slide">
+<h2 data-en="🧪 Testing Benefits" data-fr="🧪 Tests Benefits">🧪 Testing Benefits</h2>
+<h3 data-en="Testing with Traditional Architecture" data-fr="Tests with Traditional Architecture">Testing with Traditional Architecture</h3>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>@Test
+public void testTransfer() {
+    // Need real database
+    EntityManager em = createEntityManager();
+    AccountService service = new AccountService(em);
+    
+    // Complex setup
+    setupDatabase();
+    Account source = createTestAccount();
+    Account target = createTestAccount();
+    
+    // Test
+    service.transfer(source.getId(), target.getId(), 100.0);
+    
+    // Cleanup
+    cleanupDatabase();
+}</code></pre>
+<p><strong>Problems:</strong> Slow, complex, requires database</p>
+
+<span class="slide-counter">20 / 71</span>
+<div class="slide-nav">
+  <a href="#slide-19">&#8592; Previous</a>
+  <span class="slide-info">Slide 20 / 71 &nbsp;&middot;&nbsp; Lecture 7: Hexagonal Architecture</span>
+  <a href="#slide-21">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-21" class="slide">
+<h2 data-en="🧪 Testing Benefits" data-fr="🧪 Tests Benefits">🧪 Testing Benefits</h2>
+<h3 data-en="Testing with Hexagonal Architecture" data-fr="Tests with Architecture hexagonale">Testing with Hexagonal Architecture</h3>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>@Test
+public void testTransfer() {
+    // Mock adapter (no database needed)
+    AccountRepository mockRepo = new InMemoryAccountRepository();
+    TransferMoneyUseCase useCase = new TransferMoneyUseCase(mockRepo);
+    
+    // Simple setup
+    Account source = new Account(new Money(1000));
+    Account target = new Account(new Money(500));
+    mockRepo.save(source);
+    mockRepo.save(target);
+    
+    // Test
+    useCase.execute(new TransferCommand(source.getId(), target.getId(), 100));
+    
+    // Verify
+    assertEquals(900, source.getBalance().getAmount());
+    assertEquals(600, target.getBalance().getAmount());
+}</code></pre>
+<p data-en="<strong>Benefits:</strong> Fast, simple, no infrastructure needed" data-fr="Benefits: Fast, Simple, no infrastructure needed"><strong>Benefits:</strong> Fast, simple, no infrastructure needed</p>
+
+<span class="slide-counter">21 / 71</span>
+<div class="slide-nav">
+  <a href="#slide-20">&#8592; Previous</a>
+  <span class="slide-info">Slide 21 / 71 &nbsp;&middot;&nbsp; Lecture 7: Hexagonal Architecture</span>
+  <a href="#slide-22">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-22" class="slide">
+<h2 data-en="🔧 Implementing Primary Ports" data-fr="🔧 Implémentation de Primary Ports">🔧 Implementing Primary Ports</h2>
+<h3>Step 1: Define Use Case Interface (Primary Port)</h3>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>// Primary port - what application can do
+public interface AccountManagementUseCase {
+    AccountDTO openAccount(OpenAccountCommand command);
+    void closeAccount(Long accountId);
+    AccountDTO getAccount(Long accountId);
+    List&lt;AccountDTO&gt; getClientAccounts(Long clientId);
+}
+
+// Command object
+public record OpenAccountCommand(
+    Long clientId,
+    String accountNumber,
+    String accountType,
+    BigDecimal initialDeposit
+) {}</code></pre>
+
+<span class="slide-counter">22 / 71</span>
+<div class="slide-nav">
+  <a href="#slide-21">&#8592; Previous</a>
+  <span class="slide-info">Slide 22 / 71 &nbsp;&middot;&nbsp; Lecture 7: Hexagonal Architecture</span>
+  <a href="#slide-23">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-23" class="slide">
+<h2 data-en="🔧 Implementing Primary Ports" data-fr="🔧 Implémentation de Primary Ports">🔧 Implementing Primary Ports</h2>
+<h3>Step 2: Implement Use Case</h3>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>@ApplicationScoped
+public class AccountManagementService implements AccountManagementUseCase {
+    private final AccountRepository accountRepository;  // Secondary port
+    private final ClientRepository clientRepository;    // Secondary port
+    
+    @Inject
+    public AccountManagementService(
+        AccountRepository accountRepository,
+        ClientRepository clientRepository
+    ) {
+        this.accountRepository = accountRepository;
+        this.clientRepository = clientRepository;
+    }
+    
+    @Override
+    @Transactional
+    public AccountDTO openAccount(OpenAccountCommand command) {
+        Client client = clientRepository.findById(command.clientId())
+            .orElseThrow(() -&gt; new ClientNotFoundException(command.clientId()));
+        
+        Account account = Account.open(
+            AccountNumber.of(command.accountNumber()),
+            Money.of(command.initialDeposit(), &quot;EUR&quot;),
+            AccountType.valueOf(command.accountType()),
+            client
+        );
+        
+        accountRepository.save(account);
+        return AccountMapper.toDTO(account);
+    }
+}</code></pre>
+
+<span class="slide-counter">23 / 71</span>
+<div class="slide-nav">
+  <a href="#slide-22">&#8592; Previous</a>
+  <span class="slide-info">Slide 23 / 71 &nbsp;&middot;&nbsp; Lecture 7: Hexagonal Architecture</span>
+  <a href="#slide-24">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-24" class="slide">
+<h2 data-en="🔧 Implementing Primary Adapters" data-fr="🔧 Implémentation de Primary Adapters">🔧 Implementing Primary Adapters</h2>
+<h3>Step 3: Create REST Adapter (Primary Adapter)</h3>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>@Path(&quot;/api/v2/accounts&quot;)
+@ApplicationScoped
+public class AccountResource {
+    private final AccountManagementUseCase useCase;  // Primary port
+    
+    @Inject
+    public AccountResource(AccountManagementUseCase useCase) {
+        this.useCase = useCase;
+    }
+    
+    @POST
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response openAccount(OpenAccountRequest request) {
+        OpenAccountCommand command = new OpenAccountCommand(
+            request.clientId(),
+            request.accountNumber(),
+            request.accountType(),
+            request.initialDeposit()
+        );
+        
+        AccountDTO account = useCase.openAccount(command);
+        return Response.status(Response.Status.CREATED)
+            .entity(account)
+            .build();
+    }
+}</code></pre>
+
+<span class="slide-counter">24 / 71</span>
+<div class="slide-nav">
+  <a href="#slide-23">&#8592; Previous</a>
+  <span class="slide-info">Slide 24 / 71 &nbsp;&middot;&nbsp; Lecture 7: Hexagonal Architecture</span>
+  <a href="#slide-25">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-25" class="slide">
+<h2 data-en="🔧 Implementing Secondary Ports" data-fr="🔧 Implémentation de Secondary Ports">🔧 Implementing Secondary Ports</h2>
+<h3>Step 1: Define Repository Interface (Secondary Port)</h3>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>// Secondary port - what application needs
+public interface AccountRepository {
+    Optional&lt;Account&gt; findById(Long id);
+    Optional&lt;Account&gt; findByNumber(AccountNumber number);
+    List&lt;Account&gt; findByClientId(Long clientId);
+    void save(Account account);
+    void delete(Account account);
+}</code></pre>
+<p><strong>Key Points:</strong></p>
+<ul>
+<li>Defined in <strong>application layer</strong></li>
+<li>Uses <strong>domain objects</strong> (Account, AccountNumber)</li>
+<li>No infrastructure concerns (no JPA, no SQL)</li>
+</ul>
+
+<span class="slide-counter">25 / 71</span>
+<div class="slide-nav">
+  <a href="#slide-24">&#8592; Previous</a>
+  <span class="slide-info">Slide 25 / 71 &nbsp;&middot;&nbsp; Lecture 7: Hexagonal Architecture</span>
+  <a href="#slide-26">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-26" class="slide">
+<h2 data-en="🔧 Implementing Secondary Adapters" data-fr="🔧 Implémentation de Secondary Adapters">🔧 Implementing Secondary Adapters</h2>
+<h3>Step 2: Create JPA Adapter (Secondary Adapter)</h3>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>@ApplicationScoped
+public class JpaAccountRepository implements AccountRepository {
+    @PersistenceContext
+    private EntityManager em;
+    
+    @Override
+    public Optional&lt;Account&gt; findById(Long id) {
+        AccountEntity entity = em.find(AccountEntity.class, id);
+        return Optional.ofNullable(entity)
+            .map(AccountMapper::toDomain);
+    }
+    
+    @Override
+    public void save(Account account) {
+        AccountEntity entity = AccountMapper.toEntity(account);
+        if (entity.getId() == null) {
+            em.persist(entity);
+        } else {
+            em.merge(entity);
+        }
+    }
+}</code></pre>
+
+<span class="slide-counter">26 / 71</span>
+<div class="slide-nav">
+  <a href="#slide-25">&#8592; Previous</a>
+  <span class="slide-info">Slide 26 / 71 &nbsp;&middot;&nbsp; Lecture 7: Hexagonal Architecture</span>
+  <a href="#slide-27">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-27" class="slide">
+<h2>🗺️ Domain-Infrastructure Mapping</h2>
+<h3>Domain Model (Pure Business Logic)</h3>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>// Domain entity - no JPA annotations
+public class Account {
+    private Long id;
+    private AccountNumber accountNumber;
+    private Money balance;
+    private AccountType type;
+    private Client client;
+    
+    public void deposit(Money amount) {
+        if (amount.isNegative()) {
+            throw new IllegalArgumentException(&quot;Amount must be positive&quot;);
+        }
+        this.balance = this.balance.add(amount);
+    }
+}</code></pre>
+
+<span class="slide-counter">27 / 71</span>
+<div class="slide-nav">
+  <a href="#slide-26">&#8592; Previous</a>
+  <span class="slide-info">Slide 27 / 71 &nbsp;&middot;&nbsp; Lecture 7: Hexagonal Architecture</span>
+  <a href="#slide-28">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-28" class="slide">
+<h2>🗺️ Domain-Infrastructure Mapping</h2>
+<h3>Infrastructure Entity (JPA Mapping)</h3>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>// Infrastructure entity - JPA annotations
+@Entity
+@Table(name = &quot;accounts&quot;)
+public class AccountEntity {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+    
+    @Column(name = &quot;account_number&quot;, unique = true)
+    private String accountNumber;
+    
+    @Column(name = &quot;balance&quot;)
+    private BigDecimal balance;
+    
+    @Column(name = &quot;currency&quot;)
+    private String currency;
+    
+    @Enumerated(EnumType.STRING)
+    @Column(name = &quot;type&quot;)
+    private AccountTypeEnum type;
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = &quot;client_id&quot;)
+    private ClientEntity client;
+    
+    // Getters and setters
+}</code></pre>
+
+<span class="slide-counter">28 / 71</span>
+<div class="slide-nav">
+  <a href="#slide-27">&#8592; Previous</a>
+  <span class="slide-info">Slide 28 / 71 &nbsp;&middot;&nbsp; Lecture 7: Hexagonal Architecture</span>
+  <a href="#slide-29">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-29" class="slide">
+<h2>🗺️ Domain-Infrastructure Mapping</h2>
+<h3>Mapper (Bidirectional Conversion)</h3>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>public class AccountMapper {
+    public static Account toDomain(AccountEntity entity) {
+        if (entity == null) return null;
+        
+        return new Account(
+            entity.getId(),
+            AccountNumber.of(entity.getAccountNumber()),
+            Money.of(entity.getBalance(), entity.getCurrency()),
+            AccountType.valueOf(entity.getType().name()),
+            ClientMapper.toDomain(entity.getClient())
+        );
+    }
+    
+    public static AccountEntity toEntity(Account domain) {
+        if (domain == null) return null;
+        
+        AccountEntity entity = new AccountEntity();
+        entity.setId(domain.getId());
+        entity.setAccountNumber(domain.getAccountNumber().getValue());
+        entity.setBalance(domain.getBalance().getAmount());
+        entity.setCurrency(domain.getBalance().getCurrency());
+        entity.setType(AccountTypeEnum.valueOf(domain.getType().name()));
+        entity.setClient(ClientMapper.toEntity(domain.getClient()));
+        return entity;
+    }
+}</code></pre>
+
+<span class="slide-counter">29 / 71</span>
+<div class="slide-nav">
+  <a href="#slide-28">&#8592; Previous</a>
+  <span class="slide-info">Slide 29 / 71 &nbsp;&middot;&nbsp; Lecture 7: Hexagonal Architecture</span>
+  <a href="#slide-30">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-30" class="slide">
+<h2>🎭 Multiple Adapters for Same Port</h2>
+<h3>Same Use Case, Different Adapters</h3>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>// Primary port (use case interface)
+public interface AccountManagementUseCase {
+    AccountDTO getAccount(Long id);
+}
+
+// REST Adapter
+@Path(&quot;/api/accounts&quot;)
+public class AccountRestAdapter {
+    @Inject
+    private AccountManagementUseCase useCase;
+    
+    @GET
+    @Path(&quot;/{id}&quot;)
+    public Response getAccount(@PathParam(&quot;id&quot;) Long id) {
+        return Response.ok(useCase.getAccount(id)).build();
+    }
+}
+
+// Web Adapter
+@WebServlet(&quot;/accounts&quot;)
+public class AccountWebAdapter extends HttpServlet {
+    @Inject
+    private AccountManagementUseCase useCase;
+    
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp) {
+        Long id = Long.parseLong(req.getParameter(&quot;id&quot;));
+        AccountDTO account = useCase.getAccount(id);
+        req.setAttribute(&quot;account&quot;, account);
+        req.getRequestDispatcher(&quot;/WEB-INF/views/account.jsp&quot;).forward(req, resp);
+    }
+}</code></pre>
+
+<span class="slide-counter">30 / 71</span>
+<div class="slide-nav">
+  <a href="#slide-29">&#8592; Previous</a>
+  <span class="slide-info">Slide 30 / 71 &nbsp;&middot;&nbsp; Lecture 7: Hexagonal Architecture</span>
+  <a href="#slide-31">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-31" class="slide">
+<h2>🎭 Multiple Adapters for Same Port</h2>
+<h3>Same Port, Different Implementations</h3>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>// Secondary port
+public interface AccountRepository {
+    Account findById(Long id);
+}
+
+// JPA Adapter (Production)
+@ApplicationScoped
+@Default
+public class JpaAccountRepository implements AccountRepository {
+    @PersistenceContext
+    private EntityManager em;
+    
+    public Account findById(Long id) {
+        // JPA implementation
+    }
+}
+
+// In-Memory Adapter (Testing)
+@ApplicationScoped
+@Alternative
+public class InMemoryAccountRepository implements AccountRepository {
+    private Map&lt;Long, Account&gt; accounts = new HashMap&lt;&gt;();
+    
+    public Account findById(Long id) {
+        return accounts.get(id);
+    }
+}</code></pre>
+
+<span class="slide-counter">31 / 71</span>
+<div class="slide-nav">
+  <a href="#slide-30">&#8592; Previous</a>
+  <span class="slide-info">Slide 31 / 71 &nbsp;&middot;&nbsp; Lecture 7: Hexagonal Architecture</span>
+  <a href="#slide-32">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-32" class="slide">
+<h2>🧩 Clean Architecture Principles</h2>
+<h3>The Dependency Rule</h3>
+<p><strong>Dependencies must point inward:</strong></p>
+<p><img src="../../images/07-hexagonal-architecture-diagram-5.png" alt="width:70%"></p>
+<p><strong>Rule:</strong> Inner layers know nothing about outer layers</p>
+
+<span class="slide-counter">32 / 71</span>
+<div class="slide-nav">
+  <a href="#slide-31">&#8592; Previous</a>
+  <span class="slide-info">Slide 32 / 71 &nbsp;&middot;&nbsp; Lecture 7: Hexagonal Architecture</span>
+  <a href="#slide-33">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-33" class="slide">
+<h2>🧩 Clean Architecture Principles</h2>
+<h3>Layer Responsibilities</h3>
+<table class="slide-table"><thead><tr><th>Layer</th><th>Responsibility</th><th>Dependencies</th></tr></thead><tbody>
+<tr><td><strong>Domain</strong></td><td>Business rules, entities, value objects</td><td>None</td></tr>
+<tr><td><strong>Application</strong></td><td>Use cases, orchestration, ports</td><td>Domain only</td></tr>
+<tr><td><strong>Infrastructure</strong></td><td>Adapters, frameworks, databases</td><td>Application + Domain</td></tr>
+</tbody></table>
+<h3>Key Principles:</h3>
+<ol>
+<li><strong>Independent of frameworks:</strong> Business logic doesn't depend on Spring, Jakarta EE, etc.</li>
+<li><strong>Testable:</strong> Business rules can be tested without UI, database, or external services</li>
+<li><strong>Independent of UI:</strong> UI can change without changing business rules</li>
+<li><strong>Independent of database:</strong> Can swap Oracle for PostgreSQL without changing business rules</li>
+<li><strong>Independent of external agencies:</strong> Business rules don't know about external services</li>
+</ol>
+
+<span class="slide-counter">33 / 71</span>
+<div class="slide-nav">
+  <a href="#slide-32">&#8592; Previous</a>
+  <span class="slide-info">Slide 33 / 71 &nbsp;&middot;&nbsp; Lecture 7: Hexagonal Architecture</span>
+  <a href="#slide-34">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-34" class="slide">
+<h2>🔄 Refactoring from DDD to Hexagonal</h2>
+<h3>Lab 06 (DDD) Structure</h3>
+<pre class="dark"><code>com.bank/
+├── domain/
+│   ├── model/              # Entities with JPA annotations
+│   ├── valueobject/        # Value objects
+│   ├── service/            # Domain services
+│   └── event/              # Domain events
+├── application/
+│   └── dto/                # DTOs
+├── service/                # Application services (mixed concerns)
+├── api/                    # REST resources
+└── web/                    # Web controllers</code></pre>
+<p><strong>Issues:</strong></p>
+<ul>
+<li>Domain entities have JPA annotations</li>
+<li>Services mix use cases with infrastructure</li>
+<li>No clear ports/adapters separation</li>
+</ul>
+
+<span class="slide-counter">34 / 71</span>
+<div class="slide-nav">
+  <a href="#slide-33">&#8592; Previous</a>
+  <span class="slide-info">Slide 34 / 71 &nbsp;&middot;&nbsp; Lecture 7: Hexagonal Architecture</span>
+  <a href="#slide-35">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-35" class="slide">
+<h2>🔄 Refactoring from DDD to Hexagonal</h2>
+<h3>Lab 07 (Hexagonal) Structure</h3>
+<pre class="dark"><code>com.bank/
+├── domain/                 # Pure domain (no annotations)
+│   ├── model/
+│   ├── valueobject/
+│   └── service/
+├── application/            # Use cases and ports
+│   ├── port/
+│   │   ├── in/            # Primary ports
+│   │   └── out/           # Secondary ports
+│   ├── usecase/           # Use case implementations
+│   └── dto/
+└── infrastructure/         # All technical concerns
+    └── adapter/
+        ├── in/            # Primary adapters (REST, Web)
+        └── out/           # Secondary adapters (JPA, Events)</code></pre>
+<p><strong>Benefits:</strong></p>
+<ul>
+<li>Clean domain model</li>
+<li>Explicit ports and adapters</li>
+<li>Easy to test and swap implementations</li>
+</ul>
+
+<span class="slide-counter">35 / 71</span>
+<div class="slide-nav">
+  <a href="#slide-34">&#8592; Previous</a>
+  <span class="slide-info">Slide 35 / 71 &nbsp;&middot;&nbsp; Lecture 7: Hexagonal Architecture</span>
+  <a href="#slide-36">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-36" class="slide">
+<h2>🔄 Refactoring Steps</h2>
+<h3>Step 1: Extract Ports from Services</h3>
+<p><strong>Before (Lab 06):</strong></p>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>@ApplicationScoped
+public class AccountService {
+    @PersistenceContext
+    private EntityManager em;
+    
+    @Transactional
+    public void deposit(Long accountId, BigDecimal amount) {
+        Account account = em.find(Account.class, accountId);
+        account.deposit(new Money(amount));
+        em.merge(account);
+    }
+}</code></pre>
+
+<span class="slide-counter">36 / 71</span>
+<div class="slide-nav">
+  <a href="#slide-35">&#8592; Previous</a>
+  <span class="slide-info">Slide 36 / 71 &nbsp;&middot;&nbsp; Lecture 7: Hexagonal Architecture</span>
+  <a href="#slide-37">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-37" class="slide">
+<h2>🔄 Refactoring Steps</h2>
+<h3>Step 1: Extract Ports from Services</h3>
+<p><strong>After (Lab 07):</strong></p>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>// Primary port
+public interface DepositMoneyUseCase {
+    void execute(DepositCommand command);
+}
+
+// Use case implementation
+@ApplicationScoped
+public class DepositMoneyService implements DepositMoneyUseCase {
+    private final AccountRepository accountRepository;  // Secondary port
+    
+    @Inject
+    public DepositMoneyService(AccountRepository accountRepository) {
+        this.accountRepository = accountRepository;
+    }
+    
+    @Override
+    @Transactional
+    public void execute(DepositCommand command) {
+        Account account = accountRepository.findById(command.accountId())
+            .orElseThrow(() -&gt; new AccountNotFoundException(command.accountId()));
+        account.deposit(command.amount());
+        accountRepository.save(account);
+    }
+}</code></pre>
+
+<span class="slide-counter">37 / 71</span>
+<div class="slide-nav">
+  <a href="#slide-36">&#8592; Previous</a>
+  <span class="slide-info">Slide 37 / 71 &nbsp;&middot;&nbsp; Lecture 7: Hexagonal Architecture</span>
+  <a href="#slide-38">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-38" class="slide">
+<h2>🔄 Refactoring Steps</h2>
+<h3>Step 2: Separate Domain from Infrastructure</h3>
+<p><strong>Before (Lab 06):</strong></p>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>@Entity
+@Table(name = &quot;accounts&quot;)
+public class Account {  // Domain entity with JPA
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+    
+    @Column(name = &quot;balance&quot;)
+    private BigDecimal balance;
+    
+    public void deposit(Money amount) {
+        this.balance = this.balance.add(amount.getAmount());
+    }
+}</code></pre>
+
+<span class="slide-counter">38 / 71</span>
+<div class="slide-nav">
+  <a href="#slide-37">&#8592; Previous</a>
+  <span class="slide-info">Slide 38 / 71 &nbsp;&middot;&nbsp; Lecture 7: Hexagonal Architecture</span>
+  <a href="#slide-39">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-39" class="slide">
+<h2>🔄 Refactoring Steps</h2>
+<h3>Step 2: Separate Domain from Infrastructure</h3>
+<p><strong>After (Lab 07):</strong></p>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>// Pure domain entity (no JPA)
+public class Account {
+    private Long id;
+    private Money balance;
+    
+    public void deposit(Money amount) {
+        this.balance = this.balance.add(amount);
+    }
+}
+
+// Infrastructure entity (JPA)
+@Entity
+@Table(name = &quot;accounts&quot;)
+public class AccountEntity {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+    
+    @Column(name = &quot;balance&quot;)
+    private BigDecimal balance;
+    
+    @Column(name = &quot;currency&quot;)
+    private String currency;
+}
+
+// Mapper
+public class AccountMapper {
+    public static Account toDomain(AccountEntity entity) { /* ... */ }
+    public static AccountEntity toEntity(Account domain) { /* ... */ }
+}</code></pre>
+
+<span class="slide-counter">39 / 71</span>
+<div class="slide-nav">
+  <a href="#slide-38">&#8592; Previous</a>
+  <span class="slide-info">Slide 39 / 71 &nbsp;&middot;&nbsp; Lecture 7: Hexagonal Architecture</span>
+  <a href="#slide-40">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-40" class="slide">
+<h2>🔄 Refactoring Steps</h2>
+<h3>Step 3: Create Adapters</h3>
+<p><strong>Before (Lab 06):</strong></p>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>@Path(&quot;/api/accounts&quot;)
+public class AccountResource {
+    @Inject
+    private AccountService service;  // Direct service dependency
+    
+    @POST
+    @Path(&quot;/{id}/deposit&quot;)
+    public Response deposit(@PathParam(&quot;id&quot;) Long id, DepositRequest request) {
+        service.deposit(id, request.amount());
+        return Response.ok().build();
+    }
+}</code></pre>
+
+<span class="slide-counter">40 / 71</span>
+<div class="slide-nav">
+  <a href="#slide-39">&#8592; Previous</a>
+  <span class="slide-info">Slide 40 / 71 &nbsp;&middot;&nbsp; Lecture 7: Hexagonal Architecture</span>
+  <a href="#slide-41">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-41" class="slide">
+<h2>🔄 Refactoring Steps</h2>
+<h3>Step 3: Create Adapters</h3>
+<p><strong>After (Lab 07):</strong></p>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>// Primary adapter (REST)
+@Path(&quot;/api/v2/accounts&quot;)
+@ApplicationScoped
+public class AccountRestAdapter {
+    private final DepositMoneyUseCase depositUseCase;  // Port dependency
+    
+    @Inject
+    public AccountRestAdapter(DepositMoneyUseCase depositUseCase) {
+        this.depositUseCase = depositUseCase;
+    }
+    
+    @POST
+    @Path(&quot;/{id}/deposit&quot;)
+    public Response deposit(@PathParam(&quot;id&quot;) Long id, DepositRequest request) {
+        DepositCommand command = new DepositCommand(id, new Money(request.amount()));
+        depositUseCase.execute(command);
+        return Response.ok().build();
+    }
+}
+
+// Secondary adapter (JPA)
+@ApplicationScoped
+public class JpaAccountAdapter implements AccountRepository {
+    @PersistenceContext
+    private EntityManager em;
+    
+    @Override
+    public Optional&lt;Account&gt; findById(Long id) {
+        AccountEntity entity = em.find(AccountEntity.class, id);
+        return Optional.ofNullable(entity).map(AccountMapper::toDomain);
+    }
+}</code></pre>
+
+<span class="slide-counter">41 / 71</span>
+<div class="slide-nav">
+  <a href="#slide-40">&#8592; Previous</a>
+  <span class="slide-info">Slide 41 / 71 &nbsp;&middot;&nbsp; Lecture 7: Hexagonal Architecture</span>
+  <a href="#slide-42">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-42" class="slide">
+<h2 data-en="🧪 Testing Strategies" data-fr="🧪 Tests Strategies">🧪 Testing Strategies</h2>
+<h3 data-en="Unit Testing Domain Logic" data-fr="Unit Tests Domain Logic">Unit Testing Domain Logic</h3>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>@Test
+public void testAccountDeposit() {
+    // No mocks needed - pure domain logic
+    Account account = Account.open(
+        AccountNumber.generate(),
+        Money.of(BigDecimal.valueOf(1000), &quot;EUR&quot;),
+        AccountType.CHECKING,
+        client
+    );
+    
+    account.deposit(Money.of(BigDecimal.valueOf(500), &quot;EUR&quot;));
+    
+    assertEquals(BigDecimal.valueOf(1500), account.getBalance().getAmount());
+}
+
+@Test
+public void testAccountDepositNegativeAmount() {
+    Account account = Account.open(
+        AccountNumber.generate(),
+        Money.of(BigDecimal.valueOf(1000), &quot;EUR&quot;),
+        AccountType.CHECKING,
+        client
+    );
+    
+    // Money.of rejects negative amounts at construction
+    assertThrows(IllegalArgumentException.class, () -&gt; {
+        account.deposit(Money.of(BigDecimal.valueOf(-100), &quot;EUR&quot;));
+    });
+}</code></pre>
+
+<span class="slide-counter">42 / 71</span>
+<div class="slide-nav">
+  <a href="#slide-41">&#8592; Previous</a>
+  <span class="slide-info">Slide 42 / 71 &nbsp;&middot;&nbsp; Lecture 7: Hexagonal Architecture</span>
+  <a href="#slide-43">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-43" class="slide">
+<h2 data-en="🧪 Testing Strategies" data-fr="🧪 Tests Strategies">🧪 Testing Strategies</h2>
+<h3 data-en="Integration Testing Use Cases" data-fr="Integration Tests Use Cases">Integration Testing Use Cases</h3>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>@Test
+public void testDepositMoneyUseCase() {
+    // Mock secondary port
+    AccountRepository mockRepo = mock(AccountRepository.class);
+    Account account = new Account(new Money(1000));
+    when(mockRepo.findById(1L)).thenReturn(Optional.of(account));
+    
+    // Test use case
+    DepositMoneyUseCase useCase = new DepositMoneyService(mockRepo);
+    useCase.execute(new DepositCommand(1L, new Money(500)));
+    
+    // Verify
+    verify(mockRepo).save(account);
+    assertEquals(1500, account.getBalance().getAmount().intValue());
+}</code></pre>
+
+<span class="slide-counter">43 / 71</span>
+<div class="slide-nav">
+  <a href="#slide-42">&#8592; Previous</a>
+  <span class="slide-info">Slide 43 / 71 &nbsp;&middot;&nbsp; Lecture 7: Hexagonal Architecture</span>
+  <a href="#slide-44">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-44" class="slide">
+<h2 data-en="🧪 Testing Strategies" data-fr="🧪 Tests Strategies">🧪 Testing Strategies</h2>
+<h3 data-en="Testing with In-Memory Adapter" data-fr="Tests with In-Memory Adapter">Testing with In-Memory Adapter</h3>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>// In-memory adapter for testing
+public class InMemoryAccountRepository implements AccountRepository {
+    private Map&lt;Long, Account&gt; accounts = new HashMap&lt;&gt;();
+    private AtomicLong idGenerator = new AtomicLong(1);
+    
+    @Override
+    public Optional&lt;Account&gt; findById(Long id) {
+        return Optional.ofNullable(accounts.get(id));
+    }
+    
+    @Override
+    public void save(Account account) {
+        if (account.getId() == null) {
+            account.setId(idGenerator.getAndIncrement());
+        }
+        accounts.put(account.getId(), account);
+    }
+}
+
+@Test
+public void testTransferWithInMemoryRepo() {
+    AccountRepository repo = new InMemoryAccountRepository();
+    TransferMoneyUseCase useCase = new TransferMoneyService(repo);
+    
+    // Create test accounts
+    Account source = new Account(new Money(1000));
+    Account target = new Account(new Money(500));
+    repo.save(source);
+    repo.save(target);
+    
+    // Execute transfer
+    useCase.execute(new TransferCommand(source.getId(), target.getId(), 200));
+    
+    // Verify
+    assertEquals(800, repo.findById(source.getId()).get().getBalance().getAmount().intValue());
+    assertEquals(700, repo.findById(target.getId()).get().getBalance().getAmount().intValue());
+}</code></pre>
+
+<span class="slide-counter">44 / 71</span>
+<div class="slide-nav">
+  <a href="#slide-43">&#8592; Previous</a>
+  <span class="slide-info">Slide 44 / 71 &nbsp;&middot;&nbsp; Lecture 7: Hexagonal Architecture</span>
+  <a href="#slide-45">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-45" class="slide">
+<h2 data-en="🎯 Benefits of Hexagonal Architecture" data-fr="🎯 Benefits of Architecture hexagonale">🎯 Benefits of Hexagonal Architecture</h2>
+<h3>1. Testability</h3>
+<ul>
+<li><strong>Unit tests:</strong> Test domain logic without any infrastructure</li>
+<li><strong>Integration tests:</strong> Test use cases with mock adapters</li>
+<li><strong>Fast tests:</strong> No database, no server, no external services</li>
+</ul>
+<h3>2. Flexibility</h3>
+<ul>
+<li><strong>Swap implementations:</strong> Change database without changing business logic</li>
+<li><strong>Multiple interfaces:</strong> REST API, Web UI, CLI - all use same use cases</li>
+<li><strong>Technology independence:</strong> Not tied to specific frameworks</li>
+</ul>
+<h3>3. Maintainability</h3>
+<ul>
+<li><strong>Clear boundaries:</strong> Each layer has specific responsibility</li>
+<li><strong>Separation of concerns:</strong> Business logic separate from technical details</li>
+<li><strong>Easy to understand:</strong> Dependencies flow in one direction</li>
+</ul>
+
+<span class="slide-counter">45 / 71</span>
+<div class="slide-nav">
+  <a href="#slide-44">&#8592; Previous</a>
+  <span class="slide-info">Slide 45 / 71 &nbsp;&middot;&nbsp; Lecture 7: Hexagonal Architecture</span>
+  <a href="#slide-46">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-46" class="slide">
+<h2 data-en="🎯 Benefits of Hexagonal Architecture" data-fr="🎯 Benefits of Architecture hexagonale">🎯 Benefits of Hexagonal Architecture</h2>
+<h3>4. Evolvability</h3>
+<ul>
+<li><strong>Add new features:</strong> Create new use cases without changing existing code</li>
+<li><strong>Change technology:</strong> Swap JPA for MongoDB without touching domain</li>
+<li><strong>Refactor safely:</strong> Changes in one layer don't affect others</li>
+</ul>
+<h3>5. Team Collaboration</h3>
+<ul>
+<li data-en="<strong>Parallel development:</strong> Teams can work on different adapters simultaneously" data-fr="Parallel Développement: Teams can work on different adapters simultaneously"><strong>Parallel development:</strong> Teams can work on different adapters simultaneously</li>
+<li><strong>Clear contracts:</strong> Ports define explicit interfaces</li>
+<li><strong>Reduced conflicts:</strong> Changes in infrastructure don't affect domain</li>
+</ul>
+
+<span class="slide-counter">46 / 71</span>
+<div class="slide-nav">
+  <a href="#slide-45">&#8592; Previous</a>
+  <span class="slide-info">Slide 46 / 71 &nbsp;&middot;&nbsp; Lecture 7: Hexagonal Architecture</span>
+  <a href="#slide-47">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-47" class="slide">
+<h2>⚠️ Common Pitfalls</h2>
+<h3>1. Leaking Infrastructure into Domain</h3>
+<p><strong>❌ Wrong:</strong></p>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>// Domain entity with JPA annotations
+@Entity
+public class Account {
+    @Id
+    private Long id;
+    
+    @Column(name = &quot;balance&quot;)
+    private BigDecimal balance;
+}</code></pre>
+<p><strong>✅ Correct:</strong></p>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>// Pure domain entity
+public class Account {
+    private Long id;
+    private Money balance;
+}
+
+// Separate infrastructure entity
+@Entity
+public class AccountEntity {
+    @Id
+    private Long id;
+    
+    @Column(name = &quot;balance&quot;)
+    private BigDecimal balance;
+}</code></pre>
+
+<span class="slide-counter">47 / 71</span>
+<div class="slide-nav">
+  <a href="#slide-46">&#8592; Previous</a>
+  <span class="slide-info">Slide 47 / 71 &nbsp;&middot;&nbsp; Lecture 7: Hexagonal Architecture</span>
+  <a href="#slide-48">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-48" class="slide">
+<h2>⚠️ Common Pitfalls</h2>
+<h3>2. Use Cases Depending on Concrete Adapters</h3>
+<p><strong>❌ Wrong:</strong></p>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>public class DepositMoneyUseCase {
+    private JpaAccountRepository repository;  // Concrete adapter
+}</code></pre>
+<p><strong>✅ Correct:</strong></p>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>public class DepositMoneyUseCase {
+    private AccountRepository repository;  // Port (interface)
+}</code></pre>
+
+<span class="slide-counter">48 / 71</span>
+<div class="slide-nav">
+  <a href="#slide-47">&#8592; Previous</a>
+  <span class="slide-info">Slide 48 / 71 &nbsp;&middot;&nbsp; Lecture 7: Hexagonal Architecture</span>
+  <a href="#slide-49">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-49" class="slide">
+<h2>⚠️ Common Pitfalls</h2>
+<h3>3. Anemic Domain Model</h3>
+<p><strong>❌ Wrong:</strong></p>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>public class Account {
+    private Money balance;
+    
+    // Only getters and setters
+    public Money getBalance() { return balance; }
+    public void setBalance(Money balance) { this.balance = balance; }
+}
+
+// Business logic in use case
+public class DepositMoneyUseCase {
+    public void execute(DepositCommand command) {
+        Account account = repository.findById(command.accountId());
+        Money newBalance = account.getBalance().add(command.amount());
+        account.setBalance(newBalance);  // Logic outside domain
+        repository.save(account);
+    }
+}</code></pre>
+
+<span class="slide-counter">49 / 71</span>
+<div class="slide-nav">
+  <a href="#slide-48">&#8592; Previous</a>
+  <span class="slide-info">Slide 49 / 71 &nbsp;&middot;&nbsp; Lecture 7: Hexagonal Architecture</span>
+  <a href="#slide-50">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-50" class="slide">
+<h2>⚠️ Common Pitfalls</h2>
+<h3>3. Anemic Domain Model</h3>
+<p><strong>✅ Correct:</strong></p>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>public class Account {
+    private Money balance;
+    
+    // Business logic in domain
+    public void deposit(Money amount) {
+        if (amount.isNegative()) {
+            throw new IllegalArgumentException(&quot;Amount must be positive&quot;);
+        }
+        this.balance = this.balance.add(amount);
+    }
+}
+
+// Use case orchestrates
+public class DepositMoneyUseCase {
+    public void execute(DepositCommand command) {
+        Account account = repository.findById(command.accountId());
+        account.deposit(command.amount());  // Domain handles logic
+        repository.save(account);
+    }
+}</code></pre>
+
+<span class="slide-counter">50 / 71</span>
+<div class="slide-nav">
+  <a href="#slide-49">&#8592; Previous</a>
+  <span class="slide-info">Slide 50 / 71 &nbsp;&middot;&nbsp; Lecture 7: Hexagonal Architecture</span>
+  <a href="#slide-51">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-51" class="slide">
+<h2>⚠️ Common Pitfalls</h2>
+<h3>4. Over-Engineering</h3>
+<p><strong>❌ Wrong:</strong></p>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>// Too many layers for simple CRUD
+public interface GetAccountPort { }
+public interface GetAccountInputPort { }
+public interface GetAccountOutputPort { }
+public class GetAccountInputAdapter { }
+public class GetAccountOutputAdapter { }
+public class GetAccountUseCase { }</code></pre>
+<p><strong>✅ Correct:</strong></p>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>// Appropriate abstraction
+public interface AccountManagementUseCase {
+    AccountDTO getAccount(Long id);
+}
+
+public interface AccountRepository {
+    Optional&lt;Account&gt; findById(Long id);
+}</code></pre>
+<p data-en="<strong>Rule:</strong> Use hexagonal architecture when you need flexibility, not for every simple CRUD operation." data-fr="Rule: Use Architecture hexagonale when you need flexibility, not for every Simple CRUD operation."><strong>Rule:</strong> Use hexagonal architecture when you need flexibility, not for every simple CRUD operation.</p>
+
+<span class="slide-counter">51 / 71</span>
+<div class="slide-nav">
+  <a href="#slide-50">&#8592; Previous</a>
+  <span class="slide-info">Slide 51 / 71 &nbsp;&middot;&nbsp; Lecture 7: Hexagonal Architecture</span>
+  <a href="#slide-52">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-52" class="slide">
+<h2 data-en="🏦 Banking Application Example" data-fr="🏦 Banking Application Exemple">🏦 Banking Application Example</h2>
+<h3>Use Case: Transfer Money</h3>
+<p><strong>Domain Layer:</strong></p>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>// Pure business logic
+public class Account {
+    private Money balance;
+    
+    public void withdraw(Money amount) {
+        if (balance.isLessThan(amount)) {
+            throw new InsufficientFundsException();
+        }
+        this.balance = this.balance.subtract(amount);
+    }
+    
+    public void deposit(Money amount) {
+        this.balance = this.balance.add(amount);
+    }
+}</code></pre>
+
+<span class="slide-counter">52 / 71</span>
+<div class="slide-nav">
+  <a href="#slide-51">&#8592; Previous</a>
+  <span class="slide-info">Slide 52 / 71 &nbsp;&middot;&nbsp; Lecture 7: Hexagonal Architecture</span>
+  <a href="#slide-53">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-53" class="slide">
+<h2 data-en="🏦 Banking Application Example" data-fr="🏦 Banking Application Exemple">🏦 Banking Application Example</h2>
+<h3>Use Case: Transfer Money</h3>
+<p><strong>Application Layer:</strong></p>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>// Primary port
+public interface TransferMoneyUseCase {
+    void execute(TransferCommand command);
+}
+
+// Use case implementation
+@ApplicationScoped
+public class TransferMoneyService implements TransferMoneyUseCase {
+    private final AccountRepository accountRepository;  // Secondary port
+    private final EventPublisher eventPublisher;        // Secondary port
+    
+    @Inject
+    public TransferMoneyService(
+        AccountRepository accountRepository,
+        EventPublisher eventPublisher
+    ) {
+        this.accountRepository = accountRepository;
+        this.eventPublisher = eventPublisher;
+    }
+    
+    @Override
+    @Transactional
+    public void execute(TransferCommand command) {
+        Account source = accountRepository.findById(command.sourceId())
+            .orElseThrow(() -&gt; new AccountNotFoundException(command.sourceId()));
+        Account target = accountRepository.findById(command.targetId())
+            .orElseThrow(() -&gt; new AccountNotFoundException(command.targetId()));
+        
+        source.withdraw(command.amount());
+        target.deposit(command.amount());
+        
+        accountRepository.save(source);
+        accountRepository.save(target);
+        
+        eventPublisher.publish(new MoneyTransferredEvent(
+            command.sourceId(), command.targetId(), command.amount()
+        ));
+    }
+}</code></pre>
+
+<span class="slide-counter">53 / 71</span>
+<div class="slide-nav">
+  <a href="#slide-52">&#8592; Previous</a>
+  <span class="slide-info">Slide 53 / 71 &nbsp;&middot;&nbsp; Lecture 7: Hexagonal Architecture</span>
+  <a href="#slide-54">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-54" class="slide">
+<h2 data-en="🏦 Banking Application Example" data-fr="🏦 Banking Application Exemple">🏦 Banking Application Example</h2>
+<h3>Use Case: Transfer Money</h3>
+<p><strong>Infrastructure Layer - REST Adapter:</strong></p>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>@Path(&quot;/api/v2/transfers&quot;)
+@ApplicationScoped
+public class TransferRestAdapter {
+    private final TransferMoneyUseCase transferUseCase;
+    
+    @Inject
+    public TransferRestAdapter(TransferMoneyUseCase transferUseCase) {
+        this.transferUseCase = transferUseCase;
+    }
+    
+    @POST
+    @Consumes(MediaType.APPLICATION_JSON)
+    public Response transfer(TransferRequest request) {
+        TransferCommand command = new TransferCommand(
+            request.sourceAccountId(),
+            request.targetAccountId(),
+            new Money(request.amount(), request.currency())
+        );
+        
+        transferUseCase.execute(command);
+        
+        return Response.ok().build();
+    }
+}</code></pre>
+
+<span class="slide-counter">54 / 71</span>
+<div class="slide-nav">
+  <a href="#slide-53">&#8592; Previous</a>
+  <span class="slide-info">Slide 54 / 71 &nbsp;&middot;&nbsp; Lecture 7: Hexagonal Architecture</span>
+  <a href="#slide-55">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-55" class="slide">
+<h2 data-en="🏦 Banking Application Example" data-fr="🏦 Banking Application Exemple">🏦 Banking Application Example</h2>
+<h3>Use Case: Transfer Money</h3>
+<p><strong>Infrastructure Layer - JPA Adapter:</strong></p>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>@ApplicationScoped
+public class JpaAccountAdapter implements AccountRepository {
+    @PersistenceContext
+    private EntityManager em;
+    
+    @Override
+    public Optional&lt;Account&gt; findById(Long id) {
+        AccountEntity entity = em.find(AccountEntity.class, id);
+        return Optional.ofNullable(entity)
+            .map(AccountMapper::toDomain);
+    }
+    
+    @Override
+    public void save(Account account) {
+        AccountEntity entity = AccountMapper.toEntity(account);
+        if (entity.getId() == null) {
+            em.persist(entity);
+        } else {
+            em.merge(entity);
+        }
+    }
+}</code></pre>
+
+<span class="slide-counter">55 / 71</span>
+<div class="slide-nav">
+  <a href="#slide-54">&#8592; Previous</a>
+  <span class="slide-info">Slide 55 / 71 &nbsp;&middot;&nbsp; Lecture 7: Hexagonal Architecture</span>
+  <a href="#slide-56">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-56" class="slide">
+<h2 data-en="🏦 Banking Application Example" data-fr="🏦 Banking Application Exemple">🏦 Banking Application Example</h2>
+<h3>Use Case: Transfer Money</h3>
+<p><strong>Infrastructure Layer - Event Publisher Adapter:</strong></p>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>@ApplicationScoped
+public class CDIEventPublisherAdapter implements EventPublisher {
+    @Inject
+    private Event&lt;DomainEvent&gt; event;
+    
+    @Override
+    public void publish(DomainEvent domainEvent) {
+        event.fire(domainEvent);
+    }
+}
+
+// Event observer
+@ApplicationScoped
+public class TransferEventObserver {
+    public void onMoneyTransferred(@Observes MoneyTransferredEvent event) {
+        System.out.println(&quot;Money transferred: &quot; + event.amount() + 
+            &quot; from &quot; + event.sourceId() + &quot; to &quot; + event.targetId());
+    }
+}</code></pre>
+
+<span class="slide-counter">56 / 71</span>
+<div class="slide-nav">
+  <a href="#slide-55">&#8592; Previous</a>
+  <span class="slide-info">Slide 56 / 71 &nbsp;&middot;&nbsp; Lecture 7: Hexagonal Architecture</span>
+  <a href="#slide-57">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-57" class="slide">
+<h2 data-en="📊 Comparison: Traditional vs Hexagonal" data-fr="📊 Comparaison: Traditional vs Hexagonal">📊 Comparison: Traditional vs Hexagonal</h2>
+<table class="slide-table"><thead><tr><th>Aspect</th><th>Traditional Layered</th><th>Hexagonal Architecture</th></tr></thead><tbody>
+<tr><td><strong>Dependencies</strong></td><td>Downward (UI → Business → Data)</td><td>Inward (All → Domain)</td></tr>
+<tr><td><strong>Domain Purity</strong></td><td>Mixed with infrastructure</td><td>Pure, no dependencies</td></tr>
+<tr><td><strong>Testability</strong></td><td>Requires infrastructure</td><td>Easy with mocks</td></tr>
+<tr><td><strong>Flexibility</strong></td><td>Hard to change technology</td><td>Easy to swap adapters</td></tr>
+<tr><td><strong>Complexity</strong></td><td>Simpler for small apps</td><td>More structure needed</td></tr>
+<tr><td><strong>Team Work</strong></td><td>Sequential development</td><td>Parallel development</td></tr>
+<tr><td><strong>Learning Curve</strong></td><td>Easier to start</td><td>Steeper initially</td></tr>
+</tbody></table>
+
+<span class="slide-counter">57 / 71</span>
+<div class="slide-nav">
+  <a href="#slide-56">&#8592; Previous</a>
+  <span class="slide-info">Slide 57 / 71 &nbsp;&middot;&nbsp; Lecture 7: Hexagonal Architecture</span>
+  <a href="#slide-58">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-58" class="slide">
+<h2 data-en="🎓 When to Use Hexagonal Architecture" data-fr="🎓 When to Use Architecture hexagonale">🎓 When to Use Hexagonal Architecture</h2>
+<h3>✅ Good Fit:</h3>
+<ul>
+<li><strong>Complex business logic</strong> that needs to be tested independently</li>
+<li><strong>Multiple interfaces</strong> (REST API, Web UI, CLI, etc.)</li>
+<li><strong>Long-lived applications</strong> that will evolve over time</li>
+<li><strong>Team collaboration</strong> with multiple developers</li>
+<li><strong>Technology uncertainty</strong> - might change database or framework</li>
+<li data-en="<strong>Domain-driven design</strong> - rich domain model" data-fr="Conception pilotée par le domaine - rich domain model"><strong>Domain-driven design</strong> - rich domain model</li>
+</ul>
+<h3>❌ Not Necessary:</h3>
+<ul>
+<li><strong>Simple CRUD applications</strong> with minimal business logic</li>
+<li><strong>Prototypes</strong> or short-lived projects</li>
+<li><strong>Single interface</strong> that won't change</li>
+<li data-en="<strong>Small team</strong> with simple requirements" data-fr="Small team with Simple requirements"><strong>Small team</strong> with simple requirements</li>
+<li><strong>Tight deadlines</strong> where simplicity is priority</li>
+</ul>
+
+<span class="slide-counter">58 / 71</span>
+<div class="slide-nav">
+  <a href="#slide-57">&#8592; Previous</a>
+  <span class="slide-info">Slide 58 / 71 &nbsp;&middot;&nbsp; Lecture 7: Hexagonal Architecture</span>
+  <a href="#slide-59">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-59" class="slide">
+<h2>🔄 Migration Strategy</h2>
+<h3>Incremental Refactoring</h3>
+<p><strong>Don't rewrite everything at once!</strong></p>
+<ol>
+<li data-en="<strong>Start with new features:</strong> Implement new use cases with hexagonal architecture" data-fr="Start with new features: Implement new use cases with Architecture hexagonale"><strong>Start with new features:</strong> Implement new use cases with hexagonal architecture</li>
+<li><strong>Extract ports:</strong> Identify interfaces in existing code</li>
+<li><strong>Create adapters:</strong> Wrap existing infrastructure code</li>
+<li><strong>Move business logic:</strong> Gradually move logic from services to domain</li>
+<li><strong>Remove dependencies:</strong> Clean up infrastructure dependencies from domain</li>
+<li><strong>Add tests:</strong> Write tests for each refactored component</li>
+</ol>
+<h3 data-en="Parallel Development" data-fr="Parallel Développement">Parallel Development</h3>
+<ul>
+<li>Keep old code working while refactoring</li>
+<li>Use feature flags to switch between old and new implementations</li>
+<li>Migrate one bounded context at a time</li>
+</ul>
+
+<span class="slide-counter">59 / 71</span>
+<div class="slide-nav">
+  <a href="#slide-58">&#8592; Previous</a>
+  <span class="slide-info">Slide 59 / 71 &nbsp;&middot;&nbsp; Lecture 7: Hexagonal Architecture</span>
+  <a href="#slide-60">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-60" class="slide">
+<h2>🛠️ Tools and Frameworks</h2>
+<h3>Jakarta EE Support</h3>
+<ul>
+<li data-en="<strong>CDI:</strong> Dependency injection for ports and adapters" data-fr="CDI: Injection de dépendances for ports and adapters"><strong>CDI:</strong> Dependency injection for ports and adapters</li>
+<li><strong>JAX-RS:</strong> REST adapters</li>
+<li><strong>JPA:</strong> Database adapters</li>
+<li><strong>Bean Validation:</strong> Input validation in adapters</li>
+</ul>
+<h3 data-en="Testing Tools" data-fr="Tests Tools">Testing Tools</h3>
+<ul>
+<li><strong>JUnit 5:</strong> Unit and integration tests</li>
+<li><strong>Mockito:</strong> Mocking secondary ports</li>
+<li data-en="<strong>Arquillian:</strong> Integration testing with Jakarta EE" data-fr="Arquillian: Integration Tests with Jakarta EE"><strong>Arquillian:</strong> Integration testing with Jakarta EE</li>
+<li data-en="<strong>TestContainers:</strong> Database testing with Docker" data-fr="TestContainers: Database Tests with Docker"><strong>TestContainers:</strong> Database testing with Docker</li>
+</ul>
+<h3>Architecture Validation</h3>
+<ul>
+<li><strong>ArchUnit:</strong> Enforce architectural rules</li>
+<li><strong>JDepend:</strong> Analyze dependencies</li>
+<li data-en="<strong>SonarQube:</strong> Code quality and architecture metrics" data-fr="SonarQube: Code quality and Architecture metrics"><strong>SonarQube:</strong> Code quality and architecture metrics</li>
+</ul>
+
+<span class="slide-counter">60 / 71</span>
+<div class="slide-nav">
+  <a href="#slide-59">&#8592; Previous</a>
+  <span class="slide-info">Slide 60 / 71 &nbsp;&middot;&nbsp; Lecture 7: Hexagonal Architecture</span>
+  <a href="#slide-61">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-61" class="slide">
+<h2 data-en="📚 Best Practices" data-fr="📚 Bonnes pratiques">📚 Best Practices</h2>
+<h3>1. Keep Domain Pure</h3>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>// ✅ Good - Pure domain
+public class Account {
+    private Money balance;
+    
+    public void deposit(Money amount) {
+        this.balance = this.balance.add(amount);
+    }
+}
+
+// ❌ Bad - Infrastructure in domain
+@Entity
+public class Account {
+    @Column(name = &quot;balance&quot;)
+    private BigDecimal balance;
+    
+    @Transactional
+    public void deposit(BigDecimal amount) {
+        this.balance = this.balance.add(amount);
+    }
+}</code></pre>
+
+<span class="slide-counter">61 / 71</span>
+<div class="slide-nav">
+  <a href="#slide-60">&#8592; Previous</a>
+  <span class="slide-info">Slide 61 / 71 &nbsp;&middot;&nbsp; Lecture 7: Hexagonal Architecture</span>
+  <a href="#slide-62">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-62" class="slide">
+<h2 data-en="📚 Best Practices" data-fr="📚 Bonnes pratiques">📚 Best Practices</h2>
+<h3>2. Use Value Objects</h3>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>// ✅ Good - Type-safe value object
+public class Money {
+    private final BigDecimal amount;
+    private final String currency;
+    
+    public Money add(Money other) {
+        if (!this.currency.equals(other.currency)) {
+            throw new IllegalArgumentException(&quot;Currency mismatch&quot;);
+        }
+        return new Money(this.amount.add(other.amount), this.currency);
+    }
+}
+
+// ❌ Bad - Primitive obsession
+public class Account {
+    private BigDecimal balance;  // What currency? Can be negative?
+}</code></pre>
+
+<span class="slide-counter">62 / 71</span>
+<div class="slide-nav">
+  <a href="#slide-61">&#8592; Previous</a>
+  <span class="slide-info">Slide 62 / 71 &nbsp;&middot;&nbsp; Lecture 7: Hexagonal Architecture</span>
+  <a href="#slide-63">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-63" class="slide">
+<h2 data-en="📚 Best Practices" data-fr="📚 Bonnes pratiques">📚 Best Practices</h2>
+<h3>3. Define Clear Ports</h3>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>// ✅ Good - Clear, focused port
+public interface AccountRepository {
+    Optional&lt;Account&gt; findById(Long id);
+    void save(Account account);
+}
+
+// ❌ Bad - Generic, unclear port
+public interface Repository&lt;T&gt; {
+    T find(Object id);
+    void persist(T entity);
+    void remove(T entity);
+    List&lt;T&gt; findAll();
+    // Too many methods, not domain-specific
+}</code></pre>
+
+<span class="slide-counter">63 / 71</span>
+<div class="slide-nav">
+  <a href="#slide-62">&#8592; Previous</a>
+  <span class="slide-info">Slide 63 / 71 &nbsp;&middot;&nbsp; Lecture 7: Hexagonal Architecture</span>
+  <a href="#slide-64">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-64" class="slide">
+<h2 data-en="📚 Best Practices" data-fr="📚 Bonnes pratiques">📚 Best Practices</h2>
+<h3>4. Use Commands and Queries</h3>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>// Commands (write operations)
+public record OpenAccountCommand(
+    Long clientId,
+    String accountNumber,
+    String accountType,
+    BigDecimal initialDeposit
+) {}
+
+public record DepositCommand(
+    Long accountId,
+    Money amount
+) {}
+
+// Queries (read operations)
+public record GetAccountQuery(Long accountId) {}
+public record GetClientAccountsQuery(Long clientId) {}</code></pre>
+
+<span class="slide-counter">64 / 71</span>
+<div class="slide-nav">
+  <a href="#slide-63">&#8592; Previous</a>
+  <span class="slide-info">Slide 64 / 71 &nbsp;&middot;&nbsp; Lecture 7: Hexagonal Architecture</span>
+  <a href="#slide-65">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-65" class="slide">
+<h2 data-en="📚 Best Practices" data-fr="📚 Bonnes pratiques">📚 Best Practices</h2>
+<h3>5. Separate DTOs from Domain</h3>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>// Domain model
+public class Account {
+    private AccountNumber accountNumber;
+    private Money balance;
+    private AccountType type;
+}
+
+// DTO for API
+public record AccountDTO(
+    Long id,
+    String accountNumber,
+    BigDecimal balance,
+    String currency,
+    String type
+) {}
+
+// Mapper
+public class AccountMapper {
+    public static AccountDTO toDTO(Account account) {
+        return new AccountDTO(
+            account.getId(),
+            account.getAccountNumber().getValue(),
+            account.getBalance().getAmount(),
+            account.getBalance().getCurrency(),
+            account.getType().name()
+        );
+    }
+}</code></pre>
+
+<span class="slide-counter">65 / 71</span>
+<div class="slide-nav">
+  <a href="#slide-64">&#8592; Previous</a>
+  <span class="slide-info">Slide 65 / 71 &nbsp;&middot;&nbsp; Lecture 7: Hexagonal Architecture</span>
+  <a href="#slide-66">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-66" class="slide">
+<h2>🎯 Lab 07 Preview</h2>
+<h3>What You'll Build</h3>
+<ul>
+<li data-en="<strong>Refactor Lab 06</strong> from DDD to hexagonal architecture" data-fr="Refactor Lab 06 from DDD to Architecture hexagonale"><strong>Refactor Lab 06</strong> from DDD to hexagonal architecture</li>
+<li><strong>Create ports</strong> for all use cases</li>
+<li><strong>Implement adapters</strong> for REST, Web, and JPA</li>
+<li><strong>Separate domain</strong> from infrastructure completely</li>
+<li><strong>Add comprehensive tests</strong> with mock adapters</li>
+<li><strong>Maintain all features</strong> from Lab 06</li>
+</ul>
+<h3>New Package Structure</h3>
+<pre class="dark"><code>com.bank/
+├── domain/                 # Pure domain (no dependencies)
+├── application/            # Use cases and ports
+│   ├── port/in/           # Primary ports
+│   ├── port/out/          # Secondary ports
+│   └── usecase/           # Use case implementations
+└── infrastructure/         # All adapters
+    └── adapter/
+        ├── in/            # REST, Web adapters
+        └── out/           # JPA, Event adapters</code></pre>
+
+<span class="slide-counter">66 / 71</span>
+<div class="slide-nav">
+  <a href="#slide-65">&#8592; Previous</a>
+  <span class="slide-info">Slide 66 / 71 &nbsp;&middot;&nbsp; Lecture 7: Hexagonal Architecture</span>
+  <a href="#slide-67">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-67" class="slide">
+<h2>📖 Further Reading</h2>
+<h3>Books</h3>
+<ul>
+<li data-en="<strong>&quot;Hexagonal Architecture Explained&quot;</strong> by Juan Manuel Garrido de Paz" data-fr="&quot;Architecture hexagonale Explained&quot; by Juan Manuel Garrido de Paz"><strong>"Hexagonal Architecture Explained"</strong> by Juan Manuel Garrido de Paz</li>
+<li><strong>"Clean Architecture"</strong> by Robert C. Martin</li>
+<li data-en="<strong>&quot;Implementing Domain-Driven Design&quot;</strong> by Vaughn Vernon" data-fr="&quot;Implémentation de Conception pilotée par le domaine&quot; by Vaughn Vernon"><strong>"Implementing Domain-Driven Design"</strong> by Vaughn Vernon</li>
+<li><strong>"Get Your Hands Dirty on Clean Architecture"</strong> by Tom Hombergs</li>
+</ul>
+<h3>Articles</h3>
+<ul>
+<li data-en="Alistair Cockburn: &quot;Hexagonal Architecture&quot; (original article)" data-fr="Alistair Cockburn: &quot;Architecture hexagonale&quot; (original article)">Alistair Cockburn: "Hexagonal Architecture" (original article)</li>
+<li>Martin Fowler: "Ports and Adapters"</li>
+<li data-en="Netflix Tech Blog: &quot;Ready for changes with Hexagonal Architecture&quot;" data-fr="Netflix Tech Blog: &quot;Ready for changes with Architecture hexagonale&quot;">Netflix Tech Blog: "Ready for changes with Hexagonal Architecture"</li>
+</ul>
+<h3>Online Resources</h3>
+<ul>
+<li>Jakarta EE Tutorial: Enterprise Application Architecture</li>
+<li data-en="Baeldung: Hexagonal Architecture with Spring Boot" data-fr="Baeldung: Architecture hexagonale with Spring Boot">Baeldung: Hexagonal Architecture with Spring Boot</li>
+<li>DZone: Clean Architecture with Java</li>
+</ul>
+
+<span class="slide-counter">67 / 71</span>
+<div class="slide-nav">
+  <a href="#slide-66">&#8592; Previous</a>
+  <span class="slide-info">Slide 67 / 71 &nbsp;&middot;&nbsp; Lecture 7: Hexagonal Architecture</span>
+  <a href="#slide-68">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-68" class="slide">
+<h2 data-en="🎯 Key Takeaways" data-fr="🎯 Points clés">🎯 Key Takeaways</h2>
+<h3>Remember:</h3>
+<ol>
+<li data-en="<strong>Hexagonal Architecture</strong> = Ports and Adapters pattern" data-fr="Architecture hexagonale = Ports and Adapters pattern"><strong>Hexagonal Architecture</strong> = Ports and Adapters pattern</li>
+<li><strong>Ports</strong> define interfaces, <strong>Adapters</strong> implement them</li>
+<li><strong>Primary ports</strong> = what application can do (use cases)</li>
+<li><strong>Secondary ports</strong> = what application needs (repositories, etc.)</li>
+<li><strong>Domain</strong> must be pure - no infrastructure dependencies</li>
+<li><strong>Dependencies</strong> always point inward toward domain</li>
+<li data-en="<strong>Testing</strong> is easier with mock adapters" data-fr="Tests is easier with mock adapters"><strong>Testing</strong> is easier with mock adapters</li>
+<li><strong>Flexibility</strong> to swap implementations without changing business logic</li>
+</ol>
+
+<span class="slide-counter">68 / 71</span>
+<div class="slide-nav">
+  <a href="#slide-67">&#8592; Previous</a>
+  <span class="slide-info">Slide 68 / 71 &nbsp;&middot;&nbsp; Lecture 7: Hexagonal Architecture</span>
+  <a href="#slide-69">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-69" class="slide">
+<h2>❓ Questions &amp; Discussion</h2>
+<h3>Discussion Topics:</h3>
+<ol>
+<li data-en="When would you choose hexagonal architecture over traditional layered architecture?" data-fr="When would you choose Architecture hexagonale over traditional layered Architecture?">When would you choose hexagonal architecture over traditional layered architecture?</li>
+<li data-en="How does hexagonal architecture relate to microservices?" data-fr="How does Architecture hexagonale relate to microservices?">How does hexagonal architecture relate to microservices?</li>
+<li>What are the trade-offs between simplicity and flexibility?</li>
+<li data-en="How do you convince a team to adopt hexagonal architecture?" data-fr="How do you convince a team to adopt Architecture hexagonale?">How do you convince a team to adopt hexagonal architecture?</li>
+<li data-en="What challenges might you face when refactoring to hexagonal architecture?" data-fr="What challenges might you face when refactoring to Architecture hexagonale?">What challenges might you face when refactoring to hexagonal architecture?</li>
+</ol>
+<h3 data-en="Next Steps:" data-fr="Prochaines étapes:">Next Steps:</h3>
+<ul>
+<li data-en="<strong>Lab 07:</strong> Refactor banking application to hexagonal architecture" data-fr="Lab 07: Refactor banking application to Architecture hexagonale"><strong>Lab 07:</strong> Refactor banking application to hexagonal architecture</li>
+<li><strong>Practice:</strong> Identify ports and adapters in existing code</li>
+<li><strong>Experiment:</strong> Try different adapter implementations</li>
+</ul>
+
+<span class="slide-counter">69 / 71</span>
+<div class="slide-nav">
+  <a href="#slide-68">&#8592; Previous</a>
+  <span class="slide-info">Slide 69 / 71 &nbsp;&middot;&nbsp; Lecture 7: Hexagonal Architecture</span>
+  <a href="#slide-70">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-70" class="slide">
+<h2 data-en="📝 Summary" data-fr="📝 Résumé">📝 Summary</h2>
+<h3>What We Learned:</h3>
+<ul>
+<li data-en="✅ Hexagonal architecture principles and benefits" data-fr="✅ Architecture hexagonale principles and benefits">✅ Hexagonal architecture principles and benefits</li>
+<li>✅ Ports and Adapters pattern</li>
+<li>✅ Dependency Inversion Principle</li>
+<li>✅ Clean Architecture concepts</li>
+<li>✅ Domain-infrastructure separation</li>
+<li data-en="✅ Testing strategies with hexagonal architecture" data-fr="✅ Tests strategies with Architecture hexagonale">✅ Testing strategies with hexagonal architecture</li>
+<li data-en="✅ Refactoring from DDD to hexagonal architecture" data-fr="✅ Refactoring from DDD to Architecture hexagonale">✅ Refactoring from DDD to hexagonal architecture</li>
+</ul>
+<h3 data-en="Next Lecture:" data-fr="Prochaine leçon:">Next Lecture:</h3>
+<p data-en="<strong>Lecture 8: Microservices Architecture</strong>" data-fr="Lecture 8: Architecture microservices"><strong>Lecture 8: Microservices Architecture</strong></p>
+<ul>
+<li>Service decomposition strategies</li>
+<li>Inter-service communication</li>
+<li>API Gateway pattern</li>
+<li>Distributed systems challenges</li>
+</ul>
+
+<span class="slide-counter">70 / 71</span>
+<div class="slide-nav">
+  <a href="#slide-69">&#8592; Previous</a>
+  <span class="slide-info">Slide 70 / 71 &nbsp;&middot;&nbsp; Lecture 7: Hexagonal Architecture</span>
+  <a href="#slide-71">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-71" class="slide slide--section">
+<h1 data-en="Thank You!" data-fr="Merci !!">Thank You!</h1>
+<p><strong>Questions?</strong></p>
+<p data-en="<strong>Next:</strong> Lab 07 - Hexagonal Architecture Refactoring" data-fr="Next: Lab 07 - Architecture hexagonale Refactoring"><strong>Next:</strong> Lab 07 - Hexagonal Architecture Refactoring</p>
+<p><strong>Contact:</strong> [Your contact information]</p>
+
+<span class="slide-counter">71 / 71</span>
+<div class="slide-nav">
+  <a href="#slide-70">&#8592; Previous</a>
+  <span class="slide-info">Slide 71 / 71 &nbsp;&middot;&nbsp; Lecture 7: Hexagonal Architecture</span>
+  <a class="disabled">Next &#8594;</a>
+</div>
+</section>
+    </div>
+  </main>
+</div>
+<footer class="site-footer">Made with IBM Bob &nbsp;&middot;&nbsp; &copy; 2026 Olivier Planson</footer>
+<script>
+/* ── EN/FR language toggle — global scope so buttons can call it ── */
+var _lang = localStorage.getItem('slide-lang') || 'en';
+function setLang(lang) {
+  _lang = lang;
+  localStorage.setItem('slide-lang', lang);
+  document.getElementById('btn-en').classList.toggle('active', lang === 'en');
+  document.getElementById('btn-fr').classList.toggle('active', lang === 'fr');
+  document.querySelectorAll('[data-en][data-fr]').forEach(function(el) {
+    el.innerHTML = lang === 'fr' ? el.getAttribute('data-fr') : el.getAttribute('data-en');
+  });
+}
+
+(function() {
+  /* ── Sidenav hover ── */
+  var nav     = document.getElementById('sidenav');
+  var navTrig = document.getElementById('sidenav-trigger');
+  var navTimer = null;
+  function navShow() { clearTimeout(navTimer); nav.classList.add('sidenav--open'); }
+  function navHide() { navTimer = setTimeout(function(){ nav.classList.remove('sidenav--open'); }, 300); }
+  navTrig.addEventListener('mouseenter', navShow);
+  navTrig.addEventListener('mouseleave', navHide);
+  nav.addEventListener('mouseenter', navShow);
+  nav.addEventListener('mouseleave', navHide);
+
+  /* ── Progress bar hover ── */
+  var pbWrap  = document.getElementById('pb-wrap');
+  var pbTrig  = document.getElementById('pb-trigger');
+  var pbTimer = null;
+  function pbShow() { clearTimeout(pbTimer); pbWrap.classList.add('pb-open'); }
+  function pbHide() { pbTimer = setTimeout(function(){ pbWrap.classList.remove('pb-open'); }, 400); }
+  pbTrig.addEventListener('mouseenter', pbShow);
+  pbTrig.addEventListener('mouseleave', pbHide);
+  pbWrap.addEventListener('mouseenter', pbShow);
+  pbWrap.addEventListener('mouseleave', pbHide);
+
+  /* ── Wire EN/FR buttons via addEventListener (no inline onclick) ── */
+  document.getElementById('btn-en').addEventListener('click', function() { setLang('en'); });
+  document.getElementById('btn-fr').addEventListener('click', function() { setLang('fr'); });
+
+  /* Apply stored preference on page load */
+  if (_lang === 'fr') setLang('fr');
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,151 @@
+<!-- © Copyright 2026 Olivier Planson. All rights reserved. Reproduction prohibited. Made with IBM Bob. -->
+<!DOCTYPE html>
+<html lang="fr" data-lang="fr">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title data-title-en="ESIPE — Lab guides" data-title-fr="ESIPE — Guides de labs">ESIPE — Guides de labs</title>
+  <link rel="stylesheet" href="assets/slide.css"/>
+  <link rel="stylesheet" href="assets/lab-guide.css"/>
+  <script src="assets/lab-guide.js"></script>
+</head>
+<body>
+<header class="site-header">
+  <a class="brand" href="index.html">ESIPE<span>Jakarta EE &amp; Microservices — Labs</span></a>
+  <div class="lang-toggle" id="lang-toggle">
+    <button type="button" id="btn-en" data-set-lang="en">EN</button>
+    <span class="sep">|</span>
+    <button type="button" id="btn-fr" data-set-lang="fr" class="active">FR</button>
+  </div>
+  <a class="back-link" href="../index.html"><span lang="en">Course site</span><span lang="fr">Site du cours</span></a>
+</header>
+
+<div class="lg-shell">
+  <main class="lg-main">
+
+    <section class="lg-hero" id="hero">
+      <div class="lg-kicker">Labs</div>
+      <h1><span lang="en">Lab guides</span><span lang="fr">Guides de labs</span></h1>
+      <p class="lg-lead">
+        <span lang="en">One step-by-step guide per lab. Start from the <code>starter/</code> folder, follow the instructions and reach the code of the <code>solution/</code> folder. Each guide is available in English and French.</span>
+        <span lang="fr">Un guide pas à pas par lab. Partez du dossier <code>starter/</code>, suivez les consignes et arrivez au code du dossier <code>solution/</code>. Chaque guide est disponible en français et en anglais.</span>
+      </p>
+      <div class="lg-hero-links">
+        <a class="secondary" href="https://github.com/oplanson/esipe-javaee/tree/master/03-Labs"><span lang="en">Lab sources on GitHub</span><span lang="fr">Sources des labs sur GitHub</span></a>
+      </div>
+    </section>
+
+    <section class="lg-section" id="web">
+      <h2><span lang="en">Web fundamentals</span><span lang="fr">Fondamentaux web</span></h2>
+      <div class="lg-grid">
+        <a class="lg-card" href="lab01-first-servlet.html">
+          <div class="num">Lab 01</div>
+          <h3><span lang="en">First Servlet</span><span lang="fr">Première Servlet</span></h3>
+          <p><span lang="en">Write servlets, package them in a container and run them on Open Liberty.</span><span lang="fr">Écrire des servlets, les empaqueter dans un conteneur et les exécuter sur Open Liberty.</span></p>
+          <div class="lg-card-foot"><span><span lang="en">about 2 hours</span><span lang="fr">environ 2 h</span></span></div>
+        </a>
+        <div class="lg-card lg-card--soon">
+          <div class="num">Lab 02</div>
+          <h3><span lang="en">Servlets &amp; JSP</span><span lang="fr">Servlets &amp; JSP</span></h3>
+          <p><span lang="en">MVC with a front controller, JSP/JSTL, filters and MicroProfile Health.</span><span lang="fr">MVC avec contrôleur frontal, JSP/JSTL, filtres et MicroProfile Health.</span></p>
+          <div class="lg-card-foot"><span class="lg-soon"><span lang="en">Coming soon</span><span lang="fr">Bientôt</span></span></div>
+        </div>
+        <div class="lg-card lg-card--soon">
+          <div class="num">Lab 02B</div>
+          <h3><span lang="en">Jakarta Faces (JSF)</span><span lang="fr">Jakarta Faces (JSF)</span></h3>
+          <p><span lang="en">Facelets, CDI backing beans, validation and AJAX search.</span><span lang="fr">Facelets, backing beans CDI, validation et recherche AJAX.</span></p>
+          <div class="lg-card-foot"><span class="lg-soon"><span lang="en">Coming soon</span><span lang="fr">Bientôt</span></span></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="lg-section" id="persistence">
+      <h2><span lang="en">Persistence</span><span lang="fr">Persistance</span></h2>
+      <div class="lg-grid">
+        <div class="lg-card lg-card--soon">
+          <div class="num">Lab 03</div>
+          <h3><span lang="en">JPA &amp; EclipseLink</span><span lang="fr">JPA &amp; EclipseLink</span></h3>
+          <p><span lang="en">Entities, PostgreSQL, Flyway migrations and manual transactions.</span><span lang="fr">Entités, PostgreSQL, migrations Flyway et transactions manuelles.</span></p>
+          <div class="lg-card-foot"><span class="lg-soon"><span lang="en">Coming soon</span><span lang="fr">Bientôt</span></span></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="lg-section" id="beans">
+      <h2><span lang="en">Dependency injection &amp; enterprise beans</span><span lang="fr">Injection de dépendances &amp; Enterprise Beans</span></h2>
+      <div class="lg-grid">
+        <div class="lg-card lg-card--soon">
+          <div class="num">Lab 04</div>
+          <h3>CDI 4.0</h3>
+          <p><span lang="en">Scopes, producers, qualifiers, interceptors and events.</span><span lang="fr">Scopes, producteurs, qualifieurs, intercepteurs et événements.</span></p>
+          <div class="lg-card-foot"><span class="lg-soon"><span lang="en">Coming soon</span><span lang="fr">Bientôt</span></span></div>
+        </div>
+        <div class="lg-card lg-card--soon">
+          <div class="num">Lab 04B</div>
+          <h3>Enterprise JavaBeans (EJB)</h3>
+          <p><span lang="en">Stateless, stateful and singleton beans, timers, MDB and declarative transactions.</span><span lang="fr">Beans stateless, stateful et singleton, timers, MDB et transactions déclaratives.</span></p>
+          <div class="lg-card-foot"><span class="lg-soon"><span lang="en">Coming soon</span><span lang="fr">Bientôt</span></span></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="lg-section" id="services">
+      <h2><span lang="en">REST services &amp; messaging</span><span lang="fr">Services REST &amp; messagerie</span></h2>
+      <div class="lg-grid">
+        <div class="lg-card lg-card--soon">
+          <div class="num">Lab 05</div>
+          <h3><span lang="en">REST API (JAX-RS)</span><span lang="fr">API REST (JAX-RS)</span></h3>
+          <p><span lang="en">JAX-RS resources, Bean Validation, exception mappers and OpenAPI.</span><span lang="fr">Ressources JAX-RS, Bean Validation, exception mappers et OpenAPI.</span></p>
+          <div class="lg-card-foot"><span class="lg-soon"><span lang="en">Coming soon</span><span lang="fr">Bientôt</span></span></div>
+        </div>
+        <div class="lg-card lg-card--soon">
+          <div class="num">Lab 05B</div>
+          <h3><span lang="en">JMS &amp; Message-Driven Beans</span><span lang="fr">JMS &amp; Message-Driven Beans</span></h3>
+          <p><span lang="en">Queues, durable topics, dead-letter queue and safe JSON deserialization.</span><span lang="fr">Queues, topics durables, dead-letter queue et désérialisation JSON sécurisée.</span></p>
+          <div class="lg-card-foot"><span class="lg-soon"><span lang="en">Coming soon</span><span lang="fr">Bientôt</span></span></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="lg-section" id="architecture">
+      <h2><span lang="en">Advanced architecture</span><span lang="fr">Architecture avancée</span></h2>
+      <div class="lg-grid">
+        <div class="lg-card lg-card--soon">
+          <div class="num">Lab 06</div>
+          <h3>Domain-Driven Design</h3>
+          <p><span lang="en">Aggregates, value objects and bounded contexts.</span><span lang="fr">Agrégats, objets-valeurs et bounded contexts.</span></p>
+          <div class="lg-card-foot"><span class="lg-soon"><span lang="en">Coming soon</span><span lang="fr">Bientôt</span></span></div>
+        </div>
+        <div class="lg-card lg-card--soon">
+          <div class="num">Lab 07</div>
+          <h3><span lang="en">Hexagonal architecture</span><span lang="fr">Architecture hexagonale</span></h3>
+          <p><span lang="en">Pure domain, ports and adapters, API versioning.</span><span lang="fr">Domaine pur, ports et adaptateurs, versioning d'API.</span></p>
+          <div class="lg-card-foot"><span class="lg-soon"><span lang="en">Coming soon</span><span lang="fr">Bientôt</span></span></div>
+        </div>
+        <div class="lg-card lg-card--soon">
+          <div class="num">Lab 08</div>
+          <h3>Microservices</h3>
+          <p><span lang="en">Three independent services, API gateway and fault tolerance.</span><span lang="fr">Trois services indépendants, API gateway et tolérance aux pannes.</span></p>
+          <div class="lg-card-foot"><span class="lg-soon"><span lang="en">Coming soon</span><span lang="fr">Bientôt</span></span></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="lg-section" id="security">
+      <h2><span lang="en">Security</span><span lang="fr">Sécurité</span></h2>
+      <div class="lg-grid">
+        <div class="lg-card lg-card--soon">
+          <div class="num">Lab 09</div>
+          <h3><span lang="en">Jakarta EE security</span><span lang="fr">Sécurité Jakarta EE</span></h3>
+          <p><span lang="en">Audit and hardening: JWT, PBKDF2, RBAC, audit trail and HTTP security headers.</span><span lang="fr">Audit et durcissement : JWT, PBKDF2, RBAC, piste d'audit et en-têtes de sécurité HTTP.</span></p>
+          <div class="lg-card-foot"><span class="lg-soon"><span lang="en">Coming soon</span><span lang="fr">Bientôt</span></span></div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<footer class="site-footer">Made with IBM Bob &nbsp;&middot;&nbsp; &copy; 2026 Olivier Planson</footer>
+</body>
+</html>

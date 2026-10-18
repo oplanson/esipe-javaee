@@ -1,0 +1,22 @@
+{
+  "lab": "Lab01-FirstServlet",
+  "must_cite": [
+    "Containerfile",
+    "microprofile-config.properties",
+    "server.xml",
+    "mpMetrics",
+    "Client.java",
+    "WelcomeServlet.java",
+    "ClientListServlet.java",
+    "add-client.html"
+  ],
+  "must_cite_in_steps": [
+    "Containerfile",
+    "microprofile-config.properties",
+    "mpMetrics",
+    "Client.java",
+    "WelcomeServlet.java",
+    "ClientListServlet.java",
+    "add-client.html"
+  ]
+}

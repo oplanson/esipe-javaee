@@ -1,0 +1,3300 @@
+<!-- © Copyright 2026 Olivier Planson. All rights reserved. Reproduction prohibited. Made with IBM Bob. -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>ESIPE — Servlets, JSP &amp; MicroProfile — Slides</title>
+  <link rel="stylesheet" href="../assets/slide.css"/>
+  <style>
+/* suppress static .current when a slide is targeted */
+body:has(.slide:target) .progress-bar a.current { background: var(--bg); color: var(--muted); border-color: var(--border); }
+body:has(#slide-1:target) .progress-bar a[href="#slide-1"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-2:target) .progress-bar a[href="#slide-2"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-3:target) .progress-bar a[href="#slide-3"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-4:target) .progress-bar a[href="#slide-4"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-5:target) .progress-bar a[href="#slide-5"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-6:target) .progress-bar a[href="#slide-6"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-7:target) .progress-bar a[href="#slide-7"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-8:target) .progress-bar a[href="#slide-8"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-9:target) .progress-bar a[href="#slide-9"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-10:target) .progress-bar a[href="#slide-10"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-11:target) .progress-bar a[href="#slide-11"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-12:target) .progress-bar a[href="#slide-12"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-13:target) .progress-bar a[href="#slide-13"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-14:target) .progress-bar a[href="#slide-14"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-15:target) .progress-bar a[href="#slide-15"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-16:target) .progress-bar a[href="#slide-16"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-17:target) .progress-bar a[href="#slide-17"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-18:target) .progress-bar a[href="#slide-18"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-19:target) .progress-bar a[href="#slide-19"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-20:target) .progress-bar a[href="#slide-20"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-21:target) .progress-bar a[href="#slide-21"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-22:target) .progress-bar a[href="#slide-22"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-23:target) .progress-bar a[href="#slide-23"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-24:target) .progress-bar a[href="#slide-24"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-25:target) .progress-bar a[href="#slide-25"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-26:target) .progress-bar a[href="#slide-26"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-27:target) .progress-bar a[href="#slide-27"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-28:target) .progress-bar a[href="#slide-28"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-29:target) .progress-bar a[href="#slide-29"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-30:target) .progress-bar a[href="#slide-30"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-31:target) .progress-bar a[href="#slide-31"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-32:target) .progress-bar a[href="#slide-32"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-33:target) .progress-bar a[href="#slide-33"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-34:target) .progress-bar a[href="#slide-34"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-35:target) .progress-bar a[href="#slide-35"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-36:target) .progress-bar a[href="#slide-36"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-37:target) .progress-bar a[href="#slide-37"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-38:target) .progress-bar a[href="#slide-38"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-39:target) .progress-bar a[href="#slide-39"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-40:target) .progress-bar a[href="#slide-40"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-41:target) .progress-bar a[href="#slide-41"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-42:target) .progress-bar a[href="#slide-42"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-43:target) .progress-bar a[href="#slide-43"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-44:target) .progress-bar a[href="#slide-44"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-45:target) .progress-bar a[href="#slide-45"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-46:target) .progress-bar a[href="#slide-46"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-47:target) .progress-bar a[href="#slide-47"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-48:target) .progress-bar a[href="#slide-48"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-49:target) .progress-bar a[href="#slide-49"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-50:target) .progress-bar a[href="#slide-50"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-51:target) .progress-bar a[href="#slide-51"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-52:target) .progress-bar a[href="#slide-52"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-53:target) .progress-bar a[href="#slide-53"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-54:target) .progress-bar a[href="#slide-54"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-55:target) .progress-bar a[href="#slide-55"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-56:target) .progress-bar a[href="#slide-56"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-57:target) .progress-bar a[href="#slide-57"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-58:target) .progress-bar a[href="#slide-58"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-59:target) .progress-bar a[href="#slide-59"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-60:target) .progress-bar a[href="#slide-60"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-61:target) .progress-bar a[href="#slide-61"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-62:target) .progress-bar a[href="#slide-62"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-63:target) .progress-bar a[href="#slide-63"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-64:target) .progress-bar a[href="#slide-64"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-65:target) .progress-bar a[href="#slide-65"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-66:target) .progress-bar a[href="#slide-66"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-67:target) .progress-bar a[href="#slide-67"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-68:target) .progress-bar a[href="#slide-68"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-69:target) .progress-bar a[href="#slide-69"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-70:target) .progress-bar a[href="#slide-70"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-71:target) .progress-bar a[href="#slide-71"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-72:target) .progress-bar a[href="#slide-72"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-73:target) .progress-bar a[href="#slide-73"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-74:target) .progress-bar a[href="#slide-74"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-75:target) .progress-bar a[href="#slide-75"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-76:target) .progress-bar a[href="#slide-76"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+  </style>
+</head>
+<body>
+<header class="site-header">
+  <a class="brand" href="../index.html">ESIPE<span>Jakarta EE &amp; Microservices</span></a>
+  <!-- EN/FR language toggle -->
+  <div class="lang-toggle" id="lang-toggle">
+    <button id="btn-en" class="active">EN</button>
+    <span class="sep">|</span>
+    <button id="btn-fr">FR</button>
+  </div>
+  <a class="back-link" href="../index.html">&#8592; All Courses</a>
+</header>
+<!-- Thin trigger strip at top: hover to reveal progress bar -->
+<div class="progress-bar-trigger" id="pb-trigger"></div>
+<!-- Progress bar — hidden by default, revealed on hover -->
+<div class="progress-bar-wrap" id="pb-wrap">
+  <div class="progress-bar">
+    <a href="#slide-1" class="current">1</a>
+      <a href="#slide-2">2</a>
+      <a href="#slide-3">3</a>
+      <a href="#slide-4">4</a>
+      <a href="#slide-5">5</a>
+      <a href="#slide-6">6</a>
+      <a href="#slide-7">7</a>
+      <a href="#slide-8">8</a>
+      <a href="#slide-9">9</a>
+      <a href="#slide-10">10</a>
+      <a href="#slide-11">11</a>
+      <a href="#slide-12">12</a>
+      <a href="#slide-13">13</a>
+      <a href="#slide-14">14</a>
+      <a href="#slide-15">15</a>
+      <a href="#slide-16">16</a>
+      <a href="#slide-17">17</a>
+      <a href="#slide-18">18</a>
+      <a href="#slide-19">19</a>
+      <a href="#slide-20">20</a>
+      <a href="#slide-21">21</a>
+      <a href="#slide-22">22</a>
+      <a href="#slide-23">23</a>
+      <a href="#slide-24">24</a>
+      <a href="#slide-25">25</a>
+      <a href="#slide-26">26</a>
+      <a href="#slide-27">27</a>
+      <a href="#slide-28">28</a>
+      <a href="#slide-29">29</a>
+      <a href="#slide-30">30</a>
+      <a href="#slide-31">31</a>
+      <a href="#slide-32">32</a>
+      <a href="#slide-33">33</a>
+      <a href="#slide-34">34</a>
+      <a href="#slide-35">35</a>
+      <a href="#slide-36">36</a>
+      <a href="#slide-37">37</a>
+      <a href="#slide-38">38</a>
+      <a href="#slide-39">39</a>
+      <a href="#slide-40">40</a>
+      <a href="#slide-41">41</a>
+      <a href="#slide-42">42</a>
+      <a href="#slide-43">43</a>
+      <a href="#slide-44">44</a>
+      <a href="#slide-45">45</a>
+      <a href="#slide-46">46</a>
+      <a href="#slide-47">47</a>
+      <a href="#slide-48">48</a>
+      <a href="#slide-49">49</a>
+      <a href="#slide-50">50</a>
+      <a href="#slide-51">51</a>
+      <a href="#slide-52">52</a>
+      <a href="#slide-53">53</a>
+      <a href="#slide-54">54</a>
+      <a href="#slide-55">55</a>
+      <a href="#slide-56">56</a>
+      <a href="#slide-57">57</a>
+      <a href="#slide-58">58</a>
+      <a href="#slide-59">59</a>
+      <a href="#slide-60">60</a>
+      <a href="#slide-61">61</a>
+      <a href="#slide-62">62</a>
+      <a href="#slide-63">63</a>
+      <a href="#slide-64">64</a>
+      <a href="#slide-65">65</a>
+      <a href="#slide-66">66</a>
+      <a href="#slide-67">67</a>
+      <a href="#slide-68">68</a>
+      <a href="#slide-69">69</a>
+      <a href="#slide-70">70</a>
+      <a href="#slide-71">71</a>
+      <a href="#slide-72">72</a>
+      <a href="#slide-73">73</a>
+      <a href="#slide-74">74</a>
+      <a href="#slide-75">75</a>
+      <a href="#slide-76">76</a>
+  </div>
+</div>
+<!-- Thin trigger strip at left: hover to reveal sidenav -->
+<div class="sidenav-trigger" id="sidenav-trigger"></div>
+<div class="shell">
+  <nav class="sidenav" id="sidenav">
+    <div class="sidenav-section">Course outline</div>
+    <a href="#slide-7" class="active">🔄 HTTP Method Handlers</a>
+    <a href="#slide-8">🔄 HTTP Method Handlers (cont.)</a>
+    <a href="#slide-11">📊 Servlet Configuration</a>
+    <a href="#slide-12">📊 Servlet Configuration (cont.)</a>
+    <a href="#slide-13">🌐 Request and Response Objects</a>
+    <a href="#slide-14">🌐 Request and Response Objects (cont.)</a>
+    <a href="#slide-15">🎨 JavaServer Pages (JSP)</a>
+    <a href="#slide-16">🎨 JSP Syntax Elements</a>
+    <a href="#slide-17">🎨 JSP Syntax Elements (cont.)</a>
+    <a href="#slide-18">🎨 Expression Language (EL)</a>
+    <a href="#slide-19">🎨 JSTL - JSP Standard Tag Library</a>
+    <a href="#slide-20">🎨 JSTL - Iteration</a>
+    <a href="#slide-21">🎨 JSTL - Formatting</a>
+    <a href="#slide-23">🏗️ MVC Pattern in Web Applications</a>
+    <a href="#slide-24">🏗️ MVC Pattern - Model Layer</a>
+    <a href="#slide-25">🏗️ MVC Pattern - Controller Layer</a>
+    <a href="#slide-26">🏗️ MVC Pattern - View Layer</a>
+    <a href="#slide-27">⚙️ MicroProfile Config in Web Applications</a>
+    <a href="#slide-28">⚙️ MP Config - Configuration File</a>
+    <a href="#slide-29">⚙️ Configuration in Servlets</a>
+    <a href="#slide-30">⚙️ MP Config - Programmatic Access</a>
+    <a href="#slide-31">💊 Health Checks for Web Tier</a>
+    <a href="#slide-32">💊 Health Check - Database Connectivity</a>
+    <a href="#slide-33">💊 Health Check - Web Application Readiness</a>
+    <a href="#slide-34">💊 Health Check - External Service</a>
+    <a href="#slide-35">💊 Accessing Health Endpoints</a>
+    <a href="#slide-36">🏦 Banking Application - Complete Flow</a>
+    <a href="#slide-42">HTTPSession, Filters &amp; Listeners</a>
+    <a href="#slide-43">🔐 HTTPSession Management</a>
+    <a href="#slide-45">🔐 Session Attributes and Data Storage</a>
+    <a href="#slide-46">🔐 Session Timeout Configuration</a>
+    <a href="#slide-48">🔐 Cookie-based vs URL Rewriting</a>
+    <a href="#slide-49">🔍 Servlet Filters</a>
+    <a href="#slide-50">🔍 Filter Chain and Ordering</a>
+    <a href="#slide-52">🔍 Logging Filter with Timing</a>
+    <a href="#slide-54">🔍 Character Encoding Filter</a>
+    <a href="#slide-55">🔍 Compression Filter</a>
+    <a href="#slide-57">👂 Servlet Listeners</a>
+    <a href="#slide-59">👂 HttpSessionListener - Session Tracking</a>
+    <a href="#slide-60">👂 ServletRequestListener - Request Tracking</a>
+    <a href="#slide-61">👂 Attribute Listeners</a>
+    <a href="#slide-62">👂 ServletContext Attribute Listener</a>
+    <a href="#slide-63">👂 Listener Use Cases and Patterns</a>
+    <a href="#slide-65">🎯 Banking Application - Request Flow</a>
+    <a href="#slide-67">📊 Lab 2 Preview</a>
+    <a href="#slide-71">🙋 Questions &amp; Discussion</a>
+    <hr>
+    <div class="sidenav-section">Navigation</div>
+    <a href="index.html">&#9675; Overview</a>
+  </nav>
+  <main class="content">
+    <div class="slide-wrapper">
+<section id="slide-1" class="slide slide--title">
+<h1>Servlets, JSP &amp; MicroProfile</h1>
+<h2 data-en="Building Dynamic Web Applications" data-fr="Construction Dynamic Web Applications">Building Dynamic Web Applications</h2>
+<div class="slide-meta"><span><strong>Duration:</strong> 3 hours</span><span><strong>Instructor:</strong> Olivier Planson</span><span><strong>Date:</strong> 2025-12</span><span><strong>Course:</strong> Jakarta EE, MicroProfile and Microservices</span></div>
+<span class="slide-counter">1 / 76</span>
+<div class="slide-nav">
+  <a class="disabled">&#8592; Previous</a>
+  <span class="slide-info">Slide 1 / 76 &nbsp;&middot;&nbsp; Servlets, JSP &amp; MicroProfile</span>
+  <a href="#slide-2">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-2" class="slide">
+<h2 data-en="📋 Learning Objectives" data-fr="📋 Objectifs pédagogiques">📋 Learning Objectives</h2>
+<p data-en="By the end of this lecture, you will be able to:" data-fr="À la fin de cette leçon, vous serez en mesure de:">By the end of this lecture, you will be able to:</p>
+<table class="slide-table"><thead><tr><th></th><th></th></tr></thead><tbody>
+<tr><td>✅</td><td>Understand the complete servlet lifecycle</td></tr>
+<tr><td>✅</td><td>Create dynamic web pages with JSP and JSTL</td></tr>
+<tr><td>✅</td><td>Implement the MVC pattern in web applications</td></tr>
+<tr><td>✅</td><td>Use MicroProfile Config in web tier</td></tr>
+<tr><td>✅</td><td>Add health checks for web components</td></tr>
+<tr><td>✅</td><td>Build a complete banking web interface</td></tr>
+</tbody></table>
+
+<span class="slide-counter">2 / 76</span>
+<div class="slide-nav">
+  <a href="#slide-1">&#8592; Previous</a>
+  <span class="slide-info">Slide 2 / 76 &nbsp;&middot;&nbsp; Servlets, JSP &amp; MicroProfile</span>
+  <a href="#slide-3">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-3" class="slide">
+<h2 data-en="🔄 Servlet Lifecycle Deep Dive" data-fr="🔄 Servlet Cycle de vie Deep Dive">🔄 Servlet Lifecycle Deep Dive</h2>
+<h3 data-en="What is a Servlet?" data-fr="Qu'est-ce que a Servlet?">What is a Servlet?</h3>
+<p>A <strong>servlet</strong> is a Java class that handles HTTP requests and generates dynamic responses.</p>
+<h3 data-en="Key Characteristics:" data-fr="Caractéristiques clés:">Key Characteristics:</h3>
+<ul>
+<li><strong>Server-side:</strong> Runs on the application server</li>
+<li><strong>Protocol-independent:</strong> Can handle any request/response protocol</li>
+<li><strong>Thread-safe:</strong> Multiple requests handled concurrently</li>
+<li data-en="<strong>Lifecycle-managed:</strong> Container controls creation and destruction" data-fr="Cycle de vie-managed: Container controls creation and destruction"><strong>Lifecycle-managed:</strong> Container controls creation and destruction</li>
+</ul>
+<h3>Servlet API Hierarchy:</h3>
+<p><img src="../../images/02-servlets-jsp-microprofile-diagram-1.png" alt="width:70%"></p>
+
+<span class="slide-counter">3 / 76</span>
+<div class="slide-nav">
+  <a href="#slide-2">&#8592; Previous</a>
+  <span class="slide-info">Slide 3 / 76 &nbsp;&middot;&nbsp; Servlets, JSP &amp; MicroProfile</span>
+  <a href="#slide-4">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-4" class="slide">
+<h2 data-en="🔄 Servlet Lifecycle Phases" data-fr="🔄 Servlet Cycle de vie Phases">🔄 Servlet Lifecycle Phases</h2>
+<p><img src="../../images/02-servlets-jsp-microprofile-diagram-1.png" alt="width:70%"></p>
+
+<span class="slide-counter">4 / 76</span>
+<div class="slide-nav">
+  <a href="#slide-3">&#8592; Previous</a>
+  <span class="slide-info">Slide 4 / 76 &nbsp;&middot;&nbsp; Servlets, JSP &amp; MicroProfile</span>
+  <a href="#slide-5">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-5" class="slide">
+<h2 data-en="🔄 Servlet Lifecycle Methods" data-fr="🔄 Servlet Cycle de vie Methods">🔄 Servlet Lifecycle Methods</h2>
+<h3>1. init() - Initialization</h3>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>@WebServlet(&quot;/bank&quot;)
+public class BankServlet extends HttpServlet {
+    
+    private DataSource dataSource;
+    private BankService bankService;
+    
+    @Override
+    public void init() throws ServletException {
+        super.init();
+        
+        // Initialize resources (called once)
+        try {
+            Context ctx = new InitialContext();
+            dataSource = (DataSource) ctx.lookup(&quot;java:comp/env/jdbc/bankDB&quot;);
+            bankService = new BankService(dataSource);
+            
+            log(&quot;BankServlet initialized successfully&quot;);
+        } catch (NamingException e) {
+            throw new ServletException(&quot;Failed to initialize servlet&quot;, e);
+        }
+    }
+}</code></pre>
+<p data-en="<strong>When called:</strong> Once, when servlet is first loaded" data-fr="Quand appelé: Once, when servlet is first loaded"><strong>When called:</strong> Once, when servlet is first loaded</p>
+<p data-en="<strong>Purpose:</strong> Initialize resources, connections, configuration" data-fr="Purpose: Initialize resources, connections, Configuration"><strong>Purpose:</strong> Initialize resources, connections, configuration</p>
+
+<span class="slide-counter">5 / 76</span>
+<div class="slide-nav">
+  <a href="#slide-4">&#8592; Previous</a>
+  <span class="slide-info">Slide 5 / 76 &nbsp;&middot;&nbsp; Servlets, JSP &amp; MicroProfile</span>
+  <a href="#slide-6">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-6" class="slide">
+<h2 data-en="🔄 Servlet Lifecycle Methods (cont.)" data-fr="🔄 Servlet Cycle de vie Methods (cont.)">🔄 Servlet Lifecycle Methods (cont.)</h2>
+<h3>2. service() - Request Handling</h3>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>@Override
+protected void service(HttpServletRequest req, HttpServletResponse resp)
+        throws ServletException, IOException {
+    
+    // Called for every request
+    String method = req.getMethod();
+    
+    if (&quot;GET&quot;.equals(method)) {
+        doGet(req, resp);
+    } else if (&quot;POST&quot;.equals(method)) {
+        doPost(req, resp);
+    } else if (&quot;PUT&quot;.equals(method)) {
+        doPut(req, resp);
+    } else if (&quot;DELETE&quot;.equals(method)) {
+        doDelete(req, resp);
+    }
+}</code></pre>
+<p data-en="<strong>When called:</strong> For every HTTP request" data-fr="Quand appelé: For every HTTP request"><strong>When called:</strong> For every HTTP request</p>
+<p><strong>Purpose:</strong> Dispatch to appropriate HTTP method handler</p>
+<p><strong>Note:</strong> Usually you override doGet(), doPost(), etc. instead</p>
+
+<span class="slide-counter">6 / 76</span>
+<div class="slide-nav">
+  <a href="#slide-5">&#8592; Previous</a>
+  <span class="slide-info">Slide 6 / 76 &nbsp;&middot;&nbsp; Servlets, JSP &amp; MicroProfile</span>
+  <a href="#slide-7">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-7" class="slide">
+<h2>🔄 HTTP Method Handlers</h2>
+<h3>doGet() - Retrieve Data</h3>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>@Override
+protected void doGet(HttpServletRequest req, HttpServletResponse resp)
+        throws ServletException, IOException {
+    
+    String clientId = req.getParameter(&quot;id&quot;);
+    
+    if (clientId != null) {
+        // Get specific client
+        Client client = bankService.findClientById(Long.parseLong(clientId));
+        req.setAttribute(&quot;client&quot;, client);
+        req.getRequestDispatcher(&quot;/WEB-INF/views/client-details.jsp&quot;)
+           .forward(req, resp);
+    } else {
+        // List all clients
+        List&lt;Client&gt; clients = bankService.findAllClients();
+        req.setAttribute(&quot;clients&quot;, clients);
+        req.getRequestDispatcher(&quot;/WEB-INF/views/client-list.jsp&quot;)
+           .forward(req, resp);
+    }
+}</code></pre>
+<p><strong>Use case:</strong> Display data, search, list resources</p>
+
+<span class="slide-counter">7 / 76</span>
+<div class="slide-nav">
+  <a href="#slide-6">&#8592; Previous</a>
+  <span class="slide-info">Slide 7 / 76 &nbsp;&middot;&nbsp; Servlets, JSP &amp; MicroProfile</span>
+  <a href="#slide-8">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-8" class="slide">
+<h2>🔄 HTTP Method Handlers (cont.)</h2>
+<h3>doPost() - Create/Update Data</h3>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>@Override
+protected void doPost(HttpServletRequest req, HttpServletResponse resp)
+        throws ServletException, IOException {
+    
+    // Get form parameters
+    String name = req.getParameter(&quot;name&quot;);
+    String email = req.getParameter(&quot;email&quot;);
+    
+    // Validate input
+    if (name == null || name.trim().isEmpty()) {
+        req.setAttribute(&quot;error&quot;, &quot;Name is required&quot;);
+        req.getRequestDispatcher(&quot;/WEB-INF/views/client-form.jsp&quot;)
+           .forward(req, resp);
+        return;
+    }
+    
+    // Create client
+    Client client = new Client();
+    client.setName(name);
+    client.setEmail(email);
+    
+    bankService.createClient(client);
+    
+    // Redirect to list (PRG pattern)
+    resp.sendRedirect(req.getContextPath() + &quot;/clients&quot;);
+}</code></pre>
+<p><strong>Use case:</strong> Form submission, create resources</p>
+
+<span class="slide-counter">8 / 76</span>
+<div class="slide-nav">
+  <a href="#slide-7">&#8592; Previous</a>
+  <span class="slide-info">Slide 8 / 76 &nbsp;&middot;&nbsp; Servlets, JSP &amp; MicroProfile</span>
+  <a href="#slide-9">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-9" class="slide">
+<h2 data-en="🔄 Servlet Lifecycle Methods (cont.)" data-fr="🔄 Servlet Cycle de vie Methods (cont.)">🔄 Servlet Lifecycle Methods (cont.)</h2>
+<h3>3. destroy() - Cleanup</h3>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>@Override
+public void destroy() {
+    // Called once when servlet is unloaded
+    try {
+        if (bankService != null) {
+            bankService.close();
+        }
+        
+        log(&quot;BankServlet destroyed successfully&quot;);
+    } catch (Exception e) {
+        log(&quot;Error during servlet destruction&quot;, e);
+    }
+    
+    super.destroy();
+}</code></pre>
+<p data-en="<strong>When called:</strong> Once, when servlet is unloaded or server shuts down" data-fr="Quand appelé: Once, when servlet is unloaded or server shuts down"><strong>When called:</strong> Once, when servlet is unloaded or server shuts down</p>
+<p><strong>Purpose:</strong> Release resources, close connections, cleanup</p>
+
+<span class="slide-counter">9 / 76</span>
+<div class="slide-nav">
+  <a href="#slide-8">&#8592; Previous</a>
+  <span class="slide-info">Slide 9 / 76 &nbsp;&middot;&nbsp; Servlets, JSP &amp; MicroProfile</span>
+  <a href="#slide-10">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-10" class="slide">
+<h2 data-en="🔄 Servlet Lifecycle - Complete Example" data-fr="🔄 Servlet Cycle de vie - Complete Exemple">🔄 Servlet Lifecycle - Complete Example</h2>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>@WebServlet(
+    name = &quot;ClientServlet&quot;,
+    urlPatterns = {&quot;/clients&quot;, &quot;/client&quot;},
+    loadOnStartup = 1  // Load at server startup
+)
+public class ClientServlet extends HttpServlet {
+    
+    private BankService bankService;
+    private int requestCount = 0;
+    
+    @Override
+    public void init() throws ServletException {
+        log(&quot;=== INIT: ClientServlet initializing ===&quot;);
+        bankService = new BankService();
+    }
+    
+    @Override
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp)
+            throws ServletException, IOException {
+        requestCount++;
+        log(&quot;=== SERVICE: Handling GET request #&quot; + requestCount + &quot; ===&quot;);
+        
+        List&lt;Client&gt; clients = bankService.findAllClients();
+        req.setAttribute(&quot;clients&quot;, clients);
+        req.getRequestDispatcher(&quot;/WEB-INF/views/clients.jsp&quot;).forward(req, resp);
+    }
+    
+    @Override
+    public void destroy() {
+        log(&quot;=== DESTROY: ClientServlet destroyed after &quot; + requestCount + &quot; requests ===&quot;);
+        bankService.close();
+    }
+}</code></pre>
+
+<span class="slide-counter">10 / 76</span>
+<div class="slide-nav">
+  <a href="#slide-9">&#8592; Previous</a>
+  <span class="slide-info">Slide 10 / 76 &nbsp;&middot;&nbsp; Servlets, JSP &amp; MicroProfile</span>
+  <a href="#slide-11">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-11" class="slide">
+<h2>📊 Servlet Configuration</h2>
+<h3>Annotation-based Configuration</h3>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>@WebServlet(
+    name = &quot;AccountServlet&quot;,
+    urlPatterns = {&quot;/accounts&quot;, &quot;/account/*&quot;},
+    loadOnStartup = 1,
+    initParams = {
+        @WebInitParam(name = &quot;maxResults&quot;, value = &quot;100&quot;),
+        @WebInitParam(name = &quot;cacheEnabled&quot;, value = &quot;true&quot;)
+    }
+)
+public class AccountServlet extends HttpServlet {
+    
+    private int maxResults;
+    private boolean cacheEnabled;
+    
+    @Override
+    public void init() throws ServletException {
+        // Read init parameters
+        maxResults = Integer.parseInt(getInitParameter(&quot;maxResults&quot;));
+        cacheEnabled = Boolean.parseBoolean(getInitParameter(&quot;cacheEnabled&quot;));
+    }
+}</code></pre>
+
+<span class="slide-counter">11 / 76</span>
+<div class="slide-nav">
+  <a href="#slide-10">&#8592; Previous</a>
+  <span class="slide-info">Slide 11 / 76 &nbsp;&middot;&nbsp; Servlets, JSP &amp; MicroProfile</span>
+  <a href="#slide-12">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-12" class="slide">
+<h2>📊 Servlet Configuration (cont.)</h2>
+<h3>XML-based Configuration (web.xml)</h3>
+<pre class="dark"><span class="lang-badge">xml</span>
+<code>&lt;web-app xmlns=&quot;https://jakarta.ee/xml/ns/jakartaee&quot;
+         version=&quot;6.0&quot;&gt;
+    
+    &lt;servlet&gt;
+        &lt;servlet-name&gt;AccountServlet&lt;/servlet-name&gt;
+        &lt;servlet-class&gt;com.bank.web.AccountServlet&lt;/servlet-class&gt;
+        &lt;init-param&gt;
+            &lt;param-name&gt;maxResults&lt;/param-name&gt;
+            &lt;param-value&gt;100&lt;/param-value&gt;
+        &lt;/init-param&gt;
+        &lt;load-on-startup&gt;1&lt;/load-on-startup&gt;
+    &lt;/servlet&gt;
+    
+    &lt;servlet-mapping&gt;
+        &lt;servlet-name&gt;AccountServlet&lt;/servlet-name&gt;
+        &lt;url-pattern&gt;/accounts&lt;/url-pattern&gt;
+        &lt;url-pattern&gt;/account/*&lt;/url-pattern&gt;
+    &lt;/servlet-mapping&gt;
+    
+&lt;/web-app&gt;</code></pre>
+<p data-en="<strong>Best Practice:</strong> Use annotations for simple cases, XML for complex configurations" data-fr="Bonnes pratiques: Use annotations for Simple cases, XML for complex configurations"><strong>Best Practice:</strong> Use annotations for simple cases, XML for complex configurations</p>
+
+<span class="slide-counter">12 / 76</span>
+<div class="slide-nav">
+  <a href="#slide-11">&#8592; Previous</a>
+  <span class="slide-info">Slide 12 / 76 &nbsp;&middot;&nbsp; Servlets, JSP &amp; MicroProfile</span>
+  <a href="#slide-13">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-13" class="slide">
+<h2>🌐 Request and Response Objects</h2>
+<h3>HttpServletRequest - Reading Request Data</h3>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>@Override
+protected void doPost(HttpServletRequest req, HttpServletResponse resp)
+        throws ServletException, IOException {
+    
+    // Request parameters (form data, query string)
+    String name = req.getParameter(&quot;name&quot;);
+    String[] hobbies = req.getParameterValues(&quot;hobbies&quot;);
+    
+    // Request headers
+    String userAgent = req.getHeader(&quot;User-Agent&quot;);
+    String contentType = req.getContentType();
+    
+    // Request attributes (set by filters, other servlets)
+    User user = (User) req.getAttribute(&quot;currentUser&quot;);
+    
+    // Session data
+    HttpSession session = req.getSession();
+    String sessionId = session.getId();
+    
+    // Request metadata
+    String method = req.getMethod();
+    String contextPath = req.getContextPath();
+    String servletPath = req.getServletPath();
+    String queryString = req.getQueryString();
+}</code></pre>
+
+<span class="slide-counter">13 / 76</span>
+<div class="slide-nav">
+  <a href="#slide-12">&#8592; Previous</a>
+  <span class="slide-info">Slide 13 / 76 &nbsp;&middot;&nbsp; Servlets, JSP &amp; MicroProfile</span>
+  <a href="#slide-14">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-14" class="slide">
+<h2>🌐 Request and Response Objects (cont.)</h2>
+<h3>HttpServletResponse - Sending Response</h3>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>@Override
+protected void doGet(HttpServletRequest req, HttpServletResponse resp)
+        throws ServletException, IOException {
+    
+    // Set response content type
+    resp.setContentType(&quot;text/html; charset=UTF-8&quot;);
+    
+    // Set response headers
+    resp.setHeader(&quot;Cache-Control&quot;, &quot;no-cache&quot;);
+    resp.setDateHeader(&quot;Expires&quot;, 0);
+    
+    // Set response status
+    resp.setStatus(HttpServletResponse.SC_OK); // 200
+    
+    // Write response body
+    PrintWriter out = resp.getWriter();
+    out.println(&quot;&lt;html&gt;&lt;body&gt;&quot;);
+    out.println(&quot;&lt;h1&gt;Welcome to Banking App&lt;/h1&gt;&quot;);
+    out.println(&quot;&lt;/body&gt;&lt;/html&gt;&quot;);
+    
+    // Or redirect
+    // resp.sendRedirect(&quot;/login&quot;);
+    
+    // Or send error
+    // resp.sendError(HttpServletResponse.SC_NOT_FOUND, &quot;Client not found&quot;);
+}</code></pre>
+
+<span class="slide-counter">14 / 76</span>
+<div class="slide-nav">
+  <a href="#slide-13">&#8592; Previous</a>
+  <span class="slide-info">Slide 14 / 76 &nbsp;&middot;&nbsp; Servlets, JSP &amp; MicroProfile</span>
+  <a href="#slide-15">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-15" class="slide">
+<h2>🎨 JavaServer Pages (JSP)</h2>
+<h3 data-en="What is JSP?" data-fr="Qu'est-ce que JSP?">What is JSP?</h3>
+<p data-en="<strong>JSP</strong> (JavaServer Pages) is a technology for creating dynamic web pages using HTML with embedded Java code." data-fr="JSP (JavaServer Pages) is a technology for creating dynamic web pages Utilisation de HTML with embedded Java code."><strong>JSP</strong> (JavaServer Pages) is a technology for creating dynamic web pages using HTML with embedded Java code.</p>
+<h3 data-en="Key Features:" data-fr="Fonctionnalités clés:">Key Features:</h3>
+<ul>
+<li><strong>HTML-centric:</strong> Write mostly HTML with Java snippets</li>
+<li><strong>Compiled to servlets:</strong> JSP pages are converted to servlets</li>
+<li><strong>Expression Language (EL):</strong> Simplified syntax for accessing data</li>
+<li><strong>Tag libraries:</strong> Reusable components (JSTL)</li>
+</ul>
+<h3>JSP vs Servlet:</h3>
+<table class="slide-table"><thead><tr><th>Aspect</th><th>Servlet</th><th>JSP</th></tr></thead><tbody>
+<tr><td><strong>Focus</strong></td><td>Java code</td><td>HTML markup</td></tr>
+<tr><td><strong>Best for</strong></td><td>Business logic</td><td>Presentation</td></tr>
+<tr><td><strong>Syntax</strong></td><td>Java</td><td>HTML + Java</td></tr>
+<tr><td><strong>Compilation</strong></td><td>Explicit</td><td>Automatic</td></tr>
+</tbody></table>
+
+<span class="slide-counter">15 / 76</span>
+<div class="slide-nav">
+  <a href="#slide-14">&#8592; Previous</a>
+  <span class="slide-info">Slide 15 / 76 &nbsp;&middot;&nbsp; Servlets, JSP &amp; MicroProfile</span>
+  <a href="#slide-16">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-16" class="slide">
+<h2>🎨 JSP Syntax Elements</h2>
+<h3>1. Directives - Page Configuration</h3>
+<pre class="dark"><span class="lang-badge">jsp</span>
+<code>&lt;%@ page contentType=&quot;text/html; charset=UTF-8&quot; language=&quot;java&quot; %&gt;
+&lt;%@ page import=&quot;com.bank.model.Client, java.util.List&quot; %&gt;
+&lt;%@ page errorPage=&quot;/error.jsp&quot; %&gt;
+&lt;%@ page session=&quot;true&quot; %&gt;
+
+&lt;%@ taglib prefix=&quot;c&quot; uri=&quot;jakarta.tags.core&quot; %&gt;
+&lt;%@ taglib prefix=&quot;fmt&quot; uri=&quot;jakarta.tags.fmt&quot; %&gt;</code></pre>
+<h3>2. Declarations - Define Variables/Methods</h3>
+<pre class="dark"><span class="lang-badge">jsp</span>
+<code>&lt;%!
+    private int pageViewCount = 0;
+    
+    private String formatCurrency(double amount) {
+        return String.format(&quot;$%.2f&quot;, amount);
+    }
+%&gt;</code></pre>
+
+<span class="slide-counter">16 / 76</span>
+<div class="slide-nav">
+  <a href="#slide-15">&#8592; Previous</a>
+  <span class="slide-info">Slide 16 / 76 &nbsp;&middot;&nbsp; Servlets, JSP &amp; MicroProfile</span>
+  <a href="#slide-17">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-17" class="slide">
+<h2>🎨 JSP Syntax Elements (cont.)</h2>
+<h3>3. Scriptlets - Java Code Blocks</h3>
+<pre class="dark"><span class="lang-badge">jsp</span>
+<code>&lt;%
+    List&lt;Client&gt; clients = (List&lt;Client&gt;) request.getAttribute(&quot;clients&quot;);
+    
+    if (clients == null || clients.isEmpty()) {
+        out.println(&quot;&lt;p&gt;No clients found&lt;/p&gt;&quot;);
+    } else {
+        for (Client client : clients) {
+            out.println(&quot;&lt;div&gt;&quot; + client.getName() + &quot;&lt;/div&gt;&quot;);
+        }
+    }
+%&gt;</code></pre>
+<p><strong>⚠️ Warning:</strong> Scriptlets mix logic with presentation. Use JSTL instead!</p>
+<h3>4. Expressions - Output Values</h3>
+<pre class="dark"><span class="lang-badge">jsp</span>
+<code>&lt;p&gt;Client Name: &lt;%= client.getName() %&gt;&lt;/p&gt;
+&lt;p&gt;Current Time: &lt;%= new java.util.Date() %&gt;&lt;/p&gt;</code></pre>
+
+<span class="slide-counter">17 / 76</span>
+<div class="slide-nav">
+  <a href="#slide-16">&#8592; Previous</a>
+  <span class="slide-info">Slide 17 / 76 &nbsp;&middot;&nbsp; Servlets, JSP &amp; MicroProfile</span>
+  <a href="#slide-18">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-18" class="slide">
+<h2>🎨 Expression Language (EL)</h2>
+<h3>Simplified Syntax for Data Access</h3>
+<pre class="dark"><span class="lang-badge">jsp</span>
+<code>
+${client}
+
+
+${client.name}
+${client.email}
+${client.accounts[0].balance}
+
+
+${account.balance + 100}
+${account.balance * 1.05}
+
+
+${account.balance &gt; 1000}
+${client.name == 'John'}
+
+
+${client.active &amp;&amp; account.balance &gt; 0}
+
+
+${empty clients ? 'No clients' : 'Clients found'}</code></pre>
+<p><strong>Advantages:</strong> Cleaner, null-safe, no Java imports needed</p>
+
+<span class="slide-counter">18 / 76</span>
+<div class="slide-nav">
+  <a href="#slide-17">&#8592; Previous</a>
+  <span class="slide-info">Slide 18 / 76 &nbsp;&middot;&nbsp; Servlets, JSP &amp; MicroProfile</span>
+  <a href="#slide-19">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-19" class="slide">
+<h2>🎨 JSTL - JSP Standard Tag Library</h2>
+<h3>Core Tags</h3>
+<pre class="dark"><span class="lang-badge">jsp</span>
+<code>&lt;%@ taglib prefix=&quot;c&quot; uri=&quot;jakarta.tags.core&quot; %&gt;
+
+
+&lt;c:set var=&quot;discount&quot; value=&quot;0.10&quot; /&gt;
+&lt;c:out value=&quot;${client.name}&quot; default=&quot;Unknown&quot; /&gt;
+
+
+&lt;c:if test=&quot;${account.balance &gt; 1000}&quot;&gt;
+    &lt;span class=&quot;premium&quot;&gt;Premium Account&lt;/span&gt;
+&lt;/c:if&gt;
+
+&lt;c:choose&gt;
+    &lt;c:when test=&quot;${account.balance &gt; 10000}&quot;&gt;
+        &lt;span class=&quot;gold&quot;&gt;Gold&lt;/span&gt;
+    &lt;/c:when&gt;
+    &lt;c:when test=&quot;${account.balance &gt; 5000}&quot;&gt;
+        &lt;span class=&quot;silver&quot;&gt;Silver&lt;/span&gt;
+    &lt;/c:when&gt;
+    &lt;c:otherwise&gt;
+        &lt;span class=&quot;standard&quot;&gt;Standard&lt;/span&gt;
+    &lt;/c:otherwise&gt;
+&lt;/c:choose&gt;</code></pre>
+
+<span class="slide-counter">19 / 76</span>
+<div class="slide-nav">
+  <a href="#slide-18">&#8592; Previous</a>
+  <span class="slide-info">Slide 19 / 76 &nbsp;&middot;&nbsp; Servlets, JSP &amp; MicroProfile</span>
+  <a href="#slide-20">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-20" class="slide">
+<h2>🎨 JSTL - Iteration</h2>
+<h3>Looping Through Collections</h3>
+<pre class="dark"><span class="lang-badge">jsp</span>
+<code>
+&lt;c:forEach var=&quot;client&quot; items=&quot;${clients}&quot;&gt;
+    &lt;tr&gt;
+        &lt;td&gt;${client.id}&lt;/td&gt;
+        &lt;td&gt;${client.name}&lt;/td&gt;
+        &lt;td&gt;${client.email}&lt;/td&gt;
+    &lt;/tr&gt;
+&lt;/c:forEach&gt;
+
+
+&lt;c:forEach var=&quot;account&quot; items=&quot;${accounts}&quot; varStatus=&quot;status&quot;&gt;
+    &lt;tr class=&quot;${status.index % 2 == 0 ? 'even' : 'odd'}&quot;&gt;
+        &lt;td&gt;${status.count}&lt;/td&gt;
+        &lt;td&gt;${account.number}&lt;/td&gt;
+        &lt;td&gt;${account.balance}&lt;/td&gt;
+    &lt;/tr&gt;
+&lt;/c:forEach&gt;
+
+
+&lt;c:forEach var=&quot;i&quot; begin=&quot;1&quot; end=&quot;10&quot; step=&quot;2&quot;&gt;
+    &lt;option value=&quot;${i}&quot;&gt;${i}&lt;/option&gt;
+&lt;/c:forEach&gt;</code></pre>
+
+<span class="slide-counter">20 / 76</span>
+<div class="slide-nav">
+  <a href="#slide-19">&#8592; Previous</a>
+  <span class="slide-info">Slide 20 / 76 &nbsp;&middot;&nbsp; Servlets, JSP &amp; MicroProfile</span>
+  <a href="#slide-21">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-21" class="slide">
+<h2>🎨 JSTL - Formatting</h2>
+<h3>Format Tags</h3>
+<pre class="dark"><span class="lang-badge">jsp</span>
+<code>&lt;%@ taglib prefix=&quot;fmt&quot; uri=&quot;jakarta.tags.fmt&quot; %&gt;
+
+
+&lt;fmt:formatNumber value=&quot;${account.balance}&quot; type=&quot;currency&quot; /&gt;
+&lt;fmt:formatNumber value=&quot;${interestRate}&quot; type=&quot;percent&quot; /&gt;
+&lt;fmt:formatNumber value=&quot;${account.balance}&quot; pattern=&quot;#,##0.00&quot; /&gt;
+
+
+&lt;fmt:formatDate value=&quot;${transaction.date}&quot; pattern=&quot;yyyy-MM-dd HH:mm:ss&quot; /&gt;
+&lt;fmt:formatDate value=&quot;${client.createdAt}&quot; type=&quot;date&quot; dateStyle=&quot;long&quot; /&gt;
+
+
+&lt;fmt:setLocale value=&quot;en_US&quot; /&gt;
+&lt;fmt:bundle basename=&quot;messages&quot;&gt;
+    &lt;fmt:message key=&quot;welcome.message&quot; /&gt;
+    &lt;fmt:message key=&quot;balance.label&quot;&gt;
+        &lt;fmt:param value=&quot;${account.balance}&quot; /&gt;
+    &lt;/fmt:message&gt;
+&lt;/fmt:bundle&gt;</code></pre>
+
+<span class="slide-counter">21 / 76</span>
+<div class="slide-nav">
+  <a href="#slide-20">&#8592; Previous</a>
+  <span class="slide-info">Slide 21 / 76 &nbsp;&middot;&nbsp; Servlets, JSP &amp; MicroProfile</span>
+  <a href="#slide-22">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-22" class="slide">
+<h2 data-en="🎨 Complete JSP Example - Client List" data-fr="🎨 Complete JSP Exemple - Client List">🎨 Complete JSP Example - Client List</h2>
+<pre class="dark"><span class="lang-badge">jsp</span>
+<code>&lt;%@ page contentType=&quot;text/html; charset=UTF-8&quot; %&gt;
+&lt;%@ taglib prefix=&quot;c&quot; uri=&quot;jakarta.tags.core&quot; %&gt;
+&lt;%@ taglib prefix=&quot;fmt&quot; uri=&quot;jakarta.tags.fmt&quot; %&gt;
+
+&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+&lt;head&gt;
+    &lt;title&gt;Banking App - Clients&lt;/title&gt;
+    &lt;link rel=&quot;stylesheet&quot; href=&quot;${pageContext.request.contextPath}/css/style.css&quot;&gt;
+&lt;/head&gt;
+&lt;body&gt;
+    &lt;h1&gt;Client List&lt;/h1&gt;
+    
+    &lt;c:if test=&quot;${not empty message}&quot;&gt;
+        &lt;div class=&quot;alert alert-success&quot;&gt;${message}&lt;/div&gt;
+    &lt;/c:if&gt;
+    
+    &lt;table&gt;
+        &lt;thead&gt;
+            &lt;tr&gt;
+                &lt;th&gt;ID&lt;/th&gt;
+                &lt;th&gt;Name&lt;/th&gt;
+                &lt;th&gt;Email&lt;/th&gt;
+                &lt;th&gt;Accounts&lt;/th&gt;
+                &lt;th&gt;Actions&lt;/th&gt;
+            &lt;/tr&gt;
+        &lt;/thead&gt;
+        &lt;tbody&gt;
+            &lt;c:forEach var=&quot;client&quot; items=&quot;${clients}&quot;&gt;
+                &lt;tr&gt;
+                    &lt;td&gt;${client.id}&lt;/td&gt;
+                    &lt;td&gt;&lt;c:out value=&quot;${client.name}&quot; /&gt;&lt;/td&gt;
+                    &lt;td&gt;${client.email}&lt;/td&gt;
+                    &lt;td&gt;${client.accounts.size()}&lt;/td&gt;
+                    &lt;td&gt;
+                        &lt;a href=&quot;client?id=${client.id}&quot;&gt;View&lt;/a&gt;
+                        &lt;a href=&quot;client/edit?id=${client.id}&quot;&gt;Edit&lt;/a&gt;
+                    &lt;/td&gt;
+                &lt;/tr&gt;
+            &lt;/c:forEach&gt;
+        &lt;/tbody&gt;
+    &lt;/table&gt;
+    
+    &lt;a href=&quot;client/new&quot; class=&quot;btn&quot;&gt;Add New Client&lt;/a&gt;
+&lt;/body&gt;
+&lt;/html&gt;</code></pre>
+
+<span class="slide-counter">22 / 76</span>
+<div class="slide-nav">
+  <a href="#slide-21">&#8592; Previous</a>
+  <span class="slide-info">Slide 22 / 76 &nbsp;&middot;&nbsp; Servlets, JSP &amp; MicroProfile</span>
+  <a href="#slide-23">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-23" class="slide">
+<h2>🏗️ MVC Pattern in Web Applications</h2>
+<h3>Model-View-Controller Architecture</h3>
+<p><img src="../../images/02-servlets-jsp-microprofile-diagram-2.png" alt="width:70%"></p>
+<h3>Responsibilities:</h3>
+<ul>
+<li><strong>Model:</strong> Business logic, data access (Java classes, JPA entities)</li>
+<li><strong>View:</strong> Presentation layer (JSP, HTML, CSS)</li>
+<li><strong>Controller:</strong> Request handling, flow control (Servlets)</li>
+</ul>
+
+<span class="slide-counter">23 / 76</span>
+<div class="slide-nav">
+  <a href="#slide-22">&#8592; Previous</a>
+  <span class="slide-info">Slide 23 / 76 &nbsp;&middot;&nbsp; Servlets, JSP &amp; MicroProfile</span>
+  <a href="#slide-24">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-24" class="slide">
+<h2>🏗️ MVC Pattern - Model Layer</h2>
+<h3>Entity (Model)</h3>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>package com.bank.model;
+
+public class Client {
+    private Long id;
+    private String name;
+    private String email;
+    private List&lt;Account&gt; accounts;
+    
+    // Constructors
+    public Client() {}
+    
+    public Client(String name, String email) {
+        this.name = name;
+        this.email = email;
+        this.accounts = new ArrayList&lt;&gt;();
+    }
+    
+    // Getters and setters
+    public Long getId() { return id; }
+    public void setId(Long id) { this.id = id; }
+    
+    public String getName() { return name; }
+    public void setName(String name) { this.name = name; }
+    
+    public String getEmail() { return email; }
+    public void setEmail(String email) { this.email = email; }
+    
+    public List&lt;Account&gt; getAccounts() { return accounts; }
+    public void setAccounts(List&lt;Account&gt; accounts) { this.accounts = accounts; }
+}</code></pre>
+
+<span class="slide-counter">24 / 76</span>
+<div class="slide-nav">
+  <a href="#slide-23">&#8592; Previous</a>
+  <span class="slide-info">Slide 24 / 76 &nbsp;&middot;&nbsp; Servlets, JSP &amp; MicroProfile</span>
+  <a href="#slide-25">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-25" class="slide">
+<h2>🏗️ MVC Pattern - Controller Layer</h2>
+<h3>Servlet (Controller)</h3>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>@WebServlet(&quot;/clients&quot;)
+public class ClientController extends HttpServlet {
+    
+    private ClientService clientService = new ClientService();
+    
+    @Override
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp)
+            throws ServletException, IOException {
+        
+        String action = req.getParameter(&quot;action&quot;);
+        
+        if (&quot;view&quot;.equals(action)) {
+            viewClient(req, resp);
+        } else if (&quot;edit&quot;.equals(action)) {
+            editClient(req, resp);
+        } else {
+            listClients(req, resp);
+        }
+    }
+    
+    private void listClients(HttpServletRequest req, HttpServletResponse resp)
+            throws ServletException, IOException {
+        List&lt;Client&gt; clients = clientService.findAll();
+        req.setAttribute(&quot;clients&quot;, clients);
+        req.getRequestDispatcher(&quot;/WEB-INF/views/client-list.jsp&quot;).forward(req, resp);
+    }
+    
+    private void viewClient(HttpServletRequest req, HttpServletResponse resp)
+            throws ServletException, IOException {
+        Long id = Long.parseLong(req.getParameter(&quot;id&quot;));
+        Client client = clientService.findById(id);
+        req.setAttribute(&quot;client&quot;, client);
+        req.getRequestDispatcher(&quot;/WEB-INF/views/client-view.jsp&quot;).forward(req, resp);
+    }
+}</code></pre>
+
+<span class="slide-counter">25 / 76</span>
+<div class="slide-nav">
+  <a href="#slide-24">&#8592; Previous</a>
+  <span class="slide-info">Slide 25 / 76 &nbsp;&middot;&nbsp; Servlets, JSP &amp; MicroProfile</span>
+  <a href="#slide-26">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-26" class="slide">
+<h2>🏗️ MVC Pattern - View Layer</h2>
+<h3>JSP (View)</h3>
+<pre class="dark"><span class="lang-badge">jsp</span>
+<code>&lt;%@ page contentType=&quot;text/html; charset=UTF-8&quot; %&gt;
+&lt;%@ taglib prefix=&quot;c&quot; uri=&quot;jakarta.tags.core&quot; %&gt;
+
+&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+&lt;head&gt;
+    &lt;title&gt;Client Details&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+    &lt;h1&gt;Client Details&lt;/h1&gt;
+    
+    &lt;div class=&quot;client-info&quot;&gt;
+        &lt;p&gt;&lt;strong&gt;ID:&lt;/strong&gt; ${client.id}&lt;/p&gt;
+        &lt;p&gt;&lt;strong&gt;Name:&lt;/strong&gt; &lt;c:out value=&quot;${client.name}&quot; /&gt;&lt;/p&gt;
+        &lt;p&gt;&lt;strong&gt;Email:&lt;/strong&gt; ${client.email}&lt;/p&gt;
+    &lt;/div&gt;
+    
+    &lt;h2&gt;Accounts&lt;/h2&gt;
+    &lt;table&gt;
+        &lt;thead&gt;
+            &lt;tr&gt;
+                &lt;th&gt;Account Number&lt;/th&gt;
+                &lt;th&gt;Type&lt;/th&gt;
+                &lt;th&gt;Balance&lt;/th&gt;
+            &lt;/tr&gt;
+        &lt;/thead&gt;
+        &lt;tbody&gt;
+            &lt;c:forEach var=&quot;account&quot; items=&quot;${client.accounts}&quot;&gt;
+                &lt;tr&gt;
+                    &lt;td&gt;${account.number}&lt;/td&gt;
+                    &lt;td&gt;${account.type}&lt;/td&gt;
+                    &lt;td&gt;&lt;fmt:formatNumber value=&quot;${account.balance}&quot; type=&quot;currency&quot; /&gt;&lt;/td&gt;
+                &lt;/tr&gt;
+            &lt;/c:forEach&gt;
+        &lt;/tbody&gt;
+    &lt;/table&gt;
+    
+    &lt;a href=&quot;clients&quot;&gt;Back to List&lt;/a&gt;
+&lt;/body&gt;
+&lt;/html&gt;</code></pre>
+
+<span class="slide-counter">26 / 76</span>
+<div class="slide-nav">
+  <a href="#slide-25">&#8592; Previous</a>
+  <span class="slide-info">Slide 26 / 76 &nbsp;&middot;&nbsp; Servlets, JSP &amp; MicroProfile</span>
+  <a href="#slide-27">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-27" class="slide">
+<h2>⚙️ MicroProfile Config in Web Applications</h2>
+<h3 data-en="Why Use MP Config in Web Tier?" data-fr="Pourquoi MP Config in Web Tier?">Why Use MP Config in Web Tier?</h3>
+<table class="slide-table"><thead><tr><th></th><th></th></tr></thead><tbody>
+<tr><td>✅</td><td>Externalize configuration (URLs, limits, features)</td></tr>
+<tr><td>✅</td><td>Environment-specific settings (dev, test, prod)</td></tr>
+<tr><td>✅</td><td>Dynamic configuration updates</td></tr>
+<tr><td>✅</td><td>Consistent configuration across layers</td></tr>
+</tbody></table>
+<h3>Configuration Sources (Priority Order):</h3>
+<ol>
+<li>System properties (<code>-Dproperty=value</code>)</li>
+<li>Environment variables</li>
+<li><code>microprofile-config.properties</code></li>
+<li>Custom ConfigSources</li>
+</ol>
+
+<span class="slide-counter">27 / 76</span>
+<div class="slide-nav">
+  <a href="#slide-26">&#8592; Previous</a>
+  <span class="slide-info">Slide 27 / 76 &nbsp;&middot;&nbsp; Servlets, JSP &amp; MicroProfile</span>
+  <a href="#slide-28">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-28" class="slide">
+<h2>⚙️ MP Config - Configuration File</h2>
+<h3>microprofile-config.properties</h3>
+<pre class="dark"><span class="lang-badge">properties</span>
+<code># Application settings
+app.name=Banking Application
+app.version=1.0.0
+app.environment=development
+
+# Web tier configuration
+web.max.upload.size=10485760
+web.session.timeout=1800
+web.pagination.default.size=20
+web.pagination.max.size=100
+
+# Feature flags
+feature.client.registration.enabled=true
+feature.account.transfer.enabled=true
+feature.advanced.search.enabled=false
+
+# External services
+external.currency.api.url=https://api.exchangerate.com
+external.currency.api.key=${CURRENCY_API_KEY}
+external.currency.api.timeout=5000
+
+# Security
+security.password.min.length=8
+security.session.secure=true
+security.csrf.enabled=true</code></pre>
+
+<span class="slide-counter">28 / 76</span>
+<div class="slide-nav">
+  <a href="#slide-27">&#8592; Previous</a>
+  <span class="slide-info">Slide 28 / 76 &nbsp;&middot;&nbsp; Servlets, JSP &amp; MicroProfile</span>
+  <a href="#slide-29">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-29" class="slide">
+<h2>⚙️ Configuration in Servlets</h2>
+<h3 data-en="Using ServletContext Init Parameters" data-fr="Utilisation de ServletContext Init Parameters">Using ServletContext Init Parameters</h3>
+<p><strong>Configuration in web.xml:</strong></p>
+<pre class="dark"><span class="lang-badge">xml</span>
+<code>&lt;web-app&gt;
+    &lt;context-param&gt;
+        &lt;param-name&gt;web.pagination.default.size&lt;/param-name&gt;
+        &lt;param-value&gt;20&lt;/param-value&gt;
+    &lt;/context-param&gt;
+    
+    &lt;context-param&gt;
+        &lt;param-name&gt;app.name&lt;/param-name&gt;
+        &lt;param-value&gt;Banking Application&lt;/param-value&gt;
+    &lt;/context-param&gt;
+&lt;/web-app&gt;</code></pre>
+<p><strong>Reading in Servlet:</strong></p>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>@WebServlet(&quot;/clients&quot;)
+public class ClientController extends HttpServlet {
+    
+    private int defaultPageSize;
+    private int maxPageSize;
+    private boolean registrationEnabled;
+    private String appName;
+    
+    @Override
+    public void init() throws ServletException {
+        super.init();
+        
+        // Read configuration from ServletContext
+        String pageSizeParam = getServletContext()
+            .getInitParameter(&quot;web.pagination.default.size&quot;);
+        defaultPageSize = (pageSizeParam != null)
+            ? Integer.parseInt(pageSizeParam) : 20;
+        
+        appName = getServletContext().getInitParameter(&quot;app.name&quot;);
+        if (appName == null) {
+            appName = &quot;Default App&quot;;
+        }
+    }
+    
+    @Override
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp)
+            throws ServletException, IOException {
+        
+        // Use configuration
+        int pageSize = Math.min(
+            Integer.parseInt(req.getParameter(&quot;size&quot;) != null ? 
+                req.getParameter(&quot;size&quot;) : String.valueOf(defaultPageSize)),
+            maxPageSize
+        );
+        
+        List&lt;Client&gt; clients = clientService.findAll(pageSize);
+        req.setAttribute(&quot;clients&quot;, clients);
+        req.setAttribute(&quot;appName&quot;, appName);
+        req.setAttribute(&quot;registrationEnabled&quot;, registrationEnabled);
+        
+        req.getRequestDispatcher(&quot;/WEB-INF/views/client-list.jsp&quot;).forward(req, resp);
+    }
+}</code></pre>
+
+<span class="slide-counter">29 / 76</span>
+<div class="slide-nav">
+  <a href="#slide-28">&#8592; Previous</a>
+  <span class="slide-info">Slide 29 / 76 &nbsp;&middot;&nbsp; Servlets, JSP &amp; MicroProfile</span>
+  <a href="#slide-30">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-30" class="slide">
+<h2>⚙️ MP Config - Programmatic Access</h2>
+<h3 data-en="Using Config API" data-fr="Utilisation de Config API">Using Config API</h3>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>@WebServlet(&quot;/config-info&quot;)
+public class ConfigInfoServlet extends HttpServlet {
+    
+    @Override
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp)
+            throws ServletException, IOException {
+        
+        // Get Config instance
+        Config config = ConfigProvider.getConfig();
+        
+        // Read configuration values
+        String appName = config.getValue(&quot;app.name&quot;, String.class);
+        String environment = config.getValue(&quot;app.environment&quot;, String.class);
+        
+        // Optional values
+        Optional&lt;String&gt; apiKey = config.getOptionalValue(&quot;external.currency.api.key&quot;, String.class);
+        
+        // Get all property names
+        Iterable&lt;String&gt; propertyNames = config.getPropertyNames();
+        
+        // Build response
+        resp.setContentType(&quot;text/html&quot;);
+        PrintWriter out = resp.getWriter();
+        out.println(&quot;&lt;h1&gt;Configuration Info&lt;/h1&gt;&quot;);
+        out.println(&quot;&lt;p&gt;App Name: &quot; + appName + &quot;&lt;/p&gt;&quot;);
+        out.println(&quot;&lt;p&gt;Environment: &quot; + environment + &quot;&lt;/p&gt;&quot;);
+        out.println(&quot;&lt;p&gt;API Key configured: &quot; + apiKey.isPresent() + &quot;&lt;/p&gt;&quot;);
+        
+        out.println(&quot;&lt;h2&gt;All Properties:&lt;/h2&gt;&lt;ul&gt;&quot;);
+        propertyNames.forEach(name -&gt; 
+            out.println(&quot;&lt;li&gt;&quot; + name + &quot; = &quot; + config.getValue(name, String.class) + &quot;&lt;/li&gt;&quot;)
+        );
+        out.println(&quot;&lt;/ul&gt;&quot;);
+    }
+}</code></pre>
+
+<span class="slide-counter">30 / 76</span>
+<div class="slide-nav">
+  <a href="#slide-29">&#8592; Previous</a>
+  <span class="slide-info">Slide 30 / 76 &nbsp;&middot;&nbsp; Servlets, JSP &amp; MicroProfile</span>
+  <a href="#slide-31">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-31" class="slide">
+<h2>💊 Health Checks for Web Tier</h2>
+<h3 data-en="Why Health Checks in Web Applications?" data-fr="Pourquoi Health Checks in Web Applications?">Why Health Checks in Web Applications?</h3>
+<table class="slide-table"><thead><tr><th></th><th></th></tr></thead><tbody>
+<tr><td>✅</td><td>Monitor application availability</td></tr>
+<tr><td>✅</td><td>Detect issues early (database, external services)</td></tr>
+<tr><td>✅</td><td>Enable automated recovery (Kubernetes, Docker)</td></tr>
+<tr><td>✅</td><td>Provide operational insights</td></tr>
+</tbody></table>
+<h3>Health Check Types:</h3>
+<ul>
+<li><strong>Liveness:</strong> Is the application running?</li>
+<li data-en="<strong>Readiness:</strong> Is the application ready to serve requests?" data-fr="Readiness: Is the application Prêt à serve requests?"><strong>Readiness:</strong> Is the application ready to serve requests?</li>
+<li><strong>Startup:</strong> Has the application started successfully?</li>
+</ul>
+
+<span class="slide-counter">31 / 76</span>
+<div class="slide-nav">
+  <a href="#slide-30">&#8592; Previous</a>
+  <span class="slide-info">Slide 31 / 76 &nbsp;&middot;&nbsp; Servlets, JSP &amp; MicroProfile</span>
+  <a href="#slide-32">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-32" class="slide">
+<h2>💊 Health Check - Database Connectivity</h2>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>@Liveness
+@ApplicationScoped
+public class DatabaseHealthCheck implements HealthCheck {
+    
+    @Inject
+    private DataSource dataSource;
+    
+    @Override
+    public HealthCheckResponse call() {
+        HealthCheckResponseBuilder builder = HealthCheckResponse
+            .named(&quot;database-connection&quot;);
+        
+        try (Connection conn = dataSource.getConnection()) {
+            boolean isValid = conn.isValid(5); // 5 seconds timeout
+            
+            if (isValid) {
+                return builder
+                    .up()
+                    .withData(&quot;database&quot;, &quot;connected&quot;)
+                    .withData(&quot;timeout&quot;, &quot;5s&quot;)
+                    .build();
+            } else {
+                return builder
+                    .down()
+                    .withData(&quot;database&quot;, &quot;connection invalid&quot;)
+                    .build();
+            }
+        } catch (SQLException e) {
+            return builder
+                .down()
+                .withData(&quot;error&quot;, e.getMessage())
+                .build();
+        }
+    }
+}</code></pre>
+
+<span class="slide-counter">32 / 76</span>
+<div class="slide-nav">
+  <a href="#slide-31">&#8592; Previous</a>
+  <span class="slide-info">Slide 32 / 76 &nbsp;&middot;&nbsp; Servlets, JSP &amp; MicroProfile</span>
+  <a href="#slide-33">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-33" class="slide">
+<h2>💊 Health Check - Web Application Readiness</h2>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>@Readiness
+@ApplicationScoped
+public class WebAppReadinessCheck implements HealthCheck {
+    
+    @Inject
+    @ConfigProperty(name = &quot;app.environment&quot;)
+    private String environment;
+    
+    @Inject
+    private ClientService clientService;
+    
+    @Override
+    public HealthCheckResponse call() {
+        HealthCheckResponseBuilder builder = HealthCheckResponse
+            .named(&quot;web-application-readiness&quot;);
+        
+        try {
+            // Check if services are initialized
+            boolean servicesReady = clientService != null;
+            
+            // Check if configuration is loaded
+            boolean configReady = environment != null &amp;&amp; !environment.isEmpty();
+            
+            if (servicesReady &amp;&amp; configReady) {
+                return builder
+                    .up()
+                    .withData(&quot;services&quot;, &quot;initialized&quot;)
+                    .withData(&quot;configuration&quot;, &quot;loaded&quot;)
+                    .withData(&quot;environment&quot;, environment)
+                    .build();
+            } else {
+                return builder
+                    .down()
+                    .withData(&quot;services&quot;, servicesReady ? &quot;ready&quot; : &quot;not ready&quot;)
+                    .withData(&quot;configuration&quot;, configReady ? &quot;ready&quot; : &quot;not ready&quot;)
+                    .build();
+            }
+        } catch (Exception e) {
+            return builder
+                .down()
+                .withData(&quot;error&quot;, e.getMessage())
+                .build();
+        }
+    }
+}</code></pre>
+
+<span class="slide-counter">33 / 76</span>
+<div class="slide-nav">
+  <a href="#slide-32">&#8592; Previous</a>
+  <span class="slide-info">Slide 33 / 76 &nbsp;&middot;&nbsp; Servlets, JSP &amp; MicroProfile</span>
+  <a href="#slide-34">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-34" class="slide">
+<h2>💊 Health Check - External Service</h2>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>@Readiness
+@ApplicationScoped
+public class ExternalServiceHealthCheck implements HealthCheck {
+    
+    @Inject
+    @ConfigProperty(name = &quot;external.currency.api.url&quot;)
+    private String apiUrl;
+    
+    @Inject
+    @ConfigProperty(name = &quot;external.currency.api.timeout&quot;, defaultValue = &quot;5000&quot;)
+    private int timeout;
+    
+    @Override
+    public HealthCheckResponse call() {
+        HealthCheckResponseBuilder builder = HealthCheckResponse
+            .named(&quot;external-currency-api&quot;);
+        
+        try {
+            URL url = new URL(apiUrl + &quot;/health&quot;);
+            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+            conn.setRequestMethod(&quot;GET&quot;);
+            conn.setConnectTimeout(timeout);
+            conn.setReadTimeout(timeout);
+            
+            int responseCode = conn.getResponseCode();
+            
+            if (responseCode == 200) {
+                return builder
+                    .up()
+                    .withData(&quot;api&quot;, &quot;available&quot;)
+                    .withData(&quot;response_code&quot;, responseCode)
+                    .withData(&quot;url&quot;, apiUrl)
+                    .build();
+            } else {
+                return builder
+                    .down()
+                    .withData(&quot;api&quot;, &quot;unavailable&quot;)
+                    .withData(&quot;response_code&quot;, responseCode)
+                    .build();
+            }
+        } catch (Exception e) {
+            return builder
+                .down()
+                .withData(&quot;error&quot;, e.getMessage())
+                .withData(&quot;url&quot;, apiUrl)
+                .build();
+        }
+    }
+}</code></pre>
+
+<span class="slide-counter">34 / 76</span>
+<div class="slide-nav">
+  <a href="#slide-33">&#8592; Previous</a>
+  <span class="slide-info">Slide 34 / 76 &nbsp;&middot;&nbsp; Servlets, JSP &amp; MicroProfile</span>
+  <a href="#slide-35">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-35" class="slide">
+<h2>💊 Accessing Health Endpoints</h2>
+<h3>Health Check URLs</h3>
+<pre class="dark"><span class="lang-badge">bash</span>
+<code># All health checks
+curl http://localhost:9080/health
+
+# Liveness checks only
+curl http://localhost:9080/health/live
+
+# Readiness checks only
+curl http://localhost:9080/health/ready
+
+# Startup checks only
+curl http://localhost:9080/health/started</code></pre>
+<h3 data-en="Example Response" data-fr="Exemple Response">Example Response</h3>
+<pre class="dark"><span class="lang-badge">json</span>
+<code>{
+  &quot;status&quot;: &quot;UP&quot;,
+  &quot;checks&quot;: [
+    {
+      &quot;name&quot;: &quot;database-connection&quot;,
+      &quot;status&quot;: &quot;UP&quot;,
+      &quot;data&quot;: {
+        &quot;database&quot;: &quot;connected&quot;,
+        &quot;timeout&quot;: &quot;5s&quot;
+      }
+    },
+    {
+      &quot;name&quot;: &quot;web-application-readiness&quot;,
+      &quot;status&quot;: &quot;UP&quot;,
+      &quot;data&quot;: {
+        &quot;services&quot;: &quot;initialized&quot;,
+        &quot;configuration&quot;: &quot;loaded&quot;,
+        &quot;environment&quot;: &quot;development&quot;
+      }
+    }
+  ]
+}</code></pre>
+
+<span class="slide-counter">35 / 76</span>
+<div class="slide-nav">
+  <a href="#slide-34">&#8592; Previous</a>
+  <span class="slide-info">Slide 35 / 76 &nbsp;&middot;&nbsp; Servlets, JSP &amp; MicroProfile</span>
+  <a href="#slide-36">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-36" class="slide">
+<h2>🏦 Banking Application - Complete Flow</h2>
+<h3>Request Flow with MVC + MP Config + Health</h3>
+<p><img src="../../images/02-servlets-jsp-microprofile-diagram-3.png" alt="width:70%"></p>
+
+<span class="slide-counter">36 / 76</span>
+<div class="slide-nav">
+  <a href="#slide-35">&#8592; Previous</a>
+  <span class="slide-info">Slide 36 / 76 &nbsp;&middot;&nbsp; Servlets, JSP &amp; MicroProfile</span>
+  <a href="#slide-37">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-37" class="slide">
+<h2 data-en="🏦 Banking Application - Project Structure" data-fr="🏦 Banking Application - Structure du projet">🏦 Banking Application - Project Structure</h2>
+<pre class="dark"><code>banking-web-app/
+├── src/
+│   ├── main/
+│   │   ├── java/
+│   │   │   └── com/bank/
+│   │   │       ├── model/
+│   │   │       │   ├── Client.java
+│   │   │       │   └── Account.java
+│   │   │       ├── service/
+│   │   │       │   ├── ClientService.java
+│   │   │       │   └── AccountService.java
+│   │   │       ├── web/
+│   │   │       │   ├── ClientController.java
+│   │   │       │   └── AccountController.java
+│   │   │       └── health/
+│   │   │           ├── DatabaseHealthCheck.java
+│   │   │           └── WebAppReadinessCheck.java
+│   │   ├── resources/
+│   │   │   └── META-INF/
+│   │   │       └── microprofile-config.properties
+│   │   └── webapp/
+│   │       ├── WEB-INF/
+│   │       │   ├── web.xml
+│   │       │   └── views/
+│   │       │       ├── client-list.jsp
+│   │       │       ├── client-form.jsp
+│   │       │       └── account-list.jsp
+│   │       ├── css/
+│   │       │   └── style.css
+│   │       └── index.html
+│   └── test/
+└── pom.xml</code></pre>
+
+<span class="slide-counter">37 / 76</span>
+<div class="slide-nav">
+  <a href="#slide-36">&#8592; Previous</a>
+  <span class="slide-info">Slide 37 / 76 &nbsp;&middot;&nbsp; Servlets, JSP &amp; MicroProfile</span>
+  <a href="#slide-38">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-38" class="slide">
+<h2 data-en="🎯 Best Practices" data-fr="🎯 Bonnes pratiques">🎯 Best Practices</h2>
+<h3 data-en="Servlet Development" data-fr="Servlet Développement">Servlet Development</h3>
+<table class="slide-table"><thead><tr><th></th><th></th></tr></thead><tbody>
+<tr><td>✅</td><td>Use annotations for simple configurations</td></tr>
+<tr><td>✅</td><td>Keep servlets thin - delegate to service layer</td></tr>
+<tr><td>✅</td><td>Use PRG pattern (Post-Redirect-Get) for forms</td></tr>
+<tr><td>✅</td><td>Handle exceptions gracefully</td></tr>
+<tr><td>✅</td><td>Log important events and errors</td></tr>
+<tr><td>✅</td><td>Use filters for cross-cutting concerns</td></tr>
+</tbody></table>
+<h3 data-en="JSP Development" data-fr="JSP Développement">JSP Development</h3>
+<table class="slide-table"><thead><tr><th></th><th></th></tr></thead><tbody>
+<tr><td>✅</td><td>Avoid scriptlets - use JSTL and EL</td></tr>
+<tr><td>✅</td><td>Keep JSPs in WEB-INF for security</td></tr>
+<tr><td>✅</td><td>Use tag libraries for reusable components</td></tr>
+<tr><td>✅</td><td>Escape user input to prevent XSS</td></tr>
+<tr><td>✅</td><td>Separate concerns - no business logic in JSP</td></tr>
+</tbody></table>
+
+<span class="slide-counter">38 / 76</span>
+<div class="slide-nav">
+  <a href="#slide-37">&#8592; Previous</a>
+  <span class="slide-info">Slide 38 / 76 &nbsp;&middot;&nbsp; Servlets, JSP &amp; MicroProfile</span>
+  <a href="#slide-39">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-39" class="slide">
+<h2 data-en="🎯 Best Practices (cont.)" data-fr="🎯 Bonnes pratiques (cont.)">🎯 Best Practices (cont.)</h2>
+<h3>MVC Pattern</h3>
+<table class="slide-table"><thead><tr><th></th><th></th></tr></thead><tbody>
+<tr><td>✅</td><td>Clear separation of concerns</td></tr>
+<tr><td>✅</td><td>Model: Pure Java, no web dependencies</td></tr>
+<tr><td>✅</td><td>View: Presentation only, no business logic</td></tr>
+<tr><td>✅</td><td>Controller: Thin, delegates to services</td></tr>
+<tr><td>✅</td><td>Use request attributes for data passing</td></tr>
+</tbody></table>
+<h3>MicroProfile Config</h3>
+<table class="slide-table"><thead><tr><th></th><th></th></tr></thead><tbody>
+<tr><td>✅</td><td>Externalize all environment-specific settings</td></tr>
+<tr><td>✅</td><td>Use meaningful property names</td></tr>
+<tr><td>✅</td><td>Provide default values</td></tr>
+<tr><td>✅</td><td>Document configuration properties</td></tr>
+<tr><td>✅</td><td>Use environment variables for secrets</td></tr>
+</tbody></table>
+
+<span class="slide-counter">39 / 76</span>
+<div class="slide-nav">
+  <a href="#slide-38">&#8592; Previous</a>
+  <span class="slide-info">Slide 39 / 76 &nbsp;&middot;&nbsp; Servlets, JSP &amp; MicroProfile</span>
+  <a href="#slide-40">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-40" class="slide">
+<h2 data-en="🔒 Security Considerations" data-fr="🔒 Sécurité Considerations">🔒 Security Considerations</h2>
+<h3>Input Validation</h3>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>@WebServlet(&quot;/clients&quot;)
+public class ClientController extends HttpServlet {
+    
+    @Override
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp)
+            throws ServletException, IOException {
+        
+        String name = req.getParameter(&quot;name&quot;);
+        String email = req.getParameter(&quot;email&quot;);
+        
+        // Validate input
+        List&lt;String&gt; errors = new ArrayList&lt;&gt;();
+        
+        if (name == null || name.trim().isEmpty()) {
+            errors.add(&quot;Name is required&quot;);
+        } else if (name.length() &gt; 100) {
+            errors.add(&quot;Name is too long (max 100 characters)&quot;);
+        }
+        
+        if (email == null || !email.matches(&quot;^[A-Za-z0-9+_.-]+@(.+)$&quot;)) {
+            errors.add(&quot;Valid email is required&quot;);
+        }
+        
+        if (!errors.isEmpty()) {
+            req.setAttribute(&quot;errors&quot;, errors);
+            req.setAttribute(&quot;name&quot;, name);
+            req.setAttribute(&quot;email&quot;, email);
+            req.getRequestDispatcher(&quot;/WEB-INF/views/client-form.jsp&quot;)
+               .forward(req, resp);
+            return;
+        }
+        
+        // Process valid input
+        Client client = new Client(name, email);
+        clientService.create(client);
+        resp.sendRedirect(req.getContextPath() + &quot;/clients&quot;);
+    }
+}</code></pre>
+
+<span class="slide-counter">40 / 76</span>
+<div class="slide-nav">
+  <a href="#slide-39">&#8592; Previous</a>
+  <span class="slide-info">Slide 40 / 76 &nbsp;&middot;&nbsp; Servlets, JSP &amp; MicroProfile</span>
+  <a href="#slide-41">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-41" class="slide">
+<h2 data-en="🔒 Security Considerations (cont.)" data-fr="🔒 Sécurité Considerations (cont.)">🔒 Security Considerations (cont.)</h2>
+<h3>XSS Prevention in JSP</h3>
+<pre class="dark"><span class="lang-badge">jsp</span>
+<code>&lt;%@ taglib prefix=&quot;c&quot; uri=&quot;jakarta.tags.core&quot; %&gt;
+
+
+&lt;p&gt;Welcome, &lt;%= request.getParameter(&quot;name&quot;) %&gt;&lt;/p&gt;
+
+
+&lt;p&gt;Welcome, &lt;c:out value=&quot;${param.name}&quot; /&gt;&lt;/p&gt;
+
+
+&lt;p&gt;Welcome, ${param.name}&lt;/p&gt;
+
+
+&lt;input type=&quot;text&quot; value=&quot;&lt;c:out value='${param.search}' /&gt;&quot; /&gt;
+
+
+&lt;script&gt;
+    var userName = '&lt;c:out value=&quot;${user.name}&quot; escapeXml=&quot;true&quot; /&gt;';
+&lt;/script&gt;</code></pre>
+<h3>CSRF Protection</h3>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>// Generate CSRF token in servlet
+String csrfToken = UUID.randomUUID().toString();
+req.getSession().setAttribute(&quot;csrfToken&quot;, csrfToken);
+req.setAttribute(&quot;csrfToken&quot;, csrfToken);</code></pre>
+<pre class="dark"><span class="lang-badge">jsp</span>
+<code>
+&lt;form method=&quot;post&quot; action=&quot;clients&quot;&gt;
+    &lt;input type=&quot;hidden&quot; name=&quot;csrfToken&quot; value=&quot;${csrfToken}&quot; /&gt;
+    
+&lt;/form&gt;</code></pre>
+
+<span class="slide-counter">41 / 76</span>
+<div class="slide-nav">
+  <a href="#slide-40">&#8592; Previous</a>
+  <span class="slide-info">Slide 41 / 76 &nbsp;&middot;&nbsp; Servlets, JSP &amp; MicroProfile</span>
+  <a href="#slide-42">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-42" class="slide">
+<h2 data-en="🔐 Advanced Web Technologies" data-fr="🔐 Avancé Web Technologies">🔐 Advanced Web Technologies</h2>
+<h2>HTTPSession, Filters &amp; Listeners</h2>
+<p><strong>Duration:</strong> 1 hour</p>
+<p><strong>Topics:</strong> Session Management, Servlet Filters, Servlet Listeners</p>
+
+<span class="slide-counter">42 / 76</span>
+<div class="slide-nav">
+  <a href="#slide-41">&#8592; Previous</a>
+  <span class="slide-info">Slide 42 / 76 &nbsp;&middot;&nbsp; Servlets, JSP &amp; MicroProfile</span>
+  <a href="#slide-43">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-43" class="slide">
+<h2>🔐 HTTPSession Management</h2>
+<h3 data-en="What is HTTPSession?" data-fr="Qu'est-ce que HTTPSession?">What is HTTPSession?</h3>
+<p><strong>HTTPSession</strong> provides a way to identify a user across multiple requests and store user-specific data.</p>
+<table class="slide-table"><thead><tr><th></th><th></th></tr></thead><tbody>
+<tr><td>🎯</td><td><strong>Purpose:</strong> Maintain state in stateless HTTP protocol</td></tr>
+<tr><td>📦</td><td><strong>Storage:</strong> Server-side data storage per user</td></tr>
+<tr><td>🔑</td><td><strong>Identification:</strong> Session ID (cookie or URL rewriting)</td></tr>
+<tr><td>⏱️</td><td><strong>Lifecycle:</strong> Created on first request, destroyed on timeout/logout</td></tr>
+</tbody></table>
+<h3 data-en="Why Sessions?" data-fr="Pourquoi Sessions?">Why Sessions?</h3>
+<ul>
+<li><strong>User Authentication:</strong> Track logged-in users</li>
+<li><strong>Shopping Cart:</strong> Store items across pages</li>
+<li><strong>User Preferences:</strong> Remember settings</li>
+<li><strong>Multi-step Forms:</strong> Maintain data across steps</li>
+</ul>
+
+<span class="slide-counter">43 / 76</span>
+<div class="slide-nav">
+  <a href="#slide-42">&#8592; Previous</a>
+  <span class="slide-info">Slide 43 / 76 &nbsp;&middot;&nbsp; Servlets, JSP &amp; MicroProfile</span>
+  <a href="#slide-44">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-44" class="slide">
+<h2 data-en="🔐 Session Lifecycle and Scope" data-fr="🔐 Session Cycle de vie and Scope">🔐 Session Lifecycle and Scope</h2>
+<h3>Session Creation and Access</h3>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>@WebServlet(&quot;/login&quot;)
+public class LoginServlet extends HttpServlet {
+    
+    @Override
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp)
+            throws ServletException, IOException {
+        
+        String username = req.getParameter(&quot;username&quot;);
+        String password = req.getParameter(&quot;password&quot;);
+        
+        // Validate credentials
+        if (authenticate(username, password)) {
+            // Get or create session
+            HttpSession session = req.getSession(true);
+            
+            // Store user data in session
+            session.setAttribute(&quot;username&quot;, username);
+            session.setAttribute(&quot;loginTime&quot;, LocalDateTime.now());
+            session.setAttribute(&quot;role&quot;, getUserRole(username));
+            
+            // Set session timeout (in seconds)
+            session.setMaxInactiveInterval(30 * 60); // 30 minutes
+            
+            resp.sendRedirect(req.getContextPath() + &quot;/dashboard&quot;);
+        } else {
+            req.setAttribute(&quot;error&quot;, &quot;Invalid credentials&quot;);
+            req.getRequestDispatcher(&quot;/login.jsp&quot;).forward(req, resp);
+        }
+    }
+}</code></pre>
+
+<span class="slide-counter">44 / 76</span>
+<div class="slide-nav">
+  <a href="#slide-43">&#8592; Previous</a>
+  <span class="slide-info">Slide 44 / 76 &nbsp;&middot;&nbsp; Servlets, JSP &amp; MicroProfile</span>
+  <a href="#slide-45">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-45" class="slide">
+<h2>🔐 Session Attributes and Data Storage</h2>
+<h3>Storing and Retrieving Session Data</h3>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>@WebServlet(&quot;/cart&quot;)
+public class ShoppingCartServlet extends HttpServlet {
+    
+    @Override
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp)
+            throws ServletException, IOException {
+        
+        HttpSession session = req.getSession();
+        
+        // Get existing cart or create new one
+        @SuppressWarnings(&quot;unchecked&quot;)
+        List&lt;Product&gt; cart = (List&lt;Product&gt;) session.getAttribute(&quot;cart&quot;);
+        
+        if (cart == null) {
+            cart = new ArrayList&lt;&gt;();
+            session.setAttribute(&quot;cart&quot;, cart);
+        }
+        
+        // Add product to cart
+        String productId = req.getParameter(&quot;productId&quot;);
+        Product product = productService.findById(productId);
+        cart.add(product);
+        
+        // Update session
+        session.setAttribute(&quot;cart&quot;, cart);
+        session.setAttribute(&quot;cartTotal&quot;, calculateTotal(cart));
+        
+        resp.sendRedirect(req.getContextPath() + &quot;/cart&quot;);
+    }
+    
+    @Override
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp)
+            throws ServletException, IOException {
+        
+        HttpSession session = req.getSession(false);
+        
+        if (session != null) {
+            List&lt;Product&gt; cart = (List&lt;Product&gt;) session.getAttribute(&quot;cart&quot;);
+            req.setAttribute(&quot;cart&quot;, cart);
+        }
+        
+        req.getRequestDispatcher(&quot;/WEB-INF/views/cart.jsp&quot;).forward(req, resp);
+    }
+}</code></pre>
+
+<span class="slide-counter">45 / 76</span>
+<div class="slide-nav">
+  <a href="#slide-44">&#8592; Previous</a>
+  <span class="slide-info">Slide 45 / 76 &nbsp;&middot;&nbsp; Servlets, JSP &amp; MicroProfile</span>
+  <a href="#slide-46">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-46" class="slide">
+<h2>🔐 Session Timeout Configuration</h2>
+<h3>Configuring Session Timeout</h3>
+<p><strong>In web.xml:</strong></p>
+<pre class="dark"><span class="lang-badge">xml</span>
+<code>&lt;web-app&gt;
+    
+    &lt;session-config&gt;
+        &lt;session-timeout&gt;30&lt;/session-timeout&gt;
+        &lt;cookie-config&gt;
+            &lt;http-only&gt;true&lt;/http-only&gt;
+            &lt;secure&gt;true&lt;/secure&gt;
+            &lt;max-age&gt;1800&lt;/max-age&gt;
+        &lt;/cookie-config&gt;
+        &lt;tracking-mode&gt;COOKIE&lt;/tracking-mode&gt;
+    &lt;/session-config&gt;
+&lt;/web-app&gt;</code></pre>
+<p><strong>Programmatically:</strong></p>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>// Set timeout for specific session (in seconds)
+session.setMaxInactiveInterval(30 * 60); // 30 minutes
+
+// Get timeout
+int timeout = session.getMaxInactiveInterval();
+
+// Invalidate session (logout)
+session.invalidate();</code></pre>
+
+<span class="slide-counter">46 / 76</span>
+<div class="slide-nav">
+  <a href="#slide-45">&#8592; Previous</a>
+  <span class="slide-info">Slide 46 / 76 &nbsp;&middot;&nbsp; Servlets, JSP &amp; MicroProfile</span>
+  <a href="#slide-47">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-47" class="slide">
+<h2 data-en="🔐 Session Security Considerations" data-fr="🔐 Session Sécurité Considerations">🔐 Session Security Considerations</h2>
+<h3>Session Fixation Prevention</h3>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>@WebServlet(&quot;/login&quot;)
+public class SecureLoginServlet extends HttpServlet {
+    
+    @Override
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp)
+            throws ServletException, IOException {
+        
+        String username = req.getParameter(&quot;username&quot;);
+        String password = req.getParameter(&quot;password&quot;);
+        
+        if (authenticate(username, password)) {
+            // Invalidate old session (prevent session fixation)
+            HttpSession oldSession = req.getSession(false);
+            if (oldSession != null) {
+                oldSession.invalidate();
+            }
+            
+            // Create new session
+            HttpSession newSession = req.getSession(true);
+            newSession.setAttribute(&quot;username&quot;, username);
+            newSession.setAttribute(&quot;authenticated&quot;, true);
+            
+            // Regenerate session ID
+            req.changeSessionId();
+            
+            resp.sendRedirect(req.getContextPath() + &quot;/dashboard&quot;);
+        }
+    }
+}</code></pre>
+<h3>Session Hijacking Prevention</h3>
+<table class="slide-table"><thead><tr><th></th><th></th></tr></thead><tbody>
+<tr><td>✅</td><td>Use HTTPS to encrypt session cookies</td></tr>
+<tr><td>✅</td><td>Set HttpOnly flag on cookies</td></tr>
+<tr><td>✅</td><td>Set Secure flag for HTTPS-only cookies</td></tr>
+<tr><td>✅</td><td>Implement session timeout</td></tr>
+<tr><td>✅</td><td>Regenerate session ID after login</td></tr>
+</tbody></table>
+
+<span class="slide-counter">47 / 76</span>
+<div class="slide-nav">
+  <a href="#slide-46">&#8592; Previous</a>
+  <span class="slide-info">Slide 47 / 76 &nbsp;&middot;&nbsp; Servlets, JSP &amp; MicroProfile</span>
+  <a href="#slide-48">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-48" class="slide">
+<h2>🔐 Cookie-based vs URL Rewriting</h2>
+<h3>Session Tracking Mechanisms</h3>
+<div class="slide-columns">
+<div class="slide-col">
+<p><strong>Cookie-based (Preferred):</strong></p>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>// Automatic with cookies enabled
+HttpSession session = req.getSession();
+// Session ID stored in JSESSIONID cookie</code></pre>
+<p><strong>Advantages:</strong></p>
+<ul>
+<li>Transparent to user</li>
+<li>More secure</li>
+<li>Cleaner URLs</li>
+</ul>
+</div>
+<div class="slide-col">
+<p><strong>URL Rewriting (Fallback):</strong></p>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>// Encode URLs when cookies disabled
+String url = resp.encodeURL(&quot;/cart&quot;);
+String redirectUrl = resp.encodeRedirectURL(&quot;/checkout&quot;);</code></pre>
+<pre class="dark"><span class="lang-badge">jsp</span>
+<code>
+&lt;a href=&quot;&lt;c:url value='/cart'/&gt;&quot;&gt;View Cart&lt;/a&gt;</code></pre>
+<p><strong>Disadvantages:</strong></p>
+<ul>
+<li>Session ID visible in URL</li>
+<li data-en="Security risk (URL sharing)" data-fr="Sécurité risk (URL sharing)">Security risk (URL sharing)</li>
+<li>SEO issues</li>
+</ul>
+</div>
+</div>
+
+<span class="slide-counter">48 / 76</span>
+<div class="slide-nav">
+  <a href="#slide-47">&#8592; Previous</a>
+  <span class="slide-info">Slide 48 / 76 &nbsp;&middot;&nbsp; Servlets, JSP &amp; MicroProfile</span>
+  <a href="#slide-49">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-49" class="slide">
+<h2>🔍 Servlet Filters</h2>
+<h3>What are Servlet Filters?</h3>
+<p><strong>Filters</strong> intercept requests and responses to perform cross-cutting concerns.</p>
+<table class="slide-table"><thead><tr><th></th><th></th></tr></thead><tbody>
+<tr><td>🎯</td><td><strong>Purpose:</strong> Pre/post-processing of requests and responses</td></tr>
+<tr><td>🔗</td><td><strong>Chain:</strong> Multiple filters can be chained</td></tr>
+<tr><td>🎨</td><td><strong>Transparent:</strong> Servlets unaware of filters</td></tr>
+<tr><td>🔄</td><td><strong>Reusable:</strong> Apply to multiple servlets/URLs</td></tr>
+</tbody></table>
+<h3>Common Use Cases:</h3>
+<ul>
+<li>Authentication and authorization</li>
+<li>Logging and auditing</li>
+<li>Request/response modification</li>
+<li>Compression and encryption</li>
+<li>CORS handling</li>
+<li>Character encoding</li>
+</ul>
+
+<span class="slide-counter">49 / 76</span>
+<div class="slide-nav">
+  <a href="#slide-48">&#8592; Previous</a>
+  <span class="slide-info">Slide 49 / 76 &nbsp;&middot;&nbsp; Servlets, JSP &amp; MicroProfile</span>
+  <a href="#slide-50">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-50" class="slide">
+<h2>🔍 Filter Chain and Ordering</h2>
+<h3>How Filter Chain Works</h3>
+<p><img src="../../images/02-servlets-jsp-microprofile-diagram-5.png" alt="width:70%"></p>
+<h3>Filter Ordering</h3>
+<p data-en="<strong>Using @WebFilter (order not guaranteed):</strong>" data-fr="Utilisation de @WebFilter (order not guaranteed):"><strong>Using @WebFilter (order not guaranteed):</strong></p>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>@WebFilter(urlPatterns = &quot;/*&quot;)
+public class MyFilter implements Filter { }</code></pre>
+<p data-en="<strong>Using web.xml (explicit order):</strong>" data-fr="Utilisation de web.xml (explicit order):"><strong>Using web.xml (explicit order):</strong></p>
+<pre class="dark"><span class="lang-badge">xml</span>
+<code>&lt;filter-mapping&gt;
+    &lt;filter-name&gt;EncodingFilter&lt;/filter-name&gt;
+    &lt;url-pattern&gt;/*&lt;/url-pattern&gt;
+&lt;/filter-mapping&gt;
+&lt;filter-mapping&gt;
+    &lt;filter-name&gt;AuthenticationFilter&lt;/filter-name&gt;
+    &lt;url-pattern&gt;/*&lt;/url-pattern&gt;
+&lt;/filter-mapping&gt;</code></pre>
+
+<span class="slide-counter">50 / 76</span>
+<div class="slide-nav">
+  <a href="#slide-49">&#8592; Previous</a>
+  <span class="slide-info">Slide 50 / 76 &nbsp;&middot;&nbsp; Servlets, JSP &amp; MicroProfile</span>
+  <a href="#slide-51">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-51" class="slide">
+<h2 data-en="🔍 Authentication Filter Example" data-fr="🔍 Authentication Filter Exemple">🔍 Authentication Filter Example</h2>
+<h3>Complete Authentication Filter</h3>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>@WebFilter(urlPatterns = {&quot;/dashboard/*&quot;, &quot;/account/*&quot;, &quot;/admin/*&quot;})
+public class AuthenticationFilter implements Filter {
+    
+    private static final Logger logger = Logger.getLogger(
+        AuthenticationFilter.class.getName()
+    );
+    
+    @Override
+    public void init(FilterConfig filterConfig) throws ServletException {
+        logger.info(&quot;AuthenticationFilter initialized&quot;);
+    }
+    
+    @Override
+    public void doFilter(ServletRequest request, ServletResponse response,
+                        FilterChain chain) throws IOException, ServletException {
+        
+        HttpServletRequest req = (HttpServletRequest) request;
+        HttpServletResponse resp = (HttpServletResponse) response;
+        
+        HttpSession session = req.getSession(false);
+        String requestURI = req.getRequestURI();
+        
+        // Check if user is authenticated
+        boolean isAuthenticated = (session != null &amp;&amp; 
+                                  session.getAttribute(&quot;username&quot;) != null);
+        
+        // Check if accessing admin area
+        boolean isAdminArea = requestURI.contains(&quot;/admin/&quot;);
+        
+        if (!isAuthenticated) {
+            logger.warning(&quot;Unauthorized access attempt to: &quot; + requestURI);
+            resp.sendRedirect(req.getContextPath() + &quot;/login&quot;);
+            return;
+        }
+        
+        // Check admin role for admin area
+        if (isAdminArea) {
+            String role = (String) session.getAttribute(&quot;role&quot;);
+            if (!&quot;ADMIN&quot;.equals(role)) {
+                logger.warning(&quot;Non-admin user attempted to access: &quot; + requestURI);
+                resp.sendError(HttpServletResponse.SC_FORBIDDEN, 
+                              &quot;Access denied&quot;);
+                return;
+            }
+        }
+        
+        // User is authenticated, continue
+        chain.doFilter(request, response);
+    }
+    
+    @Override
+    public void destroy() {
+        logger.info(&quot;AuthenticationFilter destroyed&quot;);
+    }
+}</code></pre>
+
+<span class="slide-counter">51 / 76</span>
+<div class="slide-nav">
+  <a href="#slide-50">&#8592; Previous</a>
+  <span class="slide-info">Slide 51 / 76 &nbsp;&middot;&nbsp; Servlets, JSP &amp; MicroProfile</span>
+  <a href="#slide-52">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-52" class="slide">
+<h2>🔍 Logging Filter with Timing</h2>
+<h3>Request Logging and Performance Monitoring</h3>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>@WebFilter(urlPatterns = &quot;/*&quot;)
+public class LoggingFilter implements Filter {
+    
+    private static final Logger logger = Logger.getLogger(
+        LoggingFilter.class.getName()
+    );
+    
+    @Override
+    public void doFilter(ServletRequest request, ServletResponse response,
+                        FilterChain chain) throws IOException, ServletException {
+        
+        HttpServletRequest req = (HttpServletRequest) request;
+        HttpServletResponse resp = (HttpServletResponse) response;
+        
+        // Log request details
+        String method = req.getMethod();
+        String uri = req.getRequestURI();
+        String queryString = req.getQueryString();
+        String remoteAddr = req.getRemoteAddr();
+        
+        logger.info(String.format(&quot;Request: %s %s%s from %s&quot;,
+            method, uri, 
+            queryString != null ? &quot;?&quot; + queryString : &quot;&quot;,
+            remoteAddr
+        ));
+        
+        // Start timing
+        long startTime = System.currentTimeMillis();
+        
+        try {
+            // Continue filter chain
+            chain.doFilter(request, response);
+        } finally {
+            // Calculate duration
+            long duration = System.currentTimeMillis() - startTime;
+            
+            // Log response details
+            int status = resp.getStatus();
+            logger.info(String.format(&quot;Response: %d for %s %s (took %d ms)&quot;,
+                status, method, uri, duration
+            ));
+            
+            // Warn on slow requests
+            if (duration &gt; 1000) {
+                logger.warning(String.format(&quot;Slow request detected: %s %s took %d ms&quot;,
+                    method, uri, duration
+                ));
+            }
+        }
+    }
+}</code></pre>
+
+<span class="slide-counter">52 / 76</span>
+<div class="slide-nav">
+  <a href="#slide-51">&#8592; Previous</a>
+  <span class="slide-info">Slide 52 / 76 &nbsp;&middot;&nbsp; Servlets, JSP &amp; MicroProfile</span>
+  <a href="#slide-53">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-53" class="slide">
+<h2 data-en="🔍 CORS Filter Example" data-fr="🔍 CORS Filter Exemple">🔍 CORS Filter Example</h2>
+<h3>Cross-Origin Resource Sharing Filter</h3>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>@WebFilter(urlPatterns = &quot;/api/*&quot;)
+public class CorsFilter implements Filter {
+    
+    @Override
+    public void doFilter(ServletRequest request, ServletResponse response,
+                        FilterChain chain) throws IOException, ServletException {
+        
+        HttpServletRequest req = (HttpServletRequest) request;
+        HttpServletResponse resp = (HttpServletResponse) response;
+        
+        // Get origin from request
+        String origin = req.getHeader(&quot;Origin&quot;);
+        
+        // Set CORS headers
+        if (origin != null &amp;&amp; isAllowedOrigin(origin)) {
+            resp.setHeader(&quot;Access-Control-Allow-Origin&quot;, origin);
+            resp.setHeader(&quot;Access-Control-Allow-Methods&quot;, 
+                          &quot;GET, POST, PUT, DELETE, OPTIONS&quot;);
+            resp.setHeader(&quot;Access-Control-Allow-Headers&quot;, 
+                          &quot;Content-Type, Authorization, X-Requested-With&quot;);
+            resp.setHeader(&quot;Access-Control-Allow-Credentials&quot;, &quot;true&quot;);
+            resp.setHeader(&quot;Access-Control-Max-Age&quot;, &quot;3600&quot;);
+        }
+        
+        // Handle preflight request
+        if (&quot;OPTIONS&quot;.equalsIgnoreCase(req.getMethod())) {
+            resp.setStatus(HttpServletResponse.SC_OK);
+            return;
+        }
+        
+        // Continue filter chain
+        chain.doFilter(request, response);
+    }
+    
+    private boolean isAllowedOrigin(String origin) {
+        // Configure allowed origins
+        List&lt;String&gt; allowedOrigins = Arrays.asList(
+            &quot;http://localhost:3000&quot;,
+            &quot;http://localhost:4200&quot;,
+            &quot;https://myapp.example.com&quot;
+        );
+        return allowedOrigins.contains(origin);
+    }
+}</code></pre>
+
+<span class="slide-counter">53 / 76</span>
+<div class="slide-nav">
+  <a href="#slide-52">&#8592; Previous</a>
+  <span class="slide-info">Slide 53 / 76 &nbsp;&middot;&nbsp; Servlets, JSP &amp; MicroProfile</span>
+  <a href="#slide-54">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-54" class="slide">
+<h2>🔍 Character Encoding Filter</h2>
+<h3>Ensuring Proper Character Encoding</h3>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>@WebFilter(urlPatterns = &quot;/*&quot;)
+public class CharacterEncodingFilter implements Filter {
+    
+    private String encoding = &quot;UTF-8&quot;;
+    
+    @Override
+    public void init(FilterConfig filterConfig) throws ServletException {
+        String encodingParam = filterConfig.getInitParameter(&quot;encoding&quot;);
+        if (encodingParam != null) {
+            this.encoding = encodingParam;
+        }
+    }
+    
+    @Override
+    public void doFilter(ServletRequest request, ServletResponse response,
+                        FilterChain chain) throws IOException, ServletException {
+        
+        // Set request encoding
+        if (request.getCharacterEncoding() == null) {
+            request.setCharacterEncoding(encoding);
+        }
+        
+        // Set response encoding
+        response.setCharacterEncoding(encoding);
+        response.setContentType(&quot;text/html; charset=&quot; + encoding);
+        
+        // Continue filter chain
+        chain.doFilter(request, response);
+    }
+}</code></pre>
+<p><strong>Configuration in web.xml:</strong></p>
+<pre class="dark"><span class="lang-badge">xml</span>
+<code>&lt;filter&gt;
+    &lt;filter-name&gt;CharacterEncodingFilter&lt;/filter-name&gt;
+    &lt;filter-class&gt;com.bank.filter.CharacterEncodingFilter&lt;/filter-class&gt;
+    &lt;init-param&gt;
+        &lt;param-name&gt;encoding&lt;/param-name&gt;
+        &lt;param-value&gt;UTF-8&lt;/param-value&gt;
+    &lt;/init-param&gt;
+&lt;/filter&gt;</code></pre>
+
+<span class="slide-counter">54 / 76</span>
+<div class="slide-nav">
+  <a href="#slide-53">&#8592; Previous</a>
+  <span class="slide-info">Slide 54 / 76 &nbsp;&middot;&nbsp; Servlets, JSP &amp; MicroProfile</span>
+  <a href="#slide-55">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-55" class="slide">
+<h2>🔍 Compression Filter</h2>
+<h3>Response Compression Filter</h3>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>@WebFilter(urlPatterns = &quot;/*&quot;)
+public class CompressionFilter implements Filter {
+    
+    @Override
+    public void doFilter(ServletRequest request, ServletResponse response,
+                        FilterChain chain) throws IOException, ServletException {
+        
+        HttpServletRequest req = (HttpServletRequest) request;
+        HttpServletResponse resp = (HttpServletResponse) response;
+        
+        // Check if client accepts gzip
+        String acceptEncoding = req.getHeader(&quot;Accept-Encoding&quot;);
+        
+        if (acceptEncoding != null &amp;&amp; acceptEncoding.contains(&quot;gzip&quot;)) {
+            // Wrap response with compression
+            GzipResponseWrapper wrappedResponse = 
+                new GzipResponseWrapper(resp);
+            
+            try {
+                chain.doFilter(request, wrappedResponse);
+            } finally {
+                wrappedResponse.finish();
+            }
+        } else {
+            // No compression
+            chain.doFilter(request, response);
+        }
+    }
+}
+
+// Response wrapper for compression
+class GzipResponseWrapper extends HttpServletResponseWrapper {
+    private GZIPOutputStream gzipStream;
+    private ServletOutputStream outputStream;
+    
+    public GzipResponseWrapper(HttpServletResponse response) 
+            throws IOException {
+        super(response);
+        response.setHeader(&quot;Content-Encoding&quot;, &quot;gzip&quot;);
+    }
+    
+    @Override
+    public ServletOutputStream getOutputStream() throws IOException {
+        if (outputStream == null) {
+            gzipStream = new GZIPOutputStream(getResponse().getOutputStream());
+            outputStream = new ServletOutputStream() {
+                @Override
+                public void write(int b) throws IOException {
+                    gzipStream.write(b);
+                }
+                
+                @Override
+                public boolean isReady() { return true; }
+                
+                @Override
+                public void setWriteListener(WriteListener listener) { }
+            };
+        }
+        return outputStream;
+    }
+    
+    public void finish() throws IOException {
+        if (gzipStream != null) {
+            gzipStream.finish();
+        }
+    }
+}</code></pre>
+
+<span class="slide-counter">55 / 76</span>
+<div class="slide-nav">
+  <a href="#slide-54">&#8592; Previous</a>
+  <span class="slide-info">Slide 55 / 76 &nbsp;&middot;&nbsp; Servlets, JSP &amp; MicroProfile</span>
+  <a href="#slide-56">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-56" class="slide">
+<h2 data-en="🔍 Filter Best Practices" data-fr="🔍 Filter Bonnes pratiques">🔍 Filter Best Practices</h2>
+<h3 data-en="Guidelines for Filter Development" data-fr="Guidelines for Filter Développement">Guidelines for Filter Development</h3>
+<table class="slide-table"><thead><tr><th></th><th></th></tr></thead><tbody>
+<tr><td>✅</td><td><strong>Keep filters focused:</strong> One responsibility per filter</td></tr>
+<tr><td>✅</td><td><strong>Order matters:</strong> Use web.xml for explicit ordering</td></tr>
+<tr><td>✅</td><td><strong>Always call chain.doFilter():</strong> Unless intentionally blocking</td></tr>
+<tr><td>✅</td><td><strong>Handle exceptions:</strong> Catch and log appropriately</td></tr>
+<tr><td>✅</td><td><strong>Use init() for setup:</strong> Initialize resources once</td></tr>
+<tr><td>✅</td><td><strong>Clean up in destroy():</strong> Release resources</td></tr>
+<tr><td>✅</td><td><strong>Be thread-safe:</strong> Filters are singletons</td></tr>
+<tr><td>✅</td><td><strong>Minimize overhead:</strong> Filters execute on every request</td></tr>
+</tbody></table>
+<h3>Common Filter Patterns</h3>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>// Pattern 1: Pre-processing only
+chain.doFilter(request, response);
+
+// Pattern 2: Post-processing only
+chain.doFilter(request, response);
+// Post-processing code here
+
+// Pattern 3: Wrap request/response
+ModifiedRequest wrappedRequest = new ModifiedRequest(request);
+ModifiedResponse wrappedResponse = new ModifiedResponse(response);
+chain.doFilter(wrappedRequest, wrappedResponse);
+
+// Pattern 4: Conditional execution
+if (condition) {
+    chain.doFilter(request, response);
+} else {
+    // Block request
+    response.sendError(HttpServletResponse.SC_FORBIDDEN);
+}</code></pre>
+
+<span class="slide-counter">56 / 76</span>
+<div class="slide-nav">
+  <a href="#slide-55">&#8592; Previous</a>
+  <span class="slide-info">Slide 56 / 76 &nbsp;&middot;&nbsp; Servlets, JSP &amp; MicroProfile</span>
+  <a href="#slide-57">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-57" class="slide">
+<h2>👂 Servlet Listeners</h2>
+<h3>What are Servlet Listeners?</h3>
+<p data-en="<strong>Listeners</strong> respond to lifecycle events in web applications." data-fr="Listeners respond to Cycle de vie events in web applications."><strong>Listeners</strong> respond to lifecycle events in web applications.</p>
+<table class="slide-table"><thead><tr><th></th><th></th></tr></thead><tbody>
+<tr><td>🎯</td><td><strong>Purpose:</strong> React to application, session, and request events</td></tr>
+<tr><td>📡</td><td><strong>Event-driven:</strong> Triggered automatically by container</td></tr>
+<tr><td>🔄</td><td><strong>Lifecycle hooks:</strong> Initialize/cleanup resources</td></tr>
+<tr><td>📊</td><td><strong>Monitoring:</strong> Track application state and metrics</td></tr>
+</tbody></table>
+<h3>Listener Types:</h3>
+<ol>
+<li data-en="<strong>ServletContextListener</strong> - Application lifecycle" data-fr="ServletContextListener - Application Cycle de vie"><strong>ServletContextListener</strong> - Application lifecycle</li>
+<li data-en="<strong>HttpSessionListener</strong> - Session lifecycle" data-fr="HttpSessionListener - Session Cycle de vie"><strong>HttpSessionListener</strong> - Session lifecycle</li>
+<li data-en="<strong>ServletRequestListener</strong> - Request lifecycle" data-fr="ServletRequestListener - Request Cycle de vie"><strong>ServletRequestListener</strong> - Request lifecycle</li>
+<li><strong>Attribute Listeners</strong> - Attribute changes</li>
+</ol>
+
+<span class="slide-counter">57 / 76</span>
+<div class="slide-nav">
+  <a href="#slide-56">&#8592; Previous</a>
+  <span class="slide-info">Slide 57 / 76 &nbsp;&middot;&nbsp; Servlets, JSP &amp; MicroProfile</span>
+  <a href="#slide-58">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-58" class="slide">
+<h2 data-en="👂 ServletContextListener - Application Lifecycle" data-fr="👂 ServletContextListener - Application Cycle de vie">👂 ServletContextListener - Application Lifecycle</h2>
+<h3>Application Startup and Shutdown</h3>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>@WebListener
+public class ApplicationLifecycleListener implements ServletContextListener {
+    
+    private static final Logger logger = Logger.getLogger(
+        ApplicationLifecycleListener.class.getName()
+    );
+    
+    @Override
+    public void contextInitialized(ServletContextEvent sce) {
+        ServletContext context = sce.getServletContext();
+        
+        logger.info(&quot;=== Application Starting ===&quot;);
+        logger.info(&quot;Context Path: &quot; + context.getContextPath());
+        logger.info(&quot;Server Info: &quot; + context.getServerInfo());
+        
+        // Initialize application-wide resources
+        initializeDatabase(context);
+        loadConfiguration(context);
+        startScheduledTasks(context);
+        
+        // Store application start time
+        context.setAttribute(&quot;startTime&quot;, LocalDateTime.now());
+        
+        logger.info(&quot;=== Application Started Successfully ===&quot;);
+    }
+    
+    @Override
+    public void contextDestroyed(ServletContextEvent sce) {
+        ServletContext context = sce.getServletContext();
+        
+        logger.info(&quot;=== Application Shutting Down ===&quot;);
+        
+        // Cleanup resources
+        stopScheduledTasks(context);
+        closeDatabase(context);
+        
+        LocalDateTime startTime = 
+            (LocalDateTime) context.getAttribute(&quot;startTime&quot;);
+        if (startTime != null) {
+            Duration uptime = Duration.between(startTime, LocalDateTime.now());
+            logger.info(&quot;Application uptime: &quot; + uptime);
+        }
+        
+        logger.info(&quot;=== Application Stopped ===&quot;);
+    }
+    
+    private void initializeDatabase(ServletContext context) {
+        // Database initialization logic
+        logger.info(&quot;Database connection pool initialized&quot;);
+    }
+    
+    private void loadConfiguration(ServletContext context) {
+        // Load configuration
+        logger.info(&quot;Configuration loaded&quot;);
+    }
+    
+    private void startScheduledTasks(ServletContext context) {
+        // Start background tasks
+        logger.info(&quot;Scheduled tasks started&quot;);
+    }
+    
+    private void stopScheduledTasks(ServletContext context) {
+        // Stop background tasks
+        logger.info(&quot;Scheduled tasks stopped&quot;);
+    }
+    
+    private void closeDatabase(ServletContext context) {
+        // Close database connections
+        logger.info(&quot;Database connections closed&quot;);
+    }
+}</code></pre>
+
+<span class="slide-counter">58 / 76</span>
+<div class="slide-nav">
+  <a href="#slide-57">&#8592; Previous</a>
+  <span class="slide-info">Slide 58 / 76 &nbsp;&middot;&nbsp; Servlets, JSP &amp; MicroProfile</span>
+  <a href="#slide-59">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-59" class="slide">
+<h2>👂 HttpSessionListener - Session Tracking</h2>
+<h3>Session Counter Listener</h3>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>@WebListener
+public class SessionCounterListener implements HttpSessionListener {
+    
+    private static final Logger logger = Logger.getLogger(
+        SessionCounterListener.class.getName()
+    );
+    
+    private final AtomicInteger activeSessions = new AtomicInteger(0);
+    private final AtomicInteger totalSessions = new AtomicInteger(0);
+    
+    @Override
+    public void sessionCreated(HttpSessionEvent se) {
+        HttpSession session = se.getSession();
+        
+        int active = activeSessions.incrementAndGet();
+        int total = totalSessions.incrementAndGet();
+        
+        logger.info(String.format(
+            &quot;Session created: %s | Active: %d | Total: %d&quot;,
+            session.getId(), active, total
+        ));
+        
+        // Store session creation time
+        session.setAttribute(&quot;createdAt&quot;, LocalDateTime.now());
+        
+        // Store counter in application scope
+        ServletContext context = session.getServletContext();
+        context.setAttribute(&quot;activeSessions&quot;, active);
+        context.setAttribute(&quot;totalSessions&quot;, total);
+    }
+    
+    @Override
+    public void sessionDestroyed(HttpSessionEvent se) {
+        HttpSession session = se.getSession();
+        
+        int active = activeSessions.decrementAndGet();
+        
+        LocalDateTime createdAt = 
+            (LocalDateTime) session.getAttribute(&quot;createdAt&quot;);
+        if (createdAt != null) {
+            Duration duration = Duration.between(createdAt, LocalDateTime.now());
+            logger.info(String.format(
+                &quot;Session destroyed: %s | Duration: %s | Active: %d&quot;,
+                session.getId(), duration, active
+            ));
+        }
+        
+        // Update application scope
+        ServletContext context = session.getServletContext();
+        context.setAttribute(&quot;activeSessions&quot;, active);
+    }
+    
+    public int getActiveSessions() {
+        return activeSessions.get();
+    }
+    
+    public int getTotalSessions() {
+        return totalSessions.get();
+    }
+}</code></pre>
+
+<span class="slide-counter">59 / 76</span>
+<div class="slide-nav">
+  <a href="#slide-58">&#8592; Previous</a>
+  <span class="slide-info">Slide 59 / 76 &nbsp;&middot;&nbsp; Servlets, JSP &amp; MicroProfile</span>
+  <a href="#slide-60">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-60" class="slide">
+<h2>👂 ServletRequestListener - Request Tracking</h2>
+<h3>Request Logging Listener</h3>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>@WebListener
+public class RequestLoggingListener implements ServletRequestListener {
+    
+    private static final Logger logger = Logger.getLogger(
+        RequestLoggingListener.class.getName()
+    );
+    
+    private static final String START_TIME_ATTR = &quot;requestStartTime&quot;;
+    private final AtomicLong requestCounter = new AtomicLong(0);
+    
+    @Override
+    public void requestInitialized(ServletRequestEvent sre) {
+        ServletRequest request = sre.getServletRequest();
+        
+        if (request instanceof HttpServletRequest) {
+            HttpServletRequest httpRequest = (HttpServletRequest) request;
+            
+            // Store start time
+            request.setAttribute(START_TIME_ATTR, System.currentTimeMillis());
+            
+            // Increment counter
+            long requestId = requestCounter.incrementAndGet();
+            request.setAttribute(&quot;requestId&quot;, requestId);
+            
+            // Log request details
+            String method = httpRequest.getMethod();
+            String uri = httpRequest.getRequestURI();
+            String queryString = httpRequest.getQueryString();
+            String remoteAddr = httpRequest.getRemoteAddr();
+            String userAgent = httpRequest.getHeader(&quot;User-Agent&quot;);
+            
+            logger.info(String.format(
+                &quot;[Request #%d] %s %s%s from %s | User-Agent: %s&quot;,
+                requestId, method, uri,
+                queryString != null ? &quot;?&quot; + queryString : &quot;&quot;,
+                remoteAddr,
+                userAgent != null ? userAgent : &quot;Unknown&quot;
+            ));
+        }
+    }
+    
+    @Override
+    public void requestDestroyed(ServletRequestEvent sre) {
+        ServletRequest request = sre.getServletRequest();
+        
+        if (request instanceof HttpServletRequest) {
+            HttpServletRequest httpRequest = (HttpServletRequest) request;
+            
+            // Calculate duration
+            Long startTime = (Long) request.getAttribute(START_TIME_ATTR);
+            if (startTime != null) {
+                long duration = System.currentTimeMillis() - startTime;
+                Long requestId = (Long) request.getAttribute(&quot;requestId&quot;);
+                
+                String method = httpRequest.getMethod();
+                String uri = httpRequest.getRequestURI();
+                
+                logger.info(String.format(
+                    &quot;[Request #%d] %s %s completed in %d ms&quot;,
+                    requestId, method, uri, duration
+                ));
+                
+                // Warn on slow requests
+                if (duration &gt; 1000) {
+                    logger.warning(String.format(
+                        &quot;[Request #%d] Slow request: %s %s took %d ms&quot;,
+                        requestId, method, uri, duration
+                    ));
+                }
+            }
+        }
+    }
+}</code></pre>
+
+<span class="slide-counter">60 / 76</span>
+<div class="slide-nav">
+  <a href="#slide-59">&#8592; Previous</a>
+  <span class="slide-info">Slide 60 / 76 &nbsp;&middot;&nbsp; Servlets, JSP &amp; MicroProfile</span>
+  <a href="#slide-61">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-61" class="slide">
+<h2>👂 Attribute Listeners</h2>
+<h3>Monitoring Attribute Changes</h3>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>@WebListener
+public class SessionAttributeListener implements HttpSessionAttributeListener {
+    
+    private static final Logger logger = Logger.getLogger(
+        SessionAttributeListener.class.getName()
+    );
+    
+    @Override
+    public void attributeAdded(HttpSessionBindingEvent event) {
+        String name = event.getName();
+        Object value = event.getValue();
+        String sessionId = event.getSession().getId();
+        
+        logger.info(String.format(
+            &quot;Session attribute added: %s = %s (Session: %s)&quot;,
+            name, value, sessionId
+        ));
+        
+        // Track important attributes
+        if (&quot;username&quot;.equals(name)) {
+            logger.info(&quot;User logged in: &quot; + value);
+        }
+    }
+    
+    @Override
+    public void attributeRemoved(HttpSessionBindingEvent event) {
+        String name = event.getName();
+        Object value = event.getValue();
+        String sessionId = event.getSession().getId();
+        
+        logger.info(String.format(
+            &quot;Session attribute removed: %s = %s (Session: %s)&quot;,
+            name, value, sessionId
+        ));
+        
+        if (&quot;username&quot;.equals(name)) {
+            logger.info(&quot;User logged out: &quot; + value);
+        }
+    }
+    
+    @Override
+    public void attributeReplaced(HttpSessionBindingEvent event) {
+        String name = event.getName();
+        Object oldValue = event.getValue();
+        Object newValue = event.getSession().getAttribute(name);
+        String sessionId = event.getSession().getId();
+        
+        logger.info(String.format(
+            &quot;Session attribute replaced: %s changed from %s to %s (Session: %s)&quot;,
+            name, oldValue, newValue, sessionId
+        ));
+    }
+}</code></pre>
+
+<span class="slide-counter">61 / 76</span>
+<div class="slide-nav">
+  <a href="#slide-60">&#8592; Previous</a>
+  <span class="slide-info">Slide 61 / 76 &nbsp;&middot;&nbsp; Servlets, JSP &amp; MicroProfile</span>
+  <a href="#slide-62">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-62" class="slide">
+<h2>👂 ServletContext Attribute Listener</h2>
+<h3>Application-wide Attribute Monitoring</h3>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>@WebListener
+public class ApplicationAttributeListener 
+        implements ServletContextAttributeListener {
+    
+    private static final Logger logger = Logger.getLogger(
+        ApplicationAttributeListener.class.getName()
+    );
+    
+    @Override
+    public void attributeAdded(ServletContextAttributeEvent event) {
+        String name = event.getName();
+        Object value = event.getValue();
+        
+        logger.info(String.format(
+            &quot;Application attribute added: %s = %s&quot;,
+            name, value
+        ));
+    }
+    
+    @Override
+    public void attributeRemoved(ServletContextAttributeEvent event) {
+        String name = event.getName();
+        Object value = event.getValue();
+        
+        logger.info(String.format(
+            &quot;Application attribute removed: %s = %s&quot;,
+            name, value
+        ));
+    }
+    
+    @Override
+    public void attributeReplaced(ServletContextAttributeEvent event) {
+        String name = event.getName();
+        Object oldValue = event.getValue();
+        Object newValue = event.getServletContext().getAttribute(name);
+        
+        logger.info(String.format(
+            &quot;Application attribute replaced: %s changed from %s to %s&quot;,
+            name, oldValue, newValue
+        ));
+    }
+}</code></pre>
+
+<span class="slide-counter">62 / 76</span>
+<div class="slide-nav">
+  <a href="#slide-61">&#8592; Previous</a>
+  <span class="slide-info">Slide 62 / 76 &nbsp;&middot;&nbsp; Servlets, JSP &amp; MicroProfile</span>
+  <a href="#slide-63">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-63" class="slide">
+<h2>👂 Listener Use Cases and Patterns</h2>
+<h3>Common Listener Patterns</h3>
+<div class="slide-columns">
+<div class="slide-col">
+<p data-en="<strong>Application Lifecycle:</strong>" data-fr="Application Cycle de vie:"><strong>Application Lifecycle:</strong></p>
+<ul>
+<li>Database connection pool setup</li>
+<li>Configuration loading</li>
+<li>Cache initialization</li>
+<li>Scheduled task management</li>
+<li>Resource cleanup</li>
+</ul>
+<p><strong>Session Management:</strong></p>
+<ul>
+<li>Active user tracking</li>
+<li>Session timeout handling</li>
+<li>User activity logging</li>
+<li>Session statistics</li>
+</ul>
+</div>
+<div class="slide-col">
+<p><strong>Request Processing:</strong></p>
+<ul>
+<li>Request timing and profiling</li>
+<li>Request/response logging</li>
+<li>Performance monitoring</li>
+<li>Audit trail creation</li>
+</ul>
+<p><strong>Attribute Monitoring:</strong></p>
+<ul>
+<li data-en="Security auditing" data-fr="Sécurité auditing">Security auditing</li>
+<li>State change tracking</li>
+<li>Data validation</li>
+<li>Event triggering</li>
+</ul>
+</div>
+</div>
+<h3 data-en="Best Practices" data-fr="Bonnes pratiques">Best Practices</h3>
+<table class="slide-table"><thead><tr><th></th><th></th></tr></thead><tbody>
+<tr><td>✅</td><td><strong>Keep listeners lightweight:</strong> Avoid heavy processing</td></tr>
+<tr><td>✅</td><td><strong>Use for cross-cutting concerns:</strong> Logging, monitoring, etc.</td></tr>
+<tr><td>✅</td><td><strong>Be thread-safe:</strong> Listeners are singletons</td></tr>
+<tr><td>✅</td><td><strong>Handle exceptions:</strong> Don't let exceptions propagate</td></tr>
+<tr><td>✅</td><td><strong>Log important events:</strong> Aid debugging and monitoring</td></tr>
+</tbody></table>
+
+<span class="slide-counter">63 / 76</span>
+<div class="slide-nav">
+  <a href="#slide-62">&#8592; Previous</a>
+  <span class="slide-info">Slide 63 / 76 &nbsp;&middot;&nbsp; Servlets, JSP &amp; MicroProfile</span>
+  <a href="#slide-64">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-64" class="slide">
+<h2 data-en="🎯 Complete Example: Banking Application" data-fr="🎯 Complete Exemple: Banking Application">🎯 Complete Example: Banking Application</h2>
+<h3>Combining Filters and Listeners</h3>
+<p data-en="<strong>Project Structure:</strong>" data-fr="Structure du projet:"><strong>Project Structure:</strong></p>
+<pre class="dark"><code>src/main/java/com/bank/
+├── filter/
+│   ├── AuthenticationFilter.java
+│   ├── LoggingFilter.java
+│   └── CharacterEncodingFilter.java
+├── listener/
+│   ├── ApplicationLifecycleListener.java
+│   ├── SessionCounterListener.java
+│   └── RequestLoggingListener.java
+└── web/
+    ├── LoginServlet.java
+    ├── DashboardServlet.java
+    └── LogoutServlet.java</code></pre>
+<p><strong>Filter Chain Order (web.xml):</strong></p>
+<pre class="dark"><span class="lang-badge">xml</span>
+<code>&lt;filter-mapping&gt;
+    &lt;filter-name&gt;CharacterEncodingFilter&lt;/filter-name&gt;
+    &lt;url-pattern&gt;/*&lt;/url-pattern&gt;
+&lt;/filter-mapping&gt;
+&lt;filter-mapping&gt;
+    &lt;filter-name&gt;LoggingFilter&lt;/filter-name&gt;
+    &lt;url-pattern&gt;/*&lt;/url-pattern&gt;
+&lt;/filter-mapping&gt;
+&lt;filter-mapping&gt;
+    &lt;filter-name&gt;AuthenticationFilter&lt;/filter-name&gt;
+    &lt;url-pattern&gt;/dashboard/*&lt;/url-pattern&gt;
+&lt;/filter-mapping&gt;</code></pre>
+
+<span class="slide-counter">64 / 76</span>
+<div class="slide-nav">
+  <a href="#slide-63">&#8592; Previous</a>
+  <span class="slide-info">Slide 64 / 76 &nbsp;&middot;&nbsp; Servlets, JSP &amp; MicroProfile</span>
+  <a href="#slide-65">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-65" class="slide">
+<h2>🎯 Banking Application - Request Flow</h2>
+<h3>Complete Request Processing Flow</h3>
+<p><img src="../../images/02-servlets-jsp-microprofile-diagram-6.png" alt="width:70%"></p>
+
+<span class="slide-counter">65 / 76</span>
+<div class="slide-nav">
+  <a href="#slide-64">&#8592; Previous</a>
+  <span class="slide-info">Slide 65 / 76 &nbsp;&middot;&nbsp; Servlets, JSP &amp; MicroProfile</span>
+  <a href="#slide-66">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-66" class="slide">
+<h2 data-en="📊 Monitoring Dashboard Example" data-fr="📊 Monitoring Dashboard Exemple">📊 Monitoring Dashboard Example</h2>
+<h3>Servlet for Application Statistics</h3>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>@WebServlet(&quot;/admin/stats&quot;)
+public class StatisticsServlet extends HttpServlet {
+    
+    @Override
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp)
+            throws ServletException, IOException {
+        
+        ServletContext context = getServletContext();
+        
+        // Get statistics from application scope
+        Integer activeSessions = 
+            (Integer) context.getAttribute(&quot;activeSessions&quot;);
+        Integer totalSessions = 
+            (Integer) context.getAttribute(&quot;totalSessions&quot;);
+        LocalDateTime startTime = 
+            (LocalDateTime) context.getAttribute(&quot;startTime&quot;);
+        
+        // Calculate uptime
+        Duration uptime = Duration.between(startTime, LocalDateTime.now());
+        
+        // Set attributes for JSP
+        req.setAttribute(&quot;activeSessions&quot;, activeSessions);
+        req.setAttribute(&quot;totalSessions&quot;, totalSessions);
+        req.setAttribute(&quot;uptime&quot;, formatDuration(uptime));
+        req.setAttribute(&quot;startTime&quot;, startTime);
+        
+        req.getRequestDispatcher(&quot;/WEB-INF/views/stats.jsp&quot;)
+           .forward(req, resp);
+    }
+    
+    private String formatDuration(Duration duration) {
+        long days = duration.toDays();
+        long hours = duration.toHours() % 24;
+        long minutes = duration.toMinutes() % 60;
+        return String.format(&quot;%d days, %d hours, %d minutes&quot;, 
+                           days, hours, minutes);
+    }
+}</code></pre>
+
+<span class="slide-counter">66 / 76</span>
+<div class="slide-nav">
+  <a href="#slide-65">&#8592; Previous</a>
+  <span class="slide-info">Slide 66 / 76 &nbsp;&middot;&nbsp; Servlets, JSP &amp; MicroProfile</span>
+  <a href="#slide-67">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-67" class="slide">
+<h2>📊 Lab 2 Preview</h2>
+<h3 data-en="Objectives:" data-fr="Objectifs:">Objectives:</h3>
+<ul>
+<li data-en="Implement complete servlet lifecycle" data-fr="Implement complete servlet Cycle de vie">Implement complete servlet lifecycle</li>
+<li>Create dynamic JSP pages with JSTL</li>
+<li>Build MVC-based client management</li>
+<li>Add MicroProfile Config for web settings</li>
+<li>Implement health checks for web tier</li>
+</ul>
+<h3>What You'll Build:</h3>
+<p>A banking web interface with:</p>
+<ul>
+<li>Client CRUD operations (Create, Read, Update, Delete)</li>
+<li>Account listing and details</li>
+<li data-en="Form validation and error handling" data-fr="Form validation and Gestion des erreurs">Form validation and error handling</li>
+<li>Pagination with MP Config</li>
+<li>Health monitoring</li>
+</ul>
+<p><strong>Time:</strong> 3 hours</p>
+<p><strong>Difficulty:</strong> Intermediate</p>
+
+<span class="slide-counter">67 / 76</span>
+<div class="slide-nav">
+  <a href="#slide-66">&#8592; Previous</a>
+  <span class="slide-info">Slide 67 / 76 &nbsp;&middot;&nbsp; Servlets, JSP &amp; MicroProfile</span>
+  <a href="#slide-68">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-68" class="slide">
+<h2 data-en="🎓 Key Takeaways" data-fr="🎓 Points clés">🎓 Key Takeaways</h2>
+<h3>What We Learned Today:</h3>
+<table class="slide-table"><thead><tr><th></th><th></th></tr></thead><tbody>
+<tr><td>✅</td><td>Servlet lifecycle: init(), service(), destroy()</td></tr>
+<tr><td>✅</td><td>JSP with JSTL for dynamic pages</td></tr>
+<tr><td>✅</td><td>MVC pattern for web applications</td></tr>
+<tr><td>✅</td><td>MicroProfile Config in web tier</td></tr>
+<tr><td>✅</td><td>Health checks for monitoring</td></tr>
+</tbody></table>
+<h3 data-en="Next Steps:" data-fr="Prochaines étapes:">Next Steps:</h3>
+<ul>
+<li>Complete Lab 2: Servlets and JSP</li>
+<li>Practice JSTL and EL syntax</li>
+<li>Implement MVC pattern</li>
+<li>Add health checks to your application</li>
+</ul>
+
+<span class="slide-counter">68 / 76</span>
+<div class="slide-nav">
+  <a href="#slide-67">&#8592; Previous</a>
+  <span class="slide-info">Slide 68 / 76 &nbsp;&middot;&nbsp; Servlets, JSP &amp; MicroProfile</span>
+  <a href="#slide-69">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-69" class="slide">
+<h2 data-en="📚 Additional Resources" data-fr="📚 Ressources supplémentaires">📚 Additional Resources</h2>
+<h3>Official Documentation:</h3>
+<ul>
+<li><strong>Jakarta Servlet:</strong> https://jakarta.ee/specifications/servlet/</li>
+<li><strong>Jakarta Server Pages:</strong> https://jakarta.ee/specifications/pages/</li>
+<li><strong>JSTL:</strong> https://jakarta.ee/specifications/tags/</li>
+<li><strong>MicroProfile Config:</strong> https://microprofile.io/specifications/microprofile-config/</li>
+</ul>
+<h3>Recommended Reading:</h3>
+<ul>
+<li>"Head First Servlets and JSP" by Bryan Basham</li>
+<li>"Jakarta EE Cookbook" by Elder Moraes</li>
+<li>"Pro JSP 2" by Simon Brown</li>
+</ul>
+<h3>Tutorials:</h3>
+<ul>
+<li>Jakarta EE Tutorial: https://eclipse-ee4j.github.io/jakartaee-tutorial/</li>
+<li>Baeldung Servlet Guide: https://www.baeldung.com/intro-to-servlets</li>
+</ul>
+
+<span class="slide-counter">69 / 76</span>
+<div class="slide-nav">
+  <a href="#slide-68">&#8592; Previous</a>
+  <span class="slide-info">Slide 69 / 76 &nbsp;&middot;&nbsp; Servlets, JSP &amp; MicroProfile</span>
+  <a href="#slide-70">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-70" class="slide">
+<h2 data-en="📝 Homework" data-fr="📝 Devoirs">📝 Homework</h2>
+<h3 data-en="Before Next Lecture:" data-fr="Before Prochaine leçon:">Before Next Lecture:</h3>
+<table class="slide-table"><thead><tr><th></th><th></th></tr></thead><tbody>
+<tr><td>✅</td><td>Complete Lab 2: Servlets and JSP</td></tr>
+<tr><td>✅</td><td>Practice JSTL core and formatting tags</td></tr>
+<tr><td>✅</td><td>Implement MVC pattern in your project</td></tr>
+<tr><td>✅</td><td>Add MicroProfile Config properties</td></tr>
+<tr><td>✅</td><td>Test health check endpoints</td></tr>
+</tbody></table>
+<h3>Optional:</h3>
+<ul>
+<li>Explore JSP custom tags</li>
+<li>Implement file upload servlet</li>
+<li>Add internationalization (i18n) with JSTL</li>
+</ul>
+
+<span class="slide-counter">70 / 76</span>
+<div class="slide-nav">
+  <a href="#slide-69">&#8592; Previous</a>
+  <span class="slide-info">Slide 70 / 76 &nbsp;&middot;&nbsp; Servlets, JSP &amp; MicroProfile</span>
+  <a href="#slide-71">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-71" class="slide">
+<h2>🙋 Questions &amp; Discussion</h2>
+<h3>Discussion Topics:</h3>
+<ul>
+<li>When to use servlets vs JAX-RS?</li>
+<li>How does JSP compare to modern frontend frameworks?</li>
+<li>What are the advantages of MVC pattern?</li>
+<li>How do health checks help in production?</li>
+</ul>
+<h3>Office Hours:</h3>
+<ul>
+<li><strong>When:</strong> [Your schedule]</li>
+<li><strong>Where:</strong> [Your location/online]</li>
+<li><strong>Contact:</strong> [Your email]</li>
+</ul>
+
+<span class="slide-counter">71 / 76</span>
+<div class="slide-nav">
+  <a href="#slide-70">&#8592; Previous</a>
+  <span class="slide-info">Slide 71 / 76 &nbsp;&middot;&nbsp; Servlets, JSP &amp; MicroProfile</span>
+  <a href="#slide-72">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-72" class="slide">
+<h2 data-en="📅 Next Lecture" data-fr="📅 Prochaine leçon">📅 Next Lecture</h2>
+<h3 data-en="JPA and Database Integration" data-fr="JPA and Intégration base de données">JPA and Database Integration</h3>
+<p><strong>Date:</strong> [Next session date]</p>
+<p><strong>Duration:</strong> 4 hours</p>
+<p><strong>Topics:</strong></p>
+<ul>
+<li>JPA entities and relationships</li>
+<li>JPQL and Criteria API</li>
+<li data-en="Transaction management" data-fr="Gestion des transactions">Transaction management</li>
+<li>Database migrations</li>
+<li>MP Config for database settings</li>
+</ul>
+<p><strong>Preparation:</strong> Complete Lab 2 and review SQL basics</p>
+
+<span class="slide-counter">72 / 76</span>
+<div class="slide-nav">
+  <a href="#slide-71">&#8592; Previous</a>
+  <span class="slide-info">Slide 72 / 76 &nbsp;&middot;&nbsp; Servlets, JSP &amp; MicroProfile</span>
+  <a href="#slide-73">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-73" class="slide">
+<h1 data-en="Thank You!" data-fr="Merci !!">Thank You!</h1>
+<h2 data-en="Ready to Build Dynamic Web Applications? 🚀" data-fr="Prêt à Build Dynamic Web Applications? 🚀">Ready to Build Dynamic Web Applications? 🚀</h2>
+<p><strong>Remember:</strong></p>
+<ul>
+<li>Servlets handle requests, JSP presents data</li>
+<li>MVC keeps code organized and maintainable</li>
+<li>JSTL makes JSP cleaner and more powerful</li>
+<li data-en="MP Config externalizes configuration" data-fr="MP Config externalizes Configuration">MP Config externalizes configuration</li>
+<li>Health checks ensure application reliability</li>
+</ul>
+<p data-en="<strong>See you in Lab 2!</strong>" data-fr="À bientôt dans Lab 2!"><strong>See you in Lab 2!</strong></p>
+
+<span class="slide-counter">73 / 76</span>
+<div class="slide-nav">
+  <a href="#slide-72">&#8592; Previous</a>
+  <span class="slide-info">Slide 73 / 76 &nbsp;&middot;&nbsp; Servlets, JSP &amp; MicroProfile</span>
+  <a href="#slide-74">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-74" class="slide">
+<h2 data-en="Appendix: Quick Reference" data-fr="Annexe: Quick Reference">Appendix: Quick Reference</h2>
+<h3>Servlet Annotations</h3>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>@WebServlet(
+    name = &quot;MyServlet&quot;,
+    urlPatterns = {&quot;/path&quot;, &quot;/path/*&quot;},
+    loadOnStartup = 1,
+    initParams = {
+        @WebInitParam(name = &quot;key&quot;, value = &quot;value&quot;)
+    }
+)</code></pre>
+<h3>JSTL Core Tags</h3>
+<pre class="dark"><span class="lang-badge">jsp</span>
+<code>&lt;c:set var=&quot;name&quot; value=&quot;value&quot; /&gt;
+&lt;c:out value=&quot;${expression}&quot; /&gt;
+&lt;c:if test=&quot;${condition}&quot;&gt;...&lt;/c:if&gt;
+&lt;c:choose&gt;
+    &lt;c:when test=&quot;${condition}&quot;&gt;...&lt;/c:when&gt;
+    &lt;c:otherwise&gt;...&lt;/c:otherwise&gt;
+&lt;/c:choose&gt;
+&lt;c:forEach var=&quot;item&quot; items=&quot;${list}&quot;&gt;...&lt;/c:forEach&gt;</code></pre>
+
+<span class="slide-counter">74 / 76</span>
+<div class="slide-nav">
+  <a href="#slide-73">&#8592; Previous</a>
+  <span class="slide-info">Slide 74 / 76 &nbsp;&middot;&nbsp; Servlets, JSP &amp; MicroProfile</span>
+  <a href="#slide-75">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-75" class="slide">
+<h2 data-en="Appendix: Common Patterns" data-fr="Annexe: Common Patterns">Appendix: Common Patterns</h2>
+<h3>Post-Redirect-Get (PRG) Pattern</h3>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>@Override
+protected void doPost(HttpServletRequest req, HttpServletResponse resp)
+        throws ServletException, IOException {
+    
+    // Process form data
+    Client client = new Client();
+    client.setName(req.getParameter(&quot;name&quot;));
+    clientService.create(client);
+    
+    // Redirect to prevent duplicate submission
+    resp.sendRedirect(req.getContextPath() + &quot;/clients?message=created&quot;);
+}
+
+@Override
+protected void doGet(HttpServletRequest req, HttpServletResponse resp)
+        throws ServletException, IOException {
+    
+    String message = req.getParameter(&quot;message&quot;);
+    if (message != null) {
+        req.setAttribute(&quot;message&quot;, &quot;Client created successfully&quot;);
+    }
+    
+    List&lt;Client&gt; clients = clientService.findAll();
+    req.setAttribute(&quot;clients&quot;, clients);
+    req.getRequestDispatcher(&quot;/WEB-INF/views/client-list.jsp&quot;).forward(req, resp);
+}</code></pre>
+
+<span class="slide-counter">75 / 76</span>
+<div class="slide-nav">
+  <a href="#slide-74">&#8592; Previous</a>
+  <span class="slide-info">Slide 75 / 76 &nbsp;&middot;&nbsp; Servlets, JSP &amp; MicroProfile</span>
+  <a href="#slide-76">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-76" class="slide">
+<h2 data-en="Appendix: Error Handling" data-fr="Annexe: Gestion des erreurs">Appendix: Error Handling</h2>
+<h3>Custom Error Pages (web.xml)</h3>
+<pre class="dark"><span class="lang-badge">xml</span>
+<code>&lt;error-page&gt;
+    &lt;error-code&gt;404&lt;/error-code&gt;
+    &lt;location&gt;/WEB-INF/views/error-404.jsp&lt;/location&gt;
+&lt;/error-page&gt;
+
+&lt;error-page&gt;
+    &lt;error-code&gt;500&lt;/error-code&gt;
+    &lt;location&gt;/WEB-INF/views/error-500.jsp&lt;/location&gt;
+&lt;/error-page&gt;
+
+&lt;error-page&gt;
+    &lt;exception-type&gt;java.lang.Exception&lt;/exception-type&gt;
+    &lt;location&gt;/WEB-INF/views/error-general.jsp&lt;/location&gt;
+&lt;/error-page&gt;</code></pre>
+<h3>Error Page JSP</h3>
+
+<span class="slide-counter">76 / 76</span>
+<div class="slide-nav">
+  <a href="#slide-75">&#8592; Previous</a>
+  <span class="slide-info">Slide 76 / 76 &nbsp;&middot;&nbsp; Servlets, JSP &amp; MicroProfile</span>
+  <a class="disabled">Next &#8594;</a>
+</div>
+</section>
+    </div>
+  </main>
+</div>
+<footer class="site-footer">Made with IBM Bob &nbsp;&middot;&nbsp; &copy; 2026 Olivier Planson</footer>
+<script>
+/* ── EN/FR language toggle — global scope so buttons can call it ── */
+var _lang = localStorage.getItem('slide-lang') || 'en';
+function setLang(lang) {
+  _lang = lang;
+  localStorage.setItem('slide-lang', lang);
+  document.getElementById('btn-en').classList.toggle('active', lang === 'en');
+  document.getElementById('btn-fr').classList.toggle('active', lang === 'fr');
+  document.querySelectorAll('[data-en][data-fr]').forEach(function(el) {
+    el.innerHTML = lang === 'fr' ? el.getAttribute('data-fr') : el.getAttribute('data-en');
+  });
+}
+
+(function() {
+  /* ── Sidenav hover ── */
+  var nav     = document.getElementById('sidenav');
+  var navTrig = document.getElementById('sidenav-trigger');
+  var navTimer = null;
+  function navShow() { clearTimeout(navTimer); nav.classList.add('sidenav--open'); }
+  function navHide() { navTimer = setTimeout(function(){ nav.classList.remove('sidenav--open'); }, 300); }
+  navTrig.addEventListener('mouseenter', navShow);
+  navTrig.addEventListener('mouseleave', navHide);
+  nav.addEventListener('mouseenter', navShow);
+  nav.addEventListener('mouseleave', navHide);
+
+  /* ── Progress bar hover ── */
+  var pbWrap  = document.getElementById('pb-wrap');
+  var pbTrig  = document.getElementById('pb-trigger');
+  var pbTimer = null;
+  function pbShow() { clearTimeout(pbTimer); pbWrap.classList.add('pb-open'); }
+  function pbHide() { pbTimer = setTimeout(function(){ pbWrap.classList.remove('pb-open'); }, 400); }
+  pbTrig.addEventListener('mouseenter', pbShow);
+  pbTrig.addEventListener('mouseleave', pbHide);
+  pbWrap.addEventListener('mouseenter', pbShow);
+  pbWrap.addEventListener('mouseleave', pbHide);
+
+  /* ── Wire EN/FR buttons via addEventListener (no inline onclick) ── */
+  document.getElementById('btn-en').addEventListener('click', function() { setLang('en'); });
+  document.getElementById('btn-fr').addEventListener('click', function() { setLang('fr'); });
+
+  /* Apply stored preference on page load */
+  if (_lang === 'fr') setLang('fr');
+})();
+</script>
+</body>
+</html>

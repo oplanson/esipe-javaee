@@ -1,0 +1,3770 @@
+<!-- © Copyright 2026 Olivier Planson. All rights reserved. Reproduction prohibited. Made with IBM Bob. -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>ESIPE — Enterprise Java Beans (EJB) — Slides</title>
+  <link rel="stylesheet" href="../assets/slide.css"/>
+  <style>
+/* suppress static .current when a slide is targeted */
+body:has(.slide:target) .progress-bar a.current { background: var(--bg); color: var(--muted); border-color: var(--border); }
+body:has(#slide-1:target) .progress-bar a[href="#slide-1"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-2:target) .progress-bar a[href="#slide-2"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-3:target) .progress-bar a[href="#slide-3"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-4:target) .progress-bar a[href="#slide-4"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-5:target) .progress-bar a[href="#slide-5"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-6:target) .progress-bar a[href="#slide-6"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-7:target) .progress-bar a[href="#slide-7"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-8:target) .progress-bar a[href="#slide-8"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-9:target) .progress-bar a[href="#slide-9"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-10:target) .progress-bar a[href="#slide-10"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-11:target) .progress-bar a[href="#slide-11"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-12:target) .progress-bar a[href="#slide-12"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-13:target) .progress-bar a[href="#slide-13"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-14:target) .progress-bar a[href="#slide-14"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-15:target) .progress-bar a[href="#slide-15"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-16:target) .progress-bar a[href="#slide-16"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-17:target) .progress-bar a[href="#slide-17"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-18:target) .progress-bar a[href="#slide-18"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-19:target) .progress-bar a[href="#slide-19"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-20:target) .progress-bar a[href="#slide-20"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-21:target) .progress-bar a[href="#slide-21"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-22:target) .progress-bar a[href="#slide-22"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-23:target) .progress-bar a[href="#slide-23"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-24:target) .progress-bar a[href="#slide-24"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-25:target) .progress-bar a[href="#slide-25"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-26:target) .progress-bar a[href="#slide-26"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-27:target) .progress-bar a[href="#slide-27"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-28:target) .progress-bar a[href="#slide-28"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-29:target) .progress-bar a[href="#slide-29"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-30:target) .progress-bar a[href="#slide-30"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-31:target) .progress-bar a[href="#slide-31"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-32:target) .progress-bar a[href="#slide-32"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-33:target) .progress-bar a[href="#slide-33"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-34:target) .progress-bar a[href="#slide-34"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-35:target) .progress-bar a[href="#slide-35"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-36:target) .progress-bar a[href="#slide-36"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-37:target) .progress-bar a[href="#slide-37"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-38:target) .progress-bar a[href="#slide-38"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-39:target) .progress-bar a[href="#slide-39"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-40:target) .progress-bar a[href="#slide-40"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-41:target) .progress-bar a[href="#slide-41"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-42:target) .progress-bar a[href="#slide-42"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-43:target) .progress-bar a[href="#slide-43"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-44:target) .progress-bar a[href="#slide-44"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-45:target) .progress-bar a[href="#slide-45"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-46:target) .progress-bar a[href="#slide-46"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-47:target) .progress-bar a[href="#slide-47"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-48:target) .progress-bar a[href="#slide-48"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-49:target) .progress-bar a[href="#slide-49"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-50:target) .progress-bar a[href="#slide-50"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-51:target) .progress-bar a[href="#slide-51"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-52:target) .progress-bar a[href="#slide-52"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-53:target) .progress-bar a[href="#slide-53"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-54:target) .progress-bar a[href="#slide-54"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-55:target) .progress-bar a[href="#slide-55"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-56:target) .progress-bar a[href="#slide-56"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-57:target) .progress-bar a[href="#slide-57"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-58:target) .progress-bar a[href="#slide-58"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-59:target) .progress-bar a[href="#slide-59"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-60:target) .progress-bar a[href="#slide-60"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-61:target) .progress-bar a[href="#slide-61"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-62:target) .progress-bar a[href="#slide-62"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-63:target) .progress-bar a[href="#slide-63"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-64:target) .progress-bar a[href="#slide-64"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-65:target) .progress-bar a[href="#slide-65"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-66:target) .progress-bar a[href="#slide-66"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-67:target) .progress-bar a[href="#slide-67"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-68:target) .progress-bar a[href="#slide-68"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-69:target) .progress-bar a[href="#slide-69"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-70:target) .progress-bar a[href="#slide-70"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-71:target) .progress-bar a[href="#slide-71"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-72:target) .progress-bar a[href="#slide-72"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-73:target) .progress-bar a[href="#slide-73"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-74:target) .progress-bar a[href="#slide-74"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-75:target) .progress-bar a[href="#slide-75"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-76:target) .progress-bar a[href="#slide-76"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-77:target) .progress-bar a[href="#slide-77"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-78:target) .progress-bar a[href="#slide-78"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-79:target) .progress-bar a[href="#slide-79"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-80:target) .progress-bar a[href="#slide-80"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-81:target) .progress-bar a[href="#slide-81"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-82:target) .progress-bar a[href="#slide-82"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-83:target) .progress-bar a[href="#slide-83"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-84:target) .progress-bar a[href="#slide-84"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-85:target) .progress-bar a[href="#slide-85"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-86:target) .progress-bar a[href="#slide-86"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-87:target) .progress-bar a[href="#slide-87"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-88:target) .progress-bar a[href="#slide-88"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-89:target) .progress-bar a[href="#slide-89"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-90:target) .progress-bar a[href="#slide-90"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-91:target) .progress-bar a[href="#slide-91"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-92:target) .progress-bar a[href="#slide-92"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-93:target) .progress-bar a[href="#slide-93"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-94:target) .progress-bar a[href="#slide-94"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-95:target) .progress-bar a[href="#slide-95"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-96:target) .progress-bar a[href="#slide-96"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-97:target) .progress-bar a[href="#slide-97"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-98:target) .progress-bar a[href="#slide-98"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-99:target) .progress-bar a[href="#slide-99"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-100:target) .progress-bar a[href="#slide-100"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-101:target) .progress-bar a[href="#slide-101"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-102:target) .progress-bar a[href="#slide-102"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-103:target) .progress-bar a[href="#slide-103"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-104:target) .progress-bar a[href="#slide-104"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-105:target) .progress-bar a[href="#slide-105"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+body:has(#slide-106:target) .progress-bar a[href="#slide-106"] { background: var(--interactive); color: #fff; border-color: var(--interactive); }
+  </style>
+</head>
+<body>
+<header class="site-header">
+  <a class="brand" href="../index.html">ESIPE<span>Jakarta EE &amp; Microservices</span></a>
+  <!-- EN/FR language toggle -->
+  <div class="lang-toggle" id="lang-toggle">
+    <button id="btn-en" class="active">EN</button>
+    <span class="sep">|</span>
+    <button id="btn-fr">FR</button>
+  </div>
+  <a class="back-link" href="../index.html">&#8592; All Courses</a>
+</header>
+<!-- Thin trigger strip at top: hover to reveal progress bar -->
+<div class="progress-bar-trigger" id="pb-trigger"></div>
+<!-- Progress bar — hidden by default, revealed on hover -->
+<div class="progress-bar-wrap" id="pb-wrap">
+  <div class="progress-bar">
+    <a href="#slide-1" class="current">1</a>
+      <a href="#slide-2">2</a>
+      <a href="#slide-3">3</a>
+      <a href="#slide-4">4</a>
+      <a href="#slide-5">5</a>
+      <a href="#slide-6">6</a>
+      <a href="#slide-7">7</a>
+      <a href="#slide-8">8</a>
+      <a href="#slide-9">9</a>
+      <a href="#slide-10">10</a>
+      <a href="#slide-11">11</a>
+      <a href="#slide-12">12</a>
+      <a href="#slide-13">13</a>
+      <a href="#slide-14">14</a>
+      <a href="#slide-15">15</a>
+      <a href="#slide-16">16</a>
+      <a href="#slide-17">17</a>
+      <a href="#slide-18">18</a>
+      <a href="#slide-19">19</a>
+      <a href="#slide-20">20</a>
+      <a href="#slide-21">21</a>
+      <a href="#slide-22">22</a>
+      <a href="#slide-23">23</a>
+      <a href="#slide-24">24</a>
+      <a href="#slide-25">25</a>
+      <a href="#slide-26">26</a>
+      <a href="#slide-27">27</a>
+      <a href="#slide-28">28</a>
+      <a href="#slide-29">29</a>
+      <a href="#slide-30">30</a>
+      <a href="#slide-31">31</a>
+      <a href="#slide-32">32</a>
+      <a href="#slide-33">33</a>
+      <a href="#slide-34">34</a>
+      <a href="#slide-35">35</a>
+      <a href="#slide-36">36</a>
+      <a href="#slide-37">37</a>
+      <a href="#slide-38">38</a>
+      <a href="#slide-39">39</a>
+      <a href="#slide-40">40</a>
+      <a href="#slide-41">41</a>
+      <a href="#slide-42">42</a>
+      <a href="#slide-43">43</a>
+      <a href="#slide-44">44</a>
+      <a href="#slide-45">45</a>
+      <a href="#slide-46">46</a>
+      <a href="#slide-47">47</a>
+      <a href="#slide-48">48</a>
+      <a href="#slide-49">49</a>
+      <a href="#slide-50">50</a>
+      <a href="#slide-51">51</a>
+      <a href="#slide-52">52</a>
+      <a href="#slide-53">53</a>
+      <a href="#slide-54">54</a>
+      <a href="#slide-55">55</a>
+      <a href="#slide-56">56</a>
+      <a href="#slide-57">57</a>
+      <a href="#slide-58">58</a>
+      <a href="#slide-59">59</a>
+      <a href="#slide-60">60</a>
+      <a href="#slide-61">61</a>
+      <a href="#slide-62">62</a>
+      <a href="#slide-63">63</a>
+      <a href="#slide-64">64</a>
+      <a href="#slide-65">65</a>
+      <a href="#slide-66">66</a>
+      <a href="#slide-67">67</a>
+      <a href="#slide-68">68</a>
+      <a href="#slide-69">69</a>
+      <a href="#slide-70">70</a>
+      <a href="#slide-71">71</a>
+      <a href="#slide-72">72</a>
+      <a href="#slide-73">73</a>
+      <a href="#slide-74">74</a>
+      <a href="#slide-75">75</a>
+      <a href="#slide-76">76</a>
+      <a href="#slide-77">77</a>
+      <a href="#slide-78">78</a>
+      <a href="#slide-79">79</a>
+      <a href="#slide-80">80</a>
+      <a href="#slide-81">81</a>
+      <a href="#slide-82">82</a>
+      <a href="#slide-83">83</a>
+      <a href="#slide-84">84</a>
+      <a href="#slide-85">85</a>
+      <a href="#slide-86">86</a>
+      <a href="#slide-87">87</a>
+      <a href="#slide-88">88</a>
+      <a href="#slide-89">89</a>
+      <a href="#slide-90">90</a>
+      <a href="#slide-91">91</a>
+      <a href="#slide-92">92</a>
+      <a href="#slide-93">93</a>
+      <a href="#slide-94">94</a>
+      <a href="#slide-95">95</a>
+      <a href="#slide-96">96</a>
+      <a href="#slide-97">97</a>
+      <a href="#slide-98">98</a>
+      <a href="#slide-99">99</a>
+      <a href="#slide-100">100</a>
+      <a href="#slide-101">101</a>
+      <a href="#slide-102">102</a>
+      <a href="#slide-103">103</a>
+      <a href="#slide-104">104</a>
+      <a href="#slide-105">105</a>
+      <a href="#slide-106">106</a>
+  </div>
+</div>
+<!-- Thin trigger strip at left: hover to reveal sidenav -->
+<div class="sidenav-trigger" id="sidenav-trigger"></div>
+<div class="shell">
+  <nav class="sidenav" id="sidenav">
+    <div class="sidenav-section">Course outline</div>
+    <a href="#slide-1" class="active">Jakarta EE 10</a>
+    <a href="#slide-4">History, Architecture, and Container Services</a>
+    <a href="#slide-13">Stateless, Stateful, and Singleton</a>
+    <a href="#slide-30">Asynchronous Processing with JMS</a>
+    <a href="#slide-39">Callbacks and Resource Management</a>
+    <a href="#slide-46">CMT and BMT</a>
+    <a href="#slide-65">Scheduled Tasks and Automatic Timers</a>
+    <a href="#slide-75">Non-Blocking Operations</a>
+    <a href="#slide-82">Choosing the Right Technology</a>
+    <a href="#slide-90">Performance Considerations</a>
+    <a href="#slide-93">1. Transaction Boundaries</a>
+    <a href="#slide-94">2. Stateful Bean Memory Leaks</a>
+    <a href="#slide-95">3. Singleton Concurrency Issues</a>
+    <a href="#slide-96">4. Circular Dependencies</a>
+    <a href="#slide-97">1. Service Facade Pattern</a>
+    <a href="#slide-98">2. Session Facade Pattern</a>
+    <a href="#slide-99">3. Data Access Object (DAO) Pattern</a>
+    <a href="#slide-100">1. Lazy Loading Strategy</a>
+    <a href="#slide-101">EJB Interceptor for Logging</a>
+    <a href="#slide-103">Lab 4B: EJB Banking Services</a>
+    <a href="#slide-104">Documentation</a>
+    <hr>
+    <div class="sidenav-section">Navigation</div>
+    <a href="index.html">&#9675; Overview</a>
+  </nav>
+  <main class="content">
+    <div class="slide-wrapper">
+<section id="slide-1" class="slide slide--title">
+<h1>Enterprise Java Beans (EJB)</h1>
+<h2>Jakarta EE 10</h2>
+<p data-en="<strong>ESIPE - Advanced Java EE &amp; Microservices</strong>" data-fr="ESIPE - Avancé Java EE & Microservices"><strong>ESIPE - Advanced Java EE &amp; Microservices</strong></p>
+<p>Lecture 4B - 3 Hours</p>
+
+<span class="slide-counter">1 / 106</span>
+<div class="slide-nav">
+  <a class="disabled">&#8592; Previous</a>
+  <span class="slide-info">Slide 1 / 106 &nbsp;&middot;&nbsp; Enterprise Java Beans (EJB)</span>
+  <a href="#slide-2">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-2" class="slide slide--section">
+<h1 data-en="Learning Objectives" data-fr="Objectifs pédagogiques">Learning Objectives</h1>
+<p data-en="By the end of this lecture, you will be able to:" data-fr="À la fin de cette leçon, vous serez en mesure de:">By the end of this lecture, you will be able to:</p>
+<ul>
+<li data-en="✅ Understand EJB architecture and container services" data-fr="✅ Understand EJB Architecture and container services">✅ Understand EJB architecture and container services</li>
+<li>✅ Implement Stateless, Stateful, and Singleton Session Beans</li>
+<li>✅ Create Message-Driven Beans for asynchronous processing</li>
+<li>✅ Manage transactions with CMT and BMT</li>
+<li data-en="✅ Implement declarative and programmatic security" data-fr="✅ Implement declarative and programmatic Sécurité">✅ Implement declarative and programmatic security</li>
+<li>✅ Use Timer Service for scheduled tasks</li>
+<li>✅ Create asynchronous methods</li>
+<li>✅ Compare EJB vs CDI and choose appropriately</li>
+</ul>
+
+<span class="slide-counter">2 / 106</span>
+<div class="slide-nav">
+  <a href="#slide-1">&#8592; Previous</a>
+  <span class="slide-info">Slide 2 / 106 &nbsp;&middot;&nbsp; Enterprise Java Beans (EJB)</span>
+  <a href="#slide-3">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-3" class="slide slide--section">
+<h1>Table of Contents</h1>
+<ol>
+<li data-en="<strong>Introduction to EJB</strong> (15 min)" data-fr="Introduction à EJB (15 min)"><strong>Introduction to EJB</strong> (15 min)</li>
+<li><strong>Session Beans</strong> (45 min)</li>
+<li><strong>Message-Driven Beans</strong> (30 min)</li>
+<li data-en="<strong>EJB Lifecycle</strong> (20 min)" data-fr="EJB Cycle de vie (20 min)"><strong>EJB Lifecycle</strong> (20 min)</li>
+<li data-en="<strong>Transaction Management</strong> (30 min)" data-fr="Gestion des transactions (30 min)"><strong>Transaction Management</strong> (30 min)</li>
+<li data-en="<strong>Security with EJB</strong> (20 min)" data-fr="Sécurité with EJB (20 min)"><strong>Security with EJB</strong> (20 min)</li>
+<li><strong>Timer Service</strong> (20 min)</li>
+<li><strong>Asynchronous Methods</strong> (15 min)</li>
+<li><strong>EJB vs CDI</strong> (15 min)</li>
+<li data-en="<strong>Best Practices</strong> (10 min)" data-fr="Bonnes pratiques (10 min)"><strong>Best Practices</strong> (10 min)</li>
+</ol>
+
+<span class="slide-counter">3 / 106</span>
+<div class="slide-nav">
+  <a href="#slide-2">&#8592; Previous</a>
+  <span class="slide-info">Slide 3 / 106 &nbsp;&middot;&nbsp; Enterprise Java Beans (EJB)</span>
+  <a href="#slide-4">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-4" class="slide">
+<h1 data-en="1. Introduction to EJB" data-fr="1. Introduction à EJB">1. Introduction to EJB</h1>
+<h2>History, Architecture, and Container Services</h2>
+
+<span class="slide-counter">4 / 106</span>
+<div class="slide-nav">
+  <a href="#slide-3">&#8592; Previous</a>
+  <span class="slide-info">Slide 4 / 106 &nbsp;&middot;&nbsp; Enterprise Java Beans (EJB)</span>
+  <a href="#slide-5">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-5" class="slide slide--section">
+<h1>What are Enterprise Java Beans?</h1>
+<p data-en="<strong>EJB</strong> is a server-side component architecture for building:" data-fr="EJB is a server-side component Architecture for building:"><strong>EJB</strong> is a server-side component architecture for building:</p>
+<ul>
+<li><strong>Transactional</strong> business logic</li>
+<li><strong>Scalable</strong> enterprise applications</li>
+<li><strong>Distributed</strong> systems</li>
+<li><strong>Secure</strong> components</li>
+</ul>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>@Stateless
+public class AccountService {
+    
+    @PersistenceContext
+    private EntityManager em;
+    
+    public Account findAccount(Long id) {
+        return em.find(Account.class, id);
+    }
+}</code></pre>
+
+<span class="slide-counter">5 / 106</span>
+<div class="slide-nav">
+  <a href="#slide-4">&#8592; Previous</a>
+  <span class="slide-info">Slide 5 / 106 &nbsp;&middot;&nbsp; Enterprise Java Beans (EJB)</span>
+  <a href="#slide-6">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-6" class="slide slide--section">
+<h1>History and Evolution</h1>
+<table class="slide-table"><thead><tr><th>Version</th><th>Year</th><th>Key Features</th></tr></thead><tbody>
+<tr><td>EJB 1.0</td><td>1998</td><td>Initial release, complex</td></tr>
+<tr><td>EJB 2.0</td><td>2001</td><td>Local interfaces, MDB</td></tr>
+<tr><td>EJB 3.0</td><td>2006</td><td><strong>Annotations</strong>, simplified</td></tr>
+<tr><td>EJB 3.1</td><td>2009</td><td>No-interface view, Singleton</td></tr>
+<tr><td>EJB 3.2</td><td>2013</td><td>Async methods, improvements</td></tr>
+<tr><td>Jakarta EE 8</td><td>2019</td><td>Namespace change</td></tr>
+<tr><td><strong>Jakarta EE 10</strong></td><td>2022</td><td><strong>Current version</strong></td></tr>
+</tbody></table>
+
+<span class="slide-counter">6 / 106</span>
+<div class="slide-nav">
+  <a href="#slide-5">&#8592; Previous</a>
+  <span class="slide-info">Slide 6 / 106 &nbsp;&middot;&nbsp; Enterprise Java Beans (EJB)</span>
+  <a href="#slide-7">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-7" class="slide slide--section">
+<h1>EJB in Jakarta EE 10</h1>
+<p><strong>Key Changes:</strong></p>
+<ul>
+<li>Namespace: <code>javax.ejb.<em></code> → <code>jakarta.ejb.</em></code></li>
+<li data-en="Simplified deployment" data-fr="Simplified Déploiement">Simplified deployment</li>
+<li>Better CDI integration</li>
+<li>Modern Java features support</li>
+</ul>
+<p><strong>Status:</strong></p>
+<ul>
+<li>✅ Still actively maintained</li>
+<li>✅ Production-ready</li>
+<li>✅ Enterprise-grade features</li>
+<li>⚠️ Some features deprecated (Entity Beans, Remote EJB)</li>
+</ul>
+
+<span class="slide-counter">7 / 106</span>
+<div class="slide-nav">
+  <a href="#slide-6">&#8592; Previous</a>
+  <span class="slide-info">Slide 7 / 106 &nbsp;&middot;&nbsp; Enterprise Java Beans (EJB)</span>
+  <a href="#slide-8">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-8" class="slide slide--section">
+<h1>EJB Architecture</h1>
+<p><img src="../../images/04b-ejb-enterprise-java-beans-diagram-1.png" alt="width:70%"></p>
+
+<span class="slide-counter">8 / 106</span>
+<div class="slide-nav">
+  <a href="#slide-7">&#8592; Previous</a>
+  <span class="slide-info">Slide 8 / 106 &nbsp;&middot;&nbsp; Enterprise Java Beans (EJB)</span>
+  <a href="#slide-9">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-9" class="slide slide--section">
+<h1>Container Services</h1>
+<p><strong>What the EJB Container provides:</strong></p>
+<ol>
+<li data-en="<strong>Transaction Management</strong> - Automatic ACID transactions" data-fr="Gestion des transactions - Automatic ACID transactions"><strong>Transaction Management</strong> - Automatic ACID transactions</li>
+<li data-en="<strong>Security</strong> - Declarative authorization" data-fr="Sécurité - Declarative authorization"><strong>Security</strong> - Declarative authorization</li>
+<li><strong>Concurrency</strong> - Thread-safe bean access</li>
+<li data-en="<strong>Lifecycle</strong> - Creation, pooling, destruction" data-fr="Cycle de vie - Creation, pooling, destruction"><strong>Lifecycle</strong> - Creation, pooling, destruction</li>
+<li data-en="<strong>Dependency Injection</strong> - Resource and bean injection" data-fr="Injection de dépendances - Resource and bean injection"><strong>Dependency Injection</strong> - Resource and bean injection</li>
+<li><strong>Persistence</strong> - EntityManager integration</li>
+<li><strong>Messaging</strong> - JMS integration</li>
+<li><strong>Timers</strong> - Scheduled execution</li>
+</ol>
+
+<span class="slide-counter">9 / 106</span>
+<div class="slide-nav">
+  <a href="#slide-8">&#8592; Previous</a>
+  <span class="slide-info">Slide 9 / 106 &nbsp;&middot;&nbsp; Enterprise Java Beans (EJB)</span>
+  <a href="#slide-10">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-10" class="slide slide--section">
+<h1>Types of EJB</h1>
+<p><strong>Session Beans</strong> (Business Logic)</p>
+<ul>
+<li><strong>Stateless</strong> - No conversational state</li>
+<li><strong>Stateful</strong> - Maintains client state</li>
+<li><strong>Singleton</strong> - Single instance per application</li>
+</ul>
+<p><strong>Message-Driven Beans</strong> (Asynchronous Processing)</p>
+<ul>
+<li>JMS message consumers</li>
+<li data-en="Event-driven architecture" data-fr="Event-driven Architecture">Event-driven architecture</li>
+</ul>
+<p><strong>~~Entity Beans~~</strong> (Deprecated)</p>
+<ul>
+<li>Replaced by JPA entities</li>
+</ul>
+
+<span class="slide-counter">10 / 106</span>
+<div class="slide-nav">
+  <a href="#slide-9">&#8592; Previous</a>
+  <span class="slide-info">Slide 10 / 106 &nbsp;&middot;&nbsp; Enterprise Java Beans (EJB)</span>
+  <a href="#slide-11">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-11" class="slide slide--section">
+<h1>When to Use EJB</h1>
+<p><strong>Use EJB when you need:</strong></p>
+<ul>
+<li>✅ Distributed transactions</li>
+<li data-en="✅ Container-managed security" data-fr="✅ Container-managed Sécurité">✅ Container-managed security</li>
+<li>✅ Message-driven processing</li>
+<li>✅ Scheduled tasks (timers)</li>
+<li>✅ Asynchronous methods</li>
+<li>✅ Remote access (if required)</li>
+</ul>
+<p><strong>Consider CDI when:</strong></p>
+<ul>
+<li data-en="❌ Simple dependency injection" data-fr="❌ Simple Injection de dépendances">❌ Simple dependency injection</li>
+<li>❌ Web-tier components</li>
+<li>❌ No transaction requirements</li>
+<li>❌ Lightweight services</li>
+</ul>
+
+<span class="slide-counter">11 / 106</span>
+<div class="slide-nav">
+  <a href="#slide-10">&#8592; Previous</a>
+  <span class="slide-info">Slide 11 / 106 &nbsp;&middot;&nbsp; Enterprise Java Beans (EJB)</span>
+  <a href="#slide-12">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-12" class="slide slide--section">
+<h1 data-en="EJB vs CDI Quick Comparison" data-fr="EJB vs CDI Quick Comparaison">EJB vs CDI Quick Comparison</h1>
+<table class="slide-table"><thead><tr><th>Feature</th><th>EJB</th><th>CDI</th></tr></thead><tbody>
+<tr><td>Transactions</td><td>✅ CMT/BMT</td><td>⚠️ Manual</td></tr>
+<tr><td>Security</td><td>✅ Declarative</td><td>⚠️ Manual</td></tr>
+<tr><td>Messaging</td><td>✅ MDB</td><td>❌ No</td></tr>
+<tr><td>Timers</td><td>✅ Built-in</td><td>❌ No</td></tr>
+<tr><td>Async</td><td>✅ @Asynchronous</td><td>⚠️ Limited</td></tr>
+<tr><td>Pooling</td><td>✅ Automatic</td><td>❌ No</td></tr>
+<tr><td>Complexity</td><td>⚠️ Higher</td><td>✅ Lower</td></tr>
+</tbody></table>
+
+<span class="slide-counter">12 / 106</span>
+<div class="slide-nav">
+  <a href="#slide-11">&#8592; Previous</a>
+  <span class="slide-info">Slide 12 / 106 &nbsp;&middot;&nbsp; Enterprise Java Beans (EJB)</span>
+  <a href="#slide-13">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-13" class="slide">
+<h1>2. Session Beans</h1>
+<h2>Stateless, Stateful, and Singleton</h2>
+
+<span class="slide-counter">13 / 106</span>
+<div class="slide-nav">
+  <a href="#slide-12">&#8592; Previous</a>
+  <span class="slide-info">Slide 13 / 106 &nbsp;&middot;&nbsp; Enterprise Java Beans (EJB)</span>
+  <a href="#slide-14">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-14" class="slide slide--section">
+<h1 data-en="Session Beans Overview" data-fr="Session Beans Vue d'ensemble">Session Beans Overview</h1>
+<p><strong>Session Beans</strong> encapsulate business logic:</p>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>// Business Interface (optional)
+public interface AccountService {
+    Account findAccount(Long id);
+    void deposit(Long accountId, BigDecimal amount);
+}
+
+// Bean Implementation
+@Stateless
+public class AccountServiceBean implements AccountService {
+    
+    @PersistenceContext
+    private EntityManager em;
+    
+    @Override
+    public Account findAccount(Long id) {
+        return em.find(Account.class, id);
+    }
+}</code></pre>
+
+<span class="slide-counter">14 / 106</span>
+<div class="slide-nav">
+  <a href="#slide-13">&#8592; Previous</a>
+  <span class="slide-info">Slide 14 / 106 &nbsp;&middot;&nbsp; Enterprise Java Beans (EJB)</span>
+  <a href="#slide-15">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-15" class="slide slide--section">
+<h1>Stateless Session Beans</h1>
+<p><strong>Characteristics:</strong></p>
+<ul>
+<li>✅ No conversational state</li>
+<li>✅ Pooled by container</li>
+<li>✅ Highly scalable</li>
+<li>✅ Thread-safe</li>
+<li>✅ Best for stateless operations</li>
+</ul>
+<p><strong>Use Cases:</strong></p>
+<ul>
+<li>Service layer operations</li>
+<li>Data access</li>
+<li>Calculations</li>
+<li>Validations</li>
+</ul>
+
+<span class="slide-counter">15 / 106</span>
+<div class="slide-nav">
+  <a href="#slide-14">&#8592; Previous</a>
+  <span class="slide-info">Slide 15 / 106 &nbsp;&middot;&nbsp; Enterprise Java Beans (EJB)</span>
+  <a href="#slide-16">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-16" class="slide slide--section">
+<h1 data-en="Stateless Bean Example" data-fr="Stateless Bean Exemple">Stateless Bean Example</h1>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>/**
+ * Account service for banking operations.
+ * Stateless bean - no client state maintained.
+ * 
+ * @author ESIPE
+ */
+@Stateless
+public class AccountService {
+    
+    @PersistenceContext
+    private EntityManager em;
+    
+    @Inject
+    private Logger logger;
+    
+    /**
+     * Find account by ID.
+     * @param id Account identifier
+     * @return Account or null
+     */
+    public Account findAccount(Long id) {
+        logger.info(&quot;Finding account: &quot; + id);
+        return em.find(Account.class, id);
+    }
+}</code></pre>
+
+<span class="slide-counter">16 / 106</span>
+<div class="slide-nav">
+  <a href="#slide-15">&#8592; Previous</a>
+  <span class="slide-info">Slide 16 / 106 &nbsp;&middot;&nbsp; Enterprise Java Beans (EJB)</span>
+  <a href="#slide-17">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-17" class="slide slide--section">
+<h1>Stateless Bean - Deposit Operation</h1>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>@Stateless
+public class AccountService {
+    
+    @PersistenceContext
+    private EntityManager em;
+    
+    /**
+     * Deposit money into account.
+     * Transaction managed by container.
+     * 
+     * @param accountId Account identifier
+     * @param amount Amount to deposit
+     * @throws IllegalArgumentException if amount is negative
+     */
+    @TransactionAttribute(TransactionAttributeType.REQUIRED)
+    public void deposit(Long accountId, BigDecimal amount) {
+        if (amount.compareTo(BigDecimal.ZERO) &lt;= 0) {
+            throw new IllegalArgumentException(&quot;Amount must be positive&quot;);
+        }
+        
+        Account account = em.find(Account.class, accountId);
+        if (account == null) {
+            throw new EntityNotFoundException(&quot;Account not found&quot;);
+        }
+        
+        account.setBalance(account.getBalance().add(amount));
+        // Container commits transaction automatically
+    }
+}</code></pre>
+
+<span class="slide-counter">17 / 106</span>
+<div class="slide-nav">
+  <a href="#slide-16">&#8592; Previous</a>
+  <span class="slide-info">Slide 17 / 106 &nbsp;&middot;&nbsp; Enterprise Java Beans (EJB)</span>
+  <a href="#slide-18">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-18" class="slide slide--section">
+<h1>Stateless Bean Pooling</h1>
+<p><img src="../../images/04b-ejb-enterprise-java-beans-diagram-2.png" alt="width:70%"></p>
+<p><strong>Configuration:</strong></p>
+<pre class="dark"><span class="lang-badge">xml</span>
+<code>
+&lt;stateless-session-bean&gt;
+    &lt;pool-size&gt;10&lt;/pool-size&gt;
+    &lt;max-pool-size&gt;50&lt;/max-pool-size&gt;
+&lt;/stateless-session-bean&gt;</code></pre>
+
+<span class="slide-counter">18 / 106</span>
+<div class="slide-nav">
+  <a href="#slide-17">&#8592; Previous</a>
+  <span class="slide-info">Slide 18 / 106 &nbsp;&middot;&nbsp; Enterprise Java Beans (EJB)</span>
+  <a href="#slide-19">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-19" class="slide slide--section">
+<h1>Stateful Session Beans</h1>
+<p><strong>Characteristics:</strong></p>
+<ul>
+<li>✅ Maintains conversational state</li>
+<li>✅ One instance per client</li>
+<li>✅ State preserved between calls</li>
+<li>⚠️ Less scalable than stateless</li>
+<li>⚠️ Requires passivation/activation</li>
+</ul>
+<p><strong>Use Cases:</strong></p>
+<ul>
+<li>Shopping carts</li>
+<li>Multi-step wizards</li>
+<li>User sessions</li>
+<li>Conversational workflows</li>
+</ul>
+
+<span class="slide-counter">19 / 106</span>
+<div class="slide-nav">
+  <a href="#slide-18">&#8592; Previous</a>
+  <span class="slide-info">Slide 19 / 106 &nbsp;&middot;&nbsp; Enterprise Java Beans (EJB)</span>
+  <a href="#slide-20">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-20" class="slide slide--section">
+<h1 data-en="Stateful Bean Example - Shopping Cart" data-fr="Stateful Bean Exemple - Shopping Cart">Stateful Bean Example - Shopping Cart</h1>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>/**
+ * Shopping cart for online banking products.
+ * Maintains state for a single client session.
+ * 
+ * @author ESIPE
+ */
+@Stateful
+public class ShoppingCart implements Serializable {
+    
+    private static final long serialVersionUID = 1L;
+    
+    private List&lt;Product&gt; items = new ArrayList&lt;&gt;();
+    private String customerId;
+    
+    @Inject
+    private Logger logger;
+    
+    /**
+     * Initialize cart for customer.
+     */
+    @PostConstruct
+    public void init() {
+        logger.info(&quot;Shopping cart created&quot;);
+    }
+    
+    /**
+     * Add product to cart.
+     */
+    public void addItem(Product product) {
+        items.add(product);
+        logger.info(&quot;Added item: &quot; + product.getName());
+    }
+}</code></pre>
+
+<span class="slide-counter">20 / 106</span>
+<div class="slide-nav">
+  <a href="#slide-19">&#8592; Previous</a>
+  <span class="slide-info">Slide 20 / 106 &nbsp;&middot;&nbsp; Enterprise Java Beans (EJB)</span>
+  <a href="#slide-21">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-21" class="slide slide--section">
+<h1>Stateful Bean - Complete Shopping Cart</h1>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>@Stateful
+public class ShoppingCart implements Serializable {
+    
+    private List&lt;Product&gt; items = new ArrayList&lt;&gt;();
+    private BigDecimal total = BigDecimal.ZERO;
+    
+    public void addItem(Product product) {
+        items.add(product);
+        total = total.add(product.getPrice());
+    }
+    
+    public void removeItem(Product product) {
+        items.remove(product);
+        total = total.subtract(product.getPrice());
+    }
+    
+    public BigDecimal getTotal() {
+        return total;
+    }
+    
+    public List&lt;Product&gt; getItems() {
+        return new ArrayList&lt;&gt;(items);
+    }
+    
+    @Remove
+    public void checkout() {
+        // Process order
+        items.clear();
+        total = BigDecimal.ZERO;
+    }
+}</code></pre>
+
+<span class="slide-counter">21 / 106</span>
+<div class="slide-nav">
+  <a href="#slide-20">&#8592; Previous</a>
+  <span class="slide-info">Slide 21 / 106 &nbsp;&middot;&nbsp; Enterprise Java Beans (EJB)</span>
+  <a href="#slide-22">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-22" class="slide slide--section">
+<h1 data-en="Stateful Bean Lifecycle" data-fr="Stateful Bean Cycle de vie">Stateful Bean Lifecycle</h1>
+<p><img src="../../images/04b-ejb-enterprise-java-beans-diagram-3.png" alt="width:70%"></p>
+
+<span class="slide-counter">22 / 106</span>
+<div class="slide-nav">
+  <a href="#slide-21">&#8592; Previous</a>
+  <span class="slide-info">Slide 22 / 106 &nbsp;&middot;&nbsp; Enterprise Java Beans (EJB)</span>
+  <a href="#slide-23">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-23" class="slide slide--section">
+<h1 data-en="Stateful Bean - Lifecycle Callbacks" data-fr="Stateful Bean - Cycle de vie Callbacks">Stateful Bean - Lifecycle Callbacks</h1>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>@Stateful
+public class ShoppingCart implements Serializable {
+    
+    private List&lt;Product&gt; items = new ArrayList&lt;&gt;();
+    
+    @PostConstruct
+    public void init() {
+        System.out.println(&quot;Cart created&quot;);
+    }
+    
+    @PrePassivate
+    public void aboutToPassivate() {
+        System.out.println(&quot;Cart being passivated&quot;);
+        // Clean up non-serializable resources
+    }
+    
+    @PostActivate
+    public void justActivated() {
+        System.out.println(&quot;Cart activated&quot;);
+        // Restore resources
+    }
+    
+    @PreDestroy
+    public void cleanup() {
+        System.out.println(&quot;Cart destroyed&quot;);
+    }
+    
+    @Remove
+    public void checkout() {
+        // Triggers @PreDestroy
+    }
+}</code></pre>
+
+<span class="slide-counter">23 / 106</span>
+<div class="slide-nav">
+  <a href="#slide-22">&#8592; Previous</a>
+  <span class="slide-info">Slide 23 / 106 &nbsp;&middot;&nbsp; Enterprise Java Beans (EJB)</span>
+  <a href="#slide-24">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-24" class="slide slide--section">
+<h1>Singleton Session Beans</h1>
+<p><strong>Characteristics:</strong></p>
+<ul>
+<li>✅ Single instance per application</li>
+<li>✅ Shared state across all clients</li>
+<li>✅ Concurrency management</li>
+<li>✅ Startup initialization</li>
+<li>✅ Application-wide cache</li>
+</ul>
+<p><strong>Use Cases:</strong></p>
+<ul>
+<li>Configuration management</li>
+<li>Application cache</li>
+<li>Counters/statistics</li>
+<li>Shared resources</li>
+</ul>
+
+<span class="slide-counter">24 / 106</span>
+<div class="slide-nav">
+  <a href="#slide-23">&#8592; Previous</a>
+  <span class="slide-info">Slide 24 / 106 &nbsp;&middot;&nbsp; Enterprise Java Beans (EJB)</span>
+  <a href="#slide-25">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-25" class="slide slide--section">
+<h1 data-en="Singleton Bean Example" data-fr="Singleton Bean Exemple">Singleton Bean Example</h1>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>/**
+ * Configuration manager for banking application.
+ * Single instance shared across all clients.
+ * 
+ * @author ESIPE
+ */
+@Singleton
+@Startup  // Initialize at application startup
+public class ConfigurationManager {
+    
+    private Map&lt;String, String&gt; config = new ConcurrentHashMap&lt;&gt;();
+    
+    @Inject
+    private Logger logger;
+    
+    /**
+     * Load configuration at startup.
+     */
+    @PostConstruct
+    public void loadConfiguration() {
+        logger.info(&quot;Loading application configuration&quot;);
+        config.put(&quot;max.transfer.amount&quot;, &quot;10000.00&quot;);
+        config.put(&quot;daily.withdrawal.limit&quot;, &quot;5000.00&quot;);
+        config.put(&quot;interest.rate&quot;, &quot;0.025&quot;);
+    }
+    
+    @Lock(LockType.READ)
+    public String getProperty(String key) {
+        return config.get(key);
+    }
+}</code></pre>
+
+<span class="slide-counter">25 / 106</span>
+<div class="slide-nav">
+  <a href="#slide-24">&#8592; Previous</a>
+  <span class="slide-info">Slide 25 / 106 &nbsp;&middot;&nbsp; Enterprise Java Beans (EJB)</span>
+  <a href="#slide-26">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-26" class="slide slide--section">
+<h1>Singleton Bean - Concurrency Management</h1>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>@Singleton
+public class ConfigurationManager {
+    
+    private Map&lt;String, String&gt; config = new ConcurrentHashMap&lt;&gt;();
+    
+    /**
+     * Read operation - multiple threads allowed.
+     */
+    @Lock(LockType.READ)
+    public String getProperty(String key) {
+        return config.get(key);
+    }
+    
+    /**
+     * Write operation - exclusive access.
+     */
+    @Lock(LockType.WRITE)
+    public void setProperty(String key, String value) {
+        config.put(key, value);
+    }
+    
+    /**
+     * Bean-managed concurrency.
+     */
+    @ConcurrencyManagement(ConcurrencyManagementType.BEAN)
+    public synchronized void updateConfig(Map&lt;String, String&gt; newConfig) {
+        config.putAll(newConfig);
+    }
+}</code></pre>
+
+<span class="slide-counter">26 / 106</span>
+<div class="slide-nav">
+  <a href="#slide-25">&#8592; Previous</a>
+  <span class="slide-info">Slide 26 / 106 &nbsp;&middot;&nbsp; Enterprise Java Beans (EJB)</span>
+  <a href="#slide-27">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-27" class="slide slide--section">
+<h1>Singleton Bean - Startup Order</h1>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>/**
+ * Database initialization - runs first.
+ */
+@Singleton
+@Startup
+@DependsOn({})  // No dependencies
+public class DatabaseInitializer {
+    
+    @PostConstruct
+    public void init() {
+        System.out.println(&quot;1. Database initialized&quot;);
+    }
+}
+
+/**
+ * Configuration loader - runs after database.
+ */
+@Singleton
+@Startup
+@DependsOn(&quot;DatabaseInitializer&quot;)
+public class ConfigurationLoader {
+    
+    @PostConstruct
+    public void init() {
+        System.out.println(&quot;2. Configuration loaded&quot;);
+    }
+}</code></pre>
+
+<span class="slide-counter">27 / 106</span>
+<div class="slide-nav">
+  <a href="#slide-26">&#8592; Previous</a>
+  <span class="slide-info">Slide 27 / 106 &nbsp;&middot;&nbsp; Enterprise Java Beans (EJB)</span>
+  <a href="#slide-28">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-28" class="slide slide--section">
+<h1>Singleton Bean - Application Cache</h1>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>/**
+ * Cache for frequently accessed data.
+ */
+@Singleton
+@ConcurrencyManagement(ConcurrencyManagementType.CONTAINER)
+public class AccountCache {
+    
+    private Map&lt;Long, Account&gt; cache = new ConcurrentHashMap&lt;&gt;();
+    
+    @PersistenceContext
+    private EntityManager em;
+    
+    @Lock(LockType.READ)
+    public Account getAccount(Long id) {
+        return cache.computeIfAbsent(id, 
+            key -&gt; em.find(Account.class, key));
+    }
+    
+    @Lock(LockType.WRITE)
+    public void invalidate(Long id) {
+        cache.remove(id);
+    }
+    
+    @Lock(LockType.WRITE)
+    public void clear() {
+        cache.clear();
+    }
+}</code></pre>
+
+<span class="slide-counter">28 / 106</span>
+<div class="slide-nav">
+  <a href="#slide-27">&#8592; Previous</a>
+  <span class="slide-info">Slide 28 / 106 &nbsp;&middot;&nbsp; Enterprise Java Beans (EJB)</span>
+  <a href="#slide-29">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-29" class="slide slide--section">
+<h1 data-en="Session Beans Comparison" data-fr="Session Beans Comparaison">Session Beans Comparison</h1>
+<table class="slide-table"><thead><tr><th>Feature</th><th>Stateless</th><th>Stateful</th><th>Singleton</th></tr></thead><tbody>
+<tr><td><strong>State</strong></td><td>None</td><td>Per-client</td><td>Shared</td></tr>
+<tr><td><strong>Instances</strong></td><td>Pool</td><td>One per client</td><td>One total</td></tr>
+<tr><td><strong>Scalability</strong></td><td>✅ High</td><td>⚠️ Medium</td><td>⚠️ Low</td></tr>
+<tr><td><strong>Concurrency</strong></td><td>✅ Automatic</td><td>✅ Automatic</td><td>⚠️ Manual</td></tr>
+<tr><td><strong>Use Case</strong></td><td>Services</td><td>Sessions</td><td>Config</td></tr>
+<tr><td><strong>Passivation</strong></td><td>❌ No</td><td>✅ Yes</td><td>❌ No</td></tr>
+</tbody></table>
+
+<span class="slide-counter">29 / 106</span>
+<div class="slide-nav">
+  <a href="#slide-28">&#8592; Previous</a>
+  <span class="slide-info">Slide 29 / 106 &nbsp;&middot;&nbsp; Enterprise Java Beans (EJB)</span>
+  <a href="#slide-30">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-30" class="slide">
+<h1>3. Message-Driven Beans</h1>
+<h2>Asynchronous Processing with JMS</h2>
+
+<span class="slide-counter">30 / 106</span>
+<div class="slide-nav">
+  <a href="#slide-29">&#8592; Previous</a>
+  <span class="slide-info">Slide 30 / 106 &nbsp;&middot;&nbsp; Enterprise Java Beans (EJB)</span>
+  <a href="#slide-31">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-31" class="slide slide--section">
+<h1>Message-Driven Beans (MDB)</h1>
+<p><strong>Characteristics:</strong></p>
+<ul>
+<li>✅ Asynchronous message processing</li>
+<li>✅ JMS integration</li>
+<li>✅ No client interface</li>
+<li data-en="✅ Container-managed lifecycle" data-fr="✅ Container-managed Cycle de vie">✅ Container-managed lifecycle</li>
+<li>✅ Transaction support</li>
+</ul>
+<p><strong>Use Cases:</strong></p>
+<ul>
+<li>Event processing</li>
+<li>Background tasks</li>
+<li>System integration</li>
+<li>Decoupled communication</li>
+</ul>
+
+<span class="slide-counter">31 / 106</span>
+<div class="slide-nav">
+  <a href="#slide-30">&#8592; Previous</a>
+  <span class="slide-info">Slide 31 / 106 &nbsp;&middot;&nbsp; Enterprise Java Beans (EJB)</span>
+  <a href="#slide-32">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-32" class="slide slide--section">
+<h1>MDB Architecture</h1>
+<p><img src="../../images/04b-ejb-enterprise-java-beans-diagram-4.png" alt="width:70%"></p>
+
+<span class="slide-counter">32 / 106</span>
+<div class="slide-nav">
+  <a href="#slide-31">&#8592; Previous</a>
+  <span class="slide-info">Slide 32 / 106 &nbsp;&middot;&nbsp; Enterprise Java Beans (EJB)</span>
+  <a href="#slide-33">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-33" class="slide slide--section">
+<h1 data-en="MDB Example - Transaction Processor" data-fr="MDB Exemple - Transaction Processor">MDB Example - Transaction Processor</h1>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>/**
+ * Processes banking transactions asynchronously.
+ * Listens to transaction queue.
+ * 
+ * @author ESIPE
+ */
+@MessageDriven(
+    activationConfig = {
+        @ActivationConfigProperty(
+            propertyName = &quot;destinationType&quot;,
+            propertyValue = &quot;jakarta.jms.Queue&quot;
+        ),
+        @ActivationConfigProperty(
+            propertyName = &quot;destination&quot;,
+            propertyValue = &quot;java:/jms/queue/TransactionQueue&quot;
+        ),
+        @ActivationConfigProperty(
+            propertyName = &quot;acknowledgeMode&quot;,
+            propertyValue = &quot;Auto-acknowledge&quot;
+        )
+    }
+)
+public class TransactionProcessor implements MessageListener {
+    
+    @Inject
+    private Logger logger;
+}</code></pre>
+
+<span class="slide-counter">33 / 106</span>
+<div class="slide-nav">
+  <a href="#slide-32">&#8592; Previous</a>
+  <span class="slide-info">Slide 33 / 106 &nbsp;&middot;&nbsp; Enterprise Java Beans (EJB)</span>
+  <a href="#slide-34">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-34" class="slide slide--section">
+<h1>MDB - Message Processing</h1>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>@MessageDriven(activationConfig = {
+    @ActivationConfigProperty(
+        propertyName = &quot;destination&quot;,
+        propertyValue = &quot;java:/jms/queue/TransactionQueue&quot;
+    )
+})
+public class TransactionProcessor implements MessageListener {
+    
+    @PersistenceContext
+    private EntityManager em;
+    
+    @Inject
+    private Logger logger;
+    
+    @Override
+    public void onMessage(Message message) {
+        try {
+            if (message instanceof TextMessage) {
+                TextMessage textMessage = (TextMessage) message;
+                String transactionData = textMessage.getText();
+                
+                logger.info(&quot;Processing transaction: &quot; + transactionData);
+                processTransaction(transactionData);
+            }
+        } catch (JMSException e) {
+            logger.error(&quot;Error processing message&quot;, e);
+            throw new EJBException(e);
+        }
+    }
+}</code></pre>
+
+<span class="slide-counter">34 / 106</span>
+<div class="slide-nav">
+  <a href="#slide-33">&#8592; Previous</a>
+  <span class="slide-info">Slide 34 / 106 &nbsp;&middot;&nbsp; Enterprise Java Beans (EJB)</span>
+  <a href="#slide-35">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-35" class="slide slide--section">
+<h1>MDB - Complete Implementation</h1>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>@MessageDriven(activationConfig = {
+    @ActivationConfigProperty(
+        propertyName = &quot;destination&quot;,
+        propertyValue = &quot;java:/jms/queue/TransactionQueue&quot;
+    ),
+    @ActivationConfigProperty(
+        propertyName = &quot;maxSessions&quot;,
+        propertyValue = &quot;10&quot;  // Concurrent consumers
+    )
+})
+public class TransactionProcessor implements MessageListener {
+    
+    @PersistenceContext
+    private EntityManager em;
+    
+    @Override
+    @TransactionAttribute(TransactionAttributeType.REQUIRED)
+    public void onMessage(Message message) {
+        try {
+            ObjectMessage objMsg = (ObjectMessage) message;
+            TransactionDTO dto = (TransactionDTO) objMsg.getObject();
+            
+            // Process transaction
+            Transaction tx = new Transaction();
+            tx.setAmount(dto.getAmount());
+            tx.setAccountId(dto.getAccountId());
+            tx.setTimestamp(LocalDateTime.now());
+            
+            em.persist(tx);
+            
+        } catch (JMSException e) {
+            throw new EJBException(&quot;Transaction processing failed&quot;, e);
+        }
+    }
+}</code></pre>
+
+<span class="slide-counter">35 / 106</span>
+<div class="slide-nav">
+  <a href="#slide-34">&#8592; Previous</a>
+  <span class="slide-info">Slide 35 / 106 &nbsp;&middot;&nbsp; Enterprise Java Beans (EJB)</span>
+  <a href="#slide-36">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-36" class="slide slide--section">
+<h1>MDB - Sending Messages</h1>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>@Stateless
+public class TransactionService {
+    
+    @Resource(lookup = &quot;java:/jms/queue/TransactionQueue&quot;)
+    private Queue transactionQueue;
+    
+    @Inject
+    private JMSContext jmsContext;
+    
+    /**
+     * Submit transaction for async processing.
+     */
+    public void submitTransaction(TransactionDTO transaction) {
+        try {
+            ObjectMessage message = jmsContext.createObjectMessage();
+            message.setObject(transaction);
+            
+            // Set message properties
+            message.setStringProperty(&quot;type&quot;, &quot;TRANSFER&quot;);
+            message.setLongProperty(&quot;accountId&quot;, transaction.getAccountId());
+            
+            // Send message
+            jmsContext.createProducer()
+                     .send(transactionQueue, message);
+                     
+        } catch (JMSException e) {
+            throw new RuntimeException(&quot;Failed to send message&quot;, e);
+        }
+    }
+}</code></pre>
+
+<span class="slide-counter">36 / 106</span>
+<div class="slide-nav">
+  <a href="#slide-35">&#8592; Previous</a>
+  <span class="slide-info">Slide 36 / 106 &nbsp;&middot;&nbsp; Enterprise Java Beans (EJB)</span>
+  <a href="#slide-37">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-37" class="slide slide--section">
+<h1 data-en="MDB - Error Handling" data-fr="MDB - Gestion des erreurs">MDB - Error Handling</h1>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>@MessageDriven(activationConfig = {
+    @ActivationConfigProperty(
+        propertyName = &quot;destination&quot;,
+        propertyValue = &quot;java:/jms/queue/TransactionQueue&quot;
+    )
+})
+public class TransactionProcessor implements MessageListener {
+    
+    @Resource
+    private MessageDrivenContext mdc;
+    
+    @Override
+    public void onMessage(Message message) {
+        try {
+            processMessage(message);
+        } catch (BusinessException e) {
+            // Rollback transaction - message returns to queue
+            mdc.setRollbackOnly();
+            logger.error(&quot;Business error, message will be redelivered&quot;, e);
+        } catch (Exception e) {
+            // Fatal error - send to dead letter queue
+            logger.error(&quot;Fatal error processing message&quot;, e);
+            throw new EJBException(e);
+        }
+    }
+    
+    private void processMessage(Message message) throws BusinessException {
+        // Processing logic
+    }
+}</code></pre>
+
+<span class="slide-counter">37 / 106</span>
+<div class="slide-nav">
+  <a href="#slide-36">&#8592; Previous</a>
+  <span class="slide-info">Slide 37 / 106 &nbsp;&middot;&nbsp; Enterprise Java Beans (EJB)</span>
+  <a href="#slide-38">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-38" class="slide slide--section">
+<h1>MDB - Topic Subscription</h1>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>/**
+ * Listens to account events topic.
+ * Multiple subscribers can receive same message.
+ */
+@MessageDriven(activationConfig = {
+    @ActivationConfigProperty(
+        propertyName = &quot;destinationType&quot;,
+        propertyValue = &quot;jakarta.jms.Topic&quot;
+    ),
+    @ActivationConfigProperty(
+        propertyName = &quot;destination&quot;,
+        propertyValue = &quot;java:/jms/topic/AccountEvents&quot;
+    ),
+    @ActivationConfigProperty(
+        propertyName = &quot;subscriptionDurability&quot;,
+        propertyValue = &quot;Durable&quot;
+    ),
+    @ActivationConfigProperty(
+        propertyName = &quot;clientId&quot;,
+        propertyValue = &quot;NotificationService&quot;
+    ),
+    @ActivationConfigProperty(
+        propertyName = &quot;subscriptionName&quot;,
+        propertyValue = &quot;NotificationSubscription&quot;
+    )
+})
+public class AccountEventListener implements MessageListener {
+    // Implementation
+}</code></pre>
+
+<span class="slide-counter">38 / 106</span>
+<div class="slide-nav">
+  <a href="#slide-37">&#8592; Previous</a>
+  <span class="slide-info">Slide 38 / 106 &nbsp;&middot;&nbsp; Enterprise Java Beans (EJB)</span>
+  <a href="#slide-39">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-39" class="slide">
+<h1 data-en="4. EJB Lifecycle" data-fr="4. EJB Cycle de vie">4. EJB Lifecycle</h1>
+<h2>Callbacks and Resource Management</h2>
+
+<span class="slide-counter">39 / 106</span>
+<div class="slide-nav">
+  <a href="#slide-38">&#8592; Previous</a>
+  <span class="slide-info">Slide 39 / 106 &nbsp;&middot;&nbsp; Enterprise Java Beans (EJB)</span>
+  <a href="#slide-40">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-40" class="slide slide--section">
+<h1 data-en="EJB Lifecycle Overview" data-fr="EJB Cycle de vie Vue d'ensemble">EJB Lifecycle Overview</h1>
+<p data-en="<strong>Lifecycle Callbacks:</strong>" data-fr="Cycle de vie Callbacks:"><strong>Lifecycle Callbacks:</strong></p>
+<ul>
+<li data-en="<code>@PostConstruct</code> - After dependency injection" data-fr="@PostConstruct - After Injection de dépendances"><code>@PostConstruct</code> - After dependency injection</li>
+<li><code>@PreDestroy</code> - Before bean removal</li>
+<li><code>@PrePassivate</code> - Before passivation (Stateful)</li>
+<li><code>@PostActivate</code> - After activation (Stateful)</li>
+</ul>
+<p><strong>Purpose:</strong></p>
+<ul>
+<li>Initialize resources</li>
+<li>Clean up resources</li>
+<li>Prepare for passivation</li>
+<li>Restore after activation</li>
+</ul>
+
+<span class="slide-counter">40 / 106</span>
+<div class="slide-nav">
+  <a href="#slide-39">&#8592; Previous</a>
+  <span class="slide-info">Slide 40 / 106 &nbsp;&middot;&nbsp; Enterprise Java Beans (EJB)</span>
+  <a href="#slide-41">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-41" class="slide slide--section">
+<h1 data-en="Stateless Bean Lifecycle" data-fr="Stateless Bean Cycle de vie">Stateless Bean Lifecycle</h1>
+<p><img src="../../images/04b-ejb-enterprise-java-beans-diagram-5.png" alt="width:70%"></p>
+
+<span class="slide-counter">41 / 106</span>
+<div class="slide-nav">
+  <a href="#slide-40">&#8592; Previous</a>
+  <span class="slide-info">Slide 41 / 106 &nbsp;&middot;&nbsp; Enterprise Java Beans (EJB)</span>
+  <a href="#slide-42">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-42" class="slide slide--section">
+<h1 data-en="Lifecycle Callbacks - Stateless" data-fr="Cycle de vie Callbacks - Stateless">Lifecycle Callbacks - Stateless</h1>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>@Stateless
+public class AccountService {
+    
+    @PersistenceContext
+    private EntityManager em;
+    
+    @Resource
+    private DataSource dataSource;
+    
+    private Connection connection;
+    
+    /**
+     * Initialize resources after dependency injection.
+     */
+    @PostConstruct
+    public void init() {
+        System.out.println(&quot;AccountService initialized&quot;);
+        try {
+            connection = dataSource.getConnection();
+        } catch (SQLException e) {
+            throw new EJBException(&quot;Failed to get connection&quot;, e);
+        }
+    }
+    
+    /**
+     * Clean up resources before destruction.
+     */
+    @PreDestroy
+    public void cleanup() {
+        System.out.println(&quot;AccountService destroyed&quot;);
+        try {
+            if (connection != null) {
+                connection.close();
+            }
+        } catch (SQLException e) {
+            // Log error
+        }
+    }
+}</code></pre>
+
+<span class="slide-counter">42 / 106</span>
+<div class="slide-nav">
+  <a href="#slide-41">&#8592; Previous</a>
+  <span class="slide-info">Slide 42 / 106 &nbsp;&middot;&nbsp; Enterprise Java Beans (EJB)</span>
+  <a href="#slide-43">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-43" class="slide slide--section">
+<h1 data-en="Lifecycle Callbacks - Stateful" data-fr="Cycle de vie Callbacks - Stateful">Lifecycle Callbacks - Stateful</h1>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>@Stateful
+public class ShoppingCart implements Serializable {
+    
+    private List&lt;Product&gt; items = new ArrayList&lt;&gt;();
+    
+    @Inject
+    private transient Logger logger;  // Non-serializable
+    
+    @PostConstruct
+    public void init() {
+        logger.info(&quot;Shopping cart created&quot;);
+    }
+    
+    @PrePassivate
+    public void aboutToPassivate() {
+        logger.info(&quot;Cart being passivated&quot;);
+        // Clean up non-serializable resources
+        // logger will be null after passivation
+    }
+    
+    @PostActivate
+    public void justActivated() {
+        // logger is re-injected
+        logger.info(&quot;Cart activated from passivation&quot;);
+        // Restore transient state if needed
+    }
+    
+    @PreDestroy
+    public void cleanup() {
+        logger.info(&quot;Cart destroyed&quot;);
+    }
+}</code></pre>
+
+<span class="slide-counter">43 / 106</span>
+<div class="slide-nav">
+  <a href="#slide-42">&#8592; Previous</a>
+  <span class="slide-info">Slide 43 / 106 &nbsp;&middot;&nbsp; Enterprise Java Beans (EJB)</span>
+  <a href="#slide-44">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-44" class="slide slide--section">
+<h1 data-en="Dependency Injection in EJB" data-fr="Injection de dépendances in EJB">Dependency Injection in EJB</h1>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>@Stateless
+public class BankingService {
+    
+    // EntityManager injection
+    @PersistenceContext(unitName = &quot;bankingPU&quot;)
+    private EntityManager em;
+    
+    // Resource injection
+    @Resource(lookup = &quot;java:/jms/queue/TransactionQueue&quot;)
+    private Queue transactionQueue;
+    
+    // EJB injection
+    @EJB
+    private AccountService accountService;
+    
+    // CDI injection
+    @Inject
+    private Logger logger;
+    
+    // Environment entry
+    @Resource(name = &quot;maxTransferAmount&quot;)
+    private BigDecimal maxTransferAmount;
+    
+    // EJBContext injection
+    @Resource
+    private SessionContext context;
+}</code></pre>
+
+<span class="slide-counter">44 / 106</span>
+<div class="slide-nav">
+  <a href="#slide-43">&#8592; Previous</a>
+  <span class="slide-info">Slide 44 / 106 &nbsp;&middot;&nbsp; Enterprise Java Beans (EJB)</span>
+  <a href="#slide-45">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-45" class="slide slide--section">
+<h1 data-en="Resource Management Best Practices" data-fr="Resource Management Bonnes pratiques">Resource Management Best Practices</h1>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>@Stateless
+public class ReportService {
+    
+    @Resource
+    private DataSource dataSource;
+    
+    /**
+     * Proper resource management with try-with-resources.
+     */
+    public List&lt;Transaction&gt; generateReport(LocalDate date) {
+        // Connection auto-closed
+        try (Connection conn = dataSource.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(
+                 &quot;SELECT * FROM transactions WHERE date = ?&quot;)) {
+            
+            stmt.setDate(1, Date.valueOf(date));
+            
+            try (ResultSet rs = stmt.executeQuery()) {
+                List&lt;Transaction&gt; transactions = new ArrayList&lt;&gt;();
+                while (rs.next()) {
+                    transactions.add(mapTransaction(rs));
+                }
+                return transactions;
+            }
+        } catch (SQLException e) {
+            throw new EJBException(&quot;Report generation failed&quot;, e);
+        }
+    }
+}</code></pre>
+
+<span class="slide-counter">45 / 106</span>
+<div class="slide-nav">
+  <a href="#slide-44">&#8592; Previous</a>
+  <span class="slide-info">Slide 45 / 106 &nbsp;&middot;&nbsp; Enterprise Java Beans (EJB)</span>
+  <a href="#slide-46">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-46" class="slide">
+<h1 data-en="5. Transaction Management" data-fr="5. Gestion des transactions">5. Transaction Management</h1>
+<h2>CMT and BMT</h2>
+
+<span class="slide-counter">46 / 106</span>
+<div class="slide-nav">
+  <a href="#slide-45">&#8592; Previous</a>
+  <span class="slide-info">Slide 46 / 106 &nbsp;&middot;&nbsp; Enterprise Java Beans (EJB)</span>
+  <a href="#slide-47">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-47" class="slide slide--section">
+<h1 data-en="Transaction Management Overview" data-fr="Gestion des transactions Vue d'ensemble">Transaction Management Overview</h1>
+<p><strong>Two Approaches:</strong></p>
+<ol>
+<li><strong>Container-Managed Transactions (CMT)</strong></li>
+</ol>
+<ul>
+<li>Declarative with annotations</li>
+<li>Container handles begin/commit/rollback</li>
+<li>Recommended approach</li>
+</ul>
+<ol>
+<li><strong>Bean-Managed Transactions (BMT)</strong></li>
+</ol>
+<ul>
+<li>Programmatic control</li>
+<li>Developer handles transactions</li>
+<li>More flexibility, more complexity</li>
+</ul>
+
+<span class="slide-counter">47 / 106</span>
+<div class="slide-nav">
+  <a href="#slide-46">&#8592; Previous</a>
+  <span class="slide-info">Slide 47 / 106 &nbsp;&middot;&nbsp; Enterprise Java Beans (EJB)</span>
+  <a href="#slide-48">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-48" class="slide slide--section">
+<h1>Container-Managed Transactions (CMT)</h1>
+<p><strong>Transaction Attributes:</strong></p>
+<table class="slide-table"><thead><tr><th>Attribute</th><th>Description</th></tr></thead><tbody>
+<tr><td><code>REQUIRED</code></td><td>Join existing or create new (default)</td></tr>
+<tr><td><code>REQUIRES_NEW</code></td><td>Always create new transaction</td></tr>
+<tr><td><code>MANDATORY</code></td><td>Must have existing transaction</td></tr>
+<tr><td><code>NOT_SUPPORTED</code></td><td>Suspend transaction</td></tr>
+<tr><td><code>SUPPORTS</code></td><td>Join if exists, else no transaction</td></tr>
+<tr><td><code>NEVER</code></td><td>Fail if transaction exists</td></tr>
+</tbody></table>
+
+<span class="slide-counter">48 / 106</span>
+<div class="slide-nav">
+  <a href="#slide-47">&#8592; Previous</a>
+  <span class="slide-info">Slide 48 / 106 &nbsp;&middot;&nbsp; Enterprise Java Beans (EJB)</span>
+  <a href="#slide-49">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-49" class="slide slide--section">
+<h1 data-en="CMT - REQUIRED Example" data-fr="CMT - REQUIRED Exemple">CMT - REQUIRED Example</h1>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>@Stateless
+public class TransferService {
+    
+    @PersistenceContext
+    private EntityManager em;
+    
+    /**
+     * Transfer money between accounts.
+     * REQUIRED: Join existing transaction or create new one.
+     */
+    @TransactionAttribute(TransactionAttributeType.REQUIRED)
+    public void transfer(Long fromId, Long toId, BigDecimal amount) {
+        
+        Account fromAccount = em.find(Account.class, fromId);
+        Account toAccount = em.find(Account.class, toId);
+        
+        if (fromAccount.getBalance().compareTo(amount) &lt; 0) {
+            throw new InsufficientFundsException();
+        }
+        
+        // Both operations in same transaction
+        fromAccount.setBalance(fromAccount.getBalance().subtract(amount));
+        toAccount.setBalance(toAccount.getBalance().add(amount));
+        
+        // Container commits automatically
+        // If exception thrown, container rolls back
+    }
+}</code></pre>
+
+<span class="slide-counter">49 / 106</span>
+<div class="slide-nav">
+  <a href="#slide-48">&#8592; Previous</a>
+  <span class="slide-info">Slide 49 / 106 &nbsp;&middot;&nbsp; Enterprise Java Beans (EJB)</span>
+  <a href="#slide-50">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-50" class="slide slide--section">
+<h1 data-en="CMT - REQUIRES_NEW Example" data-fr="CMT - REQUIRES_NEW Exemple">CMT - REQUIRES_NEW Example</h1>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>@Stateless
+public class AuditService {
+    
+    @PersistenceContext
+    private EntityManager em;
+    
+    /**
+     * Log audit entry in separate transaction.
+     * REQUIRES_NEW: Always create new transaction.
+     * Commits even if calling transaction rolls back.
+     */
+    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+    public void logAudit(String action, String details) {
+        AuditLog log = new AuditLog();
+        log.setAction(action);
+        log.setDetails(details);
+        log.setTimestamp(LocalDateTime.now());
+        
+        em.persist(log);
+        // This transaction commits independently
+    }
+}
+
+@Stateless
+public class AccountService {
+    
+    @EJB
+    private AuditService auditService;
+    
+    public void updateAccount(Account account) {
+        // Main transaction
+        em.merge(account);
+        
+        // Audit in separate transaction
+        auditService.logAudit(&quot;UPDATE&quot;, &quot;Account &quot; + account.getId());
+        
+        // If this fails, audit is still committed
+    }
+}</code></pre>
+
+<span class="slide-counter">50 / 106</span>
+<div class="slide-nav">
+  <a href="#slide-49">&#8592; Previous</a>
+  <span class="slide-info">Slide 50 / 106 &nbsp;&middot;&nbsp; Enterprise Java Beans (EJB)</span>
+  <a href="#slide-51">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-51" class="slide slide--section">
+<h1>CMT - Transaction Propagation</h1>
+<p><img src="../../images/04b-ejb-enterprise-java-beans-diagram-6.png" alt="width:70%"></p>
+
+<span class="slide-counter">51 / 106</span>
+<div class="slide-nav">
+  <a href="#slide-50">&#8592; Previous</a>
+  <span class="slide-info">Slide 51 / 106 &nbsp;&middot;&nbsp; Enterprise Java Beans (EJB)</span>
+  <a href="#slide-52">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-52" class="slide slide--section">
+<h1>CMT - Rollback Strategies</h1>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>@Stateless
+public class TransferService {
+    
+    @Resource
+    private SessionContext context;
+    
+    /**
+     * Automatic rollback on RuntimeException.
+     */
+    @TransactionAttribute(TransactionAttributeType.REQUIRED)
+    public void transfer(Long fromId, Long toId, BigDecimal amount) {
+        // ... transfer logic ...
+        
+        if (fraudDetected) {
+            // RuntimeException triggers automatic rollback
+            throw new FraudException(&quot;Suspicious transaction&quot;);
+        }
+    }
+    
+    /**
+     * Manual rollback decision.
+     */
+    public void processTransaction(Transaction tx) {
+        try {
+            // ... processing ...
+        } catch (BusinessException e) {
+            // Mark transaction for rollback
+            context.setRollbackOnly();
+            throw e;
+        }
+    }
+}</code></pre>
+
+<span class="slide-counter">52 / 106</span>
+<div class="slide-nav">
+  <a href="#slide-51">&#8592; Previous</a>
+  <span class="slide-info">Slide 52 / 106 &nbsp;&middot;&nbsp; Enterprise Java Beans (EJB)</span>
+  <a href="#slide-53">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-53" class="slide slide--section">
+<h1>Bean-Managed Transactions (BMT)</h1>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>/**
+ * Bean-managed transaction example.
+ * Developer controls transaction boundaries.
+ */
+@Stateless
+@TransactionManagement(TransactionManagementType.BEAN)
+public class ComplexTransferService {
+    
+    @Resource
+    private UserTransaction userTransaction;
+    
+    @PersistenceContext
+    private EntityManager em;
+    
+    /**
+     * Manual transaction management.
+     */
+    public void complexTransfer(Long fromId, Long toId, BigDecimal amount) {
+        try {
+            // Begin transaction
+            userTransaction.begin();
+            
+            // Business logic
+            Account from = em.find(Account.class, fromId);
+            Account to = em.find(Account.class, toId);
+            
+            from.setBalance(from.getBalance().subtract(amount));
+            to.setBalance(to.getBalance().add(amount));
+            
+            // Commit transaction
+            userTransaction.commit();
+            
+        } catch (Exception e) {
+            try {
+                // Rollback on error
+                userTransaction.rollback();
+            } catch (SystemException se) {
+                throw new EJBException(se);
+            }
+            throw new EJBException(e);
+        }
+    }
+}</code></pre>
+
+<span class="slide-counter">53 / 106</span>
+<div class="slide-nav">
+  <a href="#slide-52">&#8592; Previous</a>
+  <span class="slide-info">Slide 53 / 106 &nbsp;&middot;&nbsp; Enterprise Java Beans (EJB)</span>
+  <a href="#slide-54">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-54" class="slide slide--section">
+<h1>BMT - Multiple Transactions</h1>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>@Stateless
+@TransactionManagement(TransactionManagementType.BEAN)
+public class BatchProcessor {
+    
+    @Resource
+    private UserTransaction userTransaction;
+    
+    /**
+     * Process items in separate transactions.
+     * Allows partial success.
+     */
+    public void processBatch(List&lt;Transaction&gt; transactions) {
+        int successCount = 0;
+        int failureCount = 0;
+        
+        for (Transaction tx : transactions) {
+            try {
+                userTransaction.begin();
+                
+                // Process single transaction
+                processTransaction(tx);
+                
+                userTransaction.commit();
+                successCount++;
+                
+            } catch (Exception e) {
+                try {
+                    userTransaction.rollback();
+                } catch (SystemException se) {
+                    // Log error
+                }
+                failureCount++;
+            }
+        }
+        
+        System.out.println(&quot;Success: &quot; + successCount + 
+                         &quot;, Failures: &quot; + failureCount);
+    }
+}</code></pre>
+
+<span class="slide-counter">54 / 106</span>
+<div class="slide-nav">
+  <a href="#slide-53">&#8592; Previous</a>
+  <span class="slide-info">Slide 54 / 106 &nbsp;&middot;&nbsp; Enterprise Java Beans (EJB)</span>
+  <a href="#slide-55">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-55" class="slide slide--section">
+<h1 data-en="Transaction Best Practices" data-fr="Transaction Bonnes pratiques">Transaction Best Practices</h1>
+<p><strong>DO:</strong></p>
+<ul>
+<li>✅ Use CMT by default</li>
+<li>✅ Keep transactions short</li>
+<li>✅ Use REQUIRED for most operations</li>
+<li>✅ Use REQUIRES_NEW for audit logs</li>
+<li>✅ Handle exceptions properly</li>
+</ul>
+<p><strong>DON'T:</strong></p>
+<ul>
+<li>❌ Don't hold transactions during user interaction</li>
+<li>❌ Don't mix CMT and BMT in same bean</li>
+<li>❌ Don't catch RuntimeException without rollback</li>
+<li>❌ Don't perform long-running operations in transactions</li>
+<li>❌ Don't access remote resources in transactions</li>
+</ul>
+
+<span class="slide-counter">55 / 106</span>
+<div class="slide-nav">
+  <a href="#slide-54">&#8592; Previous</a>
+  <span class="slide-info">Slide 55 / 106 &nbsp;&middot;&nbsp; Enterprise Java Beans (EJB)</span>
+  <a href="#slide-56">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-56" class="slide">
+<h1 data-en="6. Security with EJB" data-fr="6. Sécurité with EJB">6. Security with EJB</h1>
+<h2 data-en="Declarative and Programmatic Security" data-fr="Declarative and Programmatic Sécurité">Declarative and Programmatic Security</h2>
+
+<span class="slide-counter">56 / 106</span>
+<div class="slide-nav">
+  <a href="#slide-55">&#8592; Previous</a>
+  <span class="slide-info">Slide 56 / 106 &nbsp;&middot;&nbsp; Enterprise Java Beans (EJB)</span>
+  <a href="#slide-57">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-57" class="slide slide--section">
+<h1 data-en="EJB Security Overview" data-fr="EJB Sécurité Vue d'ensemble">EJB Security Overview</h1>
+<p><strong>Two Approaches:</strong></p>
+<ol>
+<li data-en="<strong>Declarative Security</strong>" data-fr="Declarative Sécurité"><strong>Declarative Security</strong></li>
+</ol>
+<ul>
+<li>Annotations on methods/classes</li>
+<li data-en="Container enforces security" data-fr="Container enforces Sécurité">Container enforces security</li>
+<li>Recommended approach</li>
+</ul>
+<ol>
+<li data-en="<strong>Programmatic Security</strong>" data-fr="Programmatic Sécurité"><strong>Programmatic Security</strong></li>
+</ol>
+<ul>
+<li data-en="Code-based security checks" data-fr="Code-based Sécurité checks">Code-based security checks</li>
+<li>More flexibility</li>
+<li>Use when declarative insufficient</li>
+</ul>
+
+<span class="slide-counter">57 / 106</span>
+<div class="slide-nav">
+  <a href="#slide-56">&#8592; Previous</a>
+  <span class="slide-info">Slide 57 / 106 &nbsp;&middot;&nbsp; Enterprise Java Beans (EJB)</span>
+  <a href="#slide-58">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-58" class="slide slide--section">
+<h1 data-en="Declarative Security Annotations" data-fr="Declarative Sécurité Annotations">Declarative Security Annotations</h1>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>/**
+ * Secure account service with role-based access.
+ */
+@Stateless
+@DeclareRoles({&quot;ADMIN&quot;, &quot;MANAGER&quot;, &quot;CUSTOMER&quot;})
+public class SecureAccountService {
+    
+    /**
+     * Only customers and managers can view accounts.
+     */
+    @RolesAllowed({&quot;CUSTOMER&quot;, &quot;MANAGER&quot;})
+    public Account findAccount(Long id) {
+        return em.find(Account.class, id);
+    }
+    
+    /**
+     * Only managers can create accounts.
+     */
+    @RolesAllowed(&quot;MANAGER&quot;)
+    public void createAccount(Account account) {
+        em.persist(account);
+    }
+    
+    /**
+     * Only admins can delete accounts.
+     */
+    @RolesAllowed(&quot;ADMIN&quot;)
+    public void deleteAccount(Long id) {
+        Account account = em.find(Account.class, id);
+        em.remove(account);
+    }
+}</code></pre>
+
+<span class="slide-counter">58 / 106</span>
+<div class="slide-nav">
+  <a href="#slide-57">&#8592; Previous</a>
+  <span class="slide-info">Slide 58 / 106 &nbsp;&middot;&nbsp; Enterprise Java Beans (EJB)</span>
+  <a href="#slide-59">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-59" class="slide slide--section">
+<h1 data-en="Security Annotations" data-fr="Sécurité Annotations">Security Annotations</h1>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>@Stateless
+public class AccountService {
+    
+    /**
+     * Allow all authenticated users.
+     */
+    @PermitAll
+    public List&lt;Account&gt; listAccounts() {
+        return em.createQuery(&quot;SELECT a FROM Account a&quot;, Account.class)
+                 .getResultList();
+    }
+    
+    /**
+     * Deny all access - administrative method.
+     */
+    @DenyAll
+    public void resetDatabase() {
+        // This method cannot be called
+    }
+    
+    /**
+     * Multiple roles allowed.
+     */
+    @RolesAllowed({&quot;ADMIN&quot;, &quot;MANAGER&quot;})
+    public void approveTransaction(Long txId) {
+        // Approve logic
+    }
+}</code></pre>
+
+<span class="slide-counter">59 / 106</span>
+<div class="slide-nav">
+  <a href="#slide-58">&#8592; Previous</a>
+  <span class="slide-info">Slide 59 / 106 &nbsp;&middot;&nbsp; Enterprise Java Beans (EJB)</span>
+  <a href="#slide-60">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-60" class="slide slide--section">
+<h1 data-en="Class-Level Security" data-fr="Class-Level Sécurité">Class-Level Security</h1>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>/**
+ * All methods require MANAGER role by default.
+ */
+@Stateless
+@RolesAllowed(&quot;MANAGER&quot;)
+public class ManagementService {
+    
+    /**
+     * Inherits @RolesAllowed(&quot;MANAGER&quot;) from class.
+     */
+    public void generateReport() {
+        // Only managers can call
+    }
+    
+    /**
+     * Override class-level security.
+     * Now admins and managers can call.
+     */
+    @RolesAllowed({&quot;ADMIN&quot;, &quot;MANAGER&quot;})
+    public void deleteReport(Long id) {
+        // Admins and managers can call
+    }
+    
+    /**
+     * Override to allow all.
+     */
+    @PermitAll
+    public void viewPublicReport() {
+        // Anyone can call
+    }
+}</code></pre>
+
+<span class="slide-counter">60 / 106</span>
+<div class="slide-nav">
+  <a href="#slide-59">&#8592; Previous</a>
+  <span class="slide-info">Slide 60 / 106 &nbsp;&middot;&nbsp; Enterprise Java Beans (EJB)</span>
+  <a href="#slide-61">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-61" class="slide slide--section">
+<h1 data-en="Programmatic Security" data-fr="Programmatic Sécurité">Programmatic Security</h1>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>@Stateless
+public class AccountService {
+    
+    @Resource
+    private SessionContext context;
+    
+    /**
+     * Check caller's role programmatically.
+     */
+    public void updateAccount(Account account) {
+        // Check if caller is in role
+        if (context.isCallerInRole(&quot;MANAGER&quot;)) {
+            // Managers can update any account
+            em.merge(account);
+        } else if (context.isCallerInRole(&quot;CUSTOMER&quot;)) {
+            // Customers can only update their own account
+            String username = context.getCallerPrincipal().getName();
+            if (account.getOwner().equals(username)) {
+                em.merge(account);
+            } else {
+                throw new SecurityException(&quot;Not authorized&quot;);
+            }
+        } else {
+            throw new SecurityException(&quot;Not authorized&quot;);
+        }
+    }
+}</code></pre>
+
+<span class="slide-counter">61 / 106</span>
+<div class="slide-nav">
+  <a href="#slide-60">&#8592; Previous</a>
+  <span class="slide-info">Slide 61 / 106 &nbsp;&middot;&nbsp; Enterprise Java Beans (EJB)</span>
+  <a href="#slide-62">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-62" class="slide slide--section">
+<h1>Getting Caller Information</h1>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>@Stateless
+public class AuditService {
+    
+    @Resource
+    private SessionContext context;
+    
+    @PersistenceContext
+    private EntityManager em;
+    
+    /**
+     * Log action with caller information.
+     */
+    public void logAction(String action) {
+        // Get caller's principal
+        Principal caller = context.getCallerPrincipal();
+        String username = caller.getName();
+        
+        // Create audit log
+        AuditLog log = new AuditLog();
+        log.setUsername(username);
+        log.setAction(action);
+        log.setTimestamp(LocalDateTime.now());
+        
+        // Check roles
+        if (context.isCallerInRole(&quot;ADMIN&quot;)) {
+            log.setRole(&quot;ADMIN&quot;);
+        } else if (context.isCallerInRole(&quot;MANAGER&quot;)) {
+            log.setRole(&quot;MANAGER&quot;);
+        } else {
+            log.setRole(&quot;CUSTOMER&quot;);
+        }
+        
+        em.persist(log);
+    }
+}</code></pre>
+
+<span class="slide-counter">62 / 106</span>
+<div class="slide-nav">
+  <a href="#slide-61">&#8592; Previous</a>
+  <span class="slide-info">Slide 62 / 106 &nbsp;&middot;&nbsp; Enterprise Java Beans (EJB)</span>
+  <a href="#slide-63">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-63" class="slide slide--section">
+<h1>@RunAs Annotation</h1>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>/**
+ * Service runs with elevated privileges.
+ */
+@Stateless
+@RunAs(&quot;SYSTEM&quot;)
+public class SystemService {
+    
+    @EJB
+    private SecureAccountService accountService;
+    
+    /**
+     * This method runs as SYSTEM role,
+     * even if caller doesn't have required permissions.
+     */
+    public void performSystemMaintenance() {
+        // Can call methods requiring ADMIN role
+        accountService.deleteAccount(123L);
+        
+        // System operations
+        cleanupOldData();
+    }
+}
+
+@Stateless
+public class SecureAccountService {
+    
+    @RolesAllowed(&quot;ADMIN&quot;)
+    public void deleteAccount(Long id) {
+        // Only ADMIN can call directly
+        // But SystemService can call via @RunAs
+    }
+}</code></pre>
+
+<span class="slide-counter">63 / 106</span>
+<div class="slide-nav">
+  <a href="#slide-62">&#8592; Previous</a>
+  <span class="slide-info">Slide 63 / 106 &nbsp;&middot;&nbsp; Enterprise Java Beans (EJB)</span>
+  <a href="#slide-64">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-64" class="slide slide--section">
+<h1 data-en="Security Best Practices" data-fr="Sécurité Bonnes pratiques">Security Best Practices</h1>
+<p><strong>DO:</strong></p>
+<ul>
+<li data-en="✅ Use declarative security by default" data-fr="✅ Use declarative Sécurité by default">✅ Use declarative security by default</li>
+<li>✅ Define roles at class level when possible</li>
+<li>✅ Use @DeclareRoles for documentation</li>
+<li data-en="✅ Log security events" data-fr="✅ Log Sécurité events">✅ Log security events</li>
+<li data-en="✅ Validate input even with security" data-fr="✅ Validate input even with Sécurité">✅ Validate input even with security</li>
+</ul>
+<p><strong>DON'T:</strong></p>
+<ul>
+<li data-en="❌ Don't rely on security alone for validation" data-fr="❌ Don't rely on Sécurité alone for validation">❌ Don't rely on security alone for validation</li>
+<li>❌ Don't hardcode credentials</li>
+<li>❌ Don't expose sensitive data in exceptions</li>
+<li>❌ Don't use @PermitAll carelessly</li>
+<li data-en="❌ Don't forget to test security" data-fr="❌ Don't forget to test Sécurité">❌ Don't forget to test security</li>
+</ul>
+
+<span class="slide-counter">64 / 106</span>
+<div class="slide-nav">
+  <a href="#slide-63">&#8592; Previous</a>
+  <span class="slide-info">Slide 64 / 106 &nbsp;&middot;&nbsp; Enterprise Java Beans (EJB)</span>
+  <a href="#slide-65">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-65" class="slide">
+<h1>7. Timer Service</h1>
+<h2>Scheduled Tasks and Automatic Timers</h2>
+
+<span class="slide-counter">65 / 106</span>
+<div class="slide-nav">
+  <a href="#slide-64">&#8592; Previous</a>
+  <span class="slide-info">Slide 65 / 106 &nbsp;&middot;&nbsp; Enterprise Java Beans (EJB)</span>
+  <a href="#slide-66">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-66" class="slide slide--section">
+<h1>EJB Timer Service</h1>
+<p><strong>Two Types of Timers:</strong></p>
+<ol>
+<li><strong>Programmatic Timers</strong></li>
+</ol>
+<ul>
+<li>Created via TimerService API</li>
+<li>Dynamic scheduling</li>
+<li data-en="Flexible configuration" data-fr="Flexible Configuration">Flexible configuration</li>
+</ul>
+<ol>
+<li><strong>Automatic Timers</strong></li>
+</ol>
+<ul>
+<li>Declared with @Schedule</li>
+<li>Calendar-based expressions</li>
+<li>Simpler to use</li>
+</ul>
+
+<span class="slide-counter">66 / 106</span>
+<div class="slide-nav">
+  <a href="#slide-65">&#8592; Previous</a>
+  <span class="slide-info">Slide 66 / 106 &nbsp;&middot;&nbsp; Enterprise Java Beans (EJB)</span>
+  <a href="#slide-67">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-67" class="slide slide--section">
+<h1>Automatic Timer - @Schedule</h1>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>/**
+ * Daily report generator using automatic timer.
+ */
+@Singleton
+public class DailyReportGenerator {
+    
+    @Inject
+    private Logger logger;
+    
+    @EJB
+    private ReportService reportService;
+    
+    /**
+     * Generate daily report at 2 AM.
+     * Runs every day at 02:00:00.
+     */
+    @Schedule(
+        hour = &quot;2&quot;,
+        minute = &quot;0&quot;,
+        second = &quot;0&quot;,
+        persistent = true
+    )
+    public void generateDailyReport() {
+        logger.info(&quot;Generating daily report&quot;);
+        
+        LocalDate yesterday = LocalDate.now().minusDays(1);
+        Report report = reportService.generateReport(yesterday);
+        
+        logger.info(&quot;Daily report generated: &quot; + report.getId());
+    }
+}</code></pre>
+
+<span class="slide-counter">67 / 106</span>
+<div class="slide-nav">
+  <a href="#slide-66">&#8592; Previous</a>
+  <span class="slide-info">Slide 67 / 106 &nbsp;&middot;&nbsp; Enterprise Java Beans (EJB)</span>
+  <a href="#slide-68">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-68" class="slide slide--section">
+<h1>@Schedule - Calendar Expressions</h1>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>@Singleton
+public class ScheduledTasks {
+    
+    /**
+     * Every hour at minute 0.
+     */
+    @Schedule(hour = &quot;*&quot;, minute = &quot;0&quot;)
+    public void hourlyTask() {
+        System.out.println(&quot;Hourly task&quot;);
+    }
+    
+    /**
+     * Every 15 minutes.
+     */
+    @Schedule(hour = &quot;*&quot;, minute = &quot;*/15&quot;)
+    public void quarterHourlyTask() {
+        System.out.println(&quot;Every 15 minutes&quot;);
+    }
+    
+    /**
+     * Weekdays at 9 AM.
+     */
+    @Schedule(
+        dayOfWeek = &quot;Mon-Fri&quot;,
+        hour = &quot;9&quot;,
+        minute = &quot;0&quot;
+    )
+    public void weekdayMorningTask() {
+        System.out.println(&quot;Weekday morning task&quot;);
+    }
+}</code></pre>
+
+<span class="slide-counter">68 / 106</span>
+<div class="slide-nav">
+  <a href="#slide-67">&#8592; Previous</a>
+  <span class="slide-info">Slide 68 / 106 &nbsp;&middot;&nbsp; Enterprise Java Beans (EJB)</span>
+  <a href="#slide-69">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-69" class="slide slide--section">
+<h1 data-en="@Schedule - Advanced Examples" data-fr="@Schedule - Avancé Exemples">@Schedule - Advanced Examples</h1>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>@Singleton
+public class AdvancedScheduledTasks {
+    
+    /**
+     * First day of month at midnight.
+     */
+    @Schedule(
+        dayOfMonth = &quot;1&quot;,
+        hour = &quot;0&quot;,
+        minute = &quot;0&quot;
+    )
+    public void monthlyTask() {
+        System.out.println(&quot;Monthly task&quot;);
+    }
+    
+    /**
+     * Last day of month at 11:59 PM.
+     */
+    @Schedule(
+        dayOfMonth = &quot;Last&quot;,
+        hour = &quot;23&quot;,
+        minute = &quot;59&quot;
+    )
+    public void endOfMonthTask() {
+        System.out.println(&quot;End of month task&quot;);
+    }
+    
+    /**
+     * Every Monday at 8 AM.
+     */
+    @Schedule(
+        dayOfWeek = &quot;Mon&quot;,
+        hour = &quot;8&quot;,
+        minute = &quot;0&quot;,
+        timezone = &quot;Europe/Paris&quot;
+    )
+    public void mondayMorningTask() {
+        System.out.println(&quot;Monday morning task&quot;);
+    }
+}</code></pre>
+
+<span class="slide-counter">69 / 106</span>
+<div class="slide-nav">
+  <a href="#slide-68">&#8592; Previous</a>
+  <span class="slide-info">Slide 69 / 106 &nbsp;&middot;&nbsp; Enterprise Java Beans (EJB)</span>
+  <a href="#slide-70">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-70" class="slide slide--section">
+<h1>Multiple Schedules</h1>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>@Singleton
+public class BackupService {
+    
+    /**
+     * Multiple schedules for same method.
+     */
+    @Schedules({
+        @Schedule(
+            hour = &quot;2&quot;,
+            minute = &quot;0&quot;,
+            info = &quot;Daily backup&quot;
+        ),
+        @Schedule(
+            dayOfWeek = &quot;Sun&quot;,
+            hour = &quot;3&quot;,
+            minute = &quot;0&quot;,
+            info = &quot;Weekly full backup&quot;
+        )
+    })
+    public void performBackup(Timer timer) {
+        String info = timer.getInfo().toString();
+        System.out.println(&quot;Performing backup: &quot; + info);
+        
+        if (info.contains(&quot;full&quot;)) {
+            performFullBackup();
+        } else {
+            performIncrementalBackup();
+        }
+    }
+}</code></pre>
+
+<span class="slide-counter">70 / 106</span>
+<div class="slide-nav">
+  <a href="#slide-69">&#8592; Previous</a>
+  <span class="slide-info">Slide 70 / 106 &nbsp;&middot;&nbsp; Enterprise Java Beans (EJB)</span>
+  <a href="#slide-71">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-71" class="slide slide--section">
+<h1>Programmatic Timers</h1>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>@Stateless
+public class NotificationService {
+    
+    @Resource
+    private TimerService timerService;
+    
+    /**
+     * Create single-action timer.
+     */
+    public void scheduleNotification(Long userId, long delayMillis) {
+        // Create timer that fires once after delay
+        TimerConfig config = new TimerConfig();
+        config.setInfo(&quot;Notification for user: &quot; + userId);
+        config.setPersistent(false);
+        
+        timerService.createSingleActionTimer(delayMillis, config);
+    }
+    
+    /**
+     * Create interval timer.
+     */
+    public void schedulePeriodicCheck(long intervalMillis) {
+        TimerConfig config = new TimerConfig();
+        config.setInfo(&quot;Periodic check&quot;);
+        
+        timerService.createIntervalTimer(
+            0,              // Initial delay
+            intervalMillis, // Interval
+            config
+        );
+    }
+}</code></pre>
+
+<span class="slide-counter">71 / 106</span>
+<div class="slide-nav">
+  <a href="#slide-70">&#8592; Previous</a>
+  <span class="slide-info">Slide 71 / 106 &nbsp;&middot;&nbsp; Enterprise Java Beans (EJB)</span>
+  <a href="#slide-72">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-72" class="slide slide--section">
+<h1>Timer Callback Method</h1>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>@Singleton
+public class TimerBean {
+    
+    @Resource
+    private TimerService timerService;
+    
+    @Inject
+    private Logger logger;
+    
+    /**
+     * Create programmatic timer.
+     */
+    @PostConstruct
+    public void init() {
+        TimerConfig config = new TimerConfig();
+        config.setInfo(&quot;Cleanup timer&quot;);
+        
+        // Every 5 minutes
+        timerService.createIntervalTimer(0, 5 * 60 * 1000, config);
+    }
+    
+    /**
+     * Timeout callback method.
+     */
+    @Timeout
+    public void handleTimeout(Timer timer) {
+        String info = (String) timer.getInfo();
+        logger.info(&quot;Timer fired: &quot; + info);
+        
+        // Perform cleanup
+        performCleanup();
+        
+        // Cancel timer if needed
+        if (shouldStop()) {
+            timer.cancel();
+        }
+    }
+}</code></pre>
+
+<span class="slide-counter">72 / 106</span>
+<div class="slide-nav">
+  <a href="#slide-71">&#8592; Previous</a>
+  <span class="slide-info">Slide 72 / 106 &nbsp;&middot;&nbsp; Enterprise Java Beans (EJB)</span>
+  <a href="#slide-73">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-73" class="slide slide--section">
+<h1>Timer Persistence</h1>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>@Singleton
+public class PersistentTimerService {
+    
+    @Resource
+    private TimerService timerService;
+    
+    /**
+     * Persistent timer survives server restart.
+     */
+    @Schedule(
+        hour = &quot;*/6&quot;,  // Every 6 hours
+        minute = &quot;0&quot;,
+        persistent = true  // Survives restart
+    )
+    public void persistentTask() {
+        System.out.println(&quot;Persistent task&quot;);
+    }
+    
+    /**
+     * Non-persistent timer lost on restart.
+     */
+    public void createNonPersistentTimer() {
+        TimerConfig config = new TimerConfig();
+        config.setPersistent(false);  // Lost on restart
+        
+        timerService.createIntervalTimer(0, 60000, config);
+    }
+    
+    /**
+     * Get all active timers.
+     */
+    public void listTimers() {
+        Collection&lt;Timer&gt; timers = timerService.getTimers();
+        for (Timer timer : timers) {
+            System.out.println(&quot;Timer: &quot; + timer.getInfo());
+        }
+    }
+}</code></pre>
+
+<span class="slide-counter">73 / 106</span>
+<div class="slide-nav">
+  <a href="#slide-72">&#8592; Previous</a>
+  <span class="slide-info">Slide 73 / 106 &nbsp;&middot;&nbsp; Enterprise Java Beans (EJB)</span>
+  <a href="#slide-74">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-74" class="slide slide--section">
+<h1 data-en="Timer Best Practices" data-fr="Timer Bonnes pratiques">Timer Best Practices</h1>
+<p><strong>DO:</strong></p>
+<ul>
+<li data-en="✅ Use @Schedule for simple recurring tasks" data-fr="✅ Use @Schedule for Simple recurring tasks">✅ Use @Schedule for simple recurring tasks</li>
+<li>✅ Use programmatic timers for dynamic scheduling</li>
+<li>✅ Set persistent=true for critical timers</li>
+<li>✅ Handle exceptions in timer methods</li>
+<li>✅ Cancel timers when no longer needed</li>
+</ul>
+<p><strong>DON'T:</strong></p>
+<ul>
+<li>❌ Don't create too many timers</li>
+<li>❌ Don't perform long-running operations</li>
+<li>❌ Don't forget timezone considerations</li>
+<li>❌ Don't rely on exact timing</li>
+<li>❌ Don't create duplicate timers</li>
+</ul>
+
+<span class="slide-counter">74 / 106</span>
+<div class="slide-nav">
+  <a href="#slide-73">&#8592; Previous</a>
+  <span class="slide-info">Slide 74 / 106 &nbsp;&middot;&nbsp; Enterprise Java Beans (EJB)</span>
+  <a href="#slide-75">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-75" class="slide">
+<h1>8. Asynchronous Methods</h1>
+<h2>Non-Blocking Operations</h2>
+
+<span class="slide-counter">75 / 106</span>
+<div class="slide-nav">
+  <a href="#slide-74">&#8592; Previous</a>
+  <span class="slide-info">Slide 75 / 106 &nbsp;&middot;&nbsp; Enterprise Java Beans (EJB)</span>
+  <a href="#slide-76">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-76" class="slide slide--section">
+<h1>Asynchronous Methods</h1>
+<p><strong>Benefits:</strong></p>
+<ul>
+<li>✅ Non-blocking execution</li>
+<li>✅ Improved responsiveness</li>
+<li>✅ Better resource utilization</li>
+<li>✅ Parallel processing</li>
+</ul>
+<p><strong>Use Cases:</strong></p>
+<ul>
+<li>Email notifications</li>
+<li>Report generation</li>
+<li>Background processing</li>
+<li>Long-running operations</li>
+</ul>
+
+<span class="slide-counter">76 / 106</span>
+<div class="slide-nav">
+  <a href="#slide-75">&#8592; Previous</a>
+  <span class="slide-info">Slide 76 / 106 &nbsp;&middot;&nbsp; Enterprise Java Beans (EJB)</span>
+  <a href="#slide-77">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-77" class="slide slide--section">
+<h1>@Asynchronous - Fire and Forget</h1>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>/**
+ * Email notification service with async methods.
+ */
+@Stateless
+public class EmailNotificationService {
+    
+    @Inject
+    private Logger logger;
+    
+    @Resource(lookup = &quot;java:/mail/BankingMailSession&quot;)
+    private Session mailSession;
+    
+    /**
+     * Send email asynchronously.
+     * Fire-and-forget pattern - no return value.
+     */
+    @Asynchronous
+    public void sendWelcomeEmail(String email, String name) {
+        logger.info(&quot;Sending welcome email to: &quot; + email);
+        
+        try {
+            Message message = new MimeMessage(mailSession);
+            message.setRecipients(
+                Message.RecipientType.TO,
+                InternetAddress.parse(email)
+            );
+            message.setSubject(&quot;Welcome to Banking App&quot;);
+            message.setText(&quot;Hello &quot; + name + &quot;,\n\nWelcome!&quot;);
+            
+            Transport.send(message);
+            
+            logger.info(&quot;Welcome email sent to: &quot; + email);
+        } catch (MessagingException e) {
+            logger.error(&quot;Failed to send email&quot;, e);
+        }
+    }
+}</code></pre>
+
+<span class="slide-counter">77 / 106</span>
+<div class="slide-nav">
+  <a href="#slide-76">&#8592; Previous</a>
+  <span class="slide-info">Slide 77 / 106 &nbsp;&middot;&nbsp; Enterprise Java Beans (EJB)</span>
+  <a href="#slide-78">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-78" class="slide slide--section">
+<h1>@Asynchronous - With Future</h1>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>@Stateless
+public class ReportService {
+    
+    @PersistenceContext
+    private EntityManager em;
+    
+    /**
+     * Generate report asynchronously.
+     * Returns Future for result retrieval.
+     */
+    @Asynchronous
+    public Future&lt;Report&gt; generateMonthlyReport(int year, int month) {
+        try {
+            // Long-running operation
+            Report report = new Report();
+            report.setYear(year);
+            report.setMonth(month);
+            
+            // Fetch data
+            List&lt;Transaction&gt; transactions = fetchTransactions(year, month);
+            
+            // Calculate statistics
+            BigDecimal total = calculateTotal(transactions);
+            report.setTotal(total);
+            
+            // Save report
+            em.persist(report);
+            
+            // Return result wrapped in AsyncResult
+            return new AsyncResult&lt;&gt;(report);
+            
+        } catch (Exception e) {
+            // Return exception
+            return new AsyncResult&lt;&gt;(e);
+        }
+    }
+}</code></pre>
+
+<span class="slide-counter">78 / 106</span>
+<div class="slide-nav">
+  <a href="#slide-77">&#8592; Previous</a>
+  <span class="slide-info">Slide 78 / 106 &nbsp;&middot;&nbsp; Enterprise Java Beans (EJB)</span>
+  <a href="#slide-79">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-79" class="slide slide--section">
+<h1 data-en="Using Asynchronous Methods" data-fr="Utilisation de Asynchronous Methods">Using Asynchronous Methods</h1>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>@Stateless
+public class AccountService {
+    
+    @EJB
+    private EmailNotificationService emailService;
+    
+    @EJB
+    private ReportService reportService;
+    
+    /**
+     * Create account and send notification.
+     */
+    public Account createAccount(Account account) {
+        // Synchronous operation
+        em.persist(account);
+        
+        // Asynchronous notification - doesn't block
+        emailService.sendWelcomeEmail(
+            account.getEmail(),
+            account.getOwnerName()
+        );
+        
+        return account;
+    }
+    
+    /**
+     * Generate report and wait for result.
+     */
+    public Report generateAndRetrieveReport(int year, int month) {
+        // Start async operation
+        Future&lt;Report&gt; futureReport = 
+            reportService.generateMonthlyReport(year, month);
+        
+        try {
+            // Wait for result (with timeout)
+            Report report = futureReport.get(30, TimeUnit.SECONDS);
+            return report;
+        } catch (TimeoutException e) {
+            futureReport.cancel(true);
+            throw new RuntimeException(&quot;Report generation timeout&quot;);
+        } catch (Exception e) {
+            throw new RuntimeException(&quot;Report generation failed&quot;, e);
+        }
+    }
+}</code></pre>
+
+<span class="slide-counter">79 / 106</span>
+<div class="slide-nav">
+  <a href="#slide-78">&#8592; Previous</a>
+  <span class="slide-info">Slide 79 / 106 &nbsp;&middot;&nbsp; Enterprise Java Beans (EJB)</span>
+  <a href="#slide-80">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-80" class="slide slide--section">
+<h1>Parallel Async Operations</h1>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>@Stateless
+public class BatchReportService {
+    
+    @EJB
+    private ReportService reportService;
+    
+    /**
+     * Generate multiple reports in parallel.
+     */
+    public List&lt;Report&gt; generateQuarterlyReports(int year, int quarter) {
+        // Start all reports in parallel
+        List&lt;Future&lt;Report&gt;&gt; futures = new ArrayList&lt;&gt;();
+        
+        int startMonth = (quarter - 1) * 3 + 1;
+        for (int i = 0; i &lt; 3; i++) {
+            int month = startMonth + i;
+            Future&lt;Report&gt; future = 
+                reportService.generateMonthlyReport(year, month);
+            futures.add(future);
+        }
+        
+        // Collect results
+        List&lt;Report&gt; reports = new ArrayList&lt;&gt;();
+        for (Future&lt;Report&gt; future : futures) {
+            try {
+                Report report = future.get(60, TimeUnit.SECONDS);
+                reports.add(report);
+            } catch (Exception e) {
+                // Handle error
+            }
+        }
+        
+        return reports;
+    }
+}</code></pre>
+
+<span class="slide-counter">80 / 106</span>
+<div class="slide-nav">
+  <a href="#slide-79">&#8592; Previous</a>
+  <span class="slide-info">Slide 80 / 106 &nbsp;&middot;&nbsp; Enterprise Java Beans (EJB)</span>
+  <a href="#slide-81">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-81" class="slide slide--section">
+<h1 data-en="Async Best Practices" data-fr="Async Bonnes pratiques">Async Best Practices</h1>
+<p><strong>DO:</strong></p>
+<ul>
+<li>✅ Use for long-running operations</li>
+<li>✅ Use fire-and-forget for notifications</li>
+<li>✅ Use Future<T> when result needed</li>
+<li>✅ Set appropriate timeouts</li>
+<li>✅ Handle exceptions properly</li>
+</ul>
+<p><strong>DON'T:</strong></p>
+<ul>
+<li>❌ Don't use for short operations</li>
+<li>❌ Don't block on Future.get() unnecessarily</li>
+<li>❌ Don't forget timeout handling</li>
+<li>❌ Don't create too many async calls</li>
+<li>❌ Don't use for transactional operations</li>
+</ul>
+
+<span class="slide-counter">81 / 106</span>
+<div class="slide-nav">
+  <a href="#slide-80">&#8592; Previous</a>
+  <span class="slide-info">Slide 81 / 106 &nbsp;&middot;&nbsp; Enterprise Java Beans (EJB)</span>
+  <a href="#slide-82">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-82" class="slide">
+<h1>9. EJB vs CDI</h1>
+<h2>Choosing the Right Technology</h2>
+
+<span class="slide-counter">82 / 106</span>
+<div class="slide-nav">
+  <a href="#slide-81">&#8592; Previous</a>
+  <span class="slide-info">Slide 82 / 106 &nbsp;&middot;&nbsp; Enterprise Java Beans (EJB)</span>
+  <a href="#slide-83">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-83" class="slide slide--section">
+<h1 data-en="EJB vs CDI Comparison" data-fr="EJB vs CDI Comparaison">EJB vs CDI Comparison</h1>
+<table class="slide-table"><thead><tr><th>Feature</th><th>EJB</th><th>CDI</th></tr></thead><tbody>
+<tr><td><strong>Purpose</strong></td><td>Business components</td><td>Dependency injection</td></tr>
+<tr><td><strong>Transactions</strong></td><td>✅ Built-in CMT/BMT</td><td>⚠️ Manual with JTA</td></tr>
+<tr><td><strong>Security</strong></td><td>✅ Declarative</td><td>⚠️ Manual</td></tr>
+<tr><td><strong>Messaging</strong></td><td>✅ MDB support</td><td>❌ No</td></tr>
+<tr><td><strong>Timers</strong></td><td>✅ @Schedule</td><td>❌ No</td></tr>
+<tr><td><strong>Async</strong></td><td>✅ @Asynchronous</td><td>⚠️ Limited</td></tr>
+<tr><td><strong>Pooling</strong></td><td>✅ Automatic</td><td>❌ No</td></tr>
+<tr><td><strong>Remoting</strong></td><td>✅ Yes</td><td>❌ No</td></tr>
+<tr><td><strong>Complexity</strong></td><td>⚠️ Higher</td><td>✅ Lower</td></tr>
+<tr><td><strong>Flexibility</strong></td><td>⚠️ Lower</td><td>✅ Higher</td></tr>
+</tbody></table>
+
+<span class="slide-counter">83 / 106</span>
+<div class="slide-nav">
+  <a href="#slide-82">&#8592; Previous</a>
+  <span class="slide-info">Slide 83 / 106 &nbsp;&middot;&nbsp; Enterprise Java Beans (EJB)</span>
+  <a href="#slide-84">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-84" class="slide slide--section">
+<h1>When to Use EJB</h1>
+<p><strong>Use EJB when you need:</strong></p>
+<ol>
+<li><strong>Distributed Transactions</strong></li>
+</ol>
+<p>```java</p>
+<p>@Stateless</p>
+<p>@TransactionAttribute(TransactionAttributeType.REQUIRED)</p>
+<p>public class TransferService {</p>
+<p data-en="// Automatic transaction management" data-fr="// Automatic Gestion des transactions">// Automatic transaction management</p>
+<p>}</p>
+<p>```</p>
+<ol>
+<li data-en="<strong>Declarative Security</strong>" data-fr="Declarative Sécurité"><strong>Declarative Security</strong></li>
+</ol>
+<p>```java</p>
+<p>@Stateless</p>
+<p>@RolesAllowed("MANAGER")</p>
+<p>public class ManagementService {</p>
+<p data-en="// Container-enforced security" data-fr="// Container-enforced Sécurité">// Container-enforced security</p>
+<p>}</p>
+<p>```</p>
+<ol>
+<li><strong>Message-Driven Processing</strong></li>
+</ol>
+<p>```java</p>
+<p>@MessageDriven</p>
+<p>public class OrderProcessor implements MessageListener {</p>
+<p>// Async message processing</p>
+<p>}</p>
+<p>```</p>
+
+<span class="slide-counter">84 / 106</span>
+<div class="slide-nav">
+  <a href="#slide-83">&#8592; Previous</a>
+  <span class="slide-info">Slide 84 / 106 &nbsp;&middot;&nbsp; Enterprise Java Beans (EJB)</span>
+  <a href="#slide-85">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-85" class="slide slide--section">
+<h1>When to Use CDI</h1>
+<p><strong>Use CDI when you need:</strong></p>
+<ol>
+<li data-en="<strong>Simple Dependency Injection</strong>" data-fr="Simple Injection de dépendances"><strong>Simple Dependency Injection</strong></li>
+</ol>
+<p>```java</p>
+<p>@ApplicationScoped</p>
+<p>public class ConfigService {</p>
+<p>@Inject</p>
+<p>private Logger logger;</p>
+<p>}</p>
+<p>```</p>
+<ol>
+<li><strong>Web-Tier Components</strong></li>
+</ol>
+<p>```java</p>
+<p>@RequestScoped</p>
+<p>public class LoginController {</p>
+<p>// Web request handling</p>
+<p>}</p>
+<p>```</p>
+<ol>
+<li><strong>Event-Driven Architecture</strong></li>
+</ol>
+<p>```java</p>
+<p>@ApplicationScoped</p>
+<p>public class EventPublisher {</p>
+<p>@Inject</p>
+<p>private Event<OrderEvent> orderEvent;</p>
+<p>public void publishOrder(Order order) {</p>
+<p>orderEvent.fire(new OrderEvent(order));</p>
+<p>}</p>
+<p>}</p>
+<p>```</p>
+
+<span class="slide-counter">85 / 106</span>
+<div class="slide-nav">
+  <a href="#slide-84">&#8592; Previous</a>
+  <span class="slide-info">Slide 85 / 106 &nbsp;&middot;&nbsp; Enterprise Java Beans (EJB)</span>
+  <a href="#slide-86">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-86" class="slide slide--section">
+<h1>Mixing EJB and CDI</h1>
+<p><strong>You can use both together:</strong></p>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>/**
+ * EJB with CDI injection.
+ */
+@Stateless
+public class AccountService {
+    
+    // CDI injection in EJB
+    @Inject
+    private Logger logger;
+    
+    @Inject
+    private ConfigService configService;
+    
+    // EJB features
+    @TransactionAttribute(TransactionAttributeType.REQUIRED)
+    public void createAccount(Account account) {
+        logger.info(&quot;Creating account&quot;);
+        String maxAmount = configService.getProperty(&quot;max.amount&quot;);
+        // ...
+    }
+}
+
+/**
+ * CDI bean with EJB injection.
+ */
+@RequestScoped
+public class AccountController {
+    
+    // EJB injection in CDI bean
+    @EJB
+    private AccountService accountService;
+    
+    public void createAccount() {
+        accountService.createAccount(new Account());
+    }
+}</code></pre>
+
+<span class="slide-counter">86 / 106</span>
+<div class="slide-nav">
+  <a href="#slide-85">&#8592; Previous</a>
+  <span class="slide-info">Slide 86 / 106 &nbsp;&middot;&nbsp; Enterprise Java Beans (EJB)</span>
+  <a href="#slide-87">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-87" class="slide slide--section">
+<h1>Migration Strategy: EJB to CDI</h1>
+<p><strong>Step 1: Identify candidates</strong></p>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>// Simple EJB - good candidate for CDI
+@Stateless
+public class SimpleService {
+    public String getMessage() {
+        return &quot;Hello&quot;;
+    }
+}
+
+// Complex EJB - keep as EJB
+@Stateless
+@TransactionAttribute(TransactionAttributeType.REQUIRED)
+@RolesAllowed(&quot;ADMIN&quot;)
+public class ComplexService {
+    // Needs EJB features
+}</code></pre>
+<p data-en="<strong>Step 2: Convert simple beans</strong>" data-fr="Step 2: Convert Simple beans"><strong>Step 2: Convert simple beans</strong></p>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>// Converted to CDI
+@ApplicationScoped
+public class SimpleService {
+    public String getMessage() {
+        return &quot;Hello&quot;;
+    }
+}</code></pre>
+
+<span class="slide-counter">87 / 106</span>
+<div class="slide-nav">
+  <a href="#slide-86">&#8592; Previous</a>
+  <span class="slide-info">Slide 87 / 106 &nbsp;&middot;&nbsp; Enterprise Java Beans (EJB)</span>
+  <a href="#slide-88">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-88" class="slide slide--section">
+<h1>Decision Matrix</h1>
+<table class="slide-table"><thead><tr><th>Feature</th><th>Use EJB</th><th>Use CDI</th></tr></thead><tbody>
+<tr><td>Transactions</td><td>✅ CMT/BMT</td><td>⚠️ Manual JTA</td></tr>
+<tr><td>Async Processing</td><td>✅ @Asynchronous</td><td>⚠️ Manual threads</td></tr>
+<tr><td>Scheduling</td><td>✅ @Schedule</td><td>❌ External scheduler</td></tr>
+<tr><td>Messaging</td><td>✅ MDB</td><td>⚠️ Manual JMS</td></tr>
+<tr><td>Security</td><td>✅ Built-in</td><td>⚠️ Manual</td></tr>
+<tr><td>Remoting</td><td>✅ Built-in</td><td>❌ Not supported</td></tr>
+<tr><td>Simplicity</td><td>⚠️ More complex</td><td>✅ Simpler</td></tr>
+<tr><td>Flexibility</td><td>⚠️ Less flexible</td><td>✅ More flexible</td></tr>
+<tr><td>Testing</td><td>⚠️ Harder</td><td>✅ Easier</td></tr>
+<tr><td>Modern Apps</td><td>⚠️ Legacy feel</td><td>✅ Modern approach</td></tr>
+</tbody></table>
+
+<span class="slide-counter">88 / 106</span>
+<div class="slide-nav">
+  <a href="#slide-87">&#8592; Previous</a>
+  <span class="slide-info">Slide 88 / 106 &nbsp;&middot;&nbsp; Enterprise Java Beans (EJB)</span>
+  <a href="#slide-89">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-89" class="slide">
+<h1 data-en="10. Best Practices" data-fr="10. Bonnes pratiques">10. Best Practices</h1>
+<h2 data-en="Performance, Testing, and Common Pitfalls" data-fr="Performance, Tests, and Common Pitfalls">Performance, Testing, and Common Pitfalls</h2>
+
+<span class="slide-counter">89 / 106</span>
+<div class="slide-nav">
+  <a href="#slide-88">&#8592; Previous</a>
+  <span class="slide-info">Slide 89 / 106 &nbsp;&middot;&nbsp; Enterprise Java Beans (EJB)</span>
+  <a href="#slide-90">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-90" class="slide">
+<h1 data-en="EJB Best Practices" data-fr="EJB Bonnes pratiques">EJB Best Practices</h1>
+<h2>Performance Considerations</h2>
+<p><strong>1. Choose the Right Bean Type</strong></p>
+<ul>
+<li data-en="Use Stateless for stateless operations (better scalability)" data-fr="Use Stateless for stateless operations (better Scalabilité)">Use Stateless for stateless operations (better scalability)</li>
+<li>Use Stateful only when necessary (memory overhead)</li>
+<li>Use Singleton for shared state (careful with concurrency)</li>
+</ul>
+<p data-en="<strong>2. Transaction Management</strong>" data-fr="2. Gestion des transactions"><strong>2. Transaction Management</strong></p>
+<ul>
+<li>Keep transactions short</li>
+<li data-en="Use REQUIRES_NEW sparingly (performance impact)" data-fr="Use REQUIRES_NEW sparingly (Performance impact)">Use REQUIRES_NEW sparingly (performance impact)</li>
+<li>Avoid long-running transactions</li>
+<li>Consider async processing for heavy operations</li>
+</ul>
+<p><strong>3. Pooling and Caching</strong></p>
+<ul>
+<li>Configure appropriate pool sizes</li>
+<li>Use caching for frequently accessed data</li>
+<li>Leverage Singleton beans for application-wide cache</li>
+</ul>
+
+<span class="slide-counter">90 / 106</span>
+<div class="slide-nav">
+  <a href="#slide-89">&#8592; Previous</a>
+  <span class="slide-info">Slide 90 / 106 &nbsp;&middot;&nbsp; Enterprise Java Beans (EJB)</span>
+  <a href="#slide-91">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-91" class="slide">
+<h1 data-en="Testing Strategies" data-fr="Tests Strategies">Testing Strategies</h1>
+<h2 data-en="Unit Testing" data-fr="Unit Tests">Unit Testing</h2>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>public class AccountServiceTest {
+    private AccountService service;
+    private EntityManager em;
+    
+    @BeforeEach
+    void setUp() {
+        service = new AccountServiceBean();
+        em = mock(EntityManager.class);
+        // Inject mocked EntityManager
+        setField(service, &quot;em&quot;, em);
+    }
+    
+    @Test
+    void testDeposit() {
+        Account account = new Account();
+        account.setBalance(BigDecimal.valueOf(100));
+        
+        when(em.find(Account.class, 1L)).thenReturn(account);
+        
+        service.deposit(1L, BigDecimal.valueOf(50));
+        
+        assertEquals(BigDecimal.valueOf(150), account.getBalance());
+    }
+}</code></pre>
+
+<span class="slide-counter">91 / 106</span>
+<div class="slide-nav">
+  <a href="#slide-90">&#8592; Previous</a>
+  <span class="slide-info">Slide 91 / 106 &nbsp;&middot;&nbsp; Enterprise Java Beans (EJB)</span>
+  <a href="#slide-92">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-92" class="slide">
+<h1 data-en="Integration Testing" data-fr="Integration Tests">Integration Testing</h1>
+<h2 data-en="Arquillian for EJB Testing" data-fr="Arquillian for EJB Tests">Arquillian for EJB Testing</h2>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>@RunWith(Arquillian.class)
+public class AccountServiceIT {
+    
+    @Deployment
+    public static Archive&lt;?&gt; createDeployment() {
+        return ShrinkWrap.create(WebArchive.class)
+            .addClass(AccountService.class)
+            .addClass(AccountServiceBean.class)
+            .addAsResource(&quot;test-persistence.xml&quot;, 
+                          &quot;META-INF/persistence.xml&quot;)
+            .addAsWebInfResource(EmptyAsset.INSTANCE, 
+                                &quot;beans.xml&quot;);
+    }
+    
+    @Inject
+    private AccountService accountService;
+    
+    @Test
+    @InSequence(1)
+    public void testTransfer() {
+        accountService.transfer(1L, 2L, 
+                              BigDecimal.valueOf(100));
+        // Assertions...
+    }
+}</code></pre>
+
+<span class="slide-counter">92 / 106</span>
+<div class="slide-nav">
+  <a href="#slide-91">&#8592; Previous</a>
+  <span class="slide-info">Slide 92 / 106 &nbsp;&middot;&nbsp; Enterprise Java Beans (EJB)</span>
+  <a href="#slide-93">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-93" class="slide">
+<h1>Common Pitfalls</h1>
+<h2>1. Transaction Boundaries</h2>
+<p>❌ <strong>Wrong:</strong></p>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>@Stateless
+public class OrderService {
+    @Inject
+    private InventoryService inventory;
+    
+    @TransactionAttribute(NEVER)
+    public void processOrder(Order order) {
+        // No transaction!
+        inventory.reserve(order.getItems()); // Fails!
+    }
+}</code></pre>
+<p>✅ <strong>Correct:</strong></p>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>@Stateless
+public class OrderService {
+    @Inject
+    private InventoryService inventory;
+    
+    @TransactionAttribute(REQUIRED)
+    public void processOrder(Order order) {
+        inventory.reserve(order.getItems());
+    }
+}</code></pre>
+
+<span class="slide-counter">93 / 106</span>
+<div class="slide-nav">
+  <a href="#slide-92">&#8592; Previous</a>
+  <span class="slide-info">Slide 93 / 106 &nbsp;&middot;&nbsp; Enterprise Java Beans (EJB)</span>
+  <a href="#slide-94">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-94" class="slide">
+<h1>Common Pitfalls (2)</h1>
+<h2>2. Stateful Bean Memory Leaks</h2>
+<p>❌ <strong>Wrong:</strong></p>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>@Stateful
+public class ShoppingCartBean {
+    private List&lt;Item&gt; items = new ArrayList&lt;&gt;();
+    
+    public void addItem(Item item) {
+        items.add(item);
+    }
+    // No @Remove method - beans never destroyed!
+}</code></pre>
+<p>✅ <strong>Correct:</strong></p>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>@Stateful
+public class ShoppingCartBean {
+    private List&lt;Item&gt; items = new ArrayList&lt;&gt;();
+    
+    public void addItem(Item item) {
+        items.add(item);
+    }
+    
+    @Remove
+    public void checkout() {
+        // Process checkout
+        items.clear();
+    }
+}</code></pre>
+
+<span class="slide-counter">94 / 106</span>
+<div class="slide-nav">
+  <a href="#slide-93">&#8592; Previous</a>
+  <span class="slide-info">Slide 94 / 106 &nbsp;&middot;&nbsp; Enterprise Java Beans (EJB)</span>
+  <a href="#slide-95">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-95" class="slide">
+<h1>Common Pitfalls (3)</h1>
+<h2>3. Singleton Concurrency Issues</h2>
+<p>❌ <strong>Wrong:</strong></p>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>@Singleton
+public class CounterBean {
+    private int count = 0;
+    
+    public void increment() {
+        count++; // Race condition!
+    }
+}</code></pre>
+<p>✅ <strong>Correct:</strong></p>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>@Singleton
+@Lock(LockType.WRITE)
+public class CounterBean {
+    private AtomicInteger count = new AtomicInteger(0);
+    
+    public void increment() {
+        count.incrementAndGet();
+    }
+    
+    @Lock(LockType.READ)
+    public int getCount() {
+        return count.get();
+    }
+}</code></pre>
+
+<span class="slide-counter">95 / 106</span>
+<div class="slide-nav">
+  <a href="#slide-94">&#8592; Previous</a>
+  <span class="slide-info">Slide 95 / 106 &nbsp;&middot;&nbsp; Enterprise Java Beans (EJB)</span>
+  <a href="#slide-96">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-96" class="slide">
+<h1>Common Pitfalls (4)</h1>
+<h2>4. Circular Dependencies</h2>
+<p>❌ <strong>Wrong:</strong></p>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>@Stateless
+public class ServiceA {
+    @EJB
+    private ServiceB serviceB; // Circular!
+}
+
+@Stateless
+public class ServiceB {
+    @EJB
+    private ServiceA serviceA; // Circular!
+}</code></pre>
+<p>✅ <strong>Correct:</strong></p>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>@Stateless
+public class ServiceA {
+    @EJB
+    private ServiceB serviceB;
+}
+
+@Stateless
+public class ServiceB {
+    // No dependency on ServiceA
+    // Use events or extract common logic
+}</code></pre>
+
+<span class="slide-counter">96 / 106</span>
+<div class="slide-nav">
+  <a href="#slide-95">&#8592; Previous</a>
+  <span class="slide-info">Slide 96 / 106 &nbsp;&middot;&nbsp; Enterprise Java Beans (EJB)</span>
+  <a href="#slide-97">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-97" class="slide">
+<h1>Design Patterns with EJB</h1>
+<h2>1. Service Facade Pattern</h2>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>@Stateless
+public class BankingFacade {
+    @EJB
+    private AccountService accountService;
+    
+    @EJB
+    private TransactionService transactionService;
+    
+    @EJB
+    private NotificationService notificationService;
+    
+    @TransactionAttribute(REQUIRED)
+    public void transferWithNotification(
+            Long fromId, Long toId, BigDecimal amount) {
+        
+        transactionService.transfer(fromId, toId, amount);
+        notificationService.sendTransferNotification(
+            fromId, toId, amount);
+    }
+}</code></pre>
+
+<span class="slide-counter">97 / 106</span>
+<div class="slide-nav">
+  <a href="#slide-96">&#8592; Previous</a>
+  <span class="slide-info">Slide 97 / 106 &nbsp;&middot;&nbsp; Enterprise Java Beans (EJB)</span>
+  <a href="#slide-98">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-98" class="slide">
+<h1>Design Patterns (2)</h1>
+<h2>2. Session Facade Pattern</h2>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>@Stateless
+public class OrderFacade {
+    @PersistenceContext
+    private EntityManager em;
+    
+    @EJB
+    private InventoryService inventory;
+    
+    @EJB
+    private PaymentService payment;
+    
+    @TransactionAttribute(REQUIRED)
+    public OrderResult placeOrder(OrderRequest request) {
+        // Single transaction for entire operation
+        Order order = createOrder(request);
+        inventory.reserve(order.getItems());
+        payment.process(order.getTotal());
+        em.persist(order);
+        return new OrderResult(order.getId());
+    }
+}</code></pre>
+
+<span class="slide-counter">98 / 106</span>
+<div class="slide-nav">
+  <a href="#slide-97">&#8592; Previous</a>
+  <span class="slide-info">Slide 98 / 106 &nbsp;&middot;&nbsp; Enterprise Java Beans (EJB)</span>
+  <a href="#slide-99">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-99" class="slide">
+<h1>Design Patterns (3)</h1>
+<h2>3. Data Access Object (DAO) Pattern</h2>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>@Stateless
+public class ClientDAO {
+    @PersistenceContext
+    private EntityManager em;
+    
+    public Client findById(Long id) {
+        return em.find(Client.class, id);
+    }
+    
+    public List&lt;Client&gt; findAll() {
+        return em.createQuery(
+            &quot;SELECT c FROM Client c&quot;, Client.class)
+            .getResultList();
+    }
+    
+    @TransactionAttribute(REQUIRED)
+    public void save(Client client) {
+        if (client.getId() == null) {
+            em.persist(client);
+        } else {
+            em.merge(client);
+        }
+    }
+}</code></pre>
+
+<span class="slide-counter">99 / 106</span>
+<div class="slide-nav">
+  <a href="#slide-98">&#8592; Previous</a>
+  <span class="slide-info">Slide 99 / 106 &nbsp;&middot;&nbsp; Enterprise Java Beans (EJB)</span>
+  <a href="#slide-100">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-100" class="slide">
+<h1>Performance Optimization</h1>
+<h2>1. Lazy Loading Strategy</h2>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>@Stateless
+public class ClientService {
+    @PersistenceContext
+    private EntityManager em;
+    
+    public Client findWithAccounts(Long id) {
+        return em.createQuery(
+            &quot;SELECT c FROM Client c &quot; +
+            &quot;LEFT JOIN FETCH c.accounts &quot; +
+            &quot;WHERE c.id = :id&quot;, Client.class)
+            .setParameter(&quot;id&quot;, id)
+            .getSingleResult();
+    }
+}</code></pre>
+<h2>2. Batch Processing</h2>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>@Stateless
+public class BatchProcessor {
+    @PersistenceContext
+    private EntityManager em;
+    
+    @TransactionAttribute(REQUIRED)
+    public void processBatch(List&lt;Transaction&gt; txns) {
+        int batchSize = 50;
+        for (int i = 0; i &lt; txns.size(); i++) {
+            em.persist(txns.get(i));
+            if (i % batchSize == 0) {
+                em.flush();
+                em.clear();
+            }
+        }
+    }
+}</code></pre>
+
+<span class="slide-counter">100 / 106</span>
+<div class="slide-nav">
+  <a href="#slide-99">&#8592; Previous</a>
+  <span class="slide-info">Slide 100 / 106 &nbsp;&middot;&nbsp; Enterprise Java Beans (EJB)</span>
+  <a href="#slide-101">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-101" class="slide">
+<h1>Monitoring and Logging</h1>
+<h2>EJB Interceptor for Logging</h2>
+<pre class="dark"><span class="lang-badge">java</span>
+<code>@Interceptor
+@Priority(Interceptor.Priority.APPLICATION)
+public class PerformanceInterceptor {
+    private static final Logger logger = 
+        Logger.getLogger(PerformanceInterceptor.class.getName());
+    
+    @AroundInvoke
+    public Object logPerformance(InvocationContext ctx) 
+            throws Exception {
+        long start = System.currentTimeMillis();
+        String method = ctx.getMethod().getName();
+        
+        try {
+            Object result = ctx.proceed();
+            long duration = System.currentTimeMillis() - start;
+            
+            logger.info(String.format(
+                &quot;Method %s executed in %d ms&quot;, 
+                method, duration));
+            
+            return result;
+        } catch (Exception e) {
+            logger.severe(&quot;Method &quot; + method + &quot; failed: &quot; + 
+                         e.getMessage());
+            throw e;
+        }
+    }
+}</code></pre>
+
+<span class="slide-counter">101 / 106</span>
+<div class="slide-nav">
+  <a href="#slide-100">&#8592; Previous</a>
+  <span class="slide-info">Slide 101 / 106 &nbsp;&middot;&nbsp; Enterprise Java Beans (EJB)</span>
+  <a href="#slide-102">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-102" class="slide">
+<h1 data-en="Summary" data-fr="Résumé">Summary</h1>
+<h2 data-en="Key Takeaways" data-fr="Points clés">Key Takeaways</h2>
+<p>✅ <strong>EJB provides enterprise services out-of-the-box</strong></p>
+<ul>
+<li data-en="Transactions, security, concurrency, scheduling" data-fr="Transactions, Sécurité, concurrency, scheduling">Transactions, security, concurrency, scheduling</li>
+</ul>
+<p>✅ <strong>Choose the right bean type for your use case</strong></p>
+<ul>
+<li data-en="Stateless for scalability" data-fr="Stateless for Scalabilité">Stateless for scalability</li>
+<li>Stateful for conversational state</li>
+<li>Singleton for shared resources</li>
+<li>MDB for asynchronous processing</li>
+</ul>
+<p data-en="✅ <strong>Understand transaction management</strong>" data-fr="✅ Understand Gestion des transactions">✅ <strong>Understand transaction management</strong></p>
+<ul>
+<li>CMT for declarative approach</li>
+<li>BMT for fine-grained control</li>
+</ul>
+<p>✅ <strong>Consider EJB vs CDI trade-offs</strong></p>
+<ul>
+<li>EJB for enterprise features</li>
+<li>CDI for simplicity and flexibility</li>
+</ul>
+
+<span class="slide-counter">102 / 106</span>
+<div class="slide-nav">
+  <a href="#slide-101">&#8592; Previous</a>
+  <span class="slide-info">Slide 102 / 106 &nbsp;&middot;&nbsp; Enterprise Java Beans (EJB)</span>
+  <a href="#slide-103">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-103" class="slide">
+<h1 data-en="Lab Preview" data-fr="Aperçu du TP">Lab Preview</h1>
+<h2>Lab 4B: EJB Banking Services</h2>
+<p><strong>What you'll build:</strong></p>
+<ul>
+<li>Convert CDI services to EJB Session Beans</li>
+<li>Implement Message-Driven Bean for notifications</li>
+<li>Add scheduled tasks with Timer Service</li>
+<li data-en="Apply transaction management" data-fr="Apply Gestion des transactions">Apply transaction management</li>
+<li data-en="Implement security with EJB annotations" data-fr="Implement Sécurité with EJB annotations">Implement security with EJB annotations</li>
+</ul>
+<p><strong>Duration:</strong> 3 hours</p>
+<p><strong>Technologies:</strong></p>
+<ul>
+<li>Jakarta EE 10 EJB</li>
+<li>Open Liberty</li>
+<li>JMS messaging</li>
+<li data-en="Transaction management" data-fr="Gestion des transactions">Transaction management</li>
+</ul>
+
+<span class="slide-counter">103 / 106</span>
+<div class="slide-nav">
+  <a href="#slide-102">&#8592; Previous</a>
+  <span class="slide-info">Slide 103 / 106 &nbsp;&middot;&nbsp; Enterprise Java Beans (EJB)</span>
+  <a href="#slide-104">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-104" class="slide">
+<h1>Resources</h1>
+<h2>Documentation</h2>
+<ul>
+<li><a href="https://jakarta.ee/specifications/enterprise-beans/4.0/">Jakarta EE 10 EJB Specification</a></li>
+<li><a href="https://openliberty.io/docs/latest/reference/feature/ejb-3.2.html">Open Liberty EJB Guide</a></li>
+<li><a href="https://eclipse-ee4j.github.io/jakartaee-tutorial/">Jakarta EE Tutorial - EJB</a></li>
+</ul>
+<h2>Books</h2>
+<ul>
+<li>"Enterprise JavaBeans 3.1" by Andrew Lee Rubinger</li>
+<li>"Jakarta EE Cookbook" by Elder Moraes</li>
+<li>"Pro JPA 2 in Java EE 8" by Mike Keith</li>
+</ul>
+<h2>Community</h2>
+<ul>
+<li><a href="https://jakarta.ee/connect/">Jakarta EE Slack</a></li>
+<li><a href="https://stackoverflow.com/questions/tagged/jakarta-ee">Stack Overflow - Jakarta EE</a></li>
+</ul>
+
+<span class="slide-counter">104 / 106</span>
+<div class="slide-nav">
+  <a href="#slide-103">&#8592; Previous</a>
+  <span class="slide-info">Slide 104 / 106 &nbsp;&middot;&nbsp; Enterprise Java Beans (EJB)</span>
+  <a href="#slide-105">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-105" class="slide">
+<h1>Questions?</h1>
+<h2 data-en="Thank you!" data-fr="Merci !!">Thank you!</h2>
+<p><strong>Next:</strong> Lab 4B - EJB Banking Services</p>
+
+<span class="slide-counter">105 / 106</span>
+<div class="slide-nav">
+  <a href="#slide-104">&#8592; Previous</a>
+  <span class="slide-info">Slide 105 / 106 &nbsp;&middot;&nbsp; Enterprise Java Beans (EJB)</span>
+  <a href="#slide-106">Next &#8594;</a>
+</div>
+</section>
+
+<section id="slide-106" class="slide">
+
+<span class="slide-counter">106 / 106</span>
+<div class="slide-nav">
+  <a href="#slide-105">&#8592; Previous</a>
+  <span class="slide-info">Slide 106 / 106 &nbsp;&middot;&nbsp; Enterprise Java Beans (EJB)</span>
+  <a class="disabled">Next &#8594;</a>
+</div>
+</section>
+    </div>
+  </main>
+</div>
+<footer class="site-footer">Made with IBM Bob &nbsp;&middot;&nbsp; &copy; 2026 Olivier Planson</footer>
+<script>
+/* ── EN/FR language toggle — global scope so buttons can call it ── */
+var _lang = localStorage.getItem('slide-lang') || 'en';
+function setLang(lang) {
+  _lang = lang;
+  localStorage.setItem('slide-lang', lang);
+  document.getElementById('btn-en').classList.toggle('active', lang === 'en');
+  document.getElementById('btn-fr').classList.toggle('active', lang === 'fr');
+  document.querySelectorAll('[data-en][data-fr]').forEach(function(el) {
+    el.innerHTML = lang === 'fr' ? el.getAttribute('data-fr') : el.getAttribute('data-en');
+  });
+}
+
+(function() {
+  /* ── Sidenav hover ── */
+  var nav     = document.getElementById('sidenav');
+  var navTrig = document.getElementById('sidenav-trigger');
+  var navTimer = null;
+  function navShow() { clearTimeout(navTimer); nav.classList.add('sidenav--open'); }
+  function navHide() { navTimer = setTimeout(function(){ nav.classList.remove('sidenav--open'); }, 300); }
+  navTrig.addEventListener('mouseenter', navShow);
+  navTrig.addEventListener('mouseleave', navHide);
+  nav.addEventListener('mouseenter', navShow);
+  nav.addEventListener('mouseleave', navHide);
+
+  /* ── Progress bar hover ── */
+  var pbWrap  = document.getElementById('pb-wrap');
+  var pbTrig  = document.getElementById('pb-trigger');
+  var pbTimer = null;
+  function pbShow() { clearTimeout(pbTimer); pbWrap.classList.add('pb-open'); }
+  function pbHide() { pbTimer = setTimeout(function(){ pbWrap.classList.remove('pb-open'); }, 400); }
+  pbTrig.addEventListener('mouseenter', pbShow);
+  pbTrig.addEventListener('mouseleave', pbHide);
+  pbWrap.addEventListener('mouseenter', pbShow);
+  pbWrap.addEventListener('mouseleave', pbHide);
+
+  /* ── Wire EN/FR buttons via addEventListener (no inline onclick) ── */
+  document.getElementById('btn-en').addEventListener('click', function() { setLang('en'); });
+  document.getElementById('btn-fr').addEventListener('click', function() { setLang('fr'); });
+
+  /* Apply stored preference on page load */
+  if (_lang === 'fr') setLang('fr');
+})();
+</script>
+</body>
+</html>

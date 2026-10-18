@@ -1,0 +1,111 @@
+<!-- © Copyright 2026 Olivier Planson. All rights reserved. Reproduction prohibited. Made with IBM Bob. -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>ESIPE — 🏗️ Lecture 8: Microservices Architecture</title>
+  <link rel="stylesheet" href="../assets/slide.css"/>
+</head>
+<body>
+<header class="site-header">
+  <a class="brand" href="../index.html">ESIPE<span>Jakarta EE &amp; Microservices</span></a>
+  <a class="back-link" href="../index.html">&#8592; All Courses</a>
+</header>
+<main class="course-overview">
+  <h1>🏗️ Lecture 8: Microservices Architecture</h1>
+  <p class="subtitle">Lecture 8: Microservices Architecture</p>
+  <div class="meta-tile">
+    
+    
+    
+    <span><strong>Slides:</strong> 99 slides</span>
+  </div>
+  <h2 style="font-size:1rem;font-weight:600;margin:1.5rem 0 .75rem;">&#128218; Course outline</h2>
+  <ol class="plan-list">
+    <li><a href="slides.html#slide-1">From Monolith to Microservices</a></li>
+    <li><a href="slides.html#slide-4">📚 Prerequisites</a></li>
+    <li><a href="slides.html#slide-5">🏛️ What are Microservices?</a></li>
+    <li><a href="slides.html#slide-6">Definition</a></li>
+    <li><a href="slides.html#slide-7">Monolith vs Microservices</a></li>
+    <li><a href="slides.html#slide-9">Benefits of Microservices</a></li>
+    <li><a href="slides.html#slide-10">Benefits (Continued)</a></li>
+    <li><a href="slides.html#slide-11">Challenges of Microservices</a></li>
+    <li><a href="slides.html#slide-12">Challenges (Continued)</a></li>
+    <li><a href="slides.html#slide-13">When to Use Microservices?</a></li>
+    <li><a href="slides.html#slide-14">Conway's Law</a></li>
+    <li><a href="slides.html#slide-16">Decomposition Strategies</a></li>
+    <li><a href="slides.html#slide-17">Banking Application Decomposition</a></li>
+    <li><a href="slides.html#slide-18">Proposed Microservices (Lab 08)</a></li>
+    <li><a href="slides.html#slide-19">Service Responsibilities</a></li>
+    <li><a href="slides.html#slide-20">Service Responsibilities (Continued)</a></li>
+    <li><a href="slides.html#slide-21">Service Responsibilities (Continued)</a></li>
+    <li><a href="slides.html#slide-22">Database Per Service Pattern</a></li>
+    <li><a href="slides.html#slide-23">Shared Database Anti-Pattern</a></li>
+    <li><a href="slides.html#slide-24">Data Consistency Strategies</a></li>
+    <li><a href="slides.html#slide-25">🔗 How Services Talk to Each Other</a></li>
+    <li><a href="slides.html#slide-26">Communication Patterns</a></li>
+    <li><a href="slides.html#slide-27">REST-Based Communication</a></li>
+    <li><a href="slides.html#slide-29">Configuration with MicroProfile Config</a></li>
+    <li><a href="slides.html#slide-30">Fault Tolerance with MicroProfile</a></li>
+    <li><a href="slides.html#slide-31">Circuit Breaker States</a></li>
+    <li><a href="slides.html#slide-32">Retry Strategy</a></li>
+    <li><a href="slides.html#slide-33">Bulkhead Pattern</a></li>
+    <li><a href="slides.html#slide-34">🚪 Single Entry Point</a></li>
+    <li><a href="slides.html#slide-36">API Gateway Architecture</a></li>
+    <li><a href="slides.html#slide-37">Request Routing</a></li>
+    <li><a href="slides.html#slide-38">Response Aggregation</a></li>
+    <li><a href="slides.html#slide-39">Response Aggregation DTO</a></li>
+    <li><a href="slides.html#slide-40">Authentication at Gateway</a></li>
+    <li><a href="slides.html#slide-41">Rate Limiting</a></li>
+    <li><a href="slides.html#slide-42">🔍 Finding Services Dynamically</a></li>
+    <li><a href="slides.html#slide-43">Service Discovery</a></li>
+    <li><a href="slides.html#slide-44">Service Discovery Patterns</a></li>
+    <li><a href="slides.html#slide-45">Service Discovery in Docker Compose</a></li>
+    <li><a href="slides.html#slide-46">MicroProfile Config</a></li>
+    <li><a href="slides.html#slide-47">Configuration Sources</a></li>
+    <li><a href="slides.html#slide-48">Environment-Specific Configuration</a></li>
+    <li><a href="slides.html#slide-49">📊 Observability in Microservices</a></li>
+    <li><a href="slides.html#slide-50">The Three Pillars of Observability</a></li>
+    <li><a href="slides.html#slide-51">Distributed Tracing</a></li>
+    <li><a href="slides.html#slide-52">MicroProfile OpenTracing</a></li>
+    <li><a href="slides.html#slide-53">Correlation IDs</a></li>
+    <li><a href="slides.html#slide-54">Structured Logging</a></li>
+    <li><a href="slides.html#slide-55">MicroProfile Metrics</a></li>
+    <li><a href="slides.html#slide-56">Custom Metrics</a></li>
+    <li><a href="slides.html#slide-57">Health Checks</a></li>
+    <li><a href="slides.html#slide-58">Health Check Endpoints</a></li>
+    <li><a href="slides.html#slide-59">Metrics Endpoint</a></li>
+    <li><a href="slides.html#slide-60">🔄 Managing Distributed Data</a></li>
+    <li><a href="slides.html#slide-61">The CAP Theorem</a></li>
+    <li><a href="slides.html#slide-62">Eventual Consistency</a></li>
+    <li><a href="slides.html#slide-63">Saga Pattern</a></li>
+    <li><a href="slides.html#slide-64">Saga Implementation: Choreography</a></li>
+    <li><a href="slides.html#slide-65">Saga Implementation: Orchestration</a></li>
+    <li><a href="slides.html#slide-66">Event Sourcing</a></li>
+    <li><a href="slides.html#slide-67">CQRS Pattern</a></li>
+    <li><a href="slides.html#slide-68">🚀 Running Microservices in Production</a></li>
+    <li><a href="slides.html#slide-69">Containerization with Docker</a></li>
+    <li><a href="slides.html#slide-71">Docker Compose (Continued)</a></li>
+    <li><a href="slides.html#slide-72">Docker Compose (Continued)</a></li>
+    <li><a href="slides.html#slide-73">Running with Docker Compose</a></li>
+    <li><a href="slides.html#slide-74">Kubernetes Introduction</a></li>
+    <li><a href="slides.html#slide-78">CI/CD Pipeline</a></li>
+    <li><a href="slides.html#slide-81">Monitoring and Alerting</a></li>
+    <li><a href="slides.html#slide-82">Monitoring Stack</a></li>
+    <li><a href="slides.html#slide-83">Logging Stack (ELK)</a></li>
+    <li><a href="slides.html#slide-85">Microservices Principles</a></li>
+    <li><a href="slides.html#slide-89">Common Pitfalls to Avoid</a></li>
+    <li><a href="slides.html#slide-90">Common Pitfalls (Continued)</a></li>
+    <li><a href="slides.html#slide-91">Migration Strategy</a></li>
+    <li><a href="slides.html#slide-92">When to Use Microservices</a></li>
+    <li><a href="slides.html#slide-93">Lab 08 Preview</a></li>
+    <li><a href="slides.html#slide-94">Lab 08 Preview (Continued)</a></li>
+    <li><a href="slides.html#slide-96">Resources</a></li>
+    <li><a href="slides.html#slide-97">Questions?</a></li>
+  </ol>
+  <a class="start-btn" href="slides.html#slide-1">&#9654; Start course</a>
+</main>
+<footer class="site-footer">Made with IBM Bob &nbsp;&middot;&nbsp; &copy; 2026 Olivier Planson</footer>
+</body>
+</html>
