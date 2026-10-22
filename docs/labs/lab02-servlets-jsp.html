@@ -1,0 +1,1294 @@
+<!-- © Copyright 2026 Olivier Planson. All rights reserved. Reproduction prohibited. Made with IBM Bob. -->
+<!DOCTYPE html>
+<html lang="fr" data-lang="fr">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title data-title-en="ESIPE — Lab 02: Servlets, JSP &amp; MicroProfile — Lab guide" data-title-fr="ESIPE — Lab 02 : Servlets, JSP &amp; MicroProfile — Guide du lab">ESIPE — Lab 02 : Servlets, JSP &amp; MicroProfile — Guide du lab</title>
+  <link rel="stylesheet" href="assets/slide.css"/>
+  <link rel="stylesheet" href="assets/lab-guide.css"/>
+  <script src="assets/lab-guide.js"></script>
+</head>
+<body>
+<header class="site-header">
+  <a class="brand" href="index.html">ESIPE<span>Jakarta EE &amp; Microservices — Labs</span></a>
+  <div class="lang-toggle" id="lang-toggle">
+    <button type="button" id="btn-en" data-set-lang="en">EN</button>
+    <span class="sep">|</span>
+    <button type="button" id="btn-fr" data-set-lang="fr" class="active">FR</button>
+  </div>
+  <a class="back-link" href="index.html">&#8592; Labs</a>
+  <a class="back-link" href="../index.html"><span lang="en">Course site</span><span lang="fr">Site du cours</span></a>
+</header>
+
+<div class="lg-shell">
+
+  <nav class="lg-toc" aria-label="Table of contents">
+    <div class="lg-toc-title"><span lang="en">In this guide</span><span lang="fr">Dans ce guide</span></div>
+    <a href="#hero"><span lang="en">Overview</span><span lang="fr">Vue d'ensemble</span></a>
+    <a href="#goal"><span lang="en">1. Goal</span><span lang="fr">1. Objectif</span></a>
+    <a href="#starter"><span lang="en">2. What the starter gives you</span><span lang="fr">2. Ce que fournit le starter</span></a>
+    <a href="#target"><span lang="en">3. Target structure</span><span lang="fr">3. Structure cible</span></a>
+    <a href="#setup"><span lang="en">4. Setup</span><span lang="fr">4. Préparation</span></a>
+    <a href="#steps"><span lang="en">5. Step by step</span><span lang="fr">5. Pas à pas</span></a>
+    <a class="sub" href="#step-1"><span lang="en">1 · Build and observe the baseline</span><span lang="fr">1 · Compiler et observer l'existant</span></a>
+    <a class="sub" href="#step-2"><span lang="en">2 · Enable OpenAPI and open the metrics</span><span lang="fr">2 · Activer OpenAPI et ouvrir les métriques</span></a>
+    <a class="sub" href="#step-3"><span lang="en">3 · The Client and Account models</span><span lang="fr">3 · Les modèles Client et Account</span></a>
+    <a class="sub" href="#step-4"><span lang="en">4 · ClientService: in-memory CRUD</span><span lang="fr">4 · ClientService : CRUD en mémoire</span></a>
+    <a class="sub" href="#step-5"><span lang="en">5 · ClientController: front controller</span><span lang="fr">5 · ClientController : contrôleur frontal</span></a>
+    <a class="sub" href="#step-6"><span lang="en">6 · client-list.jsp: list view</span><span lang="fr">6 · client-list.jsp : vue liste</span></a>
+    <a class="sub" href="#step-7"><span lang="en">7 · client-form.jsp: create and edit</span><span lang="fr">7 · client-form.jsp : création et modification</span></a>
+    <a class="sub" href="#step-8"><span lang="en">8 · client-details.jsp: details and accounts</span><span lang="fr">8 · client-details.jsp : détail et comptes</span></a>
+    <a class="sub" href="#step-9"><span lang="en">9 · MicroProfile Health checks</span><span lang="fr">9 · Health checks MicroProfile</span></a>
+    <a class="sub" href="#step-10"><span lang="en">10 · MicroProfile Config and web.xml</span><span lang="fr">10 · MicroProfile Config et web.xml</span></a>
+    <a class="sub" href="#step-11"><span lang="en">11 · Listeners: sessions and application lifecycle</span><span lang="fr">11 · Listeners : sessions et cycle de vie de l'application</span></a>
+    <a class="sub" href="#step-12"><span lang="en">12 · LoggingFilter: requests, responses, timing</span><span lang="fr">12 · LoggingFilter : requêtes, réponses, durée</span></a>
+    <a class="sub" href="#step-13"><span lang="en">13 · AuthenticationFilter: protect URLs</span><span lang="fr">13 · AuthenticationFilter : protéger des URL</span></a>
+    <a class="sub" href="#step-14"><span lang="en">14 · CorsFilter: cross-origin requests</span><span lang="fr">14 · CorsFilter : requêtes cross-origin</span></a>
+    <a class="sub" href="#step-15"><span lang="en">15 · CompressionFilter: GZIP responses</span><span lang="fr">15 · CompressionFilter : réponses GZIP</span></a>
+    <a href="#run"><span lang="en">6. Run</span><span lang="fr">6. Exécution</span></a>
+    <a href="#validate"><span lang="en">7. Validate</span><span lang="fr">7. Validation</span></a>
+    <a href="#compare"><span lang="en">8. Compare with solution</span><span lang="fr">8. Comparer à la solution</span></a>
+    <a href="#trouble"><span lang="en">9. Troubleshooting</span><span lang="fr">9. Dépannage</span></a>
+    <a href="#bonus"><span lang="en">10. Go further</span><span lang="fr">10. Pour aller plus loin</span></a>
+  </nav>
+
+  <main class="lg-main">
+
+    <section class="lg-hero" id="hero">
+      <div class="lg-kicker">Lab 02</div>
+      <h1><span lang="en">Servlets, JSP &amp; MicroProfile</span><span lang="fr">Servlets, JSP &amp; MicroProfile</span></h1>
+      <p class="lg-lead">
+        <span lang="en">Starting from a project with 297 TODO comments, you build a complete MVC web application for the banking case study: a front-controller servlet, JSP views with JSTL, MicroProfile Config and Health, filters and listeners, packaged in a container on Open Liberty.</span><span lang="fr">À partir d'un projet contenant 297 commentaires TODO, vous construisez une application web MVC complète pour le cas d'étude bancaire : une servlet de contrôle frontal, des vues JSP avec JSTL, MicroProfile Config et Health, des filtres et des listeners, empaquetés dans un conteneur sur Open Liberty.</span>
+      </p>
+      <div class="badge-row">
+        <span class="badge badge-blue">Jakarta EE 10</span>
+        <span class="badge badge-teal">Servlet 6.0 · Pages 3.1</span>
+        <span class="badge badge-green">MicroProfile 6</span>
+        <span class="badge badge-purple">Open Liberty</span>
+        <span class="badge badge-warm">Podman</span>
+      </div>
+      <div class="lg-facts">
+        <div><strong><span lang="en">about 4 h 10</span><span lang="fr">environ 4 h 10</span></strong><span lang="en">Duration</span><span lang="fr">Durée</span></div>
+        <div><strong><span lang="en">Intermediate</span><span lang="fr">Intermédiaire</span></strong><span lang="en">Level</span><span lang="fr">Niveau</span></div>
+        <div><strong>JDK 17+ · Maven · Podman</strong><span lang="en">Prerequisites (Lab 01 completed)</span><span lang="fr">Prérequis (Lab 01 terminé)</span></div>
+        <div><strong>http://localhost:9080</strong><span lang="en">Application URL</span><span lang="fr">URL de l'application</span></div>
+      </div>
+      <div class="lg-hero-links">
+        <a href="../../02-Lectures/slides/02-servlets/slides.html#slide-3"><span lang="en">Course slides (Servlets)</span><span lang="fr">Slides du cours (Servlets)</span></a>
+        <a class="secondary" href="../02-servlets/index.html"><span lang="en">Course page</span><span lang="fr">Page du cours</span></a>
+        <a class="secondary" href="https://github.com/oplanson/esipe-javaee/blob/master/03-Labs/Lab02-ServletsJSP/README.md"><span lang="en">Original README</span><span lang="fr">README d'origine</span></a>
+        <a class="secondary" href="https://github.com/oplanson/esipe-javaee/tree/master/03-Labs/Lab02-ServletsJSP/solution"><span lang="en">Solution folder</span><span lang="fr">Dossier solution</span></a>
+      </div>
+    </section>
+
+    <section class="lg-section" id="goal">
+      <h2><span class="lg-sec-num">01</span><span lang="en">Goal of the lab</span><span lang="fr">Objectif du lab</span></h2>
+<p>
+  <span lang="en">You turn the plain servlets of Lab 01 into a layered web application: a <strong>model</strong> (<code>Client</code>, <code>Account</code>), a <strong>service</strong> (<code>ClientService</code>), a <strong>controller</strong> servlet and <strong>JSP views</strong>. You then add cross-cutting features with filters and listeners, and expose the state of the application with MicroProfile Health. Data stays in memory; a database comes in Lab 03.</span><span lang="fr">Vous transformez les servlets simples du Lab 01 en une application web en couches : un <strong>modèle</strong> (<code>Client</code>, <code>Account</code>), un <strong>service</strong> (<code>ClientService</code>), une servlet <strong>contrôleur</strong> et des <strong>vues JSP</strong>. Vous ajoutez ensuite des fonctions transverses avec des filtres et des listeners, et vous exposez l'état de l'application avec MicroProfile Health. Les données restent en mémoire ; une base de données arrive au Lab 03.</span>
+</p>
+<h3><span lang="en">What the finished application exposes</span><span lang="fr">Ce que l'application terminée expose</span></h3>
+<table class="slide-table">
+  <thead><tr><th>URL</th><th><span lang="en">Served by</span><span lang="fr">Servi par</span></th><th><span lang="en">Behaviour</span><span lang="fr">Comportement</span></th></tr></thead>
+  <tbody>
+    <tr><td><code>/</code></td><td><code>index.html</code> <span class="lg-tag lg-tag--ok"><span lang="en">provided</span><span lang="fr">fourni</span></span></td><td><span lang="en">Home page with links</span><span lang="fr">Page d'accueil avec liens</span></td></tr>
+    <tr><td><code>/clients</code></td><td><code>ClientController</code> → <code>client-list.jsp</code></td><td><span lang="en">Client list, <code>?search=</code> filter, <code>?message=</code> alerts</span><span lang="fr">Liste des clients, filtre <code>?search=</code>, alertes <code>?message=</code></span></td></tr>
+    <tr><td><code>/client?action=view|new|edit</code></td><td><code>ClientController</code> → <code>client-details.jsp</code>, <code>client-form.jsp</code></td><td><span lang="en">Details with accounts, creation form, edit form</span><span lang="fr">Détail avec comptes, formulaire de création, formulaire de modification</span></td></tr>
+    <tr><td><code>POST /client</code></td><td><code>ClientController</code></td><td><span lang="en"><code>action=create|update|delete</code>, then redirect (Post-Redirect-Get)</span><span lang="fr"><code>action=create|update|delete</code>, puis redirection (Post-Redirect-Get)</span></td></tr>
+    <tr><td><code>/health</code>, <code>/health/live</code>, <code>/health/ready</code></td><td><code>DatabaseHealthCheck</code>, <code>WebAppReadinessCheck</code></td><td><span lang="en">MicroProfile Health endpoints</span><span lang="fr">Endpoints MicroProfile Health</span></td></tr>
+    <tr><td><code>/metrics</code>, <code>/openapi</code></td><td>Open Liberty <span class="lg-tag lg-tag--chg"><span lang="en">no Java code</span><span lang="fr">aucun code Java</span></span></td><td><span lang="en">Enabled by &lt;code&gt;server.xml&lt;/code&gt;</span><span lang="fr">Activés par &lt;code&gt;server.xml&lt;/code&gt;</span></td></tr>
+  </tbody>
+</table>
+<h3><span lang="en">Concepts you practise</span><span lang="fr">Concepts mis en pratique</span></h3>
+<ul>
+  <li><span lang="en">MVC with a front-controller servlet — <a href="../../02-Lectures/slides/02-servlets/slides.html#slide-23">slides 23–26</a></span><span lang="fr">MVC avec une servlet de contrôle frontal — <a href="../../02-Lectures/slides/02-servlets/slides.html#slide-23">slides 23–26</a></span></li>
+  <li><span lang="en">JSP, Expression Language and JSTL (<code>c:forEach</code>, <code>c:choose</code>, <code>fmt:formatNumber</code>) — <a href="../../02-Lectures/slides/02-servlets/slides.html#slide-15">slides 15–21</a></span><span lang="fr">JSP, Expression Language et JSTL (<code>c:forEach</code>, <code>c:choose</code>, <code>fmt:formatNumber</code>) — <a href="../../02-Lectures/slides/02-servlets/slides.html#slide-15">slides 15–21</a></span></li>
+  <li><span lang="en">Post-Redirect-Get and server-side validation — <a href="../../02-Lectures/slides/02-servlets/slides.html#slide-8">slide 8</a></span><span lang="fr">Post-Redirect-Get et validation côté serveur — <a href="../../02-Lectures/slides/02-servlets/slides.html#slide-8">slide 8</a></span></li>
+  <li><span lang="en">MicroProfile Config and Health — <a href="../../02-Lectures/slides/02-servlets/slides.html#slide-27">slides 27–35</a></span><span lang="fr">MicroProfile Config et Health — <a href="../../02-Lectures/slides/02-servlets/slides.html#slide-27">slides 27–35</a></span></li>
+  <li><span lang="en">Servlet filters: logging, authentication, CORS, compression — <a href="../../02-Lectures/slides/02-servlets/slides.html#slide-49">slides 49–56</a></span><span lang="fr">Filtres de servlet : logging, authentification, CORS, compression — <a href="../../02-Lectures/slides/02-servlets/slides.html#slide-49">slides 49–56</a></span></li>
+  <li><span lang="en">Listeners for sessions and application lifecycle — <a href="../../02-Lectures/slides/02-servlets/slides.html#slide-57">slides 57–63</a></span><span lang="fr">Listeners pour les sessions et le cycle de vie de l'application — <a href="../../02-Lectures/slides/02-servlets/slides.html#slide-57">slides 57–63</a></span></li>
+  <li><span lang="en">Thread-safe shared state in a single service instance — <a href="../../02-Lectures/slides/02-servlets/slides.html#slide-3">slide 3</a></span><span lang="fr">État partagé thread-safe dans une instance de service unique — <a href="../../02-Lectures/slides/02-servlets/slides.html#slide-3">slide 3</a></span></li>
+</ul>
+    </section>
+
+    <section class="lg-section" id="starter">
+      <h2><span class="lg-sec-num">02</span><span lang="en">What the starter gives you</span><span lang="fr">Ce que fournit le starter</span></h2>
+<p>
+  <span lang="en">The folder <code>03-Labs/Lab02-ServletsJSP/starter/</code> builds and starts, but 15 source files are skeletons with <strong>297 <code>TODO</code> comments</strong> in total. Every file that differs from <code>solution/</code> is listed below and used in a step.</span><span lang="fr">Le dossier <code>03-Labs/Lab02-ServletsJSP/starter/</code> compile et démarre, mais 15 fichiers source sont des squelettes avec <strong>297 commentaires <code>TODO</code></strong> au total. Chaque fichier qui diffère de <code>solution/</code> est listé ci-dessous et utilisé dans une étape.</span>
+</p>
+<table class="slide-table">
+  <thead><tr><th><span lang="en">File (in <code>starter/</code>)</span><span lang="fr">Fichier (dans <code>starter/</code>)</span></th><th><span lang="en">Status</span><span lang="fr">Statut</span></th><th><span lang="en">What it contains</span><span lang="fr">Contenu</span></th></tr></thead>
+  <tbody>
+    <tr><td><code>pom.xml, Containerfile</code></td><td><span class="lg-tag lg-tag--ok"><span lang="en">provided</span><span lang="fr">fourni</span></span></td><td><span lang="en">WAR <code>banking-web-app</code>, Java 17, Jakarta EE 10 / MicroProfile 6 (<code>provided</code>), JSTL, Liberty plugin; image from <code>open-liberty:full-java17-openj9-ubi</code>. Identical to the solution.</span><span lang="fr">WAR <code>banking-web-app</code>, Java 17, Jakarta EE 10 / MicroProfile 6 (<code>provided</code>), JSTL, plugin Liberty ; image <code>open-liberty:full-java17-openj9-ubi</code>. Identique à la solution.</span></td></tr>
+    <tr><td><code>src/main/liberty/config/bootstrap.properties</code></td><td><span class="lg-tag lg-tag--ok"><span lang="en">provided</span><span lang="fr">fourni</span></span></td><td><span lang="en">Ports <code>9080</code> and <code>9443</code>, <code>app.name=banking-web-app</code>.</span><span lang="fr">Ports <code>9080</code> et <code>9443</code>, <code>app.name=banking-web-app</code>.</span></td></tr>
+    <tr><td><code>src/main/webapp/index.html, css/style.css</code></td><td><span class="lg-tag lg-tag--ok"><span lang="en">provided</span><span lang="fr">fourni</span></span></td><td><span lang="en">Home page and styles.</span><span lang="fr">Page d'accueil et styles.</span></td></tr>
+    <tr><td><code>src/main/liberty/config/server.xml</code></td><td><span class="lg-tag lg-tag--chg"><span lang="en">to modify</span><span lang="fr">à modifier</span></span></td><td><span lang="en">Features <code>servlet-6.0</code>, <code>pages-3.1</code>, <code>cdi-4.0</code>, <code>jsonb-3.0</code>, <code>mpConfig-3.0</code>, <code>mpHealth-4.0</code>, <code>mpMetrics-5.0</code>. Missing: <code>mpOpenAPI-3.1</code> and <code>mpMetrics authentication</code> (step 2).</span><span lang="fr">Features <code>servlet-6.0</code>, <code>pages-3.1</code>, <code>cdi-4.0</code>, <code>jsonb-3.0</code>, <code>mpConfig-3.0</code>, <code>mpHealth-4.0</code>, <code>mpMetrics-5.0</code>. Manquent : <code>mpOpenAPI-3.1</code> et <code>mpMetrics authentication</code> (étape 2).</span></td></tr>
+    <tr><td><code>src/main/webapp/WEB-INF/web.xml</code></td><td><span class="lg-tag lg-tag--chg"><span lang="en">to modify</span><span lang="fr">à modifier</span></span></td><td><span lang="en">Context parameters, welcome file, 30-minute <code>HttpOnly</code> session, error pages. The solution only adds a comment block (step 10).</span><span lang="fr">Paramètres de contexte, fichier d'accueil, session de 30 minutes <code>HttpOnly</code>, pages d'erreur. La solution ajoute seulement un bloc de commentaires (étape 10).</span></td></tr>
+    <tr><td><code>src/main/resources/META-INF/microprofile-config.properties</code></td><td><span class="lg-tag lg-tag--todo"><span lang="en">1 TODO</span><span lang="fr">1 TODO</span></span></td><td><span lang="en">Application, web and feature-flag properties; one TODO to add your own (step 10).</span><span lang="fr">Propriétés d'application, web et feature flags ; un TODO pour ajouter les vôtres (étape 10).</span></td></tr>
+    <tr><td><code>src/main/java/com/bank/model/Client.java</code></td><td><span class="lg-tag lg-tag--todo"><span lang="en">12 TODO</span><span lang="fr">12 TODO</span></span></td><td><span lang="en">Fields only (step 3).</span><span lang="fr">Champs seulement (étape 3).</span></td></tr>
+    <tr><td><code>src/main/java/com/bank/model/Account.java</code></td><td><span class="lg-tag lg-tag--todo"><span lang="en">14 TODO</span><span lang="fr">14 TODO</span></span></td><td><span lang="en">Fields only (step 3).</span><span lang="fr">Champs seulement (étape 3).</span></td></tr>
+    <tr><td><code>src/main/java/com/bank/service/ClientService.java</code></td><td><span class="lg-tag lg-tag--todo"><span lang="en">15 TODO</span><span lang="fr">15 TODO</span></span></td><td><span lang="en">Methods return <code>null</code>/<code>false</code> (step 4).</span><span lang="fr">Méthodes qui renvoient <code>null</code>/<code>false</code> (étape 4).</span></td></tr>
+    <tr><td><code>src/main/java/com/bank/web/ClientController.java</code></td><td><span class="lg-tag lg-tag--todo"><span lang="en">30 TODO</span><span lang="fr">30 TODO</span></span></td><td><span lang="en">Empty <code>init</code>, <code>doGet</code>, <code>doPost</code> (step 5).</span><span lang="fr"><code>init</code>, <code>doGet</code>, <code>doPost</code> vides (étape 5).</span></td></tr>
+    <tr><td><code>src/main/java/com/bank/health/DatabaseHealthCheck.java</code></td><td><span class="lg-tag lg-tag--todo"><span lang="en">8 TODO</span><span lang="fr">8 TODO</span></span></td><td><span lang="en"><code>call()</code> returns <code>null</code> (step 9).</span><span lang="fr"><code>call()</code> renvoie <code>null</code> (étape 9).</span></td></tr>
+    <tr><td><code>src/main/java/com/bank/health/WebAppReadinessCheck.java</code></td><td><span class="lg-tag lg-tag--todo"><span lang="en">7 TODO</span><span lang="fr">7 TODO</span></span></td><td><span lang="en"><code>call()</code> returns <code>null</code> (step 9).</span><span lang="fr"><code>call()</code> renvoie <code>null</code> (étape 9).</span></td></tr>
+    <tr><td><code>src/main/java/com/bank/listener/SessionCounterListener.java</code></td><td><span class="lg-tag lg-tag--todo"><span lang="en">31 TODO</span><span lang="fr">31 TODO</span></span></td><td><span lang="en">Counters are <code>null</code> (step 11).</span><span lang="fr">Les compteurs valent <code>null</code> (étape 11).</span></td></tr>
+    <tr><td><code>src/main/java/com/bank/listener/ApplicationLifecycleListener.java</code></td><td><span class="lg-tag lg-tag--todo"><span lang="en">34 TODO</span><span lang="fr">34 TODO</span></span></td><td><span lang="en">Formatter is <code>null</code> (step 11).</span><span lang="fr">Le formateur vaut <code>null</code> (étape 11).</span></td></tr>
+    <tr><td><code>src/main/java/com/bank/filter/LoggingFilter.java</code></td><td><span class="lg-tag lg-tag--todo"><span lang="en">30 TODO</span><span lang="fr">30 TODO</span></span></td><td><span lang="en">Never calls the chain (steps 1, 12).</span><span lang="fr">N'appelle jamais la chaîne (étapes 1, 12).</span></td></tr>
+    <tr><td><code>src/main/java/com/bank/filter/AuthenticationFilter.java</code></td><td><span class="lg-tag lg-tag--todo"><span lang="en">27 TODO</span><span lang="fr">27 TODO</span></span></td><td><span lang="en">Never calls the chain (steps 1, 13).</span><span lang="fr">N'appelle jamais la chaîne (étapes 1, 13).</span></td></tr>
+    <tr><td><code>src/main/java/com/bank/filter/CorsFilter.java</code></td><td><span class="lg-tag lg-tag--todo"><span lang="en">22 TODO</span><span lang="fr">22 TODO</span></span></td><td><span lang="en">Empty constants (step 14).</span><span lang="fr">Constantes vides (étape 14).</span></td></tr>
+    <tr><td><code>src/main/java/com/bank/filter/CompressionFilter.java</code></td><td><span class="lg-tag lg-tag--todo"><span lang="en">36 TODO</span><span lang="fr">36 TODO</span></span></td><td><span lang="en">Never calls the chain (steps 1, 15).</span><span lang="fr">N'appelle jamais la chaîne (étapes 1, 15).</span></td></tr>
+    <tr><td><code>src/main/webapp/WEB-INF/views/client-list.jsp</code></td><td><span class="lg-tag lg-tag--todo"><span lang="en">13 TODO</span><span lang="fr">13 TODO</span></span></td><td><span lang="en">List view (step 6).</span><span lang="fr">Vue liste (étape 6).</span></td></tr>
+    <tr><td><code>src/main/webapp/WEB-INF/views/client-form.jsp</code></td><td><span class="lg-tag lg-tag--todo"><span lang="en">7 TODO</span><span lang="fr">7 TODO</span></span></td><td><span lang="en">Form view (step 7).</span><span lang="fr">Vue formulaire (étape 7).</span></td></tr>
+    <tr><td><code>src/main/webapp/WEB-INF/views/client-details.jsp</code></td><td><span class="lg-tag lg-tag--todo"><span lang="en">10 TODO</span><span lang="fr">10 TODO</span></span></td><td><span lang="en">Details view (step 8).</span><span lang="fr">Vue détail (étape 8).</span></td></tr>
+  </tbody>
+</table>
+<div class="lg-callout lg-callout--warn">
+  <div lang="en"><div class="lg-callout-title">The starter does not show anything out of the box</div><p>The three filters mapped on <code>/*</code> never call the filter chain, so every page answers an empty <code>200</code>; <code>/health</code> answers <code>500</code>; and <code>web.xml</code> declares error pages (<code>error-404.jsp</code>, <code>error-500.jsp</code>) that exist nowhere. Step 1 explains how to get started.</p></div>
+  <div lang="fr"><div class="lg-callout-title">Le starter n'affiche rien tel quel</div><p>Les trois filtres mappés sur <code>/*</code> n'appellent jamais la chaîne de filtres : toutes les pages répondent un <code>200</code> vide ; <code>/health</code> répond <code>500</code> ; et <code>web.xml</code> déclare des pages d'erreur (<code>error-404.jsp</code>, <code>error-500.jsp</code>) qui n'existent nulle part. L'étape 1 explique comment démarrer.</p></div>
+</div>
+    </section>
+
+    <section class="lg-section" id="target">
+      <h2><span class="lg-sec-num">03</span><span lang="en">Target structure</span><span lang="fr">Structure cible</span></h2>
+<p>
+  <span lang="en">When you are done, <code>starter/</code> must behave like <code>solution/</code>. Legend: <code>[=]</code> provided, <code>[~]</code> modified or completed by you.</span><span lang="fr">À la fin, <code>starter/</code> doit se comporter comme <code>solution/</code>. Légende : <code>[=]</code> fourni, <code>[~]</code> modifié ou complété par vous.</span>
+</p>
+<div class="lg-tree"><span class="t-note">Lab02-ServletsJSP/starter/</span>
+├── <span class="t-ok">[=] Containerfile</span>
+├── <span class="t-ok">[=] pom.xml</span>
+└── src/main/
+    ├── java/com/bank/
+    │   ├── model/       <span class="t-chg">[~] Client.java</span>, <span class="t-chg">[~] Account.java</span>
+    │   ├── service/     <span class="t-chg">[~] ClientService.java</span>
+    │   ├── web/         <span class="t-chg">[~] ClientController.java</span>
+    │   ├── health/      <span class="t-chg">[~] DatabaseHealthCheck.java</span>, <span class="t-chg">[~] WebAppReadinessCheck.java</span>
+    │   ├── listener/    <span class="t-chg">[~] SessionCounterListener.java</span>, <span class="t-chg">[~] ApplicationLifecycleListener.java</span>
+    │   └── filter/      <span class="t-chg">[~] AuthenticationFilter.java</span>, <span class="t-chg">[~] LoggingFilter.java</span>,
+    │                    <span class="t-chg">[~] CorsFilter.java</span>, <span class="t-chg">[~] CompressionFilter.java</span>
+    ├── liberty/config/
+    │   ├── <span class="t-chg">[~] server.xml</span>
+    │   └── <span class="t-ok">[=] bootstrap.properties</span>
+    ├── resources/META-INF/
+    │   └── <span class="t-chg">[~] microprofile-config.properties</span>
+    └── webapp/
+        ├── <span class="t-ok">[=] index.html</span>, css/<span class="t-ok">[=] style.css</span>
+        └── WEB-INF/
+            ├── <span class="t-chg">[~] web.xml</span>
+            └── views/   <span class="t-chg">[~] client-list.jsp</span>, <span class="t-chg">[~] client-form.jsp</span>, <span class="t-chg">[~] client-details.jsp</span></div>
+<p>
+  <span lang="en">Reference files: <a href="https://github.com/oplanson/esipe-javaee/blob/master/03-Labs/Lab02-ServletsJSP/solution/src/main/java/com/bank/model/Client.java"><code>Client.java</code></a>, <a href="https://github.com/oplanson/esipe-javaee/blob/master/03-Labs/Lab02-ServletsJSP/solution/src/main/java/com/bank/model/Account.java"><code>Account.java</code></a>, <a href="https://github.com/oplanson/esipe-javaee/blob/master/03-Labs/Lab02-ServletsJSP/solution/src/main/java/com/bank/service/ClientService.java"><code>ClientService.java</code></a>, <a href="https://github.com/oplanson/esipe-javaee/blob/master/03-Labs/Lab02-ServletsJSP/solution/src/main/java/com/bank/web/ClientController.java"><code>ClientController.java</code></a>. Try each step on your own before opening them.</span><span lang="fr">Fichiers de référence : <a href="https://github.com/oplanson/esipe-javaee/blob/master/03-Labs/Lab02-ServletsJSP/solution/src/main/java/com/bank/model/Client.java"><code>Client.java</code></a>, <a href="https://github.com/oplanson/esipe-javaee/blob/master/03-Labs/Lab02-ServletsJSP/solution/src/main/java/com/bank/model/Account.java"><code>Account.java</code></a>, <a href="https://github.com/oplanson/esipe-javaee/blob/master/03-Labs/Lab02-ServletsJSP/solution/src/main/java/com/bank/service/ClientService.java"><code>ClientService.java</code></a>, <a href="https://github.com/oplanson/esipe-javaee/blob/master/03-Labs/Lab02-ServletsJSP/solution/src/main/java/com/bank/web/ClientController.java"><code>ClientController.java</code></a>. Essayez chaque étape par vous-même avant de les ouvrir.</span>
+</p>
+    </section>
+
+    <section class="lg-section" id="setup">
+      <h2><span class="lg-sec-num">04</span><span lang="en">Setup</span><span lang="fr">Préparation</span></h2>
+<h3><span lang="en">Tools</span><span lang="fr">Outils</span></h3>
+<table class="slide-table">
+  <thead><tr><th><span lang="en">Tool</span><span lang="fr">Outil</span></th><th><span lang="en">Check with</span><span lang="fr">Vérifier avec</span></th></tr></thead>
+  <tbody>
+    <tr><td>JDK 17+</td><td><code>java -version</code></td></tr>
+    <tr><td>Maven 3.x</td><td><code>mvn -v</code></td></tr>
+    <tr><td><span lang="en">Podman (Docker works with the same commands)</span><span lang="fr">Podman (Docker fonctionne avec les mêmes commandes)</span></td><td><code>podman --version</code></td></tr>
+    <tr><td>curl</td><td><code>curl --version</code></td></tr>
+    <tr><td><span lang="en"><code>jshell</code> (included with the JDK, used in steps 3 and 4)</span><span lang="fr"><code>jshell</code> (fourni avec le JDK, utilisé aux étapes 3 et 4)</span></td><td><code>jshell --version</code></td></tr>
+  </tbody>
+</table>
+<div class="lg-callout lg-callout--note">
+  <div lang="en"><div class="lg-callout-title">macOS and Windows</div><p>Podman runs containers in a virtual machine. If <code>podman</code> cannot connect, run <code>podman machine list</code> and start it with <code>podman machine start</code>.</p></div>
+  <div lang="fr"><div class="lg-callout-title">macOS et Windows</div><p>Podman exécute les conteneurs dans une machine virtuelle. Si <code>podman</code> ne se connecte pas, lancez <code>podman machine list</code> puis démarrez-la avec <code>podman machine start</code>.</p></div>
+</div>
+<h3><span lang="en">Your working folder</span><span lang="fr">Votre dossier de travail</span></h3>
+<p>
+  <span lang="en">Work directly in <code>starter/</code>. All commands start from the repository root, then move into the working folder.</span><span lang="fr">Travaillez directement dans <code>starter/</code>. Toutes les commandes partent de la racine du dépôt, puis se placent dans le dossier de travail.</span>
+</p>
+<pre class="dark"><code>cd 03-Labs/Lab02-ServletsJSP/starter</code></pre>
+<h3><span lang="en">The redeploy loop</span><span lang="fr">La boucle de redéploiement</span></h3>
+<p>
+  <span lang="en">The WAR is baked into the container image, so after <strong>every</strong> change you rebuild and restart. The image is <code>banking-web-app:lab02</code> and the container is <code>banking-lab02</code>:</span><span lang="fr">Le WAR est embarqué dans l'image du conteneur : après <strong>chaque</strong> modification, vous reconstruisez et relancez. L'image est <code>banking-web-app:lab02</code> et le conteneur <code>banking-lab02</code> :</span>
+</p>
+<pre class="dark"><code>mvn clean package -DskipTests
+podman rm -f banking-lab02 2&gt;/dev/null
+podman build -t banking-web-app:lab02 -f Containerfile .
+podman run -d --name banking-lab02 -p 127.0.0.1:9080:9080 banking-web-app:lab02
+until curl -fs -o /dev/null http://localhost:9080/; do sleep 2; done; echo "ready"</code></pre>
+<p>
+  <span lang="en">The container is bound to <code>127.0.0.1</code> so the application is reachable from your machine only. The first <code>mvn package</code> downloads Open Liberty and may take several minutes. Liberty writes its log file inside the container: read it with <code>podman exec banking-lab02 cat /logs/messages.log</code>.</span><span lang="fr">Le conteneur est lié à <code>127.0.0.1</code> : l'application n'est accessible que depuis votre machine. Le premier <code>mvn package</code> télécharge Open Liberty et peut prendre plusieurs minutes. Liberty écrit son fichier de log dans le conteneur : lisez-le avec <code>podman exec banking-lab02 cat /logs/messages.log</code>.</span>
+</p>
+    </section>
+
+    <section class="lg-section" id="steps">
+      <h2><span class="lg-sec-num">05</span><span lang="en">Step by step</span><span lang="fr">Pas à pas</span></h2>
+<p>
+  <span lang="en">Each step gives the task, then two levels of hints and a link to the solution file. Try first, open the hints only if you are stuck, and always run the checkpoint before moving on. Total: about 4 h 10.</span><span lang="fr">Chaque étape donne la consigne, puis deux niveaux d'indices et un lien vers le fichier solution. Essayez d'abord, n'ouvrez les indices qu'en cas de blocage, et lancez toujours le point de contrôle avant de continuer. Total : environ 4 h 10.</span>
+</p>
+<ol class="lg-steps-overview">
+  <li><a href="#step-1"><span lang="en">Build and observe the baseline</span><span lang="fr">Compiler et observer l'existant</span></a><span class="lg-dur">10 min</span></li>
+  <li><a href="#step-2"><span lang="en">Enable OpenAPI and open the metrics</span><span lang="fr">Activer OpenAPI et ouvrir les métriques</span></a><span class="lg-dur">10 min</span></li>
+  <li><a href="#step-3"><span lang="en">The <code>Client</code> and <code>Account</code> models</span><span lang="fr">Les modèles <code>Client</code> et <code>Account</code></span></a><span class="lg-dur">15 min</span></li>
+  <li><a href="#step-4"><span lang="en"><code>ClientService</code>: in-memory CRUD</span><span lang="fr"><code>ClientService</code> : CRUD en mémoire</span></a><span class="lg-dur">20 min</span></li>
+  <li><a href="#step-5"><span lang="en"><code>ClientController</code>: front controller</span><span lang="fr"><code>ClientController</code> : contrôleur frontal</span></a><span class="lg-dur">40 min</span></li>
+  <li><a href="#step-6"><span lang="en"><code>client-list.jsp</code>: list view</span><span lang="fr"><code>client-list.jsp</code> : vue liste</span></a><span class="lg-dur">20 min</span></li>
+  <li><a href="#step-7"><span lang="en"><code>client-form.jsp</code>: create and edit</span><span lang="fr"><code>client-form.jsp</code> : création et modification</span></a><span class="lg-dur">15 min</span></li>
+  <li><a href="#step-8"><span lang="en"><code>client-details.jsp</code>: details and accounts</span><span lang="fr"><code>client-details.jsp</code> : détail et comptes</span></a><span class="lg-dur">15 min</span></li>
+  <li><a href="#step-9"><span lang="en">MicroProfile Health checks</span><span lang="fr">Health checks MicroProfile</span></a><span class="lg-dur">15 min</span></li>
+  <li><a href="#step-10"><span lang="en">MicroProfile Config and <code>web.xml</code></span><span lang="fr">MicroProfile Config et <code>web.xml</code></span></a><span class="lg-dur">10 min</span></li>
+  <li><a href="#step-11"><span lang="en">Listeners: sessions and application lifecycle</span><span lang="fr">Listeners : sessions et cycle de vie de l'application</span></a><span class="lg-dur">25 min</span></li>
+  <li><a href="#step-12"><span lang="en"><code>LoggingFilter</code>: requests, responses, timing</span><span lang="fr"><code>LoggingFilter</code> : requêtes, réponses, durée</span></a><span class="lg-dur">15 min</span></li>
+  <li><a href="#step-13"><span lang="en"><code>AuthenticationFilter</code>: protect URLs</span><span lang="fr"><code>AuthenticationFilter</code> : protéger des URL</span></a><span class="lg-dur">15 min</span></li>
+  <li><a href="#step-14"><span lang="en"><code>CorsFilter</code>: cross-origin requests</span><span lang="fr"><code>CorsFilter</code> : requêtes cross-origin</span></a><span class="lg-dur">10 min</span></li>
+  <li><a href="#step-15"><span lang="en"><code>CompressionFilter</code>: GZIP responses</span><span lang="fr"><code>CompressionFilter</code> : réponses GZIP</span></a><span class="lg-dur">15 min</span></li>
+</ol>
+
+<article class="lg-step" id="step-1">
+  <div class="lg-step-head">
+    <div class="lg-step-num">1</div>
+    <div>
+      <h3><span lang="en">Build and observe the baseline</span><span lang="fr">Compiler et observer l'existant</span></h3>
+      <div class="lg-step-meta">
+        <span class="lg-chip">10 min</span>
+        <span class="lg-chip"><span lang="en">Course:</span><span lang="fr">Cours :</span> <a href="../../02-Lectures/slides/02-servlets/slides.html#slide-49"><span lang="en">servlets, slide 49 (filters)</span><span lang="fr">servlets, slide 49 (filtres)</span></a></span>
+      </div>
+    </div>
+  </div>
+  <div class="lg-step-body">
+<p class="lg-files"><span lang="en">Files:</span><span lang="fr">Fichiers :</span> <code>pom.xml</code>, <code>Containerfile</code>, <code>src/main/java/com/bank/filter/AuthenticationFilter.java</code>, <code>src/main/java/com/bank/filter/CompressionFilter.java</code>, <code>src/main/java/com/bank/filter/LoggingFilter.java</code></p>
+<div class="lg-task-label"><span lang="en">Task</span><span lang="fr">À faire</span></div>
+<ol>
+  <li><span lang="en">Run the redeploy loop of the Setup section. The starter compiles as is.</span><span lang="fr">Lancez la boucle de redéploiement de la section Préparation. Le starter compile tel quel.</span></li>
+  <li><span lang="en">Request <code>/</code> and <code>/clients</code>. Both answer <code>200</code> with an <strong>empty body</strong>. Find out why by reading the three filters mapped on <code>/*</code>: <code>AuthenticationFilter</code>, <code>CompressionFilter</code> and <code>LoggingFilter</code>.</span><span lang="fr">Appelez <code>/</code> et <code>/clients</code>. Les deux répondent <code>200</code> avec un <strong>corps vide</strong>. Trouvez pourquoi en lisant les trois filtres mappés sur <code>/*</code> : <code>AuthenticationFilter</code>, <code>CompressionFilter</code> et <code>LoggingFilter</code>.</span></li>
+  <li><span lang="en">Temporarily disable these three filters by commenting out their <code>@WebFilter(...)</code> line. You will re-enable each one in its own step (12 to 15). Leave <code>CorsFilter</code> alone: it only handles <code>/api/*</code>.</span><span lang="fr">Désactivez temporairement ces trois filtres en commentant leur ligne <code>@WebFilter(...)</code>. Vous réactiverez chacun dans sa propre étape (12 à 15). Ne touchez pas à <code>CorsFilter</code> : il ne traite que <code>/api/*</code>.</span></li>
+  <li><span lang="en">Redeploy and request <code>/</code> again.</span><span lang="fr">Redéployez et appelez de nouveau <code>/</code>.</span></li>
+</ol>
+<details class="lg-hint lg-hint--1">
+  <summary><span lang="en">Hint 1 — where is the chain call?</span><span lang="fr">Indice 1 — où est l'appel à la chaîne ?</span></summary>
+  <div class="lg-hint-body">
+<p>
+  <span lang="en">A filter lets the request continue only by calling <code>chain.doFilter(request, response)</code>. Look for that call in each <code>doFilter</code> of the starter.</span><span lang="fr">Un filtre ne laisse passer la requête que s'il appelle <code>chain.doFilter(request, response)</code>. Cherchez cet appel dans chaque <code>doFilter</code> du starter.</span>
+</p>
+  </div>
+</details>
+<details class="lg-hint lg-hint--2">
+  <summary><span lang="en">Hint 2 — the line to comment</span><span lang="fr">Indice 2 — la ligne à commenter</span></summary>
+  <div class="lg-hint-body">
+<pre class="dark"><code>// @WebFilter(filterName = "LoggingFilter", urlPatterns = "/*")</code></pre>
+<p>
+  <span lang="en">In the starter, the three <code>doFilter</code> methods contain only TODO comments and never call the chain, so the request stops there with an empty <code>200</code>.</span><span lang="fr">Dans le starter, les trois méthodes <code>doFilter</code> ne contiennent que des commentaires TODO et n'appellent jamais la chaîne : la requête s'arrête là avec un <code>200</code> vide.</span>
+</p>
+  </div>
+</details>
+<div class="lg-checkpoint">
+  <div class="lg-check-label"><span lang="en">Checkpoint</span><span lang="fr">Point de contrôle</span></div>
+<pre class="dark"><code>mvn clean package -DskipTests
+podman rm -f banking-lab02 2&gt;/dev/null
+podman build -t banking-web-app:lab02 -f Containerfile .
+podman run -d --name banking-lab02 -p 127.0.0.1:9080:9080 banking-web-app:lab02
+until curl -fs -o /dev/null http://localhost:9080/; do sleep 2; done; echo "ready"
+curl -s -o /dev/null -w '%{http_code} %{size_download}\n' http://localhost:9080/
+curl -s -o /dev/null -w '%{http_code} %{size_download}\n' http://localhost:9080/css/style.css</code></pre>
+  <p>
+  <span lang="en">Expected: <code>/</code> answers <code>200</code> with a non-zero size (the home page, 2326 bytes) and the stylesheet answers <code>200</code>. <code>/clients</code> still returns an empty <code>200</code> (no controller yet) and <code>/health</code> returns <code>500</code>: both are fixed in later steps.</span><span lang="fr">Attendu : <code>/</code> répond <code>200</code> avec une taille non nulle (la page d'accueil, 2326 octets) et la feuille de style répond <code>200</code>. <code>/clients</code> renvoie encore un <code>200</code> vide (pas de contrôleur) et <code>/health</code> renvoie <code>500</code> : les deux sont corrigés dans les étapes suivantes.</span>
+</p>
+</div>
+  </div>
+</article>
+
+<article class="lg-step" id="step-2">
+  <div class="lg-step-head">
+    <div class="lg-step-num">2</div>
+    <div>
+      <h3><span lang="en">Enable OpenAPI and open the metrics</span><span lang="fr">Activer OpenAPI et ouvrir les métriques</span></h3>
+      <div class="lg-step-meta">
+        <span class="lg-chip">10 min</span>
+        <span class="lg-chip"><span lang="en">Course:</span><span lang="fr">Cours :</span> <a href="../../02-Lectures/slides/01-intro/slides.html#slide-19"><span lang="en">intro, slide 19</span><span lang="fr">intro, slide 19</span></a></span>
+      </div>
+    </div>
+  </div>
+  <div class="lg-step-body">
+<p class="lg-files"><span lang="en">File to modify:</span><span lang="fr">Fichier à modifier :</span> <code>src/main/liberty/config/server.xml</code></p>
+<div class="lg-task-label"><span lang="en">Task</span><span lang="fr">À faire</span></div>
+<p>
+  <span lang="en">The starter <code>server.xml</code> lacks the OpenAPI feature, and <code>/metrics</code> answers <code>403</code> over plain HTTP. Add the feature <code>mpOpenAPI-3.1</code> and an element that makes <code>/metrics</code> reachable without authentication, then redeploy.</span><span lang="fr">Le <code>server.xml</code> du starter n'a pas la feature OpenAPI, et <code>/metrics</code> répond <code>403</code> en HTTP simple. Ajoutez la feature <code>mpOpenAPI-3.1</code> et un élément qui rend <code>/metrics</code> accessible sans authentification, puis redéployez.</span>
+</p>
+<details class="lg-hint lg-hint--1">
+  <summary><span lang="en">Hint 1</span><span lang="fr">Indice 1</span></summary>
+  <div class="lg-hint-body">
+<p>
+  <span lang="en">The element is named after the feature that exposes the endpoint, <code>mpMetrics</code>, and has an <code>authentication</code> attribute. The feature goes in <code>&lt;featureManager&gt;</code>.</span><span lang="fr">L'élément porte le nom de la feature qui expose l'endpoint, <code>mpMetrics</code>, et possède un attribut <code>authentication</code>. La feature va dans <code>&lt;featureManager&gt;</code>.</span>
+</p>
+  </div>
+</details>
+<details class="lg-hint lg-hint--2">
+  <summary><span lang="en">Hint 2 — the lines to add</span><span lang="fr">Indice 2 — les lignes à ajouter</span></summary>
+  <div class="lg-hint-body">
+<pre class="dark"><code>&lt;feature&gt;mpOpenAPI-3.1&lt;/feature&gt;      &lt;!-- inside &lt;featureManager&gt; --&gt;
+&lt;mpMetrics authentication="false"/&gt;   &lt;!-- directly inside &lt;server&gt; --&gt;</code></pre>
+  </div>
+</details>
+<div class="lg-callout lg-callout--warn">
+  <div lang="en"><div class="lg-callout-title">The solution also declares demo credentials</div><p><a href="https://github.com/oplanson/esipe-javaee/blob/master/03-Labs/Lab02-ServletsJSP/solution/src/main/liberty/config/server.xml"><code>solution/…/server.xml</code></a> adds <code>&lt;quickStartSecurity userName="admin" userPassword="adminpwd"/&gt;</code>. It is <strong>not needed</strong> here: <code>authentication="false"</code> is enough. Such credentials are for a local demo only and must never be reused or committed in a real project.</p></div>
+  <div lang="fr"><div class="lg-callout-title">La solution déclare aussi des identifiants de démo</div><p><a href="https://github.com/oplanson/esipe-javaee/blob/master/03-Labs/Lab02-ServletsJSP/solution/src/main/liberty/config/server.xml"><code>solution/…/server.xml</code></a> ajoute <code>&lt;quickStartSecurity userName="admin" userPassword="adminpwd"/&gt;</code>. Il n'est <strong>pas nécessaire</strong> ici : <code>authentication="false"</code> suffit. De tels identifiants servent uniquement à une démo locale et ne doivent jamais être réutilisés ni versionnés dans un vrai projet.</p></div>
+</div>
+<details class="lg-hint lg-hint--sol">
+  <summary><span lang="en">Solution file</span><span lang="fr">Fichier solution</span></summary>
+  <div class="lg-hint-body">
+<p><a href="https://github.com/oplanson/esipe-javaee/blob/master/03-Labs/Lab02-ServletsJSP/solution/src/main/liberty/config/server.xml"><code>solution/…/server.xml</code></a></p>
+  </div>
+</details>
+<div class="lg-checkpoint">
+  <div class="lg-check-label"><span lang="en">Checkpoint</span><span lang="fr">Point de contrôle</span></div>
+<pre class="dark"><code># redeploy loop, then:
+curl -s -o /dev/null -w '%{http_code}\n' http://localhost:9080/metrics
+curl -s http://localhost:9080/metrics | head -2
+curl -s http://localhost:9080/openapi | head -3</code></pre>
+  <p>
+  <span lang="en">Expected: <code>200</code>, then lines starting with <code># HELP</code> and <code># TYPE</code> (Prometheus format), then an OpenAPI document starting with <code>openapi:</code>.</span><span lang="fr">Attendu : <code>200</code>, puis des lignes commençant par <code># HELP</code> et <code># TYPE</code> (format Prometheus), puis un document OpenAPI commençant par <code>openapi:</code>.</span>
+</p>
+</div>
+  </div>
+</article>
+
+<article class="lg-step" id="step-3">
+  <div class="lg-step-head">
+    <div class="lg-step-num">3</div>
+    <div>
+      <h3><span lang="en">The <code>Client</code> and <code>Account</code> models</span><span lang="fr">Les modèles <code>Client</code> et <code>Account</code></span></h3>
+      <div class="lg-step-meta">
+        <span class="lg-chip">15 min</span>
+        <span class="lg-chip"><span lang="en">Course:</span><span lang="fr">Cours :</span> <a href="../../02-Lectures/slides/02-servlets/slides.html#slide-24"><span lang="en">servlets, slide 24 (MVC model)</span><span lang="fr">servlets, slide 24 (modèle MVC)</span></a></span>
+      </div>
+    </div>
+  </div>
+  <div class="lg-step-body">
+<p class="lg-files"><span lang="en">Files to complete:</span><span lang="fr">Fichiers à compléter :</span> <code>src/main/java/com/bank/model/Client.java</code>, <code>src/main/java/com/bank/model/Account.java</code></p>
+<div class="lg-task-label"><span lang="en">Task</span><span lang="fr">À faire</span></div>
+<p>
+  <span lang="en">Replace the TODO comments of both classes:</span><span lang="fr">Remplacez les commentaires TODO des deux classes :</span>
+</p>
+<ul>
+  <li><span lang="en"><code>Client</code>: fields <code>id</code>, <code>name</code>, <code>email</code>, <code>accounts</code> (a <code>List&lt;Account&gt;</code>). A default constructor that <strong>initialises the list</strong>, a constructor <code>(String name, String email)</code> and a constructor <code>(Long id, String name, String email)</code>.</span><span lang="fr"><code>Client</code> : champs <code>id</code>, <code>name</code>, <code>email</code>, <code>accounts</code> (une <code>List&lt;Account&gt;</code>). Un constructeur par défaut qui <strong>initialise la liste</strong>, un constructeur <code>(String name, String email)</code> et un constructeur <code>(Long id, String name, String email)</code>.</span></li>
+  <li><span lang="en"><code>Client</code>: getters and setters, <code>addAccount(Account)</code> (also calls <code>account.setClientId(this.id)</code>), <code>removeAccount(Account)</code>, <code>toString()</code>, and <code>equals</code>/<code>hashCode</code> based on <code>id</code>.</span><span lang="fr"><code>Client</code> : getters et setters, <code>addAccount(Account)</code> (appelle aussi <code>account.setClientId(this.id)</code>), <code>removeAccount(Account)</code>, <code>toString()</code>, et <code>equals</code>/<code>hashCode</code> basés sur <code>id</code>.</span></li>
+  <li><span lang="en"><code>Account</code>: fields <code>id</code>, <code>number</code>, <code>balance</code> (<code>double</code>), <code>type</code> (<code>CHECKING</code> or <code>SAVINGS</code>), <code>clientId</code>; constructors <code>()</code>, <code>(number, balance, type, clientId)</code> and <code>(id, number, balance, type, clientId)</code>; getters, setters, <code>deposit</code>, <code>withdraw</code>, <code>toString()</code>, <code>equals</code>/<code>hashCode</code> on <code>id</code>.</span><span lang="fr"><code>Account</code> : champs <code>id</code>, <code>number</code>, <code>balance</code> (<code>double</code>), <code>type</code> (<code>CHECKING</code> ou <code>SAVINGS</code>), <code>clientId</code> ; constructeurs <code>()</code>, <code>(number, balance, type, clientId)</code> et <code>(id, number, balance, type, clientId)</code> ; getters, setters, <code>deposit</code>, <code>withdraw</code>, <code>toString()</code>, <code>equals</code>/<code>hashCode</code> sur <code>id</code>.</span></li>
+</ul>
+<details class="lg-hint lg-hint--1">
+  <summary><span lang="en">Hint 1</span><span lang="fr">Indice 1</span></summary>
+  <div class="lg-hint-body">
+<p>
+  <span lang="en">Your IDE can generate constructors, accessors, <code>equals</code>/<code>hashCode</code> and <code>toString</code>. The <code>toString</code> formats are checked in the checkpoint below.</span><span lang="fr">Votre IDE peut générer constructeurs, accesseurs, <code>equals</code>/<code>hashCode</code> et <code>toString</code>. Les formats de <code>toString</code> sont vérifiés dans le point de contrôle ci-dessous.</span>
+</p>
+  </div>
+</details>
+<details class="lg-hint lg-hint--2">
+  <summary><span lang="en">Hint 2 — skeleton of <code>Client</code></span><span lang="fr">Indice 2 — squelette de <code>Client</code></span></summary>
+  <div class="lg-hint-body">
+<pre class="dark"><code>public class Client {
+    private Long id;
+    private String name;
+    private String email;
+    private List&lt;Account&gt; accounts;
+
+    public Client() { this.accounts = new ArrayList&lt;&gt;(); }
+    public Client(String name, String email) { this(); /* assign name and email */ }
+    public Client(Long id, String name, String email) { this(name, email); /* assign id */ }
+
+    public void addAccount(Account account) { /* add, then account.setClientId(this.id) */ }
+    public void removeAccount(Account account) { /* remove if the list exists */ }
+    // getters, setters, equals/hashCode on id, toString
+}</code></pre>
+  </div>
+</details>
+<details class="lg-hint lg-hint--sol">
+  <summary><span lang="en">Solution files</span><span lang="fr">Fichiers solution</span></summary>
+  <div class="lg-hint-body">
+<p><a href="https://github.com/oplanson/esipe-javaee/blob/master/03-Labs/Lab02-ServletsJSP/solution/src/main/java/com/bank/model/Client.java"><code>solution/…/Client.java</code></a> · <a href="https://github.com/oplanson/esipe-javaee/blob/master/03-Labs/Lab02-ServletsJSP/solution/src/main/java/com/bank/model/Account.java"><code>solution/…/Account.java</code></a></p>
+  </div>
+</details>
+<div class="lg-checkpoint">
+  <div class="lg-check-label"><span lang="en">Checkpoint</span><span lang="fr">Point de contrôle</span></div>
+<pre class="dark"><code>mvn -q compile
+jshell --class-path target/classes
+  var c = new com.bank.model.Client("Alice", "alice@example.com")
+  c.setId(1L)
+  var a = new com.bank.model.Account("FR76", 10.0, "CHECKING", 1L)
+  c.addAccount(a)
+  c
+  a
+  /exit</code></pre>
+  <p>
+  <span lang="en">Expected: no compilation error; <code>c</code> prints <code>Client{id=1, name='Alice', email='alice@example.com', accounts=1}</code> and <code>a</code> prints <code>Account{id=null, number='FR76', balance=10.0, type='CHECKING', clientId=1}</code>.</span><span lang="fr">Attendu : aucune erreur de compilation ; <code>c</code> affiche <code>Client{id=1, name='Alice', email='alice@example.com', accounts=1}</code> et <code>a</code> affiche <code>Account{id=null, number='FR76', balance=10.0, type='CHECKING', clientId=1}</code>.</span>
+</p>
+</div>
+  </div>
+</article>
+
+<article class="lg-step" id="step-4">
+  <div class="lg-step-head">
+    <div class="lg-step-num">4</div>
+    <div>
+      <h3><span lang="en"><code>ClientService</code>: in-memory CRUD</span><span lang="fr"><code>ClientService</code> : CRUD en mémoire</span></h3>
+      <div class="lg-step-meta">
+        <span class="lg-chip">20 min</span>
+        <span class="lg-chip"><span lang="en">Course:</span><span lang="fr">Cours :</span> <a href="../../02-Lectures/slides/02-servlets/slides.html#slide-3"><span lang="en">servlets, slide 3 (one instance, many threads)</span><span lang="fr">servlets, slide 3 (une instance, plusieurs threads)</span></a></span>
+      </div>
+    </div>
+  </div>
+  <div class="lg-step-body">
+<p class="lg-files"><span lang="en">File to complete:</span><span lang="fr">Fichier à compléter :</span> <code>src/main/java/com/bank/service/ClientService.java</code></p>
+<div class="lg-task-label"><span lang="en">Task</span><span lang="fr">À faire</span></div>
+<p>
+  <span lang="en">Implement the methods of <code>ClientService</code> (the starter returns <code>null</code> or <code>false</code>):</span><span lang="fr">Implémentez les méthodes de <code>ClientService</code> (le starter renvoie <code>null</code> ou <code>false</code>) :</span>
+</p>
+<ul>
+  <li><span lang="en"><code>findAll</code>, <code>findById</code>, <code>create</code> (generates the id), <code>update</code> (returns <code>null</code> if unknown), <code>delete</code>, <code>findByName</code> (partial, case-insensitive), <code>addAccount</code>, <code>count</code>.</span><span lang="fr"><code>findAll</code>, <code>findById</code>, <code>create</code> (génère l'id), <code>update</code> (renvoie <code>null</code> si inconnu), <code>delete</code>, <code>findByName</code> (partiel, insensible à la casse), <code>addAccount</code>, <code>count</code>.</span></li>
+  <li><span lang="en">The controller of step 5 also calls <code>initializeSampleData()</code>, which does not exist in the starter: add it (5 clients, 6 accounts, see the solution).</span><span lang="fr">Le contrôleur de l'étape 5 appelle aussi <code>initializeSampleData()</code>, absente du starter : ajoutez-la (5 clients, 6 comptes, voir la solution).</span></li>
+  <li><span lang="en">A single <code>ClientService</code> instance serves all request threads. Replace the starter's <code>HashMap</code> and <code>Long nextId</code> by thread-safe types.</span><span lang="fr">Une seule instance de <code>ClientService</code> sert tous les threads de requête. Remplacez le <code>HashMap</code> et le <code>Long nextId</code> du starter par des types thread-safe.</span></li>
+</ul>
+<details class="lg-hint lg-hint--1">
+  <summary><span lang="en">Hint 1</span><span lang="fr">Indice 1</span></summary>
+  <div class="lg-hint-body">
+<p>
+  <span lang="en"><code>ConcurrentHashMap</code> for the map and <code>AtomicLong.getAndIncrement()</code> for the id. <code>findByName</code> uses <code>stream().filter(...)</code> with <code>toLowerCase().contains(...)</code>.</span><span lang="fr"><code>ConcurrentHashMap</code> pour la map et <code>AtomicLong.getAndIncrement()</code> pour l'id. <code>findByName</code> utilise <code>stream().filter(...)</code> avec <code>toLowerCase().contains(...)</code>.</span>
+</p>
+  </div>
+</details>
+<details class="lg-hint lg-hint--2">
+  <summary><span lang="en">Hint 2 — signatures</span><span lang="fr">Indice 2 — signatures</span></summary>
+  <div class="lg-hint-body">
+<pre class="dark"><code>private final Map&lt;Long, Client&gt; clients = new ConcurrentHashMap&lt;&gt;();
+private final AtomicLong nextId = new AtomicLong(1L);
+
+public List&lt;Client&gt; findAll()                 { return new ArrayList&lt;&gt;(clients.values()); }
+public Client findById(Long id)               { return clients.get(id); }
+public Client create(Client client)           { /* id = nextId.getAndIncrement(); setId; put */ }
+public Client update(Client client)           { /* null if !containsKey(id), else put */ }
+public boolean delete(Long id)                { return clients.remove(id) != null; }
+public List&lt;Client&gt; findByName(String name)   { /* stream + filter + collect */ }
+public void initializeSampleData()            { /* copy from the solution */ }</code></pre>
+  </div>
+</details>
+<details class="lg-hint lg-hint--sol">
+  <summary><span lang="en">Solution file</span><span lang="fr">Fichier solution</span></summary>
+  <div class="lg-hint-body">
+<p><a href="https://github.com/oplanson/esipe-javaee/blob/master/03-Labs/Lab02-ServletsJSP/solution/src/main/java/com/bank/service/ClientService.java"><code>solution/…/ClientService.java</code></a></p>
+  </div>
+</details>
+<div class="lg-checkpoint">
+  <div class="lg-check-label"><span lang="en">Checkpoint</span><span lang="fr">Point de contrôle</span></div>
+<pre class="dark"><code>mvn -q compile
+jshell --class-path target/classes
+  var s = new com.bank.service.ClientService()
+  s.initializeSampleData()
+  s.count()
+  s.findByName("MARIE")
+  s.delete(1L)
+  s.count()
+  /exit</code></pre>
+  <p>
+  <span lang="en">Expected: <code>count()</code> returns <code>5</code>, <code>findByName("MARIE")</code> returns one client (<code>Marie Martin</code>, 1 account), <code>delete(1L)</code> returns <code>true</code> and <code>count()</code> then returns <code>4</code>.</span><span lang="fr">Attendu : <code>count()</code> renvoie <code>5</code>, <code>findByName("MARIE")</code> renvoie un client (<code>Marie Martin</code>, 1 compte), <code>delete(1L)</code> renvoie <code>true</code> et <code>count()</code> renvoie ensuite <code>4</code>.</span>
+</p>
+</div>
+  </div>
+</article>
+
+<article class="lg-step" id="step-5">
+  <div class="lg-step-head">
+    <div class="lg-step-num">5</div>
+    <div>
+      <h3><span lang="en"><code>ClientController</code>: front controller</span><span lang="fr"><code>ClientController</code> : contrôleur frontal</span></h3>
+      <div class="lg-step-meta">
+        <span class="lg-chip">40 min</span>
+        <span class="lg-chip"><span lang="en">Course:</span><span lang="fr">Cours :</span> <a href="../../02-Lectures/slides/02-servlets/slides.html#slide-25"><span lang="en">servlets, slide 25 (MVC controller)</span><span lang="fr">servlets, slide 25 (contrôleur MVC)</span></a></span>
+      </div>
+    </div>
+  </div>
+  <div class="lg-step-body">
+<p class="lg-files"><span lang="en">File to complete:</span><span lang="fr">Fichier à compléter :</span> <code>src/main/java/com/bank/web/ClientController.java</code></p>
+<div class="lg-task-label"><span lang="en">Task</span><span lang="fr">À faire</span></div>
+<p>
+  <span lang="en">The servlet is mapped on <code>/clients</code> and <code>/client</code>. Implement it following the TODO comments:</span><span lang="fr">La servlet est mappée sur <code>/clients</code> et <code>/client</code>. Implémentez-la en suivant les commentaires TODO :</span>
+</p>
+<ol>
+  <li><span lang="en"><code>init()</code>: create the <code>ClientService</code>, read the context parameters <code>web.pagination.default.size</code>, <code>feature.client.deletion.enabled</code> and <code>app.name</code> with <code>getServletContext().getInitParameter(...)</code>, load the sample data.</span><span lang="fr"><code>init()</code> : créez le <code>ClientService</code>, lisez les paramètres de contexte <code>web.pagination.default.size</code>, <code>feature.client.deletion.enabled</code> et <code>app.name</code> avec <code>getServletContext().getInitParameter(...)</code>, chargez les données d'exemple.</span></li>
+  <li><span lang="en"><code>doGet</code>: <code>/clients</code> lists; <code>/client</code> redirects to <code>/clients</code> without action, and handles <code>view</code>, <code>new</code>, <code>edit</code>; any other action is a <code>400</code>.</span><span lang="fr"><code>doGet</code> : <code>/clients</code> liste ; <code>/client</code> redirige vers <code>/clients</code> sans action, et gère <code>view</code>, <code>new</code>, <code>edit</code> ; toute autre action donne <code>400</code>.</span></li>
+  <li><span lang="en"><code>doPost</code>: <code>create</code>, <code>update</code>, <code>delete</code>, always followed by a redirect (Post-Redirect-Get). Validate the inputs on the server: missing name or email redirects to <code>/client?action=new&amp;error=name_required</code> (or <code>email_required</code>).</span><span lang="fr"><code>doPost</code> : <code>create</code>, <code>update</code>, <code>delete</code>, toujours suivis d'une redirection (Post-Redirect-Get). Validez les entrées côté serveur : un nom ou un email manquant redirige vers <code>/client?action=new&amp;error=name_required</code> (ou <code>email_required</code>).</span></li>
+  <li><span lang="en">Handlers: unknown id gives <code>404</code>, non-numeric id gives <code>400</code>, deletion when disabled gives <code>403</code>. Views are forwarded to <code>/WEB-INF/views/*.jsp</code>.</span><span lang="fr">Gestionnaires : un id inconnu donne <code>404</code>, un id non numérique donne <code>400</code>, une suppression désactivée donne <code>403</code>. Les vues sont atteintes par un forward vers <code>/WEB-INF/views/*.jsp</code>.</span></li>
+</ol>
+<details class="lg-hint lg-hint--1">
+  <summary><span lang="en">Hint 1</span><span lang="fr">Indice 1</span></summary>
+  <div class="lg-hint-body">
+<ul>
+  <li><span lang="en">Use <code>req.getServletPath()</code> to tell <code>/clients</code> from <code>/client</code>, and <code>req.getParameter("action")</code> for the action.</span><span lang="fr">Utilisez <code>req.getServletPath()</code> pour distinguer <code>/clients</code> de <code>/client</code>, et <code>req.getParameter("action")</code> pour l'action.</span></li>
+  <li><span lang="en">Attributes the JSPs read: <code>clients</code>, <code>client</code>, <code>appName</code>, <code>deletionEnabled</code>. Why redirect after a POST? See <a href="../../02-Lectures/slides/02-servlets/slides.html#slide-8">slide 8</a>.</span><span lang="fr">Attributs lus par les JSP : <code>clients</code>, <code>client</code>, <code>appName</code>, <code>deletionEnabled</code>. Pourquoi rediriger après un POST ? Voir la <a href="../../02-Lectures/slides/02-servlets/slides.html#slide-8">slide 8</a>.</span></li>
+</ul>
+  </div>
+</details>
+<details class="lg-hint lg-hint--2">
+  <summary><span lang="en">Hint 2 — skeleton</span><span lang="fr">Indice 2 — squelette</span></summary>
+  <div class="lg-hint-body">
+<pre class="dark"><code>@WebServlet(name = "ClientController", urlPatterns = { "/clients", "/client" }, loadOnStartup = 1)
+public class ClientController extends HttpServlet {
+    @Override public void init() throws ServletException { /* service, init params, sample data */ }
+
+    @Override protected void doGet(HttpServletRequest req, HttpServletResponse resp)
+            throws ServletException, IOException { /* route on getServletPath() and "action" */ }
+
+    @Override protected void doPost(HttpServletRequest req, HttpServletResponse resp)
+            throws ServletException, IOException { /* create | update | delete, then sendRedirect */ }
+
+    private void listClients(...)  { /* req.setAttribute(...); forward to client-list.jsp */ }
+    private void viewClient(...)   { /* parse id, findById, 404 / 400, forward */ }
+    private void createClient(...) { /* validate, new Client(name.trim(), email.trim()), redirect */ }
+}</code></pre>
+  </div>
+</details>
+<details class="lg-hint lg-hint--sol">
+  <summary><span lang="en">Solution file</span><span lang="fr">Fichier solution</span></summary>
+  <div class="lg-hint-body">
+<p><a href="https://github.com/oplanson/esipe-javaee/blob/master/03-Labs/Lab02-ServletsJSP/solution/src/main/java/com/bank/web/ClientController.java"><code>solution/…/ClientController.java</code></a></p>
+  </div>
+</details>
+<div class="lg-callout lg-callout--note">
+  <div lang="en"><div class="lg-callout-title">Expected <code>500</code> on <code>/clients</code> for now</div><p>Until step 6, <code>/clients</code> returns an empty <code>500</code>: the starter <code>client-list.jsp</code> contains an unmatched <code>&lt;c:forEach&gt;</code> tag. The error pages declared in <code>web.xml</code> (<code>error-500.jsp</code>) do not exist, so the body is empty. The checkpoint below does not call <code>/clients</code>.</p></div>
+  <div lang="fr"><div class="lg-callout-title"><code>500</code> attendu sur <code>/clients</code> pour l'instant</div><p>Jusqu'à l'étape 6, <code>/clients</code> renvoie un <code>500</code> vide : le <code>client-list.jsp</code> du starter contient une balise <code>&lt;c:forEach&gt;</code> non fermée. Les pages d'erreur déclarées dans <code>web.xml</code> (<code>error-500.jsp</code>) n'existent pas, donc le corps est vide. Le point de contrôle ci-dessous n'appelle pas <code>/clients</code>.</p></div>
+</div>
+<div class="lg-checkpoint">
+  <div class="lg-check-label"><span lang="en">Checkpoint</span><span lang="fr">Point de contrôle</span></div>
+<pre class="dark"><code>B=http://localhost:9080   # redeploy loop first
+for q in 'client?action=view&amp;id=1' 'client?action=view&amp;id=999' 'client?action=view&amp;id=abc' 'client?action=bogus' 'client?action=new'; do
+  printf '%-28s %s\n' "/$q" "$(curl -s -o /dev/null -w '%{http_code}' "$B/$q")"; done
+curl -si -X POST -d 'action=create&amp;name=Alice+Martin&amp;email=alice@example.com' $B/client | grep -iE '^HTTP|^location'
+curl -si -X POST -d 'action=create&amp;name=&amp;email=a@b.c' $B/client | grep -iE '^HTTP|^location'
+curl -si -X POST -d 'action=delete&amp;id=999' $B/client | head -1</code></pre>
+  <p>
+  <span lang="en">Expected: <code>200</code>, <code>404</code>, <code>400</code>, <code>400</code>, <code>200</code> for the five GET requests; <code>302</code> with a <code>Location</code> ending in <code>/clients?message=created</code>; <code>302</code> with a <code>Location</code> ending in <code>/client?action=new&amp;error=name_required</code>; and <code>404 Not Found</code> for the unknown delete.</span><span lang="fr">Attendu : <code>200</code>, <code>404</code>, <code>400</code>, <code>400</code>, <code>200</code> pour les cinq requêtes GET ; <code>302</code> avec un <code>Location</code> finissant par <code>/clients?message=created</code> ; <code>302</code> avec un <code>Location</code> finissant par <code>/client?action=new&amp;error=name_required</code> ; et <code>404 Not Found</code> pour la suppression inconnue.</span>
+</p>
+</div>
+  </div>
+</article>
+
+<article class="lg-step" id="step-6">
+  <div class="lg-step-head">
+    <div class="lg-step-num">6</div>
+    <div>
+      <h3><span lang="en"><code>client-list.jsp</code>: list view</span><span lang="fr"><code>client-list.jsp</code> : vue liste</span></h3>
+      <div class="lg-step-meta">
+        <span class="lg-chip">20 min</span>
+        <span class="lg-chip"><span lang="en">Course:</span><span lang="fr">Cours :</span> <a href="../../02-Lectures/slides/02-servlets/slides.html#slide-20"><span lang="en">servlets, slide 20 (JSTL iteration)</span><span lang="fr">servlets, slide 20 (itération JSTL)</span></a></span>
+      </div>
+    </div>
+  </div>
+  <div class="lg-step-body">
+<p class="lg-files"><span lang="en">File to complete:</span><span lang="fr">Fichier à compléter :</span> <code>src/main/webapp/WEB-INF/views/client-list.jsp</code></p>
+<div class="lg-task-label"><span lang="en">Task</span><span lang="fr">À faire</span></div>
+<ol>
+  <li><span lang="en"><strong>Delete the hint comment that contains a live <code>&lt;c:forEach ...&gt;</code> tag.</strong> JSP processes tags even inside HTML comments, so it would leave an unmatched tag.</span><span lang="fr"><strong>Supprimez le commentaire d'indice qui contient une balise <code>&lt;c:forEach ...&gt;</code> active.</strong> Le JSP traite les balises même dans les commentaires HTML : il laisserait une balise non fermée.</span></li>
+  <li><span lang="en">Show a success alert from <code>param.message</code> (<code>created</code>, <code>updated</code>, <code>deleted</code>) with <code>c:choose</code>.</span><span lang="fr">Affichez une alerte de succès d'après <code>param.message</code> (<code>created</code>, <code>updated</code>, <code>deleted</code>) avec <code>c:choose</code>.</span></li>
+  <li><span lang="en">Add the search form (<code>GET /clients?search=...</code>), the table loop with <code>c:forEach</code>, an empty state, and the <strong>New Client</strong> link.</span><span lang="fr">Ajoutez le formulaire de recherche (<code>GET /clients?search=...</code>), la boucle du tableau avec <code>c:forEach</code>, un état vide, et le lien <strong>New Client</strong>.</span></li>
+  <li><span lang="en">Per row: id, name and email through <code>c:out</code>, account count, links View and Edit, and a Delete <strong>POST form</strong> only when <code>deletionEnabled</code> is true.</span><span lang="fr">Par ligne : id, nom et email via <code>c:out</code>, nombre de comptes, liens View et Edit, et un <strong>formulaire POST</strong> Delete seulement si <code>deletionEnabled</code> est vrai.</span></li>
+</ol>
+<details class="lg-hint lg-hint--1">
+  <summary><span lang="en">Hint 1</span><span lang="fr">Indice 1</span></summary>
+  <div class="lg-hint-body">
+<p>
+  <span lang="en"><code>c:out</code> escapes HTML, which protects against script injection (<a href="../../02-Lectures/slides/02-servlets/slides.html#slide-41">slide 41</a>). Build URLs with <code>${pageContext.request.contextPath}/client?action=view&amp;id=${client.id}</code>.</span><span lang="fr"><code>c:out</code> échappe le HTML, ce qui protège contre l'injection de script (<a href="../../02-Lectures/slides/02-servlets/slides.html#slide-41">slide 41</a>). Construisez les URL avec <code>${pageContext.request.contextPath}/client?action=view&amp;id=${client.id}</code>.</span>
+</p>
+  </div>
+</details>
+<details class="lg-hint lg-hint--2">
+  <summary><span lang="en">Hint 2 — the loop</span><span lang="fr">Indice 2 — la boucle</span></summary>
+  <div class="lg-hint-body">
+<pre class="dark"><code>&lt;c:forEach var="client" items="${clients}"&gt;
+  &lt;tr&gt;
+    &lt;td&gt;${client.id}&lt;/td&gt;
+    &lt;td&gt;&lt;c:out value="${client.name}" /&gt;&lt;/td&gt;
+    &lt;td&gt;&lt;c:out value="${client.email}" /&gt;&lt;/td&gt;
+    &lt;td&gt;${client.accounts.size()}&lt;/td&gt;
+    &lt;td&gt;
+      &lt;a href="${pageContext.request.contextPath}/client?action=view&amp;id=${client.id}"&gt;View&lt;/a&gt;
+      &lt;c:if test="${deletionEnabled}"&gt; &lt;!-- POST form with action=delete and id --&gt; &lt;/c:if&gt;
+    &lt;/td&gt;
+  &lt;/tr&gt;
+&lt;/c:forEach&gt;</code></pre>
+  </div>
+</details>
+<details class="lg-hint lg-hint--sol">
+  <summary><span lang="en">Solution file</span><span lang="fr">Fichier solution</span></summary>
+  <div class="lg-hint-body">
+<p><a href="https://github.com/oplanson/esipe-javaee/blob/master/03-Labs/Lab02-ServletsJSP/solution/src/main/webapp/WEB-INF/views/client-list.jsp"><code>solution/…/client-list.jsp</code></a></p>
+  </div>
+</details>
+<div class="lg-checkpoint">
+  <div class="lg-check-label"><span lang="en">Checkpoint</span><span lang="fr">Point de contrôle</span></div>
+<pre class="dark"><code>B=http://localhost:9080   # redeploy loop first
+curl -s $B/clients | grep -o 'action=view&amp;id=[0-9]*'
+curl -s "$B/clients?search=marie" | grep -o 'action=view&amp;id=[0-9]*'
+curl -s $B/clients | grep -c 'value="delete"'
+curl -s "$B/clients?message=created" | grep -c 'alert-success'</code></pre>
+  <p>
+  <span lang="en">Expected: ids 1 to 5, then only id 2 for the search, then <code>5</code> delete forms, then <code>1</code> alert.</span><span lang="fr">Attendu : les ids 1 à 5, puis seulement l'id 2 pour la recherche, puis <code>5</code> formulaires de suppression, puis <code>1</code> alerte.</span>
+</p>
+</div>
+  </div>
+</article>
+
+<article class="lg-step" id="step-7">
+  <div class="lg-step-head">
+    <div class="lg-step-num">7</div>
+    <div>
+      <h3><span lang="en"><code>client-form.jsp</code>: create and edit</span><span lang="fr"><code>client-form.jsp</code> : création et modification</span></h3>
+      <div class="lg-step-meta">
+        <span class="lg-chip">15 min</span>
+        <span class="lg-chip"><span lang="en">Course:</span><span lang="fr">Cours :</span> <a href="../../02-Lectures/slides/02-servlets/slides.html#slide-18"><span lang="en">servlets, slide 18 (EL)</span><span lang="fr">servlets, slide 18 (EL)</span></a></span>
+      </div>
+    </div>
+  </div>
+  <div class="lg-step-body">
+<p class="lg-files"><span lang="en">File to complete:</span><span lang="fr">Fichier à compléter :</span> <code>src/main/webapp/WEB-INF/views/client-form.jsp</code></p>
+<div class="lg-task-label"><span lang="en">Task</span><span lang="fr">À faire</span></div>
+<ol>
+  <li><span lang="en">Display an error alert from <code>param.error</code> (<code>name_required</code>, <code>email_required</code>, other).</span><span lang="fr">Affichez une alerte d'erreur d'après <code>param.error</code> (<code>name_required</code>, <code>email_required</code>, autre).</span></li>
+  <li><span lang="en">Hidden field <code>action</code>: <code>create</code> when <code>client</code> is empty, <code>update</code> otherwise; hidden field <code>id</code> only when editing.</span><span lang="fr">Champ caché <code>action</code> : <code>create</code> si <code>client</code> est vide, <code>update</code> sinon ; champ caché <code>id</code> seulement en modification.</span></li>
+  <li><span lang="en">Inputs <code>name</code> and <code>email</code> (<code>type="email"</code>) pre-filled with <code>c:out</code>, a submit button and a cancel link to <code>/clients</code>.</span><span lang="fr">Champs <code>name</code> et <code>email</code> (<code>type="email"</code>) pré-remplis avec <code>c:out</code>, un bouton d'envoi et un lien d'annulation vers <code>/clients</code>.</span></li>
+</ol>
+<details class="lg-hint lg-hint--1">
+  <summary><span lang="en">Hint 1</span><span lang="fr">Indice 1</span></summary>
+  <div class="lg-hint-body">
+<p>
+  <span lang="en"><code>${empty client ? 'create' : 'update'}</code> gives the action value. Inside an attribute, escape the value with <code>&lt;c:out value='${client.name}' /&gt;</code>.</span><span lang="fr"><code>${empty client ? 'create' : 'update'}</code> donne la valeur de l'action. Dans un attribut, échappez la valeur avec <code>&lt;c:out value='${client.name}' /&gt;</code>.</span>
+</p>
+  </div>
+</details>
+<details class="lg-hint lg-hint--2">
+  <summary><span lang="en">Hint 2 — hidden fields and one input</span><span lang="fr">Indice 2 — champs cachés et un champ</span></summary>
+  <div class="lg-hint-body">
+<pre class="dark"><code>&lt;input type="hidden" name="action" value="${empty client ? 'create' : 'update'}"&gt;
+&lt;c:if test="${not empty client}"&gt;
+  &lt;input type="hidden" name="id" value="${client.id}"&gt;
+&lt;/c:if&gt;
+&lt;input type="text" id="name" name="name" value="&lt;c:out value='${client.name}' /&gt;" required maxlength="100"&gt;</code></pre>
+  </div>
+</details>
+<details class="lg-hint lg-hint--sol">
+  <summary><span lang="en">Solution file</span><span lang="fr">Fichier solution</span></summary>
+  <div class="lg-hint-body">
+<p><a href="https://github.com/oplanson/esipe-javaee/blob/master/03-Labs/Lab02-ServletsJSP/solution/src/main/webapp/WEB-INF/views/client-form.jsp"><code>solution/…/client-form.jsp</code></a></p>
+  </div>
+</details>
+<div class="lg-checkpoint">
+  <div class="lg-check-label"><span lang="en">Checkpoint</span><span lang="fr">Point de contrôle</span></div>
+<pre class="dark"><code>B=http://localhost:9080   # redeploy loop first
+curl -s "$B/client?action=new" | grep -o 'value="create"'
+curl -s "$B/client?action=edit&amp;id=1" | grep -oE 'value="(update|Jean Dupont)"'
+curl -s "$B/client?action=new&amp;error=name_required" | grep -c 'alert-danger'</code></pre>
+  <p>
+  <span lang="en">Expected: <code>value="create"</code>; then <code>value="update"</code> and <code>value="Jean Dupont"</code>; then <code>1</code> (or more) matching alert. In a browser, create a client with the form and check you land on the list with the green message.</span><span lang="fr">Attendu : <code>value="create"</code> ; puis <code>value="update"</code> et <code>value="Jean Dupont"</code> ; puis <code>1</code> (ou plus) alerte. Dans un navigateur, créez un client avec le formulaire et vérifiez que vous arrivez sur la liste avec le message vert.</span>
+</p>
+</div>
+  </div>
+</article>
+
+<article class="lg-step" id="step-8">
+  <div class="lg-step-head">
+    <div class="lg-step-num">8</div>
+    <div>
+      <h3><span lang="en"><code>client-details.jsp</code>: details and accounts</span><span lang="fr"><code>client-details.jsp</code> : détail et comptes</span></h3>
+      <div class="lg-step-meta">
+        <span class="lg-chip">15 min</span>
+        <span class="lg-chip"><span lang="en">Course:</span><span lang="fr">Cours :</span> <a href="../../02-Lectures/slides/02-servlets/slides.html#slide-21"><span lang="en">servlets, slide 21 (JSTL formatting)</span><span lang="fr">servlets, slide 21 (formatage JSTL)</span></a></span>
+      </div>
+    </div>
+  </div>
+  <div class="lg-step-body">
+<p class="lg-files"><span lang="en">File to complete:</span><span lang="fr">Fichier à compléter :</span> <code>src/main/webapp/WEB-INF/views/client-details.jsp</code></p>
+<div class="lg-task-label"><span lang="en">Task</span><span lang="fr">À faire</span></div>
+<ol>
+  <li><span lang="en">Display the client id, name and email (name and email through <code>c:out</code>).</span><span lang="fr">Affichez l'id, le nom et l'email du client (nom et email via <code>c:out</code>).</span></li>
+  <li><span lang="en">With <code>c:choose</code>: a message when the client has no account, otherwise a table of accounts (number, type, balance) with <code>c:forEach</code> and <code>fmt:formatNumber</code>.</span><span lang="fr">Avec <code>c:choose</code> : un message si le client n'a aucun compte, sinon un tableau des comptes (numéro, type, solde) avec <code>c:forEach</code> et <code>fmt:formatNumber</code>.</span></li>
+  <li><span lang="en">Buttons: Edit, Delete (POST form, only if <code>deletionEnabled</code>, with a confirmation) and Back to the list.</span><span lang="fr">Boutons : Edit, Delete (formulaire POST, seulement si <code>deletionEnabled</code>, avec confirmation) et retour à la liste.</span></li>
+</ol>
+<details class="lg-hint lg-hint--1">
+  <summary><span lang="en">Hint 1</span><span lang="fr">Indice 1</span></summary>
+  <div class="lg-hint-body">
+<p>
+  <span lang="en"><code>${empty client.accounts}</code> tests an empty list. The taglib prefixes <code>c</code> and <code>fmt</code> are already declared at the top of the page.</span><span lang="fr"><code>${empty client.accounts}</code> teste une liste vide. Les préfixes de taglib <code>c</code> et <code>fmt</code> sont déjà déclarés en haut de la page.</span>
+</p>
+  </div>
+</details>
+<details class="lg-hint lg-hint--2">
+  <summary><span lang="en">Hint 2 — account rows</span><span lang="fr">Indice 2 — lignes de comptes</span></summary>
+  <div class="lg-hint-body">
+<pre class="dark"><code>&lt;c:forEach var="account" items="${client.accounts}"&gt;
+  &lt;tr&gt;
+    &lt;td&gt;&lt;c:out value="${account.number}" /&gt;&lt;/td&gt;
+    &lt;td&gt;&lt;c:out value="${account.type}" /&gt;&lt;/td&gt;
+    &lt;td&gt;&lt;fmt:formatNumber value="${account.balance}" type="currency" /&gt;&lt;/td&gt;
+  &lt;/tr&gt;
+&lt;/c:forEach&gt;</code></pre>
+  </div>
+</details>
+<details class="lg-hint lg-hint--sol">
+  <summary><span lang="en">Solution file</span><span lang="fr">Fichier solution</span></summary>
+  <div class="lg-hint-body">
+<p><a href="https://github.com/oplanson/esipe-javaee/blob/master/03-Labs/Lab02-ServletsJSP/solution/src/main/webapp/WEB-INF/views/client-details.jsp"><code>solution/…/client-details.jsp</code></a></p>
+  </div>
+</details>
+<div class="lg-checkpoint">
+  <div class="lg-check-label"><span lang="en">Checkpoint</span><span lang="fr">Point de contrôle</span></div>
+<pre class="dark"><code>B=http://localhost:9080   # redeploy loop first
+curl -s "$B/client?action=view&amp;id=1" | grep -oE 'FR[0-9]{25}'
+curl -s "$B/client?action=view&amp;id=4" | grep -ic 'no accounts'</code></pre>
+  <p>
+  <span lang="en">Expected: the two account numbers of client 1 (<code>FR7612345678901234567890123</code> and <code>FR7698765432109876543210987</code>), then <code>1</code> for client 4 (no account). The solution also shows a total balance of <code>6500.0</code> for client 1.</span><span lang="fr">Attendu : les deux numéros de compte du client 1 (<code>FR7612345678901234567890123</code> et <code>FR7698765432109876543210987</code>), puis <code>1</code> pour le client 4 (aucun compte). La solution affiche aussi un solde total de <code>6500.0</code> pour le client 1.</span>
+</p>
+</div>
+  </div>
+</article>
+
+<article class="lg-step" id="step-9">
+  <div class="lg-step-head">
+    <div class="lg-step-num">9</div>
+    <div>
+      <h3><span lang="en">MicroProfile Health checks</span><span lang="fr">Health checks MicroProfile</span></h3>
+      <div class="lg-step-meta">
+        <span class="lg-chip">15 min</span>
+        <span class="lg-chip"><span lang="en">Course:</span><span lang="fr">Cours :</span> <a href="../../02-Lectures/slides/02-servlets/slides.html#slide-31"><span lang="en">servlets, slide 31 (health checks)</span><span lang="fr">servlets, slide 31 (health checks)</span></a></span>
+      </div>
+    </div>
+  </div>
+  <div class="lg-step-body">
+<p class="lg-files"><span lang="en">Files to complete:</span><span lang="fr">Fichiers à compléter :</span> <code>src/main/java/com/bank/health/DatabaseHealthCheck.java</code>, <code>src/main/java/com/bank/health/WebAppReadinessCheck.java</code></p>
+<div class="lg-task-label"><span lang="en">Task</span><span lang="fr">À faire</span></div>
+<p>
+  <span lang="en">Right now <code>/health</code> returns <code>500</code>: both checks return <code>null</code> from <code>call()</code>. Complete them:</span><span lang="fr">Pour l'instant <code>/health</code> renvoie <code>500</code> : les deux checks renvoient <code>null</code> depuis <code>call()</code>. Complétez-les :</span>
+</p>
+<ul>
+  <li><span lang="en"><code>DatabaseHealthCheck</code> (<code>@Liveness</code>, name <code>database-connection</code>): <code>UP</code> with data <code>status=connected</code> and <code>type=in-memory</code> when <code>checkDatabase()</code> is true, otherwise <code>DOWN</code> with <code>status=disconnected</code>. The check is simulated in this lab; Lab 03 uses a real database.</span><span lang="fr"><code>DatabaseHealthCheck</code> (<code>@Liveness</code>, nom <code>database-connection</code>) : <code>UP</code> avec les données <code>status=connected</code> et <code>type=in-memory</code> quand <code>checkDatabase()</code> est vrai, sinon <code>DOWN</code> avec <code>status=disconnected</code>. Le check est simulé dans ce lab ; le Lab 03 utilise une vraie base.</span></li>
+  <li><span lang="en"><code>WebAppReadinessCheck</code> (<code>@Readiness</code>, name <code>web-application-readiness</code>): <code>UP</code> with data <code>configuration</code>, <code>services</code>, <code>app_name</code>, <code>environment</code> when the injected configuration is present, otherwise <code>DOWN</code>.</span><span lang="fr"><code>WebAppReadinessCheck</code> (<code>@Readiness</code>, nom <code>web-application-readiness</code>) : <code>UP</code> avec les données <code>configuration</code>, <code>services</code>, <code>app_name</code>, <code>environment</code> quand la configuration injectée est présente, sinon <code>DOWN</code>.</span></li>
+</ul>
+<details class="lg-hint lg-hint--1">
+  <summary><span lang="en">Hint 1</span><span lang="fr">Indice 1</span></summary>
+  <div class="lg-hint-body">
+<p>
+  <span lang="en">The builder is already created for you. Call <code>builder.up()</code> or <code>builder.down()</code>, chain <code>.withData(key, value)</code> and finish with <code>.build()</code>.</span><span lang="fr">Le builder est déjà créé. Appelez <code>builder.up()</code> ou <code>builder.down()</code>, chaînez <code>.withData(clé, valeur)</code> et terminez par <code>.build()</code>.</span>
+</p>
+  </div>
+</details>
+<details class="lg-hint lg-hint--2">
+  <summary><span lang="en">Hint 2 — the return</span><span lang="fr">Indice 2 — le retour</span></summary>
+  <div class="lg-hint-body">
+<pre class="dark"><code>return builder.up()
+    .withData("status", "connected")
+    .withData("type", "in-memory")
+    .build();</code></pre>
+  </div>
+</details>
+<details class="lg-hint lg-hint--sol">
+  <summary><span lang="en">Solution files</span><span lang="fr">Fichiers solution</span></summary>
+  <div class="lg-hint-body">
+<p><a href="https://github.com/oplanson/esipe-javaee/blob/master/03-Labs/Lab02-ServletsJSP/solution/src/main/java/com/bank/health/DatabaseHealthCheck.java"><code>solution/…/DatabaseHealthCheck.java</code></a> · <a href="https://github.com/oplanson/esipe-javaee/blob/master/03-Labs/Lab02-ServletsJSP/solution/src/main/java/com/bank/health/WebAppReadinessCheck.java"><code>solution/…/WebAppReadinessCheck.java</code></a></p>
+  </div>
+</details>
+<div class="lg-checkpoint">
+  <div class="lg-check-label"><span lang="en">Checkpoint</span><span lang="fr">Point de contrôle</span></div>
+<pre class="dark"><code>curl -s http://localhost:9080/health/live; echo
+curl -s http://localhost:9080/health/ready; echo</code></pre>
+  <p>
+  <span lang="en">Expected: both answer <code>"status":"UP"</code>. <code>/health/live</code> lists <code>database-connection</code>; <code>/health/ready</code> lists <code>web-application-readiness</code> with <code>"app_name":"banking-web-app"</code> (the value comes from <code>bootstrap.properties</code>, which wins over the default). Optional: make <code>checkDatabase()</code> return <code>false</code>, redeploy and see <code>/health/live</code> answer <code>503</code> with <code>DOWN</code>.</span><span lang="fr">Attendu : les deux répondent <code>"status":"UP"</code>. <code>/health/live</code> liste <code>database-connection</code> ; <code>/health/ready</code> liste <code>web-application-readiness</code> avec <code>"app_name":"banking-web-app"</code> (la valeur vient de <code>bootstrap.properties</code>, qui l'emporte sur la valeur par défaut). Facultatif : faites renvoyer <code>false</code> à <code>checkDatabase()</code>, redéployez et constatez que <code>/health/live</code> répond <code>503</code> avec <code>DOWN</code>.</span>
+</p>
+</div>
+  </div>
+</article>
+
+<article class="lg-step" id="step-10">
+  <div class="lg-step-head">
+    <div class="lg-step-num">10</div>
+    <div>
+      <h3><span lang="en">MicroProfile Config and <code>web.xml</code></span><span lang="fr">MicroProfile Config et <code>web.xml</code></span></h3>
+      <div class="lg-step-meta">
+        <span class="lg-chip">10 min</span>
+        <span class="lg-chip"><span lang="en">Course:</span><span lang="fr">Cours :</span> <a href="../../02-Lectures/slides/02-servlets/slides.html#slide-28"><span lang="en">servlets, slide 28 (MP Config file)</span><span lang="fr">servlets, slide 28 (fichier MP Config)</span></a></span>
+      </div>
+    </div>
+  </div>
+  <div class="lg-step-body">
+<p class="lg-files"><span lang="en">Files:</span><span lang="fr">Fichiers :</span> <code>src/main/resources/META-INF/microprofile-config.properties</code>, <code>src/main/webapp/WEB-INF/web.xml</code></p>
+<div class="lg-task-label"><span lang="en">Task</span><span lang="fr">À faire</span></div>
+<ol>
+  <li><span lang="en">In <code>microprofile-config.properties</code>, add one property of your own where the TODO says so, then change <code>app.environment=development</code> to <code>app.environment=staging</code>.</span><span lang="fr">Dans <code>microprofile-config.properties</code>, ajoutez une propriété de votre choix là où le TODO l'indique, puis changez <code>app.environment=development</code> en <code>app.environment=staging</code>.</span></li>
+  <li><span lang="en">Read <code>web.xml</code>: the three <code>context-param</code> values read by the controller, the session settings, and the two <code>error-page</code> entries. Note that <code>/WEB-INF/views/error-404.jsp</code> and <code>error-500.jsp</code> exist in neither the starter nor the solution.</span><span lang="fr">Lisez <code>web.xml</code> : les trois valeurs <code>context-param</code> lues par le contrôleur, la configuration de session et les deux entrées <code>error-page</code>. Notez que <code>/WEB-INF/views/error-404.jsp</code> et <code>error-500.jsp</code> n'existent ni dans le starter ni dans la solution.</span></li>
+  <li><span lang="en">In <code>web.xml</code>, set <code>feature.client.deletion.enabled</code> to <code>false</code>, redeploy and observe the effect, then set it back to <code>true</code>. (The solution <code>web.xml</code> additionally documents the filters and listeners in a comment block; copying it is optional.)</span><span lang="fr">Dans <code>web.xml</code>, mettez <code>feature.client.deletion.enabled</code> à <code>false</code>, redéployez et observez l'effet, puis remettez <code>true</code>. (Le <code>web.xml</code> de la solution documente en plus les filtres et listeners dans un bloc de commentaires ; le recopier est facultatif.)</span></li>
+</ol>
+<details class="lg-hint lg-hint--1">
+  <summary><span lang="en">Hint 1</span><span lang="fr">Indice 1</span></summary>
+  <div class="lg-hint-body">
+<p>
+  <span lang="en">The <code>Containerfile</code> copies <code>microprofile-config.properties</code> into <code>/config/</code>, so rebuild the image after editing it. <code>WebAppReadinessCheck</code> reads <code>app.environment</code> with <code>@ConfigProperty</code>; the controller reads the context parameters instead.</span><span lang="fr">Le <code>Containerfile</code> copie <code>microprofile-config.properties</code> dans <code>/config/</code> : reconstruisez l'image après modification. <code>WebAppReadinessCheck</code> lit <code>app.environment</code> avec <code>@ConfigProperty</code> ; le contrôleur lit les paramètres de contexte.</span>
+</p>
+  </div>
+</details>
+<details class="lg-hint lg-hint--sol">
+  <summary><span lang="en">Solution file (<code>web.xml</code>)</span><span lang="fr">Fichier solution (<code>web.xml</code>)</span></summary>
+  <div class="lg-hint-body">
+<p><a href="https://github.com/oplanson/esipe-javaee/blob/master/03-Labs/Lab02-ServletsJSP/solution/src/main/webapp/WEB-INF/web.xml"><code>solution/…/web.xml</code></a></p>
+  </div>
+</details>
+<div class="lg-checkpoint">
+  <div class="lg-check-label"><span lang="en">Checkpoint</span><span lang="fr">Point de contrôle</span></div>
+<pre class="dark"><code># with deletion set to false, redeploy loop, then:
+curl -s http://localhost:9080/health/ready | grep -o '"environment":"[a-z]*"'
+curl -s http://localhost:9080/clients | grep -c 'value="delete"'
+curl -si -X POST -d 'action=delete&amp;id=1' http://localhost:9080/client | head -1</code></pre>
+  <p>
+  <span lang="en">Expected: <code>"environment":"staging"</code>, then <code>0</code> delete forms, then <code>403 Forbidden</code>. Set <code>feature.client.deletion.enabled</code> back to <code>true</code> and redeploy before moving on.</span><span lang="fr">Attendu : <code>"environment":"staging"</code>, puis <code>0</code> formulaire de suppression, puis <code>403 Forbidden</code>. Remettez <code>feature.client.deletion.enabled</code> à <code>true</code> et redéployez avant de continuer.</span>
+</p>
+</div>
+  </div>
+</article>
+
+<article class="lg-step" id="step-11">
+  <div class="lg-step-head">
+    <div class="lg-step-num">11</div>
+    <div>
+      <h3><span lang="en">Listeners: sessions and application lifecycle</span><span lang="fr">Listeners : sessions et cycle de vie de l'application</span></h3>
+      <div class="lg-step-meta">
+        <span class="lg-chip">25 min</span>
+        <span class="lg-chip"><span lang="en">Course:</span><span lang="fr">Cours :</span> <a href="../../02-Lectures/slides/02-servlets/slides.html#slide-57"><span lang="en">servlets, slide 57 (listeners)</span><span lang="fr">servlets, slide 57 (listeners)</span></a></span>
+      </div>
+    </div>
+  </div>
+  <div class="lg-step-body">
+<p class="lg-files"><span lang="en">Files to complete:</span><span lang="fr">Fichiers à compléter :</span> <code>src/main/java/com/bank/listener/SessionCounterListener.java</code>, <code>src/main/java/com/bank/listener/ApplicationLifecycleListener.java</code></p>
+<div class="lg-task-label"><span lang="en">Task</span><span lang="fr">À faire</span></div>
+<ul>
+  <li><span lang="en"><code>SessionCounterListener</code> (<code>HttpSessionListener</code> + <code>HttpSessionAttributeListener</code>): two static <code>AtomicInteger</code> counters; on creation increment both, store them in the <code>ServletContext</code>, log, set a 30-minute timeout and store the creation time; on destruction decrement and log the duration; log login/logout when the attribute <code>user</code> changes; implement <code>getActiveSessions</code>, <code>getTotalSessions</code>, <code>resetCounters</code>.</span><span lang="fr"><code>SessionCounterListener</code> (<code>HttpSessionListener</code> + <code>HttpSessionAttributeListener</code>) : deux compteurs statiques <code>AtomicInteger</code> ; à la création, incrémentez les deux, stockez-les dans le <code>ServletContext</code>, journalisez, fixez un timeout de 30 minutes et stockez l'heure de création ; à la destruction, décrémentez et journalisez la durée ; journalisez login/logout quand l'attribut <code>user</code> change ; implémentez <code>getActiveSessions</code>, <code>getTotalSessions</code>, <code>resetCounters</code>.</span></li>
+  <li><span lang="en"><code>ApplicationLifecycleListener</code> (<code>ServletContextListener</code>): at startup store start time and application metadata in the <code>ServletContext</code> and log them; at shutdown log the uptime (<code>formatUptime</code>) and the session statistics, then clean up.</span><span lang="fr"><code>ApplicationLifecycleListener</code> (<code>ServletContextListener</code>) : au démarrage, stockez l'heure de démarrage et les métadonnées de l'application dans le <code>ServletContext</code> et journalisez-les ; à l'arrêt, journalisez la durée de fonctionnement (<code>formatUptime</code>) et les statistiques de session, puis nettoyez.</span></li>
+</ul>
+<p>
+  <span lang="en">Both classes are registered by <code>@WebListener</code>: no <code>web.xml</code> entry is needed.</span><span lang="fr">Les deux classes sont enregistrées par <code>@WebListener</code> : aucune entrée <code>web.xml</code> n'est nécessaire.</span>
+</p>
+<details class="lg-hint lg-hint--1">
+  <summary><span lang="en">Hint 1</span><span lang="fr">Indice 1</span></summary>
+  <div class="lg-hint-body">
+<p>
+  <span lang="en"><code>AtomicInteger.incrementAndGet()</code> and <code>decrementAndGet()</code> are thread-safe. The listener is a single object shared by all sessions (<a href="../../02-Lectures/slides/02-servlets/slides.html#slide-59">slide 59</a>).</span><span lang="fr"><code>AtomicInteger.incrementAndGet()</code> et <code>decrementAndGet()</code> sont thread-safe. Le listener est un objet unique partagé par toutes les sessions (<a href="../../02-Lectures/slides/02-servlets/slides.html#slide-59">slide 59</a>).</span>
+</p>
+  </div>
+</details>
+<details class="lg-hint lg-hint--2">
+  <summary><span lang="en">Hint 2 — signatures</span><span lang="fr">Indice 2 — signatures</span></summary>
+  <div class="lg-hint-body">
+<pre class="dark"><code>private static final AtomicInteger activeSessions = new AtomicInteger(0);
+private static final AtomicInteger totalSessions = new AtomicInteger(0);
+
+@Override public void sessionCreated(HttpSessionEvent se)   { /* increment, setAttribute, log */ }
+@Override public void sessionDestroyed(HttpSessionEvent se) { /* decrement, duration, log */ }
+@Override public void contextInitialized(ServletContextEvent sce) { /* startup info */ }
+@Override public void contextDestroyed(ServletContextEvent sce)   { /* uptime, cleanup */ }</code></pre>
+  </div>
+</details>
+<details class="lg-hint lg-hint--sol">
+  <summary><span lang="en">Solution files</span><span lang="fr">Fichiers solution</span></summary>
+  <div class="lg-hint-body">
+<p><a href="https://github.com/oplanson/esipe-javaee/blob/master/03-Labs/Lab02-ServletsJSP/solution/src/main/java/com/bank/listener/SessionCounterListener.java"><code>solution/…/SessionCounterListener.java</code></a> · <a href="https://github.com/oplanson/esipe-javaee/blob/master/03-Labs/Lab02-ServletsJSP/solution/src/main/java/com/bank/listener/ApplicationLifecycleListener.java"><code>solution/…/ApplicationLifecycleListener.java</code></a></p>
+  </div>
+</details>
+<div class="lg-checkpoint">
+  <div class="lg-check-label"><span lang="en">Checkpoint</span><span lang="fr">Point de contrôle</span></div>
+<pre class="dark"><code># redeploy loop, then two requests without a cookie jar (each opens a new session):
+curl -s -o /dev/null http://localhost:9080/clients
+curl -s -o /dev/null http://localhost:9080/clients
+podman exec banking-lab02 grep -E 'APPLICATION STARTUP|Servlet Version|Session created' /logs/messages.log</code></pre>
+  <p>
+  <span lang="en">Expected: a line <code>APPLICATION STARTUP</code>, a line <code>Servlet Version: 6.0</code>, and two lines <code>Session created: … | Active: 1 | Total: 1</code> then <code>Active: 2 | Total: 2</code>. The JSP creates the session; the Liberty logs are in <code>/logs/messages.log</code> inside the container.</span><span lang="fr">Attendu : une ligne <code>APPLICATION STARTUP</code>, une ligne <code>Servlet Version: 6.0</code>, et deux lignes <code>Session created: … | Active: 1 | Total: 1</code> puis <code>Active: 2 | Total: 2</code>. C'est le JSP qui crée la session ; les logs Liberty sont dans <code>/logs/messages.log</code> à l'intérieur du conteneur.</span>
+</p>
+</div>
+  </div>
+</article>
+
+<article class="lg-step" id="step-12">
+  <div class="lg-step-head">
+    <div class="lg-step-num">12</div>
+    <div>
+      <h3><span lang="en"><code>LoggingFilter</code>: requests, responses, timing</span><span lang="fr"><code>LoggingFilter</code> : requêtes, réponses, durée</span></h3>
+      <div class="lg-step-meta">
+        <span class="lg-chip">15 min</span>
+        <span class="lg-chip"><span lang="en">Course:</span><span lang="fr">Cours :</span> <a href="../../02-Lectures/slides/02-servlets/slides.html#slide-52"><span lang="en">servlets, slide 52 (logging filter)</span><span lang="fr">servlets, slide 52 (filtre de logging)</span></a></span>
+      </div>
+    </div>
+  </div>
+  <div class="lg-step-body">
+<p class="lg-files"><span lang="en">File to complete:</span><span lang="fr">Fichier à compléter :</span> <code>src/main/java/com/bank/filter/LoggingFilter.java</code></p>
+<div class="lg-task-label"><span lang="en">Task</span><span lang="fr">À faire</span></div>
+<ol>
+  <li><span lang="en">Re-enable the <code>@WebFilter(filterName = "LoggingFilter", urlPatterns = "/*")</code> line commented out in step 1.</span><span lang="fr">Réactivez la ligne <code>@WebFilter(filterName = "LoggingFilter", urlPatterns = "/*")</code> commentée à l'étape 1.</span></li>
+  <li><span lang="en"><code>doFilter</code>: record the start time, call <code>logRequest</code>, call <code>chain.doFilter(request, responseWrapper)</code> inside the <code>try</code>, and in the <code>finally</code> compute the duration and call <code>logResponse</code>.</span><span lang="fr"><code>doFilter</code> : relevez l'heure de début, appelez <code>logRequest</code>, appelez <code>chain.doFilter(request, responseWrapper)</code> dans le <code>try</code>, et dans le <code>finally</code> calculez la durée et appelez <code>logResponse</code>.</span></li>
+  <li><span lang="en"><code>logRequest</code> / <code>logResponse</code>: method, URI, query string, remote address, parameters, session id, status, content type, execution time, and a warning above 1 second.</span><span lang="fr"><code>logRequest</code> / <code>logResponse</code> : méthode, URI, query string, adresse distante, paramètres, id de session, statut, type de contenu, durée d'exécution, et un avertissement au-delà d'1 seconde.</span></li>
+  <li><span lang="en"><code>ResponseWrapper</code>: store the status in <code>setStatus</code>, <code>sendError</code> (two variants) and <code>sendRedirect</code> (<code>302</code>), then delegate to <code>super</code>.</span><span lang="fr"><code>ResponseWrapper</code> : mémorisez le statut dans <code>setStatus</code>, <code>sendError</code> (deux variantes) et <code>sendRedirect</code> (<code>302</code>), puis déléguez à <code>super</code>.</span></li>
+</ol>
+<details class="lg-hint lg-hint--1">
+  <summary><span lang="en">Hint 1</span><span lang="fr">Indice 1</span></summary>
+  <div class="lg-hint-body">
+<p>
+  <span lang="en">The <code>finally</code> block guarantees the response is logged even if the servlet throws. Without the wrapper, the status code of the response cannot be read back in a Servlet 6 filter chain of this lab.</span><span lang="fr">Le bloc <code>finally</code> garantit que la réponse est journalisée même si la servlet lève une exception. Le wrapper sert à mémoriser le statut de la réponse pour pouvoir le journaliser.</span>
+</p>
+  </div>
+</details>
+<details class="lg-hint lg-hint--2">
+  <summary><span lang="en">Hint 2 — the core</span><span lang="fr">Indice 2 — le cœur</span></summary>
+  <div class="lg-hint-body">
+<pre class="dark"><code>long startTime = System.currentTimeMillis();
+logRequest(httpRequest);
+ResponseWrapper responseWrapper = new ResponseWrapper(httpResponse);
+try {
+    chain.doFilter(request, responseWrapper);
+} finally {
+    long duration = System.currentTimeMillis() - startTime;
+    logResponse(httpRequest, responseWrapper, duration);
+}</code></pre>
+  </div>
+</details>
+<details class="lg-hint lg-hint--sol">
+  <summary><span lang="en">Solution file</span><span lang="fr">Fichier solution</span></summary>
+  <div class="lg-hint-body">
+<p><a href="https://github.com/oplanson/esipe-javaee/blob/master/03-Labs/Lab02-ServletsJSP/solution/src/main/java/com/bank/filter/LoggingFilter.java"><code>solution/…/LoggingFilter.java</code></a></p>
+  </div>
+</details>
+<div class="lg-callout lg-callout--warn">
+  <div lang="en"><div class="lg-callout-title">Do not log secrets</div><p>This filter logs all request parameters. In a real application, never log passwords, tokens or personal data.</p></div>
+  <div lang="fr"><div class="lg-callout-title">Ne journalisez pas de secrets</div><p>Ce filtre journalise tous les paramètres de requête. Dans une vraie application, ne journalisez jamais de mots de passe, de jetons ni de données personnelles.</p></div>
+</div>
+<div class="lg-checkpoint">
+  <div class="lg-check-label"><span lang="en">Checkpoint</span><span lang="fr">Point de contrôle</span></div>
+<pre class="dark"><code># redeploy loop, then:
+curl -s -o /dev/null 'http://localhost:9080/clients?search=marie'
+curl -s -o /dev/null -X POST -d 'action=delete&amp;id=999' http://localhost:9080/client
+podman exec banking-lab02 grep -A6 -E 'Incoming Request|Outgoing Response' /logs/messages.log | tail -22</code></pre>
+  <p>
+  <span lang="en">Expected: an <code>Incoming Request</code> block with <code>URI: /clients</code>, <code>Query String: search=marie</code> and <code>search = marie</code>; and an <code>Outgoing Response</code> block for the POST with <code>Status Code: 404</code> and an <code>Execution Time</code> in ms.</span><span lang="fr">Attendu : un bloc <code>Incoming Request</code> avec <code>URI: /clients</code>, <code>Query String: search=marie</code> et <code>search = marie</code> ; et un bloc <code>Outgoing Response</code> pour le POST avec <code>Status Code: 404</code> et un <code>Execution Time</code> en ms.</span>
+</p>
+</div>
+  </div>
+</article>
+
+<article class="lg-step" id="step-13">
+  <div class="lg-step-head">
+    <div class="lg-step-num">13</div>
+    <div>
+      <h3><span lang="en"><code>AuthenticationFilter</code>: protect URLs</span><span lang="fr"><code>AuthenticationFilter</code> : protéger des URL</span></h3>
+      <div class="lg-step-meta">
+        <span class="lg-chip">15 min</span>
+        <span class="lg-chip"><span lang="en">Course:</span><span lang="fr">Cours :</span> <a href="../../02-Lectures/slides/02-servlets/slides.html#slide-51"><span lang="en">servlets, slide 51 (authentication filter)</span><span lang="fr">servlets, slide 51 (filtre d'authentification)</span></a></span>
+      </div>
+    </div>
+  </div>
+  <div class="lg-step-body">
+<p class="lg-files"><span lang="en">File to complete:</span><span lang="fr">Fichier à compléter :</span> <code>src/main/java/com/bank/filter/AuthenticationFilter.java</code></p>
+<div class="lg-task-label"><span lang="en">Task</span><span lang="fr">À faire</span></div>
+<ol>
+  <li><span lang="en">Re-enable the <code>@WebFilter</code> line of this filter.</span><span lang="fr">Réactivez la ligne <code>@WebFilter</code> de ce filtre.</span></li>
+  <li><span lang="en">Fill the lists: public prefixes <code>/login</code>, <code>/logout</code>, <code>/public/</code>, <code>/css/</code>, <code>/js/</code>, <code>/images/</code>; protected prefixes <code>/clients/</code>, <code>/admin/</code>. Do <strong>not</strong> put <code>"/"</code> in the public list.</span><span lang="fr">Remplissez les listes : préfixes publics <code>/login</code>, <code>/logout</code>, <code>/public/</code>, <code>/css/</code>, <code>/js/</code>, <code>/images/</code> ; préfixes protégés <code>/clients/</code>, <code>/admin/</code>. Ne mettez <strong>pas</strong> <code>"/"</code> dans la liste publique.</span></li>
+  <li><span lang="en">In <code>doFilter</code>: compute <code>path = requestURI.substring(contextPath.length())</code>; public URLs go through; for protected URLs, read <code>getSession(false)</code>, and if there is no <code>user</code> attribute store <code>originalUrl</code> in a new session and redirect to <code>contextPath + "/login"</code>; otherwise log the user. Always end with <code>chain.doFilter</code>.</span><span lang="fr">Dans <code>doFilter</code> : calculez <code>path = requestURI.substring(contextPath.length())</code> ; les URL publiques passent ; pour les URL protégées, lisez <code>getSession(false)</code>, et sans attribut <code>user</code> stockez <code>originalUrl</code> dans une nouvelle session et redirigez vers <code>contextPath + "/login"</code> ; sinon journalisez l'utilisateur. Terminez toujours par <code>chain.doFilter</code>.</span></li>
+  <li><span lang="en">Implement <code>isPublicUrl</code> and <code>isProtectedUrl</code> with <code>startsWith</code>.</span><span lang="fr">Implémentez <code>isPublicUrl</code> et <code>isProtectedUrl</code> avec <code>startsWith</code>.</span></li>
+</ol>
+<details class="lg-hint lg-hint--1">
+  <summary><span lang="en">Hint 1</span><span lang="fr">Indice 1</span></summary>
+  <div class="lg-hint-body">
+<p>
+  <span lang="en"><code>PUBLIC_URLS.stream().anyMatch(path::startsWith)</code>. Beware: <code>path.startsWith("/")</code> is true for <strong>every</strong> path, so a public prefix <code>"/"</code> would make every URL public.</span><span lang="fr"><code>PUBLIC_URLS.stream().anyMatch(path::startsWith)</code>. Attention : <code>path.startsWith("/")</code> est vrai pour <strong>tous</strong> les chemins, donc un préfixe public <code>"/"</code> rendrait toutes les URL publiques.</span>
+</p>
+  </div>
+</details>
+<details class="lg-hint lg-hint--2">
+  <summary><span lang="en">Hint 2 — the protected branch</span><span lang="fr">Indice 2 — la branche protégée</span></summary>
+  <div class="lg-hint-body">
+<pre class="dark"><code>HttpSession session = httpRequest.getSession(false);
+if (session == null || session.getAttribute("user") == null) {
+    httpRequest.getSession(true).setAttribute("originalUrl", requestURI);
+    httpResponse.sendRedirect(contextPath + "/login");
+    return;
+}</code></pre>
+  </div>
+</details>
+<details class="lg-hint lg-hint--sol">
+  <summary><span lang="en">Solution file</span><span lang="fr">Fichier solution</span></summary>
+  <div class="lg-hint-body">
+<p><a href="https://github.com/oplanson/esipe-javaee/blob/master/03-Labs/Lab02-ServletsJSP/solution/src/main/java/com/bank/filter/AuthenticationFilter.java"><code>solution/…/AuthenticationFilter.java</code></a></p>
+  </div>
+</details>
+<div class="lg-callout lg-callout--warn">
+  <div lang="en"><div class="lg-callout-title">The solution is less strict than it looks</div><p>The solution lists <code>"/"</code> as public, which matches every path with <code>startsWith</code>: nothing is ever redirected. Also, <code>/clients</code> (the real servlet path) does not start with <code>/clients/</code>, and no <code>/login</code> page exists in this lab. The filter is a teaching exercise, not real access control.</p></div>
+  <div lang="fr"><div class="lg-callout-title">La solution est moins stricte qu'elle n'en a l'air</div><p>La solution met <code>"/"</code> dans les URL publiques, ce qui correspond à tous les chemins avec <code>startsWith</code> : rien n'est jamais redirigé. De plus, <code>/clients</code> (le vrai chemin de la servlet) ne commence pas par <code>/clients/</code>, et aucune page <code>/login</code> n'existe dans ce lab. Ce filtre est un exercice pédagogique, pas un vrai contrôle d'accès.</p></div>
+</div>
+<div class="lg-checkpoint">
+  <div class="lg-check-label"><span lang="en">Checkpoint</span><span lang="fr">Point de contrôle</span></div>
+<pre class="dark"><code># redeploy loop, then:
+for u in '' css/style.css clients clients/x admin/x; do
+  printf '%-12s %s\n' "/$u" "$(curl -s -o /dev/null -w '%{http_code} %{redirect_url}' "http://localhost:9080/$u")"; done</code></pre>
+  <p>
+  <span lang="en">Expected: <code>/</code> <code>200</code>, <code>/css/style.css</code> <code>200</code>, <code>/clients</code> <code>200</code>, then <code>302 http://localhost:9080/login</code> for <code>/clients/x</code> and <code>/admin/x</code>. The <code>/login</code> target itself answers <code>404</code> (no login page): that is normal.</span><span lang="fr">Attendu : <code>/</code> <code>200</code>, <code>/css/style.css</code> <code>200</code>, <code>/clients</code> <code>200</code>, puis <code>302 http://localhost:9080/login</code> pour <code>/clients/x</code> et <code>/admin/x</code>. La cible <code>/login</code> répond elle-même <code>404</code> (pas de page de login) : c'est normal.</span>
+</p>
+</div>
+  </div>
+</article>
+
+<article class="lg-step" id="step-14">
+  <div class="lg-step-head">
+    <div class="lg-step-num">14</div>
+    <div>
+      <h3><span lang="en"><code>CorsFilter</code>: cross-origin requests</span><span lang="fr"><code>CorsFilter</code> : requêtes cross-origin</span></h3>
+      <div class="lg-step-meta">
+        <span class="lg-chip">10 min</span>
+        <span class="lg-chip"><span lang="en">Course:</span><span lang="fr">Cours :</span> <a href="../../02-Lectures/slides/02-servlets/slides.html#slide-53"><span lang="en">servlets, slide 53 (CORS filter)</span><span lang="fr">servlets, slide 53 (filtre CORS)</span></a></span>
+      </div>
+    </div>
+  </div>
+  <div class="lg-step-body">
+<p class="lg-files"><span lang="en">File to complete:</span><span lang="fr">Fichier à compléter :</span> <code>src/main/java/com/bank/filter/CorsFilter.java</code></p>
+<div class="lg-task-label"><span lang="en">Task</span><span lang="fr">À faire</span></div>
+<ol>
+  <li><span lang="en">Fill the constants: origins <code>http://localhost:3000,http://localhost:4200,http://localhost:8080</code>, methods <code>GET, POST, PUT, DELETE, OPTIONS, HEAD</code>, headers <code>Content-Type, Authorization, X-Requested-With, Accept, Origin</code>, exposed headers <code>Location, Content-Disposition</code>, max age <code>3600</code>, credentials <code>true</code>.</span><span lang="fr">Remplissez les constantes : origines <code>http://localhost:3000,http://localhost:4200,http://localhost:8080</code>, méthodes <code>GET, POST, PUT, DELETE, OPTIONS, HEAD</code>, en-têtes <code>Content-Type, Authorization, X-Requested-With, Accept, Origin</code>, en-têtes exposés <code>Location, Content-Disposition</code>, max age <code>3600</code>, credentials <code>true</code>.</span></li>
+  <li><span lang="en">In <code>doFilter</code>: if the <code>Origin</code> header is in the allowed list, set the seven <code>Access-Control-*</code> response headers; for an <code>OPTIONS</code> preflight, answer <code>200</code> and <strong>return without calling the chain</strong>.</span><span lang="fr">Dans <code>doFilter</code> : si l'en-tête <code>Origin</code> est dans la liste autorisée, positionnez les sept en-têtes de réponse <code>Access-Control-*</code> ; pour un preflight <code>OPTIONS</code>, répondez <code>200</code> et <strong>retournez sans appeler la chaîne</strong>.</span></li>
+  <li><span lang="en">Implement <code>isOriginAllowed</code> as an <strong>exact</strong> comparison with each allowed origin.</span><span lang="fr">Implémentez <code>isOriginAllowed</code> par une comparaison <strong>exacte</strong> avec chaque origine autorisée.</span></li>
+</ol>
+<details class="lg-hint lg-hint--1">
+  <summary><span lang="en">Hint 1</span><span lang="fr">Indice 1</span></summary>
+  <div class="lg-hint-body">
+<p>
+  <span lang="en">Echo the request origin in <code>Access-Control-Allow-Origin</code> only when it is allowed; never use a wildcard together with credentials.</span><span lang="fr">Renvoyez l'origine de la requête dans <code>Access-Control-Allow-Origin</code> seulement si elle est autorisée ; n'utilisez jamais de joker avec les credentials.</span>
+</p>
+  </div>
+</details>
+<details class="lg-hint lg-hint--2">
+  <summary><span lang="en">Hint 2 — the check</span><span lang="fr">Indice 2 — le contrôle</span></summary>
+  <div class="lg-hint-body">
+<pre class="dark"><code>for (String allowed : ALLOWED_ORIGINS.split(",")) {
+    if (allowed.trim().equals(origin)) { return true; }
+}
+return false;</code></pre>
+  </div>
+</details>
+<details class="lg-hint lg-hint--sol">
+  <summary><span lang="en">Solution file</span><span lang="fr">Fichier solution</span></summary>
+  <div class="lg-hint-body">
+<p><a href="https://github.com/oplanson/esipe-javaee/blob/master/03-Labs/Lab02-ServletsJSP/solution/src/main/java/com/bank/filter/CorsFilter.java"><code>solution/…/CorsFilter.java</code></a></p>
+  </div>
+</details>
+<div class="lg-checkpoint">
+  <div class="lg-check-label"><span lang="en">Checkpoint</span><span lang="fr">Point de contrôle</span></div>
+<pre class="dark"><code># redeploy loop, then:
+curl -si -X OPTIONS -H 'Origin: http://localhost:3000' http://localhost:9080/api/clients | grep -iE '^HTTP|^access-control-allow-origin|^access-control-max-age'
+curl -si -X OPTIONS -H 'Origin: http://evil.example' http://localhost:9080/api/clients | grep -iE '^HTTP|^access-control'</code></pre>
+  <p>
+  <span lang="en">Expected: first call <code>200</code> with <code>Access-Control-Allow-Origin: http://localhost:3000</code> and <code>Access-Control-Max-Age: 3600</code>; second call <code>200</code> with <strong>no</strong> <code>Access-Control-*</code> header. The filter answers by itself: no <code>/api</code> servlet exists in this lab.</span><span lang="fr">Attendu : premier appel <code>200</code> avec <code>Access-Control-Allow-Origin: http://localhost:3000</code> et <code>Access-Control-Max-Age: 3600</code> ; second appel <code>200</code> <strong>sans</strong> en-tête <code>Access-Control-*</code>. Le filtre répond lui-même : aucune servlet <code>/api</code> n'existe dans ce lab.</span>
+</p>
+</div>
+  </div>
+</article>
+
+<article class="lg-step" id="step-15">
+  <div class="lg-step-head">
+    <div class="lg-step-num">15</div>
+    <div>
+      <h3><span lang="en"><code>CompressionFilter</code>: GZIP responses</span><span lang="fr"><code>CompressionFilter</code> : réponses GZIP</span></h3>
+      <div class="lg-step-meta">
+        <span class="lg-chip">15 min</span>
+        <span class="lg-chip"><span lang="en">Course:</span><span lang="fr">Cours :</span> <a href="../../02-Lectures/slides/02-servlets/slides.html#slide-55"><span lang="en">servlets, slide 55 (compression filter)</span><span lang="fr">servlets, slide 55 (filtre de compression)</span></a></span>
+      </div>
+    </div>
+  </div>
+  <div class="lg-step-body">
+<p class="lg-files"><span lang="en">File to complete:</span><span lang="fr">Fichier à compléter :</span> <code>src/main/java/com/bank/filter/CompressionFilter.java</code></p>
+<div class="lg-task-label"><span lang="en">Task</span><span lang="fr">À faire</span></div>
+<ol>
+  <li><span lang="en">Re-enable the <code>@WebFilter</code> line of this filter.</span><span lang="fr">Réactivez la ligne <code>@WebFilter</code> de ce filtre.</span></li>
+  <li><span lang="en">Constants: minimum size <code>1024</code> bytes; compressible types <code>text/html</code>, <code>text/css</code>, <code>text/javascript</code>, <code>application/javascript</code>, <code>application/json</code>, <code>application/xml</code>, <code>text/xml</code>, <code>text/plain</code>.</span><span lang="fr">Constantes : taille minimale <code>1024</code> octets ; types compressibles <code>text/html</code>, <code>text/css</code>, <code>text/javascript</code>, <code>application/javascript</code>, <code>application/json</code>, <code>application/xml</code>, <code>text/xml</code>, <code>text/plain</code>.</span></li>
+  <li><span lang="en"><code>doFilter</code>: if <code>Accept-Encoding</code> contains <code>gzip</code>, wrap the response, call the chain, read the captured bytes, then either compress (headers <code>Content-Encoding: gzip</code> and the new <code>Content-Length</code>) or write the original bytes; always call <code>finishResponse()</code> in <code>finally</code>. Otherwise just call the chain.</span><span lang="fr"><code>doFilter</code> : si <code>Accept-Encoding</code> contient <code>gzip</code>, enveloppez la réponse, appelez la chaîne, lisez les octets capturés, puis compressez (en-têtes <code>Content-Encoding: gzip</code> et nouveau <code>Content-Length</code>) ou écrivez les octets d'origine ; appelez toujours <code>finishResponse()</code> dans <code>finally</code>. Sinon, appelez simplement la chaîne.</span></li>
+  <li><span lang="en"><code>shouldCompress</code>, <code>compress</code> (<code>GZIPOutputStream</code>) and the wrapper methods <code>getOutputStream</code>, <code>getWriter</code>, <code>getCapturedContent</code>, <code>finishResponse</code>.</span><span lang="fr"><code>shouldCompress</code>, <code>compress</code> (<code>GZIPOutputStream</code>) et les méthodes du wrapper <code>getOutputStream</code>, <code>getWriter</code>, <code>getCapturedContent</code>, <code>finishResponse</code>.</span></li>
+</ol>
+<details class="lg-hint lg-hint--1">
+  <summary><span lang="en">Hint 1</span><span lang="fr">Indice 1</span></summary>
+  <div class="lg-hint-body">
+<p>
+  <span lang="en">The wrapper must return a stream or writer that writes into a <code>ByteArrayOutputStream</code>, and must refuse to hand out both <code>getWriter()</code> and <code>getOutputStream()</code> (throw <code>IllegalStateException</code>), like the container does.</span><span lang="fr">Le wrapper doit renvoyer un flux ou un writer qui écrit dans un <code>ByteArrayOutputStream</code>, et refuser de fournir à la fois <code>getWriter()</code> et <code>getOutputStream()</code> (lever <code>IllegalStateException</code>), comme le fait le conteneur.</span>
+</p>
+  </div>
+</details>
+<details class="lg-hint lg-hint--2">
+  <summary><span lang="en">Hint 2 — compress</span><span lang="fr">Indice 2 — compress</span></summary>
+  <div class="lg-hint-body">
+<pre class="dark"><code>private byte[] compress(byte[] content) throws IOException {
+    ByteArrayOutputStream byteStream = new ByteArrayOutputStream();
+    try (GZIPOutputStream gzipStream = new GZIPOutputStream(byteStream)) {
+        gzipStream.write(content);
+    }
+    return byteStream.toByteArray();
+}</code></pre>
+  </div>
+</details>
+<details class="lg-hint lg-hint--sol">
+  <summary><span lang="en">Solution file</span><span lang="fr">Fichier solution</span></summary>
+  <div class="lg-hint-body">
+<p><a href="https://github.com/oplanson/esipe-javaee/blob/master/03-Labs/Lab02-ServletsJSP/solution/src/main/java/com/bank/filter/CompressionFilter.java"><code>solution/…/CompressionFilter.java</code></a></p>
+  </div>
+</details>
+<div class="lg-checkpoint">
+  <div class="lg-check-label"><span lang="en">Checkpoint</span><span lang="fr">Point de contrôle</span></div>
+<pre class="dark"><code># redeploy loop, then:
+curl -s -o /dev/null -D - -H 'Accept-Encoding: gzip' http://localhost:9080/ | grep -iE '^HTTP|^content-encoding|^content-length'
+curl -s -o /dev/null -D - http://localhost:9080/ | grep -iE '^HTTP|^content-encoding|^content-length'
+curl -s -H 'Accept-Encoding: gzip' http://localhost:9080/ | gunzip | grep -o '&lt;title&gt;.*&lt;/title&gt;'</code></pre>
+  <p>
+  <span lang="en">Expected: with gzip, <code>Content-Encoding: gzip</code> and a smaller <code>Content-Length</code> (807 for the 2326-byte home page); without it, no <code>Content-Encoding</code> and <code>Content-Length: 2326</code>; the decompressed page shows its <code>&lt;title&gt;</code>. The log contains <code>Response compressed: 2326 bytes -&gt; 807 bytes</code>.</span><span lang="fr">Attendu : avec gzip, <code>Content-Encoding: gzip</code> et un <code>Content-Length</code> plus petit (807 pour la page d'accueil de 2326 octets) ; sans gzip, pas de <code>Content-Encoding</code> et <code>Content-Length: 2326</code> ; la page décompressée affiche son <code>&lt;title&gt;</code>. Le log contient <code>Response compressed: 2326 bytes -&gt; 807 bytes</code>.</span>
+</p>
+</div>
+  </div>
+</article>
+
+    </section>
+
+    <section class="lg-section" id="run">
+      <h2><span class="lg-sec-num">06</span><span lang="en">Run and operate</span><span lang="fr">Exécution</span></h2>
+<table class="slide-table">
+  <thead><tr><th><span lang="en">Purpose</span><span lang="fr">Usage</span></th><th><span lang="en">Command</span><span lang="fr">Commande</span></th></tr></thead>
+  <tbody>
+    <tr><td><span lang="en">Start (or restart after a change)</span><span lang="fr">Démarrer (ou redémarrer après un changement)</span></td><td><span lang="en">the redeploy loop of the Setup section</span><span lang="fr">la boucle de redéploiement de la section Préparation</span></td></tr>
+    <tr><td><span lang="en">Follow the container output</span><span lang="fr">Suivre la sortie du conteneur</span></td><td><code>podman logs -f banking-lab02</code></td></tr>
+    <tr><td><span lang="en">Read the application log</span><span lang="fr">Lire le log de l'application</span></td><td><code>podman exec banking-lab02 cat /logs/messages.log</code></td></tr>
+    <tr><td><span lang="en">Stop and clean up</span><span lang="fr">Arrêter et nettoyer</span></td><td><code>podman rm -f banking-lab02</code> <span lang="en">then</span><span lang="fr">puis</span> <code>podman rmi banking-web-app:lab02</code></td></tr>
+  </tbody>
+</table>
+<table class="slide-table">
+  <thead><tr><th>URL</th><th><span lang="en">What you get</span><span lang="fr">Ce que vous obtenez</span></th></tr></thead>
+  <tbody>
+    <tr><td><a href="http://localhost:9080/">http://localhost:9080/</a></td><td><span lang="en">Home page</span><span lang="fr">Page d'accueil</span></td></tr>
+    <tr><td><a href="http://localhost:9080/clients">http://localhost:9080/clients</a></td><td><span lang="en">Client list</span><span lang="fr">Liste des clients</span></td></tr>
+    <tr><td><a href="http://localhost:9080/client?action=new">http://localhost:9080/client?action=new</a></td><td><span lang="en">New client form</span><span lang="fr">Formulaire de création</span></td></tr>
+    <tr><td><a href="http://localhost:9080/client?action=view&amp;id=1">http://localhost:9080/client?action=view&amp;id=1</a></td><td><span lang="en">Client details</span><span lang="fr">Détail d'un client</span></td></tr>
+    <tr><td><a href="http://localhost:9080/health">http://localhost:9080/health</a></td><td><span lang="en">MicroProfile Health</span><span lang="fr">MicroProfile Health</span></td></tr>
+    <tr><td><a href="http://localhost:9080/health/live">http://localhost:9080/health/live</a></td><td><span lang="en">Liveness</span><span lang="fr">Liveness</span></td></tr>
+    <tr><td><a href="http://localhost:9080/health/ready">http://localhost:9080/health/ready</a></td><td><span lang="en">Readiness</span><span lang="fr">Readiness</span></td></tr>
+    <tr><td><a href="http://localhost:9080/metrics">http://localhost:9080/metrics</a></td><td><span lang="en">MicroProfile Metrics</span><span lang="fr">MicroProfile Metrics</span></td></tr>
+    <tr><td><a href="http://localhost:9080/openapi">http://localhost:9080/openapi</a></td><td><span lang="en">OpenAPI document</span><span lang="fr">Document OpenAPI</span></td></tr>
+  </tbody>
+</table>
+<div class="lg-callout lg-callout--note">
+  <div lang="en"><div class="lg-callout-title">Data lives in memory</div><p>The client list is a Java map. Restarting the container brings it back to the five sample clients. A database comes in Lab 03.</p></div>
+  <div lang="fr"><div class="lg-callout-title">Les données sont en mémoire</div><p>La liste de clients est une map Java. Redémarrer le conteneur la ramène aux cinq clients d'exemple. Une base de données arrive au Lab 03.</p></div>
+</div>
+<div class="lg-callout lg-callout--warn">
+  <div lang="en"><div class="lg-callout-title">About the provided scripts</div><p>The folder contains <code>podman-test.sh</code>, <code>docker-test.sh</code>, <code>run-lab.sh</code> and <code>test-lab.sh</code>. For example <code>./podman-test.sh -dir starter</code> builds and tests your work, but before starting it <strong>stops and removes any container that already uses port 9080</strong>, including containers of other labs. These scripts also publish <code>9080:9080</code> on all interfaces, unlike the commands of this guide. This guide never depends on them.</p></div>
+  <div lang="fr"><div class="lg-callout-title">À propos des scripts fournis</div><p>Le dossier contient <code>podman-test.sh</code>, <code>docker-test.sh</code>, <code>run-lab.sh</code> et <code>test-lab.sh</code>. Par exemple <code>./podman-test.sh -dir starter</code> construit et teste votre travail, mais avant de démarrer il <strong>arrête et supprime tout conteneur qui utilise déjà le port 9080</strong>, y compris ceux d'autres labs. Ces scripts publient aussi <code>9080:9080</code> sur toutes les interfaces, contrairement aux commandes de ce guide. Ce guide n'en dépend jamais.</p></div>
+</div>
+    </section>
+
+    <section class="lg-section" id="validate">
+      <h2><span class="lg-sec-num">07</span><span lang="en">Validate your work</span><span lang="fr">Valider votre travail</span></h2>
+<p>
+  <span lang="en">Run these checks once everything is deployed on a fresh container. Each line shows the expected result.</span><span lang="fr">Lancez ces vérifications une fois tout déployé sur un conteneur neuf. Chaque ligne indique le résultat attendu.</span>
+</p>
+<pre class="dark"><code>B=http://localhost:9080
+
+for u in "" clients "client?action=new" "client?action=view&amp;id=1" "client?action=edit&amp;id=1" \
+         health/live health/ready metrics openapi css/style.css; do
+  printf "%-28s %s\n" "/$u" "$(curl -s -o /dev/null -w '%{http_code}' "$B/$u")"
+done
+
+curl -s $B/clients | grep "Total Clients"
+
+# special characters must be escaped, never executed
+curl -s -o /dev/null -X POST --data-urlencode "name=&lt;script&gt;alert(1)&lt;/script&gt;" \
+  -d "action=create&amp;email=x@y.z" $B/client
+curl -s $B/clients | grep -c "&lt;script&gt;"
+curl -s $B/clients | grep -o "&amp;lt;script&amp;gt;" </code></pre>
+<table class="slide-table">
+  <thead><tr><th><span lang="en">Check</span><span lang="fr">Contrôle</span></th><th><span lang="en">Expected result</span><span lang="fr">Résultat attendu</span></th></tr></thead>
+  <tbody>
+    <tr><td><span lang="en">Ten URLs</span><span lang="fr">Dix URL</span></td><td><span lang="en"><code>200</code> for each</span><span lang="fr"><code>200</code> pour chacune</span></td></tr>
+    <tr><td><code>Total Clients</code></td><td><code>Total Clients:</code> 5 <span lang="en">on a fresh container</span><span lang="fr">sur un conteneur neuf</span></td></tr>
+    <tr><td><span lang="en"><code>&amp;lt;script&amp;gt;</code> payload, live tag count</span><span lang="fr">Charge <code>&amp;lt;script&amp;gt;</code>, nombre de balises actives</span></td><td><code>0</code></td></tr>
+    <tr><td><span lang="en"><code>&amp;lt;script&amp;gt;</code> payload, escaped text</span><span lang="fr">Charge <code>&amp;lt;script&amp;gt;</code>, texte échappé</span></td><td><code>&amp;lt;script&amp;gt;</code></td></tr>
+  </tbody>
+</table>
+<h3><span lang="en">Validation checklist</span><span lang="fr">Checklist de validation</span></h3>
+<ul class="lg-checklist">
+  <li><label><input type="checkbox"/><span lang="en">The project builds with <code>mvn clean package</code> and the image builds from the <code>Containerfile</code></span><span lang="fr">Le projet se construit avec <code>mvn clean package</code> et l'image se construit depuis le <code>Containerfile</code></span></label></li>
+  <li><label><input type="checkbox"/><span lang="en"><code>/metrics</code> and <code>/openapi</code> answer 200 thanks to my <code>server.xml</code> change</span><span lang="fr"><code>/metrics</code> et <code>/openapi</code> répondent 200 grâce à ma modification de <code>server.xml</code></span></label></li>
+  <li><label><input type="checkbox"/><span lang="en"><code>/clients</code> lists the five sample clients, search works, and the delete button follows <code>deletionEnabled</code></span><span lang="fr"><code>/clients</code> liste les cinq clients d'exemple, la recherche fonctionne, et le bouton de suppression suit <code>deletionEnabled</code></span></label></li>
+  <li><label><input type="checkbox"/><span lang="en">The form creates and edits a client and I land on the list or details with the green message</span><span lang="fr">Le formulaire crée et modifie un client et j'arrive sur la liste ou le détail avec le message vert</span></label></li>
+  <li><label><input type="checkbox"/><span lang="en">Unknown id gives 404, non-numeric id gives 400, empty name redirects with <code>error=name_required</code></span><span lang="fr">Un id inconnu donne 404, un id non numérique donne 400, un nom vide redirige avec <code>error=name_required</code></span></label></li>
+  <li><label><input type="checkbox"/><span lang="en"><code>/health/live</code> and <code>/health/ready</code> answer <code>UP</code></span><span lang="fr"><code>/health/live</code> et <code>/health/ready</code> répondent <code>UP</code></span></label></li>
+  <li><label><input type="checkbox"/><span lang="en">The logs show <code>APPLICATION STARTUP</code> and <code>Session created</code> lines</span><span lang="fr">Les logs montrent <code>APPLICATION STARTUP</code> et des lignes <code>Session created</code></span></label></li>
+  <li><label><input type="checkbox"/><span lang="en"><code>LoggingFilter</code>, <code>AuthenticationFilter</code>, <code>CorsFilter</code> and <code>CompressionFilter</code> behave as in their checkpoints</span><span lang="fr"><code>LoggingFilter</code>, <code>AuthenticationFilter</code>, <code>CorsFilter</code> et <code>CompressionFilter</code> se comportent comme dans leurs points de contrôle</span></label></li>
+  <li><label><input type="checkbox"/><span lang="en">HTML special characters in a name are escaped in the table</span><span lang="fr">Les caractères spéciaux HTML d'un nom sont échappés dans le tableau</span></label></li>
+  <li><label><input type="checkbox"/><span lang="en">I can explain why <code>ClientService</code> uses <code>ConcurrentHashMap</code> and <code>AtomicLong</code>, and why <code>doPost</code> redirects</span><span lang="fr">Je sais expliquer pourquoi <code>ClientService</code> utilise <code>ConcurrentHashMap</code> et <code>AtomicLong</code>, et pourquoi <code>doPost</code> redirige</span></label></li>
+</ul>
+    </section>
+
+    <section class="lg-section" id="compare">
+      <h2><span class="lg-sec-num">08</span><span lang="en">Compare with the solution</span><span lang="fr">Comparer à la solution</span></h2>
+<p>
+  <span lang="en">Your code does not have to match the solution character by character: comments, formatting and the exact HTML may differ. Behaviour must match. To see where you differ:</span><span lang="fr">Votre code n'a pas à être identique à la solution caractère par caractère : commentaires, mise en forme et HTML exact peuvent différer. Le comportement doit être le même. Pour voir où vous différez :</span>
+</p>
+<pre class="dark"><code>cd 03-Labs/Lab02-ServletsJSP
+diff -rq starter solution -x target -x docs
+diff -u solution/src/main/java/com/bank/web/ClientController.java \
+        starter/src/main/java/com/bank/web/ClientController.java</code></pre>
+<h3><span lang="en">Differences that are expected</span><span lang="fr">Différences attendues</span></h3>
+<ul>
+  <li><span lang="en"><code>pom.xml</code>, <code>Containerfile</code>, <code>microprofile-config.properties</code> (apart from your own edits), <code>bootstrap.properties</code>, <code>index.html</code> and <code>css/style.css</code> are identical in both folders.</span><span lang="fr"><code>pom.xml</code>, <code>Containerfile</code>, <code>microprofile-config.properties</code> (hors vos modifications), <code>bootstrap.properties</code>, <code>index.html</code> et <code>css/style.css</code> sont identiques dans les deux dossiers.</span></li>
+  <li><span lang="en"><code>src/main/liberty/config/server.xml</code>: the solution also has the demo <code>&lt;quickStartSecurity&gt;</code> element (see step 2).</span><span lang="fr"><code>src/main/liberty/config/server.xml</code> : la solution contient aussi l'élément de démo <code>&lt;quickStartSecurity&gt;</code> (voir l'étape 2).</span></li>
+  <li><span lang="en"><code>src/main/webapp/WEB-INF/web.xml</code>: the solution adds a comment block documenting filters and listeners.</span><span lang="fr"><code>src/main/webapp/WEB-INF/web.xml</code> : la solution ajoute un bloc de commentaires qui documente les filtres et les listeners.</span></li>
+  <li><span lang="en"><code>solution/docs/</code> (generated documentation site) and the empty <code>starter/src/test/</code> folder exist on one side only; <code>target/</code> is a build output ignored by Git.</span><span lang="fr"><code>solution/docs/</code> (site de documentation généré) et le dossier vide <code>starter/src/test/</code> n'existent que d'un côté ; <code>target/</code> est un résultat de build ignoré par Git.</span></li>
+  <li><span lang="en">In the solution, <code>AuthenticationFilter</code> lists <code>"/index.html"</code> and <code>"/"</code> as public (see the warning in step 13).</span><span lang="fr">Dans la solution, <code>AuthenticationFilter</code> liste <code>"/index.html"</code> et <code>"/"</code> comme publics (voir l'avertissement de l'étape 13).</span></li>
+</ul>
+<h3><span lang="en">Points to look for in your code</span><span lang="fr">Points à examiner dans votre code</span></h3>
+<ul>
+  <li><span lang="en">Is the shared state of <code>ClientService</code> thread-safe, and can you say why?</span><span lang="fr">L'état partagé de <code>ClientService</code> est-il thread-safe, et pouvez-vous dire pourquoi ?</span></li>
+  <li><span lang="en">Is every client field printed in the JSPs escaped with <code>c:out</code>?</span><span lang="fr">Chaque champ client affiché dans les JSP est-il échappé avec <code>c:out</code> ?</span></li>
+  <li><span lang="en">Does every <code>doPost</code> branch redirect instead of rendering a page?</span><span lang="fr">Chaque branche de <code>doPost</code> redirige-t-elle au lieu d'afficher une page ?</span></li>
+  <li><span lang="en">Does each filter call <code>chain.doFilter</code> on every path that must continue?</span><span lang="fr">Chaque filtre appelle-t-il <code>chain.doFilter</code> sur tous les chemins qui doivent continuer ?</span></li>
+</ul>
+    </section>
+
+    <section class="lg-section" id="trouble">
+      <h2><span class="lg-sec-num">09</span><span lang="en">Troubleshooting</span><span lang="fr">Dépannage</span></h2>
+<table class="slide-table">
+  <thead><tr><th><span lang="en">Symptom</span><span lang="fr">Symptôme</span></th><th><span lang="en">Cause and fix</span><span lang="fr">Cause et correction</span></th></tr></thead>
+  <tbody>
+    <tr><td><code>cannot bind tcp port :9080: address already in use</code></td><td><span lang="en">Another program or container uses port 9080 (another lab, for instance). Find it with <code>lsof -i :9080</code>, or publish on another port with <code>-p 127.0.0.1:9190:9080</code> and use <code>localhost:9190</code>.</span><span lang="fr">Un autre programme ou conteneur utilise le port 9080 (un autre lab, par exemple). Trouvez-le avec <code>lsof -i :9080</code>, ou publiez sur un autre port avec <code>-p 127.0.0.1:9190:9080</code> et utilisez <code>localhost:9190</code>.</span></td></tr>
+    <tr><td><code>the container name "banking-lab02" is already in use</code></td><td><span lang="en">A previous container still exists. Run <code>podman rm -f banking-lab02</code> (the redeploy loop already does it).</span><span lang="fr">Un conteneur précédent existe encore. Lancez <code>podman rm -f banking-lab02</code> (la boucle de redéploiement le fait déjà).</span></td></tr>
+    <tr><td><span lang="en">Every page answers <code>200</code> with an empty body</span><span lang="fr">Toutes les pages répondent <code>200</code> avec un corps vide</span></td><td><span lang="en">A filter mapped on <code>/*</code> does not call <code>chain.doFilter(...)</code>. In the starter, <code>AuthenticationFilter</code>, <code>CompressionFilter</code> and <code>LoggingFilter</code> do not until you complete them (step 1).</span><span lang="fr">Un filtre mappé sur <code>/*</code> n'appelle pas <code>chain.doFilter(...)</code>. Dans le starter, <code>AuthenticationFilter</code>, <code>CompressionFilter</code> et <code>LoggingFilter</code> ne le font pas tant que vous ne les avez pas complétés (étape 1).</span></td></tr>
+    <tr><td><span lang="en"><code>/clients</code> answers an empty <code>500</code></span><span lang="fr"><code>/clients</code> répond un <code>500</code> vide</span></td><td><span lang="en">A JSP failed to compile and the error page <code>/WEB-INF/views/error-500.jsp</code> does not exist. Search the log: <code>podman exec banking-lab02 grep JSPG /logs/messages.log</code>. A frequent cause in step 6 is the starter hint comment with a live <code>&lt;c:forEach&gt;</code> tag.</span><span lang="fr">Un JSP n'a pas compilé et la page d'erreur <code>/WEB-INF/views/error-500.jsp</code> n'existe pas. Cherchez dans le log : <code>podman exec banking-lab02 grep JSPG /logs/messages.log</code>. Une cause fréquente à l'étape 6 est le commentaire d'indice du starter qui contient une balise <code>&lt;c:forEach&gt;</code> active.</span></td></tr>
+    <tr><td><span lang="en"><code>/health</code> answers <code>500</code> with a <code>NullPointerException</code></span><span lang="fr"><code>/health</code> répond <code>500</code> avec une <code>NullPointerException</code></span></td><td><span lang="en">A health check returns <code>null</code> from <code>call()</code>. Complete <code>DatabaseHealthCheck</code> and <code>WebAppReadinessCheck</code> (step 9).</span><span lang="fr">Un health check renvoie <code>null</code> depuis <code>call()</code>. Complétez <code>DatabaseHealthCheck</code> et <code>WebAppReadinessCheck</code> (étape 9).</span></td></tr>
+    <tr><td><code>/metrics</code> → 403</td><td><span lang="en">The <code>mpMetrics</code> element is missing or misplaced in <code>server.xml</code> (step 2). It must be a direct child of <code>&amp;lt;server&amp;gt;</code>; rebuild the image after editing.</span><span lang="fr">L'élément <code>mpMetrics</code> manque ou est mal placé dans <code>server.xml</code> (étape 2). Il doit être un enfant direct de <code>&amp;lt;server&amp;gt;</code> ; reconstruisez l'image après modification.</span></td></tr>
+    <tr><td><span lang="en"><code>podman logs</code> shows no <code>Incoming Request</code> or <code>Session created</code> line</span><span lang="fr"><code>podman logs</code> ne montre aucune ligne <code>Incoming Request</code> ni <code>Session created</code></span></td><td><span lang="en">Liberty writes application logs to <code>/logs/messages.log</code> inside the container: use <code>podman exec banking-lab02 grep … /logs/messages.log</code>.</span><span lang="fr">Liberty écrit les logs de l'application dans <code>/logs/messages.log</code> à l'intérieur du conteneur : utilisez <code>podman exec banking-lab02 grep … /logs/messages.log</code>.</span></td></tr>
+    <tr><td><span lang="en">No <code>Session created</code> line at all</span><span lang="fr">Aucune ligne <code>Session created</code></span></td><td><span lang="en">A session only exists once something opens one; the JSP pages do. Request <code>/clients</code> (without a cookie jar for a new session each time).</span><span lang="fr">Une session n'existe que lorsqu'un élément en ouvre une ; les pages JSP le font. Appelez <code>/clients</code> (sans fichier de cookies pour obtenir une nouvelle session à chaque fois).</span></td></tr>
+    <tr><td><span lang="en"><code>/clients/x</code> is never redirected to <code>/login</code></span><span lang="fr"><code>/clients/x</code> n'est jamais redirigé vers <code>/login</code></span></td><td><span lang="en"><code>"/"</code> is in the public list: <code>startsWith("/")</code> matches everything (step 13).</span><span lang="fr"><code>"/"</code> est dans la liste publique : <code>startsWith("/")</code> correspond à tout (étape 13).</span></td></tr>
+    <tr><td><code>package javax.servlet does not exist</code></td><td><span lang="en">Servlet 6.0 uses the <code>jakarta.*</code> namespace; replace any <code>javax.servlet</code> import.</span><span lang="fr">Servlet 6.0 utilise l'espace de noms <code>jakarta.*</code> ; remplacez tout import <code>javax.servlet</code>.</span></td></tr>
+    <tr><td><code>Cannot connect to Podman</code></td><td><span lang="en">On macOS and Windows the Podman virtual machine is stopped: <code>podman machine start</code>.</span><span lang="fr">Sur macOS et Windows la machine virtuelle Podman est arrêtée : <code>podman machine start</code>.</span></td></tr>
+  </tbody>
+</table>
+    </section>
+
+    <section class="lg-section" id="bonus">
+      <h2><span class="lg-sec-num">10</span><span lang="en">Go further</span><span lang="fr">Pour aller plus loin</span></h2>
+<ul>
+  <li><span lang="en"><strong>Error pages.</strong> <code>web.xml</code> points to <code>/WEB-INF/views/error-404.jsp</code> and <code>error-500.jsp</code>, and the controller forwards to <code>error.jsp</code>: none exists. Create them with <code>isErrorPage="true"</code> and see what <code>/nope</code> returns.</span><span lang="fr"><strong>Pages d'erreur.</strong> <code>web.xml</code> référence <code>/WEB-INF/views/error-404.jsp</code> et <code>error-500.jsp</code>, et le contrôleur fait un forward vers <code>error.jsp</code> : aucun n'existe. Créez-les avec <code>isErrorPage="true"</code> et regardez ce que renvoie <code>/nope</code>.</span></li>
+  <li><span lang="en"><strong>Login page.</strong> Add a <code>/login</code> servlet that stores a <code>user</code> attribute in the session, so <code>AuthenticationFilter</code> and <code>SessionCounterListener</code> have something to detect.</span><span lang="fr"><strong>Page de login.</strong> Ajoutez une servlet <code>/login</code> qui stocke un attribut <code>user</code> dans la session, pour que <code>AuthenticationFilter</code> et <code>SessionCounterListener</code> aient quelque chose à détecter.</span></li>
+  <li><span lang="en"><strong>Pagination.</strong> <code>defaultPageSize</code> is read but never used: paginate <code>/clients</code>.</span><span lang="fr"><strong>Pagination.</strong> <code>defaultPageSize</code> est lu mais jamais utilisé : paginez <code>/clients</code>.</span></li>
+  <li><span lang="en"><strong>Config injection.</strong> Replace <code>getInitParameter</code> by <code>@Inject @ConfigProperty</code> in the controller, as the original README suggests, and compare.</span><span lang="fr"><strong>Injection de configuration.</strong> Remplacez <code>getInitParameter</code> par <code>@Inject @ConfigProperty</code> dans le contrôleur, comme le suggère le README d'origine, et comparez.</span></li>
+  <li><span lang="en"><strong>Health DOWN.</strong> Make <code>checkDatabase()</code> return <code>false</code> and see <code>/health/live</code> answer <code>503</code>.</span><span lang="fr"><strong>Health DOWN.</strong> Faites renvoyer <code>false</code> à <code>checkDatabase()</code> et constatez que <code>/health/live</code> répond <code>503</code>.</span></li>
+  <li><span lang="en"><strong>Validation.</strong> Check the email format and reject duplicate emails, with field-specific error messages.</span><span lang="fr"><strong>Validation.</strong> Contrôlez le format de l'email et refusez les emails en double, avec des messages d'erreur par champ.</span></li>
+  <li><span lang="en"><strong>Filter order.</strong> Declare the filters in <code>web.xml</code> with <code>&amp;lt;filter-mapping&amp;gt;</code> to control their order, then check the log order.</span><span lang="fr"><strong>Ordre des filtres.</strong> Déclarez les filtres dans <code>web.xml</code> avec <code>&amp;lt;filter-mapping&amp;gt;</code> pour maîtriser leur ordre, puis vérifiez l'ordre dans le log.</span></li>
+</ul>
+<div class="lg-callout lg-callout--tip">
+  <div lang="en"><div class="lg-callout-title">Next</div><p>Lab 02B rebuilds the same client management screens with Jakarta Faces (JSF), Facelets and CDI backing beans.</p></div>
+  <div lang="fr"><div class="lg-callout-title">Suite</div><p>Le Lab 02B reconstruit les mêmes écrans de gestion de clients avec Jakarta Faces (JSF), Facelets et des backing beans CDI.</p></div>
+</div>
+    </section>
+
+  </main>
+</div>
+
+<footer class="site-footer">Made with IBM Bob &nbsp;&middot;&nbsp; &copy; 2026 Olivier Planson</footer>
+</body>
+</html>

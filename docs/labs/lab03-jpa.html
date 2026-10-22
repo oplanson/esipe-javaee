@@ -1,0 +1,1209 @@
+<!-- © Copyright 2026 Olivier Planson. All rights reserved. Reproduction prohibited. Made with IBM Bob. -->
+<!DOCTYPE html>
+<html lang="fr" data-lang="fr">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title data-title-en="ESIPE — Lab 03: JPA and Database Integration — Lab guide" data-title-fr="ESIPE — Lab 03 : JPA et persistance relationnelle — Guide du lab">ESIPE — Lab 03 : JPA et persistance relationnelle — Guide du lab</title>
+  <link rel="stylesheet" href="assets/slide.css"/>
+  <link rel="stylesheet" href="assets/lab-guide.css"/>
+  <script src="assets/lab-guide.js"></script>
+</head>
+<body>
+<header class="site-header">
+  <a class="brand" href="index.html">ESIPE<span>Jakarta EE &amp; Microservices — Labs</span></a>
+  <div class="lang-toggle" id="lang-toggle">
+    <button type="button" id="btn-en" data-set-lang="en">EN</button>
+    <span class="sep">|</span>
+    <button type="button" id="btn-fr" data-set-lang="fr" class="active">FR</button>
+  </div>
+  <a class="back-link" href="index.html">&#8592; Labs</a>
+  <a class="back-link" href="../index.html"><span lang="en">Course site</span><span lang="fr">Site du cours</span></a>
+</header>
+
+<div class="lg-shell">
+
+  <nav class="lg-toc" aria-label="Table of contents">
+    <div class="lg-toc-title"><span lang="en">In this guide</span><span lang="fr">Dans ce guide</span></div>
+    <a href="#hero"><span lang="en">Overview</span><span lang="fr">Vue d'ensemble</span></a>
+    <a href="#goal"><span lang="en">1. Goal</span><span lang="fr">1. Objectif</span></a>
+    <a href="#starter"><span lang="en">2. What the starter gives you</span><span lang="fr">2. Ce que fournit le starter</span></a>
+    <a href="#target"><span lang="en">3. Target structure</span><span lang="fr">3. Structure cible</span></a>
+    <a href="#setup"><span lang="en">4. Setup</span><span lang="fr">4. Préparation</span></a>
+    <a href="#steps"><span lang="en">5. Step by step</span><span lang="fr">5. Pas à pas</span></a>
+    <a class="sub" href="#step-1"><span lang="en">1 · Database &amp; Compose</span><span lang="fr">1 · Base de données &amp; Compose</span></a>
+    <a class="sub" href="#step-2"><span lang="en">2 · JDBC driver &amp; Liberty</span><span lang="fr">2 · Driver JDBC &amp; Liberty</span></a>
+    <a class="sub" href="#step-3"><span lang="en">3 · Flyway schema migrations</span><span lang="fr">3 · Migrations de schéma Flyway</span></a>
+    <a class="sub" href="#step-4"><span lang="en">4 · JPA persistence configuration</span><span lang="fr">4 · Configuration de persistance JPA</span></a>
+    <a class="sub" href="#step-5"><span lang="en">5 · JPA Entities</span><span lang="fr">5 · Entités JPA</span></a>
+    <a class="sub" href="#step-6"><span lang="en">6 · JPA Service &amp; Transactions</span><span lang="fr">6 · Service JPA &amp; Transactions</span></a>
+    <a class="sub" href="#step-7"><span lang="en">7 · JNDI Environment Entries</span><span lang="fr">7 · Entrées d'environnement JNDI</span></a>
+    <a class="sub" href="#step-8"><span lang="en">8 · MVC Controller &amp; Errors</span><span lang="fr">8 · Contrôleur MVC &amp; Erreurs</span></a>
+    <a class="sub" href="#step-9"><span lang="en">9 · Transaction validator servlet</span><span lang="fr">9 · Servlet de validation de transaction</span></a>
+    <a class="sub" href="#step-10"><span lang="en">10 · MicroProfile Health checks</span><span lang="fr">10 · Health checks MicroProfile</span></a>
+    <a class="sub" href="#step-11"><span lang="en">11 · Container packaging</span><span lang="fr">11 · Packaging conteneur</span></a>
+    <a href="#run"><span lang="en">6. Run</span><span lang="fr">6. Exécution</span></a>
+    <a href="#validate"><span lang="en">7. Validate</span><span lang="fr">7. Validation</span></a>
+    <a href="#compare"><span lang="en">8. Compare with solution</span><span lang="fr">8. Comparer à la solution</span></a>
+    <a href="#trouble"><span lang="en">9. Troubleshooting</span><span lang="fr">9. Dépannage</span></a>
+    <a href="#bonus"><span lang="en">10. Go further</span><span lang="fr">10. Pour aller plus loin</span></a>
+  </nav>
+
+  <main class="lg-main">
+
+    <!-- ═════════════ HERO ═════════════ -->
+    <section class="lg-hero" id="hero">
+      <div class="lg-kicker">Lab 03</div>
+      <h1><span lang="en">JPA &amp; Relational Persistence</span><span lang="fr">JPA et persistance relationnelle</span></h1>
+      <p class="lg-lead">
+        <span lang="en">Replace in-memory storage with a real PostgreSQL database using Jakarta Persistence (JPA), EclipseLink, versioned Flyway migrations, and JNDI resource lookups on Open Liberty.</span>
+        <span lang="fr">Remplacez le stockage en mémoire par une vraie base de données PostgreSQL avec Jakarta Persistence (JPA), EclipseLink, des migrations versionnées Flyway et des accès JNDI sur Open Liberty.</span>
+      </p>
+      <div class="badge-row">
+        <span class="badge badge-blue">Jakarta EE 10</span>
+        <span class="badge badge-teal">JPA 3.1</span>
+        <span class="badge badge-green">PostgreSQL 16</span>
+        <span class="badge badge-purple">Flyway 10</span>
+        <span class="badge badge-warm">Open Liberty</span>
+      </div>
+      <div class="lg-facts">
+        <div><strong><span lang="en">about 3 hours</span><span lang="fr">environ 3 h</span></strong><span lang="en">Duration</span><span lang="fr">Durée</span></div>
+        <div><strong><span lang="en">Intermediate</span><span lang="fr">Intermédiaire</span></strong><span lang="en">Level</span><span lang="fr">Niveau</span></div>
+        <div><strong>JDK 17+ · Maven · Podman · PostgreSQL</strong><span lang="en">Prerequisites</span><span lang="fr">Prérequis</span></div>
+        <div><strong>http://localhost:9080/</strong><span lang="en">Application URL</span><span lang="fr">URL de l'application</span></div>
+      </div>
+      <div class="lg-hero-links">
+        <a href="../../02-Lectures/slides/03-jpa/slides.html#slide-1"><span lang="en">Course slides (JPA)</span><span lang="fr">Slides du cours (JPA)</span></a>
+        <a class="secondary" href="../03-jpa/index.html"><span lang="en">Course page</span><span lang="fr">Page du cours</span></a>
+        <a class="secondary" href="https://github.com/oplanson/esipe-javaee/blob/master/03-Labs/Lab03-JPA/README.md"><span lang="en">Original README</span><span lang="fr">README d'origine</span></a>
+        <a class="secondary" href="https://github.com/oplanson/esipe-javaee/tree/master/03-Labs/Lab03-JPA/solution"><span lang="en">Solution folder</span><span lang="fr">Dossier solution</span></a>
+      </div>
+    </section>
+
+    <!-- ═════════════ 1. GOAL ═════════════ -->
+    <section class="lg-section" id="goal">
+      <h2><span class="lg-sec-num">01</span><span lang="en">Goal of the lab</span><span lang="fr">Objectif du lab</span></h2>
+      <p>
+        <span lang="en">In Lab 02, data lived only in memory in a <code>HashMap</code> and disappeared each time the server restarted. In this lab, you transition the banking application to enterprise-grade persistence: entities mapped to PostgreSQL tables via JPA, bidirectional relationships, transactional CRUD operations via <code>EntityManager</code>, database migrations versioned with Flyway, and environment configuration resolved through JNDI.</span>
+        <span lang="fr">Dans le Lab 02, les données vivaient uniquement en mémoire dans une <code>HashMap</code> et disparaissaient à chaque redémarrage du serveur. Dans ce lab, vous faites évoluer l'application bancaire vers une persistance d'entreprise : entités mappées sur des tables PostgreSQL via JPA, relations bidirectionnelles, opérations CRUD transactionnelles via <code>EntityManager</code>, migrations de schéma versionnées avec Flyway et configuration d'environnement résolue par JNDI.</span>
+      </p>
+
+      <h3><span lang="en">What the finished application exposes</span><span lang="fr">Ce que l'application terminée expose</span></h3>
+      <table class="slide-table">
+        <thead><tr>
+          <th>URL</th>
+          <th><span lang="en">Served by</span><span lang="fr">Servi par</span></th>
+          <th><span lang="en">Behaviour</span><span lang="fr">Comportement</span></th>
+        </tr></thead>
+        <tbody>
+          <tr><td><code>/</code></td><td><code>index.html</code></td><td><span lang="en">Home page with navigation to clients, form, and JNDI validator</span><span lang="fr">Page d'accueil avec navigation vers les clients, le formulaire et le validateur JNDI</span></td></tr>
+          <tr><td><code>/clients</code></td><td><code>ClientController</code> (GET)</td><td><span lang="en">Lists clients retrieved from PostgreSQL with account count</span><span lang="fr">Liste des clients récupérés depuis PostgreSQL avec nombre de comptes</span></td></tr>
+          <tr><td><code>/client?action=view&amp;id=1</code></td><td><code>ClientController</code> (GET)</td><td><span lang="en">Displays client details with lazy-loaded accounts</span><span lang="fr">Affiche le détail d'un client avec ses comptes chargés à la demande</span></td></tr>
+          <tr><td><code>/client?action=new</code></td><td><code>ClientController</code> (GET/POST)</td><td><span lang="en">Form to create a client; persists row and redirects via PRG</span><span lang="fr">Formulaire de création d'un client ; persiste la ligne et redirige via PRG</span></td></tr>
+          <tr><td><code>/client?action=edit&amp;id=1</code></td><td><code>ClientController</code> (GET/POST)</td><td><span lang="en">Form to edit a client; updates row in database</span><span lang="fr">Formulaire d'édition d'un client ; met à jour la ligne en base</span></td></tr>
+          <tr><td><code>/validate-transaction</code></td><td><code>TransactionValidatorServlet</code></td><td><span lang="en">Demonstrates JNDI environment entries (HTML form &amp; JSON API)</span><span lang="fr">Démonstration des entrées d'environnement JNDI (formulaire HTML &amp; API JSON)</span></td></tr>
+          <tr><td><code>/health</code>, <code>/metrics</code></td><td>Open Liberty <span class="lg-tag lg-tag--chg"><span lang="en">MicroProfile</span><span lang="fr">MicroProfile</span></span></td><td><span lang="en">Liveness check (native SQL probe), readiness check, server metrics</span><span lang="fr">Check liveness (sonde SQL native), check readiness, métriques serveur</span></td></tr>
+        </tbody>
+      </table>
+
+      <h3><span lang="en">Concepts you practise</span><span lang="fr">Concepts mis en pratique</span></h3>
+      <ul>
+        <li>
+          <span lang="en">JPA Entities, primary keys, and table mapping — <a href="../../02-Lectures/slides/03-jpa/slides.html#slide-10">slide 10</a>, <a href="../../02-Lectures/slides/03-jpa/slides.html#slide-11">slide 11</a></span>
+          <span lang="fr">Entités JPA, clés primaires et mapping de tables — <a href="../../02-Lectures/slides/03-jpa/slides.html#slide-10">slide 10</a>, <a href="../../02-Lectures/slides/03-jpa/slides.html#slide-11">slide 11</a></span>
+        </li>
+        <li>
+          <span lang="en">Bidirectional relationships: <code>@OneToMany</code> and <code>@ManyToOne</code> — <a href="../../02-Lectures/slides/03-jpa/slides.html#slide-16">slide 16</a>, <a href="../../02-Lectures/slides/03-jpa/slides.html#slide-17">slide 17</a></span>
+          <span lang="fr">Relations bidirectionnelles : <code>@OneToMany</code> et <code>@ManyToOne</code> — <a href="../../02-Lectures/slides/03-jpa/slides.html#slide-16">slide 16</a>, <a href="../../02-Lectures/slides/03-jpa/slides.html#slide-17">slide 17</a></span>
+        </li>
+        <li>
+          <span lang="en">Named Queries and JPQL queries — <a href="../../02-Lectures/slides/03-jpa/slides.html#slide-26">slide 26</a></span>
+          <span lang="fr">Requêtes nommées (Named Queries) et requêtes JPQL — <a href="../../02-Lectures/slides/03-jpa/slides.html#slide-26">slide 26</a></span>
+        </li>
+        <li>
+          <span lang="en"><code>EntityManagerFactory</code>, <code>EntityManager</code> and manual <code>EntityTransaction</code> — <a href="../../02-Lectures/slides/03-jpa/slides.html#slide-38">slide 38</a>, <a href="../../02-Lectures/slides/03-jpa/slides.html#slide-40">slide 40</a></span>
+          <span lang="fr"><code>EntityManagerFactory</code>, <code>EntityManager</code> et transactions <code>EntityTransaction</code> — <a href="../../02-Lectures/slides/03-jpa/slides.html#slide-38">slide 38</a>, <a href="../../02-Lectures/slides/03-jpa/slides.html#slide-40">slide 40</a></span>
+        </li>
+        <li>
+          <span lang="en">Database schema versioning with Flyway — <a href="../../02-Lectures/slides/03-jpa/slides.html#slide-46">slide 46</a>, <a href="../../02-Lectures/slides/03-jpa/slides.html#slide-47">slide 47</a></span>
+          <span lang="fr">Gestion de versions de schéma avec Flyway — <a href="../../02-Lectures/slides/03-jpa/slides.html#slide-46">slide 46</a>, <a href="../../02-Lectures/slides/03-jpa/slides.html#slide-47">slide 47</a></span>
+        </li>
+        <li>
+          <span lang="en">JPA configuration in <code>persistence.xml</code> — <a href="../../02-Lectures/slides/03-jpa/slides.html#slide-51">slide 51</a></span>
+          <span lang="fr">Configuration JPA dans <code>persistence.xml</code> — <a href="../../02-Lectures/slides/03-jpa/slides.html#slide-51">slide 51</a></span>
+        </li>
+        <li>
+          <span lang="en">DataSource configuration and JNDI resource lookups — <a href="../../02-Lectures/slides/03-jpa/slides.html#slide-57">slide 57</a>, <a href="../../02-Lectures/slides/03-jpa/slides.html#slide-58">slide 58</a>, <a href="../../02-Lectures/slides/03-jpa/slides.html#slide-66">slide 66</a></span>
+          <span lang="fr">Configuration de DataSource et résolutions JNDI — <a href="../../02-Lectures/slides/03-jpa/slides.html#slide-57">slide 57</a>, <a href="../../02-Lectures/slides/03-jpa/slides.html#slide-58">slide 58</a>, <a href="../../02-Lectures/slides/03-jpa/slides.html#slide-66">slide 66</a></span>
+        </li>
+        <li>
+          <span lang="en">Externalised configuration with JNDI Environment Entries in <code>web.xml</code> — <a href="../../02-Lectures/slides/03-jpa/slides.html#slide-60">slide 60</a>, <a href="../../02-Lectures/slides/03-jpa/slides.html#slide-61">slide 61</a></span>
+          <span lang="fr">Configuration externalisée avec entrées d'environnement JNDI dans <code>web.xml</code> — <a href="../../02-Lectures/slides/03-jpa/slides.html#slide-60">slide 60</a>, <a href="../../02-Lectures/slides/03-jpa/slides.html#slide-61">slide 61</a></span>
+        </li>
+      </ul>
+    </section>
+
+    <!-- ═════════════ 2. STARTER ═════════════ -->
+    <section class="lg-section" id="starter">
+      <h2><span class="lg-sec-num">02</span><span lang="en">What the starter gives you</span><span lang="fr">Ce que fournit le starter</span></h2>
+      <p>
+        <span lang="en">The folder <code>03-Labs/Lab03-JPA/starter/</code> provides the skeleton of the banking application with placeholder classes and configuration files. Several essential persistence artifacts are left for you to create or complete.</span>
+        <span lang="fr">Le dossier <code>03-Labs/Lab03-JPA/starter/</code> fournit le squelette de l'application bancaire avec des classes à compléter et des fichiers de configuration. Plusieurs artefacts de persistance essentiels sont à créer ou à compléter par vos soins.</span>
+      </p>
+
+      <div class="lg-callout lg-callout--warn">
+        <div lang="en"><div class="lg-callout-title">Discrepancies between original README and real code</div><p>The original <a href="https://github.com/oplanson/esipe-javaee/blob/master/03-Labs/Lab03-JPA/README.md">README</a> mentions Hibernate and CDI annotations (such as <code>@Inject</code> and <code>@Transactional</code>). In this course architecture, <strong>CDI is formally introduced in Lab 04</strong>. Lab 03 focuses on standard JPA with Open Liberty's native EclipseLink provider (<code>RESOURCE_LOCAL</code>, Singleton <code>ClientService.getInstance()</code>, programmatic <code>EntityTransaction</code>), Flyway migrations via a <code>@WebListener ServletContextListener</code>, and JNDI lookups with <code>InitialContext</code>. Furthermore, the migration files (<code>V1</code>, <code>V2</code>, <code>V3</code>), <code>persistence.xml</code>, <code>DatabaseMigrationStartup.java</code>, <code>TransactionValidatorServlet.java</code>, and <code>Containerfile</code> are absent from <code>starter/</code> and must be created. This guide follows the real code of <code>starter/</code> and <code>solution/</code>.</p></div>
+        <div lang="fr"><div class="lg-callout-title">Écarts entre le README d'origine et le code réel</div><p>Le <a href="https://github.com/oplanson/esipe-javaee/blob/master/03-Labs/Lab03-JPA/README.md">README</a> d'origine mentionne Hibernate et des annotations CDI (comme <code>@Inject</code> et <code>@Transactional</code>). Dans l'architecture du cours, <strong>CDI est formellement introduit au Lab 04</strong>. Le Lab 03 se concentre sur JPA standard avec le provider natif EclipseLink d'Open Liberty (<code>RESOURCE_LOCAL</code>, Singleton <code>ClientService.getInstance()</code>, gestion programmatique <code>EntityTransaction</code>), les migrations Flyway via un <code>@WebListener ServletContextListener</code> et les résolutions JNDI avec <code>InitialContext</code>. De plus, les fichiers de migration (<code>V1</code>, <code>V2</code>, <code>V3</code>), <code>persistence.xml</code>, <code>DatabaseMigrationStartup.java</code>, <code>TransactionValidatorServlet.java</code> et <code>Containerfile</code> sont absents du <code>starter/</code> et doivent être créés. Ce guide suit le code réel de <code>starter/</code> et de <code>solution/</code>.</p></div>
+      </div>
+
+      <table class="slide-table">
+        <thead><tr>
+          <th><span lang="en">File (in <code>starter/</code>)</span><span lang="fr">Fichier (dans <code>starter/</code>)</span></th>
+          <th><span lang="en">Status</span><span lang="fr">Statut</span></th>
+          <th><span lang="en">What it is</span><span lang="fr">Rôle</span></th>
+        </tr></thead>
+        <tbody>
+          <tr>
+            <td><code>docker-compose.yml</code></td>
+            <td><span class="lg-tag lg-tag--chg"><span lang="en">to modify</span><span lang="fr">à modifier</span></span></td>
+            <td><span lang="en">PostgreSQL 16 Alpine container definition with database credentials and port publication.</span><span lang="fr">Définition du conteneur PostgreSQL 16 Alpine avec identifiants et publication de port.</span></td>
+          </tr>
+          <tr>
+            <td><code>pom.xml</code></td>
+            <td><span class="lg-tag lg-tag--chg"><span lang="en">to modify</span><span lang="fr">à modifier</span></span></td>
+            <td><span lang="en">Maven build: add Liberty plugin configuration to copy the PostgreSQL driver JAR to <code>shared.resource.dir</code>.</span><span lang="fr">Build Maven : ajout de la configuration du plugin Liberty pour copier le driver PostgreSQL dans <code>shared.resource.dir</code>.</span></td>
+          </tr>
+          <tr>
+            <td><code>src/main/liberty/config/server.xml</code></td>
+            <td><span class="lg-tag lg-tag--chg"><span lang="en">to modify</span><span lang="fr">à modifier</span></span></td>
+            <td><span lang="en">Open Liberty configuration: features, JDBC library, Flyway DataSource, application DataSource, and EclipseLink JPA provider.</span><span lang="fr">Configuration Open Liberty : features, bibliothèque JDBC, DataSource Flyway, DataSource applicative et provider JPA EclipseLink.</span></td>
+          </tr>
+          <tr>
+            <td><code>src/main/liberty/config/bootstrap.properties</code></td>
+            <td><span class="lg-tag lg-tag--chg"><span lang="en">to modify</span><span lang="fr">à modifier</span></span></td>
+            <td><span lang="en">Server ports and database connection properties (<code>DB_HOST</code>, <code>DB_PORT</code>, <code>DB_NAME</code>).</span><span lang="fr">Ports serveur et propriétés de connexion base de données (<code>DB_HOST</code>, <code>DB_PORT</code>, <code>DB_NAME</code>).</span></td>
+          </tr>
+          <tr>
+            <td><code>src/main/resources/META-INF/persistence.xml</code></td>
+            <td><span class="lg-tag lg-tag--new"><span lang="en">to create</span><span lang="fr">à créer</span></span></td>
+            <td><span lang="en">JPA persistence unit <code>bankingPU</code>, entity declarations, and EclipseLink PostgreSQL properties.</span><span lang="fr">Unité de persistance JPA <code>bankingPU</code>, déclaration des entités et propriétés EclipseLink PostgreSQL.</span></td>
+          </tr>
+          <tr>
+            <td><code>src/main/resources/db/migration/V1__create_clients_table.sql</code></td>
+            <td><span class="lg-tag lg-tag--new"><span lang="en">to create</span><span lang="fr">à créer</span></span></td>
+            <td><span lang="en">Flyway initial migration: creates <code>clients</code> table with indexes and sample data.</span><span lang="fr">Migration initiale Flyway : création de la table <code>clients</code> avec index et données de test.</span></td>
+          </tr>
+          <tr>
+            <td><code>src/main/resources/db/migration/V2__create_accounts_table.sql</code></td>
+            <td><span class="lg-tag lg-tag--new"><span lang="en">to create</span><span lang="fr">à créer</span></span></td>
+            <td><span lang="en">Flyway migration: creates <code>accounts</code> table with foreign key to <code>clients</code> and sample accounts.</span><span lang="fr">Migration Flyway : création de la table <code>accounts</code> avec clé étrangère vers <code>clients</code> et comptes d'exemple.</span></td>
+          </tr>
+          <tr>
+            <td><code>src/main/resources/db/migration/V3__add_account_status.sql</code></td>
+            <td><span class="lg-tag lg-tag--new"><span lang="en">to create</span><span lang="fr">à créer</span></span></td>
+            <td><span lang="en">Flyway migration: schema evolution adding <code>status</code> column and check constraint.</span><span lang="fr">Migration Flyway : évolution de schéma ajoutant la colonne <code>status</code> et contrainte de vérification.</span></td>
+          </tr>
+          <tr>
+            <td><code>src/main/java/com/bank/config/DatabaseMigrationStartup.java</code></td>
+            <td><span class="lg-tag lg-tag--new"><span lang="en">to create</span><span lang="fr">à créer</span></span></td>
+            <td><span lang="en"><code>@WebListener ServletContextListener</code> that executes Flyway migrations at application boot.</span><span lang="fr"><code>@WebListener ServletContextListener</code> qui exécute les migrations Flyway au démarrage de l'application.</span></td>
+          </tr>
+          <tr>
+            <td><code>src/main/java/com/bank/model/Client.java</code></td>
+            <td><span class="lg-tag lg-tag--chg"><span lang="en">to modify</span><span lang="fr">à modifier</span></span></td>
+            <td><span lang="en">JPA entity with <code>@Entity</code>, <code>@Table</code>, <code>@NamedQueries</code>, and <code>@OneToMany</code> accounts list.</span><span lang="fr">Entité JPA avec <code>@Entity</code>, <code>@Table</code>, <code>@NamedQueries</code> et liste de comptes <code>@OneToMany</code>.</span></td>
+          </tr>
+          <tr>
+            <td><code>src/main/java/com/bank/model/Account.java</code></td>
+            <td><span class="lg-tag lg-tag--chg"><span lang="en">to modify</span><span lang="fr">à modifier</span></span></td>
+            <td><span lang="en">JPA entity with <code>@Entity</code>, <code>@Table</code>, <code>@NamedQueries</code>, and <code>@ManyToOne</code> client relationship.</span><span lang="fr">Entité JPA avec <code>@Entity</code>, <code>@Table</code>, <code>@NamedQueries</code> et relation client <code>@ManyToOne</code>.</span></td>
+          </tr>
+          <tr>
+            <td><code>src/main/java/com/bank/service/ClientService.java</code></td>
+            <td><span class="lg-tag lg-tag--chg"><span lang="en">to modify</span><span lang="fr">à modifier</span></span></td>
+            <td><span lang="en">Data access service: manages <code>EntityManagerFactory</code>, transactions, and CRUD queries.</span><span lang="fr">Service d'accès aux données : gestion de <code>EntityManagerFactory</code>, transactions et requêtes CRUD.</span></td>
+          </tr>
+          <tr>
+            <td><code>src/main/webapp/WEB-INF/web.xml</code></td>
+            <td><span class="lg-tag lg-tag--chg"><span lang="en">to modify</span><span lang="fr">à modifier</span></span></td>
+            <td><span lang="en">Deployment descriptor: declare <code>&lt;resource-ref&gt;</code> for DataSource and <code>&lt;env-entry&gt;</code> for configuration.</span><span lang="fr">Descripteur de déploiement : déclaration de <code>&lt;resource-ref&gt;</code> pour la DataSource et <code>&lt;env-entry&gt;</code> de configuration.</span></td>
+          </tr>
+          <tr>
+            <td><code>src/main/java/com/bank/config/JndiConfigService.java</code></td>
+            <td><span class="lg-tag lg-tag--chg"><span lang="en">to modify</span><span lang="fr">à modifier</span></span></td>
+            <td><span lang="en">Service resolving JNDI resource reference and environment entries (max transaction amount, support email).</span><span lang="fr">Service résolvant la référence JNDI et les entrées d'environnement (montant max de transaction, email support).</span></td>
+          </tr>
+          <tr>
+            <td><code>src/main/java/com/bank/web/ClientController.java</code></td>
+            <td><span class="lg-tag lg-tag--chg"><span lang="en">to modify</span><span lang="fr">à modifier</span></span></td>
+            <td><span lang="en">MVC servlet routing requests, delegating to <code>ClientService</code>, and forwarding to JSP views.</span><span lang="fr">Servlet MVC routant les requêtes, déléguant à <code>ClientService</code> et redirigeant vers les JSP.</span></td>
+          </tr>
+          <tr>
+            <td><code>src/main/java/com/bank/web/TransactionValidatorServlet.java</code></td>
+            <td><span class="lg-tag lg-tag--new"><span lang="en">to create</span><span lang="fr">à créer</span></span></td>
+            <td><span lang="en">Servlet illustrating JNDI configuration validation with HTML and JSON responses.</span><span lang="fr">Servlet illustrant la validation de configuration JNDI avec réponses HTML et JSON.</span></td>
+          </tr>
+          <tr>
+            <td><code>src/main/java/com/bank/health/DatabaseHealthCheck.java</code></td>
+            <td><span class="lg-tag lg-tag--chg"><span lang="en">to modify</span><span lang="fr">à modifier</span></span></td>
+            <td><span lang="en">MicroProfile Liveness check executing a native <code>SELECT 1</code> probe against PostgreSQL.</span><span lang="fr">Check Liveness MicroProfile exécutant une sonde native <code>SELECT 1</code> sur PostgreSQL.</span></td>
+          </tr>
+          <tr>
+            <td><code>src/main/java/com/bank/health/WebAppReadinessCheck.java</code></td>
+            <td><span class="lg-tag lg-tag--chg"><span lang="en">to modify</span><span lang="fr">à modifier</span></span></td>
+            <td><span lang="en">MicroProfile Readiness check verifying configuration loading and service initialization.</span><span lang="fr">Check Readiness MicroProfile vérifiant le chargement de configuration et l'état des services.</span></td>
+          </tr>
+          <tr>
+            <td><code>src/main/webapp/index.html</code></td>
+            <td><span class="lg-tag lg-tag--chg"><span lang="en">to modify</span><span lang="fr">à modifier</span></span></td>
+            <td><span lang="en">Home page with links to client management and JNDI transaction validator demo.</span><span lang="fr">Page d'accueil avec liens vers la gestion des clients et la démo du validateur JNDI.</span></td>
+          </tr>
+          <tr>
+            <td><code>src/main/webapp/WEB-INF/views/error.jsp</code></td>
+            <td><span class="lg-tag lg-tag--new"><span lang="en">to create</span><span lang="fr">à créer</span></span></td>
+            <td><span lang="en">JSP error view for displaying exception messages.</span><span lang="fr">Vue JSP d'erreur pour afficher les messages d'exception.</span></td>
+          </tr>
+          <tr>
+            <td><code>src/main/webapp/error-404.html</code>, <code>error-500.html</code></td>
+            <td><span class="lg-tag lg-tag--new"><span lang="en">to create</span><span lang="fr">à créer</span></span></td>
+            <td><span lang="en">Standard HTTP error pages mapped in <code>web.xml</code>.</span><span lang="fr">Pages d'erreur HTTP standard mappées dans <code>web.xml</code>.</span></td>
+          </tr>
+          <tr>
+            <td><code>Containerfile</code></td>
+            <td><span class="lg-tag lg-tag--new"><span lang="en">to create</span><span lang="fr">à créer</span></span></td>
+            <td><span lang="en">Container image recipe for Open Liberty with copied PostgreSQL driver.</span><span lang="fr">Recette d'image conteneur pour Open Liberty avec driver PostgreSQL copié.</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- ═════════════ 3. TARGET ═════════════ -->
+    <section class="lg-section" id="target">
+      <h2><span class="lg-sec-num">03</span><span lang="en">Target structure</span><span lang="fr">Structure cible</span></h2>
+      <p>
+        <span lang="en">At the end of this lab, your project in <code>starter/</code> will have the following architecture:</span>
+        <span lang="fr">À la fin de ce lab, votre projet dans <code>starter/</code> aura l'architecture suivante :</span>
+      </p>
+
+      <pre class="dark"><code>Lab03-JPA/starter/
+├── pom.xml                                      # Maven dependencies &amp; copy-dependencies
+├── docker-compose.yml                           # PostgreSQL 16 container definition
+├── Containerfile                                # Podman / Docker container image build
+└── src/main/
+    ├── java/com/bank/
+    │   ├── config/
+    │   │   ├── DatabaseMigrationStartup.java    # @WebListener running Flyway at boot
+    │   │   └── JndiConfigService.java           # JNDI lookup of DataSource &amp; env-entries
+    │   ├── health/
+    │   │   ├── DatabaseHealthCheck.java         # Liveness check (SELECT 1 probe)
+    │   │   └── WebAppReadinessCheck.java        # Readiness check
+    │   ├── model/
+    │   │   ├── Account.java                     # JPA Entity @Table("accounts") @ManyToOne
+    │   │   └── Client.java                      # JPA Entity @Table("clients") @OneToMany
+    │   ├── service/
+    │   │   └── ClientService.java               # Singleton CRUD with EntityManager &amp; tx
+    │   └── web/
+    │       ├── ClientController.java            # MVC Servlet for /clients &amp; /client
+    │       └── TransactionValidatorServlet.java # Servlet for /validate-transaction
+    ├── liberty/config/
+    │   ├── bootstrap.properties                 # Server ports &amp; DB_HOST definition
+    │   └── server.xml                           # DataSources, EclipseLink JPA, features
+    ├── resources/
+    │   ├── META-INF/
+    │   │   ├── microprofile-config.properties   # MicroProfile Config properties
+    │   │   └── persistence.xml                  # JPA persistence unit bankingPU
+    │   └── db/migration/
+    │       ├── V1__create_clients_table.sql     # Flyway V1: clients table &amp; sample data
+    │       ├── V2__create_accounts_table.sql    # Flyway V2: accounts table &amp; foreign key
+    │       └── V3__add_account_status.sql       # Flyway V3: schema alteration
+    └── webapp/
+        ├── WEB-INF/
+        │   ├── web.xml                          # &lt;resource-ref&gt;, &lt;env-entry&gt;, error pages
+        │   └── views/
+        │       ├── client-details.jsp           # Client details with account table
+        │       ├── client-form.jsp              # Create / Edit client form
+        │       ├── client-list.jsp              # Client list with account count
+        │       └── error.jsp                    # JSP error view
+        ├── css/style.css                        # Application styles
+        ├── error-404.html                       # 404 error page
+        ├── error-500.html                       # 500 error page
+        └── index.html                           # Home page with feature links</code></pre>
+    </section>
+
+    <!-- ═════════════ 4. SETUP ═════════════ -->
+    <section class="lg-section" id="setup">
+      <h2><span class="lg-sec-num">04</span><span lang="en">Setup</span><span lang="fr">Préparation</span></h2>
+      <h3><span lang="en">Tools</span><span lang="fr">Outils</span></h3>
+      <table class="slide-table">
+        <thead><tr><th><span lang="en">Tool</span><span lang="fr">Outil</span></th><th><span lang="en">Check with</span><span lang="fr">Vérifier avec</span></th></tr></thead>
+        <tbody>
+          <tr><td>JDK 17+</td><td><code>java -version</code></td></tr>
+          <tr><td>Maven 3.x</td><td><code>mvn -v</code></td></tr>
+          <tr><td>Podman <span lang="en">(Docker works with the same commands)</span><span lang="fr">(Docker fonctionne avec les mêmes commandes)</span></td><td><code>podman --version</code></td></tr>
+          <tr><td>PostgreSQL client (psql)</td><td><code>psql --version</code></td></tr>
+          <tr><td>curl</td><td><code>curl --version</code></td></tr>
+        </tbody>
+      </table>
+
+      <div class="lg-callout lg-callout--note">
+        <div lang="en"><div class="lg-callout-title">Database security in development</div><p>The container environment uses demonstration credentials (<code>bankuser</code> / <code>bankpassword</code>). In production, credentials must never be hard-coded and must be provided via secret management. Ports are bound to <code>127.0.0.1</code> to prevent remote exposure.</p></div>
+        <div lang="fr"><div class="lg-callout-title">Sécurité de la base en développement</div><p>L'environnement en conteneur utilise des identifiants de démonstration (<code>bankuser</code> / <code>bankpassword</code>). En production, aucun identifiant ne doit être codé en dur et la configuration doit passer par un gestionnaire de secrets. Les ports sont liés à <code>127.0.0.1</code> pour éviter toute exposition distante.</p></div>
+      </div>
+
+      <h3><span lang="en">Your working folder</span><span lang="fr">Votre dossier de travail</span></h3>
+      <p>
+        <span lang="en">Work directly in <code>03-Labs/Lab03-JPA/starter/</code>. All commands below assume you are in that directory.</span>
+        <span lang="fr">Travaillez directement dans <code>03-Labs/Lab03-JPA/starter/</code>. Toutes les commandes ci-dessous supposent que vous êtes dans ce dossier.</span>
+      </p>
+      <pre class="dark"><code>cd 03-Labs/Lab03-JPA/starter</code></pre>
+
+      <h3><span lang="en">The redeploy loop</span><span lang="fr">La boucle de redéploiement</span></h3>
+      <p>
+        <span lang="en">You can develop using Open Liberty dev mode (<code>mvn liberty:dev</code>) or build and test via containers. For container testing:</span>
+        <span lang="fr">Vous pouvez développer en utilisant le mode dev d'Open Liberty (<code>mvn liberty:dev</code>) ou construire et tester via des conteneurs. Pour le test en conteneur :</span>
+      </p>
+      <pre class="dark"><code>mvn clean package -DskipTests
+podman rm -f banking-jpa-lab03 2&gt;/dev/null
+podman build -t banking-jpa-app:lab03 -f Containerfile .
+podman run -d --name banking-jpa-lab03 -p 127.0.0.1:9080:9080 banking-jpa-app:lab03
+until curl -fs http://localhost:9080/ &gt;/dev/null; do sleep 2; done; echo "ready"</code></pre>
+    </section>
+
+    <!-- ═════════════ 5. STEPS ═════════════ -->
+    <section class="lg-section" id="steps">
+      <h2><span class="lg-sec-num">05</span><span lang="en">Step by step</span><span lang="fr">Pas à pas</span></h2>
+      <p>
+        <span lang="en">Follow each step sequentially. Read the task, inspect the hints if needed, and run the checkpoint to verify each component before proceeding.</span>
+        <span lang="fr">Suivez chaque étape de manière séquentielle. Lisez la consigne, consultez les indices en cas de doute et exécutez le point de contrôle pour valider chaque élément avant de continuer.</span>
+      </p>
+      <ol class="lg-steps-overview">
+        <li><a href="#step-1"><span lang="en">Database &amp; Compose</span><span lang="fr">Base de données &amp; Compose</span></a><span class="lg-dur">10 min</span></li>
+        <li><a href="#step-2"><span lang="en">JDBC driver &amp; Liberty</span><span lang="fr">Driver JDBC &amp; Liberty</span></a><span class="lg-dur">15 min</span></li>
+        <li><a href="#step-3"><span lang="en">Flyway schema migrations</span><span lang="fr">Migrations de schéma Flyway</span></a><span class="lg-dur">20 min</span></li>
+        <li><a href="#step-4"><span lang="en">JPA persistence configuration</span><span lang="fr">Configuration de persistance JPA</span></a><span class="lg-dur">10 min</span></li>
+        <li><a href="#step-5"><span lang="en">JPA Entities</span><span lang="fr">Entités JPA</span></a><span class="lg-dur">25 min</span></li>
+        <li><a href="#step-6"><span lang="en">JPA Service &amp; Transactions</span><span lang="fr">Service JPA &amp; Transactions</span></a><span class="lg-dur">25 min</span></li>
+        <li><a href="#step-7"><span lang="en">JNDI Environment Entries</span><span lang="fr">Entrées d'environnement JNDI</span></a><span class="lg-dur">20 min</span></li>
+        <li><a href="#step-8"><span lang="en">MVC Controller &amp; Errors</span><span lang="fr">Contrôleur MVC &amp; Erreurs</span></a><span class="lg-dur">15 min</span></li>
+        <li><a href="#step-9"><span lang="en">Transaction validator servlet</span><span lang="fr">Servlet de validation de transaction</span></a><span class="lg-dur">15 min</span></li>
+        <li><a href="#step-10"><span lang="en">MicroProfile Health checks</span><span lang="fr">Health checks MicroProfile</span></a><span class="lg-dur">10 min</span></li>
+        <li><a href="#step-11"><span lang="en">Container packaging</span><span lang="fr">Packaging conteneur</span></a><span class="lg-dur">15 min</span></li>
+      </ol>
+
+      <!-- ───────── STEP 1 ───────── -->
+      <article class="lg-step" id="step-1">
+        <div class="lg-step-head">
+          <div class="lg-step-num">1</div>
+          <div>
+            <h3><span lang="en">Database container &amp; configuration</span><span lang="fr">Conteneur de base de données &amp; configuration</span></h3>
+            <div class="lg-step-meta">
+              <span class="lg-chip">10 min</span>
+              <span class="lg-chip"><span lang="en">Course:</span><span lang="fr">Cours :</span> <a href="../../02-Lectures/slides/03-jpa/slides.html#slide-57"><span lang="en">JPA, slide 57</span><span lang="fr">JPA, slide 57</span></a></span>
+            </div>
+          </div>
+        </div>
+        <div class="lg-step-body">
+          <p class="lg-files"><span lang="en">Files to modify:</span><span lang="fr">Fichiers à modifier :</span> <code>docker-compose.yml</code>, <code>src/main/liberty/config/bootstrap.properties</code></p>
+          <div class="lg-task-label"><span lang="en">Task</span><span lang="fr">À faire</span></div>
+          <ol>
+            <li><span lang="en">Verify <code>docker-compose.yml</code> to run PostgreSQL 16 on port <code>127.0.0.1:5432:5432</code> with database <code>bankdb</code>, user <code>bankuser</code>, and password <code>bankpassword</code>.</span><span lang="fr">Vérifiez <code>docker-compose.yml</code> pour exécuter PostgreSQL 16 sur le port <code>127.0.0.1:5432:5432</code> avec la base <code>bankdb</code>, l'utilisateur <code>bankuser</code> et le mot de passe <code>bankpassword</code>.</span></li>
+            <li><span lang="en">Check <code>src/main/liberty/config/bootstrap.properties</code>: configure <code>http.port=9080</code>, <code>https.port=9443</code>, <code>DB_PORT=5432</code>, <code>DB_NAME=bankdb</code>, <code>DB_USER=bankuser</code>, <code>DB_PASSWORD=bankpassword</code>, and set <code>DB_HOST=host.containers.internal</code> for container communication (or <code>localhost</code> for local development).</span><span lang="fr">Vérifiez <code>src/main/liberty/config/bootstrap.properties</code> : configurez <code>http.port=9080</code>, <code>https.port=9443</code>, <code>DB_PORT=5432</code>, <code>DB_NAME=bankdb</code>, <code>DB_USER=bankuser</code>, <code>DB_PASSWORD=bankpassword</code> et définissez <code>DB_HOST=host.containers.internal</code> pour la communication en conteneur (ou <code>localhost</code> pour le développement local).</span></li>
+            <li><span lang="en">Start the PostgreSQL database container with Podman Compose or Docker Compose.</span><span lang="fr">Démarrez le conteneur de base de données PostgreSQL avec Podman Compose ou Docker Compose.</span></li>
+          </ol>
+          <details class="lg-hint lg-hint--1">
+            <summary><span lang="en">Hint 1 — starting the database</span><span lang="fr">Indice 1 — démarrage de la base</span></summary>
+            <div class="lg-hint-body">
+              <p><span lang="en">Run <code>podman compose up -d</code> (or <code>docker compose up -d</code>). You can test if the database is ready using <code>podman exec banking-db pg_isready -U bankuser -d bankdb</code>.</span><span lang="fr">Exécutez <code>podman compose up -d</code> (ou <code>docker compose up -d</code>). Vous pouvez vérifier que la base est prête avec <code>podman exec banking-db pg_isready -U bankuser -d bankdb</code>.</span></p>
+            </div>
+          </details>
+          <details class="lg-hint lg-hint--2">
+            <summary><span lang="en">Hint 2 — compose structure</span><span lang="fr">Indice 2 — structure compose</span></summary>
+            <div class="lg-hint-body">
+<pre class="dark"><code>services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: banking-db
+    environment:
+      POSTGRES_DB: bankdb
+      POSTGRES_USER: bankuser
+      POSTGRES_PASSWORD: bankpassword
+    ports:
+      - "127.0.0.1:5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+volumes:
+  postgres_data:</code></pre>
+            </div>
+          </details>
+          <details class="lg-hint lg-hint--sol">
+            <summary><span lang="en">Solution files</span><span lang="fr">Fichiers solution</span></summary>
+            <div class="lg-hint-body">
+              <p><a href="https://github.com/oplanson/esipe-javaee/blob/master/03-Labs/Lab03-JPA/solution/docker-compose.yml"><code>solution/docker-compose.yml</code></a> &nbsp;&middot;&nbsp; <a href="https://github.com/oplanson/esipe-javaee/blob/master/03-Labs/Lab03-JPA/solution/src/main/liberty/config/bootstrap.properties"><code>solution/…/bootstrap.properties</code></a></p>
+            </div>
+          </details>
+          <div class="lg-checkpoint">
+            <div class="lg-check-label"><span lang="en">Checkpoint</span><span lang="fr">Point de contrôle</span></div>
+            <pre class="dark"><code>podman exec banking-db pg_isready -U bankuser -d bankdb</code></pre>
+            <p><span lang="en">Expected output: <code>bankdb:5432 - accepting connections</code>.</span><span lang="fr">Résultat attendu : <code>bankdb:5432 - accepting connections</code>.</span></p>
+          </div>
+        </div>
+      </article>
+
+      <!-- ───────── STEP 2 ───────── -->
+      <article class="lg-step" id="step-2">
+        <div class="lg-step-head">
+          <div class="lg-step-num">2</div>
+          <div>
+            <h3><span lang="en">JDBC driver &amp; Liberty DataSources</span><span lang="fr">Driver JDBC &amp; DataSources Liberty</span></h3>
+            <div class="lg-step-meta">
+              <span class="lg-chip">15 min</span>
+              <span class="lg-chip"><span lang="en">Course:</span><span lang="fr">Cours :</span> <a href="../../02-Lectures/slides/03-jpa/slides.html#slide-66"><span lang="en">JPA, slide 66</span><span lang="fr">JPA, slide 66</span></a></span>
+            </div>
+          </div>
+        </div>
+        <div class="lg-step-body">
+          <p class="lg-files"><span lang="en">Files to modify:</span><span lang="fr">Fichiers à modifier :</span> <code>pom.xml</code>, <code>src/main/liberty/config/server.xml</code></p>
+          <div class="lg-task-label"><span lang="en">Task</span><span lang="fr">À faire</span></div>
+          <ol>
+            <li><span lang="en">In <code>pom.xml</code>, configure <code>liberty-maven-plugin</code> to copy the PostgreSQL JDBC driver into the Liberty shared library directory: <code>&lt;copyLibsDirectory&gt;postgresql&lt;/copyLibsDirectory&gt;</code> and <code>&lt;copyDependencies&gt;</code>.</span><span lang="fr">Dans <code>pom.xml</code>, configurez <code>liberty-maven-plugin</code> pour copier le driver JDBC PostgreSQL dans le dossier des bibliothèques partagées : <code>&lt;copyLibsDirectory&gt;postgresql&lt;/copyLibsDirectory&gt;</code> et <code>&lt;copyDependencies&gt;</code>.</span></li>
+            <li><span lang="en">In <code>src/main/liberty/config/server.xml</code>, declare the <code>postgresql-lib</code> shared library, the non-transactional DataSource <code>jdbc/flywayDS</code> for Flyway migrations, and the main JTA DataSource <code>jdbc/bankingDS</code>.</span><span lang="fr">Dans <code>src/main/liberty/config/server.xml</code>, déclarez la bibliothèque partagée <code>postgresql-lib</code>, la DataSource non-transactionnelle <code>jdbc/flywayDS</code> pour Flyway et la DataSource JTA principale <code>jdbc/bankingDS</code>.</span></li>
+            <li><span lang="en">Set EclipseLink as the JPA provider: <code>&lt;jpa defaultPersistenceProvider="org.eclipse.persistence.jpa.PersistenceProvider"/&gt;</code> and open MicroProfile metrics with <code>&lt;mpMetrics authentication="false"/&gt;</code>.</span><span lang="fr">Définissez EclipseLink comme provider JPA : <code>&lt;jpa defaultPersistenceProvider="org.eclipse.persistence.jpa.PersistenceProvider"/&gt;</code> et ouvrez les métriques MicroProfile avec <code>&lt;mpMetrics authentication="false"/&gt;</code>.</span></li>
+          </ol>
+          <details class="lg-hint lg-hint--1">
+            <summary><span lang="en">Hint 1 — server.xml DataSources</span><span lang="fr">Indice 1 — DataSources dans server.xml</span></summary>
+            <div class="lg-hint-body">
+              <p><span lang="en">Declare two <code>&lt;dataSource&gt;</code> elements: one with <code>transactional="false"</code> and <code>jndiName="jdbc/flywayDS"</code>, and one with <code>jndiName="jdbc/bankingDS"</code>. Both reference <code>postgresql-lib</code>.</span><span lang="fr">Déclarez deux éléments <code>&lt;dataSource&gt;</code> : un avec <code>transactional="false"</code> et <code>jndiName="jdbc/flywayDS"</code>, et un avec <code>jndiName="jdbc/bankingDS"</code>. Tous deux référencent <code>postgresql-lib</code>.</span></p>
+            </div>
+          </details>
+          <details class="lg-hint lg-hint--2">
+            <summary><span lang="en">Hint 2 — pom.xml plugin configuration</span><span lang="fr">Indice 2 — configuration du plugin dans pom.xml</span></summary>
+            <div class="lg-hint-body">
+<pre class="dark"><code>&lt;copyLibsDirectory&gt;postgresql&lt;/copyLibsDirectory&gt;
+&lt;copyDependencies&gt;
+    &lt;dependencyGroup&gt;
+        &lt;location&gt;postgresql&lt;/location&gt;
+        &lt;dependency&gt;
+            &lt;groupId&gt;org.postgresql&lt;/groupId&gt;
+            &lt;artifactId&gt;postgresql&lt;/artifactId&gt;
+        &lt;/dependency&gt;
+    &lt;/dependencyGroup&gt;
+&lt;/copyDependencies&gt;</code></pre>
+            </div>
+          </details>
+          <details class="lg-hint lg-hint--sol">
+            <summary><span lang="en">Solution files</span><span lang="fr">Fichiers solution</span></summary>
+            <div class="lg-hint-body">
+              <p><a href="https://github.com/oplanson/esipe-javaee/blob/master/03-Labs/Lab03-JPA/solution/pom.xml"><code>solution/pom.xml</code></a> &nbsp;&middot;&nbsp; <a href="https://github.com/oplanson/esipe-javaee/blob/master/03-Labs/Lab03-JPA/solution/src/main/liberty/config/server.xml"><code>solution/…/server.xml</code></a></p>
+            </div>
+          </details>
+          <div class="lg-checkpoint">
+            <div class="lg-check-label"><span lang="en">Checkpoint</span><span lang="fr">Point de contrôle</span></div>
+            <pre class="dark"><code>mvn clean package -DskipTests</code></pre>
+            <p><span lang="en">Expected output: <code>BUILD SUCCESS</code>. The driver JAR is copied to <code>target/liberty/wlp/usr/shared/resources/postgresql/</code>.</span><span lang="fr">Résultat attendu : <code>BUILD SUCCESS</code>. Le fichier JAR du driver est copié dans <code>target/liberty/wlp/usr/shared/resources/postgresql/</code>.</span></p>
+          </div>
+        </div>
+      </article>
+
+      <!-- ───────── STEP 3 ───────── -->
+      <article class="lg-step" id="step-3">
+        <div class="lg-step-head">
+          <div class="lg-step-num">3</div>
+          <div>
+            <h3><span lang="en">Flyway schema migrations &amp; startup listener</span><span lang="fr">Migrations Flyway &amp; listener de démarrage</span></h3>
+            <div class="lg-step-meta">
+              <span class="lg-chip">20 min</span>
+              <span class="lg-chip"><span lang="en">Course:</span><span lang="fr">Cours :</span> <a href="../../02-Lectures/slides/03-jpa/slides.html#slide-46"><span lang="en">JPA, slide 46</span><span lang="fr">JPA, slide 46</span></a></span>
+            </div>
+          </div>
+        </div>
+        <div class="lg-step-body">
+          <p class="lg-files"><span lang="en">Files to create:</span><span lang="fr">Fichiers à créer :</span> <code>src/main/resources/db/migration/V1__create_clients_table.sql</code>, <code>V2__create_accounts_table.sql</code>, <code>V3__add_account_status.sql</code>, <code>src/main/java/com/bank/config/DatabaseMigrationStartup.java</code></p>
+          <div class="lg-task-label"><span lang="en">Task</span><span lang="fr">À faire</span></div>
+          <ol>
+            <li><span lang="en">Create <code>V1__create_clients_table.sql</code>: create the <code>clients</code> table (columns <code>id BIGSERIAL PRIMARY KEY</code>, <code>name VARCHAR(100) NOT NULL</code>, <code>email VARCHAR(100) NOT NULL UNIQUE</code>, <code>created_at</code>, <code>updated_at</code>), add indexes on <code>email</code> and <code>name</code>, and insert 5 sample clients.</span><span lang="fr">Créez <code>V1__create_clients_table.sql</code> : créez la table <code>clients</code> (colonnes <code>id BIGSERIAL PRIMARY KEY</code>, <code>name VARCHAR(100) NOT NULL</code>, <code>email VARCHAR(100) NOT NULL UNIQUE</code>, <code>created_at</code>, <code>updated_at</code>), ajoutez des index sur <code>email</code> et <code>name</code> et insérez 5 clients d'exemple.</span></li>
+            <li><span lang="en">Create <code>V2__create_accounts_table.sql</code>: create the <code>accounts</code> table (columns <code>id BIGSERIAL PRIMARY KEY</code>, <code>number VARCHAR(34) NOT NULL UNIQUE</code>, <code>balance DECIMAL(15,2) DEFAULT 0.00</code>, <code>type VARCHAR(20) CHECK (type IN ('CHECKING', 'SAVINGS'))</code>, <code>client_id BIGINT NOT NULL</code>, foreign key with <code>ON DELETE CASCADE</code>) and insert sample accounts.</span><span lang="fr">Créez <code>V2__create_accounts_table.sql</code> : créez la table <code>accounts</code> (colonnes <code>id BIGSERIAL PRIMARY KEY</code>, <code>number VARCHAR(34) NOT NULL UNIQUE</code>, <code>balance DECIMAL(15,2) DEFAULT 0.00</code>, <code>type VARCHAR(20) CHECK (type IN ('CHECKING', 'SAVINGS'))</code>, <code>client_id BIGINT NOT NULL</code>, clé étrangère avec <code>ON DELETE CASCADE</code>) et insérez des comptes d'exemple.</span></li>
+            <li><span lang="en">Create <code>V3__add_account_status.sql</code>: add column <code>status VARCHAR(20) NOT NULL DEFAULT 'ACTIVE'</code> with a CHECK constraint (<code>ACTIVE</code>, <code>SUSPENDED</code>, <code>CLOSED</code>) and an index.</span><span lang="fr">Créez <code>V3__add_account_status.sql</code> : ajoutez la colonne <code>status VARCHAR(20) NOT NULL DEFAULT 'ACTIVE'</code> avec contrainte CHECK (<code>ACTIVE</code>, <code>SUSPENDED</code>, <code>CLOSED</code>) et un index.</span></li>
+            <li><span lang="en">Create <code>DatabaseMigrationStartup.java</code>: a <code>@WebListener</code> implementing <code>ServletContextListener</code> that looks up <code>jdbc/bankingDS</code> via JNDI and executes Flyway migrations on application startup.</span><span lang="fr">Créez <code>DatabaseMigrationStartup.java</code> : un <code>@WebListener</code> implémentant <code>ServletContextListener</code> qui récupère <code>jdbc/bankingDS</code> via JNDI et exécute les migrations Flyway au démarrage.</span></li>
+          </ol>
+          <details class="lg-hint lg-hint--1">
+            <summary><span lang="en">Hint 1 — Flyway initialization code</span><span lang="fr">Indice 1 — code d'initialisation Flyway</span></summary>
+            <div class="lg-hint-body">
+              <p><span lang="en">In <code>contextInitialized(ServletContextEvent sce)</code>, create an <code>InitialContext</code>, lookup <code>jdbc/bankingDS</code>, and configure Flyway: <code>Flyway.configure().dataSource(dataSource).locations("classpath:db/migration").baselineOnMigrate(true).load().migrate()</code>.</span><span lang="fr">Dans <code>contextInitialized(ServletContextEvent sce)</code>, créez un <code>InitialContext</code>, effectuez le lookup de <code>jdbc/bankingDS</code> et configurez Flyway : <code>Flyway.configure().dataSource(dataSource).locations("classpath:db/migration").baselineOnMigrate(true).load().migrate()</code>.</span></p>
+            </div>
+          </details>
+          <details class="lg-hint lg-hint--2">
+            <summary><span lang="en">Hint 2 — DatabaseMigrationStartup skeleton</span><span lang="fr">Indice 2 — squelette DatabaseMigrationStartup</span></summary>
+            <div class="lg-hint-body">
+<pre class="dark"><code>@WebListener
+public class DatabaseMigrationStartup implements ServletContextListener {
+    @Override
+    public void contextInitialized(ServletContextEvent sce) {
+        try {
+            InitialContext ctx = new InitialContext();
+            DataSource ds = (DataSource) ctx.lookup("jdbc/bankingDS");
+            Flyway flyway = Flyway.configure()
+                    .dataSource(ds)
+                    .locations("classpath:db/migration")
+                    .baselineOnMigrate(true)
+                    .load();
+            flyway.migrate();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+}</code></pre>
+            </div>
+          </details>
+          <details class="lg-hint lg-hint--sol">
+            <summary><span lang="en">Solution files</span><span lang="fr">Fichiers solution</span></summary>
+            <div class="lg-hint-body">
+              <p><a href="https://github.com/oplanson/esipe-javaee/blob/master/03-Labs/Lab03-JPA/solution/src/main/resources/db/migration/V1__create_clients_table.sql"><code>V1__create_clients_table.sql</code></a> &nbsp;&middot;&nbsp; <a href="https://github.com/oplanson/esipe-javaee/blob/master/03-Labs/Lab03-JPA/solution/src/main/resources/db/migration/V2__create_accounts_table.sql"><code>V2__create_accounts_table.sql</code></a> &nbsp;&middot;&nbsp; <a href="https://github.com/oplanson/esipe-javaee/blob/master/03-Labs/Lab03-JPA/solution/src/main/resources/db/migration/V3__add_account_status.sql"><code>V3__add_account_status.sql</code></a> &nbsp;&middot;&nbsp; <a href="https://github.com/oplanson/esipe-javaee/blob/master/03-Labs/Lab03-JPA/solution/src/main/java/com/bank/config/DatabaseMigrationStartup.java"><code>DatabaseMigrationStartup.java</code></a></p>
+            </div>
+          </details>
+          <div class="lg-checkpoint">
+            <div class="lg-check-label"><span lang="en">Checkpoint</span><span lang="fr">Point de contrôle</span></div>
+            <pre class="dark"><code>ls src/main/resources/db/migration/V*.sql</code></pre>
+            <p><span lang="en">Expected output: <code>V1__create_clients_table.sql</code>, <code>V2__create_accounts_table.sql</code>, and <code>V3__add_account_status.sql</code> are present.</span><span lang="fr">Résultat attendu : <code>V1__create_clients_table.sql</code>, <code>V2__create_accounts_table.sql</code> et <code>V3__add_account_status.sql</code> sont présents.</span></p>
+          </div>
+        </div>
+      </article>
+
+      <!-- ───────── STEP 4 ───────── -->
+      <article class="lg-step" id="step-4">
+        <div class="lg-step-head">
+          <div class="lg-step-num">4</div>
+          <div>
+            <h3><span lang="en">JPA persistence configuration</span><span lang="fr">Configuration de persistance JPA</span></h3>
+            <div class="lg-step-meta">
+              <span class="lg-chip">10 min</span>
+              <span class="lg-chip"><span lang="en">Course:</span><span lang="fr">Cours :</span> <a href="../../02-Lectures/slides/03-jpa/slides.html#slide-51"><span lang="en">JPA, slide 51</span><span lang="fr">JPA, slide 51</span></a></span>
+            </div>
+          </div>
+        </div>
+        <div class="lg-step-body">
+          <p class="lg-files"><span lang="en">File to create:</span><span lang="fr">Fichier à créer :</span> <code>src/main/resources/META-INF/persistence.xml</code></p>
+          <div class="lg-task-label"><span lang="en">Task</span><span lang="fr">À faire</span></div>
+          <ol>
+            <li><span lang="en">Create <code>src/main/resources/META-INF/persistence.xml</code> with persistence version <code>3.0</code>.</span><span lang="fr">Créez <code>src/main/resources/META-INF/persistence.xml</code> avec la version de persistance <code>3.0</code>.</span></li>
+            <li><span lang="en">Define persistence unit <code>bankingPU</code> with <code>transaction-type="RESOURCE_LOCAL"</code> and <code>&lt;non-jta-data-source&gt;jdbc/bankingDS&lt;/non-jta-data-source&gt;</code>.</span><span lang="fr">Définissez l'unité de persistance <code>bankingPU</code> avec <code>transaction-type="RESOURCE_LOCAL"</code> et <code>&lt;non-jta-data-source&gt;jdbc/bankingDS&lt;/non-jta-data-source&gt;</code>.</span></li>
+            <li><span lang="en">Declare entity classes <code>com.bank.model.Client</code> and <code>com.bank.model.Account</code>, set EclipseLink provider <code>org.eclipse.persistence.jpa.PersistenceProvider</code>, and set property <code>eclipselink.target-database</code> to <code>PostgreSQL</code>.</span><span lang="fr">Déclarez les classes d'entités <code>com.bank.model.Client</code> et <code>com.bank.model.Account</code>, spécifiez le provider EclipseLink <code>org.eclipse.persistence.jpa.PersistenceProvider</code> et fixez la propriété <code>eclipselink.target-database</code> à <code>PostgreSQL</code>.</span></li>
+          </ol>
+          <details class="lg-hint lg-hint--1">
+            <summary><span lang="en">Hint 1 — persistence.xml properties</span><span lang="fr">Indice 1 — propriétés persistence.xml</span></summary>
+            <div class="lg-hint-body">
+              <p><span lang="en">Because Flyway manages table creation and migrations, set <code>eclipselink.ddl-generation</code> to <code>none</code> to avoid conflicts.</span><span lang="fr">Comme Flyway gère la création des tables et les migrations, fixez <code>eclipselink.ddl-generation</code> à <code>none</code> pour éviter tout conflit.</span></p>
+            </div>
+          </details>
+          <details class="lg-hint lg-hint--2">
+            <summary><span lang="en">Hint 2 — complete persistence.xml</span><span lang="fr">Indice 2 — persistence.xml complet</span></summary>
+            <div class="lg-hint-body">
+<pre class="dark"><code>&lt;persistence version="3.0"
+             xmlns="https://jakarta.ee/xml/ns/persistence"
+             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+             xsi:schemaLocation="https://jakarta.ee/xml/ns/persistence
+             https://jakarta.ee/xml/ns/persistence/persistence_3_0.xsd"&gt;
+    
+    &lt;persistence-unit name="bankingPU" transaction-type="RESOURCE_LOCAL"&gt;
+        &lt;provider&gt;org.eclipse.persistence.jpa.PersistenceProvider&lt;/provider&gt;
+        &lt;non-jta-data-source&gt;jdbc/bankingDS&lt;/non-jta-data-source&gt;
+        
+        &lt;class&gt;com.bank.model.Client&lt;/class&gt;
+        &lt;class&gt;com.bank.model.Account&lt;/class&gt;
+        
+        &lt;properties&gt;
+            &lt;property name="eclipselink.target-database" value="PostgreSQL"/&gt;
+            &lt;property name="eclipselink.logging.level" value="FINE"/&gt;
+            &lt;property name="eclipselink.ddl-generation" value="none"/&gt;
+        &lt;/properties&gt;
+    &lt;/persistence-unit&gt;
+&lt;/persistence&gt;</code></pre>
+            </div>
+          </details>
+          <details class="lg-hint lg-hint--sol">
+            <summary><span lang="en">Solution file</span><span lang="fr">Fichier solution</span></summary>
+            <div class="lg-hint-body">
+              <p><a href="https://github.com/oplanson/esipe-javaee/blob/master/03-Labs/Lab03-JPA/solution/src/main/resources/META-INF/persistence.xml"><code>solution/…/resources/META-INF/persistence.xml</code></a></p>
+            </div>
+          </details>
+          <div class="lg-checkpoint">
+            <div class="lg-check-label"><span lang="en">Checkpoint</span><span lang="fr">Point de contrôle</span></div>
+            <pre class="dark"><code>grep -E 'unit name="bankingPU"|class&gt;com.bank' src/main/resources/META-INF/persistence.xml</code></pre>
+            <p><span lang="en">Expected output: lines showing <code>bankingPU</code>, <code>com.bank.model.Client</code>, and <code>com.bank.model.Account</code>.</span><span lang="fr">Résultat attendu : lignes affichant <code>bankingPU</code>, <code>com.bank.model.Client</code> et <code>com.bank.model.Account</code>.</span></p>
+          </div>
+        </div>
+      </article>
+
+      <!-- ───────── STEP 5 ───────── -->
+      <article class="lg-step" id="step-5">
+        <div class="lg-step-head">
+          <div class="lg-step-num">5</div>
+          <div>
+            <h3><span lang="en">JPA Entities: Client &amp; Account</span><span lang="fr">Entités JPA : Client &amp; Account</span></h3>
+            <div class="lg-step-meta">
+              <span class="lg-chip">25 min</span>
+              <span class="lg-chip"><span lang="en">Course:</span><span lang="fr">Cours :</span> <a href="../../02-Lectures/slides/03-jpa/slides.html#slide-10"><span lang="en">JPA, slides 10, 16, 17</span><span lang="fr">JPA, slides 10, 16, 17</span></a></span>
+            </div>
+          </div>
+        </div>
+        <div class="lg-step-body">
+          <p class="lg-files"><span lang="en">Files to modify:</span><span lang="fr">Fichiers à modifier :</span> <code>src/main/java/com/bank/model/Client.java</code>, <code>src/main/java/com/bank/model/Account.java</code></p>
+          <div class="lg-task-label"><span lang="en">Task</span><span lang="fr">À faire</span></div>
+          <ol>
+            <li><span lang="en">Annotate <code>Client.java</code> with <code>@Entity</code>, <code>@Table(name = "clients")</code>, <code>@Id</code>, <code>@GeneratedValue(strategy = GenerationType.IDENTITY)</code> on <code>id</code>, <code>@Column</code> on fields, and lifecycle callbacks (<code>@PrePersist</code>, <code>@PreUpdate</code>) for timestamps.</span><span lang="fr">Annotez <code>Client.java</code> avec <code>@Entity</code>, <code>@Table(name = "clients")</code>, <code>@Id</code>, <code>@GeneratedValue(strategy = GenerationType.IDENTITY)</code> sur <code>id</code>, <code>@Column</code> sur les champs et callbacks de cycle de vie (<code>@PrePersist</code>, <code>@PreUpdate</code>) pour les horodatages.</span></li>
+            <li><span lang="en">In <code>Client.java</code>, declare the bidirectional relationship: <code>@OneToMany(mappedBy = "client", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY) private List&lt;Account&gt; accounts;</code> with helper methods <code>addAccount(Account)</code> and <code>removeAccount(Account)</code>.</span><span lang="fr">Dans <code>Client.java</code>, déclarez la relation bidirectionnelle : <code>@OneToMany(mappedBy = "client", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY) private List&lt;Account&gt; accounts;</code> avec méthodes d'assistance <code>addAccount(Account)</code> et <code>removeAccount(Account)</code>.</span></li>
+            <li><span lang="en">Add Named Queries on <code>Client.java</code>: <code>Client.findAll</code>, <code>Client.findByName</code>, <code>Client.findByEmail</code>, <code>Client.count</code>.</span><span lang="fr">Ajoutez les requêtes nommées sur <code>Client.java</code> : <code>Client.findAll</code>, <code>Client.findByName</code>, <code>Client.findByEmail</code>, <code>Client.count</code>.</span></li>
+            <li><span lang="en">Annotate <code>Account.java</code> with <code>@Entity</code>, <code>@Table(name = "accounts")</code>, <code>@Id @GeneratedValue</code>, and <code>@ManyToOne(fetch = FetchType.LAZY) @JoinColumn(name = "client_id", nullable = false) private Client client;</code>. Add helper methods <code>getClientId()</code>, <code>deposit(double)</code>, and <code>withdraw(double)</code>.</span><span lang="fr">Annotez <code>Account.java</code> avec <code>@Entity</code>, <code>@Table(name = "accounts")</code>, <code>@Id @GeneratedValue</code> et <code>@ManyToOne(fetch = FetchType.LAZY) @JoinColumn(name = "client_id", nullable = false) private Client client;</code>. Ajoutez les méthodes d'assistance <code>getClientId()</code>, <code>deposit(double)</code> et <code>withdraw(double)</code>.</span></li>
+          </ol>
+          <details class="lg-hint lg-hint--1">
+            <summary><span lang="en">Hint 1 — bidirectional relationship</span><span lang="fr">Indice 1 — relation bidirectionnelle</span></summary>
+            <div class="lg-hint-body">
+              <p><span lang="en">Always keep both sides of the relationship synchronized in <code>addAccount</code>: <code>this.accounts.add(account); account.setClient(this);</code>.</span><span lang="fr">Maintenez toujours les deux côtés de la relation synchronisés dans <code>addAccount</code> : <code>this.accounts.add(account); account.setClient(this);</code>.</span></p>
+            </div>
+          </details>
+          <details class="lg-hint lg-hint--2">
+            <summary><span lang="en">Hint 2 — annotations snippet</span><span lang="fr">Indice 2 — extrait d'annotations</span></summary>
+            <div class="lg-hint-body">
+<pre class="dark"><code>@Entity
+@Table(name = "clients")
+@NamedQueries({
+    @NamedQuery(name = "Client.findAll", query = "SELECT c FROM Client c ORDER BY c.name"),
+    @NamedQuery(name = "Client.findByName", query = "SELECT c FROM Client c WHERE LOWER(c.name) LIKE LOWER(:name) ORDER BY c.name")
+})
+public class Client {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+    
+    @OneToMany(mappedBy = "client", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    private List&lt;Account&gt; accounts = new ArrayList&lt;&gt;();
+}</code></pre>
+            </div>
+          </details>
+          <details class="lg-hint lg-hint--sol">
+            <summary><span lang="en">Solution files</span><span lang="fr">Fichiers solution</span></summary>
+            <div class="lg-hint-body">
+              <p><a href="https://github.com/oplanson/esipe-javaee/blob/master/03-Labs/Lab03-JPA/solution/src/main/java/com/bank/model/Client.java"><code>solution/…/model/Client.java</code></a> &nbsp;&middot;&nbsp; <a href="https://github.com/oplanson/esipe-javaee/blob/master/03-Labs/Lab03-JPA/solution/src/main/java/com/bank/model/Account.java"><code>solution/…/model/Account.java</code></a></p>
+            </div>
+          </details>
+          <div class="lg-checkpoint">
+            <div class="lg-check-label"><span lang="en">Checkpoint</span><span lang="fr">Point de contrôle</span></div>
+            <pre class="dark"><code>grep -E '@Entity|@OneToMany|@ManyToOne' src/main/java/com/bank/model/*.java</code></pre>
+            <p><span lang="en">Expected output: <code>@Entity</code> and <code>@OneToMany</code> on <code>Client.java</code>, <code>@Entity</code> and <code>@ManyToOne</code> on <code>Account.java</code>.</span><span lang="fr">Résultat attendu : <code>@Entity</code> et <code>@OneToMany</code> sur <code>Client.java</code>, <code>@Entity</code> et <code>@ManyToOne</code> sur <code>Account.java</code>.</span></p>
+          </div>
+        </div>
+      </article>
+
+      <!-- ───────── STEP 6 ───────── -->
+      <article class="lg-step" id="step-6">
+        <div class="lg-step-head">
+          <div class="lg-step-num">6</div>
+          <div>
+            <h3><span lang="en">JPA Service &amp; Transactions</span><span lang="fr">Service JPA &amp; Transactions</span></h3>
+            <div class="lg-step-meta">
+              <span class="lg-chip">25 min</span>
+              <span class="lg-chip"><span lang="en">Course:</span><span lang="fr">Cours :</span> <a href="../../02-Lectures/slides/03-jpa/slides.html#slide-38"><span lang="en">JPA, slides 38, 40</span><span lang="fr">JPA, slides 38, 40</span></a></span>
+            </div>
+          </div>
+        </div>
+        <div class="lg-step-body">
+          <p class="lg-files"><span lang="en">File to modify:</span><span lang="fr">Fichier à modifier :</span> <code>src/main/java/com/bank/service/ClientService.java</code></p>
+          <div class="lg-task-label"><span lang="en">Task</span><span lang="fr">À faire</span></div>
+          <ol>
+            <li><span lang="en">Refactor <code>ClientService.java</code> into a thread-safe Singleton: private constructor initializing <code>emf = Persistence.createEntityManagerFactory("bankingPU")</code>, and static <code>getInstance()</code>.</span><span lang="fr">Refactorisez <code>ClientService.java</code> en Singleton thread-safe : constructeur privé initialisant <code>emf = Persistence.createEntityManagerFactory("bankingPU")</code> et méthode statique <code>getInstance()</code>.</span></li>
+            <li><span lang="en">Implement <code>findAll()</code> and <code>findById(Long)</code> using <code>em.createNamedQuery("Client.findAll", Client.class)</code> and <code>em.find(Client.class, id)</code> with a <code>try-finally</code> block to ensure <code>em.close()</code>.</span><span lang="fr">Implémentez <code>findAll()</code> et <code>findById(Long)</code> avec <code>em.createNamedQuery("Client.findAll", Client.class)</code> et <code>em.find(Client.class, id)</code> dans un bloc <code>try-finally</code> garantissant <code>em.close()</code>.</span></li>
+            <li><span lang="en">Implement <code>findByIdWithAccounts(Long id)</code> using JPQL <code>SELECT c FROM Client c LEFT JOIN FETCH c.accounts WHERE c.id = :id</code> to load accounts eagerly and avoid lazy initialization errors.</span><span lang="fr">Implémentez <code>findByIdWithAccounts(Long id)</code> avec le JPQL <code>SELECT c FROM Client c LEFT JOIN FETCH c.accounts WHERE c.id = :id</code> pour charger les comptes sans erreur d'initialisation tardive.</span></li>
+            <li><span lang="en">Implement write operations (<code>create</code>, <code>update</code>, <code>delete</code>, <code>addAccount</code>, <code>removeAccount</code>) with explicit transaction management: <code>EntityTransaction tx = em.getTransaction(); tx.begin(); ... tx.commit();</code> with rollback in catch.</span><span lang="fr">Implémentez les opérations d'écriture (<code>create</code>, <code>update</code>, <code>delete</code>, <code>addAccount</code>, <code>removeAccount</code>) avec gestion explicite des transactions : <code>EntityTransaction tx = em.getTransaction(); tx.begin(); ... tx.commit();</code> et rollback dans le catch.</span></li>
+          </ol>
+          <details class="lg-hint lg-hint--1">
+            <summary><span lang="en">Hint 1 — transaction pattern</span><span lang="fr">Indice 1 — patron de transaction</span></summary>
+            <div class="lg-hint-body">
+              <p><span lang="en">Always create an <code>EntityManager</code> per operation, begin the transaction, persist/merge/remove, commit, rollback on error, and close the <code>EntityManager</code> in <code>finally</code>.</span><span lang="fr">Créez toujours un <code>EntityManager</code> par opération, démarrez la transaction, persistez/fusionnez/supprimez, committez, effectuez un rollback en cas d'erreur et fermez l'<code>EntityManager</code> dans le <code>finally</code>.</span></p>
+            </div>
+          </details>
+          <details class="lg-hint lg-hint--2">
+            <summary><span lang="en">Hint 2 — create method example</span><span lang="fr">Indice 2 — exemple de méthode create</span></summary>
+            <div class="lg-hint-body">
+<pre class="dark"><code>public Client create(Client client) {
+    EntityManager em = createEntityManager();
+    EntityTransaction tx = em.getTransaction();
+    try {
+        tx.begin();
+        em.persist(client);
+        em.flush();
+        tx.commit();
+        return client;
+    } catch (Exception e) {
+        if (tx.isActive()) tx.rollback();
+        throw new RuntimeException("Failed to create client", e);
+    } finally {
+        em.close();
+    }
+}</code></pre>
+            </div>
+          </details>
+          <details class="lg-hint lg-hint--sol">
+            <summary><span lang="en">Solution file</span><span lang="fr">Fichier solution</span></summary>
+            <div class="lg-hint-body">
+              <p><a href="https://github.com/oplanson/esipe-javaee/blob/master/03-Labs/Lab03-JPA/solution/src/main/java/com/bank/service/ClientService.java"><code>solution/…/service/ClientService.java</code></a></p>
+            </div>
+          </details>
+          <div class="lg-checkpoint">
+            <div class="lg-check-label"><span lang="en">Checkpoint</span><span lang="fr">Point de contrôle</span></div>
+            <pre class="dark"><code>grep -E 'Persistence.createEntityManagerFactory|LEFT JOIN FETCH' src/main/java/com/bank/service/ClientService.java</code></pre>
+            <p><span lang="en">Expected output: lines showing <code>Persistence.createEntityManagerFactory("bankingPU")</code> and the <code>LEFT JOIN FETCH</code> query.</span><span lang="fr">Résultat attendu : lignes montrant <code>Persistence.createEntityManagerFactory("bankingPU")</code> et la requête <code>LEFT JOIN FETCH</code>.</span></p>
+          </div>
+        </div>
+      </article>
+
+      <!-- ───────── STEP 7 ───────── -->
+      <article class="lg-step" id="step-7">
+        <div class="lg-step-head">
+          <div class="lg-step-num">7</div>
+          <div>
+            <h3><span lang="en">JNDI Configuration &amp; Environment Entries</span><span lang="fr">Configuration JNDI &amp; entrées d'environnement</span></h3>
+            <div class="lg-step-meta">
+              <span class="lg-chip">20 min</span>
+              <span class="lg-chip"><span lang="en">Course:</span><span lang="fr">Cours :</span> <a href="../../02-Lectures/slides/03-jpa/slides.html#slide-60"><span lang="en">JPA, slides 60, 61</span><span lang="fr">JPA, slides 60, 61</span></a></span>
+            </div>
+          </div>
+        </div>
+        <div class="lg-step-body">
+          <p class="lg-files"><span lang="en">Files to modify:</span><span lang="fr">Fichiers à modifier :</span> <code>src/main/webapp/WEB-INF/web.xml</code>, <code>src/main/java/com/bank/config/JndiConfigService.java</code></p>
+          <div class="lg-task-label"><span lang="en">Task</span><span lang="fr">À faire</span></div>
+          <ol>
+            <li><span lang="en">In <code>web.xml</code>, declare the <code>&lt;resource-ref&gt;</code> for <code>jdbc/bankingDS</code> (type <code>javax.sql.DataSource</code>, auth <code>Container</code>).</span><span lang="fr">Dans <code>web.xml</code>, déclarez le <code>&lt;resource-ref&gt;</code> pour <code>jdbc/bankingDS</code> (type <code>javax.sql.DataSource</code>, auth <code>Container</code>).</span></li>
+            <li><span lang="en">In <code>web.xml</code>, declare three <code>&lt;env-entry&gt;</code> elements: <code>app/maxLoginAttempts</code> (Integer: 3), <code>app/supportEmail</code> (String: <code>support@bank.com</code>), and <code>app/maxTransactionAmount</code> (Double: 10000.00).</span><span lang="fr">Dans <code>web.xml</code>, déclarez trois éléments <code>&lt;env-entry&gt;</code> : <code>app/maxLoginAttempts</code> (Integer: 3), <code>app/supportEmail</code> (String: <code>support@bank.com</code>) et <code>app/maxTransactionAmount</code> (Double: 10000.00).</span></li>
+            <li><span lang="en">In <code>JndiConfigService.java</code>, complete <code>lookupDataSource()</code> (lookup <code>java:comp/env/jdbc/bankingDS</code>) and <code>lookupEnvironmentEntries()</code> (lookup <code>java:comp/env/app/*</code> with fallback defaults). Implement getters and <code>isValidTransactionAmount(Double amount)</code>.</span><span lang="fr">Dans <code>JndiConfigService.java</code>, complétez <code>lookupDataSource()</code> (lookup <code>java:comp/env/jdbc/bankingDS</code>) et <code>lookupEnvironmentEntries()</code> (lookup <code>java:comp/env/app/*</code> avec valeurs par défaut). Implémentez les getters et <code>isValidTransactionAmount(Double amount)</code>.</span></li>
+          </ol>
+          <details class="lg-hint lg-hint--1">
+            <summary><span lang="en">Hint 1 — JNDI portable namespace</span><span lang="fr">Indice 1 — espace de noms JNDI portable</span></summary>
+            <div class="lg-hint-body">
+              <p><span lang="en">Always use the portable <code>java:comp/env/</code> prefix when resolving resource references and environment entries declared in <code>web.xml</code>.</span><span lang="fr">Utilisez toujours le préfixe portable <code>java:comp/env/</code> pour résoudre les références de ressources et entrées déclarées dans <code>web.xml</code>.</span></p>
+            </div>
+          </details>
+          <details class="lg-hint lg-hint--2">
+            <summary><span lang="en">Hint 2 — web.xml env-entry snippet</span><span lang="fr">Indice 2 — extrait env-entry de web.xml</span></summary>
+            <div class="lg-hint-body">
+<pre class="dark"><code>&lt;env-entry&gt;
+    &lt;description&gt;Maximum transaction amount&lt;/description&gt;
+    &lt;env-entry-name&gt;app/maxTransactionAmount&lt;/env-entry-name&gt;
+    &lt;env-entry-type&gt;java.lang.Double&lt;/env-entry-type&gt;
+    &lt;env-entry-value&gt;10000.00&lt;/env-entry-value&gt;
+&lt;/env-entry&gt;</code></pre>
+            </div>
+          </details>
+          <details class="lg-hint lg-hint--sol">
+            <summary><span lang="en">Solution files</span><span lang="fr">Fichiers solution</span></summary>
+            <div class="lg-hint-body">
+              <p><a href="https://github.com/oplanson/esipe-javaee/blob/master/03-Labs/Lab03-JPA/solution/src/main/webapp/WEB-INF/web.xml"><code>solution/…/WEB-INF/web.xml</code></a> &nbsp;&middot;&nbsp; <a href="https://github.com/oplanson/esipe-javaee/blob/master/03-Labs/Lab03-JPA/solution/src/main/java/com/bank/config/JndiConfigService.java"><code>solution/…/config/JndiConfigService.java</code></a></p>
+            </div>
+          </details>
+          <div class="lg-checkpoint">
+            <div class="lg-check-label"><span lang="en">Checkpoint</span><span lang="fr">Point de contrôle</span></div>
+            <pre class="dark"><code>grep -E 'maxTransactionAmount|java:comp/env/jdbc' src/main/webapp/WEB-INF/web.xml src/main/java/com/bank/config/JndiConfigService.java</code></pre>
+            <p><span lang="en">Expected output: entries declared in <code>web.xml</code> and looked up in <code>JndiConfigService.java</code>.</span><span lang="fr">Résultat attendu : entrées déclarées dans <code>web.xml</code> et résolues dans <code>JndiConfigService.java</code>.</span></p>
+          </div>
+        </div>
+      </article>
+
+      <!-- ───────── STEP 8 ───────── -->
+      <article class="lg-step" id="step-8">
+        <div class="lg-step-head">
+          <div class="lg-step-num">8</div>
+          <div>
+            <h3><span lang="en">MVC Controller &amp; Error Pages</span><span lang="fr">Contrôleur MVC &amp; pages d'erreur</span></h3>
+            <div class="lg-step-meta">
+              <span class="lg-chip">15 min</span>
+              <span class="lg-chip"><span lang="en">Course:</span><span lang="fr">Cours :</span> <a href="../../02-Lectures/slides/02-servlets/slides.html#slide-8"><span lang="en">servlets, slide 8 (PRG)</span><span lang="fr">servlets, slide 8 (PRG)</span></a></span>
+            </div>
+          </div>
+        </div>
+        <div class="lg-step-body">
+          <p class="lg-files"><span lang="en">Files to modify/create:</span><span lang="fr">Fichiers à modifier/créer :</span> <code>src/main/java/com/bank/web/ClientController.java</code>, <code>src/main/webapp/WEB-INF/views/error.jsp</code>, <code>src/main/webapp/error-404.html</code>, <code>src/main/webapp/error-500.html</code></p>
+          <div class="lg-task-label"><span lang="en">Task</span><span lang="fr">À faire</span></div>
+          <ol>
+            <li><span lang="en">Update <code>ClientController.java</code>: in <code>init()</code>, get <code>ClientService.getInstance()</code> and read ServletContext init parameters.</span><span lang="fr">Mettez à jour <code>ClientController.java</code> : dans <code>init()</code>, récupérez <code>ClientService.getInstance()</code> et lisez les paramètres d'initialisation du ServletContext.</span></li>
+            <li><span lang="en">Implement <code>doGet()</code> routing: <code>/clients</code> displays client list, <code>/client?action=view&amp;id=N</code> displays client details with accounts, <code>/client?action=new</code> shows empty form, and <code>/client?action=edit&amp;id=N</code> shows pre-filled form.</span><span lang="fr">Implémentez le routage <code>doGet()</code> : <code>/clients</code> affiche la liste, <code>/client?action=view&amp;id=N</code> affiche le détail avec comptes, <code>/client?action=new</code> affiche le formulaire vide et <code>/client?action=edit&amp;id=N</code> affiche le formulaire pré-rempli.</span></li>
+            <li><span lang="en">Implement <code>doPost()</code> actions (<code>create</code>, <code>update</code>, <code>delete</code>) using the Post-Redirect-Get (PRG) pattern.</span><span lang="fr">Implémentez les actions <code>doPost()</code> (<code>create</code>, <code>update</code>, <code>delete</code>) selon le patron Post-Redirect-Get (PRG).</span></li>
+            <li><span lang="en">Create error pages <code>error.jsp</code>, <code>error-404.html</code>, and <code>error-500.html</code> to handle user errors gracefully.</span><span lang="fr">Créez les pages d'erreur <code>error.jsp</code>, <code>error-404.html</code> et <code>error-500.html</code> pour traiter proprement les erreurs.</span></li>
+          </ol>
+          <details class="lg-hint lg-hint--1">
+            <summary><span lang="en">Hint 1 — PRG pattern</span><span lang="fr">Indice 1 — patron PRG</span></summary>
+            <div class="lg-hint-body">
+              <p><span lang="en">After saving or deleting a client, redirect to <code>req.getContextPath() + "/clients?message=created"</code> (or <code>updated</code> / <code>deleted</code>) to avoid double submission on page refresh.</span><span lang="fr">Après création ou suppression d'un client, redirigez vers <code>req.getContextPath() + "/clients?message=created"</code> (ou <code>updated</code> / <code>deleted</code>) pour éviter la double soumission lors d'un rafraîchissement.</span></p>
+            </div>
+          </details>
+          <details class="lg-hint lg-hint--2">
+            <summary><span lang="en">Hint 2 — viewClient method</span><span lang="fr">Indice 2 — méthode viewClient</span></summary>
+            <div class="lg-hint-body">
+<pre class="dark"><code>private void viewClient(HttpServletRequest req, HttpServletResponse resp)
+        throws ServletException, IOException {
+    Long id = Long.parseLong(req.getParameter("id"));
+    Client client = clientService.findByIdWithAccounts(id);
+    if (client == null) {
+        resp.sendError(HttpServletResponse.SC_NOT_FOUND, "Client not found");
+        return;
+    }
+    req.setAttribute("client", client);
+    req.getRequestDispatcher("/WEB-INF/views/client-details.jsp").forward(req, resp);
+}</code></pre>
+            </div>
+          </details>
+          <details class="lg-hint lg-hint--sol">
+            <summary><span lang="en">Solution files</span><span lang="fr">Fichiers solution</span></summary>
+            <div class="lg-hint-body">
+              <p><a href="https://github.com/oplanson/esipe-javaee/blob/master/03-Labs/Lab03-JPA/solution/src/main/java/com/bank/web/ClientController.java"><code>solution/…/web/ClientController.java</code></a> &nbsp;&middot;&nbsp; <a href="https://github.com/oplanson/esipe-javaee/blob/master/03-Labs/Lab03-JPA/solution/src/main/webapp/WEB-INF/views/error.jsp"><code>error.jsp</code></a> &nbsp;&middot;&nbsp; <a href="https://github.com/oplanson/esipe-javaee/blob/master/03-Labs/Lab03-JPA/solution/src/main/webapp/error-404.html"><code>error-404.html</code></a> &nbsp;&middot;&nbsp; <a href="https://github.com/oplanson/esipe-javaee/blob/master/03-Labs/Lab03-JPA/solution/src/main/webapp/error-500.html"><code>error-500.html</code></a></p>
+            </div>
+          </details>
+          <div class="lg-checkpoint">
+            <div class="lg-check-label"><span lang="en">Checkpoint</span><span lang="fr">Point de contrôle</span></div>
+            <pre class="dark"><code>grep -E 'ClientService.getInstance|findByIdWithAccounts' src/main/java/com/bank/web/ClientController.java</code></pre>
+            <p><span lang="en">Expected output: lines showing calls to <code>ClientService.getInstance()</code> and <code>findByIdWithAccounts</code>.</span><span lang="fr">Résultat attendu : lignes montrant les appels à <code>ClientService.getInstance()</code> et <code>findByIdWithAccounts</code>.</span></p>
+          </div>
+        </div>
+      </article>
+
+      <!-- ───────── STEP 9 ───────── -->
+      <article class="lg-step" id="step-9">
+        <div class="lg-step-head">
+          <div class="lg-step-num">9</div>
+          <div>
+            <h3><span lang="en">Transaction validator servlet (JNDI demo)</span><span lang="fr">Servlet de validation de transaction (démo JNDI)</span></h3>
+            <div class="lg-step-meta">
+              <span class="lg-chip">15 min</span>
+              <span class="lg-chip"><span lang="en">Course:</span><span lang="fr">Cours :</span> <a href="../../02-Lectures/slides/03-jpa/slides.html#slide-60"><span lang="en">JPA, slide 60</span><span lang="fr">JPA, slide 60</span></a></span>
+            </div>
+          </div>
+        </div>
+        <div class="lg-step-body">
+          <p class="lg-files"><span lang="en">Files to create/modify:</span><span lang="fr">Fichiers à créer/modifier :</span> <code>src/main/java/com/bank/web/TransactionValidatorServlet.java</code>, <code>src/main/webapp/index.html</code></p>
+          <div class="lg-task-label"><span lang="en">Task</span><span lang="fr">À faire</span></div>
+          <ol>
+            <li><span lang="en">Create <code>TransactionValidatorServlet.java</code> mapped on <code>/validate-transaction</code> and <code>/transaction/validate</code>.</span><span lang="fr">Créez <code>TransactionValidatorServlet.java</code> mappé sur <code>/validate-transaction</code> et <code>/transaction/validate</code>.</span></li>
+            <li><span lang="en">In <code>doGet()</code>, display an HTML page presenting current JNDI configuration values and an amount validation form.</span><span lang="fr">Dans <code>doGet()</code>, affichez une page HTML présentant les valeurs actuelles de configuration JNDI et un formulaire de validation de montant.</span></li>
+            <li><span lang="en">In <code>doPost()</code>, validate the submitted amount against <code>JndiConfigService.getInstance().isValidTransactionAmount(amount)</code> and return an HTML result page or JSON response if requested via <code>Accept: application/json</code>.</span><span lang="fr">Dans <code>doPost()</code>, validez le montant avec <code>JndiConfigService.getInstance().isValidTransactionAmount(amount)</code> et renvoyez une page HTML ou une réponse JSON si <code>Accept: application/json</code> est demandé.</span></li>
+            <li><span lang="en">Update <code>src/main/webapp/index.html</code> to add a link to <code>validate-transaction</code>.</span><span lang="fr">Mettez à jour <code>src/main/webapp/index.html</code> pour ajouter un lien vers <code>validate-transaction</code>.</span></li>
+          </ol>
+          <details class="lg-hint lg-hint--1">
+            <summary><span lang="en">Hint 1 — API response detection</span><span lang="fr">Indice 1 — détection d'appel API</span></summary>
+            <div class="lg-hint-body">
+              <p><span lang="en">Check header <code>"application/json".equals(req.getHeader("Accept"))</code> to send a JSON payload <code>{"valid": true, "amount": 5000.0}</code> instead of HTML.</span><span lang="fr">Vérifiez l'en-tête <code>"application/json".equals(req.getHeader("Accept"))</code> pour renvoyer du JSON <code>{"valid": true, "amount": 5000.0}</code> au lieu de l'HTML.</span></p>
+            </div>
+          </details>
+          <details class="lg-hint lg-hint--2">
+            <summary><span lang="en">Hint 2 — servlet mapping</span><span lang="fr">Indice 2 — mapping de la servlet</span></summary>
+            <div class="lg-hint-body">
+<pre class="dark"><code>@WebServlet(
+    name = "TransactionValidatorServlet",
+    urlPatterns = {"/validate-transaction", "/transaction/validate"}
+)
+public class TransactionValidatorServlet extends HttpServlet {
+    private JndiConfigService configService;
+    @Override
+    public void init() throws ServletException {
+        super.init();
+        this.configService = JndiConfigService.getInstance();
+    }
+}</code></pre>
+            </div>
+          </details>
+          <details class="lg-hint lg-hint--sol">
+            <summary><span lang="en">Solution files</span><span lang="fr">Fichiers solution</span></summary>
+            <div class="lg-hint-body">
+              <p><a href="https://github.com/oplanson/esipe-javaee/blob/master/03-Labs/Lab03-JPA/solution/src/main/java/com/bank/web/TransactionValidatorServlet.java"><code>TransactionValidatorServlet.java</code></a> &nbsp;&middot;&nbsp; <a href="https://github.com/oplanson/esipe-javaee/blob/master/03-Labs/Lab03-JPA/solution/src/main/webapp/index.html"><code>solution/…/webapp/index.html</code></a></p>
+            </div>
+          </details>
+          <div class="lg-checkpoint">
+            <div class="lg-check-label"><span lang="en">Checkpoint</span><span lang="fr">Point de contrôle</span></div>
+            <pre class="dark"><code>grep -E 'validate-transaction' src/main/java/com/bank/web/TransactionValidatorServlet.java src/main/webapp/index.html</code></pre>
+            <p><span lang="en">Expected output: URL pattern declared in the servlet and linked in <code>index.html</code>.</span><span lang="fr">Résultat attendu : motif d'URL déclaré dans la servlet et lié dans <code>index.html</code>.</span></p>
+          </div>
+        </div>
+      </article>
+
+      <!-- ───────── STEP 10 ───────── -->
+      <article class="lg-step" id="step-10">
+        <div class="lg-step-head">
+          <div class="lg-step-num">10</div>
+          <div>
+            <h3><span lang="en">MicroProfile Health checks</span><span lang="fr">Health checks MicroProfile</span></h3>
+            <div class="lg-step-meta">
+              <span class="lg-chip">10 min</span>
+              <span class="lg-chip"><span lang="en">Course:</span><span lang="fr">Cours :</span> <a href="../../02-Lectures/slides/01-intro/slides.html#slide-24"><span lang="en">intro, slide 24</span><span lang="fr">intro, slide 24</span></a></span>
+            </div>
+          </div>
+        </div>
+        <div class="lg-step-body">
+          <p class="lg-files"><span lang="en">Files to modify:</span><span lang="fr">Fichiers à modifier :</span> <code>src/main/java/com/bank/health/DatabaseHealthCheck.java</code>, <code>src/main/java/com/bank/health/WebAppReadinessCheck.java</code></p>
+          <div class="lg-task-label"><span lang="en">Task</span><span lang="fr">À faire</span></div>
+          <ol>
+            <li><span lang="en">In <code>DatabaseHealthCheck.java</code>, implement the <code>@Liveness HealthCheck</code>: execute a native SQL query <code>SELECT 1</code> via an <code>EntityManager</code> from <code>Persistence.createEntityManagerFactory("bankingPU")</code>. Return <code>UP</code> with <code>status=connected</code> and <code>type=postgresql</code> if successful, or <code>DOWN</code>.</span><span lang="fr">Dans <code>DatabaseHealthCheck.java</code>, implémentez le <code>@Liveness HealthCheck</code> : exécutez la requête native <code>SELECT 1</code> via un <code>EntityManager</code> issu de <code>Persistence.createEntityManagerFactory("bankingPU")</code>. Renvoyez <code>UP</code> avec <code>status=connected</code> et <code>type=postgresql</code> en cas de succès, ou <code>DOWN</code>.</span></li>
+            <li><span lang="en">In <code>WebAppReadinessCheck.java</code>, implement the <code>@Readiness HealthCheck</code>: read <code>microprofile-config.properties</code> via classloader stream and return <code>UP</code> with loaded configuration and service status.</span><span lang="fr">Dans <code>WebAppReadinessCheck.java</code>, implémentez le <code>@Readiness HealthCheck</code> : chargez <code>microprofile-config.properties</code> via le flux du classloader et renvoyez <code>UP</code> avec les informations de configuration et l'état des services.</span></li>
+          </ol>
+          <details class="lg-hint lg-hint--1">
+            <summary><span lang="en">Hint 1 — native probe execution</span><span lang="fr">Indice 1 — exécution de la sonde native</span></summary>
+            <div class="lg-hint-body">
+              <p><span lang="en">Use <code>em.createNativeQuery("SELECT 1").getSingleResult()</code> wrapped in a <code>try-finally</code> block that closes the <code>EntityManager</code>.</span><span lang="fr">Utilisez <code>em.createNativeQuery("SELECT 1").getSingleResult()</code> encapsulé dans un bloc <code>try-finally</code> qui ferme l'<code>EntityManager</code>.</span></p>
+            </div>
+          </details>
+          <details class="lg-hint lg-hint--2">
+            <summary><span lang="en">Hint 2 — DatabaseHealthCheck call method</span><span lang="fr">Indice 2 — méthode call de DatabaseHealthCheck</span></summary>
+            <div class="lg-hint-body">
+<pre class="dark"><code>@Override
+public HealthCheckResponse call() {
+    HealthCheckResponseBuilder builder = HealthCheckResponse.named("database-connection");
+    boolean ok = checkDatabase();
+    return ok ? builder.up().withData("status", "connected").withData("type", "postgresql").build()
+              : builder.down().withData("status", "disconnected").build();
+}</code></pre>
+            </div>
+          </details>
+          <details class="lg-hint lg-hint--sol">
+            <summary><span lang="en">Solution files</span><span lang="fr">Fichiers solution</span></summary>
+            <div class="lg-hint-body">
+              <p><a href="https://github.com/oplanson/esipe-javaee/blob/master/03-Labs/Lab03-JPA/solution/src/main/java/com/bank/health/DatabaseHealthCheck.java"><code>DatabaseHealthCheck.java</code></a> &nbsp;&middot;&nbsp; <a href="https://github.com/oplanson/esipe-javaee/blob/master/03-Labs/Lab03-JPA/solution/src/main/java/com/bank/health/WebAppReadinessCheck.java"><code>WebAppReadinessCheck.java</code></a></p>
+            </div>
+          </details>
+          <div class="lg-checkpoint">
+            <div class="lg-check-label"><span lang="en">Checkpoint</span><span lang="fr">Point de contrôle</span></div>
+            <pre class="dark"><code>grep -E 'named\("database-connection"\)|named\("web-application-readiness"\)' src/main/java/com/bank/health/*.java</code></pre>
+            <p><span lang="en">Expected output: probe builder names defined in both health check classes.</span><span lang="fr">Résultat attendu : noms des builders de sondes définis dans les deux classes de health check.</span></p>
+          </div>
+        </div>
+      </article>
+
+      <!-- ───────── STEP 11 ───────── -->
+      <article class="lg-step" id="step-11">
+        <div class="lg-step-head">
+          <div class="lg-step-num">11</div>
+          <div>
+            <h3><span lang="en">Container packaging &amp; deployment</span><span lang="fr">Packaging conteneur &amp; déploiement</span></h3>
+            <div class="lg-step-meta">
+              <span class="lg-chip">15 min</span>
+              <span class="lg-chip"><span lang="en">Course:</span><span lang="fr">Cours :</span> <a href="../../02-Lectures/slides/01-intro/slides.html#slide-21"><span lang="en">intro, slide 21</span><span lang="fr">intro, slide 21</span></a></span>
+            </div>
+          </div>
+        </div>
+        <div class="lg-step-body">
+          <p class="lg-files"><span lang="en">File to create:</span><span lang="fr">Fichier à créer :</span> <code>Containerfile</code></p>
+          <div class="lg-task-label"><span lang="en">Task</span><span lang="fr">À faire</span></div>
+          <ol>
+            <li><span lang="en">Create <code>Containerfile</code> based on <code>icr.io/appcafe/open-liberty:full-java17-openj9-ubi</code>.</span><span lang="fr">Créez <code>Containerfile</code> basé sur <code>icr.io/appcafe/open-liberty:full-java17-openj9-ubi</code>.</span></li>
+            <li><span lang="en">Copy WAR to <code>/config/apps/</code>, server configuration (<code>server.xml</code>, <code>bootstrap.properties</code>) and <code>microprofile-config.properties</code> to <code>/config/</code>.</span><span lang="fr">Copiez le WAR dans <code>/config/apps/</code>, la configuration serveur (<code>server.xml</code>, <code>bootstrap.properties</code>) et <code>microprofile-config.properties</code> dans <code>/config/</code>.</span></li>
+            <li><span lang="en">Copy the PostgreSQL JDBC driver to <code>/opt/ol/wlp/usr/shared/resources/postgresql/</code> and run <code>configure.sh</code>.</span><span lang="fr">Copiez le driver JDBC PostgreSQL dans <code>/opt/ol/wlp/usr/shared/resources/postgresql/</code> et exécutez <code>configure.sh</code>.</span></li>
+            <li><span lang="en">Build the container image and deploy the container linked to the PostgreSQL network.</span><span lang="fr">Construisez l'image conteneur et déployez le conteneur lié au réseau PostgreSQL.</span></li>
+          </ol>
+          <details class="lg-hint lg-hint--1">
+            <summary><span lang="en">Hint 1 — driver copy in Containerfile</span><span lang="fr">Indice 1 — copie du driver dans Containerfile</span></summary>
+            <div class="lg-hint-body">
+              <p><span lang="en">Ensure the target folder <code>/opt/ol/wlp/usr/shared/resources/postgresql</code> is created with <code>RUN mkdir -p ...</code> before copying the JDBC driver JAR.</span><span lang="fr">Assurez-vous que le dossier cible <code>/opt/ol/wlp/usr/shared/resources/postgresql</code> est créé avec <code>RUN mkdir -p ...</code> avant de copier le JAR du driver JDBC.</span></p>
+            </div>
+          </details>
+          <details class="lg-hint lg-hint--2">
+            <summary><span lang="en">Hint 2 — complete Containerfile</span><span lang="fr">Indice 2 — Containerfile complet</span></summary>
+            <div class="lg-hint-body">
+<pre class="dark"><code>FROM icr.io/appcafe/open-liberty:full-java17-openj9-ubi
+
+COPY --chown=1001:0 target/banking-jpa-app.war /config/apps/
+COPY --chown=1001:0 src/main/liberty/config/server.xml /config/
+COPY --chown=1001:0 src/main/liberty/config/bootstrap.properties /config/
+COPY --chown=1001:0 src/main/resources/META-INF/microprofile-config.properties /config/
+
+RUN mkdir -p /opt/ol/wlp/usr/shared/resources/postgresql
+COPY --chown=1001:0 target/liberty/wlp/usr/servers/bankingServer/postgresql/*.jar /opt/ol/wlp/usr/shared/resources/postgresql/
+
+RUN configure.sh
+EXPOSE 9080 9443
+CMD ["/opt/ol/wlp/bin/server", "run", "defaultServer"]</code></pre>
+            </div>
+          </details>
+          <details class="lg-hint lg-hint--sol">
+            <summary><span lang="en">Solution file</span><span lang="fr">Fichier solution</span></summary>
+            <div class="lg-hint-body">
+              <p><a href="https://github.com/oplanson/esipe-javaee/blob/master/03-Labs/Lab03-JPA/solution/Containerfile"><code>solution/Containerfile</code></a></p>
+            </div>
+          </details>
+          <div class="lg-checkpoint">
+            <div class="lg-check-label"><span lang="en">Checkpoint</span><span lang="fr">Point de contrôle</span></div>
+            <pre class="dark"><code>podman build -t banking-jpa-app:lab03 -f Containerfile .</code></pre>
+            <p><span lang="en">Expected output: <code>STEP ...: COMMIT banking-jpa-app:lab03</code> (image builds successfully).</span><span lang="fr">Résultat attendu : <code>STEP ...: COMMIT banking-jpa-app:lab03</code> (l'image se construit avec succès).</span></p>
+          </div>
+        </div>
+      </article>
+    </section>
+
+    <!-- ═════════════ 6. RUN ═════════════ -->
+    <section class="lg-section" id="run">
+      <h2><span class="lg-sec-num">06</span><span lang="en">Run and operate</span><span lang="fr">Exécution</span></h2>
+      <table class="slide-table">
+        <thead><tr><th><span lang="en">Purpose</span><span lang="fr">Usage</span></th><th><span lang="en">Command</span><span lang="fr">Commande</span></th></tr></thead>
+        <tbody>
+          <tr><td><span lang="en">Start PostgreSQL</span><span lang="fr">Démarrer PostgreSQL</span></td><td><code>podman compose up -d</code></td></tr>
+          <tr><td><span lang="en">Start Liberty in Dev Mode</span><span lang="fr">Démarrer Liberty en mode dev</span></td><td><code>mvn liberty:dev</code></td></tr>
+          <tr><td><span lang="en">Start application in container</span><span lang="fr">Démarrer l'application en conteneur</span></td><td><span lang="en">the redeploy loop of the <a href="#setup">Setup</a> section</span><span lang="fr">la boucle de redéploiement de la section <a href="#setup">Préparation</a></span></td></tr>
+          <tr><td><span lang="en">Inspect database rows</span><span lang="fr">Inspecter les lignes en base</span></td><td><code>podman exec -it banking-db psql -U bankuser -d bankdb -c "SELECT * FROM clients;"</code></td></tr>
+          <tr><td><span lang="en">Follow Liberty logs</span><span lang="fr">Suivre les logs Liberty</span></td><td><code>podman logs -f banking-jpa-lab03</code></td></tr>
+          <tr><td><span lang="en">Stop and clean up</span><span lang="fr">Arrêter et nettoyer</span></td><td><code>podman rm -f banking-jpa-lab03 &amp;&amp; podman compose down</code></td></tr>
+        </tbody>
+      </table>
+
+      <table class="slide-table">
+        <thead><tr><th>URL</th><th><span lang="en">What you get</span><span lang="fr">Ce que vous obtenez</span></th></tr></thead>
+        <tbody>
+          <tr><td><a href="http://localhost:9080/">http://localhost:9080/</a></td><td><span lang="en">Home page</span><span lang="fr">Page d'accueil</span></td></tr>
+          <tr><td><a href="http://localhost:9080/clients">http://localhost:9080/clients</a></td><td><span lang="en">Client list with database rows</span><span lang="fr">Liste des clients issus de la base</span></td></tr>
+          <tr><td><a href="http://localhost:9080/client?action=new">http://localhost:9080/client?action=new</a></td><td><span lang="en">Client creation form</span><span lang="fr">Formulaire de création de client</span></td></tr>
+          <tr><td><a href="http://localhost:9080/validate-transaction">http://localhost:9080/validate-transaction</a></td><td><span lang="en">JNDI transaction validator demo</span><span lang="fr">Démonstration du validateur JNDI</span></td></tr>
+          <tr><td><a href="http://localhost:9080/health">http://localhost:9080/health</a></td><td><span lang="en">MicroProfile Health (Database &amp; WebApp)</span><span lang="fr">MicroProfile Health (Database &amp; WebApp)</span></td></tr>
+          <tr><td><a href="http://localhost:9080/metrics">http://localhost:9080/metrics</a></td><td><span lang="en">MicroProfile Metrics</span><span lang="fr">MicroProfile Metrics</span></td></tr>
+          <tr><td><a href="http://localhost:9080/openapi">http://localhost:9080/openapi</a></td><td><span lang="en">MicroProfile OpenAPI document</span><span lang="fr">Document MicroProfile OpenAPI</span></td></tr>
+        </tbody>
+      </table>
+
+      <div class="lg-callout lg-callout--note">
+        <div lang="en"><div class="lg-callout-title">Persistent data</div><p>Unlike Lab 02, clients and accounts created through the UI are written to PostgreSQL. Restarting the Open Liberty container preserves all created records.</p></div>
+        <div lang="fr"><div class="lg-callout-title">Données persistantes</div><p>À la différence du Lab 02, les clients et comptes créés depuis l'interface sont écrits dans PostgreSQL. Redémarrer le conteneur Open Liberty conserve tous les enregistrements créés.</p></div>
+      </div>
+
+      <div class="lg-callout lg-callout--warn">
+        <div lang="en"><div class="lg-callout-title">About the provided scripts</div><p>The lab folder contains scripts (<code>podman-test.sh</code>, <code>docker-test.sh</code>, <code>run-lab.sh</code>). Be careful: before starting, they <strong>stop and remove any container that already uses ports 9080 or 5432</strong>. Prefer running explicit commands as shown above.</p></div>
+        <div lang="fr"><div class="lg-callout-title">À propos des scripts fournis</div><p>Le dossier du lab contient des scripts (<code>podman-test.sh</code>, <code>docker-test.sh</code>, <code>run-lab.sh</code>). Attention : avant de démarrer, ils <strong>arrêtent et suppriment tout conteneur utilisant déjà les ports 9080 ou 5432</strong>. Préférez exécuter les commandes explicites indiquées ci-dessus.</p></div>
+      </div>
+    </section>
+
+    <!-- ═════════════ 7. VALIDATE ═════════════ -->
+    <section class="lg-section" id="validate">
+      <h2><span class="lg-sec-num">07</span><span lang="en">Validate your work</span><span lang="fr">Valider votre travail</span></h2>
+      <p>
+        <span lang="en">Run these checks to verify that persistence, JNDI lookups, and migrations are functioning properly:</span>
+        <span lang="fr">Exécutez ces vérifications pour valider que la persistance, les résolutions JNDI et les migrations fonctionnent correctement :</span>
+      </p>
+
+      <pre class="dark"><code>B=http://localhost:9080
+
+# 1. Check endpoints availability
+for u in "" clients "client?action=new" validate-transaction health metrics; do
+  printf "%-25s %s\n" "/$u" "$(curl -s -o /dev/null -w '%{http_code}' "$B/$u")"
+done
+
+# 2. Check health liveness status (PostgreSQL connection)
+curl -s $B/health/live | grep -E '"name":"database-connection".*"status":"UP"'
+
+# 3. Create a client and verify database insertion
+curl -s -X POST $B/client -d "action=create&amp;name=Alice+Martin&amp;email=alice.martin@example.com"
+podman exec banking-db psql -U bankuser -d bankdb -c "SELECT id, name, email FROM clients WHERE email='alice.martin@example.com';"
+
+# 4. Test JNDI Transaction Validator (valid and invalid amounts)
+curl -s -X POST $B/validate-transaction -H "Accept: application/json" -d "amount=5000.00"
+curl -s -X POST $B/validate-transaction -H "Accept: application/json" -d "amount=15000.00"</code></pre>
+
+      <table class="slide-table">
+        <thead><tr><th><span lang="en">Check</span><span lang="fr">Contrôle</span></th><th><span lang="en">Expected result</span><span lang="fr">Résultat attendu</span></th></tr></thead>
+        <tbody>
+          <tr><td><span lang="en">Six endpoints</span><span lang="fr">Six endpoints</span></td><td><span lang="en"><code>200</code> for each</span><span lang="fr"><code>200</code> pour chacun</span></td></tr>
+          <tr><td><code>/health/live</code></td><td><code>status: UP</code> <span lang="en">with data type: postgresql</span><span lang="fr">avec data type: postgresql</span></td></tr>
+          <tr><td><code>psql SELECT</code></td><td><span lang="en">One row with <code>Alice Martin</code> and auto-generated ID</span><span lang="fr">Une ligne avec <code>Alice Martin</code> et ID auto-incrémenté</span></td></tr>
+          <tr><td><code>validate-transaction (5000)</code></td><td><code>"valid": true</code> <span lang="en">(&le; 10000.00)</span><span lang="fr">(&le; 10000.00)</span></td></tr>
+          <tr><td><code>validate-transaction (15000)</code></td><td><code>"valid": false</code> <span lang="en">(&gt; 10000.00)</span><span lang="fr">(&gt; 10000.00)</span></td></tr>
+        </tbody>
+      </table>
+
+      <h3><span lang="en">Validation checklist</span><span lang="fr">Checklist de validation</span></h3>
+      <ul class="lg-checklist">
+        <li><label><input type="checkbox"/><span lang="en">PostgreSQL container starts and responds to <code>pg_isready</code></span><span lang="fr">Le conteneur PostgreSQL démarre et répond à <code>pg_isready</code></span></label></li>
+        <li><label><input type="checkbox"/><span lang="en">Flyway migrations (V1, V2, V3) execute automatically at application startup</span><span lang="fr">Les migrations Flyway (V1, V2, V3) s'exécutent automatiquement au démarrage</span></label></li>
+        <li><label><input type="checkbox"/><span lang="en"><code>Client</code> and <code>Account</code> entities map table columns and bidirectional relationship</span><span lang="fr">Les entités <code>Client</code> et <code>Account</code> mappent les tables et la relation bidirectionnelle</span></label></li>
+        <li><label><input type="checkbox"/><span lang="en"><code>ClientService</code> manages transactions with <code>EntityTransaction</code> commit/rollback</span><span lang="fr"><code>ClientService</code> gère les transactions avec <code>EntityTransaction</code> commit/rollback</span></label></li>
+        <li><label><input type="checkbox"/><span lang="en"><code>/clients</code> displays data from the database with account count</span><span lang="fr"><code>/clients</code> affiche les données de la base avec le nombre de comptes</span></label></li>
+        <li><label><input type="checkbox"/><span lang="en"><code>/client?action=view&amp;id=1</code> loads client accounts eagerly using <code>LEFT JOIN FETCH</code></span><span lang="fr"><code>/client?action=view&amp;id=1</code> charge les comptes du client avec <code>LEFT JOIN FETCH</code></span></label></li>
+        <li><label><input type="checkbox"/><span lang="en">Creating a client persists the record permanently across server restarts</span><span lang="fr">Créer un client persiste l'enregistrement de façon permanente après redémarrage</span></label></li>
+        <li><label><input type="checkbox"/><span lang="en"><code>JndiConfigService</code> retrieves environment entries from <code>web.xml</code></span><span lang="fr"><code>JndiConfigService</code> récupère les entrées d'environnement depuis <code>web.xml</code></span></label></li>
+        <li><label><input type="checkbox"/><span lang="en"><code>/validate-transaction</code> checks amounts against the JNDI limit (10,000.00 €)</span><span lang="fr"><code>/validate-transaction</code> valide les montants selon la limite JNDI (10 000,00 €)</span></label></li>
+        <li><label><input type="checkbox"/><span lang="en"><code>/health/live</code> executes a native SQL probe and reports <code>UP</code></span><span lang="fr"><code>/health/live</code> exécute une sonde SQL native et renvoie <code>UP</code></span></label></li>
+      </ul>
+    </section>
+
+    <!-- ═════════════ 8. COMPARE ═════════════ -->
+    <section class="lg-section" id="compare">
+      <h2><span class="lg-sec-num">08</span><span lang="en">Compare with the solution</span><span lang="fr">Comparer à la solution</span></h2>
+      <p>
+        <span lang="en">To compare your implementation with the reference solution:</span>
+        <span lang="fr">Pour comparer votre implémentation avec la solution de référence :</span>
+      </p>
+      <pre class="dark"><code>cd 03-Labs/Lab03-JPA
+diff -rq starter solution -x target -x docs -x postgresql
+diff -u solution/src/main/java/com/bank/service/ClientService.java \
+        starter/src/main/java/com/bank/service/ClientService.java</code></pre>
+
+      <h3><span lang="en">Differences that are expected</span><span lang="fr">Différences attendues</span></h3>
+      <ul>
+        <li><span lang="en"><code>pom.xml</code>: the solution may include specific plugin options; ensure your driver copy is working.</span><span lang="fr"><code>pom.xml</code> : la solution peut inclure des options spécifiques de plugin ; assurez-vous que la copie du driver fonctionne.</span></li>
+        <li><span lang="en"><code>bootstrap.properties</code>: the solution uses <code>DB_HOST=host.containers.internal</code> for container-to-host networking.</span><span lang="fr"><code>bootstrap.properties</code> : la solution utilise <code>DB_HOST=host.containers.internal</code> pour le réseau conteneur-hôte.</span></li>
+        <li><span lang="en">Build directories (<code>target/</code>) and downloaded libraries (<code>postgresql/</code>) are build outputs.</span><span lang="fr">Les dossiers de compilation (<code>target/</code>) et bibliothèques téléchargées (<code>postgresql/</code>) sont des résultats de build.</span></li>
+      </ul>
+
+      <h3><span lang="en">Points to look for in your code</span><span lang="fr">Points à examiner dans votre code</span></h3>
+      <ul>
+        <li><span lang="en">Are all <code>EntityManager</code> instances closed in a <code>finally</code> block?</span><span lang="fr">Toutes les instances d'<code>EntityManager</code> sont-elles fermées dans un bloc <code>finally</code> ?</span></li>
+        <li><span lang="en">Are write operations wrapped in active <code>EntityTransaction</code> blocks with rollback on error?</span><span lang="fr">Les écritures sont-elles enveloppées dans des blocs <code>EntityTransaction</code> avec rollback en cas d'erreur ?</span></li>
+        <li><span lang="en">Does <code>Client.addAccount</code> maintain both sides of the relationship?</span><span lang="fr">La méthode <code>Client.addAccount</code> maintient-elle les deux côtés de la relation ?</span></li>
+        <li><span lang="en">Are JNDI <code>InitialContext</code> instances properly closed after lookups?</span><span lang="fr">Les instances <code>InitialContext</code> de JNDI sont-elles bien fermées après les lookups ?</span></li>
+      </ul>
+    </section>
+
+    <!-- ═════════════ 9. TROUBLESHOOTING ═════════════ -->
+    <section class="lg-section" id="trouble">
+      <h2><span class="lg-sec-num">09</span><span lang="en">Troubleshooting</span><span lang="fr">Dépannage</span></h2>
+      <table class="slide-table">
+        <thead><tr><th><span lang="en">Symptom</span><span lang="fr">Symptôme</span></th><th><span lang="en">Cause and fix</span><span lang="fr">Cause et correction</span></th></tr></thead>
+        <tbody>
+          <tr>
+            <td><code>Connection to localhost:5432 refused</code></td>
+            <td><span lang="en">PostgreSQL container is not running. Start it with <code>podman compose up -d</code> and check status with <code>podman ps</code>.</span><span lang="fr">Le conteneur PostgreSQL n'est pas démarré. Lancez-le avec <code>podman compose up -d</code> et vérifiez avec <code>podman ps</code>.</span></td>
+          </tr>
+          <tr>
+            <td><code>FlywayException: Table "clients" already exists</code></td>
+            <td><span lang="en">The database schema has conflicting migrations. Reset the database: <code>podman compose down -v &amp;&amp; podman compose up -d</code>.</span><span lang="fr">Le schéma de base contient des migrations en conflit. Réinitialisez la base : <code>podman compose down -v &amp;&amp; podman compose up -d</code>.</span></td>
+          </tr>
+          <tr>
+            <td><code>NameNotFoundException: jdbc/bankingDS</code></td>
+            <td><span lang="en">DataSource declaration is missing in <code>server.xml</code> or <code>&lt;resource-ref&gt;</code> is missing in <code>web.xml</code>.</span><span lang="fr">La déclaration de DataSource manque dans <code>server.xml</code> ou le <code>&lt;resource-ref&gt;</code> manque dans <code>web.xml</code>.</span></td>
+          </tr>
+          <tr>
+            <td><code>PersistenceException: No Persistence provider for EntityManager named bankingPU</code></td>
+            <td><span lang="en"><code>persistence.xml</code> is missing in <code>src/main/resources/META-INF/</code> or provider class name is mistyped.</span><span lang="fr"><code>persistence.xml</code> est absent dans <code>src/main/resources/META-INF/</code> ou le nom du provider contient une faute de frappe.</span></td>
+          </tr>
+          <tr>
+            <td><code>LazyInitializationException</code> / empty accounts</td>
+            <td><span lang="en">Accounts collection was accessed after <code>EntityManager</code> was closed. Use <code>findByIdWithAccounts</code> with <code>LEFT JOIN FETCH</code>.</span><span lang="fr">La collection de comptes a été accédée après fermeture de l'<code>EntityManager</code>. Utilisez <code>findByIdWithAccounts</code> avec <code>LEFT JOIN FETCH</code>.</span></td>
+          </tr>
+          <tr>
+            <td><code>Port 5432 or 9080 already in use</code></td>
+            <td><span lang="en">Another process holds the port. Check with <code>lsof -i :5432</code> or <code>lsof -i :9080</code> and stop conflicting containers.</span><span lang="fr">Un autre processus occupe le port. Vérifiez avec <code>lsof -i :5432</code> ou <code>lsof -i :9080</code> et arrêtez les conteneurs en conflit.</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- ═════════════ 10. BONUS ═════════════ -->
+    <section class="lg-section" id="bonus">
+      <h2><span class="lg-sec-num">10</span><span lang="en">Go further</span><span lang="fr">Pour aller plus loin</span></h2>
+      <ul>
+        <li><span lang="en"><strong>Dynamic queries with Criteria API.</strong> Implement a multi-criteria search method in <code>ClientService</code> allowing optional filtering by name prefix, email domain, and minimum account balance.</span><span lang="fr"><strong>Requêtes dynamiques avec Criteria API.</strong> Implémentez une méthode de recherche multi-critères dans <code>ClientService</code> avec filtrage optionnel par préfixe de nom, domaine d'email et solde minimum.</span></li>
+        <li><span lang="en"><strong>Account money transfer.</strong> Implement a transactional method <code>transfer(String fromNumber, String toNumber, double amount)</code> in <code>ClientService</code> verifying balances and atomic execution.</span><span lang="fr"><strong>Virement bancaire de compte à compte.</strong> Implémentez une méthode transactionnelle <code>transfer(String fromNumber, String toNumber, double amount)</code> dans <code>ClientService</code> garantissant l'atomicité et la vérification des soldes.</span></li>
+        <li><span lang="en"><strong>Optimistic locking with <code>@Version</code>.</strong> Add a <code>@Version private Long version;</code> property to <code>Account</code> to prevent concurrent modification lost updates.</span><span lang="fr"><strong>Verrouillage optimiste avec <code>@Version</code>.</strong> Ajoutez la propriété <code>@Version private Long version;</code> sur <code>Account</code> pour prévenir les écrasements lors d'accès concurrents.</span></li>
+        <li><span lang="en"><strong>Flyway V4 migration.</strong> Create <code>V4__add_client_phone.sql</code> adding a <code>phone VARCHAR(20)</code> column to <code>clients</code>, update <code>Client.java</code>, and verify seamless schema evolution.</span><span lang="fr"><strong>Migration Flyway V4.</strong> Créez <code>V4__add_client_phone.sql</code> ajoutant la colonne <code>phone VARCHAR(20)</code> sur <code>clients</code>, mettez à jour <code>Client.java</code> et vérifiez l'évolution de schéma sans interruption.</span></li>
+      </ul>
+      <div class="lg-callout lg-callout--tip">
+        <div lang="en"><div class="lg-callout-title">Next</div><p>Lab 04 introduces Contexts and Dependency Injection (CDI 4.0), replacing manual Singletons and lookup services with <code>@Inject</code>, scopes, and interceptors.</p></div>
+        <div lang="fr"><div class="lg-callout-title">Suite</div><p>Le Lab 04 introduit l'injection de dépendances et les contextes (CDI 4.0), remplaçant les Singletons manuels et services de lookup par <code>@Inject</code>, les portées et les intercepteurs.</p></div>
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<footer class="site-footer">Made with IBM Bob &nbsp;&middot;&nbsp; &copy; 2026 Olivier Planson</footer>
+</body>
+</html>

@@ -1,0 +1,35 @@
+{
+  "lab": "Lab02B-JSF",
+  "must_cite": [
+    "pom.xml",
+    "beans.xml",
+    "faces-config.xml",
+    "main.xhtml",
+    "index.xhtml",
+    "client-list.xhtml",
+    "client-form.xhtml",
+    "client-details.xhtml",
+    "ClientBean.java",
+    "ClientService.java",
+    "Client.java",
+    "Account.java",
+    "Address.java",
+    "server.xml"
+  ],
+  "must_cite_in_steps": [
+    "pom.xml",
+    "beans.xml",
+    "faces-config.xml",
+    "main.xhtml",
+    "index.xhtml",
+    "client-list.xhtml",
+    "client-form.xhtml",
+    "client-details.xhtml",
+    "ClientBean.java",
+    "ClientService.java",
+    "Client.java",
+    "Account.java",
+    "Address.java",
+    "server.xml"
+  ]
+}

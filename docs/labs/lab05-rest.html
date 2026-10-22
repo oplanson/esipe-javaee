@@ -1,0 +1,1127 @@
+<!-- © Copyright 2026 Olivier Planson. All rights reserved. Reproduction prohibited. Made with IBM Bob. -->
+<!DOCTYPE html>
+<html lang="fr" data-lang="fr">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title data-title-en="ESIPE — Lab 05: JAX-RS REST API — Lab guide" data-title-fr="ESIPE — Lab 05 : API REST JAX-RS — Guide du lab">ESIPE — Lab 05 : API REST JAX-RS — Guide du lab</title>
+  <link rel="stylesheet" href="assets/slide.css"/>
+  <link rel="stylesheet" href="assets/lab-guide.css"/>
+  <script src="assets/lab-guide.js"></script>
+</head>
+<body>
+<header class="site-header">
+  <a class="brand" href="index.html">ESIPE<span>Jakarta EE &amp; Microservices — Labs</span></a>
+  <div class="lang-toggle" id="lang-toggle">
+    <button type="button" id="btn-en" data-set-lang="en">EN</button>
+    <span class="sep">|</span>
+    <button type="button" id="btn-fr" data-set-lang="fr" class="active">FR</button>
+  </div>
+  <a class="back-link" href="index.html">&#8592; Labs</a>
+  <a class="back-link" href="../index.html"><span lang="en">Course site</span><span lang="fr">Site du cours</span></a>
+</header>
+
+<div class="lg-shell">
+
+  <nav class="lg-toc" aria-label="Table of contents">
+    <div class="lg-toc-title"><span lang="en">In this guide</span><span lang="fr">Dans ce guide</span></div>
+    <a href="#hero"><span lang="en">Overview</span><span lang="fr">Vue d'ensemble</span></a>
+    <a href="#goal"><span lang="en">1. Goal</span><span lang="fr">1. Objectif</span></a>
+    <a href="#starter"><span lang="en">2. What the starter gives you</span><span lang="fr">2. Ce que fournit le starter</span></a>
+    <a href="#target"><span lang="en">3. Target structure</span><span lang="fr">3. Structure cible</span></a>
+    <a href="#setup"><span lang="en">4. Setup</span><span lang="fr">4. Préparation</span></a>
+    <a href="#steps"><span lang="en">5. Step by step</span><span lang="fr">5. Pas à pas</span></a>
+    <a class="sub" href="#step-1"><span lang="en">1 · Bootstrap &amp; RestApplication</span><span lang="fr">1 · Bootstrap &amp; RestApplication</span></a>
+    <a class="sub" href="#step-2"><span lang="en">2 · DTOs &amp; exception types</span><span lang="fr">2 · DTO &amp; types d'exception</span></a>
+    <a class="sub" href="#step-3"><span lang="en">3 · Exception mappers</span><span lang="fr">3 · Exception mappers</span></a>
+    <a class="sub" href="#step-4"><span lang="en">4 · RootResource &amp; ApiInfo</span><span lang="fr">4 · RootResource &amp; ApiInfo</span></a>
+    <a class="sub" href="#step-5"><span lang="en">5 · ClientResource (CRUD)</span><span lang="fr">5 · ClientResource (CRUD)</span></a>
+    <a class="sub" href="#step-6"><span lang="en">6 · AccountResource (CRUD + transfers)</span><span lang="fr">6 · AccountResource (CRUD + virements)</span></a>
+    <a class="sub" href="#step-7"><span lang="en">7 · Flyway migrations V4–V6</span><span lang="fr">7 · Migrations Flyway V4–V6</span></a>
+    <a class="sub" href="#step-8"><span lang="en">8 · TransactionResource</span><span lang="fr">8 · TransactionResource</span></a>
+    <a class="sub" href="#step-9"><span lang="en">9 · MicroProfile Rest Client</span><span lang="fr">9 · MicroProfile Rest Client</span></a>
+    <a class="sub" href="#step-10"><span lang="en">10 · Container &amp; deploy</span><span lang="fr">10 · Conteneur &amp; déploiement</span></a>
+    <a href="#run"><span lang="en">6. Run</span><span lang="fr">6. Exécution</span></a>
+    <a href="#validate"><span lang="en">7. Validate</span><span lang="fr">7. Validation</span></a>
+    <a href="#compare"><span lang="en">8. Compare with solution</span><span lang="fr">8. Comparer à la solution</span></a>
+    <a href="#trouble"><span lang="en">9. Troubleshooting</span><span lang="fr">9. Dépannage</span></a>
+    <a href="#bonus"><span lang="en">10. Go further</span><span lang="fr">10. Pour aller plus loin</span></a>
+  </nav>
+
+  <main class="lg-main">
+
+    <!-- ═════════════ HERO ═════════════ -->
+    <section class="lg-hero" id="hero">
+      <div class="lg-kicker">Lab 05</div>
+      <h1><span lang="en">JAX-RS REST API</span><span lang="fr">API REST JAX-RS</span></h1>
+      <p class="lg-lead">
+        <span lang="en">Starting from the Lab 04 CDI solution, you add a complete REST API layer (JAX-RS, JSON-B, Bean Validation, exception mappers, MicroProfile Rest Client) while keeping the existing JSP web UI.</span>
+        <span lang="fr">À partir de la solution du Lab 04 CDI, vous ajoutez une couche API REST complète (JAX-RS, JSON-B, Bean Validation, exception mappers, MicroProfile Rest Client) tout en conservant l'interface web JSP existante.</span>
+      </p>
+      <div class="badge-row">
+        <span class="badge badge-blue">Jakarta EE 10</span>
+        <span class="badge badge-teal">JAX-RS 3.1</span>
+        <span class="badge badge-green">JSON-B 3.0</span>
+        <span class="badge badge-purple">MicroProfile 6</span>
+        <span class="badge badge-warm">Flyway</span>
+      </div>
+      <div class="lg-facts">
+        <div><strong><span lang="en">about 3 hours</span><span lang="fr">environ 3 h</span></strong><span lang="en">Duration</span><span lang="fr">Durée</span></div>
+        <div><strong><span lang="en">Intermediate</span><span lang="fr">Intermédiaire</span></strong><span lang="en">Level</span><span lang="fr">Niveau</span></div>
+        <div><strong>JDK 17+ · Maven · Podman · PostgreSQL</strong><span lang="en">Prerequisites</span><span lang="fr">Prérequis</span></div>
+        <div><strong>http://localhost:9080/api</strong><span lang="en">REST base URL</span><span lang="fr">URL REST de base</span></div>
+      </div>
+      <div class="lg-hero-links">
+        <a href="../../02-Lectures/slides/05-rest/slides.html#slide-1"><span lang="en">Course slides (REST / JAX-RS)</span><span lang="fr">Slides du cours (REST / JAX-RS)</span></a>
+        <a class="secondary" href="https://github.com/oplanson/esipe-javaee/blob/master/03-Labs/Lab05-REST/README.md"><span lang="en">Original README</span><span lang="fr">README d'origine</span></a>
+        <a class="secondary" href="https://github.com/oplanson/esipe-javaee/tree/master/03-Labs/Lab05-REST/solution"><span lang="en">Solution folder</span><span lang="fr">Dossier solution</span></a>
+      </div>
+    </section>
+
+    <!-- ═════════════ 1. GOAL ═════════════ -->
+    <section class="lg-section" id="goal">
+      <h2><span class="lg-sec-num">01</span><span lang="en">Goal of the lab</span><span lang="fr">Objectif du lab</span></h2>
+      <p>
+        <span lang="en">You extend the banking application from Lab 04 with a full REST API. The web UI (JSP + servlets) remains intact; the new <code>/api</code> path serves JSON to any HTTP client.</span>
+        <span lang="fr">Vous étendez l'application bancaire du Lab 04 avec une API REST complète. L'interface web (JSP + servlets) reste intacte ; le nouveau chemin <code>/api</code> sert du JSON à tout client HTTP.</span>
+      </p>
+
+      <h3><span lang="en">What the finished API exposes</span><span lang="fr">Ce que l'API terminée expose</span></h3>
+      <table class="slide-table">
+        <thead><tr>
+          <th>Endpoint</th>
+          <th><span lang="en">HTTP methods</span><span lang="fr">Méthodes HTTP</span></th>
+          <th><span lang="en">Behaviour</span><span lang="fr">Comportement</span></th>
+        </tr></thead>
+        <tbody>
+          <tr><td><code>GET /api</code></td><td>GET</td><td><span lang="en">API discovery — name, version, links</span><span lang="fr">Découverte API — nom, version, liens</span></td></tr>
+          <tr><td><code>/api/clients</code></td><td>GET · POST</td><td><span lang="en">List all / create a client</span><span lang="fr">Liste tous / crée un client</span></td></tr>
+          <tr><td><code>/api/clients/{id}</code></td><td>GET · PUT · DELETE</td><td><span lang="en">Read / update / delete one client</span><span lang="fr">Lire / modifier / supprimer un client</span></td></tr>
+          <tr><td><code>/api/clients/search?name=…</code></td><td>GET</td><td><span lang="en">Search clients by name</span><span lang="fr">Chercher des clients par nom</span></td></tr>
+          <tr><td><code>/api/accounts</code></td><td>GET · POST</td><td><span lang="en">List all / create an account</span><span lang="fr">Liste tous / crée un compte</span></td></tr>
+          <tr><td><code>/api/accounts/{id}/deposit</code></td><td>POST</td><td><span lang="en">Deposit money</span><span lang="fr">Déposer de l'argent</span></td></tr>
+          <tr><td><code>/api/accounts/{fromId}/transfer</code></td><td>POST</td><td><span lang="en">Transfer between accounts</span><span lang="fr">Virement entre comptes</span></td></tr>
+          <tr><td><code>/api/transactions</code></td><td>GET</td><td><span lang="en">Transaction history</span><span lang="fr">Historique des transactions</span></td></tr>
+        </tbody>
+      </table>
+
+      <h3><span lang="en">Concepts you practise</span><span lang="fr">Concepts mis en pratique</span></h3>
+      <ul>
+        <li>
+          <span lang="en">JAX-RS annotations: <code>@Path</code>, <code>@GET/POST/PUT/DELETE</code>, <code>@PathParam</code>, <code>@QueryParam</code>, <code>@Produces</code>, <code>@Consumes</code> — <a href="../../02-Lectures/slides/05-rest/slides.html#slide-3">slide 3</a></span>
+          <span lang="fr">Annotations JAX-RS : <code>@Path</code>, <code>@GET/POST/PUT/DELETE</code>, <code>@PathParam</code>, <code>@QueryParam</code>, <code>@Produces</code>, <code>@Consumes</code> — <a href="../../02-Lectures/slides/05-rest/slides.html#slide-3">slide 3</a></span>
+        </li>
+        <li>
+          <span lang="en">JSON-B automatic serialisation / deserialisation — <a href="../../02-Lectures/slides/05-rest/slides.html#slide-7">slide 7</a></span>
+          <span lang="fr">Sérialisation / désérialisation automatique JSON-B — <a href="../../02-Lectures/slides/05-rest/slides.html#slide-7">slide 7</a></span>
+        </li>
+        <li>
+          <span lang="en">Exception mappers (<code>ExceptionMapper&lt;T&gt;</code>, <code>@Provider</code>) — <a href="../../02-Lectures/slides/05-rest/slides.html#slide-11">slide 11</a></span>
+          <span lang="fr">Exception mappers (<code>ExceptionMapper&lt;T&gt;</code>, <code>@Provider</code>) — <a href="../../02-Lectures/slides/05-rest/slides.html#slide-11">slide 11</a></span>
+        </li>
+        <li>
+          <span lang="en">Bean Validation on REST resources (<code>@Valid</code>, <code>@NotNull</code>, <code>@Email</code>) — <a href="../../02-Lectures/slides/05-rest/slides.html#slide-13">slide 13</a></span>
+          <span lang="fr">Bean Validation sur les resources REST (<code>@Valid</code>, <code>@NotNull</code>, <code>@Email</code>) — <a href="../../02-Lectures/slides/05-rest/slides.html#slide-13">slide 13</a></span>
+        </li>
+        <li>
+          <span lang="en">MicroProfile Rest Client — type-safe declarative HTTP client — <a href="../../02-Lectures/slides/05-rest/slides.html#slide-17">slide 17</a></span>
+          <span lang="fr">MicroProfile Rest Client — client HTTP déclaratif type-safe — <a href="../../02-Lectures/slides/05-rest/slides.html#slide-17">slide 17</a></span>
+        </li>
+        <li>
+          <span lang="en">Hybrid architecture: REST API and JSP UI sharing CDI services — <a href="../../02-Lectures/slides/05-rest/slides.html#slide-5">slide 5</a></span>
+          <span lang="fr">Architecture hybride : API REST et UI JSP partageant les services CDI — <a href="../../02-Lectures/slides/05-rest/slides.html#slide-5">slide 5</a></span>
+        </li>
+      </ul>
+    </section>
+
+    <!-- ═════════════ 2. STARTER ═════════════ -->
+    <section class="lg-section" id="starter">
+      <h2><span class="lg-sec-num">02</span><span lang="en">What the starter gives you</span><span lang="fr">Ce que fournit le starter</span></h2>
+
+      <div class="lg-callout lg-callout--warn">
+        <div lang="en">
+          <div class="lg-callout-title">Starter anomaly — only 2 Java files, no pom.xml</div>
+          <p>The <code>03-Labs/Lab05-REST/starter/</code> folder contains <strong>only</strong> <code>src/main/java/com/bank/api/RootResource.java</code> and <code>src/main/java/com/bank/dto/ApiInfo.java</code>. There is no <code>pom.xml</code>, no <code>server.xml</code>, no <code>docker-compose.yml</code>, and the README describes a more complete starter structure that does not exist. The correct starting point is the <strong>solution of Lab 04 CDI</strong> (see Setup section). The two Java files above are part of the exercise and are included as samples only.</p>
+        </div>
+        <div lang="fr">
+          <div class="lg-callout-title">Anomalie du starter — seulement 2 fichiers Java, pas de pom.xml</div>
+          <p>Le dossier <code>03-Labs/Lab05-REST/starter/</code> ne contient <strong>que</strong> <code>src/main/java/com/bank/api/RootResource.java</code> et <code>src/main/java/com/bank/dto/ApiInfo.java</code>. Il n'y a ni <code>pom.xml</code>, ni <code>server.xml</code>, ni <code>docker-compose.yml</code>, et le README décrit une structure de starter plus complète qui n'existe pas. Le vrai point de départ est la <strong>solution du Lab 04 CDI</strong> (voir section Préparation). Les deux fichiers Java ci-dessus font partie de l'exercice et sont fournis à titre d'exemples seulement.</p>
+        </div>
+      </div>
+
+      <p>
+        <span lang="en">The two provided Java files give you the pattern to follow:</span>
+        <span lang="fr">Les deux fichiers Java fournis vous donnent le schéma à suivre :</span>
+      </p>
+      <table class="slide-table">
+        <thead><tr>
+          <th><span lang="en">File (in <code>starter/</code>)</span><span lang="fr">Fichier (dans <code>starter/</code>)</span></th>
+          <th><span lang="en">Status</span><span lang="fr">Statut</span></th>
+          <th><span lang="en">What it contains</span><span lang="fr">Contenu</span></th>
+        </tr></thead>
+        <tbody>
+          <tr>
+            <td><code>com/bank/api/RootResource.java</code></td>
+            <td><span class="lg-tag lg-tag--ok"><span lang="en">provided</span><span lang="fr">fourni</span></span></td>
+            <td><span lang="en"><code>@Path("/")</code> resource that uses <code>UriInfo</code> to build an <code>ApiInfo</code> response (step 4).</span><span lang="fr">Resource <code>@Path("/")</code> qui utilise <code>UriInfo</code> pour construire une réponse <code>ApiInfo</code> (étape 4).</span></td>
+          </tr>
+          <tr>
+            <td><code>com/bank/dto/ApiInfo.java</code></td>
+            <td><span class="lg-tag lg-tag--ok"><span lang="en">provided</span><span lang="fr">fourni</span></span></td>
+            <td><span lang="en">DTO with <code>name</code>, <code>version</code>, <code>description</code>, <code>endpoints</code> map, <code>links</code> map and <code>timestamp</code> (step 4).</span><span lang="fr">DTO avec <code>name</code>, <code>version</code>, <code>description</code>, map <code>endpoints</code>, map <code>links</code> et <code>timestamp</code> (étape 4).</span></td>
+          </tr>
+        </tbody>
+      </table>
+
+      <p>
+        <span lang="en">Everything else is new compared with the Lab 04 CDI solution (your working base): 5 new packages (<code>api</code>, <code>client</code>, <code>dto</code>, <code>exception</code>, <code>health</code>), 4 Flyway migrations (V4–V6 + <code>flyway.location</code>), updated <code>server.xml</code>, <code>pom.xml</code>, <code>Containerfile</code>, and <code>persistence.xml</code>.</span>
+        <span lang="fr">Tout le reste est nouveau par rapport à la solution du Lab 04 CDI (votre base de travail) : 5 nouveaux packages (<code>api</code>, <code>client</code>, <code>dto</code>, <code>exception</code>, <code>health</code>), 4 migrations Flyway (V4–V6 + <code>flyway.location</code>), <code>server.xml</code>, <code>pom.xml</code>, <code>Containerfile</code> et <code>persistence.xml</code> mis à jour.</span>
+      </p>
+    </section>
+
+    <!-- ═════════════ 3. TARGET ═════════════ -->
+    <section class="lg-section" id="target">
+      <h2><span class="lg-sec-num">03</span><span lang="en">Target structure</span><span lang="fr">Structure cible</span></h2>
+      <p>
+        <span lang="en">Legend: <code>[=]</code> unchanged from Lab 04, <code>[~]</code> modified, <code>[+]</code> new.</span>
+        <span lang="fr">Légende : <code>[=]</code> inchangé par rapport au Lab 04, <code>[~]</code> modifié, <code>[+]</code> nouveau.</span>
+      </p>
+      <div class="lg-tree"><span class="t-note">Lab05-REST/solution/</span>
+├── <span class="t-chg">[~] pom.xml</span>        <span class="t-note">banking-rest-app, mpRestClient-3.0 added</span>
+├── <span class="t-chg">[~] Containerfile</span>  <span class="t-note">copies postgresql JARs</span>
+├── <span class="t-ok">[=] docker-compose.yml</span>
+└── src/main/
+    ├── java/com/bank/
+    │   ├── api/
+    │   │   ├── <span class="t-new">[+] RestApplication.java</span>   @ApplicationPath("/api")
+    │   │   ├── <span class="t-ok">[=] RootResource.java</span>      provided in starter
+    │   │   ├── <span class="t-new">[+] ClientResource.java</span>
+    │   │   ├── <span class="t-new">[+] AccountResource.java</span>
+    │   │   └── <span class="t-new">[+] TransactionResource.java</span>
+    │   ├── client/
+    │   │   └── <span class="t-new">[+] BankingRestClient.java</span>  @RegisterRestClient
+    │   ├── config/        <span class="t-ok">[=] from Lab04</span>
+    │   ├── dto/
+    │   │   ├── <span class="t-ok">[=] ApiInfo.java</span>            provided in starter
+    │   │   └── <span class="t-new">[+] ErrorResponse.java</span>
+    │   ├── event/         <span class="t-ok">[=] from Lab04</span>
+    │   ├── exception/
+    │   │   ├── <span class="t-new">[+] NotFoundException.java</span>
+    │   │   ├── <span class="t-new">[+] ValidationException.java</span>
+    │   │   └── mapper/
+    │   │       ├── <span class="t-new">[+] NotFoundExceptionMapper.java</span>
+    │   │       ├── <span class="t-new">[+] ValidationExceptionMapper.java</span>
+    │   │       ├── <span class="t-new">[+] ConstraintViolationExceptionMapper.java</span>
+    │   │       ├── <span class="t-new">[+] IllegalArgumentExceptionMapper.java</span>
+    │   │       └── <span class="t-new">[+] GenericExceptionMapper.java</span>
+    │   ├── health/
+    │   │   ├── <span class="t-ok">[=] DatabaseHealthCheck.java</span>
+    │   │   └── <span class="t-ok">[=] WebAppReadinessCheck.java</span>
+    │   ├── model/         <span class="t-chg">[~] Transaction.java added</span>
+    │   ├── service/       <span class="t-chg">[~] TransactionService added</span>
+    │   └── web/           <span class="t-ok">[=] from Lab04</span>
+    ├── liberty/config/
+    │   ├── <span class="t-chg">[~] server.xml</span>    restfulWS-3.1, mpRestClient-3.0 added
+    │   └── <span class="t-ok">[=] bootstrap.properties</span>
+    ├── resources/
+    │   ├── META-INF/
+    │   │   ├── <span class="t-chg">[~] microprofile-config.properties</span>
+    │   │   └── <span class="t-chg">[~] persistence.xml</span>    Transaction class added
+    │   └── db/migration/
+    │       ├── <span class="t-ok">[=] V1–V3</span>    from Lab04
+    │       ├── <span class="t-new">[+] V4__add_client_premium_status.sql</span>
+    │       ├── <span class="t-new">[+] V5__create_transactions_table.sql</span>
+    │       └── <span class="t-new">[+] V6__insert_sample_transactions.sql</span>
+    └── webapp/            <span class="t-ok">[=] from Lab04</span></div>
+    </section>
+
+    <!-- ═════════════ 4. SETUP ═════════════ -->
+    <section class="lg-section" id="setup">
+      <h2><span class="lg-sec-num">04</span><span lang="en">Setup</span><span lang="fr">Préparation</span></h2>
+
+      <h3><span lang="en">Starting point: copy the Lab 04 CDI solution</span><span lang="fr">Point de départ : copier la solution du Lab 04 CDI</span></h3>
+      <p>
+        <span lang="en">Per the course rules, Lab 05 starts from the solution of Lab 04 CDI. Run the following commands from the repository root:</span>
+        <span lang="fr">Conformément aux règles du cours, le Lab 05 part de la solution du Lab 04 CDI. Exécutez les commandes suivantes depuis la racine du dépôt :</span>
+      </p>
+      <pre class="dark"><code>cp -r 03-Labs/Lab04-CDI/solution 03-Labs/Lab05-REST/work
+cd 03-Labs/Lab05-REST/work</code></pre>
+      <p>
+        <span lang="en">All commands in this guide run from <code>03-Labs/Lab05-REST/work/</code>.</span>
+        <span lang="fr">Toutes les commandes de ce guide s'exécutent depuis <code>03-Labs/Lab05-REST/work/</code>.</span>
+      </p>
+
+      <div class="lg-callout lg-callout--warn">
+        <div lang="en">
+          <div class="lg-callout-title">Demo credentials in bootstrap.properties</div>
+          <p><code>bootstrap.properties</code> contains <code>db_password=bankpass</code>. These are demo credentials for a local lab only. Never reuse or commit real passwords.</p>
+        </div>
+        <div lang="fr">
+          <div class="lg-callout-title">Identifiants de démo dans bootstrap.properties</div>
+          <p><code>bootstrap.properties</code> contient <code>db_password=bankpass</code>. Ce sont des identifiants de démo pour un lab local uniquement. Ne réutilisez et ne versionnez jamais de vrais mots de passe.</p>
+        </div>
+      </div>
+
+      <h3><span lang="en">Tools check</span><span lang="fr">Vérification des outils</span></h3>
+      <table class="slide-table">
+        <thead><tr><th><span lang="en">Tool</span><span lang="fr">Outil</span></th><th><span lang="en">Check with</span><span lang="fr">Vérifier avec</span></th></tr></thead>
+        <tbody>
+          <tr><td>JDK 17+</td><td><code>java -version</code></td></tr>
+          <tr><td>Maven 3.x</td><td><code>mvn -v</code></td></tr>
+          <tr><td>Podman</td><td><code>podman --version</code></td></tr>
+          <tr><td>curl</td><td><code>curl --version</code></td></tr>
+        </tbody>
+      </table>
+
+      <h3><span lang="en">Start PostgreSQL</span><span lang="fr">Démarrer PostgreSQL</span></h3>
+      <pre class="dark"><code>podman-compose up -d   # or: docker compose up -d</code></pre>
+      <div class="lg-callout lg-callout--warn">
+        <div lang="en">
+          <div class="lg-callout-title"><code>docker-compose.yml</code> binds all interfaces</div>
+          <p>The file publishes <code>5432:5432</code> on all interfaces. When running <code>podman run</code> or <code>docker run</code> directly, always use <code>-p 127.0.0.1:5432:5432</code>. The compose file is a lab convenience; never use it in production as-is.</p>
+        </div>
+        <div lang="fr">
+          <div class="lg-callout-title"><code>docker-compose.yml</code> lie toutes les interfaces</div>
+          <p>Le fichier publie <code>5432:5432</code> sur toutes les interfaces. Lorsque vous lancez <code>podman run</code> ou <code>docker run</code> directement, utilisez toujours <code>-p 127.0.0.1:5432:5432</code>. Le fichier compose est une facilité de lab ; ne l'utilisez jamais tel quel en production.</p>
+        </div>
+      </div>
+
+      <h3><span lang="en">Redeploy loop</span><span lang="fr">Boucle de redéploiement</span></h3>
+      <pre class="dark"><code>mvn clean package -DskipTests
+podman rm -f banking-rest-lab05 2&gt;/dev/null
+podman build -t banking-rest-app:lab05 -f Containerfile .
+podman run -d --name banking-rest-lab05 \
+  -p 127.0.0.1:9080:9080 \
+  -e DB_HOST=host.containers.internal \
+  -e DB_PORT=5432 -e DB_NAME=bankdb \
+  -e DB_USER=bankuser -e DB_PASSWORD=bankpass \
+  banking-rest-app:lab05
+until curl -fs http://localhost:9080/health &gt;/dev/null; do sleep 3; done; echo "ready"</code></pre>
+
+      <div class="lg-callout lg-callout--warn">
+        <div lang="en">
+          <div class="lg-callout-title">Scripts <code>podman-test.sh</code> / <code>docker-test.sh</code></div>
+          <p>These scripts <strong>stop and remove any container using the target port</strong> before starting a new one. They are convenient for automated testing but may kill unrelated containers. The guide gives the explicit commands above; do not rely on the scripts.</p>
+        </div>
+        <div lang="fr">
+          <div class="lg-callout-title">Scripts <code>podman-test.sh</code> / <code>docker-test.sh</code></div>
+          <p>Ces scripts <strong>arrêtent et suppriment tout conteneur utilisant le port cible</strong> avant d'en démarrer un nouveau. Pratiques pour les tests automatisés, ils peuvent tuer des conteneurs sans rapport. Le guide donne les commandes explicites ci-dessus ; ne dépendez pas des scripts.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═════════════ 5. STEPS ═════════════ -->
+    <section class="lg-section" id="steps">
+      <h2><span class="lg-sec-num">05</span><span lang="en">Step by step</span><span lang="fr">Pas à pas</span></h2>
+      <p>
+        <span lang="en">Each step gives the task, two levels of hints and a link to the solution file. Try first, open the hints only if you are stuck, and always run the checkpoint before continuing.</span>
+        <span lang="fr">Chaque étape donne la consigne, deux niveaux d'indices et un lien vers le fichier solution. Essayez d'abord, n'ouvrez les indices qu'en cas de blocage, et lancez toujours le point de contrôle avant de continuer.</span>
+      </p>
+      <ol class="lg-steps-overview">
+        <li><a href="#step-1"><span lang="en">Bootstrap &amp; RestApplication</span><span lang="fr">Bootstrap &amp; RestApplication</span></a><span class="lg-dur">15 min</span></li>
+        <li><a href="#step-2"><span lang="en">DTOs &amp; exception types</span><span lang="fr">DTO &amp; types d'exception</span></a><span class="lg-dur">15 min</span></li>
+        <li><a href="#step-3"><span lang="en">Exception mappers</span><span lang="fr">Exception mappers</span></a><span class="lg-dur">20 min</span></li>
+        <li><a href="#step-4"><span lang="en">RootResource &amp; ApiInfo</span><span lang="fr">RootResource &amp; ApiInfo</span></a><span class="lg-dur">10 min</span></li>
+        <li><a href="#step-5"><span lang="en">ClientResource (CRUD)</span><span lang="fr">ClientResource (CRUD)</span></a><span class="lg-dur">30 min</span></li>
+        <li><a href="#step-6"><span lang="en">AccountResource (CRUD + transfers)</span><span lang="fr">AccountResource (CRUD + virements)</span></a><span class="lg-dur">30 min</span></li>
+        <li><a href="#step-7"><span lang="en">Flyway migrations V4–V6</span><span lang="fr">Migrations Flyway V4–V6</span></a><span class="lg-dur">15 min</span></li>
+        <li><a href="#step-8"><span lang="en">TransactionResource</span><span lang="fr">TransactionResource</span></a><span class="lg-dur">20 min</span></li>
+        <li><a href="#step-9"><span lang="en">MicroProfile Rest Client</span><span lang="fr">MicroProfile Rest Client</span></a><span class="lg-dur">20 min</span></li>
+        <li><a href="#step-10"><span lang="en">Container &amp; deploy</span><span lang="fr">Conteneur &amp; déploiement</span></a><span class="lg-dur">15 min</span></li>
+      </ol>
+
+      <!-- ───────── STEP 1 ───────── -->
+      <article class="lg-step" id="step-1">
+        <div class="lg-step-head">
+          <div class="lg-step-num">1</div>
+          <div>
+            <h3><span lang="en">Bootstrap &amp; RestApplication</span><span lang="fr">Bootstrap &amp; RestApplication</span></h3>
+            <div class="lg-step-meta">
+              <span class="lg-chip">15 min</span>
+              <span class="lg-chip"><span lang="en">Course:</span><span lang="fr">Cours :</span> <a href="../../02-Lectures/slides/05-rest/slides.html#slide-3">slide 3</a></span>
+            </div>
+          </div>
+        </div>
+        <div class="lg-step-body">
+          <p class="lg-files"><span lang="en">Files to modify:</span><span lang="fr">Fichiers à modifier :</span> <code>pom.xml</code>, <code>server.xml</code></p>
+          <p class="lg-files"><span lang="en">File to create:</span><span lang="fr">Fichier à créer :</span> <code>src/main/java/com/bank/api/RestApplication.java</code></p>
+          <div class="lg-task-label"><span lang="en">Task</span><span lang="fr">À faire</span></div>
+          <ol>
+            <li>
+              <span lang="en">In <code>pom.xml</code>: update <code>&lt;artifactId&gt;</code> to <code>banking-rest-app</code>, add <code>&lt;feature&gt;restfulWS-3.1&lt;/feature&gt;</code> and <code>&lt;feature&gt;mpRestClient-3.0&lt;/feature&gt;</code> to <code>server.xml</code> (the existing <code>webProfile-10.0</code> already includes JAX-RS; <code>restfulWS-3.1</code> is listed explicitly for clarity).</span>
+              <span lang="fr">Dans <code>pom.xml</code> : mettez à jour <code>&lt;artifactId&gt;</code> en <code>banking-rest-app</code>, ajoutez <code>&lt;feature&gt;restfulWS-3.1&lt;/feature&gt;</code> et <code>&lt;feature&gt;mpRestClient-3.0&lt;/feature&gt;</code> à <code>server.xml</code> (le <code>webProfile-10.0</code> existant inclut déjà JAX-RS ; <code>restfulWS-3.1</code> est listé explicitement pour la clarté).</span>
+            </li>
+            <li>
+              <span lang="en">Create <code>RestApplication.java</code> annotated <code>@ApplicationPath("/api")</code> extending <code>Application</code> (no body needed — JAX-RS auto-discovers resources).</span>
+              <span lang="fr">Créez <code>RestApplication.java</code> annotée <code>@ApplicationPath("/api")</code> étendant <code>Application</code> (pas de corps nécessaire — JAX-RS autodécouvre les resources).</span>
+            </li>
+          </ol>
+          <details class="lg-hint lg-hint--1">
+            <summary><span lang="en">Hint 1 — what to add</span><span lang="fr">Indice 1 — quoi ajouter</span></summary>
+            <div class="lg-hint-body">
+              <p><span lang="en"><code>@ApplicationPath</code> is in package <code>jakarta.ws.rs</code>. The annotation on the class is enough; JAX-RS scans the WAR for classes annotated with <code>@Path</code> and <code>@Provider</code> automatically.</span><span lang="fr"><code>@ApplicationPath</code> est dans le package <code>jakarta.ws.rs</code>. L'annotation sur la classe suffit ; JAX-RS parcourt le WAR à la recherche des classes annotées <code>@Path</code> et <code>@Provider</code> automatiquement.</span></p>
+            </div>
+          </details>
+          <details class="lg-hint lg-hint--2">
+            <summary><span lang="en">Hint 2 — the class skeleton</span><span lang="fr">Indice 2 — le squelette de classe</span></summary>
+            <div class="lg-hint-body">
+<pre class="dark"><code>@ApplicationPath("/api")
+public class RestApplication extends Application {
+    // no body — auto-discovery
+}</code></pre>
+              <p><span lang="en">The <code>server.xml</code> features to add: <code>restfulWS-3.1</code>, <code>mpRestClient-3.0</code>. Keep <code>jsonb-3.0</code>, <code>beanValidation-3.0</code>, and <code>mpOpenAPI-3.1</code> that were already present from Lab 04.</span><span lang="fr">Les features à ajouter dans <code>server.xml</code> : <code>restfulWS-3.1</code>, <code>mpRestClient-3.0</code>. Conservez <code>jsonb-3.0</code>, <code>beanValidation-3.0</code> et <code>mpOpenAPI-3.1</code> déjà présents du Lab 04.</span></p>
+            </div>
+          </details>
+          <details class="lg-hint lg-hint--sol">
+            <summary><span lang="en">Solution files</span><span lang="fr">Fichiers solution</span></summary>
+            <div class="lg-hint-body">
+              <p><a href="https://github.com/oplanson/esipe-javaee/blob/master/03-Labs/Lab05-REST/solution/src/main/java/com/bank/api/RestApplication.java"><code>RestApplication.java</code></a> · <a href="https://github.com/oplanson/esipe-javaee/blob/master/03-Labs/Lab05-REST/solution/src/main/liberty/config/server.xml"><code>server.xml</code></a> · <a href="https://github.com/oplanson/esipe-javaee/blob/master/03-Labs/Lab05-REST/solution/pom.xml"><code>pom.xml</code></a></p>
+            </div>
+          </details>
+          <div class="lg-checkpoint">
+            <div class="lg-check-label"><span lang="en">Checkpoint</span><span lang="fr">Point de contrôle</span></div>
+            <pre class="dark"><code>mvn clean package -DskipTests
+unzip -l target/banking-rest-app.war | grep RestApplication</code></pre>
+            <p><span lang="en">Expected: <code>BUILD SUCCESS</code> and <code>com/bank/api/RestApplication.class</code> is listed in the WAR.</span><span lang="fr">Attendu : <code>BUILD SUCCESS</code> et <code>com/bank/api/RestApplication.class</code> listé dans le WAR.</span></p>
+          </div>
+        </div>
+      </article>
+
+      <!-- ───────── STEP 2 ───────── -->
+      <article class="lg-step" id="step-2">
+        <div class="lg-step-head">
+          <div class="lg-step-num">2</div>
+          <div>
+            <h3><span lang="en">DTOs &amp; exception types</span><span lang="fr">DTO &amp; types d'exception</span></h3>
+            <div class="lg-step-meta">
+              <span class="lg-chip">15 min</span>
+              <span class="lg-chip"><span lang="en">Course:</span><span lang="fr">Cours :</span> <a href="../../02-Lectures/slides/05-rest/slides.html#slide-11">slide 11</a></span>
+            </div>
+          </div>
+        </div>
+        <div class="lg-step-body">
+          <p class="lg-files"><span lang="en">Files to create:</span><span lang="fr">Fichiers à créer :</span> <code>com/bank/dto/ErrorResponse.java</code>, <code>com/bank/exception/NotFoundException.java</code>, <code>com/bank/exception/ValidationException.java</code></p>
+          <div class="lg-task-label"><span lang="en">Task</span><span lang="fr">À faire</span></div>
+          <ol>
+            <li>
+              <span lang="en">Create <code>ErrorResponse</code>: a plain Java class with fields <code>int status</code>, <code>String error</code>, <code>String message</code>, <code>LocalDateTime timestamp</code>, and <code>List&lt;String&gt; details</code>. JSON-B serialises it automatically.</span>
+              <span lang="fr">Créez <code>ErrorResponse</code> : une classe Java simple avec les champs <code>int status</code>, <code>String error</code>, <code>String message</code>, <code>LocalDateTime timestamp</code> et <code>List&lt;String&gt; details</code>. JSON-B la sérialise automatiquement.</span>
+            </li>
+            <li>
+              <span lang="en">Create <code>NotFoundException extends RuntimeException</code> — one constructor taking a <code>String message</code>.</span>
+              <span lang="fr">Créez <code>NotFoundException extends RuntimeException</code> — un constructeur prenant un <code>String message</code>.</span>
+            </li>
+            <li>
+              <span lang="en">Create <code>ValidationException extends RuntimeException</code> — holds a <code>List&lt;String&gt; errors</code>.</span>
+              <span lang="fr">Créez <code>ValidationException extends RuntimeException</code> — contient un <code>List&lt;String&gt; errors</code>.</span>
+            </li>
+          </ol>
+          <details class="lg-hint lg-hint--1">
+            <summary><span lang="en">Hint 1 — why these classes?</span><span lang="fr">Indice 1 — pourquoi ces classes ?</span></summary>
+            <div class="lg-hint-body">
+              <p><span lang="en"><code>ErrorResponse</code> is the standard JSON error body your mappers (step 3) will return. <code>NotFoundException</code> and <code>ValidationException</code> let resources throw domain-level exceptions that mappers translate to <code>404</code>/<code>400</code> responses without try/catch in every resource.</span><span lang="fr"><code>ErrorResponse</code> est le corps JSON d'erreur standard que vos mappers (étape 3) retourneront. <code>NotFoundException</code> et <code>ValidationException</code> permettent aux resources de lancer des exceptions métier que les mappers traduisent en réponses <code>404</code>/<code>400</code> sans try/catch dans chaque resource.</span></p>
+            </div>
+          </details>
+          <details class="lg-hint lg-hint--2">
+            <summary><span lang="en">Hint 2 — signatures</span><span lang="fr">Indice 2 — signatures</span></summary>
+            <div class="lg-hint-body">
+<pre class="dark"><code>// ErrorResponse constructor used by mappers:
+public ErrorResponse(int status, String error, String message) { … }
+public ErrorResponse(int status, String error, String message, List&lt;String&gt; details) { … }
+
+// ValidationException constructor:
+public ValidationException(String message, List&lt;String&gt; errors) { … }</code></pre>
+            </div>
+          </details>
+          <details class="lg-hint lg-hint--sol">
+            <summary><span lang="en">Solution files</span><span lang="fr">Fichiers solution</span></summary>
+            <div class="lg-hint-body">
+              <p><a href="https://github.com/oplanson/esipe-javaee/blob/master/03-Labs/Lab05-REST/solution/src/main/java/com/bank/dto/ErrorResponse.java"><code>ErrorResponse.java</code></a> · <a href="https://github.com/oplanson/esipe-javaee/blob/master/03-Labs/Lab05-REST/solution/src/main/java/com/bank/exception/NotFoundException.java"><code>NotFoundException.java</code></a> · <a href="https://github.com/oplanson/esipe-javaee/blob/master/03-Labs/Lab05-REST/solution/src/main/java/com/bank/exception/ValidationException.java"><code>ValidationException.java</code></a></p>
+            </div>
+          </details>
+          <div class="lg-checkpoint">
+            <div class="lg-check-label"><span lang="en">Checkpoint</span><span lang="fr">Point de contrôle</span></div>
+            <pre class="dark"><code>mvn clean package -DskipTests</code></pre>
+            <p><span lang="en">Expected: <code>BUILD SUCCESS</code>.</span><span lang="fr">Attendu : <code>BUILD SUCCESS</code>.</span></p>
+          </div>
+        </div>
+      </article>
+
+      <!-- ───────── STEP 3 ───────── -->
+      <article class="lg-step" id="step-3">
+        <div class="lg-step-head">
+          <div class="lg-step-num">3</div>
+          <div>
+            <h3><span lang="en">Exception mappers</span><span lang="fr">Exception mappers</span></h3>
+            <div class="lg-step-meta">
+              <span class="lg-chip">20 min</span>
+              <span class="lg-chip"><span lang="en">Course:</span><span lang="fr">Cours :</span> <a href="../../02-Lectures/slides/05-rest/slides.html#slide-11">slide 11</a></span>
+            </div>
+          </div>
+        </div>
+        <div class="lg-step-body">
+          <p class="lg-files"><span lang="en">Files to create (package <code>com.bank.exception.mapper</code>):</span><span lang="fr">Fichiers à créer (package <code>com.bank.exception.mapper</code>) :</span> <code>NotFoundExceptionMapper.java</code>, <code>ValidationExceptionMapper.java</code>, <code>ConstraintViolationExceptionMapper.java</code>, <code>IllegalArgumentExceptionMapper.java</code>, <code>GenericExceptionMapper.java</code></p>
+          <div class="lg-task-label"><span lang="en">Task</span><span lang="fr">À faire</span></div>
+          <p>
+            <span lang="en">Create one mapper per exception type, each annotated <code>@Provider</code>. The mapper implements <code>ExceptionMapper&lt;T&gt;</code> and overrides <code>toResponse(T ex)</code>. Map:</span>
+            <span lang="fr">Créez un mapper par type d'exception, chacun annoté <code>@Provider</code>. Le mapper implémente <code>ExceptionMapper&lt;T&gt;</code> et surcharge <code>toResponse(T ex)</code>. Associez :</span>
+          </p>
+          <table class="slide-table">
+            <thead><tr><th><span lang="en">Exception</span><span lang="fr">Exception</span></th><th>HTTP</th><th><code>ErrorResponse.error</code></th></tr></thead>
+            <tbody>
+              <tr><td><code>NotFoundException</code></td><td>404</td><td><code>"Not Found"</code></td></tr>
+              <tr><td><code>ValidationException</code></td><td>400</td><td><code>"Validation Failed"</code></td></tr>
+              <tr><td><code>ConstraintViolationException</code></td><td>400</td><td><code>"Validation Failed"</code></td></tr>
+              <tr><td><code>IllegalArgumentException</code></td><td>400</td><td><code>"Bad Request"</code></td></tr>
+              <tr><td><code>Exception</code></td><td>500</td><td><code>"Internal Server Error"</code></td></tr>
+            </tbody>
+          </table>
+          <p>
+            <span lang="en">For <code>ConstraintViolationExceptionMapper</code> extract the violation messages: <code>violation.getPropertyPath() + ": " + violation.getMessage()</code> and pass them as the <code>details</code> list.</span>
+            <span lang="fr">Pour <code>ConstraintViolationExceptionMapper</code>, extrayez les messages de violation : <code>violation.getPropertyPath() + ": " + violation.getMessage()</code> et passez-les comme liste <code>details</code>.</span>
+          </p>
+          <details class="lg-hint lg-hint--1">
+            <summary><span lang="en">Hint 1 — mapper skeleton</span><span lang="fr">Indice 1 — squelette de mapper</span></summary>
+            <div class="lg-hint-body">
+<pre class="dark"><code>@Provider
+public class NotFoundExceptionMapper
+        implements ExceptionMapper&lt;NotFoundException&gt; {
+    @Override
+    public Response toResponse(NotFoundException ex) {
+        ErrorResponse err = new ErrorResponse(404, "Not Found", ex.getMessage());
+        return Response.status(404).entity(err).build();
+    }
+}</code></pre>
+            </div>
+          </details>
+          <details class="lg-hint lg-hint--2">
+            <summary><span lang="en">Hint 2 — ConstraintViolation extraction</span><span lang="fr">Indice 2 — extraction des violations</span></summary>
+            <div class="lg-hint-body">
+<pre class="dark"><code>List&lt;String&gt; errors = ex.getConstraintViolations().stream()
+    .map(v -&gt; v.getPropertyPath() + ": " + v.getMessage())
+    .collect(Collectors.toList());</code></pre>
+            </div>
+          </details>
+          <details class="lg-hint lg-hint--sol">
+            <summary><span lang="en">Solution files</span><span lang="fr">Fichiers solution</span></summary>
+            <div class="lg-hint-body">
+              <p><a href="https://github.com/oplanson/esipe-javaee/blob/master/03-Labs/Lab05-REST/solution/src/main/java/com/bank/exception/mapper/NotFoundExceptionMapper.java"><code>NotFoundExceptionMapper.java</code></a> · <a href="https://github.com/oplanson/esipe-javaee/blob/master/03-Labs/Lab05-REST/solution/src/main/java/com/bank/exception/mapper/ConstraintViolationExceptionMapper.java"><code>ConstraintViolationExceptionMapper.java</code></a> · <a href="https://github.com/oplanson/esipe-javaee/blob/master/03-Labs/Lab05-REST/solution/src/main/java/com/bank/exception/mapper/GenericExceptionMapper.java"><code>GenericExceptionMapper.java</code></a></p>
+            </div>
+          </details>
+          <div class="lg-checkpoint">
+            <div class="lg-check-label"><span lang="en">Checkpoint</span><span lang="fr">Point de contrôle</span></div>
+            <pre class="dark"><code>mvn clean package -DskipTests
+unzip -l target/banking-rest-app.war | grep mapper</code></pre>
+            <p><span lang="en">Expected: 5 mapper classes listed in the WAR.</span><span lang="fr">Attendu : 5 classes de mapper listées dans le WAR.</span></p>
+          </div>
+        </div>
+      </article>
+
+      <!-- ───────── STEP 4 ───────── -->
+      <article class="lg-step" id="step-4">
+        <div class="lg-step-head">
+          <div class="lg-step-num">4</div>
+          <div>
+            <h3><span lang="en">RootResource &amp; ApiInfo (provided)</span><span lang="fr">RootResource &amp; ApiInfo (fournis)</span></h3>
+            <div class="lg-step-meta">
+              <span class="lg-chip">10 min</span>
+              <span class="lg-chip"><span lang="en">HATEOAS discovery</span><span lang="fr">Découverte HATEOAS</span></span>
+            </div>
+          </div>
+        </div>
+        <div class="lg-step-body">
+          <p class="lg-files"><span lang="en">Files to copy from starter:</span><span lang="fr">Fichiers à copier depuis le starter :</span> <code>com/bank/api/RootResource.java</code>, <code>com/bank/dto/ApiInfo.java</code></p>
+          <div class="lg-task-label"><span lang="en">Task</span><span lang="fr">À faire</span></div>
+          <p>
+            <span lang="en">Copy the two files from <code>03-Labs/Lab05-REST/starter/src/main/java/com/bank/</code> into your working copy. Read the code to understand how <code>UriInfo</code> is used to build absolute URLs dynamically, and how <code>ApiInfo</code>'s builder-style <code>addEndpoint</code> and <code>addLink</code> methods chain.</span>
+            <span lang="fr">Copiez les deux fichiers depuis <code>03-Labs/Lab05-REST/starter/src/main/java/com/bank/</code> dans votre copie de travail. Lisez le code pour comprendre comment <code>UriInfo</code> est utilisé pour construire des URL absolues dynamiquement, et comment les méthodes <code>addEndpoint</code> et <code>addLink</code> d'<code>ApiInfo</code> s'enchaînent.</span>
+          </p>
+          <details class="lg-hint lg-hint--1">
+            <summary><span lang="en">Hint 1 — how UriInfo works</span><span lang="fr">Indice 1 — comment fonctionne UriInfo</span></summary>
+            <div class="lg-hint-body">
+              <p><span lang="en"><code>uriInfo.getBaseUri()</code> returns the base URI up to and including the <code>@ApplicationPath</code> (e.g., <code>http://localhost:9080/api/</code>). Strip the trailing slash to build sub-resource URLs cleanly: <code>baseUri + "/clients"</code>.</span><span lang="fr"><code>uriInfo.getBaseUri()</code> retourne l'URI de base jusqu'au <code>@ApplicationPath</code> inclus (ex. <code>http://localhost:9080/api/</code>). Supprimez le slash final pour construire les URL de sous-resources proprement : <code>baseUri + "/clients"</code>.</span></p>
+            </div>
+          </details>
+          <details class="lg-hint lg-hint--2">
+            <summary><span lang="en">Hint 2 — the copy commands</span><span lang="fr">Indice 2 — les commandes de copie</span></summary>
+            <div class="lg-hint-body">
+<pre class="dark"><code>cp ../starter/src/main/java/com/bank/api/RootResource.java \
+   src/main/java/com/bank/api/
+cp ../starter/src/main/java/com/bank/dto/ApiInfo.java \
+   src/main/java/com/bank/dto/</code></pre>
+            </div>
+          </details>
+          <details class="lg-hint lg-hint--sol">
+            <summary><span lang="en">Solution files</span><span lang="fr">Fichiers solution</span></summary>
+            <div class="lg-hint-body">
+              <p><a href="https://github.com/oplanson/esipe-javaee/blob/master/03-Labs/Lab05-REST/solution/src/main/java/com/bank/api/RootResource.java"><code>RootResource.java</code></a> · <a href="https://github.com/oplanson/esipe-javaee/blob/master/03-Labs/Lab05-REST/solution/src/main/java/com/bank/dto/ApiInfo.java"><code>ApiInfo.java</code></a></p>
+            </div>
+          </details>
+          <div class="lg-checkpoint">
+            <div class="lg-check-label"><span lang="en">Checkpoint</span><span lang="fr">Point de contrôle</span></div>
+            <pre class="dark"><code># after redeploy loop:
+curl -s http://localhost:9080/api | python3 -m json.tool</code></pre>
+            <p><span lang="en">Expected: a JSON object with keys <code>name</code>, <code>version</code>, <code>endpoints</code> and <code>links</code>. If you get <code>404</code>, check that <code>RestApplication</code> is compiled in the WAR.</span><span lang="fr">Attendu : un objet JSON avec les clés <code>name</code>, <code>version</code>, <code>endpoints</code> et <code>links</code>. Si vous obtenez <code>404</code>, vérifiez que <code>RestApplication</code> est compilé dans le WAR.</span></p>
+          </div>
+        </div>
+      </article>
+
+      <!-- ───────── STEP 5 ───────── -->
+      <article class="lg-step" id="step-5">
+        <div class="lg-step-head">
+          <div class="lg-step-num">5</div>
+          <div>
+            <h3><span lang="en">ClientResource — full CRUD</span><span lang="fr">ClientResource — CRUD complet</span></h3>
+            <div class="lg-step-meta">
+              <span class="lg-chip">30 min</span>
+              <span class="lg-chip"><span lang="en">Course:</span><span lang="fr">Cours :</span> <a href="../../02-Lectures/slides/05-rest/slides.html#slide-5">slides 5–9</a></span>
+            </div>
+          </div>
+        </div>
+        <div class="lg-step-body">
+          <p class="lg-files"><span lang="en">File to create:</span><span lang="fr">Fichier à créer :</span> <code>com/bank/api/ClientResource.java</code></p>
+          <div class="lg-task-label"><span lang="en">Task</span><span lang="fr">À faire</span></div>
+          <p>
+            <span lang="en">Create a JAX-RS resource at path <code>/clients</code> that delegates to the CDI-injected <code>ClientService</code>. Implement all endpoints from the goal table. Key points:</span>
+            <span lang="fr">Créez une resource JAX-RS au chemin <code>/clients</code> qui délègue au <code>ClientService</code> injecté par CDI. Implémentez tous les endpoints du tableau objectif. Points clés :</span>
+          </p>
+          <ul>
+            <li><span lang="en">Annotate POST and PUT parameters with <code>@Valid</code> to trigger Bean Validation.</span><span lang="fr">Annotez les paramètres de POST et PUT avec <code>@Valid</code> pour déclencher la Bean Validation.</span></li>
+            <li><span lang="en"><code>POST</code> returns HTTP 201 Created with a <code>Location</code> header built from <code>UriInfo.getAbsolutePathBuilder()</code>.</span><span lang="fr"><code>POST</code> retourne HTTP 201 Created avec un en-tête <code>Location</code> construit depuis <code>UriInfo.getAbsolutePathBuilder()</code>.</span></li>
+            <li><span lang="en">Throw <code>NotFoundException</code> instead of returning <code>Response.status(404)</code> manually.</span><span lang="fr">Lancez <code>NotFoundException</code> plutôt que de retourner <code>Response.status(404)</code> manuellement.</span></li>
+            <li><span lang="en">Add a <code>GET /clients/count</code> endpoint returning <code>{"count": N}</code>.</span><span lang="fr">Ajoutez un endpoint <code>GET /clients/count</code> retournant <code>{"count": N}</code>.</span></li>
+          </ul>
+          <details class="lg-hint lg-hint--1">
+            <summary><span lang="en">Hint 1 — class-level annotations</span><span lang="fr">Indice 1 — annotations au niveau classe</span></summary>
+            <div class="lg-hint-body">
+<pre class="dark"><code>@Path("/clients")
+@Produces(MediaType.APPLICATION_JSON)
+@Consumes(MediaType.APPLICATION_JSON)
+public class ClientResource {
+    @Inject private ClientService clientService;
+    @Inject private Logger logger;
+    @Context private UriInfo uriInfo;
+    …
+}</code></pre>
+            </div>
+          </details>
+          <details class="lg-hint lg-hint--2">
+            <summary><span lang="en">Hint 2 — POST with 201 Location</span><span lang="fr">Indice 2 — POST avec 201 Location</span></summary>
+            <div class="lg-hint-body">
+<pre class="dark"><code>@POST
+public Response createClient(@Valid Client client) {
+    Client created = clientService.create(client);
+    return Response
+        .created(uriInfo.getAbsolutePathBuilder()
+            .path(String.valueOf(created.getId())).build())
+        .entity(created)
+        .build();
+}</code></pre>
+              <p><span lang="en">The solution has ~130 lines; see the reference link for the full code.</span><span lang="fr">La solution a ~130 lignes ; voir le lien de référence pour le code complet.</span></p>
+            </div>
+          </details>
+          <details class="lg-hint lg-hint--sol">
+            <summary><span lang="en">Solution file</span><span lang="fr">Fichier solution</span></summary>
+            <div class="lg-hint-body">
+              <p><a href="https://github.com/oplanson/esipe-javaee/blob/master/03-Labs/Lab05-REST/solution/src/main/java/com/bank/api/ClientResource.java"><code>ClientResource.java</code></a></p>
+            </div>
+          </details>
+          <div class="lg-checkpoint">
+            <div class="lg-check-label"><span lang="en">Checkpoint</span><span lang="fr">Point de contrôle</span></div>
+            <pre class="dark"><code># after redeploy loop:
+curl -s http://localhost:9080/api/clients | python3 -m json.tool
+# create a client:
+curl -s -X POST http://localhost:9080/api/clients \
+  -H "Content-Type: application/json" \
+  -d '{"name":"Test","email":"test@bank.fr"}' -i | head -5
+# validation: should return 400
+curl -s -X POST http://localhost:9080/api/clients \
+  -H "Content-Type: application/json" \
+  -d '{"name":"X","email":"bad"}' | python3 -m json.tool</code></pre>
+            <p><span lang="en">Expected: clients list as JSON; POST returns <code>201</code> with <code>Location</code> header; invalid POST returns <code>400</code> with <code>details</code> array.</span><span lang="fr">Attendu : liste de clients en JSON ; POST retourne <code>201</code> avec en-tête <code>Location</code> ; POST invalide retourne <code>400</code> avec tableau <code>details</code>.</span></p>
+          </div>
+        </div>
+      </article>
+
+      <!-- ───────── STEP 6 ───────── -->
+      <article class="lg-step" id="step-6">
+        <div class="lg-step-head">
+          <div class="lg-step-num">6</div>
+          <div>
+            <h3><span lang="en">AccountResource — CRUD + transfers</span><span lang="fr">AccountResource — CRUD + virements</span></h3>
+            <div class="lg-step-meta">
+              <span class="lg-chip">30 min</span>
+              <span class="lg-chip"><span lang="en">Course:</span><span lang="fr">Cours :</span> <a href="../../02-Lectures/slides/05-rest/slides.html#slide-9">slide 9</a></span>
+            </div>
+          </div>
+        </div>
+        <div class="lg-step-body">
+          <p class="lg-files"><span lang="en">File to create:</span><span lang="fr">Fichier à créer :</span> <code>com/bank/api/AccountResource.java</code></p>
+          <div class="lg-task-label"><span lang="en">Task</span><span lang="fr">À faire</span></div>
+          <p>
+            <span lang="en">Create the account resource at <code>/accounts</code>. In addition to standard CRUD, implement:</span>
+            <span lang="fr">Créez la resource compte à <code>/accounts</code>. En plus du CRUD standard, implémentez :</span>
+          </p>
+          <ul>
+            <li><span lang="en"><code>POST /accounts/{id}/deposit?amount=…</code> — calls <code>account.deposit()</code> then <code>accountService.update()</code>.</span><span lang="fr"><code>POST /accounts/{id}/deposit?amount=…</code> — appelle <code>account.deposit()</code> puis <code>accountService.update()</code>.</span></li>
+            <li><span lang="en"><code>POST /accounts/{id}/withdraw?amount=…</code> — throws <code>IllegalArgumentException</code> on insufficient funds.</span><span lang="fr"><code>POST /accounts/{id}/withdraw?amount=…</code> — lance <code>IllegalArgumentException</code> en cas de solde insuffisant.</span></li>
+            <li><span lang="en"><code>POST /accounts/{fromId}/transfer?toId=…&amp;amount=…</code> — delegates to <code>accountService.transfer()</code> and returns a <code>TransferResponse</code> inner class with both updated accounts.</span><span lang="fr"><code>POST /accounts/{fromId}/transfer?toId=…&amp;amount=…</code> — délègue à <code>accountService.transfer()</code> et retourne une classe interne <code>TransferResponse</code> avec les deux comptes mis à jour.</span></li>
+            <li><span lang="en"><code>GET /accounts/client/{clientId}</code> and <code>GET /accounts/type/{type}</code> — filtering endpoints.</span><span lang="fr"><code>GET /accounts/client/{clientId}</code> et <code>GET /accounts/type/{type}</code> — endpoints de filtrage.</span></li>
+          </ul>
+          <details class="lg-hint lg-hint--1">
+            <summary><span lang="en">Hint 1 — POST with QueryParam</span><span lang="fr">Indice 1 — POST avec QueryParam</span></summary>
+            <div class="lg-hint-body">
+<pre class="dark"><code>@POST
+@Path("/{id}/deposit")
+public Account deposit(@PathParam("id") Long id,
+                       @QueryParam("amount") double amount) {
+    Account account = accountService.findById(id);
+    if (account == null) throw new NotFoundException("…");
+    if (amount &lt;= 0) throw new IllegalArgumentException("…");
+    account.deposit(amount);
+    return accountService.update(account);
+}</code></pre>
+            </div>
+          </details>
+          <details class="lg-hint lg-hint--2">
+            <summary><span lang="en">Hint 2 — the solution is ~220 lines</span><span lang="fr">Indice 2 — la solution fait ~220 lignes</span></summary>
+            <div class="lg-hint-body">
+              <p><span lang="en">The class contains a static inner <code>TransferResponse</code> with fields <code>boolean success</code>, <code>String message</code>, <code>Account fromAccount</code>, <code>Account toAccount</code>. JSON-B serialises it without annotations.</span><span lang="fr">La classe contient une classe interne statique <code>TransferResponse</code> avec les champs <code>boolean success</code>, <code>String message</code>, <code>Account fromAccount</code>, <code>Account toAccount</code>. JSON-B la sérialise sans annotations.</span></p>
+            </div>
+          </details>
+          <details class="lg-hint lg-hint--sol">
+            <summary><span lang="en">Solution file</span><span lang="fr">Fichier solution</span></summary>
+            <div class="lg-hint-body">
+              <p><a href="https://github.com/oplanson/esipe-javaee/blob/master/03-Labs/Lab05-REST/solution/src/main/java/com/bank/api/AccountResource.java"><code>AccountResource.java</code></a></p>
+            </div>
+          </details>
+          <div class="lg-checkpoint">
+            <div class="lg-check-label"><span lang="en">Checkpoint</span><span lang="fr">Point de contrôle</span></div>
+            <pre class="dark"><code># after redeploy:
+curl -s http://localhost:9080/api/accounts | python3 -m json.tool
+# deposit into account 1:
+curl -s -X POST "http://localhost:9080/api/accounts/1/deposit?amount=100" \
+  | python3 -m json.tool</code></pre>
+            <p><span lang="en">Expected: accounts list as JSON; deposit returns the updated account with <code>balance</code> increased by 100.</span><span lang="fr">Attendu : liste des comptes en JSON ; le dépôt retourne le compte mis à jour avec <code>balance</code> augmenté de 100.</span></p>
+          </div>
+        </div>
+      </article>
+
+      <!-- ───────── STEP 7 ───────── -->
+      <article class="lg-step" id="step-7">
+        <div class="lg-step-head">
+          <div class="lg-step-num">7</div>
+          <div>
+            <h3><span lang="en">Flyway migrations V4–V6 &amp; Transaction model</span><span lang="fr">Migrations Flyway V4–V6 &amp; modèle Transaction</span></h3>
+            <div class="lg-step-meta">
+              <span class="lg-chip">15 min</span>
+              <span class="lg-chip"><span lang="en">Flyway incremental migration</span><span lang="fr">Migration incrémentale Flyway</span></span>
+            </div>
+          </div>
+        </div>
+        <div class="lg-step-body">
+          <p class="lg-files"><span lang="en">Files to create:</span><span lang="fr">Fichiers à créer :</span> <code>db/migration/V4__add_client_premium_status.sql</code>, <code>V5__create_transactions_table.sql</code>, <code>V6__insert_sample_transactions.sql</code></p>
+          <p class="lg-files"><span lang="en">Files to update:</span><span lang="fr">Fichiers à mettre à jour :</span> <code>persistence.xml</code> (add <code>Transaction</code> class), <code>model/Transaction.java</code> (new entity), <code>service/TransactionService.java</code> (new service)</p>
+          <div class="lg-task-label"><span lang="en">Task</span><span lang="fr">À faire</span></div>
+          <ol>
+            <li>
+              <span lang="en">Create the three SQL migration files. V4 adds a <code>is_premium</code> boolean column to <code>clients</code>. V5 creates the <code>transactions</code> table (fields: <code>id</code>, <code>type</code>, <code>amount</code>, <code>balance_before</code>, <code>balance_after</code>, <code>description</code>, <code>transaction_date</code>, FK to <code>accounts</code>). V6 inserts sample rows. <strong>Do not modify V1–V3</strong> (Flyway checksum will fail).</span>
+              <span lang="fr">Créez les trois fichiers de migration SQL. V4 ajoute une colonne booléenne <code>is_premium</code> à <code>clients</code>. V5 crée la table <code>transactions</code> (champs : <code>id</code>, <code>type</code>, <code>amount</code>, <code>balance_before</code>, <code>balance_after</code>, <code>description</code>, <code>transaction_date</code>, FK vers <code>accounts</code>). V6 insère des lignes exemple. <strong>Ne modifiez pas V1–V3</strong> (Flyway échouera sur le checksum).</span>
+            </li>
+            <li>
+              <span lang="en">Create <code>Transaction.java</code> JPA entity mapped to the <code>transactions</code> table, with <code>@JsonbTransient</code> on the <code>account</code> relation to avoid circular JSON.</span>
+              <span lang="fr">Créez l'entité JPA <code>Transaction.java</code> mappée sur la table <code>transactions</code>, avec <code>@JsonbTransient</code> sur la relation <code>account</code> pour éviter la circularité JSON.</span>
+            </li>
+            <li>
+              <span lang="en">Add <code>&lt;class&gt;com.bank.model.Transaction&lt;/class&gt;</code> to <code>persistence.xml</code>.</span>
+              <span lang="fr">Ajoutez <code>&lt;class&gt;com.bank.model.Transaction&lt;/class&gt;</code> à <code>persistence.xml</code>.</span>
+            </li>
+          </ol>
+          <details class="lg-hint lg-hint--1">
+            <summary><span lang="en">Hint 1 — V4 SQL</span><span lang="fr">Indice 1 — SQL V4</span></summary>
+            <div class="lg-hint-body">
+<pre class="dark"><code>ALTER TABLE clients ADD COLUMN is_premium BOOLEAN NOT NULL DEFAULT FALSE;</code></pre>
+            </div>
+          </details>
+          <details class="lg-hint lg-hint--2">
+            <summary><span lang="en">Hint 2 — Transaction entity key annotations</span><span lang="fr">Indice 2 — annotations clés de l'entité Transaction</span></summary>
+            <div class="lg-hint-body">
+              <p><span lang="en">The entity has an enum <code>TransactionType {DEPOSIT, WITHDRAWAL, TRANSFER}</code> mapped with <code>@Enumerated(EnumType.STRING)</code>, a <code>@ManyToOne @JsonbTransient Account account</code>, and named queries <code>Transaction.findAll</code>, <code>Transaction.findByAccount</code>. The class has ~60 lines. See the solution link.</span><span lang="fr">L'entité a un enum <code>TransactionType {DEPOSIT, WITHDRAWAL, TRANSFER}</code> mappé avec <code>@Enumerated(EnumType.STRING)</code>, un <code>@ManyToOne @JsonbTransient Account account</code>, et des named queries <code>Transaction.findAll</code>, <code>Transaction.findByAccount</code>. La classe fait ~60 lignes. Voir le lien solution.</span></p>
+            </div>
+          </details>
+          <details class="lg-hint lg-hint--sol">
+            <summary><span lang="en">Solution files</span><span lang="fr">Fichiers solution</span></summary>
+            <div class="lg-hint-body">
+              <p><a href="https://github.com/oplanson/esipe-javaee/blob/master/03-Labs/Lab05-REST/solution/src/main/resources/db/migration/V4__add_client_premium_status.sql"><code>V4__add_client_premium_status.sql</code></a> · <a href="https://github.com/oplanson/esipe-javaee/blob/master/03-Labs/Lab05-REST/solution/src/main/resources/db/migration/V5__create_transactions_table.sql"><code>V5__create_transactions_table.sql</code></a> · <a href="https://github.com/oplanson/esipe-javaee/blob/master/03-Labs/Lab05-REST/solution/src/main/resources/db/migration/V6__insert_sample_transactions.sql"><code>V6__insert_sample_transactions.sql</code></a> · <a href="https://github.com/oplanson/esipe-javaee/blob/master/03-Labs/Lab05-REST/solution/src/main/java/com/bank/model/Transaction.java"><code>Transaction.java</code></a> · <a href="https://github.com/oplanson/esipe-javaee/blob/master/03-Labs/Lab05-REST/solution/src/main/resources/META-INF/persistence.xml"><code>persistence.xml</code></a></p>
+            </div>
+          </details>
+          <div class="lg-checkpoint">
+            <div class="lg-check-label"><span lang="en">Checkpoint</span><span lang="fr">Point de contrôle</span></div>
+            <pre class="dark"><code># after redeploy (Flyway runs V4–V6 automatically on startup):
+podman logs banking-rest-lab05 | grep "Successfully applied"</code></pre>
+            <p><span lang="en">Expected: log lines mentioning <code>V4</code>, <code>V5</code> and <code>V6</code> applied. If Flyway fails, check the SQL syntax or that V1–V3 checksums are untouched.</span><span lang="fr">Attendu : lignes de log mentionnant <code>V4</code>, <code>V5</code> et <code>V6</code> appliqués. Si Flyway échoue, vérifiez la syntaxe SQL ou que les checksums de V1–V3 sont intacts.</span></p>
+          </div>
+        </div>
+      </article>
+
+      <!-- ───────── STEP 8 ───────── -->
+      <article class="lg-step" id="step-8">
+        <div class="lg-step-head">
+          <div class="lg-step-num">8</div>
+          <div>
+            <h3><span lang="en">TransactionResource</span><span lang="fr">TransactionResource</span></h3>
+            <div class="lg-step-meta">
+              <span class="lg-chip">20 min</span>
+              <span class="lg-chip"><span lang="en">Read-only history endpoint</span><span lang="fr">Endpoint d'historique en lecture seule</span></span>
+            </div>
+          </div>
+        </div>
+        <div class="lg-step-body">
+          <p class="lg-files"><span lang="en">Files to create:</span><span lang="fr">Fichiers à créer :</span> <code>com/bank/api/TransactionResource.java</code>, <code>com/bank/service/TransactionService.java</code></p>
+          <div class="lg-task-label"><span lang="en">Task</span><span lang="fr">À faire</span></div>
+          <p>
+            <span lang="en">Create <code>TransactionService</code> (CDI <code>@ApplicationScoped</code>, <code>@Transactional(TxType.SUPPORTS)</code> on reads) and <code>TransactionResource</code> at path <code>/transactions</code> with at least:</span>
+            <span lang="fr">Créez <code>TransactionService</code> (CDI <code>@ApplicationScoped</code>, <code>@Transactional(TxType.SUPPORTS)</code> sur les lectures) et <code>TransactionResource</code> au chemin <code>/transactions</code> avec au minimum :</span>
+          </p>
+          <ul>
+            <li><span lang="en"><code>GET /transactions</code> — all transactions ordered by date descending.</span><span lang="fr"><code>GET /transactions</code> — toutes les transactions triées par date décroissante.</span></li>
+            <li><span lang="en"><code>GET /transactions/{id}</code> — one transaction.</span><span lang="fr"><code>GET /transactions/{id}</code> — une transaction.</span></li>
+            <li><span lang="en"><code>GET /transactions/account/{accountId}</code> — history for an account.</span><span lang="fr"><code>GET /transactions/account/{accountId}</code> — historique pour un compte.</span></li>
+          </ul>
+          <details class="lg-hint lg-hint--1">
+            <summary><span lang="en">Hint 1 — named query usage</span><span lang="fr">Indice 1 — usage des named queries</span></summary>
+            <div class="lg-hint-body">
+<pre class="dark"><code>// in TransactionService:
+public List&lt;Transaction&gt; findAll() {
+    return em.createNamedQuery("Transaction.findAll", Transaction.class)
+             .getResultList();
+}
+public List&lt;Transaction&gt; findByAccount(Long accountId) {
+    return em.createNamedQuery("Transaction.findByAccount", Transaction.class)
+             .setParameter("accountId", accountId)
+             .getResultList();
+}</code></pre>
+            </div>
+          </details>
+          <details class="lg-hint lg-hint--2">
+            <summary><span lang="en">Hint 2 — error handling in TransactionResource</span><span lang="fr">Indice 2 — gestion des erreurs dans TransactionResource</span></summary>
+            <div class="lg-hint-body">
+              <p><span lang="en">The solution wraps service calls in try/catch in <code>TransactionResource</code> and returns <code>ErrorResponse</code> manually (does not rely on <code>GenericExceptionMapper</code>). This is a deliberate defensive pattern to handle partial DB state gracefully.</span><span lang="fr">La solution entoure les appels de service dans try/catch dans <code>TransactionResource</code> et retourne <code>ErrorResponse</code> manuellement (sans s'appuyer sur <code>GenericExceptionMapper</code>). C'est un pattern défensif délibéré pour gérer l'état partiel de la BD gracieusement.</span></p>
+            </div>
+          </details>
+          <details class="lg-hint lg-hint--sol">
+            <summary><span lang="en">Solution files</span><span lang="fr">Fichiers solution</span></summary>
+            <div class="lg-hint-body">
+              <p><a href="https://github.com/oplanson/esipe-javaee/blob/master/03-Labs/Lab05-REST/solution/src/main/java/com/bank/api/TransactionResource.java"><code>TransactionResource.java</code></a> · <a href="https://github.com/oplanson/esipe-javaee/blob/master/03-Labs/Lab05-REST/solution/src/main/java/com/bank/service/TransactionService.java"><code>TransactionService.java</code></a></p>
+            </div>
+          </details>
+          <div class="lg-checkpoint">
+            <div class="lg-check-label"><span lang="en">Checkpoint</span><span lang="fr">Point de contrôle</span></div>
+            <pre class="dark"><code>curl -s http://localhost:9080/api/transactions | python3 -m json.tool | head -20</code></pre>
+            <p><span lang="en">Expected: JSON array of transactions with fields <code>id</code>, <code>type</code>, <code>amount</code>, <code>balanceBefore</code>, <code>balanceAfter</code>. If the array is empty, Flyway V6 may not have inserted data — check the logs.</span><span lang="fr">Attendu : tableau JSON de transactions avec les champs <code>id</code>, <code>type</code>, <code>amount</code>, <code>balanceBefore</code>, <code>balanceAfter</code>. Si le tableau est vide, Flyway V6 n'a peut-être pas inséré de données — vérifiez les logs.</span></p>
+          </div>
+        </div>
+      </article>
+
+      <!-- ───────── STEP 9 ───────── -->
+      <article class="lg-step" id="step-9">
+        <div class="lg-step-head">
+          <div class="lg-step-num">9</div>
+          <div>
+            <h3><span lang="en">MicroProfile Rest Client</span><span lang="fr">MicroProfile Rest Client</span></h3>
+            <div class="lg-step-meta">
+              <span class="lg-chip">20 min</span>
+              <span class="lg-chip"><span lang="en">Course:</span><span lang="fr">Cours :</span> <a href="../../02-Lectures/slides/05-rest/slides.html#slide-17">slide 17</a></span>
+            </div>
+          </div>
+        </div>
+        <div class="lg-step-body">
+          <p class="lg-files"><span lang="en">Files to create/update:</span><span lang="fr">Fichiers à créer/mettre à jour :</span> <code>com/bank/client/BankingRestClient.java</code>, <code>microprofile-config.properties</code></p>
+          <div class="lg-task-label"><span lang="en">Task</span><span lang="fr">À faire</span></div>
+          <ol>
+            <li>
+              <span lang="en">Create <code>BankingRestClient</code>: a <code>@RegisterRestClient(configKey="banking-api")</code> interface that mirrors the methods of your resources (clients + accounts). Use the same JAX-RS annotations as the server side.</span>
+              <span lang="fr">Créez <code>BankingRestClient</code> : une interface <code>@RegisterRestClient(configKey="banking-api")</code> qui reprend les méthodes de vos resources (clients + comptes). Utilisez les mêmes annotations JAX-RS que côté serveur.</span>
+            </li>
+            <li>
+              <span lang="en">Add to <code>microprofile-config.properties</code>:</span>
+              <span lang="fr">Ajoutez dans <code>microprofile-config.properties</code> :</span>
+              <pre class="dark"><code>banking-api/mp-rest/url=http://localhost:9080
+banking-api/mp-rest/scope=jakarta.inject.Singleton
+banking-api/mp-rest/connectTimeout=5000
+banking-api/mp-rest/readTimeout=10000</code></pre>
+            </li>
+          </ol>
+          <details class="lg-hint lg-hint--1">
+            <summary><span lang="en">Hint 1 — interface declaration</span><span lang="fr">Indice 1 — déclaration de l'interface</span></summary>
+            <div class="lg-hint-body">
+<pre class="dark"><code>@Path("/api")
+@RegisterRestClient(configKey = "banking-api")
+@Produces(MediaType.APPLICATION_JSON)
+@Consumes(MediaType.APPLICATION_JSON)
+public interface BankingRestClient {
+    @GET @Path("/clients") List&lt;Client&gt; getAllClients();
+    @GET @Path("/clients/{id}") Client getClient(@PathParam("id") Long id);
+    @POST @Path("/clients") Response createClient(Client client);
+    // … accounts …
+}</code></pre>
+            </div>
+          </details>
+          <details class="lg-hint lg-hint--2">
+            <summary><span lang="en">Hint 2 — injecting the client</span><span lang="fr">Indice 2 — injection du client</span></summary>
+            <div class="lg-hint-body">
+<pre class="dark"><code>@Inject
+@RestClient
+private BankingRestClient bankingClient;</code></pre>
+              <p><span lang="en">The <code>@RestClient</code> qualifier is in package <code>org.eclipse.microprofile.rest.client.inject</code>. Remember to add <code>feature mpRestClient-3.0</code> to <code>server.xml</code> (step 1).</span><span lang="fr">Le qualifier <code>@RestClient</code> est dans le package <code>org.eclipse.microprofile.rest.client.inject</code>. N'oubliez pas d'ajouter <code>feature mpRestClient-3.0</code> à <code>server.xml</code> (étape 1).</span></p>
+            </div>
+          </details>
+          <details class="lg-hint lg-hint--sol">
+            <summary><span lang="en">Solution file</span><span lang="fr">Fichier solution</span></summary>
+            <div class="lg-hint-body">
+              <p><a href="https://github.com/oplanson/esipe-javaee/blob/master/03-Labs/Lab05-REST/solution/src/main/java/com/bank/client/BankingRestClient.java"><code>BankingRestClient.java</code></a> · <a href="https://github.com/oplanson/esipe-javaee/blob/master/03-Labs/Lab05-REST/solution/src/main/resources/META-INF/microprofile-config.properties"><code>microprofile-config.properties</code></a></p>
+            </div>
+          </details>
+          <div class="lg-checkpoint">
+            <div class="lg-check-label"><span lang="en">Checkpoint</span><span lang="fr">Point de contrôle</span></div>
+            <pre class="dark"><code>mvn clean package -DskipTests
+unzip -l target/banking-rest-app.war | grep BankingRestClient</code></pre>
+            <p><span lang="en">Expected: <code>com/bank/client/BankingRestClient.class</code> in the WAR. You can test client injection by adding a test resource that injects <code>@RestClient BankingRestClient</code> and calls <code>getAllClients()</code>.</span><span lang="fr">Attendu : <code>com/bank/client/BankingRestClient.class</code> dans le WAR. Vous pouvez tester l'injection du client en ajoutant une resource de test qui injecte <code>@RestClient BankingRestClient</code> et appelle <code>getAllClients()</code>.</span></p>
+          </div>
+        </div>
+      </article>
+
+      <!-- ───────── STEP 10 ───────── -->
+      <article class="lg-step" id="step-10">
+        <div class="lg-step-head">
+          <div class="lg-step-num">10</div>
+          <div>
+            <h3><span lang="en">Container packaging &amp; final deploy</span><span lang="fr">Packaging conteneur &amp; déploiement final</span></h3>
+            <div class="lg-step-meta">
+              <span class="lg-chip">15 min</span>
+              <span class="lg-chip"><span lang="en">Containerfile + PostgreSQL JARs</span><span lang="fr">Containerfile + JARs PostgreSQL</span></span>
+            </div>
+          </div>
+        </div>
+        <div class="lg-step-body">
+          <p class="lg-files"><span lang="en">File to update:</span><span lang="fr">Fichier à mettre à jour :</span> <code>Containerfile</code></p>
+          <div class="lg-task-label"><span lang="en">Task</span><span lang="fr">À faire</span></div>
+          <p>
+            <span lang="en">The Lab 04 <code>Containerfile</code> did not copy the PostgreSQL JDBC JARs into the shared resources directory. The Lab 05 solution adds these two lines before <code>RUN configure.sh</code>:</span>
+            <span lang="fr">Le <code>Containerfile</code> du Lab 04 ne copiait pas les JARs JDBC PostgreSQL dans le répertoire de ressources partagées. La solution du Lab 05 ajoute ces deux lignes avant <code>RUN configure.sh</code> :</span>
+          </p>
+          <pre class="dark"><code>RUN mkdir -p /opt/ol/wlp/usr/shared/resources/postgresql
+COPY --chown=1001:0 target/liberty/wlp/usr/servers/bankingServer/postgresql/*.jar \
+     /opt/ol/wlp/usr/shared/resources/postgresql/</code></pre>
+          <p>
+            <span lang="en">Also update the WAR name: change <code>banking-cdi-app.war</code> to <code>banking-rest-app.war</code> in the <code>COPY</code> instruction, and update the <code>webApplication</code> name in <code>server.xml</code>.</span>
+            <span lang="fr">Mettez aussi à jour le nom du WAR : changez <code>banking-cdi-app.war</code> en <code>banking-rest-app.war</code> dans l'instruction <code>COPY</code>, et mettez à jour le nom de <code>webApplication</code> dans <code>server.xml</code>.</span>
+          </p>
+          <details class="lg-hint lg-hint--sol">
+            <summary><span lang="en">Solution file</span><span lang="fr">Fichier solution</span></summary>
+            <div class="lg-hint-body">
+              <p><a href="https://github.com/oplanson/esipe-javaee/blob/master/03-Labs/Lab05-REST/solution/Containerfile"><code>Containerfile</code></a></p>
+            </div>
+          </details>
+          <div class="lg-checkpoint">
+            <div class="lg-check-label"><span lang="en">Checkpoint</span><span lang="fr">Point de contrôle</span></div>
+            <pre class="dark"><code>mvn clean package -DskipTests
+podman rm -f banking-rest-lab05 2&gt;/dev/null
+podman build -t banking-rest-app:lab05 -f Containerfile .
+podman run -d --name banking-rest-lab05 \
+  -p 127.0.0.1:9080:9080 \
+  -e DB_HOST=host.containers.internal \
+  -e DB_PORT=5432 -e DB_NAME=bankdb \
+  -e DB_USER=bankuser -e DB_PASSWORD=bankpass \
+  banking-rest-app:lab05
+until curl -fs http://localhost:9080/health/ready &gt;/dev/null; do sleep 3; done; echo "ready"
+curl -s http://localhost:9080/api | python3 -m json.tool</code></pre>
+            <p><span lang="en">Expected: the container starts, <code>/health/ready</code> returns UP, and <code>/api</code> returns JSON with endpoints. If the DataSource fails, verify you passed all five <code>DB_*</code> environment variables.</span><span lang="fr">Attendu : le conteneur démarre, <code>/health/ready</code> retourne UP, et <code>/api</code> retourne du JSON avec les endpoints. Si la DataSource échoue, vérifiez que vous avez passé les cinq variables d'environnement <code>DB_*</code>.</span></p>
+          </div>
+        </div>
+      </article>
+
+    </section>
+
+    <!-- ═════════════ 6. RUN ═════════════ -->
+    <section class="lg-section" id="run">
+      <h2><span class="lg-sec-num">06</span><span lang="en">Run</span><span lang="fr">Exécution</span></h2>
+      <p>
+        <span lang="en">Use the redeploy loop from the Setup section. Verify the full stack in one shot:</span>
+        <span lang="fr">Utilisez la boucle de redéploiement de la section Préparation. Vérifiez la pile complète en une seule commande :</span>
+      </p>
+      <pre class="dark"><code>for u in "api" "api/clients" "api/accounts" "api/transactions" "health" "openapi"; do
+  printf "%-30s %s\n" "/$u" "$(curl -s -o /dev/null -w '%{http_code}' http://localhost:9080/$u)"
+done</code></pre>
+      <p>
+        <span lang="en">Expected: all six return <code>200</code>.</span>
+        <span lang="fr">Attendu : les six retournent <code>200</code>.</span>
+      </p>
+
+      <div class="lg-callout lg-callout--warn">
+        <div lang="en">
+          <div class="lg-callout-title">Scripts <code>podman-test.sh</code> / <code>docker-test.sh</code></div>
+          <p>These scripts stop and remove any container using port 9080 before starting a new one. Use with caution if other containers are running on the same port. The explicit commands above are always safer.</p>
+        </div>
+        <div lang="fr">
+          <div class="lg-callout-title">Scripts <code>podman-test.sh</code> / <code>docker-test.sh</code></div>
+          <p>Ces scripts arrêtent et suppriment tout conteneur utilisant le port 9080 avant d'en démarrer un nouveau. À utiliser avec prudence si d'autres conteneurs tournent sur le même port. Les commandes explicites ci-dessus sont toujours plus sûres.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═════════════ 7. VALIDATE ═════════════ -->
+    <section class="lg-section" id="validate">
+      <h2><span class="lg-sec-num">07</span><span lang="en">Validate</span><span lang="fr">Validation</span></h2>
+      <p>
+        <span lang="en">Run the following sequence to cover all main scenarios:</span>
+        <span lang="fr">Exécutez la séquence suivante pour couvrir tous les scénarios principaux :</span>
+      </p>
+      <pre class="dark"><code># 1. Create a client
+curl -s -X POST http://localhost:9080/api/clients \
+  -H "Content-Type: application/json" \
+  -d '{"name":"Alice Dupont","email":"alice@bank.fr"}' | python3 -m json.tool
+
+# 2. List clients (should include Alice)
+curl -s http://localhost:9080/api/clients | python3 -m json.tool
+
+# 3. Create an account for client 1
+curl -s -X POST http://localhost:9080/api/accounts \
+  -H "Content-Type: application/json" \
+  -d '{"number":"FR7600000000001","balance":0,"type":"CHECKING","client":{"id":1}}' \
+  | python3 -m json.tool
+
+# 4. Deposit
+curl -s -X POST "http://localhost:9080/api/accounts/1/deposit?amount=500"
+
+# 5. Transfer
+curl -s -X POST "http://localhost:9080/api/accounts/1/transfer?toId=2&amp;amount=100" \
+  | python3 -m json.tool
+
+# 6. Validation error (short name)
+curl -s -X POST http://localhost:9080/api/clients \
+  -H "Content-Type: application/json" \
+  -d '{"name":"A","email":"bad"}' | python3 -m json.tool
+
+# 7. Not found
+curl -s http://localhost:9080/api/clients/9999 | python3 -m json.tool
+
+# 8. OpenAPI documentation
+curl -s http://localhost:9080/openapi | head -10</code></pre>
+
+      <h3><span lang="en">Expected results</span><span lang="fr">Résultats attendus</span></h3>
+      <table class="slide-table">
+        <thead><tr><th><span lang="en">Test</span><span lang="fr">Test</span></th><th><span lang="en">Expected HTTP</span><span lang="fr">HTTP attendu</span></th><th><span lang="en">Key field</span><span lang="fr">Champ clé</span></th></tr></thead>
+        <tbody>
+          <tr><td>1. Create client</td><td>201</td><td><code>id</code> set, <code>Location</code> header</td></tr>
+          <tr><td>2. List clients</td><td>200</td><td>JSON array</td></tr>
+          <tr><td>3. Create account</td><td>201</td><td><code>id</code> set</td></tr>
+          <tr><td>4. Deposit</td><td>200</td><td><code>balance</code> = 500</td></tr>
+          <tr><td>5. Transfer</td><td>200</td><td><code>success: true</code></td></tr>
+          <tr><td>6. Validation error</td><td>400</td><td><code>details</code> array non-empty</td></tr>
+          <tr><td>7. Not found</td><td>404</td><td><code>error: "Not Found"</code></td></tr>
+          <tr><td>8. OpenAPI</td><td>200</td><td>YAML starting with <code>openapi: 3.</code></td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- ═════════════ 8. COMPARE ═════════════ -->
+    <section class="lg-section" id="compare">
+      <h2><span class="lg-sec-num">08</span><span lang="en">Compare with solution</span><span lang="fr">Comparer à la solution</span></h2>
+      <p>
+        <span lang="en">To compare your implementation with the reference solution:</span>
+        <span lang="fr">Pour comparer votre implémentation avec la solution de référence :</span>
+      </p>
+      <pre class="dark"><code>cd 03-Labs/Lab05-REST
+diff -rq work solution -x target -x docs -x postgresql -x db -x '*.md' -x .gitignore</code></pre>
+
+      <h3><span lang="en">Differences that are expected</span><span lang="fr">Différences attendues</span></h3>
+      <ul>
+        <li><span lang="en"><code>docker-compose.yml</code>: yours binds <code>127.0.0.1:5432:5432</code>; the solution publishes on all interfaces.</span><span lang="fr"><code>docker-compose.yml</code> : le vôtre lie <code>127.0.0.1:5432:5432</code> ; la solution publie sur toutes les interfaces.</span></li>
+        <li><span lang="en">Javadoc and log messages may differ; only behaviour matters.</span><span lang="fr">Javadoc et messages de log peuvent différer ; seul le comportement compte.</span></li>
+        <li><span lang="en">The <code>postgresql/</code>, <code>target/</code>, and <code>docs/</code> directories inside <code>solution/</code> are not part of the exercise.</span><span lang="fr">Les répertoires <code>postgresql/</code>, <code>target/</code> et <code>docs/</code> à l'intérieur de <code>solution/</code> ne font pas partie de l'exercice.</span></li>
+      </ul>
+
+      <h3><span lang="en">Points to look for in your code</span><span lang="fr">Points à examiner dans votre code</span></h3>
+      <ul>
+        <li><span lang="en">Does every resource class have both <code>@Produces</code> and <code>@Consumes(APPLICATION_JSON)</code> at class level?</span><span lang="fr">Chaque classe de resource a-t-elle à la fois <code>@Produces</code> et <code>@Consumes(APPLICATION_JSON)</code> au niveau classe ?</span></li>
+        <li><span lang="en">Are POST and PUT methods annotated with <code>@Valid</code> on the body parameter?</span><span lang="fr">Les méthodes POST et PUT ont-elles <code>@Valid</code> sur le paramètre du corps ?</span></li>
+        <li><span lang="en">Does every mapper have <code>@Provider</code>? Without it JAX-RS does not discover them.</span><span lang="fr">Chaque mapper a-t-il <code>@Provider</code> ? Sans cette annotation JAX-RS ne les découvre pas.</span></li>
+        <li><span lang="en">Is <code>@JsonbTransient</code> on the <code>Account account</code> field of <code>Transaction</code>? Without it JSON-B will try to serialise the relation and may loop.</span><span lang="fr"><code>@JsonbTransient</code> est-il sur le champ <code>Account account</code> de <code>Transaction</code> ? Sans cela JSON-B essaiera de sérialiser la relation et peut boucler.</span></li>
+      </ul>
+    </section>
+
+    <!-- ═════════════ 9. TROUBLESHOOTING ═════════════ -->
+    <section class="lg-section" id="trouble">
+      <h2><span class="lg-sec-num">09</span><span lang="en">Troubleshooting</span><span lang="fr">Dépannage</span></h2>
+      <table class="slide-table">
+        <thead><tr><th><span lang="en">Symptom</span><span lang="fr">Symptôme</span></th><th><span lang="en">Cause and fix</span><span lang="fr">Cause et correction</span></th></tr></thead>
+        <tbody>
+          <tr>
+            <td><code>404 on /api</code></td>
+            <td><span lang="en"><code>RestApplication</code> is missing or not compiled. Verify with <code>unzip -l target/banking-rest-app.war | grep RestApplication</code>.</span><span lang="fr"><code>RestApplication</code> est absent ou non compilé. Vérifiez avec <code>unzip -l target/banking-rest-app.war | grep RestApplication</code>.</span></td>
+          </tr>
+          <tr>
+            <td><code>WELD-001408 … Logger unsatisfied</code></td>
+            <td><span lang="en">The CDI producer in <code>EntityManagerProducer</code> is missing. Copy it from Lab 04.</span><span lang="fr">Le producer CDI dans <code>EntityManagerProducer</code> est absent. Copiez-le depuis le Lab 04.</span></td>
+          </tr>
+          <tr>
+            <td><code>500 on all REST calls after deploy</code></td>
+            <td><span lang="en">Flyway migration failed (likely checksum mismatch on V1–V3). Restore V1–V3 from the Lab 04 solution and check the container logs.</span><span lang="fr">La migration Flyway a échoué (probablement un checksum incorrect sur V1–V3). Restaurez V1–V3 depuis la solution du Lab 04 et consultez les logs du conteneur.</span></td>
+          </tr>
+          <tr>
+            <td><code>CWWKG0075E … db.port not a number</code></td>
+            <td><span lang="en">One of the five <code>DB_*</code> environment variables is missing from <code>podman run</code>.</span><span lang="fr">Une des cinq variables d'environnement <code>DB_*</code> manque dans <code>podman run</code>.</span></td>
+          </tr>
+          <tr>
+            <td><code>400 with empty details on validation</code></td>
+            <td><span lang="en"><code>@Valid</code> is missing from the method parameter. Add it and redeploy.</span><span lang="fr"><code>@Valid</code> manque sur le paramètre de la méthode. Ajoutez-le et redéployez.</span></td>
+          </tr>
+          <tr>
+            <td><code>Mapper not invoked — JSON error body not returned</code></td>
+            <td><span lang="en"><code>@Provider</code> is missing on the mapper class. JAX-RS discovers providers by scanning for this annotation.</span><span lang="fr"><code>@Provider</code> manque sur la classe mapper. JAX-RS découvre les providers en cherchant cette annotation.</span></td>
+          </tr>
+          <tr>
+            <td><code>StackOverflowError on GET /transactions</code></td>
+            <td><span lang="en">JSON-B is serialising the <code>Account → Transaction → Account</code> cycle. Add <code>@JsonbTransient</code> to the <code>account</code> field of <code>Transaction</code>.</span><span lang="fr">JSON-B sérialise le cycle <code>Account → Transaction → Account</code>. Ajoutez <code>@JsonbTransient</code> au champ <code>account</code> de <code>Transaction</code>.</span></td>
+          </tr>
+          <tr>
+            <td><code>DSRA4000E: driver not found</code></td>
+            <td><span lang="en">The PostgreSQL JARs were not copied into <code>/opt/ol/wlp/usr/shared/resources/postgresql/</code> in the <code>Containerfile</code>. Add the two lines from step 10.</span><span lang="fr">Les JARs PostgreSQL n'ont pas été copiés dans <code>/opt/ol/wlp/usr/shared/resources/postgresql/</code> dans le <code>Containerfile</code>. Ajoutez les deux lignes de l'étape 10.</span></td>
+          </tr>
+          <tr>
+            <td><code>Transfer fails: insufficient funds</code></td>
+            <td><span lang="en">The source account has no balance. First deposit with <code>POST /accounts/{id}/deposit?amount=…</code>.</span><span lang="fr">Le compte source n'a pas de solde. Faites d'abord un dépôt avec <code>POST /accounts/{id}/deposit?amount=…</code>.</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- ═════════════ 10. BONUS ═════════════ -->
+    <section class="lg-section" id="bonus">
+      <h2><span class="lg-sec-num">10</span><span lang="en">Go further</span><span lang="fr">Pour aller plus loin</span></h2>
+      <ul>
+        <li><span lang="en"><strong>Pagination.</strong> Add <code>@QueryParam("page")</code> and <code>@QueryParam("size")</code> to <code>GET /clients</code> and implement JPA paging with <code>setFirstResult</code> / <code>setMaxResults</code>.</span><span lang="fr"><strong>Pagination.</strong> Ajoutez <code>@QueryParam("page")</code> et <code>@QueryParam("size")</code> à <code>GET /clients</code> et implémentez la pagination JPA avec <code>setFirstResult</code> / <code>setMaxResults</code>.</span></li>
+        <li><span lang="en"><strong>HATEOAS links.</strong> Add a <code>_links</code> map to each response entity so clients can navigate to related resources without hardcoding URLs.</span><span lang="fr"><strong>Liens HATEOAS.</strong> Ajoutez une map <code>_links</code> à chaque entité de réponse pour que les clients puissent naviguer vers les resources liées sans encoder les URL en dur.</span></li>
+        <li><span lang="en"><strong>OpenAPI annotations.</strong> Annotate resources with <code>@Operation</code>, <code>@Parameter</code> and <code>@APIResponse</code> from MicroProfile OpenAPI and inspect the generated spec at <code>/openapi/ui</code>.</span><span lang="fr"><strong>Annotations OpenAPI.</strong> Annotez les resources avec <code>@Operation</code>, <code>@Parameter</code> et <code>@APIResponse</code> de MicroProfile OpenAPI et inspectez la spec générée à <code>/openapi/ui</code>.</span></li>
+        <li><span lang="en"><strong>CORS filter.</strong> Add a JAX-RS <code>@Provider ContainerResponseFilter</code> that sets <code>Access-Control-Allow-Origin</code> headers so that a browser-based client can call your API.</span><span lang="fr"><strong>Filtre CORS.</strong> Ajoutez un <code>@Provider ContainerResponseFilter</code> JAX-RS qui positionne les en-têtes <code>Access-Control-Allow-Origin</code> pour qu'un client navigateur puisse appeler votre API.</span></li>
+        <li><span lang="en"><strong>Audit trail.</strong> Record every deposit, withdrawal and transfer as a <code>Transaction</code> row. Trigger this from <code>AccountService</code> using CDI events fired after the JPA update.</span><span lang="fr"><strong>Piste d'audit.</strong> Enregistrez chaque dépôt, retrait et virement comme ligne <code>Transaction</code>. Déclenchez ceci depuis <code>AccountService</code> en utilisant des événements CDI lancés après la mise à jour JPA.</span></li>
+      </ul>
+      <div class="lg-callout lg-callout--tip">
+        <div lang="en">
+          <div class="lg-callout-title">Next</div>
+          <p>Lab 06 introduces Domain-Driven Design (DDD): aggregates, value objects, repositories, domain events, and bounded contexts applied to the banking case study. Your JAX-RS resources become the application layer of the DDD architecture.</p>
+        </div>
+        <div lang="fr">
+          <div class="lg-callout-title">Suite</div>
+          <p>Le Lab 06 introduit la conception dirigée par le domaine (DDD) : agrégats, objets-valeurs, repositories, événements de domaine et bounded contexts appliqués au cas bancaire. Vos resources JAX-RS deviennent la couche application de l'architecture DDD.</p>
+        </div>
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<footer class="site-footer">Made with IBM Bob &nbsp;&middot;&nbsp; &copy; 2026 Olivier Planson</footer>
+</body>
+</html>

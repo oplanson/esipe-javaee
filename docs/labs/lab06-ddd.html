@@ -1,0 +1,1032 @@
+<!-- © Copyright 2026 Olivier Planson. All rights reserved. Reproduction prohibited. Made with IBM Bob. -->
+<!DOCTYPE html>
+<html lang="fr" data-lang="fr">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title data-title-en="ESIPE — Lab 06: Domain-Driven Design — Lab guide" data-title-fr="ESIPE — Lab 06 : Domain-Driven Design — Guide du lab">ESIPE — Lab 06 : Domain-Driven Design — Guide du lab</title>
+  <link rel="stylesheet" href="assets/slide.css"/>
+  <link rel="stylesheet" href="assets/lab-guide.css"/>
+  <script src="assets/lab-guide.js"></script>
+</head>
+<body>
+<header class="site-header">
+  <a class="brand" href="index.html">ESIPE<span>Jakarta EE &amp; Microservices — Labs</span></a>
+  <div class="lang-toggle" id="lang-toggle">
+    <button type="button" id="btn-en" data-set-lang="en">EN</button>
+    <span class="sep">|</span>
+    <button type="button" id="btn-fr" data-set-lang="fr" class="active">FR</button>
+  </div>
+  <a class="back-link" href="index.html">&#8592; Labs</a>
+  <a class="back-link" href="../index.html"><span lang="en">Course site</span><span lang="fr">Site du cours</span></a>
+</header>
+
+<div class="lg-shell">
+
+  <nav class="lg-toc" aria-label="Table of contents">
+    <div class="lg-toc-title"><span lang="en">In this guide</span><span lang="fr">Dans ce guide</span></div>
+    <a href="#hero"><span lang="en">Overview</span><span lang="fr">Vue d'ensemble</span></a>
+    <a href="#goal"><span lang="en">1. Goal</span><span lang="fr">1. Objectif</span></a>
+    <a href="#starter"><span lang="en">2. Starting point</span><span lang="fr">2. Point de départ</span></a>
+    <a href="#target"><span lang="en">3. Target structure</span><span lang="fr">3. Structure cible</span></a>
+    <a href="#setup"><span lang="en">4. Setup</span><span lang="fr">4. Préparation</span></a>
+    <a href="#steps"><span lang="en">5. Step by step</span><span lang="fr">5. Pas à pas</span></a>
+    <a class="sub" href="#step-1"><span lang="en">1 · Copy &amp; verify baseline</span><span lang="fr">1 · Copier &amp; vérifier la base</span></a>
+    <a class="sub" href="#step-2"><span lang="en">2 · Value objects (Money, Email, AccountNumber, AccountType)</span><span lang="fr">2 · Objets-valeur (Money, Email, AccountNumber, AccountType)</span></a>
+    <a class="sub" href="#step-3"><span lang="en">3 · Account aggregate root</span><span lang="fr">3 · Agrégat Account</span></a>
+    <a class="sub" href="#step-4"><span lang="en">4 · Client aggregate root</span><span lang="fr">4 · Agrégat Client</span></a>
+    <a class="sub" href="#step-5"><span lang="en">5 · Domain events</span><span lang="fr">5 · Événements de domaine</span></a>
+    <a class="sub" href="#step-6"><span lang="en">6 · Repository interfaces</span><span lang="fr">6 · Interfaces repository</span></a>
+    <a class="sub" href="#step-7"><span lang="en">7 · Domain service (TransferService)</span><span lang="fr">7 · Service de domaine (TransferService)</span></a>
+    <a class="sub" href="#step-8"><span lang="en">8 · Application services &amp; application-layer DTOs</span><span lang="fr">8 · Services applicatifs &amp; DTOs de couche application</span></a>
+    <a class="sub" href="#step-9"><span lang="en">9 · Flyway migration V5 &amp; API versioning</span><span lang="fr">9 · Migration Flyway V5 &amp; versioning API</span></a>
+    <a class="sub" href="#step-10"><span lang="en">10 · server.xml, pom.xml &amp; docker-compose</span><span lang="fr">10 · server.xml, pom.xml &amp; docker-compose</span></a>
+    <a href="#run"><span lang="en">6. Run</span><span lang="fr">6. Exécution</span></a>
+    <a href="#validate"><span lang="en">7. Validate</span><span lang="fr">7. Validation</span></a>
+    <a href="#compare"><span lang="en">8. Compare with solution</span><span lang="fr">8. Comparer à la solution</span></a>
+    <a href="#trouble"><span lang="en">9. Troubleshooting</span><span lang="fr">9. Dépannage</span></a>
+    <a href="#bonus"><span lang="en">10. Go further</span><span lang="fr">10. Pour aller plus loin</span></a>
+  </nav>
+
+  <main class="lg-main">
+
+    <!-- ═════════════ HERO ═════════════ -->
+    <section class="lg-hero" id="hero">
+      <div class="lg-kicker">Lab 06</div>
+      <h1><span lang="en">Domain-Driven Design</span><span lang="fr">Domain-Driven Design</span></h1>
+      <p class="lg-lead">
+        <span lang="en">Starting from the Lab 05 REST solution, you refactor an anemic domain model into a rich domain model using DDD tactical patterns: value objects, aggregate roots, domain events, repository interfaces and a domain service.</span>
+        <span lang="fr">En partant de la solution du Lab 05 REST, vous refactorisez un modèle de domaine anémique en un modèle de domaine riche en utilisant les patterns tactiques DDD : objets-valeur, racines d'agrégat, événements de domaine, interfaces repository et service de domaine.</span>
+      </p>
+      <div class="badge-row">
+        <span class="badge badge-blue">Jakarta EE 10</span>
+        <span class="badge badge-teal">DDD</span>
+        <span class="badge badge-green">JPA 3.1</span>
+        <span class="badge badge-purple">CDI 4.0</span>
+        <span class="badge badge-warm">Flyway</span>
+      </div>
+      <div class="lg-facts">
+        <div><strong><span lang="en">about 4 hours</span><span lang="fr">environ 4 h</span></strong><span lang="en">Duration</span><span lang="fr">Durée</span></div>
+        <div><strong><span lang="en">Advanced</span><span lang="fr">Avancé</span></strong><span lang="en">Level</span><span lang="fr">Niveau</span></div>
+        <div><strong>JDK 17+ · Maven · Podman · Labs 01–05</strong><span lang="en">Prerequisites</span><span lang="fr">Prérequis</span></div>
+        <div><strong>http://localhost:9080</strong><span lang="en">Application URL</span><span lang="fr">URL de l'application</span></div>
+      </div>
+      <div class="lg-hero-links">
+        <a href="../../02-Lectures/slides/06-ddd/slides.html#slide-1"><span lang="en">Course slides (DDD)</span><span lang="fr">Slides du cours (DDD)</span></a>
+        <a class="secondary" href="../06-ddd/index.html"><span lang="en">Course page</span><span lang="fr">Page du cours</span></a>
+        <a class="secondary" href="https://github.com/oplanson/esipe-javaee/blob/master/03-Labs/Lab06-DDD/README.md"><span lang="en">Original README</span><span lang="fr">README d'origine</span></a>
+        <a class="secondary" href="https://github.com/oplanson/esipe-javaee/tree/master/03-Labs/Lab06-DDD/solution"><span lang="en">Solution folder</span><span lang="fr">Dossier solution</span></a>
+      </div>
+    </section>
+
+    <!-- ═════════════ 1. GOAL ═════════════ -->
+    <section class="lg-section" id="goal">
+      <h2><span class="lg-sec-num">01</span><span lang="en">Goal of the lab</span><span lang="fr">Objectif du lab</span></h2>
+      <p>
+        <span lang="en">You refactor the banking application from Lab 05's anemic REST model into a rich domain model. The external REST API and the JSP interface remain unchanged; only the internal architecture changes.</span>
+        <span lang="fr">Vous refactorisez l'application bancaire du modèle REST anémique du Lab 05 en un modèle de domaine riche. L'API REST externe et l'interface JSP restent inchangées ; seule l'architecture interne change.</span>
+      </p>
+
+      <h3><span lang="en">DDD tactical patterns you practise</span><span lang="fr">Patterns tactiques DDD mis en pratique</span></h3>
+      <table class="slide-table">
+        <thead><tr>
+          <th><span lang="en">Pattern</span><span lang="fr">Pattern</span></th>
+          <th><span lang="en">Class(es)</span><span lang="fr">Classe(s)</span></th>
+          <th><span lang="en">Key characteristic</span><span lang="fr">Caractéristique clé</span></th>
+        </tr></thead>
+        <tbody>
+          <tr>
+            <td><strong><span lang="en">Value Object</span><span lang="fr">Objet-valeur</span></strong></td>
+            <td><code>Money</code>, <code>Email</code>, <code>AccountNumber</code>, <code>AccountType</code></td>
+            <td><span lang="en">Immutable, no identity, equality by value, self-validating, <code>@Embeddable</code></span><span lang="fr">Immuable, sans identité, égalité par valeur, auto-validant, <code>@Embeddable</code></span></td>
+          </tr>
+          <tr>
+            <td><strong><span lang="en">Aggregate Root</span><span lang="fr">Racine d'agrégat</span></strong></td>
+            <td><code>Account</code>, <code>Client</code></td>
+            <td><span lang="en">Entity with identity, encapsulates business logic, factory method, enforces invariants via <code>@PrePersist</code></span><span lang="fr">Entité avec identité, encapsule la logique métier, méthode fabrique, invariants via <code>@PrePersist</code></span></td>
+          </tr>
+          <tr>
+            <td><strong><span lang="en">Domain Service</span><span lang="fr">Service de domaine</span></strong></td>
+            <td><code>TransferService</code></td>
+            <td><span lang="en">Stateless CDI bean, coordinates operations across aggregates, fee calculation</span><span lang="fr">Bean CDI sans état, coordonne les opérations entre agrégats, calcul des frais</span></td>
+          </tr>
+          <tr>
+            <td><strong><span lang="en">Domain Event</span><span lang="fr">Événement de domaine</span></strong></td>
+            <td><code>MoneyDepositedEvent</code>, <code>MoneyWithdrawnEvent</code>, <code>MoneyTransferredEvent</code></td>
+            <td><span lang="en">Immutable, records something that happened, enables decoupled audit trail</span><span lang="fr">Immuable, enregistre ce qui s'est passé, permet une piste d'audit découplée</span></td>
+          </tr>
+          <tr>
+            <td><strong>Repository</strong></td>
+            <td><code>AccountRepository</code>, <code>ClientRepository</code></td>
+            <td><span lang="en">Interface in domain layer; collection-like contract for aggregates; implementation in infrastructure</span><span lang="fr">Interface dans la couche domaine ; contrat de type collection pour les agrégats ; implémentation dans l'infrastructure</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- ═════════════ 2. STARTER ═════════════ -->
+    <section class="lg-section" id="starter">
+      <h2><span class="lg-sec-num">02</span><span lang="en">Starting point</span><span lang="fr">Point de départ</span></h2>
+      <p>
+        <span lang="en">The folder <code>03-Labs/Lab06-DDD/starter/</code> is <strong>empty</strong>. Your starting point is the <strong>solution of Lab 05</strong> (<code>03-Labs/Lab05-REST/solution</code>), which you copy into <code>starter/</code> (see Setup, section 4). The files to add or modify are all in the solution of this lab (<code>03-Labs/Lab06-DDD/solution</code>).</span>
+        <span lang="fr">Le dossier <code>03-Labs/Lab06-DDD/starter/</code> est <strong>vide</strong>. Votre point de départ est la <strong>solution du Lab 05</strong> (<code>03-Labs/Lab05-REST/solution</code>), que vous copiez dans <code>starter/</code> (voir Préparation, section 4). Les fichiers à ajouter ou modifier sont tous dans la solution de ce lab (<code>03-Labs/Lab06-DDD/solution</code>).</span>
+      </p>
+      <div class="lg-callout lg-callout--warn">
+        <div lang="en">
+          <div class="lg-callout-title">Starter is empty — anomaly noted</div>
+          <p>The <code>starter/</code> directory contains no files, while the README describes a set of TODOs as if a starter existed. The source of truth is the <code>diff -rq</code> between <code>Lab05-REST/solution</code> (your baseline) and <code>Lab06-DDD/solution</code> (your target). The README's task list is informational only.</p>
+        </div>
+        <div lang="fr">
+          <div class="lg-callout-title">Starter vide — anomalie signalée</div>
+          <p>Le répertoire <code>starter/</code> ne contient aucun fichier, alors que le README décrit un ensemble de TODO comme si un starter existait. La source de vérité est le <code>diff -rq</code> entre <code>Lab05-REST/solution</code> (votre base) et <code>Lab06-DDD/solution</code> (votre cible). La liste des tâches du README est uniquement informative.</p>
+        </div>
+      </div>
+      <h3><span lang="en">New files added in Lab 06 (vs Lab 05 solution)</span><span lang="fr">Fichiers ajoutés dans le Lab 06 (par rapport à la solution du Lab 05)</span></h3>
+      <table class="slide-table">
+        <thead><tr>
+          <th><span lang="en">File</span><span lang="fr">Fichier</span></th>
+          <th><span lang="en">DDD layer</span><span lang="fr">Couche DDD</span></th>
+        </tr></thead>
+        <tbody>
+          <tr><td><code>domain/valueobject/Money.java</code></td><td><span lang="en">Domain — Value Object</span><span lang="fr">Domaine — Objet-valeur</span></td></tr>
+          <tr><td><code>domain/valueobject/Email.java</code></td><td><span lang="en">Domain — Value Object</span><span lang="fr">Domaine — Objet-valeur</span></td></tr>
+          <tr><td><code>domain/valueobject/AccountNumber.java</code></td><td><span lang="en">Domain — Value Object</span><span lang="fr">Domaine — Objet-valeur</span></td></tr>
+          <tr><td><code>domain/valueobject/AccountType.java</code></td><td><span lang="en">Domain — Value Object (enum)</span><span lang="fr">Domaine — Objet-valeur (enum)</span></td></tr>
+          <tr><td><code>domain/event/MoneyDepositedEvent.java</code></td><td><span lang="en">Domain — Domain Event</span><span lang="fr">Domaine — Événement de domaine</span></td></tr>
+          <tr><td><code>domain/event/MoneyWithdrawnEvent.java</code></td><td><span lang="en">Domain — Domain Event</span><span lang="fr">Domaine — Événement de domaine</span></td></tr>
+          <tr><td><code>domain/event/MoneyTransferredEvent.java</code></td><td><span lang="en">Domain — Domain Event</span><span lang="fr">Domaine — Événement de domaine</span></td></tr>
+          <tr><td><code>domain/repository/AccountRepository.java</code></td><td><span lang="en">Domain — Repository interface</span><span lang="fr">Domaine — Interface repository</span></td></tr>
+          <tr><td><code>domain/repository/ClientRepository.java</code></td><td><span lang="en">Domain — Repository interface</span><span lang="fr">Domaine — Interface repository</span></td></tr>
+          <tr><td><code>domain/service/TransferService.java</code></td><td><span lang="en">Domain — Domain Service</span><span lang="fr">Domaine — Service de domaine</span></td></tr>
+          <tr><td><code>application/dto/AccountDTO.java</code></td><td><span lang="en">Application — DTO</span><span lang="fr">Application — DTO</span></td></tr>
+          <tr><td><code>application/dto/ClientDTO.java</code></td><td><span lang="en">Application — DTO</span><span lang="fr">Application — DTO</span></td></tr>
+          <tr><td><code>db/migration/V5__refactor_for_ddd.sql</code></td><td><span lang="en">Infrastructure — Flyway migration</span><span lang="fr">Infrastructure — Migration Flyway</span></td></tr>
+        </tbody>
+      </table>
+      <h3><span lang="en">Files modified from Lab 05</span><span lang="fr">Fichiers modifiés par rapport au Lab 05</span></h3>
+      <table class="slide-table">
+        <thead><tr>
+          <th><span lang="en">File</span><span lang="fr">Fichier</span></th>
+          <th><span lang="en">Change</span><span lang="fr">Modification</span></th>
+        </tr></thead>
+        <tbody>
+          <tr><td><code>model/Account.java</code></td><td><span lang="en">Replaced primitive fields with Value Objects (<code>Money</code>, <code>AccountNumber</code>, <code>AccountType</code>); added factory method <code>Account.create()</code>, business methods <code>deposit()</code>, <code>withdraw()</code>, <code>transferTo()</code></span><span lang="fr">Champs primitifs remplacés par des objets-valeur (<code>Money</code>, <code>AccountNumber</code>, <code>AccountType</code>) ; méthode fabrique <code>Account.create()</code>, méthodes métier <code>deposit()</code>, <code>withdraw()</code>, <code>transferTo()</code></span></td></tr>
+          <tr><td><code>model/Client.java</code></td><td><span lang="en">Replaced <code>String email</code> with <code>Email</code> Value Object; added factory method <code>Client.create()</code>, business methods <code>addAccount()</code>, <code>upgradeToPremium()</code>, <code>downgradeFromPremium()</code></span><span lang="fr">Champ <code>String email</code> remplacé par l'objet-valeur <code>Email</code> ; méthode fabrique <code>Client.create()</code>, méthodes métier <code>addAccount()</code>, <code>upgradeToPremium()</code>, <code>downgradeFromPremium()</code></span></td></tr>
+          <tr><td><code>service/AccountService.java</code></td><td><span lang="en">Uses <code>Money</code> value object for deposit/withdraw/transfer; fires CDI events</span><span lang="fr">Utilise l'objet-valeur <code>Money</code> pour dépôt/retrait/virement ; déclenche des événements CDI</span></td></tr>
+          <tr><td><code>service/ClientService.java</code></td><td><span lang="en">Uses <code>Email</code> value object</span><span lang="fr">Utilise l'objet-valeur <code>Email</code></span></td></tr>
+          <tr><td><code>pom.xml</code></td><td><code>artifactId</code> → <code>banking-ddd-app</code></td></tr>
+          <tr><td><code>server.xml</code></td><td><span lang="en">Updated <code>webApplication location</code> to <code>banking-ddd-app.war</code></span><span lang="fr"><code>webApplication location</code> mis à jour vers <code>banking-ddd-app.war</code></span></td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- ═════════════ 3. TARGET ═════════════ -->
+    <section class="lg-section" id="target">
+      <h2><span class="lg-sec-num">03</span><span lang="en">Target structure</span><span lang="fr">Structure cible</span></h2>
+      <p>
+        <span lang="en">When you are done, your <code>starter/</code> (copied from Lab 05 solution) must match <code>Lab06-DDD/solution</code>. Legend: <code>[=]</code> kept from Lab 05, <code>[~]</code> modified, <code>[+]</code> created.</span>
+        <span lang="fr">À la fin, votre <code>starter/</code> (copié depuis la solution du Lab 05) doit correspondre à <code>Lab06-DDD/solution</code>. Légende : <code>[=]</code> conservé du Lab 05, <code>[~]</code> modifié, <code>[+]</code> créé.</span>
+      </p>
+      <div class="lg-tree"><span class="t-note">Lab06-DDD/starter/</span>
+├── <span class="t-chg">[~] pom.xml</span>               <span class="t-note">artifactId → banking-ddd-app</span>
+├── <span class="t-ok">[=] Containerfile</span>
+├── <span class="t-chg">[~] docker-compose.yml</span>    <span class="t-note">container_name: lab06-postgres</span>
+└── src/main/
+    ├── java/com/bank/
+    │   ├── domain/
+    │   │   ├── valueobject/
+    │   │   │   ├── <span class="t-new">[+] Money.java</span>
+    │   │   │   ├── <span class="t-new">[+] Email.java</span>
+    │   │   │   ├── <span class="t-new">[+] AccountNumber.java</span>
+    │   │   │   └── <span class="t-new">[+] AccountType.java</span>
+    │   │   ├── event/
+    │   │   │   ├── <span class="t-new">[+] MoneyDepositedEvent.java</span>
+    │   │   │   ├── <span class="t-new">[+] MoneyWithdrawnEvent.java</span>
+    │   │   │   └── <span class="t-new">[+] MoneyTransferredEvent.java</span>
+    │   │   ├── repository/
+    │   │   │   ├── <span class="t-new">[+] AccountRepository.java</span>
+    │   │   │   └── <span class="t-new">[+] ClientRepository.java</span>
+    │   │   └── service/
+    │   │       └── <span class="t-new">[+] TransferService.java</span>
+    │   ├── application/dto/
+    │   │   ├── <span class="t-new">[+] AccountDTO.java</span>
+    │   │   └── <span class="t-new">[+] ClientDTO.java</span>
+    │   ├── model/
+    │   │   ├── <span class="t-chg">[~] Account.java</span>
+    │   │   └── <span class="t-chg">[~] Client.java</span>
+    │   └── service/
+    │       ├── <span class="t-chg">[~] AccountService.java</span>
+    │       └── <span class="t-chg">[~] ClientService.java</span>
+    ├── liberty/config/
+    │   └── <span class="t-chg">[~] server.xml</span>
+    └── resources/db/migration/
+        └── <span class="t-new">[+] V5__refactor_for_ddd.sql</span></div>
+    </section>
+
+    <!-- ═════════════ 4. SETUP ═════════════ -->
+    <section class="lg-section" id="setup">
+      <h2><span class="lg-sec-num">04</span><span lang="en">Setup</span><span lang="fr">Préparation</span></h2>
+      <h3><span lang="en">Tools</span><span lang="fr">Outils</span></h3>
+      <table class="slide-table">
+        <thead><tr><th><span lang="en">Tool</span><span lang="fr">Outil</span></th><th><span lang="en">Check with</span><span lang="fr">Vérifier avec</span></th></tr></thead>
+        <tbody>
+          <tr><td>JDK 17+</td><td><code>java -version</code></td></tr>
+          <tr><td>Maven 3.x</td><td><code>mvn -v</code></td></tr>
+          <tr><td>Podman <span lang="en">(or Docker)</span><span lang="fr">(ou Docker)</span></td><td><code>podman --version</code></td></tr>
+          <tr><td>curl</td><td><code>curl --version</code></td></tr>
+        </tbody>
+      </table>
+
+      <h3><span lang="en">Copy the Lab 05 solution into your starter folder</span><span lang="fr">Copier la solution du Lab 05 dans votre dossier starter</span></h3>
+      <p>
+        <span lang="en"><strong>Rule 9</strong>: Lab 06 builds on Lab 05's solution. Copy it first, then apply the DDD changes on top.</span>
+        <span lang="fr"><strong>Règle 9</strong> : le Lab 06 repart de la solution du Lab 05. Copiez-la d'abord, puis appliquez les modifications DDD par-dessus.</span>
+      </p>
+      <pre class="dark"><code># from the repository root
+cp -r 03-Labs/Lab05-REST/solution/. 03-Labs/Lab06-DDD/starter/
+cd 03-Labs/Lab06-DDD/starter</code></pre>
+
+      <h3><span lang="en">Start the database</span><span lang="fr">Démarrer la base de données</span></h3>
+      <p>
+        <span lang="en">The database container for this lab is named <code>lab06-postgres</code>. Use the <code>docker-compose.yml</code> from <code>Lab06-DDD/solution</code> (the one you copied will still reference <code>banking-db</code> from Lab 05):</span>
+        <span lang="fr">Le conteneur de base de données de ce lab s'appelle <code>lab06-postgres</code>. Utilisez le <code>docker-compose.yml</code> de <code>Lab06-DDD/solution</code> (celui copié depuis le Lab 05 référence encore <code>banking-db</code>) :</span>
+      </p>
+      <pre class="dark"><code>podman-compose -f ../solution/docker-compose.yml up -d
+# or with docker:
+# docker compose -f ../solution/docker-compose.yml up -d</code></pre>
+      <div class="lg-callout lg-callout--warn">
+        <div lang="en">
+          <div class="lg-callout-title">Compose publishes <code>5432:5432</code> on all interfaces</div>
+          <p>The <code>docker-compose.yml</code> binds the PostgreSQL port as <code>5432:5432</code> (no <code>127.0.0.1:</code> prefix). This is a lab convenience. In production always bind to <code>127.0.0.1:5432:5432</code>. The credentials shown (<code>bankuser</code> / <code>bankpass</code>) are demo credentials and must never be reused in a real project.</p>
+        </div>
+        <div lang="fr">
+          <div class="lg-callout-title">Compose publie <code>5432:5432</code> sur toutes les interfaces</div>
+          <p>Le <code>docker-compose.yml</code> lie le port PostgreSQL en <code>5432:5432</code> (sans préfixe <code>127.0.0.1:</code>). C'est une facilité de lab. En production, liez toujours à <code>127.0.0.1:5432:5432</code>. Les identifiants affichés (<code>bankuser</code> / <code>bankpass</code>) sont des identifiants de démo et ne doivent jamais être réutilisés dans un vrai projet.</p>
+        </div>
+      </div>
+
+      <h3><span lang="en">Redeploy loop</span><span lang="fr">Boucle de redéploiement</span></h3>
+      <pre class="dark"><code>mvn clean package -DskipTests
+podman rm -f banking-lab06 2&gt;/dev/null
+podman build -t banking-ddd-app:lab06 -f Containerfile .
+podman run -d --name banking-lab06 \
+  -p 127.0.0.1:9080:9080 \
+  --network host \
+  banking-ddd-app:lab06
+until curl -fs http://localhost:9080/health &gt;/dev/null; do sleep 2; done; echo "ready"</code></pre>
+    </section>
+
+    <!-- ═════════════ 5. STEPS ═════════════ -->
+    <section class="lg-section" id="steps">
+      <h2><span class="lg-sec-num">05</span><span lang="en">Step by step</span><span lang="fr">Pas à pas</span></h2>
+      <p>
+        <span lang="en">Each step targets a DDD layer. Try each task on your own; open the hints only if you are stuck; run the checkpoint before continuing.</span>
+        <span lang="fr">Chaque étape cible une couche DDD. Essayez chaque tâche par vous-même ; n'ouvrez les indices qu'en cas de blocage ; lancez le point de contrôle avant de continuer.</span>
+      </p>
+      <ol class="lg-steps-overview">
+        <li><a href="#step-1"><span lang="en">Copy &amp; verify baseline</span><span lang="fr">Copier &amp; vérifier la base</span></a><span class="lg-dur">10 min</span></li>
+        <li><a href="#step-2"><span lang="en">Value objects</span><span lang="fr">Objets-valeur</span></a><span class="lg-dur">40 min</span></li>
+        <li><a href="#step-3"><span lang="en">Account aggregate</span><span lang="fr">Agrégat Account</span></a><span class="lg-dur">30 min</span></li>
+        <li><a href="#step-4"><span lang="en">Client aggregate</span><span lang="fr">Agrégat Client</span></a><span class="lg-dur">25 min</span></li>
+        <li><a href="#step-5"><span lang="en">Domain events</span><span lang="fr">Événements de domaine</span></a><span class="lg-dur">20 min</span></li>
+        <li><a href="#step-6"><span lang="en">Repository interfaces</span><span lang="fr">Interfaces repository</span></a><span class="lg-dur">15 min</span></li>
+        <li><a href="#step-7"><span lang="en">Domain service (TransferService)</span><span lang="fr">Service de domaine (TransferService)</span></a><span class="lg-dur">25 min</span></li>
+        <li><a href="#step-8"><span lang="en">Application services &amp; DTOs</span><span lang="fr">Services applicatifs &amp; DTOs</span></a><span class="lg-dur">30 min</span></li>
+        <li><a href="#step-9"><span lang="en">Flyway V5 migration &amp; API versioning</span><span lang="fr">Migration Flyway V5 &amp; versioning API</span></a><span class="lg-dur">20 min</span></li>
+        <li><a href="#step-10"><span lang="en">server.xml, pom.xml &amp; docker-compose</span><span lang="fr">server.xml, pom.xml &amp; docker-compose</span></a><span class="lg-dur">5 min</span></li>
+      </ol>
+
+      <!-- ───────── STEP 1 ───────── -->
+      <article class="lg-step" id="step-1">
+        <div class="lg-step-head">
+          <div class="lg-step-num">1</div>
+          <div>
+            <h3><span lang="en">Copy the Lab 05 baseline and verify it builds</span><span lang="fr">Copier la base du Lab 05 et vérifier qu'elle compile</span></h3>
+            <div class="lg-step-meta">
+              <span class="lg-chip">10 min</span>
+              <span class="lg-chip"><span lang="en">Maven WAR packaging</span><span lang="fr">Packaging WAR Maven</span></span>
+            </div>
+          </div>
+        </div>
+        <div class="lg-step-body">
+          <p class="lg-files"><span lang="en">Files:</span><span lang="fr">Fichiers :</span> <code>pom.xml</code>, <code>Containerfile</code></p>
+          <div class="lg-task-label"><span lang="en">Task</span><span lang="fr">À faire</span></div>
+          <ol>
+            <li><span lang="en">Copy the Lab 05 solution into <code>starter/</code> (see Setup).</span><span lang="fr">Copiez la solution du Lab 05 dans <code>starter/</code> (voir Préparation).</span></li>
+            <li><span lang="en">Build with Maven to confirm the baseline compiles without errors.</span><span lang="fr">Compilez avec Maven pour confirmer que la base compile sans erreur.</span></li>
+            <li><span lang="en">Note the <code>artifactId</code> in <code>pom.xml</code>: it is currently <code>banking-rest-app</code> and must be changed to <code>banking-ddd-app</code> later (step 10).</span><span lang="fr">Notez l'<code>artifactId</code> dans <code>pom.xml</code> : il est actuellement <code>banking-rest-app</code> et doit être changé en <code>banking-ddd-app</code> plus tard (étape 10).</span></li>
+          </ol>
+          <details class="lg-hint lg-hint--1">
+            <summary><span lang="en">Hint 1</span><span lang="fr">Indice 1</span></summary>
+            <div class="lg-hint-body">
+              <p><span lang="en">Run <code>mvn -q -DskipTests package</code>. The flag <code>-q</code> (quiet) shows only warnings and errors; a clean build produces no output.</span><span lang="fr">Lancez <code>mvn -q -DskipTests package</code>. Le flag <code>-q</code> (quiet) n'affiche que les avertissements et erreurs ; un build propre ne produit aucune sortie.</span></p>
+            </div>
+          </details>
+          <details class="lg-hint lg-hint--sol">
+            <summary><span lang="en">Solution folder</span><span lang="fr">Dossier solution</span></summary>
+            <div class="lg-hint-body">
+              <p><a href="https://github.com/oplanson/esipe-javaee/tree/master/03-Labs/Lab06-DDD/solution"><span lang="en">solution/ (full Lab 06 solution)</span><span lang="fr">solution/ (solution complète du Lab 06)</span></a></p>
+            </div>
+          </details>
+          <div class="lg-checkpoint">
+            <div class="lg-check-label"><span lang="en">Checkpoint</span><span lang="fr">Point de contrôle</span></div>
+            <pre class="dark"><code>mvn -q -DskipTests package</code></pre>
+            <p><span lang="en">Expected: <code>BUILD SUCCESS</code>, no errors. The WAR file is at <code>target/banking-rest-app.war</code> (the name changes in step 10).</span><span lang="fr">Attendu : <code>BUILD SUCCESS</code>, aucune erreur. Le WAR est dans <code>target/banking-rest-app.war</code> (le nom change à l'étape 10).</span></p>
+          </div>
+        </div>
+      </article>
+
+      <!-- ───────── STEP 2 ───────── -->
+      <article class="lg-step" id="step-2">
+        <div class="lg-step-head">
+          <div class="lg-step-num">2</div>
+          <div>
+            <h3><span lang="en">Value objects — <code>Money</code>, <code>Email</code>, <code>AccountNumber</code>, <code>AccountType</code></span><span lang="fr">Objets-valeur — <code>Money</code>, <code>Email</code>, <code>AccountNumber</code>, <code>AccountType</code></span></h3>
+            <div class="lg-step-meta">
+              <span class="lg-chip">40 min</span>
+              <span class="lg-chip"><span lang="en">DDD — Value Object</span><span lang="fr">DDD — Objet-valeur</span></span>
+            </div>
+          </div>
+        </div>
+        <div class="lg-step-body">
+          <p class="lg-files"><span lang="en">Files to create:</span><span lang="fr">Fichiers à créer :</span>
+            <code>Money.java</code>, <code>Email.java</code>, <code>AccountNumber.java</code>, <code>AccountType.java</code>
+            <span lang="en"> (all in <code>com.bank.domain.valueobject</code>)</span><span lang="fr"> (tous dans <code>com.bank.domain.valueobject</code>)</span>
+          </p>
+          <div class="lg-task-label"><span lang="en">Task</span><span lang="fr">À faire</span></div>
+          <ol>
+            <li>
+              <span lang="en">Create the package <code>com.bank.domain.valueobject</code> and implement the four value objects. Each must be: <code>@Embeddable</code>, immutable (no public setters after construction), self-validating (throws <code>IllegalArgumentException</code> on bad input), and override <code>equals()</code>, <code>hashCode()</code>, <code>toString()</code>.</span>
+              <span lang="fr">Créez le package <code>com.bank.domain.valueobject</code> et implémentez les quatre objets-valeur. Chacun doit être : <code>@Embeddable</code>, immuable (pas de setters publics après construction), auto-validant (lève <code>IllegalArgumentException</code> sur entrée invalide), et surcharger <code>equals()</code>, <code>hashCode()</code>, <code>toString()</code>.</span>
+            </li>
+            <li>
+              <span lang="en"><strong><code>Money</code></strong>: fields <code>BigDecimal amount</code> and <code>String currency</code> (ISO 4217). Factory methods: <code>euros(double)</code>, <code>zero(String)</code>, <code>of(double, String)</code>. Operations: <code>add()</code>, <code>subtract()</code>, <code>multiply()</code>. Comparisons: <code>isGreaterThan()</code>, <code>isLessThan()</code>, <code>isPositive()</code>, <code>isNegative()</code>, <code>isZero()</code>. The JPA-required <code>protected</code> no-arg constructor must exist but must not be public.</span>
+              <span lang="fr"><strong><code>Money</code></strong> : champs <code>BigDecimal amount</code> et <code>String currency</code> (ISO 4217). Méthodes fabriques : <code>euros(double)</code>, <code>zero(String)</code>, <code>of(double, String)</code>. Opérations : <code>add()</code>, <code>subtract()</code>, <code>multiply()</code>. Comparaisons : <code>isGreaterThan()</code>, <code>isLessThan()</code>, <code>isPositive()</code>, <code>isNegative()</code>, <code>isZero()</code>. Le constructeur sans argument <code>protected</code> requis par JPA doit exister mais ne pas être public.</span>
+            </li>
+            <li>
+              <span lang="en"><strong><code>Email</code></strong>: field <code>String value</code>, validated against a regex pattern. Factory: <code>Email.of(String)</code>. Utility: <code>getLocalPart()</code>, <code>getDomain()</code>, <code>getMasked()</code>.</span>
+              <span lang="fr"><strong><code>Email</code></strong> : champ <code>String value</code>, validé contre un motif regex. Fabrique : <code>Email.of(String)</code>. Utilitaires : <code>getLocalPart()</code>, <code>getDomain()</code>, <code>getMasked()</code>.</span>
+            </li>
+            <li>
+              <span lang="en"><strong><code>AccountNumber</code></strong>: field <code>String value</code> (IBAN format <code>FR76</code> + 23 digits). Static factory: <code>AccountNumber.generate()</code> generates a random IBAN-like number using UUID digits.</span>
+              <span lang="fr"><strong><code>AccountNumber</code></strong> : champ <code>String value</code> (format IBAN <code>FR76</code> + 23 chiffres). Fabrique statique : <code>AccountNumber.generate()</code> génère un numéro IBAN-like aléatoire à partir de chiffres UUID.</span>
+            </li>
+            <li>
+              <span lang="en"><strong><code>AccountType</code></strong>: an enum with values <code>CHECKING</code> (overdraft allowed down to −500 EUR) and <code>SAVINGS</code> (no overdraft, earns interest). Methods: <code>canWithdraw(Money balance, Money amount)</code>, <code>getMinimumBalance(String currency)</code>, <code>calculateInterest(Money, double rate, int days)</code>.</span>
+              <span lang="fr"><strong><code>AccountType</code></strong> : un enum avec les valeurs <code>CHECKING</code> (découvert autorisé jusqu'à −500 EUR) et <code>SAVINGS</code> (pas de découvert, génère des intérêts). Méthodes : <code>canWithdraw(Money balance, Money amount)</code>, <code>getMinimumBalance(String currency)</code>, <code>calculateInterest(Money, double rate, int days)</code>.</span>
+            </li>
+          </ol>
+          <details class="lg-hint lg-hint--1">
+            <summary><span lang="en">Hint 1 — key design rules for value objects</span><span lang="fr">Indice 1 — règles clés pour les objets-valeur</span></summary>
+            <div class="lg-hint-body">
+              <ul>
+                <li><span lang="en"><code>@Embeddable</code> tells JPA the object has no table of its own; its columns are embedded in the owner entity's table.</span><span lang="fr"><code>@Embeddable</code> dit à JPA que l'objet n'a pas de table propre ; ses colonnes sont intégrées dans la table de l'entité propriétaire.</span></li>
+                <li><span lang="en">Operations on value objects return <strong>new instances</strong> (never mutate <code>this</code>): e.g. <code>money.add(other)</code> returns a third <code>Money</code>, it does not change <code>money</code>.</span><span lang="fr">Les opérations sur les objets-valeur renvoient de <strong>nouvelles instances</strong> (ne mutent jamais <code>this</code>) : ex. <code>money.add(other)</code> renvoie un troisième <code>Money</code>, il ne change pas <code>money</code>.</span></li>
+                <li><span lang="en">Always validate currency compatibility before arithmetic; throw <code>IllegalArgumentException</code> on mismatch.</span><span lang="fr">Toujours vérifier la compatibilité des devises avant toute arithmétique ; lever <code>IllegalArgumentException</code> en cas d'incompatibilité.</span></li>
+              </ul>
+            </div>
+          </details>
+          <details class="lg-hint lg-hint--2">
+            <summary><span lang="en">Hint 2 — signatures and annotations</span><span lang="fr">Indice 2 — signatures et annotations</span></summary>
+            <div class="lg-hint-body">
+<pre class="dark"><code>@Embeddable
+public class Money {
+    @NotNull private BigDecimal amount;
+    @NotNull private String currency;
+    protected Money() {} // JPA only
+    public Money(BigDecimal amount, String currency) { /* validate + normalize */ }
+    public static Money euros(double amount) { return new Money(BigDecimal.valueOf(amount), "EUR"); }
+    public Money add(Money other) { /* check currency, return new Money */ }
+    public boolean isPositive() { return amount.compareTo(BigDecimal.ZERO) > 0; }
+    // equals / hashCode / toString on (amount, currency)
+}
+
+@Embeddable
+public class Email {
+    @NotNull @Pattern(regexp = "...") private String value;
+    protected Email() {}
+    public Email(String value) { /* validate + toLowerCase */ }
+}
+
+@Embeddable
+public class AccountNumber {
+    private String value;
+    protected AccountNumber() {}
+    public static AccountNumber generate() { /* FR76 + 23 UUID digits */ }
+}
+
+public enum AccountType {
+    CHECKING("Checking Account", false, true, -500.0),
+    SAVINGS ("Savings Account",  true,  false,  0.0);
+    // earnsInterest, allowsOverdraft, overdraftLimit
+    public boolean canWithdraw(Money balance, Money amount) { /* check min balance */ }
+    public Money calculateInterest(Money balance, double rate, int days) { /* simple interest */ }
+}</code></pre>
+            </div>
+          </details>
+          <details class="lg-hint lg-hint--sol">
+            <summary><span lang="en">Solution files</span><span lang="fr">Fichiers solution</span></summary>
+            <div class="lg-hint-body">
+              <p>
+                <a href="https://github.com/oplanson/esipe-javaee/blob/master/03-Labs/Lab06-DDD/solution/src/main/java/com/bank/domain/valueobject/Money.java"><code>Money.java</code></a> ·
+                <a href="https://github.com/oplanson/esipe-javaee/blob/master/03-Labs/Lab06-DDD/solution/src/main/java/com/bank/domain/valueobject/Email.java"><code>Email.java</code></a> ·
+                <a href="https://github.com/oplanson/esipe-javaee/blob/master/03-Labs/Lab06-DDD/solution/src/main/java/com/bank/domain/valueobject/AccountNumber.java"><code>AccountNumber.java</code></a> ·
+                <a href="https://github.com/oplanson/esipe-javaee/blob/master/03-Labs/Lab06-DDD/solution/src/main/java/com/bank/domain/valueobject/AccountType.java"><code>AccountType.java</code></a>
+              </p>
+            </div>
+          </details>
+          <div class="lg-checkpoint">
+            <div class="lg-check-label"><span lang="en">Checkpoint</span><span lang="fr">Point de contrôle</span></div>
+            <pre class="dark"><code>mvn -q compile</code></pre>
+            <p><span lang="en">Expected: no output, no error. If the compiler cannot find the <code>@Embeddable</code> annotation, the <code>jakarta.platform:jakarta.jakartaee-api</code> dependency has been removed from <code>pom.xml</code>.</span><span lang="fr">Attendu : aucune sortie, aucune erreur. Si le compilateur ne trouve pas l'annotation <code>@Embeddable</code>, la dépendance <code>jakarta.platform:jakarta.jakartaee-api</code> a été retirée du <code>pom.xml</code>.</span></p>
+          </div>
+        </div>
+      </article>
+
+      <!-- ───────── STEP 3 ───────── -->
+      <article class="lg-step" id="step-3">
+        <div class="lg-step-head">
+          <div class="lg-step-num">3</div>
+          <div>
+            <h3><span lang="en"><code>Account</code> aggregate root — rich domain model</span><span lang="fr">Agrégat <code>Account</code> — modèle de domaine riche</span></h3>
+            <div class="lg-step-meta">
+              <span class="lg-chip">30 min</span>
+              <span class="lg-chip"><span lang="en">DDD — Aggregate Root</span><span lang="fr">DDD — Racine d'agrégat</span></span>
+            </div>
+          </div>
+        </div>
+        <div class="lg-step-body">
+          <p class="lg-files"><span lang="en">File to modify:</span><span lang="fr">Fichier à modifier :</span> <code>src/main/java/com/bank/model/Account.java</code></p>
+          <div class="lg-task-label"><span lang="en">Task</span><span lang="fr">À faire</span></div>
+          <ol>
+            <li><span lang="en">Replace the primitive fields <code>String number</code>, <code>double balance</code>, <code>String type</code> with the value objects: <code>AccountNumber accountNumber</code>, <code>Money balance</code>, <code>AccountType accountType</code>. Use <code>@Embedded</code> + <code>@AttributeOverride</code> to map them to the correct column names.</span><span lang="fr">Remplacez les champs primitifs <code>String number</code>, <code>double balance</code>, <code>String type</code> par les objets-valeur : <code>AccountNumber accountNumber</code>, <code>Money balance</code>, <code>AccountType accountType</code>. Utilisez <code>@Embedded</code> + <code>@AttributeOverride</code> pour les mapper sur les bons noms de colonnes.</span></li>
+            <li><span lang="en">Make all public setters private or package-private (JPA + test use only). Add a static factory method <code>Account.create(Client, AccountType, Money initialDeposit)</code> that enforces the business rule: initial deposit ≥ 10 EUR.</span><span lang="fr">Rendez tous les setters publics privés ou package-private (usage JPA + tests uniquement). Ajoutez une méthode fabrique statique <code>Account.create(Client, AccountType, Money initialDeposit)</code> qui applique la règle métier : dépôt initial ≥ 10 EUR.</span></li>
+            <li><span lang="en">Add rich business methods: <code>deposit(Money)</code>, <code>withdraw(Money)</code>, <code>transferTo(Account, Money)</code>, <code>isOverdrawn()</code>, <code>canWithdraw(Money)</code>, <code>applyInterest(double rate, int days)</code>. Each validates its inputs and delegates currency/limit checks to <code>AccountType</code> and <code>Money</code>.</span><span lang="fr">Ajoutez des méthodes métier riches : <code>deposit(Money)</code>, <code>withdraw(Money)</code>, <code>transferTo(Account, Money)</code>, <code>isOverdrawn()</code>, <code>canWithdraw(Money)</code>, <code>applyInterest(double rate, int days)</code>. Chacune valide ses entrées et délègue les vérifications devise/limite à <code>AccountType</code> et <code>Money</code>.</span></li>
+            <li><span lang="en">Add a <code>@PrePersist</code> / <code>@PreUpdate</code> lifecycle method that calls a private <code>validateInvariants()</code>: checks <code>accountNumber</code>, <code>balance</code>, <code>accountType</code> and <code>client</code> are non-null, and that the balance is above the type's minimum.</span><span lang="fr">Ajoutez une méthode de cycle de vie <code>@PrePersist</code> / <code>@PreUpdate</code> qui appelle un <code>validateInvariants()</code> privé : vérifie que <code>accountNumber</code>, <code>balance</code>, <code>accountType</code> et <code>client</code> sont non-null, et que le solde est au-dessus du minimum du type.</span></li>
+          </ol>
+          <details class="lg-hint lg-hint--1">
+            <summary><span lang="en">Hint 1 — JPA embedding</span><span lang="fr">Indice 1 — incorporation JPA</span></summary>
+            <div class="lg-hint-body">
+              <p><span lang="en">For <code>Money balance</code>, the two columns are <code>balance_amount</code> and <code>balance_currency</code> (added by Flyway V5). Use:</span><span lang="fr">Pour <code>Money balance</code>, les deux colonnes sont <code>balance_amount</code> et <code>balance_currency</code> (ajoutées par Flyway V5). Utilisez :</span></p>
+<pre class="dark"><code>@Embedded
+@AttributeOverrides({
+  @AttributeOverride(name="amount",   column=@Column(name="balance_amount",   ...)),
+  @AttributeOverride(name="currency", column=@Column(name="balance_currency", ...))
+})
+private Money balance;</code></pre>
+              <p><span lang="en">For <code>AccountNumber</code>, the column is <code>account_number</code>. For <code>AccountType</code>, use <code>@Enumerated(EnumType.STRING)</code> instead of <code>@Embedded</code>.</span><span lang="fr">Pour <code>AccountNumber</code>, la colonne est <code>account_number</code>. Pour <code>AccountType</code>, utilisez <code>@Enumerated(EnumType.STRING)</code> au lieu de <code>@Embedded</code>.</span></p>
+            </div>
+          </details>
+          <details class="lg-hint lg-hint--2">
+            <summary><span lang="en">Hint 2 — deposit business method</span><span lang="fr">Indice 2 — méthode métier deposit</span></summary>
+            <div class="lg-hint-body">
+<pre class="dark"><code>public void deposit(Money amount) {
+    if (amount == null) throw new IllegalArgumentException("Deposit amount cannot be null");
+    if (!amount.isPositive()) throw new IllegalArgumentException("Deposit amount must be positive");
+    if (!amount.getCurrency().equals(balance.getCurrency()))
+        throw new IllegalArgumentException("Currency mismatch");
+    this.balance = this.balance.add(amount); // immutable — creates a new Money
+}</code></pre>
+              <p><span lang="en">Note: <code>this.balance = balance.add(amount)</code> reassigns the field to a new <code>Money</code> object. This is correct: the <em>field</em> is mutable (the entity changes state) but the <em>value object</em> is not.</span><span lang="fr">Note : <code>this.balance = balance.add(amount)</code> réassigne le champ à un nouvel objet <code>Money</code>. C'est correct : le <em>champ</em> est mutable (l'entité change d'état) mais l'<em>objet-valeur</em> ne l'est pas.</span></p>
+            </div>
+          </details>
+          <details class="lg-hint lg-hint--sol">
+            <summary><span lang="en">Solution file</span><span lang="fr">Fichier solution</span></summary>
+            <div class="lg-hint-body">
+              <p><a href="https://github.com/oplanson/esipe-javaee/blob/master/03-Labs/Lab06-DDD/solution/src/main/java/com/bank/model/Account.java"><code>solution/…/model/Account.java</code></a> <span lang="en">(~450 lines — read the signatures; the full logic is in the file)</span><span lang="fr">(~450 lignes — lisez les signatures ; la logique complète est dans le fichier)</span></p>
+            </div>
+          </details>
+          <div class="lg-checkpoint">
+            <div class="lg-check-label"><span lang="en">Checkpoint</span><span lang="fr">Point de contrôle</span></div>
+            <pre class="dark"><code>mvn -q compile</code></pre>
+            <p><span lang="en">Expected: no output, no error. If you see <code>cannot find symbol: AccountNumber</code>, check that <code>Money.java</code>, <code>AccountNumber.java</code> and <code>AccountType.java</code> are in <code>com.bank.domain.valueobject</code> and that the import statements are correct.</span><span lang="fr">Attendu : aucune sortie, aucune erreur. Si vous voyez <code>cannot find symbol: AccountNumber</code>, vérifiez que <code>Money.java</code>, <code>AccountNumber.java</code> et <code>AccountType.java</code> sont dans <code>com.bank.domain.valueobject</code> et que les imports sont corrects.</span></p>
+          </div>
+        </div>
+      </article>
+
+      <!-- ───────── STEP 4 ───────── -->
+      <article class="lg-step" id="step-4">
+        <div class="lg-step-head">
+          <div class="lg-step-num">4</div>
+          <div>
+            <h3><span lang="en"><code>Client</code> aggregate root — rich domain model</span><span lang="fr">Agrégat <code>Client</code> — modèle de domaine riche</span></h3>
+            <div class="lg-step-meta">
+              <span class="lg-chip">25 min</span>
+              <span class="lg-chip"><span lang="en">DDD — Aggregate Root</span><span lang="fr">DDD — Racine d'agrégat</span></span>
+            </div>
+          </div>
+        </div>
+        <div class="lg-step-body">
+          <p class="lg-files"><span lang="en">File to modify:</span><span lang="fr">Fichier à modifier :</span> <code>src/main/java/com/bank/model/Client.java</code></p>
+          <div class="lg-task-label"><span lang="en">Task</span><span lang="fr">À faire</span></div>
+          <ol>
+            <li><span lang="en">Replace the <code>String email</code> field with <code>Email email</code> (the value object from step 2). Map it with <code>@Embedded @AttributeOverride(name="value", column=@Column(name="email", ...))</code>.</span><span lang="fr">Remplacez le champ <code>String email</code> par <code>Email email</code> (l'objet-valeur de l'étape 2). Mappez-le avec <code>@Embedded @AttributeOverride(name="value", column=@Column(name="email", ...))</code>.</span></li>
+            <li><span lang="en">Add factory methods <code>Client.create(String name, Email email)</code> and <code>Client.createPremium(String name, Email email)</code>.</span><span lang="fr">Ajoutez les méthodes fabriques <code>Client.create(String name, Email email)</code> et <code>Client.createPremium(String name, Email email)</code>.</span></li>
+            <li><span lang="en">Add business methods: <code>upgradeToPremium()</code>, <code>downgradeFromPremium()</code> (must check that no accounts are overdrawn), <code>addAccount(Account)</code> (enforces the limit: 5 for standard, 10 for premium clients), <code>removeAccount(Account)</code>, <code>canOpenNewAccount()</code>, <code>getMaxAccountsAllowed()</code>.</span><span lang="fr">Ajoutez les méthodes métier : <code>upgradeToPremium()</code>, <code>downgradeFromPremium()</code> (doit vérifier qu'aucun compte n'est à découvert), <code>addAccount(Account)</code> (applique la limite : 5 pour standard, 10 pour premium), <code>removeAccount(Account)</code>, <code>canOpenNewAccount()</code>, <code>getMaxAccountsAllowed()</code>.</span></li>
+            <li><span lang="en">Make <code>getAccounts()</code> return <code>Collections.unmodifiableList(accounts)</code> to protect the aggregate boundary.</span><span lang="fr">Faites retourner à <code>getAccounts()</code> <code>Collections.unmodifiableList(accounts)</code> pour protéger la frontière de l'agrégat.</span></li>
+          </ol>
+          <details class="lg-hint lg-hint--1">
+            <summary><span lang="en">Hint 1</span><span lang="fr">Indice 1</span></summary>
+            <div class="lg-hint-body">
+              <ul>
+                <li><span lang="en">The <code>accounts</code> collection relationship is <code>@OneToMany(mappedBy="client", cascade=CascadeType.ALL, orphanRemoval=true, fetch=FetchType.LAZY)</code>.</span><span lang="fr">La relation de collection <code>accounts</code> est <code>@OneToMany(mappedBy="client", cascade=CascadeType.ALL, orphanRemoval=true, fetch=FetchType.LAZY)</code>.</span></li>
+                <li><span lang="en"><code>downgradeFromPremium()</code> must use <code>accounts.stream().anyMatch(Account::isOverdrawn)</code>.</span><span lang="fr"><code>downgradeFromPremium()</code> doit utiliser <code>accounts.stream().anyMatch(Account::isOverdrawn)</code>.</span></li>
+              </ul>
+            </div>
+          </details>
+          <details class="lg-hint lg-hint--2">
+            <summary><span lang="en">Hint 2 — <code>addAccount</code> method</span><span lang="fr">Indice 2 — méthode <code>addAccount</code></span></summary>
+            <div class="lg-hint-body">
+<pre class="dark"><code>public void addAccount(Account account) {
+    if (accounts.size() >= getMaxAccountsAllowed())
+        throw new IllegalStateException("Client has reached maximum accounts: " + getMaxAccountsAllowed());
+    if (!accounts.contains(account)) {
+        accounts.add(account);
+        account.setClient(this); // package-private setter in Account
+    }
+}</code></pre>
+            </div>
+          </details>
+          <details class="lg-hint lg-hint--sol">
+            <summary><span lang="en">Solution file</span><span lang="fr">Fichier solution</span></summary>
+            <div class="lg-hint-body">
+              <p><a href="https://github.com/oplanson/esipe-javaee/blob/master/03-Labs/Lab06-DDD/solution/src/main/java/com/bank/model/Client.java"><code>solution/…/model/Client.java</code></a> <span lang="en">(~400 lines)</span><span lang="fr">(~400 lignes)</span></p>
+            </div>
+          </details>
+          <div class="lg-checkpoint">
+            <div class="lg-check-label"><span lang="en">Checkpoint</span><span lang="fr">Point de contrôle</span></div>
+            <pre class="dark"><code>mvn -q compile</code></pre>
+            <p><span lang="en">Expected: no output, no error.</span><span lang="fr">Attendu : aucune sortie, aucune erreur.</span></p>
+          </div>
+        </div>
+      </article>
+
+      <!-- ───────── STEP 5 ───────── -->
+      <article class="lg-step" id="step-5">
+        <div class="lg-step-head">
+          <div class="lg-step-num">5</div>
+          <div>
+            <h3><span lang="en">Domain events — <code>MoneyDepositedEvent</code>, <code>MoneyWithdrawnEvent</code>, <code>MoneyTransferredEvent</code></span><span lang="fr">Événements de domaine — <code>MoneyDepositedEvent</code>, <code>MoneyWithdrawnEvent</code>, <code>MoneyTransferredEvent</code></span></h3>
+            <div class="lg-step-meta">
+              <span class="lg-chip">20 min</span>
+              <span class="lg-chip"><span lang="en">DDD — Domain Events</span><span lang="fr">DDD — Événements de domaine</span></span>
+            </div>
+          </div>
+        </div>
+        <div class="lg-step-body">
+          <p class="lg-files"><span lang="en">Files to create (in <code>com.bank.domain.event</code>):</span><span lang="fr">Fichiers à créer (dans <code>com.bank.domain.event</code>) :</span>
+            <code>MoneyDepositedEvent.java</code>, <code>MoneyWithdrawnEvent.java</code>, <code>MoneyTransferredEvent.java</code>
+          </p>
+          <div class="lg-task-label"><span lang="en">Task</span><span lang="fr">À faire</span></div>
+          <p><span lang="en">Create the three domain event classes. Each must be: immutable (all fields <code>final</code>), capture a timestamp (<code>LocalDateTime occurredAt = LocalDateTime.now()</code> in the constructor), expose only getters, and provide a meaningful <code>toString()</code>.</span><span lang="fr">Créez les trois classes d'événements de domaine. Chacune doit être : immuable (tous les champs <code>final</code>), capturer un horodatage (<code>LocalDateTime occurredAt = LocalDateTime.now()</code> dans le constructeur), n'exposer que des getters, et fournir un <code>toString()</code> significatif.</span></p>
+          <ul>
+            <li><span lang="en"><strong><code>MoneyDepositedEvent</code></strong>: <code>Account account</code>, <code>Money amount</code>, <code>Money balanceAfter</code>.</span><span lang="fr"><strong><code>MoneyDepositedEvent</code></strong> : <code>Account account</code>, <code>Money amount</code>, <code>Money balanceAfter</code>.</span></li>
+            <li><span lang="en"><strong><code>MoneyWithdrawnEvent</code></strong>: <code>Account account</code>, <code>Money amount</code>, <code>Money balanceAfter</code>.</span><span lang="fr"><strong><code>MoneyWithdrawnEvent</code></strong> : <code>Account account</code>, <code>Money amount</code>, <code>Money balanceAfter</code>.</span></li>
+            <li><span lang="en"><strong><code>MoneyTransferredEvent</code></strong>: <code>Account fromAccount</code>, <code>Account toAccount</code>, <code>Money amount</code>.</span><span lang="fr"><strong><code>MoneyTransferredEvent</code></strong> : <code>Account fromAccount</code>, <code>Account toAccount</code>, <code>Money amount</code>.</span></li>
+          </ul>
+          <details class="lg-hint lg-hint--1">
+            <summary><span lang="en">Hint 1 — why domain events?</span><span lang="fr">Indice 1 — pourquoi des événements de domaine ?</span></summary>
+            <div class="lg-hint-body">
+              <p><span lang="en">A domain event decouples the code that causes a change from the code that reacts to it. Here, <code>MoneyDepositedEvent</code> is picked up by <code>BankingEventObserver</code> to log an audit trail. The event is fired from the application service (step 8), not from the aggregate itself (to avoid CDI dependency in the domain layer).</span><span lang="fr">Un événement de domaine découple le code qui provoque un changement du code qui y réagit. Ici, <code>MoneyDepositedEvent</code> est capté par <code>BankingEventObserver</code> pour journaliser une piste d'audit. L'événement est déclenché depuis le service applicatif (étape 8), et non depuis l'agrégat lui-même (pour éviter une dépendance CDI dans la couche domaine).</span></p>
+            </div>
+          </details>
+          <details class="lg-hint lg-hint--sol">
+            <summary><span lang="en">Solution files</span><span lang="fr">Fichiers solution</span></summary>
+            <div class="lg-hint-body">
+              <p>
+                <a href="https://github.com/oplanson/esipe-javaee/blob/master/03-Labs/Lab06-DDD/solution/src/main/java/com/bank/domain/event/MoneyDepositedEvent.java"><code>MoneyDepositedEvent.java</code></a> ·
+                <a href="https://github.com/oplanson/esipe-javaee/blob/master/03-Labs/Lab06-DDD/solution/src/main/java/com/bank/domain/event/MoneyWithdrawnEvent.java"><code>MoneyWithdrawnEvent.java</code></a> ·
+                <a href="https://github.com/oplanson/esipe-javaee/blob/master/03-Labs/Lab06-DDD/solution/src/main/java/com/bank/domain/event/MoneyTransferredEvent.java"><code>MoneyTransferredEvent.java</code></a>
+              </p>
+            </div>
+          </details>
+          <div class="lg-checkpoint">
+            <div class="lg-check-label"><span lang="en">Checkpoint</span><span lang="fr">Point de contrôle</span></div>
+            <pre class="dark"><code>mvn -q compile</code></pre>
+            <p><span lang="en">Expected: no output, no error.</span><span lang="fr">Attendu : aucune sortie, aucune erreur.</span></p>
+          </div>
+        </div>
+      </article>
+
+      <!-- ───────── STEP 6 ───────── -->
+      <article class="lg-step" id="step-6">
+        <div class="lg-step-head">
+          <div class="lg-step-num">6</div>
+          <div>
+            <h3><span lang="en">Repository interfaces — <code>AccountRepository</code>, <code>ClientRepository</code></span><span lang="fr">Interfaces repository — <code>AccountRepository</code>, <code>ClientRepository</code></span></h3>
+            <div class="lg-step-meta">
+              <span class="lg-chip">15 min</span>
+              <span class="lg-chip"><span lang="en">DDD — Repository pattern</span><span lang="fr">DDD — Pattern Repository</span></span>
+            </div>
+          </div>
+        </div>
+        <div class="lg-step-body">
+          <p class="lg-files"><span lang="en">Files to create (in <code>com.bank.domain.repository</code>):</span><span lang="fr">Fichiers à créer (dans <code>com.bank.domain.repository</code>) :</span>
+            <code>AccountRepository.java</code>, <code>ClientRepository.java</code>
+          </p>
+          <div class="lg-task-label"><span lang="en">Task</span><span lang="fr">À faire</span></div>
+          <p><span lang="en">Define the two repository interfaces. They belong to the <strong>domain layer</strong> (no JPA annotations, no CDI, pure domain types). The application services in Lab 06 still use JPA directly through <code>EntityManager</code>; these interfaces document the contract that a future Lab 07 infrastructure layer will implement.</span><span lang="fr">Définissez les deux interfaces repository. Elles appartiennent à la <strong>couche domaine</strong> (pas d'annotations JPA, pas de CDI, types domaine purs). Les services applicatifs du Lab 06 utilisent encore JPA directement via l'<code>EntityManager</code> ; ces interfaces documentent le contrat qu'une future couche infrastructure du Lab 07 implémentera.</span></p>
+          <ul>
+            <li><span lang="en"><strong><code>AccountRepository</code></strong> methods: <code>save(Account)</code>, <code>findById(Long)</code> → <code>Optional&lt;Account&gt;</code>, <code>findByAccountNumber(AccountNumber)</code> → <code>Optional&lt;Account&gt;</code>, <code>findByClientId(Long)</code>, <code>findByType(AccountType)</code>, <code>findAll()</code>, <code>count()</code>, <code>delete(Account)</code>, <code>deleteById(Long)</code>, <code>existsById(Long)</code>.</span><span lang="fr"><strong><code>AccountRepository</code></strong> méthodes : <code>save(Account)</code>, <code>findById(Long)</code> → <code>Optional&lt;Account&gt;</code>, <code>findByAccountNumber(AccountNumber)</code> → <code>Optional&lt;Account&gt;</code>, <code>findByClientId(Long)</code>, <code>findByType(AccountType)</code>, <code>findAll()</code>, <code>count()</code>, <code>delete(Account)</code>, <code>deleteById(Long)</code>, <code>existsById(Long)</code>.</span></li>
+            <li><span lang="en"><strong><code>ClientRepository</code></strong>: mirror interface for the <code>Client</code> aggregate.</span><span lang="fr"><strong><code>ClientRepository</code></strong> : interface miroir pour l'agrégat <code>Client</code>.</span></li>
+          </ul>
+          <details class="lg-hint lg-hint--sol">
+            <summary><span lang="en">Solution files</span><span lang="fr">Fichiers solution</span></summary>
+            <div class="lg-hint-body">
+              <p>
+                <a href="https://github.com/oplanson/esipe-javaee/blob/master/03-Labs/Lab06-DDD/solution/src/main/java/com/bank/domain/repository/AccountRepository.java"><code>AccountRepository.java</code></a> ·
+                <a href="https://github.com/oplanson/esipe-javaee/blob/master/03-Labs/Lab06-DDD/solution/src/main/java/com/bank/domain/repository/ClientRepository.java"><code>ClientRepository.java</code></a>
+              </p>
+            </div>
+          </details>
+          <div class="lg-checkpoint">
+            <div class="lg-check-label"><span lang="en">Checkpoint</span><span lang="fr">Point de contrôle</span></div>
+            <pre class="dark"><code>mvn -q compile</code></pre>
+            <p><span lang="en">Expected: no output, no error.</span><span lang="fr">Attendu : aucune sortie, aucune erreur.</span></p>
+          </div>
+        </div>
+      </article>
+
+      <!-- ───────── STEP 7 ───────── -->
+      <article class="lg-step" id="step-7">
+        <div class="lg-step-head">
+          <div class="lg-step-num">7</div>
+          <div>
+            <h3><span lang="en">Domain service — <code>TransferService</code></span><span lang="fr">Service de domaine — <code>TransferService</code></span></h3>
+            <div class="lg-step-meta">
+              <span class="lg-chip">25 min</span>
+              <span class="lg-chip"><span lang="en">DDD — Domain Service</span><span lang="fr">DDD — Service de domaine</span></span>
+            </div>
+          </div>
+        </div>
+        <div class="lg-step-body">
+          <p class="lg-files"><span lang="en">File to create:</span><span lang="fr">Fichier à créer :</span> <code>src/main/java/com/bank/domain/service/TransferService.java</code></p>
+          <div class="lg-task-label"><span lang="en">Task</span><span lang="fr">À faire</span></div>
+          <ol>
+            <li><span lang="en">Create <code>TransferService</code> in <code>com.bank.domain.service</code>, annotated <code>@ApplicationScoped</code>. It is a <em>domain service</em> because it coordinates operations across two aggregates (source account and destination account) that do not naturally belong to either.</span><span lang="fr">Créez <code>TransferService</code> dans <code>com.bank.domain.service</code>, annoté <code>@ApplicationScoped</code>. C'est un <em>service de domaine</em> car il coordonne des opérations sur deux agrégats (compte source et compte destination) qui n'appartiennent naturellement à aucun des deux.</span></li>
+            <li><span lang="en">Implement <code>@Transactional transfer(Account from, Account to, Money amount)</code>: validates both accounts and amount, then calls <code>from.transferTo(to, amount)</code> (which delegates to <code>withdraw</code> + <code>deposit</code> on the aggregates).</span><span lang="fr">Implémentez <code>@Transactional transfer(Account from, Account to, Money amount)</code> : valide les deux comptes et le montant, puis appelle <code>from.transferTo(to, amount)</code> (qui délègue à <code>withdraw</code> + <code>deposit</code> sur les agrégats).</span></li>
+            <li><span lang="en">Implement <code>transferWithFee(Account from, Account to, Money amount, boolean isPremiumClient)</code>: calculates the fee (premium → 0, standard → 1%, min 1 EUR, max 50 EUR), withdraws <code>amount + fee</code> from the source, deposits only <code>amount</code> to the destination.</span><span lang="fr">Implémentez <code>transferWithFee(Account from, Account to, Money amount, boolean isPremiumClient)</code> : calcule les frais (premium → 0, standard → 1%, min 1 EUR, max 50 EUR), retire <code>amount + fee</code> du compte source, dépose uniquement <code>amount</code> sur le compte destination.</span></li>
+            <li><span lang="en">Add a read-only <code>canTransfer(Account, Account, Money)</code> utility that checks feasibility without executing.</span><span lang="fr">Ajoutez un utilitaire en lecture seule <code>canTransfer(Account, Account, Money)</code> qui vérifie la faisabilité sans exécuter.</span></li>
+          </ol>
+          <details class="lg-hint lg-hint--1">
+            <summary><span lang="en">Hint 1 — why a domain service and not a method on Account?</span><span lang="fr">Indice 1 — pourquoi un service de domaine et pas une méthode sur Account ?</span></summary>
+            <div class="lg-hint-body">
+              <p><span lang="en">A transfer involves two Account aggregates. If <code>Account.transferTo()</code> only delegates withdraw + deposit, the <em>coordination</em> (loading both accounts, checking business rules that span both) is the responsibility of a domain service. The domain service knows about both aggregates; each aggregate only knows about itself.</span><span lang="fr">Un virement implique deux agrégats Account. Si <code>Account.transferTo()</code> ne fait que déléguer retrait + dépôt, la <em>coordination</em> (chargement des deux comptes, vérification des règles métier qui s'étendent aux deux) est la responsabilité d'un service de domaine. Le service de domaine connaît les deux agrégats ; chaque agrégat ne connaît que lui-même.</span></p>
+            </div>
+          </details>
+          <details class="lg-hint lg-hint--2">
+            <summary><span lang="en">Hint 2 — fee calculation skeleton</span><span lang="fr">Indice 2 — squelette du calcul de frais</span></summary>
+            <div class="lg-hint-body">
+<pre class="dark"><code>public Money calculateTransferFee(Money amount, boolean isPremiumClient) {
+    if (isPremiumClient) return Money.zero(amount.getCurrency());
+    Money fee = amount.multiply(0.01);
+    Money min = Money.of(1.0, amount.getCurrency());
+    Money max = Money.of(50.0, amount.getCurrency());
+    if (fee.isLessThan(min)) return min;
+    if (fee.isGreaterThan(max)) return max;
+    return fee;
+}</code></pre>
+            </div>
+          </details>
+          <details class="lg-hint lg-hint--sol">
+            <summary><span lang="en">Solution file</span><span lang="fr">Fichier solution</span></summary>
+            <div class="lg-hint-body">
+              <p><a href="https://github.com/oplanson/esipe-javaee/blob/master/03-Labs/Lab06-DDD/solution/src/main/java/com/bank/domain/service/TransferService.java"><code>solution/…/domain/service/TransferService.java</code></a></p>
+            </div>
+          </details>
+          <div class="lg-checkpoint">
+            <div class="lg-check-label"><span lang="en">Checkpoint</span><span lang="fr">Point de contrôle</span></div>
+            <pre class="dark"><code>mvn -q compile</code></pre>
+            <p><span lang="en">Expected: no output, no error.</span><span lang="fr">Attendu : aucune sortie, aucune erreur.</span></p>
+          </div>
+        </div>
+      </article>
+
+      <!-- ───────── STEP 8 ───────── -->
+      <article class="lg-step" id="step-8">
+        <div class="lg-step-head">
+          <div class="lg-step-num">8</div>
+          <div>
+            <h3><span lang="en">Application services &amp; application-layer DTOs</span><span lang="fr">Services applicatifs &amp; DTOs de couche application</span></h3>
+            <div class="lg-step-meta">
+              <span class="lg-chip">30 min</span>
+              <span class="lg-chip"><span lang="en">DDD — Application layer</span><span lang="fr">DDD — Couche application</span></span>
+            </div>
+          </div>
+        </div>
+        <div class="lg-step-body">
+          <p class="lg-files"><span lang="en">Files to modify/create:</span><span lang="fr">Fichiers à modifier/créer :</span>
+            <code>service/AccountService.java</code>, <code>service/ClientService.java</code>,
+            <code>application/dto/AccountDTO.java</code>, <code>application/dto/ClientDTO.java</code>
+          </p>
+          <div class="lg-task-label"><span lang="en">Task</span><span lang="fr">À faire</span></div>
+          <ol>
+            <li><span lang="en">Create the package <code>com.bank.application.dto</code> with <code>AccountDTO</code> and <code>ClientDTO</code>. They are plain Java classes (no JPA annotations) used to decouple the domain model from REST resources and JSP views.</span><span lang="fr">Créez le package <code>com.bank.application.dto</code> avec <code>AccountDTO</code> et <code>ClientDTO</code>. Ce sont des classes Java simples (pas d'annotations JPA) utilisées pour découpler le modèle de domaine des ressources REST et des vues JSP.</span></li>
+            <li><span lang="en">Update <code>AccountService.deposit(Long accountId, double amount)</code> to use the <code>Money</code> value object: <code>Money depositAmount = Money.of(BigDecimal.valueOf(amount), account.getBalance().getCurrency()); account.deposit(depositAmount);</code> Same pattern for <code>withdraw</code> and <code>transfer</code>.</span><span lang="fr">Mettez à jour <code>AccountService.deposit(Long accountId, double amount)</code> pour utiliser l'objet-valeur <code>Money</code> : <code>Money depositAmount = Money.of(BigDecimal.valueOf(amount), account.getBalance().getCurrency()); account.deposit(depositAmount);</code> Même pattern pour <code>withdraw</code> et <code>transfer</code>.</span></li>
+            <li><span lang="en">Update <code>AccountService.create(Account, Long clientId)</code> to call <code>client.addAccount(account)</code> instead of setting the client directly. This enforces the business rule (max accounts) in the domain.</span><span lang="fr">Mettez à jour <code>AccountService.create(Account, Long clientId)</code> pour appeler <code>client.addAccount(account)</code> au lieu de définir directement le client. Cela applique la règle métier (max comptes) dans le domaine.</span></li>
+          </ol>
+          <details class="lg-hint lg-hint--1">
+            <summary><span lang="en">Hint 1 — mapping Money to double for views</span><span lang="fr">Indice 1 — mapper Money vers double pour les vues</span></summary>
+            <div class="lg-hint-body">
+              <p><span lang="en">Views and REST endpoints often need a simple <code>double</code> or <code>String</code>. Add convenience getters to <code>Account</code>: <code>getBalanceAsDouble()</code> returns <code>balance.getAmountAsDouble()</code>, and <code>getNumber()</code> returns <code>accountNumber.getValue()</code>. This avoids coupling JSP/REST to the value object API.</span><span lang="fr">Les vues et les endpoints REST ont souvent besoin d'un simple <code>double</code> ou <code>String</code>. Ajoutez des getters pratiques à <code>Account</code> : <code>getBalanceAsDouble()</code> retourne <code>balance.getAmountAsDouble()</code>, et <code>getNumber()</code> retourne <code>accountNumber.getValue()</code>. Cela évite de coupler JSP/REST à l'API des objets-valeur.</span></p>
+            </div>
+          </details>
+          <details class="lg-hint lg-hint--sol">
+            <summary><span lang="en">Solution files</span><span lang="fr">Fichiers solution</span></summary>
+            <div class="lg-hint-body">
+              <p>
+                <a href="https://github.com/oplanson/esipe-javaee/blob/master/03-Labs/Lab06-DDD/solution/src/main/java/com/bank/service/AccountService.java"><code>AccountService.java</code></a> ·
+                <a href="https://github.com/oplanson/esipe-javaee/blob/master/03-Labs/Lab06-DDD/solution/src/main/java/com/bank/service/ClientService.java"><code>ClientService.java</code></a> ·
+                <a href="https://github.com/oplanson/esipe-javaee/blob/master/03-Labs/Lab06-DDD/solution/src/main/java/com/bank/application/dto/AccountDTO.java"><code>AccountDTO.java</code></a> ·
+                <a href="https://github.com/oplanson/esipe-javaee/blob/master/03-Labs/Lab06-DDD/solution/src/main/java/com/bank/application/dto/ClientDTO.java"><code>ClientDTO.java</code></a>
+              </p>
+            </div>
+          </details>
+          <div class="lg-checkpoint">
+            <div class="lg-check-label"><span lang="en">Checkpoint</span><span lang="fr">Point de contrôle</span></div>
+            <pre class="dark"><code>mvn -q -DskipTests package</code></pre>
+            <p><span lang="en">Expected: <code>BUILD SUCCESS</code>. All compilation errors must be resolved. If <code>getBalance()</code> returns a <code>Money</code> instead of <code>double</code>, update every call site in controllers and REST resources to use <code>getBalanceAsDouble()</code> or <code>getBalance().getAmount()</code>.</span><span lang="fr">Attendu : <code>BUILD SUCCESS</code>. Toutes les erreurs de compilation doivent être résolues. Si <code>getBalance()</code> retourne un <code>Money</code> au lieu d'un <code>double</code>, mettez à jour chaque point d'appel dans les contrôleurs et ressources REST pour utiliser <code>getBalanceAsDouble()</code> ou <code>getBalance().getAmount()</code>.</span></p>
+          </div>
+        </div>
+      </article>
+
+      <!-- ───────── STEP 9 ───────── -->
+      <article class="lg-step" id="step-9">
+        <div class="lg-step-head">
+          <div class="lg-step-num">9</div>
+          <div>
+            <h3><span lang="en">Flyway migration V5 &amp; API versioning</span><span lang="fr">Migration Flyway V5 &amp; versioning API</span></h3>
+            <div class="lg-step-meta">
+              <span class="lg-chip">20 min</span>
+              <span class="lg-chip"><span lang="en">Database evolution strategy</span><span lang="fr">Stratégie d'évolution de la base de données</span></span>
+            </div>
+          </div>
+        </div>
+        <div class="lg-step-body">
+          <p class="lg-files"><span lang="en">File to create:</span><span lang="fr">Fichier à créer :</span> <code>src/main/resources/db/migration/V5__refactor_for_ddd.sql</code></p>
+          <div class="lg-task-label"><span lang="en">Task</span><span lang="fr">À faire</span></div>
+          <ol>
+            <li><span lang="en">Create the migration file. It must: add <code>balance_amount DECIMAL(19,2)</code> and <code>balance_currency VARCHAR(3)</code> columns to the <code>accounts</code> table (<code>IF NOT EXISTS</code>); populate them from the existing <code>balance</code> column; rename <code>number</code> to <code>account_number</code> and <code>type</code> to <code>account_type</code>; add check constraints; create a trigger function <code>sync_account_balance()</code> that keeps the old <code>balance</code> column in sync with <code>balance_amount</code> (backward compatibility).</span><span lang="fr">Créez le fichier de migration. Il doit : ajouter les colonnes <code>balance_amount DECIMAL(19,2)</code> et <code>balance_currency VARCHAR(3)</code> à la table <code>accounts</code> (<code>IF NOT EXISTS</code>) ; les alimenter depuis la colonne <code>balance</code> existante ; renommer <code>number</code> en <code>account_number</code> et <code>type</code> en <code>account_type</code> ; ajouter des contraintes de vérification ; créer une fonction trigger <code>sync_account_balance()</code> qui garde l'ancienne colonne <code>balance</code> synchronisée avec <code>balance_amount</code> (compatibilité ascendante).</span></li>
+            <li><span lang="en">Understand why this is <strong>Option 4 — Backward Compatible Migration</strong>: zero downtime, gradual rollout, easy rollback. The old <code>balance</code> column is <em>kept</em> (deprecated) and will only be removed in a future V6 migration.</span><span lang="fr">Comprenez pourquoi il s'agit de l'<strong>Option 4 — Migration compatible ascendante</strong> : zéro temps d'arrêt, déploiement progressif, retour arrière facile. L'ancienne colonne <code>balance</code> est <em>conservée</em> (dépréciée) et ne sera supprimée que dans une future migration V6.</span></li>
+          </ol>
+          <details class="lg-hint lg-hint--1">
+            <summary><span lang="en">Hint 1 — the four migration options compared</span><span lang="fr">Indice 1 — les quatre options de migration comparées</span></summary>
+            <div class="lg-hint-body">
+              <table class="slide-table">
+                <thead><tr><th><span lang="en">Option</span><span lang="fr">Option</span></th><th><span lang="en">Risk</span><span lang="fr">Risque</span></th><th><span lang="en">Usable?</span><span lang="fr">Utilisable ?</span></th></tr></thead>
+                <tbody>
+                  <tr><td><span lang="en">1 — Break &amp; rename</span><span lang="fr">1 — Casser &amp; renommer</span></td><td><span lang="en">Breaks all existing code</span><span lang="fr">Casse tout le code existant</span></td><td>❌</td></tr>
+                  <tr><td><span lang="en">2 — Big bang rename</span><span lang="fr">2 — Renommage big bang</span></td><td><span lang="en">Breaks existing code, hard to test</span><span lang="fr">Casse le code existant, difficile à tester</span></td><td>❌</td></tr>
+                  <tr><td><span lang="en">3 — Dual write</span><span lang="fr">3 — Double écriture</span></td><td><span lang="en">Code duplication, risk of inconsistency</span><span lang="fr">Duplication de code, risque d'incohérence</span></td><td>❌</td></tr>
+                  <tr><td><span lang="en">4 — Backward compatible (our choice)</span><span lang="fr">4 — Compatible ascendant (notre choix)</span></td><td><span lang="en">Zero downtime, easy rollback, gradual</span><span lang="fr">Zéro temps d'arrêt, retour arrière facile, progressif</span></td><td>✅</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </details>
+          <details class="lg-hint lg-hint--2">
+            <summary><span lang="en">Hint 2 — key SQL steps</span><span lang="fr">Indice 2 — étapes SQL clés</span></summary>
+            <div class="lg-hint-body">
+<pre class="dark"><code>-- Step 1: add new columns (NON-BREAKING)
+ALTER TABLE accounts ADD COLUMN IF NOT EXISTS balance_amount DECIMAL(19,2);
+ALTER TABLE accounts ADD COLUMN IF NOT EXISTS balance_currency VARCHAR(3) DEFAULT 'EUR';
+-- Step 2: populate
+UPDATE accounts SET balance_amount = balance WHERE balance_amount IS NULL;
+UPDATE accounts SET balance_currency = 'EUR' WHERE balance_currency IS NULL;
+-- Step 3: enforce NOT NULL
+ALTER TABLE accounts ALTER COLUMN balance_amount SET NOT NULL;
+-- Step 4: rename for DDD clarity
+ALTER TABLE accounts RENAME COLUMN number TO account_number;
+ALTER TABLE accounts RENAME COLUMN type   TO account_type;
+-- Step 5: backward-compat trigger
+CREATE OR REPLACE FUNCTION sync_account_balance() RETURNS TRIGGER AS $$
+BEGIN NEW.balance = NEW.balance_amount; RETURN NEW; END;
+$$ LANGUAGE plpgsql;
+CREATE TRIGGER trigger_sync_account_balance BEFORE INSERT OR UPDATE ON accounts
+FOR EACH ROW EXECUTE FUNCTION sync_account_balance();</code></pre>
+            </div>
+          </details>
+          <details class="lg-hint lg-hint--sol">
+            <summary><span lang="en">Solution file</span><span lang="fr">Fichier solution</span></summary>
+            <div class="lg-hint-body">
+              <p><a href="https://github.com/oplanson/esipe-javaee/blob/master/03-Labs/Lab06-DDD/solution/src/main/resources/db/migration/V5__refactor_for_ddd.sql"><code>solution/…/V5__refactor_for_ddd.sql</code></a></p>
+            </div>
+          </details>
+          <div class="lg-checkpoint">
+            <div class="lg-check-label"><span lang="en">Checkpoint</span><span lang="fr">Point de contrôle</span></div>
+            <pre class="dark"><code># after the database is running (lab06-postgres):
+curl -s http://localhost:9080/health | python3 -m json.tool | grep status</code></pre>
+            <p><span lang="en">Expected (after full deployment in step 10): <code>"status": "UP"</code>. Flyway runs V5 automatically on application startup; check the server logs for <code>Successfully applied 1 migration to schema "public"</code>.</span><span lang="fr">Attendu (après déploiement complet à l'étape 10) : <code>"status": "UP"</code>. Flyway exécute V5 automatiquement au démarrage de l'application ; cherchez dans les logs <code>Successfully applied 1 migration to schema "public"</code>.</span></p>
+          </div>
+        </div>
+      </article>
+
+      <!-- ───────── STEP 10 ───────── -->
+      <article class="lg-step" id="step-10">
+        <div class="lg-step-head">
+          <div class="lg-step-num">10</div>
+          <div>
+            <h3><span lang="en"><code>server.xml</code>, <code>pom.xml</code> &amp; <code>docker-compose.yml</code></span><span lang="fr"><code>server.xml</code>, <code>pom.xml</code> &amp; <code>docker-compose.yml</code></span></h3>
+            <div class="lg-step-meta">
+              <span class="lg-chip">5 min</span>
+              <span class="lg-chip"><span lang="en">Packaging &amp; configuration</span><span lang="fr">Packaging &amp; configuration</span></span>
+            </div>
+          </div>
+        </div>
+        <div class="lg-step-body">
+          <p class="lg-files"><span lang="en">Files to modify:</span><span lang="fr">Fichiers à modifier :</span>
+            <code>pom.xml</code>, <code>src/main/liberty/config/server.xml</code>, <code>docker-compose.yml</code>
+          </p>
+          <div class="lg-task-label"><span lang="en">Task</span><span lang="fr">À faire</span></div>
+          <ol>
+            <li><span lang="en">In <code>pom.xml</code>: change <code>&lt;artifactId&gt;</code> from <code>banking-rest-app</code> to <code>banking-ddd-app</code>. The <code>Containerfile</code> copies <code>target/banking-ddd-app.war</code>; update it if needed.</span><span lang="fr">Dans <code>pom.xml</code> : changez <code>&lt;artifactId&gt;</code> de <code>banking-rest-app</code> en <code>banking-ddd-app</code>. Le <code>Containerfile</code> copie <code>target/banking-ddd-app.war</code> ; mettez-le à jour si besoin.</span></li>
+            <li><span lang="en">In <code>server.xml</code>: update the <code>webApplication location</code> from <code>banking-rest-app.war</code> to <code>banking-ddd-app.war</code>.</span><span lang="fr">Dans <code>server.xml</code> : mettez à jour le <code>webApplication location</code> de <code>banking-rest-app.war</code> vers <code>banking-ddd-app.war</code>.</span></li>
+            <li><span lang="en">Replace the <code>docker-compose.yml</code> with the Lab 06 version: the container is renamed to <code>lab06-postgres</code>.</span><span lang="fr">Remplacez le <code>docker-compose.yml</code> par la version du Lab 06 : le conteneur est renommé en <code>lab06-postgres</code>.</span></li>
+          </ol>
+          <details class="lg-hint lg-hint--sol">
+            <summary><span lang="en">Solution files</span><span lang="fr">Fichiers solution</span></summary>
+            <div class="lg-hint-body">
+              <p>
+                <a href="https://github.com/oplanson/esipe-javaee/blob/master/03-Labs/Lab06-DDD/solution/pom.xml"><code>solution/pom.xml</code></a> ·
+                <a href="https://github.com/oplanson/esipe-javaee/blob/master/03-Labs/Lab06-DDD/solution/src/main/liberty/config/server.xml"><code>solution/…/server.xml</code></a> ·
+                <a href="https://github.com/oplanson/esipe-javaee/blob/master/03-Labs/Lab06-DDD/solution/docker-compose.yml"><code>solution/docker-compose.yml</code></a>
+              </p>
+            </div>
+          </details>
+          <div class="lg-checkpoint">
+            <div class="lg-check-label"><span lang="en">Checkpoint</span><span lang="fr">Point de contrôle</span></div>
+            <pre class="dark"><code>mvn -q -DskipTests package
+podman build -t banking-ddd-app:lab06 -f Containerfile .
+podman rm -f banking-lab06 2&gt;/dev/null
+podman run -d --name banking-lab06 -p 127.0.0.1:9080:9080 --network host banking-ddd-app:lab06
+until curl -fs http://localhost:9080/health &gt;/dev/null; do sleep 2; done; echo "ready"</code></pre>
+            <p><span lang="en">Expected: <code>BUILD SUCCESS</code>, then the image builds, the container starts, and <code>ready</code> is printed. Open <a href="http://localhost:9080/">http://localhost:9080/</a> in the browser.</span><span lang="fr">Attendu : <code>BUILD SUCCESS</code>, puis l'image se construit, le conteneur démarre, et <code>ready</code> s'affiche. Ouvrez <a href="http://localhost:9080/">http://localhost:9080/</a> dans le navigateur.</span></p>
+          </div>
+        </div>
+      </article>
+    </section>
+
+    <!-- ═════════════ 6. RUN ═════════════ -->
+    <section class="lg-section" id="run">
+      <h2><span class="lg-sec-num">06</span><span lang="en">Run and operate</span><span lang="fr">Exécution</span></h2>
+      <table class="slide-table">
+        <thead><tr><th><span lang="en">Purpose</span><span lang="fr">Usage</span></th><th><span lang="en">Command</span><span lang="fr">Commande</span></th></tr></thead>
+        <tbody>
+          <tr><td><span lang="en">Start/restart after a change</span><span lang="fr">Démarrer/redémarrer après un changement</span></td><td><span lang="en">redeploy loop from <a href="#setup">Setup</a></span><span lang="fr">boucle de redéploiement de la <a href="#setup">Préparation</a></span></td></tr>
+          <tr><td><span lang="en">Follow server logs</span><span lang="fr">Suivre les logs du serveur</span></td><td><code>podman logs -f banking-lab06</code></td></tr>
+          <tr><td><span lang="en">Stop database</span><span lang="fr">Arrêter la base</span></td><td><code>podman stop lab06-postgres</code></td></tr>
+          <tr><td><span lang="en">Stop and clean all</span><span lang="fr">Tout arrêter et nettoyer</span></td><td><code>podman rm -f banking-lab06 lab06-postgres</code></td></tr>
+        </tbody>
+      </table>
+      <table class="slide-table">
+        <thead><tr><th>URL</th><th><span lang="en">What you get</span><span lang="fr">Ce que vous obtenez</span></th></tr></thead>
+        <tbody>
+          <tr><td><a href="http://localhost:9080/">http://localhost:9080/</a></td><td><span lang="en">Home page</span><span lang="fr">Page d'accueil</span></td></tr>
+          <tr><td><a href="http://localhost:9080/clients">http://localhost:9080/clients</a></td><td><span lang="en">Client list (JSP)</span><span lang="fr">Liste des clients (JSP)</span></td></tr>
+          <tr><td><a href="http://localhost:9080/api/clients">http://localhost:9080/api/clients</a></td><td><span lang="en">REST API — client list (JSON)</span><span lang="fr">API REST — liste des clients (JSON)</span></td></tr>
+          <tr><td><a href="http://localhost:9080/api/accounts">http://localhost:9080/api/accounts</a></td><td><span lang="en">REST API — account list (JSON)</span><span lang="fr">API REST — liste des comptes (JSON)</span></td></tr>
+          <tr><td><a href="http://localhost:9080/health">http://localhost:9080/health</a></td><td><span lang="en">MicroProfile Health</span><span lang="fr">MicroProfile Health</span></td></tr>
+          <tr><td><a href="http://localhost:9080/metrics">http://localhost:9080/metrics</a></td><td><span lang="en">MicroProfile Metrics</span><span lang="fr">MicroProfile Metrics</span></td></tr>
+          <tr><td><a href="http://localhost:9080/openapi">http://localhost:9080/openapi</a></td><td><span lang="en">MicroProfile OpenAPI</span><span lang="fr">MicroProfile OpenAPI</span></td></tr>
+        </tbody>
+      </table>
+      <div class="lg-callout lg-callout--warn">
+        <div lang="en">
+          <div class="lg-callout-title">About the provided scripts (<code>podman-test.sh</code>, <code>run-lab.sh</code>, <code>test-lab.sh</code>)</div>
+          <p>These scripts stop and remove <strong>any container that already uses the target ports</strong> before starting. This includes containers from other labs. Use the explicit commands in this guide instead. The scripts are provided as a convenience only.</p>
+        </div>
+        <div lang="fr">
+          <div class="lg-callout-title">À propos des scripts fournis (<code>podman-test.sh</code>, <code>run-lab.sh</code>, <code>test-lab.sh</code>)</div>
+          <p>Ces scripts arrêtent et suppriment <strong>tout conteneur qui utilise déjà les ports cibles</strong> avant de démarrer. Cela inclut les conteneurs d'autres labs. Utilisez les commandes explicites de ce guide à la place. Les scripts sont fournis uniquement par commodité.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═════════════ 7. VALIDATE ═════════════ -->
+    <section class="lg-section" id="validate">
+      <h2><span class="lg-sec-num">07</span><span lang="en">Validate your work</span><span lang="fr">Valider votre travail</span></h2>
+      <p>
+        <span lang="en">Run these checks once everything is deployed. Each line shows the expected result.</span>
+        <span lang="fr">Lancez ces vérifications une fois tout déployé. Chaque ligne indique le résultat attendu.</span>
+      </p>
+      <pre class="dark"><code>B=http://localhost:9080
+
+# Health and metrics
+curl -s $B/health | python3 -m json.tool | grep '"status"'
+curl -s -o /dev/null -w '%{http_code}\n' $B/metrics
+
+# REST API — list clients
+curl -s $B/api/clients | python3 -m json.tool | head -20
+
+# Create a client
+curl -s -X POST $B/api/clients \
+  -H "Content-Type: application/json" \
+  -d '{"name":"Alice Dupont","email":{"value":"alice@example.com"},"premium":false}' \
+  -o /dev/null -w '%{http_code}\n'
+
+# Create an account (replace 1 with the actual client id)
+curl -s -X POST "$B/api/accounts?clientId=1&amp;type=CHECKING&amp;initialDeposit=100.0" \
+  -o /dev/null -w '%{http_code}\n'
+
+# Deposit (replace 1 with an actual account id)
+curl -s -X POST "$B/api/accounts/1/deposit?amount=50.0" \
+  -o /dev/null -w '%{http_code}\n'</code></pre>
+      <table class="slide-table">
+        <thead><tr><th><span lang="en">Check</span><span lang="fr">Contrôle</span></th><th><span lang="en">Expected result</span><span lang="fr">Résultat attendu</span></th></tr></thead>
+        <tbody>
+          <tr><td><code>/health status</code></td><td><code>"status": "UP"</code></td></tr>
+          <tr><td><code>/metrics</code></td><td><code>200</code></td></tr>
+          <tr><td><span lang="en">Create client</span><span lang="fr">Créer un client</span></td><td><code>201</code></td></tr>
+          <tr><td><span lang="en">Create account (min 10 EUR)</span><span lang="fr">Créer un compte (min 10 EUR)</span></td><td><code>201</code></td></tr>
+          <tr><td><span lang="en">Deposit</span><span lang="fr">Dépôt</span></td><td><code>200</code></td></tr>
+          <tr><td><span lang="en">Flyway V5 in logs</span><span lang="fr">Flyway V5 dans les logs</span></td><td><code>Successfully applied 1 migration</code></td></tr>
+        </tbody>
+      </table>
+      <h3><span lang="en">Validation checklist</span><span lang="fr">Checklist de validation</span></h3>
+      <ul class="lg-checklist">
+        <li><label><input type="checkbox"/><span lang="en">The project builds with <code>mvn -DskipTests package</code> and the image builds</span><span lang="fr">Le projet se compile avec <code>mvn -DskipTests package</code> et l'image se construit</span></label></li>
+        <li><label><input type="checkbox"/><span lang="en">Flyway applies V5 migration without errors on first startup</span><span lang="fr">Flyway applique la migration V5 sans erreur au premier démarrage</span></label></li>
+        <li><label><input type="checkbox"/><span lang="en"><code>/health</code> returns <code>UP</code></span><span lang="fr"><code>/health</code> retourne <code>UP</code></span></label></li>
+        <li><label><input type="checkbox"/><span lang="en">Creating an account with initialDeposit below 10 EUR is rejected with an error</span><span lang="fr">Créer un compte avec un dépôt initial inférieur à 10 EUR est rejeté avec une erreur</span></label></li>
+        <li><label><input type="checkbox"/><span lang="en">A withdrawal that would breach the account type's minimum is rejected</span><span lang="fr">Un retrait qui dépasserait le minimum du type de compte est rejeté</span></label></li>
+        <li><label><input type="checkbox"/><span lang="en">I can explain the difference between <code>Money</code> (value object) and <code>Account</code> (aggregate root)</span><span lang="fr">Je sais expliquer la différence entre <code>Money</code> (objet-valeur) et <code>Account</code> (racine d'agrégat)</span></label></li>
+        <li><label><input type="checkbox"/><span lang="en">I can explain why a transfer uses a domain service instead of a method on Account or AccountService</span><span lang="fr">Je sais expliquer pourquoi un virement utilise un service de domaine plutôt qu'une méthode sur Account ou AccountService</span></label></li>
+        <li><label><input type="checkbox"/><span lang="en">I can explain the V5 migration strategy (Option 4) and why the old <code>balance</code> column is kept</span><span lang="fr">Je sais expliquer la stratégie de migration V5 (Option 4) et pourquoi l'ancienne colonne <code>balance</code> est conservée</span></label></li>
+      </ul>
+    </section>
+
+    <!-- ═════════════ 8. COMPARE ═════════════ -->
+    <section class="lg-section" id="compare">
+      <h2><span class="lg-sec-num">08</span><span lang="en">Compare with the solution</span><span lang="fr">Comparer à la solution</span></h2>
+      <p>
+        <span lang="en">Your code does not have to match the solution character by character. Behaviour must match. To see differences:</span>
+        <span lang="fr">Votre code n'a pas à être identique à la solution caractère par caractère. Le comportement doit être le même. Pour voir les différences :</span>
+      </p>
+      <pre class="dark"><code>diff -rq 03-Labs/Lab06-DDD/starter 03-Labs/Lab06-DDD/solution \
+  -x target -x docs -x postgresql</code></pre>
+      <h3><span lang="en">Expected differences</span><span lang="fr">Différences attendues</span></h3>
+      <ul>
+        <li><span lang="en">Documentation files only in the solution: <code>BOUNDED-CONTEXT.md</code>, <code>RECORDS-MIGRATION-GUIDE.md</code>, <code>FEATURE-COMPARISON.md</code>, <code>API-VERSIONING.md</code>, <code>SOLUTION-STATUS.md</code>.</span><span lang="fr">Fichiers de documentation uniquement dans la solution : <code>BOUNDED-CONTEXT.md</code>, <code>RECORDS-MIGRATION-GUIDE.md</code>, <code>FEATURE-COMPARISON.md</code>, <code>API-VERSIONING.md</code>, <code>SOLUTION-STATUS.md</code>.</span></li>
+        <li><span lang="en">The <code>api/v2/</code> package (AccountResourceV2) is a bonus in the solution and is not required for this lab.</span><span lang="fr">Le package <code>api/v2/</code> (AccountResourceV2) est un bonus dans la solution et n'est pas requis pour ce lab.</span></li>
+      </ul>
+    </section>
+
+    <!-- ═════════════ 9. TROUBLESHOOTING ═════════════ -->
+    <section class="lg-section" id="trouble">
+      <h2><span class="lg-sec-num">09</span><span lang="en">Troubleshooting</span><span lang="fr">Dépannage</span></h2>
+      <table class="slide-table">
+        <thead><tr><th><span lang="en">Symptom</span><span lang="fr">Symptôme</span></th><th><span lang="en">Cause and fix</span><span lang="fr">Cause et correction</span></th></tr></thead>
+        <tbody>
+          <tr>
+            <td><code>Cannot find symbol: class Money</code></td>
+            <td><span lang="en">The package <code>com.bank.domain.valueobject</code> is missing or the import is wrong. Check the folder name matches exactly.</span><span lang="fr">Le package <code>com.bank.domain.valueobject</code> est absent ou l'import est incorrect. Vérifiez que le nom du dossier correspond exactement.</span></td>
+          </tr>
+          <tr>
+            <td><code>getBalance() returns Money, expected double</code></td>
+            <td><span lang="en">All call sites in JSP/REST that used <code>account.getBalance()</code> as a <code>double</code> must now call <code>account.getBalanceAsDouble()</code> or <code>account.getBalance().getAmountAsDouble()</code>.</span><span lang="fr">Tous les points d'appel dans JSP/REST qui utilisaient <code>account.getBalance()</code> comme un <code>double</code> doivent maintenant appeler <code>account.getBalanceAsDouble()</code> ou <code>account.getBalance().getAmountAsDouble()</code>.</span></td>
+          </tr>
+          <tr>
+            <td><span lang="en">Flyway error: <code>column "balance" does not exist</code></span><span lang="fr">Erreur Flyway : <code>column "balance" does not exist</code></span></td>
+            <td><span lang="en">You may have already run V5 from a previous attempt. Reset the database: <code>podman stop lab06-postgres &amp;&amp; podman rm lab06-postgres</code> and restart with <code>podman-compose up -d</code>.</span><span lang="fr">Vous avez peut-être déjà exécuté V5 lors d'une tentative précédente. Réinitialisez la base : <code>podman stop lab06-postgres &amp;&amp; podman rm lab06-postgres</code> et relancez avec <code>podman-compose up -d</code>.</span></td>
+          </tr>
+          <tr>
+            <td><code>IllegalStateException: Balance is below minimum</code></td>
+            <td><span lang="en">The <code>@PrePersist</code> / <code>@PreUpdate</code> invariant check fires. A SAVINGS account cannot go below 0.00 EUR, a CHECKING account cannot go below −500.00 EUR. Verify your test data.</span><span lang="fr">La vérification d'invariant <code>@PrePersist</code> / <code>@PreUpdate</code> se déclenche. Un compte SAVINGS ne peut pas passer sous 0,00 EUR, un compte CHECKING ne peut pas passer sous −500,00 EUR. Vérifiez vos données de test.</span></td>
+          </tr>
+          <tr>
+            <td><span lang="en"><code>/health</code> returns <code>DOWN</code></span><span lang="fr"><code>/health</code> retourne <code>DOWN</code></span></td>
+            <td><span lang="en">The database container <code>lab06-postgres</code> is not running or unreachable. Check <code>podman ps</code> and restart with <code>podman start lab06-postgres</code>.</span><span lang="fr">Le conteneur de base de données <code>lab06-postgres</code> n'est pas en cours d'exécution ou est injoignable. Vérifiez <code>podman ps</code> et relancez avec <code>podman start lab06-postgres</code>.</span></td>
+          </tr>
+          <tr>
+            <td><code>Currency mismatch: account uses EUR, deposit is USD</code></td>
+            <td><span lang="en">The <code>Money</code> value object enforces currency consistency. All accounts in this lab use EUR. Make sure you pass EUR amounts everywhere.</span><span lang="fr">L'objet-valeur <code>Money</code> applique la cohérence des devises. Tous les comptes de ce lab utilisent EUR. Assurez-vous de passer des montants en EUR partout.</span></td>
+          </tr>
+          <tr>
+            <td><span lang="en">Cannot connect to Podman</span><span lang="fr">Impossible de se connecter à Podman</span></td>
+            <td><span lang="en">On macOS/Windows the Podman VM is stopped: <code>podman machine start</code>.</span><span lang="fr">Sur macOS/Windows la VM Podman est arrêtée : <code>podman machine start</code>.</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- ═════════════ 10. BONUS ═════════════ -->
+    <section class="lg-section" id="bonus">
+      <h2><span class="lg-sec-num">10</span><span lang="en">Go further</span><span lang="fr">Pour aller plus loin</span></h2>
+      <ul>
+        <li><span lang="en"><strong>Records migration.</strong> Read <code>RECORDS-MIGRATION-GUIDE.md</code>: convert <code>Money</code>, <code>Email</code> and the domain events to Java 17 records. Note how <code>@Embeddable</code> requires a specific records pattern.</span><span lang="fr"><strong>Migration vers les records.</strong> Lisez <code>RECORDS-MIGRATION-GUIDE.md</code> : convertissez <code>Money</code>, <code>Email</code> et les événements de domaine en records Java 17. Notez comment <code>@Embeddable</code> nécessite un pattern records spécifique.</span></li>
+        <li><span lang="en"><strong>API v2.</strong> The solution contains <code>api/v2/AccountResourceV2.java</code> that returns the <code>Money</code> object (with <code>amount</code> + <code>currency</code>) instead of a plain <code>double</code>. Add deprecation headers to v1 and add the v2 endpoint.</span><span lang="fr"><strong>API v2.</strong> La solution contient <code>api/v2/AccountResourceV2.java</code> qui retourne l'objet <code>Money</code> (avec <code>amount</code> + <code>currency</code>) au lieu d'un simple <code>double</code>. Ajoutez des headers de dépréciation à v1 et ajoutez l'endpoint v2.</span></li>
+        <li><span lang="en"><strong>Domain event observer.</strong> The solution fires CDI events from <code>AccountService</code>. Implement <code>BankingEventObserver</code> that logs all three event types.</span><span lang="fr"><strong>Observateur d'événements de domaine.</strong> La solution déclenche des événements CDI depuis <code>AccountService</code>. Implémentez <code>BankingEventObserver</code> qui journalise les trois types d'événements.</span></li>
+        <li><span lang="en"><strong>V6 cleanup migration.</strong> Write the future V6 SQL that removes the deprecated <code>balance</code> column and the trigger.</span><span lang="fr"><strong>Migration de nettoyage V6.</strong> Rédigez le futur SQL V6 qui supprime la colonne <code>balance</code> dépréciée et le trigger.</span></li>
+        <li><span lang="en"><strong>Bounded Context documentation.</strong> Read <code>BOUNDED-CONTEXT.md</code> in the solution and write the Context Map for the banking application (which other bounded contexts exist? how do they communicate?).</span><span lang="fr"><strong>Documentation du bounded context.</strong> Lisez <code>BOUNDED-CONTEXT.md</code> dans la solution et rédigez la Context Map de l'application bancaire (quels autres bounded contexts existent ? comment communiquent-ils ?).</span></li>
+      </ul>
+      <div class="lg-callout lg-callout--tip">
+        <div lang="en"><div class="lg-callout-title">Next</div><p>Lab 07 introduces the Hexagonal Architecture (Ports &amp; Adapters), extracting the repository interfaces defined here into proper infrastructure adapters and adding a secondary port for external notifications.</p></div>
+        <div lang="fr"><div class="lg-callout-title">Suite</div><p>Le Lab 07 introduit l'Architecture Hexagonale (Ports &amp; Adaptateurs), en extrayant les interfaces repository définies ici en adaptateurs d'infrastructure à part entière, et en ajoutant un port secondaire pour les notifications externes.</p></div>
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<footer class="site-footer">Made with IBM Bob &nbsp;&middot;&nbsp; &copy; 2026 Olivier Planson</footer>
+</body>
+</html>

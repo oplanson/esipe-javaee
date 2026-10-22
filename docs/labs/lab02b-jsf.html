@@ -1,0 +1,1535 @@
+<!-- © Copyright 2026 Olivier Planson. All rights reserved. Reproduction prohibited. Made with IBM Bob. -->
+<!DOCTYPE html>
+<html lang="fr" data-lang="fr">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title data-title-en="ESIPE — Lab 02B: Jakarta Faces (JSF) — Lab guide" data-title-fr="ESIPE — Lab 02B : Jakarta Faces (JSF) — Guide du lab">ESIPE — Lab 02B : Jakarta Faces (JSF) — Guide du lab</title>
+  <link rel="stylesheet" href="assets/slide.css"/>
+  <link rel="stylesheet" href="assets/lab-guide.css"/>
+  <script src="assets/lab-guide.js"></script>
+</head>
+<body>
+<header class="site-header">
+  <a class="brand" href="index.html">ESIPE<span>Jakarta EE &amp; Microservices — Labs</span></a>
+  <div class="lang-toggle" id="lang-toggle">
+    <button type="button" id="btn-en" data-set-lang="en">EN</button>
+    <span class="sep">|</span>
+    <button type="button" id="btn-fr" data-set-lang="fr" class="active">FR</button>
+  </div>
+  <a class="back-link" href="index.html">&#8592; Labs</a>
+  <a class="back-link" href="../index.html"><span lang="en">Course site</span><span lang="fr">Site du cours</span></a>
+</header>
+
+<div class="lg-shell">
+
+  <nav class="lg-toc" aria-label="Table of contents">
+    <div class="lg-toc-title"><span lang="en">In this guide</span><span lang="fr">Dans ce guide</span></div>
+    <a href="#hero"><span lang="en">Overview</span><span lang="fr">Vue d'ensemble</span></a>
+    <a href="#goal"><span lang="en">1. Goal</span><span lang="fr">1. Objectif</span></a>
+    <a href="#starter"><span lang="en">2. What the starter gives you</span><span lang="fr">2. Ce que fournit le starter</span></a>
+    <a href="#target"><span lang="en">3. Target structure</span><span lang="fr">3. Structure cible</span></a>
+    <a href="#setup"><span lang="en">4. Setup</span><span lang="fr">4. Préparation</span></a>
+    <a href="#steps"><span lang="en">5. Step by step</span><span lang="fr">5. Pas à pas</span></a>
+    <a class="sub" href="#step-1"><span lang="en">1 · The Maven build</span><span lang="fr">1 · Le build Maven</span></a>
+    <a class="sub" href="#step-2"><span lang="en">2 · Liberty and container</span><span lang="fr">2 · Liberty et conteneur</span></a>
+    <a class="sub" href="#step-3"><span lang="en">3 · Faces, CDI and locales</span><span lang="fr">3 · Faces, CDI et locales</span></a>
+    <a class="sub" href="#step-4"><span lang="en">4 · Model classes</span><span lang="fr">4 · Classes du modèle</span></a>
+    <a class="sub" href="#step-5"><span lang="en">5 · Service and health checks</span><span lang="fr">5 · Service et health checks</span></a>
+    <a class="sub" href="#step-6"><span lang="en">6 · Template and styles</span><span lang="fr">6 · Template et styles</span></a>
+    <a class="sub" href="#step-7"><span lang="en">7 · Home page</span><span lang="fr">7 · Page d'accueil</span></a>
+    <a class="sub" href="#step-8"><span lang="en">8 · ClientBean</span><span lang="fr">8 · ClientBean</span></a>
+    <a class="sub" href="#step-9"><span lang="en">9 · Email validator</span><span lang="fr">9 · Validateur d'email</span></a>
+    <a class="sub" href="#step-10"><span lang="en">10 · Client list and AJAX</span><span lang="fr">10 · Liste et AJAX</span></a>
+    <a class="sub" href="#step-11"><span lang="en">11 · Client form</span><span lang="fr">11 · Formulaire client</span></a>
+    <a class="sub" href="#step-12"><span lang="en">12 · Client details</span><span lang="fr">12 · Détail du client</span></a>
+    <a class="sub" href="#step-13"><span lang="en">13 · Navigation rules</span><span lang="fr">13 · Règles de navigation</span></a>
+    <a href="#run"><span lang="en">6. Run</span><span lang="fr">6. Exécution</span></a>
+    <a href="#validate"><span lang="en">7. Validate</span><span lang="fr">7. Validation</span></a>
+    <a href="#compare"><span lang="en">8. Compare with solution</span><span lang="fr">8. Comparer à la solution</span></a>
+    <a href="#trouble"><span lang="en">9. Troubleshooting</span><span lang="fr">9. Dépannage</span></a>
+    <a href="#bonus"><span lang="en">10. Go further</span><span lang="fr">10. Pour aller plus loin</span></a>
+  </nav>
+
+  <main class="lg-main">
+
+    <!-- ═════════════ HERO ═════════════ -->
+    <section class="lg-hero" id="hero">
+      <div class="lg-kicker">Lab 02B</div>
+      <h1><span lang="en">Jakarta Faces (JSF) Client Management</span><span lang="fr">Gestion de clients avec Jakarta Faces (JSF)</span></h1>
+      <p class="lg-lead">
+        <span lang="en">Starting from a single Facelets template, you build a server-side component UI with Jakarta Faces: CDI backing bean, Facelets views, validation, AJAX search and navigation, packaged in a container and run on Open Liberty.</span>
+        <span lang="fr">À partir d'un unique template Facelets, vous construisez une interface à base de composants côté serveur avec Jakarta Faces : backing bean CDI, vues Facelets, validation, recherche AJAX et navigation, empaquetée dans un conteneur et exécutée sur Open Liberty.</span>
+      </p>
+      <div class="badge-row">
+        <span class="badge badge-blue">Jakarta EE 10</span>
+        <span class="badge badge-teal">Faces 4.0</span>
+        <span class="badge badge-green">CDI 4.0</span>
+        <span class="badge badge-purple">Open Liberty</span>
+        <span class="badge badge-warm">Podman</span>
+      </div>
+      <div class="lg-facts">
+        <div><strong><span lang="en">about 3 hours</span><span lang="fr">environ 3 h</span></strong><span lang="en">Duration</span><span lang="fr">Durée</span></div>
+        <div><strong><span lang="en">Intermediate</span><span lang="fr">Intermédiaire</span></strong><span lang="en">Level</span><span lang="fr">Niveau</span></div>
+        <div><strong>JDK 17+ · Maven · Podman</strong><span lang="en">Prerequisites</span><span lang="fr">Prérequis</span></div>
+        <div><strong>http://localhost:9080/lab02b-jsf/</strong><span lang="en">Application URL</span><span lang="fr">URL de l'application</span></div>
+      </div>
+      <div class="lg-hero-links">
+        <a href="../../02-Lectures/slides/02b-jsf/slides.html#slide-1"><span lang="en">Course slides (JSF)</span><span lang="fr">Slides du cours (JSF)</span></a>
+        <a class="secondary" href="../02b-jsf/index.html"><span lang="en">Course page</span><span lang="fr">Page du cours</span></a>
+        <a class="secondary" href="https://github.com/oplanson/esipe-javaee/blob/master/03-Labs/Lab02B-JSF/README.md"><span lang="en">Original README</span><span lang="fr">README d'origine</span></a>
+        <a class="secondary" href="https://github.com/oplanson/esipe-javaee/blob/master/03-Labs/Lab02B-JSF/TESTING-GUIDE.md"><span lang="en">Testing guide</span><span lang="fr">Guide de test</span></a>
+        <a class="secondary" href="https://github.com/oplanson/esipe-javaee/tree/master/03-Labs/Lab02B-JSF/solution"><span lang="en">Solution folder</span><span lang="fr">Dossier solution</span></a>
+      </div>
+    </section>
+
+    <!-- ═════════════ 1. GOAL ═════════════ -->
+    <section class="lg-section" id="goal">
+      <h2><span class="lg-sec-num">01</span><span lang="en">Goal of the lab</span><span lang="fr">Objectif du lab</span></h2>
+      <p>
+        <span lang="en">You build a <strong>client management</strong> web application for the banking case study that runs through the whole course, this time with <strong>Jakarta Faces</strong> instead of hand-written servlets and JSP. Data stays in memory (a CDI application-scoped service); the database arrives in Lab 03. The goal is to understand how a Faces page, an Expression Language binding and a CDI bean work together.</span>
+        <span lang="fr">Vous construisez une application web de <strong>gestion de clients</strong> pour le cas d'étude bancaire qui sert de fil rouge au cours, cette fois avec <strong>Jakarta Faces</strong> plutôt que des servlets et des JSP écrites à la main. Les données restent en mémoire (un service CDI de portée application) ; la base de données arrive au Lab 03. L'objectif est de comprendre comment une page Faces, une liaison par Expression Language et un bean CDI fonctionnent ensemble.</span>
+      </p>
+
+      <h3><span lang="en">What the finished application exposes</span><span lang="fr">Ce que l'application terminée expose</span></h3>
+      <p>
+        <span lang="en">The context root is <code>/lab02b-jsf</code>. The Faces servlet is mapped on <code>*.xhtml</code>, so pages are reached by their file name.</span>
+        <span lang="fr">Le context root est <code>/lab02b-jsf</code>. La servlet Faces est mappée sur <code>*.xhtml</code> : on accède donc aux pages par leur nom de fichier.</span>
+      </p>
+      <table class="slide-table">
+        <thead><tr>
+          <th>URL</th>
+          <th><span lang="en">Served by</span><span lang="fr">Servi par</span></th>
+          <th><span lang="en">Behaviour</span><span lang="fr">Comportement</span></th>
+        </tr></thead>
+        <tbody>
+          <tr><td><code>/lab02b-jsf/</code></td><td><code>index.xhtml</code></td><td><span lang="en">Welcome page with a link to the client list</span><span lang="fr">Page d'accueil avec un lien vers la liste des clients</span></td></tr>
+          <tr><td><code>/lab02b-jsf/views/client-list.xhtml</code></td><td><code>client-list.xhtml</code></td><td><span lang="en">Data table, AJAX search box, View / Edit / Delete buttons, New Client</span><span lang="fr">Tableau de données, recherche AJAX, boutons View / Edit / Delete, New Client</span></td></tr>
+          <tr><td><code>/lab02b-jsf/views/client-form.xhtml</code></td><td><code>client-form.xhtml</code></td><td><span lang="en">Create or edit a client with required fields, length checks and a custom email validator</span><span lang="fr">Création ou modification d'un client avec champs obligatoires, contrôles de longueur et validateur d'email personnalisé</span></td></tr>
+          <tr><td><code>/lab02b-jsf/views/client-details.xhtml</code></td><td><code>client-details.xhtml</code></td><td><span lang="en">Read-only client with address and account table</span><span lang="fr">Client en lecture seule avec adresse et tableau de comptes</span></td></tr>
+          <tr><td><code>/health</code>, <code>/metrics</code></td><td>Open Liberty <span class="lg-tag lg-tag--chg"><span lang="en">MicroProfile</span><span lang="fr">MicroProfile</span></span></td><td><span lang="en">Liveness and readiness checks written in this lab; metrics enabled by <code>server.xml</code></span><span lang="fr">Checks liveness et readiness écrits dans ce lab ; métriques activées par <code>server.xml</code></span></td></tr>
+        </tbody>
+      </table>
+
+      <h3><span lang="en">Concepts you practise</span><span lang="fr">Concepts mis en pratique</span></h3>
+      <ul>
+        <li>
+          <span lang="en">Faces architecture and request lifecycle — <a href="../../02-Lectures/slides/02b-jsf/slides.html#slide-5">slide 5</a>, <a href="../../02-Lectures/slides/02b-jsf/slides.html#slide-6">slide 6</a>, <a href="../../02-Lectures/slides/02b-jsf/slides.html#slide-7">slides 7–9</a></span>
+          <span lang="fr">Architecture Faces et cycle de vie d'une requête — <a href="../../02-Lectures/slides/02b-jsf/slides.html#slide-5">slide 5</a>, <a href="../../02-Lectures/slides/02b-jsf/slides.html#slide-6">slide 6</a>, <a href="../../02-Lectures/slides/02b-jsf/slides.html#slide-7">slides 7–9</a></span>
+        </li>
+        <li>
+          <span lang="en">CDI backing beans: <code>@Named</code>, <code>@SessionScoped</code>, <code>@Inject</code> — <a href="../../02-Lectures/slides/02b-jsf/slides.html#slide-10">slides 10–13</a></span>
+          <span lang="fr">Backing beans CDI : <code>@Named</code>, <code>@SessionScoped</code>, <code>@Inject</code> — <a href="../../02-Lectures/slides/02b-jsf/slides.html#slide-10">slides 10–13</a></span>
+        </li>
+        <li>
+          <span lang="en">Facelets templating with <code>ui:composition</code>, <code>ui:insert</code>, <code>ui:define</code> — <a href="../../02-Lectures/slides/02b-jsf/slides.html#slide-14">slides 14–18</a></span>
+          <span lang="fr">Templating Facelets avec <code>ui:composition</code>, <code>ui:insert</code>, <code>ui:define</code> — <a href="../../02-Lectures/slides/02b-jsf/slides.html#slide-14">slides 14–18</a></span>
+        </li>
+        <li>
+          <span lang="en">Standard components: <code>h:form</code>, <code>h:dataTable</code>, <code>h:panelGrid</code>, <code>h:commandButton</code> — <a href="../../02-Lectures/slides/02b-jsf/slides.html#slide-19">slides 19–22</a></span>
+          <span lang="fr">Composants standard : <code>h:form</code>, <code>h:dataTable</code>, <code>h:panelGrid</code>, <code>h:commandButton</code> — <a href="../../02-Lectures/slides/02b-jsf/slides.html#slide-19">slides 19–22</a></span>
+        </li>
+        <li>
+          <span lang="en">Validation: required fields, <code>f:validateLength</code>, custom <code>@FacesValidator</code> — <a href="../../02-Lectures/slides/02b-jsf/slides.html#slide-23">slides 23–25</a></span>
+          <span lang="fr">Validation : champs obligatoires, <code>f:validateLength</code>, <code>@FacesValidator</code> personnalisé — <a href="../../02-Lectures/slides/02b-jsf/slides.html#slide-23">slides 23–25</a></span>
+        </li>
+        <li>
+          <span lang="en">AJAX with <code>f:ajax</code> — <a href="../../02-Lectures/slides/02b-jsf/slides.html#slide-28">slides 28–32</a></span>
+          <span lang="fr">AJAX avec <code>f:ajax</code> — <a href="../../02-Lectures/slides/02b-jsf/slides.html#slide-28">slides 28–32</a></span>
+        </li>
+        <li>
+          <span lang="en">Implicit and explicit navigation, redirect versus forward — <a href="../../02-Lectures/slides/02b-jsf/slides.html#slide-33">slides 33–45</a></span>
+          <span lang="fr">Navigation implicite et explicite, redirect et forward — <a href="../../02-Lectures/slides/02b-jsf/slides.html#slide-33">slides 33–45</a></span>
+        </li>
+        <li>
+          <span lang="en">Faces configuration in <code>web.xml</code> and <code>faces-config.xml</code> — <a href="../../02-Lectures/slides/02b-jsf/slides.html#slide-62">slides 62–64</a></span>
+          <span lang="fr">Configuration de Faces dans <code>web.xml</code> et <code>faces-config.xml</code> — <a href="../../02-Lectures/slides/02b-jsf/slides.html#slide-62">slides 62–64</a></span>
+        </li>
+      </ul>
+    </section>
+
+    <!-- ═════════════ 2. STARTER ═════════════ -->
+    <section class="lg-section" id="starter">
+      <h2><span class="lg-sec-num">02</span><span lang="en">What the starter gives you</span><span lang="fr">Ce que fournit le starter</span></h2>
+      <p>
+        <span lang="en">The folder <code>03-Labs/Lab02B-JSF/starter/</code> contains <strong>a single file</strong>: the Facelets template <code>src/main/webapp/WEB-INF/templates/main.xhtml</code>. There is no <code>pom.xml</code>, no Java class and no configuration: you create the whole project around that template.</span>
+        <span lang="fr">Le dossier <code>03-Labs/Lab02B-JSF/starter/</code> contient <strong>un seul fichier</strong> : le template Facelets <code>src/main/webapp/WEB-INF/templates/main.xhtml</code>. Il n'y a ni <code>pom.xml</code>, ni classe Java, ni configuration : vous créez tout le projet autour de ce template.</span>
+      </p>
+      <div class="lg-callout lg-callout--warn">
+        <div lang="en"><div class="lg-callout-title">The original README does not match the starter</div><p>The <a href="https://github.com/oplanson/esipe-javaee/blob/master/03-Labs/Lab02B-JSF/README.md">README</a> says that <code>Client.java</code>, <code>Account.java</code>, <code>ClientService.java</code>, <code>pom.xml</code>, <code>web.xml</code> and <code>style.css</code> are "provided", and it describes a composite component <code>addressInput.xhtml</code>. None of this exists in <code>starter/</code>, and the composite component is not in <code>solution/</code> either. This guide follows the real content of <code>starter/</code> and <code>solution/</code>; the composite component is proposed as a bonus exercise.</p></div>
+        <div lang="fr"><div class="lg-callout-title">Le README d'origine ne correspond pas au starter</div><p>Le <a href="https://github.com/oplanson/esipe-javaee/blob/master/03-Labs/Lab02B-JSF/README.md">README</a> indique que <code>Client.java</code>, <code>Account.java</code>, <code>ClientService.java</code>, <code>pom.xml</code>, <code>web.xml</code> et <code>style.css</code> sont « fournis » et décrit un composant composite <code>addressInput.xhtml</code>. Rien de tout cela n'existe dans <code>starter/</code>, et le composant composite n'est pas non plus dans <code>solution/</code>. Ce guide suit le contenu réel de <code>starter/</code> et <code>solution/</code> ; le composant composite est proposé en exercice bonus.</p></div>
+      </div>
+      <table class="slide-table">
+        <thead><tr>
+          <th><span lang="en">File (in <code>starter/</code>)</span><span lang="fr">Fichier (dans <code>starter/</code>)</span></th>
+          <th><span lang="en">Status</span><span lang="fr">Statut</span></th>
+          <th><span lang="en">What it is</span><span lang="fr">Rôle</span></th>
+        </tr></thead>
+        <tbody>
+          <tr>
+            <td><code>src/main/webapp/WEB-INF/templates/main.xhtml</code></td>
+            <td><span class="lg-tag lg-tag--ok"><span lang="en">provided</span><span lang="fr">fourni</span></span></td>
+            <td><span lang="en">The page layout: header with navigation, content area and footer, with four <code>ui:insert</code> slots (<code>title</code>, <code>header</code>, <code>content</code>, <code>footer</code>). It loads the stylesheet with <code>h:outputStylesheet library="css" name="style.css"</code>. Its only difference with the solution is the footer text.</span><span lang="fr">La mise en page : en-tête avec navigation, zone de contenu et pied de page, avec quatre emplacements <code>ui:insert</code> (<code>title</code>, <code>header</code>, <code>content</code>, <code>footer</code>). Il charge la feuille de style avec <code>h:outputStylesheet library="css" name="style.css"</code>. Sa seule différence avec la solution est le texte du pied de page.</span></td>
+          </tr>
+          <tr>
+            <td><code>pom.xml</code></td>
+            <td><span class="lg-tag lg-tag--new"><span lang="en">to create</span><span lang="fr">à créer</span></span></td>
+            <td><span lang="en">Maven build: WAR, Java 17, Jakarta EE 10 and MicroProfile 6 APIs (scope <code>provided</code>), Liberty Maven plugin. Final name <code>lab02b-jsf</code> (step 1).</span><span lang="fr">Build Maven : WAR, Java 17, API Jakarta EE 10 et MicroProfile 6 (scope <code>provided</code>), plugin Maven Liberty. Nom final <code>lab02b-jsf</code> (étape 1).</span></td>
+          </tr>
+          <tr>
+            <td><code>src/main/liberty/config/server.xml</code></td>
+            <td><span class="lg-tag lg-tag--new"><span lang="en">to create</span><span lang="fr">à créer</span></span></td>
+            <td><span lang="en">Liberty features including <code>faces-4.0</code>, HTTP endpoint, web application at <code>/lab02b-jsf</code> (step 2).</span><span lang="fr">Features Liberty dont <code>faces-4.0</code>, endpoint HTTP, application web sur <code>/lab02b-jsf</code> (étape 2).</span></td>
+          </tr>
+          <tr>
+            <td><code>src/main/liberty/config/bootstrap.properties</code></td>
+            <td><span class="lg-tag lg-tag--new"><span lang="en">to create</span><span lang="fr">à créer</span></span></td>
+            <td><span lang="en">Ports <code>9080</code> and <code>9443</code> (step 2).</span><span lang="fr">Ports <code>9080</code> et <code>9443</code> (étape 2).</span></td>
+          </tr>
+          <tr>
+            <td><code>src/main/resources/META-INF/microprofile-config.properties</code></td>
+            <td><span class="lg-tag lg-tag--new"><span lang="en">to create</span><span lang="fr">à créer</span></span></td>
+            <td><span lang="en">MicroProfile Config source copied into the image (step 2).</span><span lang="fr">Source MicroProfile Config copiée dans l'image (étape 2).</span></td>
+          </tr>
+          <tr>
+            <td><code>Containerfile</code></td>
+            <td><span class="lg-tag lg-tag--new"><span lang="en">to create</span><span lang="fr">à créer</span></span></td>
+            <td><span lang="en">Builds the container image from the WAR (step 2).</span><span lang="fr">Construit l'image du conteneur à partir du WAR (étape 2).</span></td>
+          </tr>
+          <tr>
+            <td><code>src/main/webapp/WEB-INF/web.xml</code></td>
+            <td><span class="lg-tag lg-tag--new"><span lang="en">to create</span><span lang="fr">à créer</span></span></td>
+            <td><span lang="en">Declares <code>FacesServlet</code> on <code>*.xhtml</code>, the welcome file and the project stage (step 3).</span><span lang="fr">Déclare <code>FacesServlet</code> sur <code>*.xhtml</code>, le fichier d'accueil et le project stage (étape 3).</span></td>
+          </tr>
+          <tr>
+            <td><code>src/main/webapp/WEB-INF/beans.xml</code></td>
+            <td><span class="lg-tag lg-tag--new"><span lang="en">to create</span><span lang="fr">à créer</span></span></td>
+            <td><span lang="en">Activates CDI with <code>bean-discovery-mode="all"</code> (step 3).</span><span lang="fr">Active CDI avec <code>bean-discovery-mode="all"</code> (étape 3).</span></td>
+          </tr>
+          <tr>
+            <td><code>src/main/webapp/WEB-INF/faces-config.xml</code></td>
+            <td><span class="lg-tag lg-tag--new"><span lang="en">to create</span><span lang="fr">à créer</span></span></td>
+            <td><span lang="en">Locales in step 3, navigation rules in step 13.</span><span lang="fr">Locales à l'étape 3, règles de navigation à l'étape 13.</span></td>
+          </tr>
+          <tr>
+            <td><code>src/main/java/com/bank/model/Address.java</code></td>
+            <td><span class="lg-tag lg-tag--new"><span lang="en">to create</span><span lang="fr">à créer</span></span></td>
+            <td><span lang="en">Street, city, postal code, country (step 4).</span><span lang="fr">Rue, ville, code postal, pays (étape 4).</span></td>
+          </tr>
+          <tr>
+            <td><code>src/main/java/com/bank/model/Client.java</code></td>
+            <td><span class="lg-tag lg-tag--new"><span lang="en">to create</span><span lang="fr">à créer</span></span></td>
+            <td><span lang="en">Client with an <code>Address</code> and a list of accounts (step 4).</span><span lang="fr">Client avec une <code>Address</code> et une liste de comptes (étape 4).</span></td>
+          </tr>
+          <tr>
+            <td><code>src/main/java/com/bank/model/Account.java</code></td>
+            <td><span class="lg-tag lg-tag--new"><span lang="en">to create</span><span lang="fr">à créer</span></span></td>
+            <td><span lang="en">Account number, type, balance (step 4).</span><span lang="fr">Numéro de compte, type, solde (étape 4).</span></td>
+          </tr>
+          <tr>
+            <td><code>src/main/java/com/bank/service/ClientService.java</code></td>
+            <td><span class="lg-tag lg-tag--new"><span lang="en">to create</span><span lang="fr">à créer</span></span></td>
+            <td><span lang="en"><code>@ApplicationScoped</code> in-memory CRUD with five sample clients (step 5).</span><span lang="fr">CRUD en mémoire <code>@ApplicationScoped</code> avec cinq clients d'exemple (étape 5).</span></td>
+          </tr>
+          <tr>
+            <td><code>src/main/java/com/bank/health/DatabaseHealthCheck.java</code></td>
+            <td><span class="lg-tag lg-tag--new"><span lang="en">to create</span><span lang="fr">à créer</span></span></td>
+            <td><span lang="en">MicroProfile liveness check (step 5).</span><span lang="fr">Check liveness MicroProfile (étape 5).</span></td>
+          </tr>
+          <tr>
+            <td><code>src/main/java/com/bank/health/WebAppReadinessCheck.java</code></td>
+            <td><span class="lg-tag lg-tag--new"><span lang="en">to create</span><span lang="fr">à créer</span></span></td>
+            <td><span lang="en">MicroProfile readiness check (step 5).</span><span lang="fr">Check readiness MicroProfile (étape 5).</span></td>
+          </tr>
+          <tr>
+            <td><code>src/main/webapp/resources/css/style.css</code></td>
+            <td><span class="lg-tag lg-tag--new"><span lang="en">to create</span><span lang="fr">à créer</span></span></td>
+            <td><span lang="en">Styles used by the template and the views (step 6).</span><span lang="fr">Styles utilisés par le template et les vues (étape 6).</span></td>
+          </tr>
+          <tr>
+            <td><code>src/main/webapp/index.xhtml</code></td>
+            <td><span class="lg-tag lg-tag--new"><span lang="en">to create</span><span lang="fr">à créer</span></span></td>
+            <td><span lang="en">Home page (step 7).</span><span lang="fr">Page d'accueil (étape 7).</span></td>
+          </tr>
+          <tr>
+            <td><code>src/main/java/com/bank/web/ClientBean.java</code></td>
+            <td><span class="lg-tag lg-tag--new"><span lang="en">to create</span><span lang="fr">à créer</span></span></td>
+            <td><span lang="en">Session-scoped backing bean (step 8).</span><span lang="fr">Backing bean de portée session (étape 8).</span></td>
+          </tr>
+          <tr>
+            <td><code>src/main/java/com/bank/validator/EmailValidator.java</code></td>
+            <td><span class="lg-tag lg-tag--new"><span lang="en">to create</span><span lang="fr">à créer</span></span></td>
+            <td><span lang="en">Custom Faces validator <code>emailValidator</code> (step 9).</span><span lang="fr">Validateur Faces personnalisé <code>emailValidator</code> (étape 9).</span></td>
+          </tr>
+          <tr>
+            <td><code>src/main/webapp/views/client-list.xhtml</code></td>
+            <td><span class="lg-tag lg-tag--new"><span lang="en">to create</span><span lang="fr">à créer</span></span></td>
+            <td><span lang="en">Client list with AJAX search (step 10).</span><span lang="fr">Liste des clients avec recherche AJAX (étape 10).</span></td>
+          </tr>
+          <tr>
+            <td><code>src/main/webapp/views/client-form.xhtml</code></td>
+            <td><span class="lg-tag lg-tag--new"><span lang="en">to create</span><span lang="fr">à créer</span></span></td>
+            <td><span lang="en">Create and edit form (step 11).</span><span lang="fr">Formulaire de création et de modification (étape 11).</span></td>
+          </tr>
+          <tr>
+            <td><code>src/main/webapp/views/client-details.xhtml</code></td>
+            <td><span class="lg-tag lg-tag--new"><span lang="en">to create</span><span lang="fr">à créer</span></span></td>
+            <td><span lang="en">Client details with accounts (step 12).</span><span lang="fr">Détail du client avec comptes (étape 12).</span></td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="lg-callout lg-callout--note">
+        <div lang="en"><div class="lg-callout-title">Duplicates in the solution that you should not copy</div><p>The solution keeps a second copy of the three views under <code>WEB-INF/views/</code> and of the stylesheet under <code>webapp/css/</code>. Nothing uses them: the working copies are <code>webapp/views/</code> and <code>webapp/resources/css/</code>. Put your views in <code>src/main/webapp/views/</code>.</p></div>
+        <div lang="fr"><div class="lg-callout-title">Doublons de la solution à ne pas recopier</div><p>La solution conserve une seconde copie des trois vues sous <code>WEB-INF/views/</code> et de la feuille de style sous <code>webapp/css/</code>. Rien ne les utilise : les copies actives sont <code>webapp/views/</code> et <code>webapp/resources/css/</code>. Placez vos vues dans <code>src/main/webapp/views/</code>.</p></div>
+      </div>
+    </section>
+
+    <!-- ═════════════ 3. TARGET ═════════════ -->
+    <section class="lg-section" id="target">
+      <h2><span class="lg-sec-num">03</span><span lang="en">Target structure</span><span lang="fr">Structure cible</span></h2>
+      <p>
+        <span lang="en">When you are done, <code>starter/</code> must contain the same application as <code>solution/</code> (without its unused duplicates). Legend: <code>[=]</code> provided, <code>[+]</code> created by you.</span>
+        <span lang="fr">À la fin, <code>starter/</code> doit contenir la même application que <code>solution/</code> (sans ses doublons inutilisés). Légende : <code>[=]</code> fourni, <code>[+]</code> créé par vous.</span>
+      </p>
+      <div class="lg-tree"><span class="t-note">Lab02B-JSF/starter/</span>
+├── <span class="t-new">[+] Containerfile</span>
+├── <span class="t-new">[+] pom.xml</span>
+└── src/main/
+    ├── java/com/bank/
+    │   ├── health/
+    │   │   ├── <span class="t-new">[+] DatabaseHealthCheck.java</span>
+    │   │   └── <span class="t-new">[+] WebAppReadinessCheck.java</span>
+    │   ├── model/
+    │   │   ├── <span class="t-new">[+] Account.java</span>
+    │   │   ├── <span class="t-new">[+] Address.java</span>
+    │   │   └── <span class="t-new">[+] Client.java</span>
+    │   ├── service/
+    │   │   └── <span class="t-new">[+] ClientService.java</span>
+    │   ├── validator/
+    │   │   └── <span class="t-new">[+] EmailValidator.java</span>
+    │   └── web/
+    │       └── <span class="t-new">[+] ClientBean.java</span>
+    ├── liberty/config/
+    │   ├── <span class="t-new">[+] server.xml</span>
+    │   └── <span class="t-new">[+] bootstrap.properties</span>
+    ├── resources/META-INF/
+    │   └── <span class="t-new">[+] microprofile-config.properties</span>
+    └── webapp/
+        ├── <span class="t-new">[+] index.xhtml</span>
+        ├── resources/css/<span class="t-new">[+] style.css</span>
+        ├── views/
+        │   ├── <span class="t-new">[+] client-list.xhtml</span>
+        │   ├── <span class="t-new">[+] client-form.xhtml</span>
+        │   └── <span class="t-new">[+] client-details.xhtml</span>
+        └── WEB-INF/
+            ├── <span class="t-new">[+] web.xml</span>
+            ├── <span class="t-new">[+] beans.xml</span>
+            ├── <span class="t-new">[+] faces-config.xml</span>
+            └── templates/<span class="t-ok">[=] main.xhtml</span></div>
+      <p>
+        <span lang="en">Reference files: <a href="https://github.com/oplanson/esipe-javaee/blob/master/03-Labs/Lab02B-JSF/solution/src/main/java/com/bank/web/ClientBean.java"><code>ClientBean.java</code></a>, <a href="https://github.com/oplanson/esipe-javaee/blob/master/03-Labs/Lab02B-JSF/solution/src/main/java/com/bank/service/ClientService.java"><code>ClientService.java</code></a>, <a href="https://github.com/oplanson/esipe-javaee/blob/master/03-Labs/Lab02B-JSF/solution/src/main/webapp/WEB-INF/faces-config.xml"><code>faces-config.xml</code></a>. Try each step on your own before opening them.</span>
+        <span lang="fr">Fichiers de référence : <a href="https://github.com/oplanson/esipe-javaee/blob/master/03-Labs/Lab02B-JSF/solution/src/main/java/com/bank/web/ClientBean.java"><code>ClientBean.java</code></a>, <a href="https://github.com/oplanson/esipe-javaee/blob/master/03-Labs/Lab02B-JSF/solution/src/main/java/com/bank/service/ClientService.java"><code>ClientService.java</code></a>, <a href="https://github.com/oplanson/esipe-javaee/blob/master/03-Labs/Lab02B-JSF/solution/src/main/webapp/WEB-INF/faces-config.xml"><code>faces-config.xml</code></a>. Essayez chaque étape par vous-même avant de les ouvrir.</span>
+      </p>
+    </section>
+
+    <!-- ═════════════ 4. SETUP ═════════════ -->
+    <section class="lg-section" id="setup">
+      <h2><span class="lg-sec-num">04</span><span lang="en">Setup</span><span lang="fr">Préparation</span></h2>
+      <h3><span lang="en">Tools</span><span lang="fr">Outils</span></h3>
+      <table class="slide-table">
+        <thead><tr><th><span lang="en">Tool</span><span lang="fr">Outil</span></th><th><span lang="en">Check with</span><span lang="fr">Vérifier avec</span></th></tr></thead>
+        <tbody>
+          <tr><td>JDK 17+</td><td><code>java -version</code></td></tr>
+          <tr><td>Maven 3.x</td><td><code>mvn -v</code></td></tr>
+          <tr><td>Podman <span lang="en">(Docker works with the same commands)</span><span lang="fr">(Docker fonctionne avec les mêmes commandes)</span></td><td><code>podman --version</code></td></tr>
+          <tr><td>curl</td><td><code>curl --version</code></td></tr>
+        </tbody>
+      </table>
+      <div class="lg-callout lg-callout--note">
+        <div lang="en"><div class="lg-callout-title">macOS and Windows</div><p>Podman runs containers in a virtual machine. If <code>podman</code> cannot connect, run <code>podman machine list</code> and start it with <code>podman machine start</code>.</p></div>
+        <div lang="fr"><div class="lg-callout-title">macOS et Windows</div><p>Podman exécute les conteneurs dans une machine virtuelle. Si <code>podman</code> ne se connecte pas, lancez <code>podman machine list</code> puis démarrez-la avec <code>podman machine start</code>.</p></div>
+      </div>
+
+      <h3><span lang="en">Your working folder</span><span lang="fr">Votre dossier de travail</span></h3>
+      <p>
+        <span lang="en">Work directly in <code>starter/</code>. All commands below start from the repository root. The lab does not reuse the code of Lab 02, only its ideas (MVC, request and session scope).</span>
+        <span lang="fr">Travaillez directement dans <code>starter/</code>. Toutes les commandes ci-dessous partent de la racine du dépôt. Le lab ne réutilise pas le code du Lab 02, seulement ses idées (MVC, portées requête et session).</span>
+      </p>
+      <pre class="dark"><code>cd 03-Labs/Lab02B-JSF/starter</code></pre>
+
+      <h3><span lang="en">The redeploy loop</span><span lang="fr">La boucle de redéploiement</span></h3>
+      <p>
+        <span lang="en">The WAR is baked into the container image, so after <strong>every</strong> change you rebuild and restart. You will use these commands many times:</span>
+        <span lang="fr">Le WAR est embarqué dans l'image du conteneur : après <strong>chaque</strong> modification, vous reconstruisez et relancez. Vous utiliserez ces commandes de nombreuses fois :</span>
+      </p>
+      <pre class="dark"><code>mvn clean package -DskipTests
+podman rm -f lab02b-jsf 2&gt;/dev/null
+podman build -t lab02b-jsf:latest -f Containerfile .
+podman run -d --name lab02b-jsf -p 127.0.0.1:9080:9080 lab02b-jsf:latest
+until curl -fs http://localhost:9080/health/ready &gt;/dev/null; do sleep 2; done; echo "ready"</code></pre>
+      <p>
+        <span lang="en">The container is bound to <code>127.0.0.1</code> so the application is reachable from your machine only. The first <code>mvn package</code> downloads Open Liberty and may take several minutes. The loop works from step 2 on, once the <code>Containerfile</code> exists. The readiness check is on <code>/health/ready</code> (at the server root, not under <code>/lab02b-jsf</code>); it answers <code>UP</code> as soon as the server is started.</span>
+        <span lang="fr">Le conteneur est lié à <code>127.0.0.1</code> : l'application n'est accessible que depuis votre machine. Le premier <code>mvn package</code> télécharge Open Liberty et peut prendre plusieurs minutes. La boucle fonctionne à partir de l'étape 2, une fois le <code>Containerfile</code> créé. Le contrôle de disponibilité utilise <code>/health/ready</code> (à la racine du serveur, pas sous <code>/lab02b-jsf</code>) ; il répond <code>UP</code> dès que le serveur est démarré.</span>
+      </p>
+      <div class="lg-callout lg-callout--note">
+        <div lang="en"><div class="lg-callout-title">After a redeploy, reload the page</div><p>The session lives in the container. After a redeploy, a page opened before may fail with <code>ViewExpiredException</code> when you click a button: reload it with a plain <code>GET</code> (address bar) first.</p></div>
+        <div lang="fr"><div class="lg-callout-title">Après un redéploiement, rechargez la page</div><p>La session vit dans le conteneur. Après un redéploiement, une page ouverte avant peut échouer avec <code>ViewExpiredException</code> quand vous cliquez sur un bouton : rechargez-la d'abord par un simple <code>GET</code> (barre d'adresse).</p></div>
+      </div>
+    </section>
+
+    <!-- ═════════════ 5. STEPS ═════════════ -->
+    <section class="lg-section" id="steps">
+      <h2><span class="lg-sec-num">05</span><span lang="en">Step by step</span><span lang="fr">Pas à pas</span></h2>
+      <p>
+        <span lang="en">Each step gives the task, then two levels of hints and, when useful, a link to the solution file. Try first, open the hints only if you are stuck, and always run the checkpoint before moving on.</span>
+        <span lang="fr">Chaque étape donne la consigne, puis deux niveaux d'indices et, si utile, un lien vers le fichier solution. Essayez d'abord, n'ouvrez les indices qu'en cas de blocage, et lancez toujours le point de contrôle avant de continuer.</span>
+      </p>
+      <ol class="lg-steps-overview">
+        <li><a href="#step-1"><span lang="en">The Maven build</span><span lang="fr">Le build Maven</span></a><span class="lg-dur">10 min</span></li>
+        <li><a href="#step-2"><span lang="en">Liberty configuration and container</span><span lang="fr">Configuration Liberty et conteneur</span></a><span class="lg-dur">15 min</span></li>
+        <li><a href="#step-3"><span lang="en">Faces, CDI and locales</span><span lang="fr">Faces, CDI et locales</span></a><span class="lg-dur">10 min</span></li>
+        <li><a href="#step-4"><span lang="en">Model classes</span><span lang="fr">Classes du modèle</span></a><span class="lg-dur">10 min</span></li>
+        <li><a href="#step-5"><span lang="en">Service and health checks</span><span lang="fr">Service et health checks</span></a><span class="lg-dur">15 min</span></li>
+        <li><a href="#step-6"><span lang="en">Template and styles</span><span lang="fr">Template et styles</span></a><span class="lg-dur">5 min</span></li>
+        <li><a href="#step-7"><span lang="en">The home page</span><span lang="fr">La page d'accueil</span></a><span class="lg-dur">10 min</span></li>
+        <li><a href="#step-8"><span lang="en">The <code>ClientBean</code> backing bean</span><span lang="fr">Le backing bean <code>ClientBean</code></span></a><span class="lg-dur">25 min</span></li>
+        <li><a href="#step-9"><span lang="en">The email validator</span><span lang="fr">Le validateur d'email</span></a><span class="lg-dur">10 min</span></li>
+        <li><a href="#step-10"><span lang="en">Client list with AJAX search</span><span lang="fr">Liste des clients avec recherche AJAX</span></a><span class="lg-dur">25 min</span></li>
+        <li><a href="#step-11"><span lang="en">The client form</span><span lang="fr">Le formulaire client</span></a><span class="lg-dur">20 min</span></li>
+        <li><a href="#step-12"><span lang="en">Client details</span><span lang="fr">Détail du client</span></a><span class="lg-dur">10 min</span></li>
+        <li><a href="#step-13"><span lang="en">Navigation rules</span><span lang="fr">Règles de navigation</span></a><span class="lg-dur">10 min</span></li>
+      </ol>
+
+      <!-- ───────── STEP 1 ───────── -->
+      <article class="lg-step" id="step-1">
+        <div class="lg-step-head">
+          <div class="lg-step-num">1</div>
+          <div>
+            <h3><span lang="en">The Maven build</span><span lang="fr">Le build Maven</span></h3>
+            <div class="lg-step-meta">
+              <span class="lg-chip">10 min</span>
+              <span class="lg-chip"><span lang="en">Maven WAR packaging</span><span lang="fr">Packaging WAR avec Maven</span></span>
+            </div>
+          </div>
+        </div>
+        <div class="lg-step-body">
+          <p class="lg-files"><span lang="en">File to create:</span><span lang="fr">Fichier à créer :</span> <code>pom.xml</code></p>
+          <div class="lg-task-label"><span lang="en">Task</span><span lang="fr">À faire</span></div>
+          <ol>
+            <li><span lang="en">Create <code>pom.xml</code> at the root of <code>starter/</code>. It is about 120 lines of mostly standard Maven and Liberty plugin configuration, so you copy it from the solution instead of typing it, then you read it.</span><span lang="fr">Créez <code>pom.xml</code> à la racine de <code>starter/</code>. Il fait environ 120 lignes de configuration Maven et Liberty surtout standard : vous le copiez depuis la solution plutôt que de le saisir, puis vous le lisez.</span></li>
+            <li><span lang="en">Find in it: the packaging, the name of the produced file, why the Jakarta EE dependency has the scope <code>provided</code>, and which phase runs the Liberty plugin.</span><span lang="fr">Repérez-y : le packaging, le nom du fichier produit, pourquoi la dépendance Jakarta EE a le scope <code>provided</code>, et quelle phase exécute le plugin Liberty.</span></li>
+            <li><span lang="en">Build the project with Maven, skipping tests. Do not change any version in the file.</span><span lang="fr">Compilez le projet avec Maven, sans les tests. Ne modifiez aucune version dans le fichier.</span></li>
+          </ol>
+          <details class="lg-hint lg-hint--1">
+            <summary><span lang="en">Hint 1 — where to look</span><span lang="fr">Indice 1 — où chercher</span></summary>
+            <div class="lg-hint-body">
+              <p><span lang="en">The answers are in the elements <code>&lt;packaging&gt;</code>, <code>&lt;finalName&gt;</code>, the dependency scope, and the plugin <code>&lt;executions&gt;</code>. Remember that Open Liberty already contains the Jakarta EE implementation. The solution's <code>pom.xml</code> targets Open Liberty, so it is valid for this lab.</span><span lang="fr">Les réponses se trouvent dans les éléments <code>&lt;packaging&gt;</code>, <code>&lt;finalName&gt;</code>, le scope de la dépendance, et les <code>&lt;executions&gt;</code> du plugin. Rappelez-vous qu'Open Liberty contient déjà l'implémentation Jakarta EE. Le <code>pom.xml</code> de la solution cible Open Liberty : il est valide pour ce lab.</span></p>
+            </div>
+          </details>
+          <details class="lg-hint lg-hint--2">
+            <summary><span lang="en">Hint 2 — the command and the answers</span><span lang="fr">Indice 2 — la commande et les réponses</span></summary>
+            <div class="lg-hint-body">
+<pre class="dark"><code>cp ../solution/pom.xml .</code></pre>
+              <ul>
+                <li><span lang="en">Packaging <code>war</code>, <code>&lt;finalName&gt;</code> is <code>${project.artifactId}</code> = <code>lab02b-jsf</code>, so the file is <code>target/lab02b-jsf.war</code>.</span><span lang="fr">Packaging <code>war</code>, <code>&lt;finalName&gt;</code> vaut <code>${project.artifactId}</code> = <code>lab02b-jsf</code>, donc le fichier est <code>target/lab02b-jsf.war</code>.</span></li>
+                <li><span lang="en">Scope <code>provided</code>: <code>jakarta.jakartaee-api</code> 10.0.0 and the MicroProfile 6.0 API are needed to compile, but the server supplies them at runtime, so they must not be packaged.</span><span lang="fr">Scope <code>provided</code> : <code>jakarta.jakartaee-api</code> 10.0.0 et l'API MicroProfile 6.0 sont nécessaires à la compilation, mais le serveur les fournit à l'exécution : elles ne doivent pas être empaquetées.</span></li>
+                <li><span lang="en">The Liberty plugin runs at <code>package</code> (goals <code>create</code>, <code>install-feature</code>, <code>deploy</code>).</span><span lang="fr">Le plugin Liberty s'exécute à la phase <code>package</code> (goals <code>create</code>, <code>install-feature</code>, <code>deploy</code>).</span></li>
+              </ul>
+            </div>
+          </details>
+          <details class="lg-hint lg-hint--sol">
+            <summary><span lang="en">Solution file</span><span lang="fr">Fichier solution</span></summary>
+            <div class="lg-hint-body">
+              <p><a href="https://github.com/oplanson/esipe-javaee/blob/master/03-Labs/Lab02B-JSF/solution/pom.xml"><code>solution/pom.xml</code></a></p>
+            </div>
+          </details>
+          <div class="lg-checkpoint">
+            <div class="lg-check-label"><span lang="en">Checkpoint</span><span lang="fr">Point de contrôle</span></div>
+            <pre class="dark"><code>mvn clean package -DskipTests
+unzip -l target/lab02b-jsf.war</code></pre>
+            <p><span lang="en">Expected: <code>BUILD SUCCESS</code>. The WAR lists <code>WEB-INF/templates/main.xhtml</code> and <strong>no <code>.class</code> file</strong>, since you have not written any Java yet.</span><span lang="fr">Attendu : <code>BUILD SUCCESS</code>. Le WAR contient <code>WEB-INF/templates/main.xhtml</code> et <strong>aucun fichier <code>.class</code></strong>, puisque vous n'avez pas encore écrit de Java.</span></p>
+          </div>
+        </div>
+      </article>
+
+      <!-- ───────── STEP 2 ───────── -->
+      <article class="lg-step" id="step-2">
+        <div class="lg-step-head">
+          <div class="lg-step-num">2</div>
+          <div>
+            <h3><span lang="en">Liberty configuration and container</span><span lang="fr">Configuration Liberty et conteneur</span></h3>
+            <div class="lg-step-meta">
+              <span class="lg-chip">15 min</span>
+              <span class="lg-chip"><span lang="en">Course:</span><span lang="fr">Cours :</span> <a href="../../02-Lectures/slides/01-intro/slides.html#slide-21"><span lang="en">intro, slide 21</span><span lang="fr">intro, slide 21</span></a></span>
+            </div>
+          </div>
+        </div>
+        <div class="lg-step-body">
+          <p class="lg-files"><span lang="en">Files to create:</span><span lang="fr">Fichiers à créer :</span> <code>src/main/liberty/config/server.xml</code>, <code>src/main/liberty/config/bootstrap.properties</code>, <code>src/main/resources/META-INF/microprofile-config.properties</code>, <code>Containerfile</code></p>
+          <div class="lg-task-label"><span lang="en">Task</span><span lang="fr">À faire</span></div>
+          <ol>
+            <li><span lang="en">Create <code>server.xml</code>. It must enable the features <code>faces-4.0</code>, <code>cdi-4.0</code>, <code>servlet-6.0</code>, <code>jsonp-2.1</code>, <code>jsonb-3.0</code>, <code>mpHealth-4.0</code>, <code>mpConfig-3.0</code> and <code>mpMetrics-5.0</code>; define the HTTP endpoint with the variables <code>${http.port}</code> and <code>${https.port}</code>; declare the web application <code>lab02b-jsf.war</code> at the context root <code>/lab02b-jsf</code>; and open <code>/metrics</code> without authentication.</span><span lang="fr">Créez <code>server.xml</code>. Il doit activer les features <code>faces-4.0</code>, <code>cdi-4.0</code>, <code>servlet-6.0</code>, <code>jsonp-2.1</code>, <code>jsonb-3.0</code>, <code>mpHealth-4.0</code>, <code>mpConfig-3.0</code> et <code>mpMetrics-5.0</code> ; définir l'endpoint HTTP avec les variables <code>${http.port}</code> et <code>${https.port}</code> ; déclarer l'application web <code>lab02b-jsf.war</code> au context root <code>/lab02b-jsf</code> ; et ouvrir <code>/metrics</code> sans authentification.</span></li>
+            <li><span lang="en">Create <code>bootstrap.properties</code> that gives values to <code>http.port</code> (9080), <code>https.port</code> (9443) and <code>app.name</code>.</span><span lang="fr">Créez <code>bootstrap.properties</code> qui donne des valeurs à <code>http.port</code> (9080), <code>https.port</code> (9443) et <code>app.name</code>.</span></li>
+            <li><span lang="en">Create <code>microprofile-config.properties</code>: application information and server settings. No class of this lab reads it; it exists because the <code>Containerfile</code> copies it and later labs use it.</span><span lang="fr">Créez <code>microprofile-config.properties</code> : informations sur l'application et paramètres serveur. Aucune classe de ce lab ne le lit ; il existe parce que le <code>Containerfile</code> le copie et que les labs suivants l'utilisent.</span></li>
+            <li><span lang="en">Create the <code>Containerfile</code>: start from the Open Liberty image, copy the WAR into <code>/config/apps/</code> and the three configuration files into <code>/config/</code>, run <code>configure.sh</code>, expose the two ports and start the server.</span><span lang="fr">Créez le <code>Containerfile</code> : partir de l'image Open Liberty, copier le WAR dans <code>/config/apps/</code> et les trois fichiers de configuration dans <code>/config/</code>, exécuter <code>configure.sh</code>, exposer les deux ports et démarrer le serveur.</span></li>
+          </ol>
+          <details class="lg-hint lg-hint--1">
+            <summary><span lang="en">Hint 1 — how the pieces fit</span><span lang="fr">Indice 1 — comment les pièces s'assemblent</span></summary>
+            <div class="lg-hint-body">
+              <p><span lang="en">The feature <code>faces-4.0</code> brings Jakarta Faces (and the Facelets view handler) into Liberty: without it, <code>.xhtml</code> files are not processed. <code>host="*"</code> in the endpoint lets the server listen on all container interfaces, which the published port needs; the host side is restricted by <code>-p 127.0.0.1:...</code>. The <code>location</code> of the web application must match the WAR file name, <code>lab02b-jsf.war</code>.</span><span lang="fr">La feature <code>faces-4.0</code> apporte Jakarta Faces (et le gestionnaire de vues Facelets) à Liberty : sans elle, les fichiers <code>.xhtml</code> ne sont pas traités. <code>host="*"</code> dans l'endpoint permet au serveur d'écouter sur toutes les interfaces du conteneur, ce que demande le port publié ; côté hôte, l'accès est restreint par <code>-p 127.0.0.1:...</code>. Le <code>location</code> de l'application web doit correspondre au nom du WAR, <code>lab02b-jsf.war</code>.</span></p>
+            </div>
+          </details>
+          <details class="lg-hint lg-hint--2">
+            <summary><span lang="en">Hint 2 — the four files</span><span lang="fr">Indice 2 — les quatre fichiers</span></summary>
+            <div class="lg-hint-body">
+<pre class="dark"><code>&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+&lt;server description="Lab 02B - JSF Client Management Server"&gt;
+    &lt;featureManager&gt;
+        &lt;feature&gt;faces-4.0&lt;/feature&gt;
+        &lt;feature&gt;cdi-4.0&lt;/feature&gt;
+        &lt;feature&gt;servlet-6.0&lt;/feature&gt;
+        &lt;feature&gt;jsonp-2.1&lt;/feature&gt;
+        &lt;feature&gt;jsonb-3.0&lt;/feature&gt;
+        &lt;feature&gt;mpHealth-4.0&lt;/feature&gt;
+        &lt;feature&gt;mpConfig-3.0&lt;/feature&gt;
+        &lt;feature&gt;mpMetrics-5.0&lt;/feature&gt;
+    &lt;/featureManager&gt;
+
+    &lt;httpEndpoint id="defaultHttpEndpoint"
+                  httpPort="${http.port}" httpsPort="${https.port}" host="*"/&gt;
+
+    &lt;webApplication id="lab02b-jsf" location="lab02b-jsf.war" contextRoot="/lab02b-jsf"&gt;
+        &lt;classloader delegation="parentLast"/&gt;
+    &lt;/webApplication&gt;
+
+    &lt;logging traceSpecification="*=info" maxFileSize="20" maxFiles="10"/&gt;
+    &lt;mpHealth/&gt;
+    &lt;mpMetrics authentication="false"/&gt;
+&lt;/server&gt;</code></pre>
+<pre class="dark"><code># bootstrap.properties
+http.port=9080
+https.port=9443
+app.name=lab02b-jsf
+
+# microprofile-config.properties
+app.name=Lab 02B - JSF Client Management
+app.version=1.0.0
+app.description=JSF-based client management with Facelets and AJAX
+server.host=localhost
+server.port=9080</code></pre>
+<pre class="dark"><code>FROM icr.io/appcafe/open-liberty:full-java17-openj9-ubi
+COPY --chown=1001:0 target/lab02b-jsf.war /config/apps/
+COPY --chown=1001:0 src/main/liberty/config/server.xml /config/
+COPY --chown=1001:0 src/main/liberty/config/bootstrap.properties /config/
+COPY --chown=1001:0 src/main/resources/META-INF/microprofile-config.properties /config/
+RUN configure.sh
+EXPOSE 9080 9443
+CMD ["/opt/ol/wlp/bin/server", "run", "defaultServer"]</code></pre>
+              <p><span lang="en">The solution's <code>server.xml</code> sets <code>traceSpecification="*=info:com.bank.*=all"</code>, which floods the log; <code>*=info</code> is enough here.</span><span lang="fr">Le <code>server.xml</code> de la solution fixe <code>traceSpecification="*=info:com.bank.*=all"</code>, ce qui inonde le journal ; <code>*=info</code> suffit ici.</span></p>
+            </div>
+          </details>
+          <details class="lg-hint lg-hint--sol">
+            <summary><span lang="en">Solution files</span><span lang="fr">Fichiers solution</span></summary>
+            <div class="lg-hint-body">
+              <p><a href="https://github.com/oplanson/esipe-javaee/blob/master/03-Labs/Lab02B-JSF/solution/src/main/liberty/config/server.xml"><code>solution/…/server.xml</code></a> · <a href="https://github.com/oplanson/esipe-javaee/blob/master/03-Labs/Lab02B-JSF/solution/Containerfile"><code>solution/Containerfile</code></a> · <a href="https://github.com/oplanson/esipe-javaee/blob/master/03-Labs/Lab02B-JSF/solution/src/main/liberty/config/bootstrap.properties"><code>solution/…/bootstrap.properties</code></a> · <a href="https://github.com/oplanson/esipe-javaee/blob/master/03-Labs/Lab02B-JSF/solution/src/main/resources/META-INF/microprofile-config.properties"><code>solution/…/microprofile-config.properties</code></a></p>
+            </div>
+          </details>
+          <div class="lg-checkpoint">
+            <div class="lg-check-label"><span lang="en">Checkpoint</span><span lang="fr">Point de contrôle</span></div>
+            <pre class="dark"><code># run the redeploy loop, then:
+curl -s http://localhost:9080/health/ready
+curl -s -o /dev/null -w '%{http_code}\n' http://localhost:9080/lab02b-jsf/
+podman logs lab02b-jsf | grep CWWKZ0001I</code></pre>
+            <p><span lang="en">Expected: <code>{"status":"UP","checks":[]}</code>; <code>404</code> for <code>/lab02b-jsf/</code> (the application is deployed but has no page yet); and a log line <code>CWWKZ0001I: Application lab02b-jsf started</code>. If <code>podman build</code> stops on a <code>COPY</code> step, a file is missing or misnamed.</span><span lang="fr">Attendu : <code>{"status":"UP","checks":[]}</code> ; <code>404</code> pour <code>/lab02b-jsf/</code> (l'application est déployée mais n'a pas encore de page) ; et une ligne de log <code>CWWKZ0001I: Application lab02b-jsf started</code>. Si <code>podman build</code> s'arrête sur une étape <code>COPY</code>, un fichier est manquant ou mal nommé.</span></p>
+          </div>
+        </div>
+      </article>
+
+      <!-- ───────── STEP 3 ───────── -->
+      <article class="lg-step" id="step-3">
+        <div class="lg-step-head">
+          <div class="lg-step-num">3</div>
+          <div>
+            <h3><span lang="en">Faces, CDI and locales</span><span lang="fr">Faces, CDI et locales</span></h3>
+            <div class="lg-step-meta">
+              <span class="lg-chip">10 min</span>
+              <span class="lg-chip"><span lang="en">Course:</span><span lang="fr">Cours :</span> <a href="../../02-Lectures/slides/02b-jsf/slides.html#slide-63"><span lang="en">JSF, slides 63–64</span><span lang="fr">JSF, slides 63–64</span></a></span>
+            </div>
+          </div>
+        </div>
+        <div class="lg-step-body">
+          <p class="lg-files"><span lang="en">Files to create:</span><span lang="fr">Fichiers à créer :</span> <code>src/main/webapp/WEB-INF/web.xml</code>, <code>src/main/webapp/WEB-INF/beans.xml</code>, <code>src/main/webapp/WEB-INF/faces-config.xml</code></p>
+          <div class="lg-task-label"><span lang="en">Task</span><span lang="fr">À faire</span></div>
+          <ol>
+            <li><span lang="en"><code>web.xml</code> (Servlet 6.0): declare <code>jakarta.faces.webapp.FacesServlet</code> with <code>load-on-startup</code> 1 and map it on <code>*.xhtml</code>; set <code>index.xhtml</code> as welcome file; set the context parameters <code>jakarta.faces.PROJECT_STAGE</code> = <code>Development</code> and <code>jakarta.faces.FACELETS_SKIP_COMMENTS</code> = <code>true</code>; set a 30-minute session timeout.</span><span lang="fr"><code>web.xml</code> (Servlet 6.0) : déclarer <code>jakarta.faces.webapp.FacesServlet</code> avec <code>load-on-startup</code> 1 et le mapper sur <code>*.xhtml</code> ; définir <code>index.xhtml</code> comme fichier d'accueil ; fixer les paramètres de contexte <code>jakarta.faces.PROJECT_STAGE</code> = <code>Development</code> et <code>jakarta.faces.FACELETS_SKIP_COMMENTS</code> = <code>true</code> ; fixer une session de 30 minutes.</span></li>
+            <li><span lang="en"><code>beans.xml</code> (CDI 4.0): an empty <code>&lt;beans&gt;</code> element with <code>bean-discovery-mode="all"</code>, so that every class of the WAR is a bean candidate.</span><span lang="fr"><code>beans.xml</code> (CDI 4.0) : un élément <code>&lt;beans&gt;</code> vide avec <code>bean-discovery-mode="all"</code>, pour que toute classe du WAR soit candidate à devenir bean.</span></li>
+            <li><span lang="en"><code>faces-config.xml</code> (Faces 4.0): for now only the <code>&lt;locale-config&gt;</code> with default locale <code>en</code> and supported locales <code>en</code> and <code>fr</code>. You add the navigation rules in step 13.</span><span lang="fr"><code>faces-config.xml</code> (Faces 4.0) : pour l'instant seulement le <code>&lt;locale-config&gt;</code> avec la locale par défaut <code>en</code> et les locales prises en charge <code>en</code> et <code>fr</code>. Vous ajouterez les règles de navigation à l'étape 13.</span></li>
+          </ol>
+          <details class="lg-hint lg-hint--1">
+            <summary><span lang="en">Hint 1</span><span lang="fr">Indice 1</span></summary>
+            <div class="lg-hint-body">
+              <p><span lang="en">The namespace of all three files is <code>https://jakarta.ee/xml/ns/jakartaee</code> (not <code>javax</code>), and the schemas are <code>web-app_6_0.xsd</code>, <code>beans_4_0.xsd</code> and <code>web-facesconfig_4_0.xsd</code>. The solution also maps the servlet on <code>/faces/*</code>; you do not need that mapping. It also declares a <code>resource-bundle</code> named <code>messages</code> although no <code>messages.properties</code> exists: do not copy it.</span><span lang="fr">L'espace de noms des trois fichiers est <code>https://jakarta.ee/xml/ns/jakartaee</code> (pas <code>javax</code>), et les schémas sont <code>web-app_6_0.xsd</code>, <code>beans_4_0.xsd</code> et <code>web-facesconfig_4_0.xsd</code>. La solution mappe aussi la servlet sur <code>/faces/*</code> ; ce mapping est inutile ici. Elle déclare aussi un <code>resource-bundle</code> nommé <code>messages</code> alors qu'aucun <code>messages.properties</code> n'existe : ne le recopiez pas.</span></p>
+            </div>
+          </details>
+          <details class="lg-hint lg-hint--2">
+            <summary><span lang="en">Hint 2 — the three files</span><span lang="fr">Indice 2 — les trois fichiers</span></summary>
+            <div class="lg-hint-body">
+<pre class="dark"><code>&lt;!-- web.xml --&gt;
+&lt;web-app xmlns="https://jakarta.ee/xml/ns/jakartaee" version="6.0"&gt;
+    &lt;servlet&gt;
+        &lt;servlet-name&gt;Faces Servlet&lt;/servlet-name&gt;
+        &lt;servlet-class&gt;jakarta.faces.webapp.FacesServlet&lt;/servlet-class&gt;
+        &lt;load-on-startup&gt;1&lt;/load-on-startup&gt;
+    &lt;/servlet&gt;
+    &lt;servlet-mapping&gt;
+        &lt;servlet-name&gt;Faces Servlet&lt;/servlet-name&gt;
+        &lt;url-pattern&gt;*.xhtml&lt;/url-pattern&gt;
+    &lt;/servlet-mapping&gt;
+    &lt;welcome-file-list&gt;
+        &lt;welcome-file&gt;index.xhtml&lt;/welcome-file&gt;
+    &lt;/welcome-file-list&gt;
+    &lt;context-param&gt;
+        &lt;param-name&gt;jakarta.faces.PROJECT_STAGE&lt;/param-name&gt;
+        &lt;param-value&gt;Development&lt;/param-value&gt;
+    &lt;/context-param&gt;
+    &lt;!-- same pattern for jakarta.faces.FACELETS_SKIP_COMMENTS = true --&gt;
+    &lt;session-config&gt;&lt;session-timeout&gt;30&lt;/session-timeout&gt;&lt;/session-config&gt;
+&lt;/web-app&gt;</code></pre>
+<pre class="dark"><code>&lt;!-- beans.xml --&gt;
+&lt;beans xmlns="https://jakarta.ee/xml/ns/jakartaee" version="4.0"
+       bean-discovery-mode="all"&gt;
+&lt;/beans&gt;
+
+&lt;!-- faces-config.xml --&gt;
+&lt;faces-config xmlns="https://jakarta.ee/xml/ns/jakartaee" version="4.0"&gt;
+    &lt;application&gt;
+        &lt;locale-config&gt;
+            &lt;default-locale&gt;en&lt;/default-locale&gt;
+            &lt;supported-locale&gt;en&lt;/supported-locale&gt;
+            &lt;supported-locale&gt;fr&lt;/supported-locale&gt;
+        &lt;/locale-config&gt;
+    &lt;/application&gt;
+&lt;/faces-config&gt;</code></pre>
+              <p><span lang="en">Add the <code>xsi:schemaLocation</code> attribute of each file as in the solution if your editor validates against the schema.</span><span lang="fr">Ajoutez l'attribut <code>xsi:schemaLocation</code> de chaque fichier comme dans la solution si votre éditeur valide contre le schéma.</span></p>
+            </div>
+          </details>
+          <details class="lg-hint lg-hint--sol">
+            <summary><span lang="en">Solution files</span><span lang="fr">Fichiers solution</span></summary>
+            <div class="lg-hint-body">
+              <p><a href="https://github.com/oplanson/esipe-javaee/blob/master/03-Labs/Lab02B-JSF/solution/src/main/webapp/WEB-INF/web.xml"><code>solution/…/web.xml</code></a> · <a href="https://github.com/oplanson/esipe-javaee/blob/master/03-Labs/Lab02B-JSF/solution/src/main/webapp/WEB-INF/beans.xml"><code>solution/…/beans.xml</code></a> · <a href="https://github.com/oplanson/esipe-javaee/blob/master/03-Labs/Lab02B-JSF/solution/src/main/webapp/WEB-INF/faces-config.xml"><code>solution/…/faces-config.xml</code></a></p>
+            </div>
+          </details>
+          <div class="lg-checkpoint">
+            <div class="lg-check-label"><span lang="en">Checkpoint</span><span lang="fr">Point de contrôle</span></div>
+            <pre class="dark"><code># redeploy loop, then:
+unzip -l target/lab02b-jsf.war | grep -E "web.xml|beans.xml|faces-config.xml"
+curl -s -o /dev/null -w '%{http_code}\n' http://localhost:9080/lab02b-jsf/
+podman logs lab02b-jsf | grep CWWKZ0001I</code></pre>
+            <p><span lang="en">Expected: the three descriptors are listed under <code>WEB-INF/</code>; the application still starts (<code>CWWKZ0001I</code>) and <code>/lab02b-jsf/</code> still answers <code>404</code>, because <code>index.xhtml</code> does not exist yet. A malformed XML file would make the application fail to start instead.</span><span lang="fr">Attendu : les trois descripteurs sont listés sous <code>WEB-INF/</code> ; l'application démarre toujours (<code>CWWKZ0001I</code>) et <code>/lab02b-jsf/</code> répond encore <code>404</code>, car <code>index.xhtml</code> n'existe pas encore. Un fichier XML mal formé ferait échouer le démarrage de l'application.</span></p>
+          </div>
+        </div>
+      </article>
+
+      <!-- ───────── STEP 4 ───────── -->
+      <article class="lg-step" id="step-4">
+        <div class="lg-step-head">
+          <div class="lg-step-num">4</div>
+          <div>
+            <h3><span lang="en">Model classes</span><span lang="fr">Classes du modèle</span></h3>
+            <div class="lg-step-meta">
+              <span class="lg-chip">10 min</span>
+              <span class="lg-chip"><span lang="en">Plain Java objects used by Expression Language</span><span lang="fr">Objets Java simples utilisés par l'Expression Language</span></span>
+            </div>
+          </div>
+        </div>
+        <div class="lg-step-body">
+          <p class="lg-files"><span lang="en">Files to create (package <code>com.bank.model</code>):</span><span lang="fr">Fichiers à créer (package <code>com.bank.model</code>) :</span> <code>src/main/java/com/bank/model/Address.java</code>, <code>src/main/java/com/bank/model/Client.java</code>, <code>src/main/java/com/bank/model/Account.java</code></p>
+          <div class="lg-task-label"><span lang="en">Task</span><span lang="fr">À faire</span></div>
+          <p><span lang="en">Create three classes that all implement <code>Serializable</code> (with <code>serialVersionUID = 1L</code>), because a <code>@SessionScoped</code> bean will hold them. Each needs a public no-argument constructor and getters and setters: Expression Language such as <code>#{client.address.city}</code> works through them.</span><span lang="fr">Créez trois classes qui implémentent toutes <code>Serializable</code> (avec <code>serialVersionUID = 1L</code>), car un bean <code>@SessionScoped</code> les détiendra. Chacune a besoin d'un constructeur public sans argument et de getters et setters : l'Expression Language comme <code>#{client.address.city}</code> passe par eux.</span></p>
+          <ul>
+            <li><span lang="en"><code>Address</code>: <code>String street, city, postalCode, country</code>; constructors <code>()</code> and <code>(street, city, postalCode, country)</code>; <code>toString</code> returning <code>street, postalCode city, country</code>.</span><span lang="fr"><code>Address</code> : <code>String street, city, postalCode, country</code> ; constructeurs <code>()</code> et <code>(street, city, postalCode, country)</code> ; <code>toString</code> retournant <code>street, postalCode city, country</code>.</span></li>
+            <li><span lang="en"><code>Client</code>: <code>Long id</code>, <code>String name</code>, <code>String email</code>, <code>Address address</code>, <code>List&lt;Account&gt; accounts</code>; constructors <code>()</code>, <code>(id, name, email)</code> and <code>(id, name, email, address)</code>; every constructor creates an empty <code>ArrayList</code> of accounts and, when no address is given, a new <code>Address</code>; an <code>addAccount(Account)</code> method; a <code>toString</code>.</span><span lang="fr"><code>Client</code> : <code>Long id</code>, <code>String name</code>, <code>String email</code>, <code>Address address</code>, <code>List&lt;Account&gt; accounts</code> ; constructeurs <code>()</code>, <code>(id, name, email)</code> et <code>(id, name, email, address)</code> ; chaque constructeur crée une <code>ArrayList</code> de comptes vide et, sans adresse fournie, une nouvelle <code>Address</code> ; une méthode <code>addAccount(Account)</code> ; un <code>toString</code>.</span></li>
+            <li><span lang="en"><code>Account</code>: <code>Long id</code>, <code>String accountNumber</code>, <code>String accountType</code>, <code>BigDecimal balance</code>, <code>Long clientId</code>; constructors <code>()</code> (balance <code>BigDecimal.ZERO</code>), <code>(id, accountNumber, accountType, balance)</code> and the same with a final <code>clientId</code>; a <code>toString</code>.</span><span lang="fr"><code>Account</code> : <code>Long id</code>, <code>String accountNumber</code>, <code>String accountType</code>, <code>BigDecimal balance</code>, <code>Long clientId</code> ; constructeurs <code>()</code> (solde <code>BigDecimal.ZERO</code>), <code>(id, accountNumber, accountType, balance)</code> et le même avec un <code>clientId</code> final ; un <code>toString</code>.</span></li>
+          </ul>
+          <details class="lg-hint lg-hint--1">
+            <summary><span lang="en">Hint 1</span><span lang="fr">Indice 1</span></summary>
+            <div class="lg-hint-body">
+              <p><span lang="en">Let your IDE generate constructors, accessors and <code>toString</code>. Money is a <code>BigDecimal</code>, never a <code>double</code>. The form of step 11 binds directly to <code>client.address.street</code>, so a <code>Client</code> must never have a <code>null</code> address when the form opens.</span><span lang="fr">Laissez votre IDE générer constructeurs, accesseurs et <code>toString</code>. Un montant est un <code>BigDecimal</code>, jamais un <code>double</code>. Le formulaire de l'étape 11 se lie directement à <code>client.address.street</code> : un <code>Client</code> ne doit donc jamais avoir d'adresse <code>null</code> à l'ouverture du formulaire.</span></p>
+            </div>
+          </details>
+          <details class="lg-hint lg-hint--2">
+            <summary><span lang="en">Hint 2 — signatures</span><span lang="fr">Indice 2 — signatures</span></summary>
+            <div class="lg-hint-body">
+<pre class="dark"><code>public class Client implements Serializable {
+    private static final long serialVersionUID = 1L;
+    private Long id;
+    private String name;
+    private String email;
+    private Address address;
+    private List&lt;Account&gt; accounts;
+
+    public Client() { this.address = new Address(); this.accounts = new ArrayList&lt;&gt;(); }
+    public Client(Long id, String name, String email) { /* ... */ }
+    public Client(Long id, String name, String email, Address address) { /* ... */ }
+
+    public void addAccount(Account account) { this.accounts.add(account); }
+    // getters, setters, toString
+}</code></pre>
+            </div>
+          </details>
+          <details class="lg-hint lg-hint--sol">
+            <summary><span lang="en">Solution files</span><span lang="fr">Fichiers solution</span></summary>
+            <div class="lg-hint-body">
+              <p><a href="https://github.com/oplanson/esipe-javaee/blob/master/03-Labs/Lab02B-JSF/solution/src/main/java/com/bank/model/Address.java"><code>solution/…/model/Address.java</code></a> · <a href="https://github.com/oplanson/esipe-javaee/blob/master/03-Labs/Lab02B-JSF/solution/src/main/java/com/bank/model/Client.java"><code>solution/…/model/Client.java</code></a> · <a href="https://github.com/oplanson/esipe-javaee/blob/master/03-Labs/Lab02B-JSF/solution/src/main/java/com/bank/model/Account.java"><code>solution/…/model/Account.java</code></a></p>
+            </div>
+          </details>
+          <div class="lg-checkpoint">
+            <div class="lg-check-label"><span lang="en">Checkpoint</span><span lang="fr">Point de contrôle</span></div>
+            <pre class="dark"><code>mvn clean package -DskipTests
+unzip -l target/lab02b-jsf.war | grep "com/bank/model"</code></pre>
+            <p><span lang="en">Expected: <code>BUILD SUCCESS</code> and three lines <code>WEB-INF/classes/com/bank/model/Account.class</code>, <code>Address.class</code> and <code>Client.class</code>.</span><span lang="fr">Attendu : <code>BUILD SUCCESS</code> et trois lignes <code>WEB-INF/classes/com/bank/model/Account.class</code>, <code>Address.class</code> et <code>Client.class</code>.</span></p>
+          </div>
+        </div>
+      </article>
+
+      <!-- ───────── STEP 5 ───────── -->
+      <article class="lg-step" id="step-5">
+        <div class="lg-step-head">
+          <div class="lg-step-num">5</div>
+          <div>
+            <h3><span lang="en">Service and health checks</span><span lang="fr">Service et health checks</span></h3>
+            <div class="lg-step-meta">
+              <span class="lg-chip">15 min</span>
+              <span class="lg-chip"><span lang="en">Course:</span><span lang="fr">Cours :</span> <a href="../../02-Lectures/slides/02b-jsf/slides.html#slide-12"><span lang="en">JSF, slide 12 (scopes)</span><span lang="fr">JSF, slide 12 (portées)</span></a></span>
+            </div>
+          </div>
+        </div>
+        <div class="lg-step-body">
+          <p class="lg-files"><span lang="en">Files to create:</span><span lang="fr">Fichiers à créer :</span> <code>src/main/java/com/bank/service/ClientService.java</code>, <code>src/main/java/com/bank/health/DatabaseHealthCheck.java</code>, <code>src/main/java/com/bank/health/WebAppReadinessCheck.java</code></p>
+          <div class="lg-task-label"><span lang="en">Task</span><span lang="fr">À faire</span></div>
+          <ol>
+            <li><span lang="en"><code>ClientService</code> (package <code>com.bank.service</code>): an <code>@ApplicationScoped</code>, <code>Serializable</code> class, so that one instance is shared by all users. It holds a <code>List&lt;Client&gt;</code> and two <code>AtomicLong</code> counters (client ids and account ids). A <code>@PostConstruct</code> method fills it with five sample clients (John Doe, Jane Smith, Bob Johnson, Alice Williams, Charlie Brown, in Paris, Lyon, Marseille, Toulouse and Nice) and seven accounts in total.</span><span lang="fr"><code>ClientService</code> (package <code>com.bank.service</code>) : une classe <code>@ApplicationScoped</code> et <code>Serializable</code>, pour qu'une seule instance soit partagée par tous les utilisateurs. Elle détient une <code>List&lt;Client&gt;</code> et deux compteurs <code>AtomicLong</code> (ids de clients et de comptes). Une méthode <code>@PostConstruct</code> la remplit avec cinq clients d'exemple (John Doe, Jane Smith, Bob Johnson, Alice Williams, Charlie Brown, à Paris, Lyon, Marseille, Toulouse et Nice) et sept comptes au total.</span></li>
+            <li><span lang="en">Its public methods: <code>getAllClients()</code> (returns a copy), <code>findById(Long)</code> (<code>null</code> if absent), <code>searchClients(String)</code> (name or email contains the text, case-insensitive; all clients if the text is blank), <code>save(Client)</code> (a client without id gets the next id and is added; otherwise name, email and address of the stored client are updated), <code>delete(Long)</code> (returns a <code>boolean</code>) and <code>getClientCount()</code>.</span><span lang="fr">Ses méthodes publiques : <code>getAllClients()</code> (retourne une copie), <code>findById(Long)</code> (<code>null</code> si absent), <code>searchClients(String)</code> (le nom ou l'email contient le texte, sans tenir compte de la casse ; tous les clients si le texte est vide), <code>save(Client)</code> (un client sans id reçoit le prochain id et est ajouté ; sinon nom, email et adresse du client stocké sont mis à jour), <code>delete(Long)</code> (retourne un <code>boolean</code>) et <code>getClientCount()</code>.</span></li>
+            <li><span lang="en"><code>DatabaseHealthCheck</code> (package <code>com.bank.health</code>): <code>@Liveness</code> and <code>@ApplicationScoped</code>, implements <code>HealthCheck</code>, injects <code>ClientService</code> and answers <code>UP</code> under the name <code>Client Service Health</code> with the data <code>clientCount</code> and <code>status</code>=<code>operational</code>; <code>DOWN</code> with an <code>error</code> entry if an exception occurs. The class name is misleading (there is no database); it is kept so that it matches the solution.</span><span lang="fr"><code>DatabaseHealthCheck</code> (package <code>com.bank.health</code>) : <code>@Liveness</code> et <code>@ApplicationScoped</code>, implémente <code>HealthCheck</code>, injecte <code>ClientService</code> et répond <code>UP</code> sous le nom <code>Client Service Health</code> avec les données <code>clientCount</code> et <code>status</code>=<code>operational</code> ; <code>DOWN</code> avec une entrée <code>error</code> en cas d'exception. Le nom de la classe est trompeur (il n'y a pas de base de données) ; il est conservé pour rester identique à la solution.</span></li>
+            <li><span lang="en"><code>WebAppReadinessCheck</code>: <code>@Readiness</code> and <code>@ApplicationScoped</code>, answers <code>UP</code> under the name <code>JSF Application Readiness</code> with the data <code>status</code>=<code>ready</code> and <code>application</code>.</span><span lang="fr"><code>WebAppReadinessCheck</code> : <code>@Readiness</code> et <code>@ApplicationScoped</code>, répond <code>UP</code> sous le nom <code>JSF Application Readiness</code> avec les données <code>status</code>=<code>ready</code> et <code>application</code>.</span></li>
+          </ol>
+          <details class="lg-hint lg-hint--1">
+            <summary><span lang="en">Hint 1</span><span lang="fr">Indice 1</span></summary>
+            <div class="lg-hint-body">
+              <ul>
+                <li><span lang="en">Build the sample data with the constructors of step 4, e.g. <code>new Client(id, "John Doe", "john.doe@example.com", new Address("123 Main St", "Paris", "75001", "France"))</code>, then <code>client.addAccount(new Account(accId, "FR76…", "Checking", new BigDecimal("5000.00"), client.getId()))</code>. Take ids with <code>counter.getAndIncrement()</code>.</span><span lang="fr">Construisez les données d'exemple avec les constructeurs de l'étape 4, par ex. <code>new Client(id, "John Doe", "john.doe@example.com", new Address("123 Main St", "Paris", "75001", "France"))</code>, puis <code>client.addAccount(new Account(accId, "FR76…", "Checking", new BigDecimal("5000.00"), client.getId()))</code>. Prenez les ids avec <code>counter.getAndIncrement()</code>.</span></li>
+                <li><span lang="en"><code>findById</code> and <code>searchClients</code> are one stream each (<code>filter</code>, then <code>findFirst().orElse(null)</code> or <code>collect</code>); <code>delete</code> is one <code>removeIf</code>. Compare ids with <code>Objects.equals</code>, since they are <code>Long</code> objects.</span><span lang="fr"><code>findById</code> et <code>searchClients</code> tiennent chacune en un stream (<code>filter</code>, puis <code>findFirst().orElse(null)</code> ou <code>collect</code>) ; <code>delete</code> tient en un <code>removeIf</code>. Comparez les ids avec <code>Objects.equals</code>, car ce sont des objets <code>Long</code>.</span></li>
+                <li><span lang="en">The service is shared by every user but its list is a plain <code>ArrayList</code>, which is not thread-safe. That is acceptable for a lab with one user; see the bonus section.</span><span lang="fr">Le service est partagé par tous les utilisateurs mais sa liste est une simple <code>ArrayList</code>, qui n'est pas thread-safe. C'est acceptable pour un lab à un seul utilisateur ; voir la section bonus.</span></li>
+              </ul>
+            </div>
+          </details>
+          <details class="lg-hint lg-hint--2">
+            <summary><span lang="en">Hint 2 — signatures and annotations</span><span lang="fr">Indice 2 — signatures et annotations</span></summary>
+            <div class="lg-hint-body">
+<pre class="dark"><code>@ApplicationScoped
+public class ClientService implements Serializable {
+    private List&lt;Client&gt; clients;
+    private AtomicLong clientIdCounter;
+    private AtomicLong accountIdCounter;
+
+    @PostConstruct
+    public void init() { /* create the lists and counters, then the 5 sample clients */ }
+
+    public List&lt;Client&gt; getAllClients()            { return new ArrayList&lt;&gt;(clients); }
+    public Client findById(Long id)               { /* stream + Objects.equals */ }
+    public List&lt;Client&gt; searchClients(String t)   { /* name or email, lower case */ }
+    public Client save(Client client)             { /* insert or update */ }
+    public boolean delete(Long id)                { return clients.removeIf(c -&gt; c.getId().equals(id)); }
+    public int getClientCount()                   { return clients.size(); }
+}</code></pre>
+<pre class="dark"><code>@Liveness
+@ApplicationScoped
+public class DatabaseHealthCheck implements HealthCheck {
+    @Inject private ClientService clientService;
+
+    @Override
+    public HealthCheckResponse call() {
+        return HealthCheckResponse.named("Client Service Health").up()
+                .withData("clientCount", clientService.getClientCount())
+                .withData("status", "operational").build();
+    }
+}
+// WebAppReadinessCheck: same shape with @Readiness and the name "JSF Application Readiness"</code></pre>
+              <p><span lang="en">Imports: <code>org.eclipse.microprofile.health.*</code>, <code>jakarta.enterprise.context.ApplicationScoped</code>, <code>jakarta.inject.Inject</code>, <code>jakarta.annotation.PostConstruct</code>. Add the <code>try</code>/<code>catch</code> that returns <code>.down()</code> as described in the task.</span><span lang="fr">Imports : <code>org.eclipse.microprofile.health.*</code>, <code>jakarta.enterprise.context.ApplicationScoped</code>, <code>jakarta.inject.Inject</code>, <code>jakarta.annotation.PostConstruct</code>. Ajoutez le <code>try</code>/<code>catch</code> qui retourne <code>.down()</code> comme décrit dans la consigne.</span></p>
+            </div>
+          </details>
+          <details class="lg-hint lg-hint--sol">
+            <summary><span lang="en">Solution files</span><span lang="fr">Fichiers solution</span></summary>
+            <div class="lg-hint-body">
+              <p><a href="https://github.com/oplanson/esipe-javaee/blob/master/03-Labs/Lab02B-JSF/solution/src/main/java/com/bank/service/ClientService.java"><code>solution/…/service/ClientService.java</code></a> · <a href="https://github.com/oplanson/esipe-javaee/blob/master/03-Labs/Lab02B-JSF/solution/src/main/java/com/bank/health/DatabaseHealthCheck.java"><code>solution/…/health/DatabaseHealthCheck.java</code></a> · <a href="https://github.com/oplanson/esipe-javaee/blob/master/03-Labs/Lab02B-JSF/solution/src/main/java/com/bank/health/WebAppReadinessCheck.java"><code>solution/…/health/WebAppReadinessCheck.java</code></a></p>
+            </div>
+          </details>
+          <div class="lg-checkpoint">
+            <div class="lg-check-label"><span lang="en">Checkpoint</span><span lang="fr">Point de contrôle</span></div>
+            <pre class="dark"><code># redeploy loop, then:
+curl -s http://localhost:9080/health/live
+curl -s http://localhost:9080/health/ready</code></pre>
+            <p><span lang="en">Expected: <code>"name":"Client Service Health","status":"UP"</code> with <code>"clientCount":5</code>, then <code>"name":"JSF Application Readiness","status":"UP"</code>. <code>clientCount</code> being 5 proves that CDI created the service, injected it and ran <code>@PostConstruct</code>.</span><span lang="fr">Attendu : <code>"name":"Client Service Health","status":"UP"</code> avec <code>"clientCount":5</code>, puis <code>"name":"JSF Application Readiness","status":"UP"</code>. Un <code>clientCount</code> de 5 prouve que CDI a créé le service, l'a injecté et a exécuté <code>@PostConstruct</code>.</span></p>
+          </div>
+        </div>
+      </article>
+
+      <!-- ───────── STEP 6 ───────── -->
+      <article class="lg-step" id="step-6">
+        <div class="lg-step-head">
+          <div class="lg-step-num">6</div>
+          <div>
+            <h3><span lang="en">Template and styles</span><span lang="fr">Template et styles</span></h3>
+            <div class="lg-step-meta">
+              <span class="lg-chip">5 min</span>
+              <span class="lg-chip"><span lang="en">Course:</span><span lang="fr">Cours :</span> <a href="../../02-Lectures/slides/02b-jsf/slides.html#slide-17"><span lang="en">JSF, slides 17–18 (templates)</span><span lang="fr">JSF, slides 17–18 (templates)</span></a></span>
+            </div>
+          </div>
+        </div>
+        <div class="lg-step-body">
+          <p class="lg-files"><span lang="en">File to read:</span><span lang="fr">Fichier à lire :</span> <code>src/main/webapp/WEB-INF/templates/main.xhtml</code> · <span lang="en">File to create:</span><span lang="fr">Fichier à créer :</span> <code>src/main/webapp/resources/css/style.css</code></p>
+          <div class="lg-task-label"><span lang="en">Task</span><span lang="fr">À faire</span></div>
+          <ol>
+            <li><span lang="en">Read the provided <code>main.xhtml</code> and find: the names of its <code>ui:insert</code> slots, how the stylesheet is loaded, and where the two <code>h:link</code> elements lead.</span><span lang="fr">Lisez le <code>main.xhtml</code> fourni et repérez : les noms de ses emplacements <code>ui:insert</code>, comment la feuille de style est chargée, et où mènent les deux éléments <code>h:link</code>.</span></li>
+            <li><span lang="en">Create the stylesheet at the location that <code>h:outputStylesheet library="css" name="style.css"</code> expects. It is 316 lines of CSS (ids <code>#wrapper</code>, <code>#header</code>, <code>#content</code>, <code>#footer</code> and classes such as <code>.button</code>, <code>.data-table</code>, <code>.error-message</code>); CSS is not the subject of the lab, so copy it from the solution.</span><span lang="fr">Créez la feuille de style à l'endroit qu'attend <code>h:outputStylesheet library="css" name="style.css"</code>. Elle fait 316 lignes de CSS (ids <code>#wrapper</code>, <code>#header</code>, <code>#content</code>, <code>#footer</code> et classes comme <code>.button</code>, <code>.data-table</code>, <code>.error-message</code>) ; le CSS n'est pas le sujet du lab : copiez-la depuis la solution.</span></li>
+          </ol>
+          <details class="lg-hint lg-hint--1">
+            <summary><span lang="en">Hint 1</span><span lang="fr">Indice 1</span></summary>
+            <div class="lg-hint-body">
+              <p><span lang="en">Faces resolves a resource <code>library</code>/<code>name</code> in the folder <code>webapp/resources/&lt;library&gt;/&lt;name&gt;</code>. The slots are <code>title</code>, <code>header</code>, <code>content</code> and <code>footer</code>; a page that does not <code>ui:define</code> a slot gets the default content written between the <code>ui:insert</code> tags. The links use the outcomes <code>/index</code> and <code>/views/client-list</code> (Faces adds the <code>.xhtml</code> suffix).</span><span lang="fr">Faces résout une ressource <code>library</code>/<code>name</code> dans le dossier <code>webapp/resources/&lt;library&gt;/&lt;name&gt;</code>. Les emplacements sont <code>title</code>, <code>header</code>, <code>content</code> et <code>footer</code> ; une page qui ne fait pas de <code>ui:define</code> pour un emplacement reçoit le contenu par défaut écrit entre les balises <code>ui:insert</code>. Les liens utilisent les outcomes <code>/index</code> et <code>/views/client-list</code> (Faces ajoute le suffixe <code>.xhtml</code>).</span></p>
+            </div>
+          </details>
+          <details class="lg-hint lg-hint--2">
+            <summary><span lang="en">Hint 2 — the command</span><span lang="fr">Indice 2 — la commande</span></summary>
+            <div class="lg-hint-body">
+<pre class="dark"><code>mkdir -p src/main/webapp/resources/css
+cp ../solution/src/main/webapp/resources/css/style.css src/main/webapp/resources/css/</code></pre>
+              <p><span lang="en">Do not use <code>solution/…/webapp/css/style.css</code>: it is an identical, unused copy.</span><span lang="fr">N'utilisez pas <code>solution/…/webapp/css/style.css</code> : c'est une copie identique et inutilisée.</span></p>
+            </div>
+          </details>
+          <details class="lg-hint lg-hint--sol">
+            <summary><span lang="en">Solution files</span><span lang="fr">Fichiers solution</span></summary>
+            <div class="lg-hint-body">
+              <p><a href="https://github.com/oplanson/esipe-javaee/blob/master/03-Labs/Lab02B-JSF/solution/src/main/webapp/WEB-INF/templates/main.xhtml"><code>solution/…/templates/main.xhtml</code></a> · <a href="https://github.com/oplanson/esipe-javaee/blob/master/03-Labs/Lab02B-JSF/solution/src/main/webapp/resources/css/style.css"><code>solution/…/resources/css/style.css</code></a></p>
+            </div>
+          </details>
+          <div class="lg-checkpoint">
+            <div class="lg-check-label"><span lang="en">Checkpoint</span><span lang="fr">Point de contrôle</span></div>
+            <pre class="dark"><code># redeploy loop, then:
+curl -s -o /dev/null -w '%{http_code}\n' http://localhost:9080/lab02b-jsf/resources/css/style.css</code></pre>
+            <p><span lang="en">Expected: <code>200</code>. The template is only rendered through a page that uses it, which you create in the next step.</span><span lang="fr">Attendu : <code>200</code>. Le template n'est rendu qu'à travers une page qui l'utilise, ce que vous créez à l'étape suivante.</span></p>
+          </div>
+        </div>
+      </article>
+
+      <!-- ───────── STEP 7 ───────── -->
+      <article class="lg-step" id="step-7">
+        <div class="lg-step-head">
+          <div class="lg-step-num">7</div>
+          <div>
+            <h3><span lang="en">The home page</span><span lang="fr">La page d'accueil</span></h3>
+            <div class="lg-step-meta">
+              <span class="lg-chip">10 min</span>
+              <span class="lg-chip"><span lang="en">Course:</span><span lang="fr">Cours :</span> <a href="../../02-Lectures/slides/02b-jsf/slides.html#slide-18"><span lang="en">JSF, slide 18 (using a template)</span><span lang="fr">JSF, slide 18 (utiliser un template)</span></a></span>
+            </div>
+          </div>
+        </div>
+        <div class="lg-step-body">
+          <p class="lg-files"><span lang="en">File to create:</span><span lang="fr">Fichier à créer :</span> <code>src/main/webapp/index.xhtml</code></p>
+          <div class="lg-task-label"><span lang="en">Task</span><span lang="fr">À faire</span></div>
+          <p><span lang="en">Create the welcome page. It must use the template <code>/WEB-INF/templates/main.xhtml</code> with <code>ui:composition</code>, define the slot <code>title</code> (<code>Home - Banking Application</code>) and the slot <code>content</code>: an <code>h2</code> <code>Welcome to ESIPE Bank</code>, two sentences of presentation, an <code>h:link</code> to the client list with the style class <code>button</code>, and a list of features. Link with the outcome <code>/views/client-list</code>.</span><span lang="fr">Créez la page d'accueil. Elle doit utiliser le template <code>/WEB-INF/templates/main.xhtml</code> avec <code>ui:composition</code>, définir l'emplacement <code>title</code> (<code>Home - Banking Application</code>) et l'emplacement <code>content</code> : un <code>h2</code> <code>Welcome to ESIPE Bank</code>, deux phrases de présentation, un <code>h:link</code> vers la liste des clients avec la classe de style <code>button</code>, et une liste de fonctionnalités. Liez avec l'outcome <code>/views/client-list</code>.</span></p>
+          <details class="lg-hint lg-hint--1">
+            <summary><span lang="en">Hint 1</span><span lang="fr">Indice 1</span></summary>
+            <div class="lg-hint-body">
+              <p><span lang="en">In Faces 4 the tag library namespaces are <code>jakarta.faces.html</code> (<code>h:</code>), <code>jakarta.faces.facelets</code> (<code>ui:</code>) and <code>jakarta.faces.core</code> (<code>f:</code>), not the old <code>http://xmlns.jcp.org/…</code> ones. Everything outside <code>ui:define</code> inside <code>ui:composition</code> is ignored. <code>styleClass</code> is the Faces name of the HTML attribute <code>class</code>.</span><span lang="fr">Dans Faces 4, les espaces de noms des bibliothèques de balises sont <code>jakarta.faces.html</code> (<code>h:</code>), <code>jakarta.faces.facelets</code> (<code>ui:</code>) et <code>jakarta.faces.core</code> (<code>f:</code>), et non les anciens <code>http://xmlns.jcp.org/…</code>. Tout ce qui est hors de <code>ui:define</code> dans <code>ui:composition</code> est ignoré. <code>styleClass</code> est le nom Faces de l'attribut HTML <code>class</code>.</span></p>
+            </div>
+          </details>
+          <details class="lg-hint lg-hint--2">
+            <summary><span lang="en">Hint 2 — skeleton</span><span lang="fr">Indice 2 — squelette</span></summary>
+            <div class="lg-hint-body">
+<pre class="dark"><code>&lt;!DOCTYPE html&gt;
+&lt;html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="jakarta.faces.facelets"
+      xmlns:h="jakarta.faces.html"&gt;
+&lt;ui:composition template="/WEB-INF/templates/main.xhtml"&gt;
+    &lt;ui:define name="title"&gt;Home - Banking Application&lt;/ui:define&gt;
+    &lt;ui:define name="content"&gt;
+        &lt;div class="welcome"&gt;
+            &lt;h2&gt;Welcome to ESIPE Bank&lt;/h2&gt;
+            &lt;h:link outcome="/views/client-list" value="View Clients" styleClass="button"/&gt;
+            &lt;!-- features list --&gt;
+        &lt;/div&gt;
+    &lt;/ui:define&gt;
+&lt;/ui:composition&gt;
+&lt;/html&gt;</code></pre>
+            </div>
+          </details>
+          <details class="lg-hint lg-hint--sol">
+            <summary><span lang="en">Solution file</span><span lang="fr">Fichier solution</span></summary>
+            <div class="lg-hint-body">
+              <p><a href="https://github.com/oplanson/esipe-javaee/blob/master/03-Labs/Lab02B-JSF/solution/src/main/webapp/index.xhtml"><code>solution/…/webapp/index.xhtml</code></a></p>
+            </div>
+          </details>
+          <div class="lg-checkpoint">
+            <div class="lg-check-label"><span lang="en">Checkpoint</span><span lang="fr">Point de contrôle</span></div>
+            <pre class="dark"><code># redeploy loop, then:
+curl -s -o /dev/null -w '%{http_code}\n' http://localhost:9080/lab02b-jsf/
+curl -s http://localhost:9080/lab02b-jsf/ | grep -c "Welcome to ESIPE Bank"
+curl -s http://localhost:9080/lab02b-jsf/ | grep -oE '&lt;a [^&gt;]*&gt;[^&lt;]*&lt;/a&gt;'</code></pre>
+            <p><span lang="en">Expected: <code>200</code>, then <code>1</code>, then a single link <code>Home</code>. The links to the client list are not rendered yet: <code>h:link</code> leaves out a link whose target view does not exist, so they appear in step 10. Open <a href="http://localhost:9080/lab02b-jsf/">http://localhost:9080/lab02b-jsf/</a>: the page appears styled, with the header and footer from the template.</span><span lang="fr">Attendu : <code>200</code>, puis <code>1</code>, puis un seul lien <code>Home</code>. Les liens vers la liste des clients ne sont pas encore rendus : <code>h:link</code> omet un lien dont la vue cible n'existe pas, ils apparaîtront à l'étape 10. Ouvrez <a href="http://localhost:9080/lab02b-jsf/">http://localhost:9080/lab02b-jsf/</a> : la page s'affiche avec son style, l'en-tête et le pied de page du template.</span></p>
+          </div>
+        </div>
+      </article>
+
+      <!-- ───────── STEP 8 ───────── -->
+      <article class="lg-step" id="step-8">
+        <div class="lg-step-head">
+          <div class="lg-step-num">8</div>
+          <div>
+            <h3><span lang="en">The <code>ClientBean</code> backing bean</span><span lang="fr">Le backing bean <code>ClientBean</code></span></h3>
+            <div class="lg-step-meta">
+              <span class="lg-chip">25 min</span>
+              <span class="lg-chip"><span lang="en">Course:</span><span lang="fr">Cours :</span> <a href="../../02-Lectures/slides/02b-jsf/slides.html#slide-11"><span lang="en">JSF, slides 11–13 (CDI beans)</span><span lang="fr">JSF, slides 11–13 (beans CDI)</span></a></span>
+            </div>
+          </div>
+        </div>
+        <div class="lg-step-body">
+          <p class="lg-files"><span lang="en">File to create:</span><span lang="fr">Fichier à créer :</span> <code>src/main/java/com/bank/web/ClientBean.java</code></p>
+          <div class="lg-task-label"><span lang="en">Task</span><span lang="fr">À faire</span></div>
+          <p><span lang="en">Create <code>com.bank.web.ClientBean</code>: <code>@Named</code>, <code>@SessionScoped</code>, <code>Serializable</code>. It injects <code>ClientService</code> and has the fields <code>Client client</code> (the client being edited or viewed), <code>List&lt;Client&gt; clients</code>, <code>List&lt;Client&gt; filteredClients</code> (<code>null</code> means "no filter"), <code>String searchTerm</code> (initially empty) and <code>Long selectedClientId</code>. Methods:</span><span lang="fr">Créez <code>com.bank.web.ClientBean</code> : <code>@Named</code>, <code>@SessionScoped</code>, <code>Serializable</code>. Il injecte <code>ClientService</code> et possède les champs <code>Client client</code> (le client en cours de modification ou de consultation), <code>List&lt;Client&gt; clients</code>, <code>List&lt;Client&gt; filteredClients</code> (<code>null</code> signifie « pas de filtre »), <code>String searchTerm</code> (vide au départ) et <code>Long selectedClientId</code>. Méthodes :</span></p>
+          <table class="slide-table">
+            <thead><tr><th><span lang="en">Method</span><span lang="fr">Méthode</span></th><th><span lang="en">What it does</span><span lang="fr">Ce qu'elle fait</span></th></tr></thead>
+            <tbody>
+              <tr><td><code>@PostConstruct init()</code></td><td><span lang="en">Loads the clients and gives <code>client</code> an empty <code>Address</code>.</span><span lang="fr">Charge les clients et donne une <code>Address</code> vide à <code>client</code>.</span></td></tr>
+              <tr><td><code>loadClients()</code></td><td><span lang="en">Reads all clients from the service and clears the filter.</span><span lang="fr">Lit tous les clients depuis le service et efface le filtre.</span></td></tr>
+              <tr><td><code>search()</code></td><td><span lang="en">Blank <code>searchTerm</code>: no filter; otherwise <code>filteredClients</code> = result of <code>searchClients</code>. Returns <code>void</code>.</span><span lang="fr"><code>searchTerm</code> vide : pas de filtre ; sinon <code>filteredClients</code> = résultat de <code>searchClients</code>. Retourne <code>void</code>.</span></td></tr>
+              <tr><td><code>String save()</code></td><td><span lang="en">Saves <code>client</code>, adds an info message ("created" or "updated"), reloads, resets the form and returns <code>"client-list?faces-redirect=true"</code>. On an exception: error message and <code>null</code>.</span><span lang="fr">Enregistre <code>client</code>, ajoute un message d'information (« créé » ou « mis à jour »), recharge, réinitialise le formulaire et retourne <code>"client-list?faces-redirect=true"</code>. En cas d'exception : message d'erreur et <code>null</code>.</span></td></tr>
+              <tr><td><code>String createNew()</code></td><td><span lang="en">Resets and returns <code>"client-form?faces-redirect=true"</code>.</span><span lang="fr">Réinitialise et retourne <code>"client-form?faces-redirect=true"</code>.</span></td></tr>
+              <tr><td><code>String edit()</code></td><td><span lang="en">Loads the client <code>selectedClientId</code> into <code>client</code> (error message and <code>null</code> if not found; make sure its address is not <code>null</code>), returns <code>"client-form?faces-redirect=true"</code>.</span><span lang="fr">Charge le client <code>selectedClientId</code> dans <code>client</code> (message d'erreur et <code>null</code> s'il est introuvable ; veillez à ce que son adresse ne soit pas <code>null</code>), retourne <code>"client-form?faces-redirect=true"</code>.</span></td></tr>
+              <tr><td><code>String viewDetails()</code></td><td><span lang="en">Same as <code>edit()</code> but returns <code>"client-details?faces-redirect=true"</code>.</span><span lang="fr">Comme <code>edit()</code> mais retourne <code>"client-details?faces-redirect=true"</code>.</span></td></tr>
+              <tr><td><code>String delete()</code></td><td><span lang="en">Deletes <code>selectedClientId</code>, adds a message, reloads, returns <code>null</code> (stay on the page).</span><span lang="fr">Supprime <code>selectedClientId</code>, ajoute un message, recharge, retourne <code>null</code> (on reste sur la page).</span></td></tr>
+              <tr><td><code>String cancel()</code></td><td><span lang="en">Resets and returns <code>"client-list?faces-redirect=true"</code>.</span><span lang="fr">Réinitialise et retourne <code>"client-list?faces-redirect=true"</code>.</span></td></tr>
+              <tr><td><code>private reset()</code>, <code>private addMessage(...)</code></td><td><span lang="en"><code>reset</code> creates a new <code>Client</code> with a new <code>Address</code>; <code>addMessage</code> calls <code>FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(severity, summary, detail))</code>.</span><span lang="fr"><code>reset</code> crée un nouveau <code>Client</code> avec une nouvelle <code>Address</code> ; <code>addMessage</code> appelle <code>FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(severity, summary, detail))</code>.</span></td></tr>
+              <tr><td><span lang="en">Getters and setters</span><span lang="fr">Getters et setters</span></td><td><span lang="en">For the five fields: Expression Language reads and writes through them.</span><span lang="fr">Pour les cinq champs : l'Expression Language lit et écrit à travers eux.</span></td></tr>
+            </tbody>
+          </table>
+          <details class="lg-hint lg-hint--1">
+            <summary><span lang="en">Hint 1 — the design choices</span><span lang="fr">Indice 1 — les choix de conception</span></summary>
+            <div class="lg-hint-body">
+              <ul>
+                <li><span lang="en">The returned <code>String</code> is a <em>navigation outcome</em>. <code>?faces-redirect=true</code> makes Faces answer with an HTTP redirect (Post-Redirect-Get, as in Lab 01), so the address bar shows the new page and F5 does not resubmit the form. <code>null</code> means "redisplay the same view".</span><span lang="fr">Le <code>String</code> retourné est un <em>outcome de navigation</em>. <code>?faces-redirect=true</code> fait répondre Faces par une redirection HTTP (Post-Redirect-Get, comme au Lab 01) : la barre d'adresse montre la nouvelle page et F5 ne renvoie pas le formulaire. <code>null</code> signifie « réafficher la même vue ».</span></li>
+                <li><span lang="en"><code>@SessionScoped</code> keeps <code>client</code> alive between the list page, the form and the details page (a request-scoped bean would forget it at each redirect). The price: the data lives as long as the user's session, which is why the bean and the model classes are <code>Serializable</code>.</span><span lang="fr"><code>@SessionScoped</code> garde <code>client</code> vivant entre la liste, le formulaire et la page de détail (un bean de portée requête l'oublierait à chaque redirection). Le prix : les données vivent aussi longtemps que la session de l'utilisateur, d'où le <code>Serializable</code> du bean et des classes du modèle.</span></li>
+                <li><span lang="en">Which scope would be enough if you split the bean? Think about it for the bonus section.</span><span lang="fr">Quelle portée suffirait si vous découpiez le bean ? Gardez la question pour la section bonus.</span></li>
+              </ul>
+            </div>
+          </details>
+          <details class="lg-hint lg-hint--2">
+            <summary><span lang="en">Hint 2 — skeleton</span><span lang="fr">Indice 2 — squelette</span></summary>
+            <div class="lg-hint-body">
+<pre class="dark"><code>@Named
+@SessionScoped
+public class ClientBean implements Serializable {
+    private static final long serialVersionUID = 1L;
+
+    @Inject private ClientService clientService;
+    private Client client = new Client();
+    private List&lt;Client&gt; clients;
+    private List&lt;Client&gt; filteredClients;
+    private String searchTerm = "";
+    private Long selectedClientId;
+
+    @PostConstruct
+    public void init() { loadClients(); client.setAddress(new Address()); }
+
+    public void search() { /* blank -&gt; filteredClients = null, else searchClients(searchTerm) */ }
+
+    public String save() {
+        try {
+            boolean isNew = (client.getId() == null);
+            clientService.save(client);
+            addMessage(FacesMessage.SEVERITY_INFO, "Success",
+                       isNew ? "Client created successfully" : "Client updated successfully");
+            loadClients();
+            reset();
+            return "client-list?faces-redirect=true";
+        } catch (Exception e) {
+            addMessage(FacesMessage.SEVERITY_ERROR, "Error", "Failed to save client: " + e.getMessage());
+            return null;
+        }
+    }
+    // createNew, edit, viewDetails, delete, cancel, reset, addMessage, getters and setters
+}</code></pre>
+              <p><span lang="en">Imports: <code>jakarta.inject.Named</code>, <code>jakarta.inject.Inject</code>, <code>jakarta.enterprise.context.SessionScoped</code>, <code>jakarta.faces.application.FacesMessage</code>, <code>jakarta.faces.context.FacesContext</code>, <code>jakarta.annotation.PostConstruct</code>. The scope annotation comes from CDI (<code>jakarta.enterprise.context</code>), not from <code>jakarta.faces.bean</code>, which no longer exists.</span><span lang="fr">Imports : <code>jakarta.inject.Named</code>, <code>jakarta.inject.Inject</code>, <code>jakarta.enterprise.context.SessionScoped</code>, <code>jakarta.faces.application.FacesMessage</code>, <code>jakarta.faces.context.FacesContext</code>, <code>jakarta.annotation.PostConstruct</code>. L'annotation de portée vient de CDI (<code>jakarta.enterprise.context</code>), pas de <code>jakarta.faces.bean</code>, qui n'existe plus.</span></p>
+            </div>
+          </details>
+          <details class="lg-hint lg-hint--sol">
+            <summary><span lang="en">Solution file</span><span lang="fr">Fichier solution</span></summary>
+            <div class="lg-hint-body">
+              <p><a href="https://github.com/oplanson/esipe-javaee/blob/master/03-Labs/Lab02B-JSF/solution/src/main/java/com/bank/web/ClientBean.java"><code>solution/…/web/ClientBean.java</code></a></p>
+            </div>
+          </details>
+          <div class="lg-checkpoint">
+            <div class="lg-check-label"><span lang="en">Checkpoint</span><span lang="fr">Point de contrôle</span></div>
+            <pre class="dark"><code>mvn clean package -DskipTests
+unzip -l target/lab02b-jsf.war | grep ClientBean</code></pre>
+            <p><span lang="en">Expected: <code>BUILD SUCCESS</code> and the line <code>WEB-INF/classes/com/bank/web/ClientBean.class</code>. No page uses the bean yet; you test it through the views of steps 10 to 12.</span><span lang="fr">Attendu : <code>BUILD SUCCESS</code> et la ligne <code>WEB-INF/classes/com/bank/web/ClientBean.class</code>. Aucune page n'utilise encore le bean ; vous le testez à travers les vues des étapes 10 à 12.</span></p>
+          </div>
+        </div>
+      </article>
+
+      <!-- ───────── STEP 9 ───────── -->
+      <article class="lg-step" id="step-9">
+        <div class="lg-step-head">
+          <div class="lg-step-num">9</div>
+          <div>
+            <h3><span lang="en">The email validator</span><span lang="fr">Le validateur d'email</span></h3>
+            <div class="lg-step-meta">
+              <span class="lg-chip">10 min</span>
+              <span class="lg-chip"><span lang="en">Course:</span><span lang="fr">Cours :</span> <a href="../../02-Lectures/slides/02b-jsf/slides.html#slide-25"><span lang="en">JSF, slide 25 (custom validator)</span><span lang="fr">JSF, slide 25 (validateur personnalisé)</span></a></span>
+            </div>
+          </div>
+        </div>
+        <div class="lg-step-body">
+          <p class="lg-files"><span lang="en">File to create:</span><span lang="fr">Fichier à créer :</span> <code>src/main/java/com/bank/validator/EmailValidator.java</code></p>
+          <div class="lg-task-label"><span lang="en">Task</span><span lang="fr">À faire</span></div>
+          <ol>
+            <li><span lang="en">Create <code>com.bank.validator.EmailValidator</code>, annotated <code>@FacesValidator("emailValidator")</code> and implementing <code>jakarta.faces.validator.Validator&lt;String&gt;</code>.</span><span lang="fr">Créez <code>com.bank.validator.EmailValidator</code>, annotée <code>@FacesValidator("emailValidator")</code> et implémentant <code>jakarta.faces.validator.Validator&lt;String&gt;</code>.</span></li>
+            <li><span lang="en">Compile the pattern <code>^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$</code> once, in a <code>static final Pattern</code>.</span><span lang="fr">Compilez le motif <code>^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$</code> une seule fois, dans un <code>static final Pattern</code>.</span></li>
+            <li><span lang="en">In <code>validate(FacesContext, UIComponent, String)</code>: return silently if the value is <code>null</code> or blank (emptiness is the job of <code>required="true"</code>); if it does not match, throw a <code>ValidatorException</code> carrying a <code>FacesMessage</code> of severity <code>ERROR</code>, summary <code>Invalid Email</code> and detail <code>Please enter a valid email address (e.g., user@example.com)</code>.</span><span lang="fr">Dans <code>validate(FacesContext, UIComponent, String)</code> : retournez sans rien faire si la valeur est <code>null</code> ou vide (le vide est le rôle de <code>required="true"</code>) ; si elle ne correspond pas, levez une <code>ValidatorException</code> portant un <code>FacesMessage</code> de sévérité <code>ERROR</code>, de résumé <code>Invalid Email</code> et de détail <code>Please enter a valid email address (e.g., user@example.com)</code>.</span></li>
+          </ol>
+          <details class="lg-hint lg-hint--1">
+            <summary><span lang="en">Hint 1</span><span lang="fr">Indice 1</span></summary>
+            <div class="lg-hint-body">
+              <p><span lang="en">The string in <code>@FacesValidator</code> is the validator id that a view uses with <code>&lt;f:validator validatorId="emailValidator"/&gt;</code> (step 11). Faces shows the message of the exception next to the field, in the <code>h:message</code> bound to that field. In Java, the backslash of the pattern must be doubled: <code>"\\."</code>.</span><span lang="fr">La chaîne de <code>@FacesValidator</code> est l'identifiant que la vue utilise avec <code>&lt;f:validator validatorId="emailValidator"/&gt;</code> (étape 11). Faces affiche le message de l'exception à côté du champ, dans le <code>h:message</code> lié à ce champ. En Java, l'antislash du motif doit être doublé : <code>"\\."</code>.</span></p>
+            </div>
+          </details>
+          <details class="lg-hint lg-hint--2">
+            <summary><span lang="en">Hint 2 — the class</span><span lang="fr">Indice 2 — la classe</span></summary>
+            <div class="lg-hint-body">
+<pre class="dark"><code>@FacesValidator("emailValidator")
+public class EmailValidator implements Validator&lt;String&gt; {
+    private static final Pattern EMAIL_PATTERN =
+        Pattern.compile("^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$");
+
+    @Override
+    public void validate(FacesContext context, UIComponent component, String value)
+            throws ValidatorException {
+        if (value == null || value.trim().isEmpty()) { return; }
+        if (!EMAIL_PATTERN.matcher(value).matches()) {
+            throw new ValidatorException(new FacesMessage(FacesMessage.SEVERITY_ERROR,
+                "Invalid Email", "Please enter a valid email address (e.g., user@example.com)"));
+        }
+    }
+}</code></pre>
+            </div>
+          </details>
+          <details class="lg-hint lg-hint--sol">
+            <summary><span lang="en">Solution file</span><span lang="fr">Fichier solution</span></summary>
+            <div class="lg-hint-body">
+              <p><a href="https://github.com/oplanson/esipe-javaee/blob/master/03-Labs/Lab02B-JSF/solution/src/main/java/com/bank/validator/EmailValidator.java"><code>solution/…/validator/EmailValidator.java</code></a></p>
+            </div>
+          </details>
+          <div class="lg-checkpoint">
+            <div class="lg-check-label"><span lang="en">Checkpoint</span><span lang="fr">Point de contrôle</span></div>
+            <pre class="dark"><code>mvn clean package -DskipTests
+unzip -l target/lab02b-jsf.war | grep EmailValidator</code></pre>
+            <p><span lang="en">Expected: <code>BUILD SUCCESS</code> and <code>WEB-INF/classes/com/bank/validator/EmailValidator.class</code>. The validator is exercised for real in step 11.</span><span lang="fr">Attendu : <code>BUILD SUCCESS</code> et <code>WEB-INF/classes/com/bank/validator/EmailValidator.class</code>. Le validateur est vraiment éprouvé à l'étape 11.</span></p>
+          </div>
+        </div>
+      </article>
+
+      <!-- ───────── STEP 10 ───────── -->
+      <article class="lg-step" id="step-10">
+        <div class="lg-step-head">
+          <div class="lg-step-num">10</div>
+          <div>
+            <h3><span lang="en">Client list with AJAX search</span><span lang="fr">Liste des clients avec recherche AJAX</span></h3>
+            <div class="lg-step-meta">
+              <span class="lg-chip">25 min</span>
+              <span class="lg-chip"><span lang="en">Course:</span><span lang="fr">Cours :</span> <a href="../../02-Lectures/slides/02b-jsf/slides.html#slide-30"><span lang="en">JSF, slides 28–32 (AJAX)</span><span lang="fr">JSF, slides 28–32 (AJAX)</span></a></span>
+            </div>
+          </div>
+        </div>
+        <div class="lg-step-body">
+          <p class="lg-files"><span lang="en">File to create:</span><span lang="fr">Fichier à créer :</span> <code>src/main/webapp/views/client-list.xhtml</code></p>
+          <div class="lg-task-label"><span lang="en">Task</span><span lang="fr">À faire</span></div>
+          <p><span lang="en">Create the list page with the template (title <code>Client List</code>). In the content slot, inside one <code>h:form id="clientListForm"</code>:</span><span lang="fr">Créez la page de liste avec le template (titre <code>Client List</code>). Dans l'emplacement de contenu, dans un seul <code>h:form id="clientListForm"</code> :</span></p>
+          <ol>
+            <li><span lang="en">An <code>h:messages globalOnly="true"</code> for the messages of the bean.</span><span lang="fr">Un <code>h:messages globalOnly="true"</code> pour les messages du bean.</span></li>
+            <li><span lang="en">A search box: <code>h:inputText id="search"</code> bound to <code>#{clientBean.searchTerm}</code>, with an <code>f:ajax</code> on the event <code>keyup</code> that calls the bean's <code>search</code> method and re-renders the table.</span><span lang="fr">Une zone de recherche : <code>h:inputText id="search"</code> liée à <code>#{clientBean.searchTerm}</code>, avec un <code>f:ajax</code> sur l'événement <code>keyup</code> qui appelle la méthode <code>search</code> du bean et rafraîchit le tableau.</span></li>
+            <li><span lang="en">A <code>New Client</code> <code>h:commandButton</code> calling <code>#{clientBean.createNew}</code>.</span><span lang="fr">Un <code>h:commandButton</code> <code>New Client</code> appelant <code>#{clientBean.createNew}</code>.</span></li>
+            <li><span lang="en">An <code>h:dataTable id="clientTable"</code> whose value is <code>filteredClients</code> when it is not <code>null</code>, <code>clients</code> otherwise, with <code>var="client"</code> and the columns ID, Name, Email, City (<code>client.address.city</code>), Accounts (<code>client.accounts.size()</code>) and Actions.</span><span lang="fr">Un <code>h:dataTable id="clientTable"</code> dont la valeur est <code>filteredClients</code> s'il n'est pas <code>null</code>, <code>clients</code> sinon, avec <code>var="client"</code> et les colonnes ID, Name, Email, City (<code>client.address.city</code>), Accounts (<code>client.accounts.size()</code>) et Actions.</span></li>
+            <li><span lang="en">In the Actions column, three <code>h:commandButton</code>: View (<code>viewDetails</code>), Edit (<code>edit</code>) and Delete (<code>delete</code>, with a JavaScript <code>confirm</code> in <code>onclick</code>). Each one contains an <code>f:setPropertyActionListener</code> that copies <code>#{client.id}</code> into <code>#{clientBean.selectedClientId}</code>.</span><span lang="fr">Dans la colonne Actions, trois <code>h:commandButton</code> : View (<code>viewDetails</code>), Edit (<code>edit</code>) et Delete (<code>delete</code>, avec un <code>confirm</code> JavaScript dans <code>onclick</code>). Chacun contient un <code>f:setPropertyActionListener</code> qui copie <code>#{client.id}</code> dans <code>#{clientBean.selectedClientId}</code>.</span></li>
+            <li><span lang="en">Under the table, a line <code>Total clients: n</code> using the same filtered-or-not choice.</span><span lang="fr">Sous le tableau, une ligne <code>Total clients: n</code> avec le même choix filtré ou non.</span></li>
+          </ol>
+          <div class="lg-callout lg-callout--warn">
+            <div lang="en"><div class="lg-callout-title">The solution's AJAX search fails on this server</div><p><a href="https://github.com/oplanson/esipe-javaee/blob/master/03-Labs/Lab02B-JSF/solution/src/main/webapp/views/client-list.xhtml"><code>solution/…/client-list.xhtml</code></a> writes <code>listener="#{clientBean.search}"</code>. On Open Liberty (Apache MyFaces) the listener is then searched with the signature <code>search(AjaxBehaviorEvent)</code>, which does not exist, and each keystroke ends with <code>MethodNotFoundException</code>. Write <code>listener="#{clientBean.search()}"</code> (with parentheses) to call the no-argument method.</p></div>
+            <div lang="fr"><div class="lg-callout-title">La recherche AJAX de la solution échoue sur ce serveur</div><p><a href="https://github.com/oplanson/esipe-javaee/blob/master/03-Labs/Lab02B-JSF/solution/src/main/webapp/views/client-list.xhtml"><code>solution/…/client-list.xhtml</code></a> écrit <code>listener="#{clientBean.search}"</code>. Sur Open Liberty (Apache MyFaces), le listener est alors cherché avec la signature <code>search(AjaxBehaviorEvent)</code>, qui n'existe pas, et chaque frappe se termine par une <code>MethodNotFoundException</code>. Écrivez <code>listener="#{clientBean.search()}"</code> (avec parenthèses) pour appeler la méthode sans argument.</p></div>
+          </div>
+          <details class="lg-hint lg-hint--1">
+            <summary><span lang="en">Hint 1</span><span lang="fr">Indice 1</span></summary>
+            <div class="lg-hint-body">
+              <ul>
+                <li><span lang="en">Why <code>f:setPropertyActionListener</code>? A command button inside a table row cannot receive the row as an argument here; the listener runs <em>before</em> the action and stores the row's id in the session bean, which the action then reads.</span><span lang="fr">Pourquoi <code>f:setPropertyActionListener</code> ? Un bouton de commande dans une ligne de tableau ne reçoit pas la ligne en argument ici ; le listener s'exécute <em>avant</em> l'action et range l'id de la ligne dans le bean de session, que l'action lit ensuite.</span></li>
+                <li><span lang="en">In <code>f:ajax</code>, <code>render="clientTable"</code> is an id relative to the form. Only the table is re-rendered, so anything outside it (the total line, the messages) is not updated by the search.</span><span lang="fr">Dans <code>f:ajax</code>, <code>render="clientTable"</code> est un id relatif au formulaire. Seul le tableau est rafraîchi : tout ce qui est hors de lui (la ligne de total, les messages) n'est pas mis à jour par la recherche.</span></li>
+                <li><span lang="en">Column headers use <code>&lt;f:facet name="header"&gt;</code> inside each <code>h:column</code>. The <code>rowClasses="row-odd,row-even"</code>, <code>headerClass="table-header"</code> and <code>styleClass="data-table"</code> attributes come from the stylesheet.</span><span lang="fr">Les en-têtes de colonnes utilisent <code>&lt;f:facet name="header"&gt;</code> dans chaque <code>h:column</code>. Les attributs <code>rowClasses="row-odd,row-even"</code>, <code>headerClass="table-header"</code> et <code>styleClass="data-table"</code> viennent de la feuille de style.</span></li>
+              </ul>
+            </div>
+          </details>
+          <details class="lg-hint lg-hint--2">
+            <summary><span lang="en">Hint 2 — the key parts</span><span lang="fr">Indice 2 — les éléments clés</span></summary>
+            <div class="lg-hint-body">
+<pre class="dark"><code>&lt;h:form id="clientListForm"&gt;
+    &lt;h:inputText id="search" value="#{clientBean.searchTerm}"&gt;
+        &lt;f:ajax event="keyup" listener="#{clientBean.search()}" render="clientTable"/&gt;
+    &lt;/h:inputText&gt;
+
+    &lt;h:dataTable id="clientTable" var="client" styleClass="data-table"
+                 value="#{clientBean.filteredClients != null ? clientBean.filteredClients : clientBean.clients}"&gt;
+        &lt;h:column&gt;
+            &lt;f:facet name="header"&gt;Name&lt;/f:facet&gt;
+            #{client.name}
+        &lt;/h:column&gt;
+        &lt;h:column&gt;
+            &lt;f:facet name="header"&gt;Actions&lt;/f:facet&gt;
+            &lt;h:commandButton value="Edit" action="#{clientBean.edit}" styleClass="button button-small"&gt;
+                &lt;f:setPropertyActionListener target="#{clientBean.selectedClientId}" value="#{client.id}"/&gt;
+            &lt;/h:commandButton&gt;
+            &lt;!-- View and Delete follow the same pattern --&gt;
+        &lt;/h:column&gt;
+    &lt;/h:dataTable&gt;
+&lt;/h:form&gt;</code></pre>
+              <p><span lang="en">Add the namespace <code>xmlns:f="jakarta.faces.core"</code> next to <code>ui</code> and <code>h</code>. In the page that is a copy of the template composition, do not forget <code>&lt;ui:composition template="/WEB-INF/templates/main.xhtml"&gt;</code> and the <code>ui:define</code> elements.</span><span lang="fr">Ajoutez l'espace de noms <code>xmlns:f="jakarta.faces.core"</code> à côté de <code>ui</code> et <code>h</code>. N'oubliez pas, comme pour la page d'accueil, <code>&lt;ui:composition template="/WEB-INF/templates/main.xhtml"&gt;</code> et les éléments <code>ui:define</code>.</span></p>
+            </div>
+          </details>
+          <details class="lg-hint lg-hint--sol">
+            <summary><span lang="en">Solution file</span><span lang="fr">Fichier solution</span></summary>
+            <div class="lg-hint-body">
+              <p><a href="https://github.com/oplanson/esipe-javaee/blob/master/03-Labs/Lab02B-JSF/solution/src/main/webapp/views/client-list.xhtml"><code>solution/…/views/client-list.xhtml</code></a> <span lang="en">(remember the <code>search()</code> fix)</span><span lang="fr">(pensez à la correction <code>search()</code>)</span></p>
+            </div>
+          </details>
+          <div class="lg-checkpoint">
+            <div class="lg-check-label"><span lang="en">Checkpoint</span><span lang="fr">Point de contrôle</span></div>
+            <pre class="dark"><code># redeploy loop, then:
+curl -s http://localhost:9080/lab02b-jsf/views/client-list.xhtml | grep -E "John Doe|Total clients"
+curl -s http://localhost:9080/lab02b-jsf/ | grep -oE '&lt;a [^&gt;]*&gt;[^&lt;]*&lt;/a&gt;'</code></pre>
+            <p><span lang="en">Expected: a line with <code>John Doe</code> and <code>Total clients: 5</code>; the home page now shows three links (<code>Home</code>, <code>Clients</code>, <code>View Clients</code>). Then, in the browser at <a href="http://localhost:9080/lab02b-jsf/views/client-list.xhtml">/lab02b-jsf/views/client-list.xhtml</a>, type <code>jane</code> in the search box: the table shrinks to <em>Jane Smith</em> without a page reload (the browser's network tab shows a <code>POST</code> with <code>jakarta.faces.partial.ajax=true</code>). Clear the box: five rows come back. The total line does not change (it is outside <code>clientTable</code>). Do not click View, Edit or New Client yet: their target pages do not exist until steps 11 and 12.</span><span lang="fr">Attendu : une ligne avec <code>John Doe</code> et <code>Total clients: 5</code> ; la page d'accueil montre maintenant trois liens (<code>Home</code>, <code>Clients</code>, <code>View Clients</code>). Puis, dans le navigateur sur <a href="http://localhost:9080/lab02b-jsf/views/client-list.xhtml">/lab02b-jsf/views/client-list.xhtml</a>, tapez <code>jane</code> dans la zone de recherche : le tableau se réduit à <em>Jane Smith</em> sans rechargement de la page (l'onglet réseau du navigateur montre un <code>POST</code> avec <code>jakarta.faces.partial.ajax=true</code>). Videz la zone : les cinq lignes reviennent. La ligne de total ne change pas (elle est hors de <code>clientTable</code>). Ne cliquez pas encore sur View, Edit ou New Client : leurs pages cibles n'existent pas avant les étapes 11 et 12.</span></p>
+          </div>
+        </div>
+      </article>
+
+      <!-- ───────── STEP 11 ───────── -->
+      <article class="lg-step" id="step-11">
+        <div class="lg-step-head">
+          <div class="lg-step-num">11</div>
+          <div>
+            <h3><span lang="en">The client form</span><span lang="fr">Le formulaire client</span></h3>
+            <div class="lg-step-meta">
+              <span class="lg-chip">20 min</span>
+              <span class="lg-chip"><span lang="en">Course:</span><span lang="fr">Cours :</span> <a href="../../02-Lectures/slides/02b-jsf/slides.html#slide-23"><span lang="en">JSF, slides 23–25 (validation)</span><span lang="fr">JSF, slides 23–25 (validation)</span></a></span>
+            </div>
+          </div>
+        </div>
+        <div class="lg-step-body">
+          <p class="lg-files"><span lang="en">File to create:</span><span lang="fr">Fichier à créer :</span> <code>src/main/webapp/views/client-form.xhtml</code></p>
+          <div class="lg-task-label"><span lang="en">Task</span><span lang="fr">À faire</span></div>
+          <p><span lang="en">Create the form with the template. The title and the <code>h2</code> both show <code>New Client</code> when <code>#{clientBean.client.id}</code> is <code>null</code> and <code>Edit Client</code> otherwise. In one <code>h:form id="clientForm"</code> put an <code>h:messages globalOnly="true"</code> and two <code>h:panelGrid columns="3"</code> (label, input, <code>h:message</code> of the field, with the style class <code>error-message</code>):</span><span lang="fr">Créez le formulaire avec le template. Le titre et le <code>h2</code> affichent tous deux <code>New Client</code> quand <code>#{clientBean.client.id}</code> vaut <code>null</code> et <code>Edit Client</code> sinon. Dans un seul <code>h:form id="clientForm"</code>, placez un <code>h:messages globalOnly="true"</code> et deux <code>h:panelGrid columns="3"</code> (libellé, saisie, <code>h:message</code> du champ, avec la classe de style <code>error-message</code>) :</span></p>
+          <table class="slide-table">
+            <thead><tr><th><span lang="en">Field (id)</span><span lang="fr">Champ (id)</span></th><th><span lang="en">Bound to</span><span lang="fr">Lié à</span></th><th><span lang="en">Rules</span><span lang="fr">Règles</span></th></tr></thead>
+            <tbody>
+              <tr><td><code>name</code></td><td><code>client.name</code></td><td><span lang="en">required (<code>Name is required</code>), <code>f:validateLength</code> 2 to 100</span><span lang="fr">obligatoire (<code>Name is required</code>), <code>f:validateLength</code> de 2 à 100</span></td></tr>
+              <tr><td><code>email</code></td><td><code>client.email</code></td><td><span lang="en">required (<code>Email is required</code>), <code>f:validator validatorId="emailValidator"</code></span><span lang="fr">obligatoire (<code>Email is required</code>), <code>f:validator validatorId="emailValidator"</code></span></td></tr>
+              <tr><td><code>street</code></td><td><code>client.address.street</code></td><td><span lang="en">required (<code>Street is required</code>)</span><span lang="fr">obligatoire (<code>Street is required</code>)</span></td></tr>
+              <tr><td><code>city</code></td><td><code>client.address.city</code></td><td><span lang="en">required (<code>City is required</code>)</span><span lang="fr">obligatoire (<code>City is required</code>)</span></td></tr>
+              <tr><td><code>postalCode</code></td><td><code>client.address.postalCode</code></td><td><span lang="en">required (<code>Postal code is required</code>), <code>f:validateLength</code> 4 to 10</span><span lang="fr">obligatoire (<code>Postal code is required</code>), <code>f:validateLength</code> de 4 à 10</span></td></tr>
+              <tr><td><code>country</code></td><td><code>client.address.country</code></td><td><span lang="en"><code>h:selectOneMenu</code>, required (<code>Country is required</code>), items: empty value labelled <code>-- Select Country --</code>, France, USA, UK, Germany, Spain, Italy</span><span lang="fr"><code>h:selectOneMenu</code>, obligatoire (<code>Country is required</code>), éléments : valeur vide libellée <code>-- Select Country --</code>, France, USA, UK, Germany, Spain, Italy</span></td></tr>
+            </tbody>
+          </table>
+          <p><span lang="en">Finish with two buttons: <code>Save</code> (<code>#{clientBean.save}</code>) and <code>Cancel</code> (<code>#{clientBean.cancel}</code>, with <code>immediate="true"</code>).</span><span lang="fr">Terminez avec deux boutons : <code>Save</code> (<code>#{clientBean.save}</code>) et <code>Cancel</code> (<code>#{clientBean.cancel}</code>, avec <code>immediate="true"</code>).</span></p>
+          <details class="lg-hint lg-hint--1">
+            <summary><span lang="en">Hint 1</span><span lang="fr">Indice 1</span></summary>
+            <div class="lg-hint-body">
+              <ul>
+                <li><span lang="en"><code>immediate="true"</code> on Cancel makes Faces skip validation. Without it, clicking Cancel on an empty form would be blocked by the "required" errors.</span><span lang="fr"><code>immediate="true"</code> sur Cancel fait sauter la validation à Faces. Sans lui, cliquer sur Cancel sur un formulaire vide serait bloqué par les erreurs « obligatoire ».</span></li>
+                <li><span lang="en">The empty <code>f:selectItem itemValue=""</code> counts as "no value" for <code>required</code>, which is what makes the placeholder work.</span><span lang="fr">Le <code>f:selectItem itemValue=""</code> vide compte comme « pas de valeur » pour <code>required</code>, ce qui fait fonctionner le texte d'invite.</span></li>
+                <li><span lang="en">Each <code>h:message for="x"</code> refers to the component id inside the same form. <code>f:validateLength</code> uses the default Faces message, which starts with the component's client id (<code>clientForm:name: Validation Error: …</code>): that is normal.</span><span lang="fr">Chaque <code>h:message for="x"</code> désigne l'id d'un composant du même formulaire. <code>f:validateLength</code> utilise le message Faces par défaut, qui commence par l'id client du composant (<code>clientForm:name: Validation Error: …</code>) : c'est normal.</span></li>
+              </ul>
+            </div>
+          </details>
+          <details class="lg-hint lg-hint--2">
+            <summary><span lang="en">Hint 2 — one field and the buttons</span><span lang="fr">Indice 2 — un champ et les boutons</span></summary>
+            <div class="lg-hint-body">
+<pre class="dark"><code>&lt;h:panelGrid columns="3" styleClass="form-grid"&gt;
+    &lt;h:outputLabel value="Name:" for="name"/&gt;
+    &lt;h:inputText id="name" value="#{clientBean.client.name}"
+                 required="true" requiredMessage="Name is required"&gt;
+        &lt;f:validateLength minimum="2" maximum="100"/&gt;
+    &lt;/h:inputText&gt;
+    &lt;h:message for="name" styleClass="error-message"/&gt;
+    &lt;!-- email: &lt;f:validator validatorId="emailValidator"/&gt; ; same pattern for the others --&gt;
+&lt;/h:panelGrid&gt;
+
+&lt;h:selectOneMenu id="country" value="#{clientBean.client.address.country}" required="true"
+                 requiredMessage="Country is required"&gt;
+    &lt;f:selectItem itemValue="" itemLabel="-- Select Country --"/&gt;
+    &lt;f:selectItem itemValue="France" itemLabel="France"/&gt;
+    &lt;!-- USA, UK, Germany, Spain, Italy --&gt;
+&lt;/h:selectOneMenu&gt;
+
+&lt;h:commandButton value="Save" action="#{clientBean.save}" styleClass="button button-primary"/&gt;
+&lt;h:commandButton value="Cancel" action="#{clientBean.cancel}" immediate="true" styleClass="button"/&gt;</code></pre>
+            </div>
+          </details>
+          <details class="lg-hint lg-hint--sol">
+            <summary><span lang="en">Solution file</span><span lang="fr">Fichier solution</span></summary>
+            <div class="lg-hint-body">
+              <p><a href="https://github.com/oplanson/esipe-javaee/blob/master/03-Labs/Lab02B-JSF/solution/src/main/webapp/views/client-form.xhtml"><code>solution/…/views/client-form.xhtml</code></a></p>
+            </div>
+          </details>
+          <div class="lg-checkpoint">
+            <div class="lg-check-label"><span lang="en">Checkpoint</span><span lang="fr">Point de contrôle</span></div>
+            <pre class="dark"><code># redeploy loop, then:
+curl -s http://localhost:9080/lab02b-jsf/views/client-form.xhtml \
+  | grep -oE 'name="clientForm:[a-zA-Z]*"' | sort -u</code></pre>
+            <p><span lang="en">Expected: six names (<code>city</code>, <code>country</code>, <code>email</code>, <code>name</code>, <code>postalCode</code>, <code>street</code>). Then in the browser, open the list and click <em>New Client</em>:</span><span lang="fr">Attendu : six noms (<code>city</code>, <code>country</code>, <code>email</code>, <code>name</code>, <code>postalCode</code>, <code>street</code>). Puis, dans le navigateur, ouvrez la liste et cliquez sur <em>New Client</em> :</span></p>
+            <ul>
+              <li><span lang="en">Click <code>Save</code> on the empty form: messages <code>Name is required</code>, <code>Email is required</code>, <code>Street is required</code>, <code>City is required</code>, <code>Postal code is required</code>, <code>Country is required</code>.</span><span lang="fr">Cliquez sur <code>Save</code> sur le formulaire vide : messages <code>Name is required</code>, <code>Email is required</code>, <code>Street is required</code>, <code>City is required</code>, <code>Postal code is required</code>, <code>Country is required</code>.</span></li>
+              <li><span lang="en">Enter name <code>A</code>, email <code>notanemail</code>, postal code <code>75</code>: you get <code>… Length is less than allowable minimum of '2'</code>, <code>Please enter a valid email address (e.g., user@example.com)</code> and <code>… minimum of '4'</code>.</span><span lang="fr">Saisissez le nom <code>A</code>, l'email <code>notanemail</code>, le code postal <code>75</code> : vous obtenez <code>… Length is less than allowable minimum of '2'</code>, <code>Please enter a valid email address (e.g., user@example.com)</code> et <code>… minimum of '4'</code>.</span></li>
+              <li><span lang="en">Enter <code>Alice Martin</code>, <code>alice@example.com</code>, <code>1 Rue X</code>, <code>Paris</code>, <code>75001</code>, <code>France</code> and Save: you are redirected to the list, which now shows <code>Alice Martin</code> and <code>Total clients: 6</code>. The address bar shows <code>client-list.xhtml</code> (redirect), and F5 does not add a duplicate.</span><span lang="fr">Saisissez <code>Alice Martin</code>, <code>alice@example.com</code>, <code>1 Rue X</code>, <code>Paris</code>, <code>75001</code>, <code>France</code> et enregistrez : vous êtes redirigé vers la liste, qui montre maintenant <code>Alice Martin</code> et <code>Total clients: 6</code>. La barre d'adresse affiche <code>client-list.xhtml</code> (redirection), et F5 n'ajoute pas de doublon.</span></li>
+              <li><span lang="en">The success message set by <code>save()</code> is <em>not</em> displayed after the redirect: a Faces message lives for one request and the redirect starts a new one. The bonus section shows how to keep it.</span><span lang="fr">Le message de succès posé par <code>save()</code> n'est <em>pas</em> affiché après la redirection : un message Faces vit le temps d'une requête et la redirection en démarre une nouvelle. La section bonus montre comment le conserver.</span></li>
+              <li><span lang="en">Click <em>Edit</em> on a row in the list: the title is <code>Edit Client</code> and the fields are filled. <code>Cancel</code> returns to the list without validation.</span><span lang="fr">Cliquez sur <em>Edit</em> sur une ligne de la liste : le titre est <code>Edit Client</code> et les champs sont remplis. <code>Cancel</code> revient à la liste sans validation.</span></li>
+            </ul>
+          </div>
+        </div>
+      </article>
+
+      <!-- ───────── STEP 12 ───────── -->
+      <article class="lg-step" id="step-12">
+        <div class="lg-step-head">
+          <div class="lg-step-num">12</div>
+          <div>
+            <h3><span lang="en">Client details</span><span lang="fr">Détail du client</span></h3>
+            <div class="lg-step-meta">
+              <span class="lg-chip">10 min</span>
+              <span class="lg-chip"><span lang="en">Course:</span><span lang="fr">Cours :</span> <a href="../../02-Lectures/slides/02b-jsf/slides.html#slide-26"><span lang="en">JSF, slide 26 (converters)</span><span lang="fr">JSF, slide 26 (convertisseurs)</span></a></span>
+            </div>
+          </div>
+        </div>
+        <div class="lg-step-body">
+          <p class="lg-files"><span lang="en">File to create:</span><span lang="fr">Fichier à créer :</span> <code>src/main/webapp/views/client-details.xhtml</code></p>
+          <div class="lg-task-label"><span lang="en">Task</span><span lang="fr">À faire</span></div>
+          <p><span lang="en">Create the read-only page with the template (title <code>Client Details</code>). In a <code>div class="details-panel"</code>:</span><span lang="fr">Créez la page en lecture seule avec le template (titre <code>Client Details</code>). Dans un <code>div class="details-panel"</code> :</span></p>
+          <ol>
+            <li><span lang="en">Under <code>Personal Information</code>, a <code>dl</code> with id, name and email of <code>#{clientBean.client}</code>; under <code>Address</code>, a <code>dl</code> with street, city, postal code and country.</span><span lang="fr">Sous <code>Personal Information</code>, une <code>dl</code> avec id, nom et email de <code>#{clientBean.client}</code> ; sous <code>Address</code>, une <code>dl</code> avec rue, ville, code postal et pays.</span></li>
+            <li><span lang="en">Under <code>Accounts</code>, an <code>h:dataTable</code> over <code>#{clientBean.client.accounts}</code> (<code>var="account"</code>) with the columns Account Number, Type and Balance, shown only if the list is not empty (<code>rendered="#{not empty clientBean.client.accounts}"</code>). Format the balance with an <code>h:outputText</code> and <code>f:convertNumber type="currency" currencySymbol="€"</code>.</span><span lang="fr">Sous <code>Accounts</code>, un <code>h:dataTable</code> sur <code>#{clientBean.client.accounts}</code> (<code>var="account"</code>) avec les colonnes Account Number, Type et Balance, affiché seulement si la liste n'est pas vide (<code>rendered="#{not empty clientBean.client.accounts}"</code>). Formatez le solde avec un <code>h:outputText</code> et <code>f:convertNumber type="currency" currencySymbol="€"</code>.</span></li>
+            <li><span lang="en">The text <code>No accounts found for this client.</code> must appear <strong>only</strong> when the list is empty.</span><span lang="fr">Le texte <code>No accounts found for this client.</code> doit apparaître <strong>uniquement</strong> quand la liste est vide.</span></li>
+            <li><span lang="en">Two links at the bottom: <code>h:link outcome="client-form"</code> labelled <code>Edit</code> and <code>h:link outcome="client-list"</code> labelled <code>Back to List</code>, both with the style class <code>button</code>.</span><span lang="fr">Deux liens en bas : <code>h:link outcome="client-form"</code> libellé <code>Edit</code> et <code>h:link outcome="client-list"</code> libellé <code>Back to List</code>, tous deux avec la classe de style <code>button</code>.</span></li>
+          </ol>
+          <div class="lg-callout lg-callout--warn">
+            <div lang="en"><div class="lg-callout-title">The solution always shows "No accounts found"</div><p><a href="https://github.com/oplanson/esipe-javaee/blob/master/03-Labs/Lab02B-JSF/solution/src/main/webapp/views/client-details.xhtml"><code>solution/…/client-details.xhtml</code></a> writes the message in a plain HTML <code>&lt;p rendered="..."&gt;</code>. <code>rendered</code> only means something on a Faces component, so the paragraph is displayed for every client, even one with accounts. Use <code>&lt;h:outputText value="No accounts found for this client." rendered="#{empty clientBean.client.accounts}"/&gt;</code> instead.</p></div>
+            <div lang="fr"><div class="lg-callout-title">La solution affiche toujours « No accounts found »</div><p><a href="https://github.com/oplanson/esipe-javaee/blob/master/03-Labs/Lab02B-JSF/solution/src/main/webapp/views/client-details.xhtml"><code>solution/…/client-details.xhtml</code></a> écrit le message dans un simple <code>&lt;p rendered="..."&gt;</code> HTML. <code>rendered</code> n'a de sens que sur un composant Faces : le paragraphe est donc affiché pour tous les clients, même ceux qui ont des comptes. Utilisez plutôt <code>&lt;h:outputText value="No accounts found for this client." rendered="#{empty clientBean.client.accounts}"/&gt;</code>.</p></div>
+          </div>
+          <details class="lg-hint lg-hint--1">
+            <summary><span lang="en">Hint 1</span><span lang="fr">Indice 1</span></summary>
+            <div class="lg-hint-body">
+              <p><span lang="en">Expressions such as <code>#{clientBean.client.address.city}</code> are plain Expression Language; Facelets escapes their output, so a name containing <code>&lt;script&gt;</code> is displayed as text. The solution passes an <code>id</code> parameter to the Edit link with <code>f:param</code>, but nothing reads it: the form simply shows the client already stored in the session bean by <code>viewDetails()</code>.</span><span lang="fr">Les expressions comme <code>#{clientBean.client.address.city}</code> sont de l'Expression Language classique ; Facelets échappe leur sortie, donc un nom contenant <code>&lt;script&gt;</code> est affiché comme du texte. La solution passe un paramètre <code>id</code> au lien Edit avec <code>f:param</code>, mais rien ne le lit : le formulaire affiche simplement le client déjà rangé dans le bean de session par <code>viewDetails()</code>.</span></p>
+            </div>
+          </details>
+          <details class="lg-hint lg-hint--2">
+            <summary><span lang="en">Hint 2 — the accounts table</span><span lang="fr">Indice 2 — le tableau des comptes</span></summary>
+            <div class="lg-hint-body">
+<pre class="dark"><code>&lt;h:dataTable value="#{clientBean.client.accounts}" var="account" styleClass="data-table"
+             rendered="#{not empty clientBean.client.accounts}"&gt;
+    &lt;h:column&gt;
+        &lt;f:facet name="header"&gt;Balance&lt;/f:facet&gt;
+        &lt;h:outputText value="#{account.balance}"&gt;
+            &lt;f:convertNumber type="currency" currencySymbol="€"/&gt;
+        &lt;/h:outputText&gt;
+    &lt;/h:column&gt;
+    &lt;!-- Account Number (account.accountNumber) and Type (account.accountType) --&gt;
+&lt;/h:dataTable&gt;
+&lt;h:outputText value="No accounts found for this client."
+              rendered="#{empty clientBean.client.accounts}"/&gt;</code></pre>
+            </div>
+          </details>
+          <details class="lg-hint lg-hint--sol">
+            <summary><span lang="en">Solution file</span><span lang="fr">Fichier solution</span></summary>
+            <div class="lg-hint-body">
+              <p><a href="https://github.com/oplanson/esipe-javaee/blob/master/03-Labs/Lab02B-JSF/solution/src/main/webapp/views/client-details.xhtml"><code>solution/…/views/client-details.xhtml</code></a> <span lang="en">(remember the <code>h:outputText</code> fix)</span><span lang="fr">(pensez à la correction <code>h:outputText</code>)</span></p>
+            </div>
+          </details>
+          <div class="lg-checkpoint">
+            <div class="lg-check-label"><span lang="en">Checkpoint</span><span lang="fr">Point de contrôle</span></div>
+            <p><span lang="en">Redeploy, open the client list in the browser and click <em>View</em> on <em>Jane Smith</em>: the page shows <code>jane.smith@example.com</code>, <code>Lyon</code> and one account (<code>FR7612345678901234567890125</code>, Checking, 3,500.00 with the euro sign; the exact separators depend on your locale), and <strong>no</strong> "No accounts found" text. Go back, create a client as in step 11 and click <em>View</em> on it: the accounts table is gone and the text <code>No accounts found for this client.</code> is shown. <code>Back to List</code> returns to the list.</span><span lang="fr">Redéployez, ouvrez la liste des clients dans le navigateur et cliquez sur <em>View</em> pour <em>Jane Smith</em> : la page montre <code>jane.smith@example.com</code>, <code>Lyon</code> et un compte (<code>FR7612345678901234567890125</code>, Checking, 3,500.00 avec le signe euro ; les séparateurs exacts dépendent de votre locale), et <strong>pas</strong> le texte « No accounts found ». Revenez, créez un client comme à l'étape 11 et cliquez sur <em>View</em> : le tableau de comptes disparaît et le texte <code>No accounts found for this client.</code> s'affiche. <code>Back to List</code> ramène à la liste.</span></p>
+          </div>
+        </div>
+      </article>
+
+      <!-- ───────── STEP 13 ───────── -->
+      <article class="lg-step" id="step-13">
+        <div class="lg-step-head">
+          <div class="lg-step-num">13</div>
+          <div>
+            <h3><span lang="en">Navigation rules</span><span lang="fr">Règles de navigation</span></h3>
+            <div class="lg-step-meta">
+              <span class="lg-chip">10 min</span>
+              <span class="lg-chip"><span lang="en">Course:</span><span lang="fr">Cours :</span> <a href="../../02-Lectures/slides/02b-jsf/slides.html#slide-34"><span lang="en">JSF, slides 34–44 (navigation)</span><span lang="fr">JSF, slides 34–44 (navigation)</span></a></span>
+            </div>
+          </div>
+        </div>
+        <div class="lg-step-body">
+          <p class="lg-files"><span lang="en">File to modify:</span><span lang="fr">Fichier à modifier :</span> <code>src/main/webapp/WEB-INF/faces-config.xml</code></p>
+          <div class="lg-task-label"><span lang="en">Task</span><span lang="fr">À faire</span></div>
+          <p><span lang="en">Your application already navigates, because Faces supports <em>implicit navigation</em>: an outcome such as <code>client-list</code> is resolved to <code>client-list.xhtml</code> next to the current view. Now declare the same navigation <em>explicitly</em>. In <code>faces-config.xml</code>, after <code>&lt;application&gt;</code>, add one <code>&lt;navigation-rule&gt;</code> with <code>&lt;from-view-id&gt;*&lt;/from-view-id&gt;</code> and seven <code>&lt;navigation-case&gt;</code>, each with a <code>&lt;redirect/&gt;</code>:</span><span lang="fr">Votre application navigue déjà, car Faces gère la <em>navigation implicite</em> : un outcome comme <code>client-list</code> est résolu vers <code>client-list.xhtml</code> à côté de la vue courante. Déclarez maintenant la même navigation de façon <em>explicite</em>. Dans <code>faces-config.xml</code>, après <code>&lt;application&gt;</code>, ajoutez une <code>&lt;navigation-rule&gt;</code> avec <code>&lt;from-view-id&gt;*&lt;/from-view-id&gt;</code> et sept <code>&lt;navigation-case&gt;</code>, chacun avec un <code>&lt;redirect/&gt;</code> :</span></p>
+          <table class="slide-table">
+            <thead><tr><th><code>from-outcome</code></th><th><code>to-view-id</code></th></tr></thead>
+            <tbody>
+              <tr><td><code>client-list</code>, <code>/views/client-list</code></td><td><code>/views/client-list.xhtml</code></td></tr>
+              <tr><td><code>client-form</code>, <code>/views/client-form</code></td><td><code>/views/client-form.xhtml</code></td></tr>
+              <tr><td><code>client-details</code>, <code>/views/client-details</code></td><td><code>/views/client-details.xhtml</code></td></tr>
+              <tr><td><code>/index</code></td><td><code>/index.xhtml</code></td></tr>
+            </tbody>
+          </table>
+          <p><span lang="en">Each short outcome is used by the bean (<code>return "client-list?faces-redirect=true"</code>), each long one by the <code>h:link</code> elements of the template and of the home page.</span><span lang="fr">Chaque outcome court est utilisé par le bean (<code>return "client-list?faces-redirect=true"</code>), chaque outcome long par les éléments <code>h:link</code> du template et de la page d'accueil.</span></p>
+          <div class="lg-callout lg-callout--note">
+            <div lang="en"><div class="lg-callout-title">Do not follow the path in NAVIGATION-RULES-EXPLAINED.md</div><p><a href="https://github.com/oplanson/esipe-javaee/blob/master/03-Labs/Lab02B-JSF/NAVIGATION-RULES-EXPLAINED.md"><code>NAVIGATION-RULES-EXPLAINED.md</code></a> (written in French) is a good explanation of <code>from-outcome</code>, <code>to-view-id</code> and <code>&lt;redirect/&gt;</code>, but its examples target <code>/WEB-INF/views/client-list.xhtml</code>. The views of this lab are in <code>/views/</code>, as in the table above.</p></div>
+            <div lang="fr"><div class="lg-callout-title">Ne suivez pas le chemin de NAVIGATION-RULES-EXPLAINED.md</div><p><a href="https://github.com/oplanson/esipe-javaee/blob/master/03-Labs/Lab02B-JSF/NAVIGATION-RULES-EXPLAINED.md"><code>NAVIGATION-RULES-EXPLAINED.md</code></a> est une bonne explication de <code>from-outcome</code>, <code>to-view-id</code> et <code>&lt;redirect/&gt;</code>, mais ses exemples ciblent <code>/WEB-INF/views/client-list.xhtml</code>. Les vues de ce lab sont dans <code>/views/</code>, comme dans le tableau ci-dessus.</p></div>
+          </div>
+          <details class="lg-hint lg-hint--1">
+            <summary><span lang="en">Hint 1</span><span lang="fr">Indice 1</span></summary>
+            <div class="lg-hint-body">
+              <p><span lang="en">An outcome is compared with <code>from-outcome</code> <em>without</em> its query string: <code>client-list?faces-redirect=true</code> matches <code>client-list</code>. Two cases per page exist only because two different callers use two spellings. As the explicit rules and the implicit navigation lead to the same pages, the application behaves identically with or without them: the value of the rules is to centralise the page names in one file, which you can check by renaming a view and changing one line only.</span><span lang="fr">Un outcome est comparé à <code>from-outcome</code> <em>sans</em> sa chaîne de requête : <code>client-list?faces-redirect=true</code> correspond à <code>client-list</code>. Il y a deux cas par page parce que deux appelants utilisent deux écritures. Comme les règles explicites et la navigation implicite mènent aux mêmes pages, l'application se comporte de la même façon avec ou sans elles : l'intérêt des règles est de centraliser les noms de pages dans un seul fichier, ce que vous pouvez vérifier en renommant une vue et en ne changeant qu'une ligne.</span></p>
+            </div>
+          </details>
+          <details class="lg-hint lg-hint--2">
+            <summary><span lang="en">Hint 2 — the structure</span><span lang="fr">Indice 2 — la structure</span></summary>
+            <div class="lg-hint-body">
+<pre class="dark"><code>&lt;navigation-rule&gt;
+    &lt;from-view-id&gt;*&lt;/from-view-id&gt;
+    &lt;navigation-case&gt;
+        &lt;from-outcome&gt;client-list&lt;/from-outcome&gt;
+        &lt;to-view-id&gt;/views/client-list.xhtml&lt;/to-view-id&gt;
+        &lt;redirect/&gt;
+    &lt;/navigation-case&gt;
+    &lt;navigation-case&gt;
+        &lt;from-outcome&gt;/views/client-list&lt;/from-outcome&gt;
+        &lt;to-view-id&gt;/views/client-list.xhtml&lt;/to-view-id&gt;
+        &lt;redirect/&gt;
+    &lt;/navigation-case&gt;
+    &lt;!-- client-form, client-details (short and long), and /index --&gt;
+&lt;/navigation-rule&gt;</code></pre>
+              <p><span lang="en">The solution's <code>faces-config.xml</code> also declares a <code>&lt;resource-bundle&gt;</code> named <code>messages</code>. No <code>messages.properties</code> exists and no view uses <code>#{msg…}</code>: leave it out.</span><span lang="fr">Le <code>faces-config.xml</code> de la solution déclare aussi un <code>&lt;resource-bundle&gt;</code> nommé <code>messages</code>. Aucun <code>messages.properties</code> n'existe et aucune vue n'utilise <code>#{msg…}</code> : laissez-le de côté.</span></p>
+            </div>
+          </details>
+          <details class="lg-hint lg-hint--sol">
+            <summary><span lang="en">Solution file</span><span lang="fr">Fichier solution</span></summary>
+            <div class="lg-hint-body">
+              <p><a href="https://github.com/oplanson/esipe-javaee/blob/master/03-Labs/Lab02B-JSF/solution/src/main/webapp/WEB-INF/faces-config.xml"><code>solution/…/faces-config.xml</code></a></p>
+            </div>
+          </details>
+          <div class="lg-checkpoint">
+            <div class="lg-check-label"><span lang="en">Checkpoint</span><span lang="fr">Point de contrôle</span></div>
+            <pre class="dark"><code>xmllint --noout src/main/webapp/WEB-INF/faces-config.xml
+# redeploy loop, then:
+curl -s -o /dev/null -w '%{http_code}\n' http://localhost:9080/lab02b-jsf/
+podman logs lab02b-jsf | grep CWWKZ0001I</code></pre>
+            <p><span lang="en">Expected: no output from <code>xmllint</code> (the file is well formed), <code>200</code>, and <code>CWWKZ0001I: Application lab02b-jsf started</code>. In the browser, walk through the whole application: home → <em>View Clients</em> → <em>View</em> → <em>Edit</em> → <em>Save</em> → list; <em>Delete</em> a client (confirm the dialog: the row disappears and the total decreases); <em>New Client</em> → <em>Cancel</em>. Every click must land on the expected page, and after each redirect the address bar must show the page you are on.</span><span lang="fr">Attendu : aucune sortie de <code>xmllint</code> (le fichier est bien formé), <code>200</code>, et <code>CWWKZ0001I: Application lab02b-jsf started</code>. Dans le navigateur, parcourez toute l'application : accueil → <em>View Clients</em> → <em>View</em> → <em>Edit</em> → <em>Save</em> → liste ; <em>Delete</em> d'un client (confirmez la boîte de dialogue : la ligne disparaît et le total diminue) ; <em>New Client</em> → <em>Cancel</em>. Chaque clic doit arriver sur la page attendue, et après chaque redirection la barre d'adresse doit montrer la page où vous êtes.</span></p>
+          </div>
+        </div>
+      </article>
+    </section>
+
+    <!-- ═════════════ 6. RUN ═════════════ -->
+    <section class="lg-section" id="run">
+      <h2><span class="lg-sec-num">06</span><span lang="en">Run and operate</span><span lang="fr">Exécution</span></h2>
+      <table class="slide-table">
+        <thead><tr><th><span lang="en">Purpose</span><span lang="fr">Usage</span></th><th><span lang="en">Command</span><span lang="fr">Commande</span></th></tr></thead>
+        <tbody>
+          <tr><td><span lang="en">Start (or restart after a change)</span><span lang="fr">Démarrer (ou redémarrer après un changement)</span></td><td><span lang="en">the redeploy loop of the <a href="#setup">Setup</a> section</span><span lang="fr">la boucle de redéploiement de la section <a href="#setup">Préparation</a></span></td></tr>
+          <tr><td><span lang="en">Follow the server logs</span><span lang="fr">Suivre les logs du serveur</span></td><td><code>podman logs -f lab02b-jsf</code></td></tr>
+          <tr><td><span lang="en">Stop and clean up</span><span lang="fr">Arrêter et nettoyer</span></td><td><code>podman rm -f lab02b-jsf</code> <span lang="en">then</span><span lang="fr">puis</span> <code>podman rmi lab02b-jsf:latest</code></td></tr>
+        </tbody>
+      </table>
+      <table class="slide-table">
+        <thead><tr><th>URL</th><th><span lang="en">What you get</span><span lang="fr">Ce que vous obtenez</span></th></tr></thead>
+        <tbody>
+          <tr><td><a href="http://localhost:9080/lab02b-jsf/">http://localhost:9080/lab02b-jsf/</a></td><td><span lang="en">Home page</span><span lang="fr">Page d'accueil</span></td></tr>
+          <tr><td><a href="http://localhost:9080/lab02b-jsf/views/client-list.xhtml">http://localhost:9080/lab02b-jsf/views/client-list.xhtml</a></td><td><span lang="en">Client list with AJAX search</span><span lang="fr">Liste des clients avec recherche AJAX</span></td></tr>
+          <tr><td><a href="http://localhost:9080/lab02b-jsf/views/client-form.xhtml">http://localhost:9080/lab02b-jsf/views/client-form.xhtml</a></td><td><span lang="en">Client form</span><span lang="fr">Formulaire client</span></td></tr>
+          <tr><td><a href="http://localhost:9080/health/live">http://localhost:9080/health/live</a>, <a href="http://localhost:9080/health/ready">/health/ready</a></td><td><span lang="en">MicroProfile Health (liveness, readiness)</span><span lang="fr">MicroProfile Health (liveness, readiness)</span></td></tr>
+          <tr><td><a href="http://localhost:9080/metrics">http://localhost:9080/metrics</a></td><td><span lang="en">MicroProfile Metrics</span><span lang="fr">MicroProfile Metrics</span></td></tr>
+        </tbody>
+      </table>
+      <div class="lg-callout lg-callout--note">
+        <div lang="en"><div class="lg-callout-title">Data lives in memory</div><p>The clients are in the <code>ClientService</code> list. Restarting the container brings the data back to the five sample clients. A database comes in Lab 03.</p></div>
+        <div lang="fr"><div class="lg-callout-title">Les données sont en mémoire</div><p>Les clients sont dans la liste de <code>ClientService</code>. Redémarrer le conteneur ramène les données aux cinq clients d'exemple. Une base de données arrive au Lab 03.</p></div>
+      </div>
+      <div class="lg-callout lg-callout--warn">
+        <div lang="en"><div class="lg-callout-title">About the provided scripts</div><p>The folder contains <code>podman-test.sh</code> (<code>./podman-test.sh -dir starter</code> builds and tests your work) and <code>test-lab.sh</code> (build and file checks only). Be careful with <code>podman-test.sh</code>: before starting, it <strong>stops and removes every container that publishes port 9080 on all interfaces</strong>, including containers of other labs, and it then publishes ports 9080 and 9443 on all interfaces instead of <code>127.0.0.1</code>. <code>test-lab.sh</code> also reports a missing <code>addressInput.xhtml</code> composite component; that is only a warning, since the component is a bonus exercise here.</p></div>
+        <div lang="fr"><div class="lg-callout-title">À propos des scripts fournis</div><p>Le dossier contient <code>podman-test.sh</code> (<code>./podman-test.sh -dir starter</code> construit et teste votre travail) et <code>test-lab.sh</code> (build et contrôle des fichiers seulement). Attention à <code>podman-test.sh</code> : avant de démarrer, il <strong>arrête et supprime tout conteneur qui publie le port 9080 sur toutes les interfaces</strong>, y compris ceux d'autres labs, puis il publie les ports 9080 et 9443 sur toutes les interfaces au lieu de <code>127.0.0.1</code>. <code>test-lab.sh</code> signale aussi l'absence du composant composite <code>addressInput.xhtml</code> ; ce n'est qu'un avertissement, puisque le composant est ici un exercice bonus.</p></div>
+      </div>
+    </section>
+
+    <!-- ═════════════ 7. VALIDATE ═════════════ -->
+    <section class="lg-section" id="validate">
+      <h2><span class="lg-sec-num">07</span><span lang="en">Validate your work</span><span lang="fr">Valider votre travail</span></h2>
+      <p>
+        <span lang="en">Run these checks once everything is deployed. Each line shows the expected result.</span>
+        <span lang="fr">Lancez ces vérifications une fois tout déployé. Chaque ligne indique le résultat attendu.</span>
+      </p>
+      <pre class="dark"><code>B=http://localhost:9080
+
+for u in lab02b-jsf/ lab02b-jsf/index.xhtml lab02b-jsf/views/client-list.xhtml \
+         lab02b-jsf/views/client-form.xhtml lab02b-jsf/views/client-details.xhtml \
+         health/live health/ready metrics; do
+  printf "%-42s %s\n" "/$u" "$(curl -s -o /dev/null -w '%{http_code}' $B/$u)"
+done
+
+curl -s $B/lab02b-jsf/views/client-list.xhtml | grep "Total clients"
+curl -s $B/health/live
+
+# views are served only through the Faces servlet; WEB-INF is never public
+curl -s -o /dev/null -w '%{http_code}\n' $B/lab02b-jsf/WEB-INF/templates/main.xhtml</code></pre>
+      <table class="slide-table">
+        <thead><tr><th><span lang="en">Check</span><span lang="fr">Contrôle</span></th><th><span lang="en">Expected result</span><span lang="fr">Résultat attendu</span></th></tr></thead>
+        <tbody>
+          <tr><td><span lang="en">Eight URLs</span><span lang="fr">Huit URL</span></td><td><span lang="en"><code>200</code> for each</span><span lang="fr"><code>200</code> pour chacune</span></td></tr>
+          <tr><td><code>Total clients</code></td><td><code>Total clients: 5</code> <span lang="en">on a fresh container</span><span lang="fr">sur un conteneur neuf</span></td></tr>
+          <tr><td><code>/health/live</code></td><td><span lang="en"><code>UP</code> with <code>"clientCount":5</code></span><span lang="fr"><code>UP</code> avec <code>"clientCount":5</code></span></td></tr>
+          <tr><td><code>WEB-INF</code></td><td><code>404</code></td></tr>
+        </tbody>
+      </table>
+      <h3><span lang="en">Validation checklist</span><span lang="fr">Checklist de validation</span></h3>
+      <ul class="lg-checklist">
+        <li><label><input type="checkbox"/><span lang="en">The project builds with <code>mvn clean package</code> and the image builds from my <code>Containerfile</code></span><span lang="fr">Le projet se construit avec <code>mvn clean package</code> et l'image se construit depuis mon <code>Containerfile</code></span></label></li>
+        <li><label><input type="checkbox"/><span lang="en">The home page is styled and its link leads to the client list</span><span lang="fr">La page d'accueil est stylée et son lien mène à la liste des clients</span></label></li>
+        <li><label><input type="checkbox"/><span lang="en">Typing in the search box filters the table without a page reload</span><span lang="fr">Taper dans la zone de recherche filtre le tableau sans rechargement de la page</span></label></li>
+        <li><label><input type="checkbox"/><span lang="en">The empty form shows six "required" messages; <code>notanemail</code> is rejected by my <code>EmailValidator</code></span><span lang="fr">Le formulaire vide affiche six messages « obligatoire » ; <code>notanemail</code> est refusé par mon <code>EmailValidator</code></span></label></li>
+        <li><label><input type="checkbox"/><span lang="en">A valid client is saved and I land on the list; F5 does not create a duplicate</span><span lang="fr">Un client valide est enregistré et j'arrive sur la liste ; F5 ne crée pas de doublon</span></label></li>
+        <li><label><input type="checkbox"/><span lang="en">Edit pre-fills the form; Delete asks for confirmation and removes the row</span><span lang="fr">Edit pré-remplit le formulaire ; Delete demande une confirmation et supprime la ligne</span></label></li>
+        <li><label><input type="checkbox"/><span lang="en">Details show the accounts of Jane Smith, and "No accounts found" only for a client without account</span><span lang="fr">Le détail montre les comptes de Jane Smith, et « No accounts found » seulement pour un client sans compte</span></label></li>
+        <li><label><input type="checkbox"/><span lang="en">A client named <code>&lt;b&gt;x&lt;/b&gt;</code> is displayed as text, not as bold</span><span lang="fr">Un client nommé <code>&lt;b&gt;x&lt;/b&gt;</code> est affiché comme du texte, pas en gras</span></label></li>
+        <li><label><input type="checkbox"/><span lang="en">I can explain why <code>ClientBean</code> is <code>@SessionScoped</code>, what <code>?faces-redirect=true</code> does and what <code>immediate="true"</code> does on Cancel</span><span lang="fr">Je sais expliquer pourquoi <code>ClientBean</code> est <code>@SessionScoped</code>, ce que fait <code>?faces-redirect=true</code> et ce que fait <code>immediate="true"</code> sur Cancel</span></label></li>
+      </ul>
+    </section>
+
+    <!-- ═════════════ 8. COMPARE ═════════════ -->
+    <section class="lg-section" id="compare">
+      <h2><span class="lg-sec-num">08</span><span lang="en">Compare with the solution</span><span lang="fr">Comparer à la solution</span></h2>
+      <p>
+        <span lang="en">Your code does not have to match the solution character by character: comments, formatting and the exact HTML may differ. Behaviour must match. To see where you differ:</span>
+        <span lang="fr">Votre code n'a pas à être identique à la solution caractère par caractère : commentaires, mise en forme et HTML exact peuvent différer. Le comportement doit être le même. Pour voir où vous différez :</span>
+      </p>
+      <pre class="dark"><code>cd 03-Labs/Lab02B-JSF
+diff -rq starter solution -x target -x docs
+diff -u solution/src/main/webapp/views/client-list.xhtml \
+        starter/src/main/webapp/views/client-list.xhtml</code></pre>
+      <h3><span lang="en">Differences that are expected</span><span lang="fr">Différences attendues</span></h3>
+      <ul>
+        <li><span lang="en"><code>src/main/webapp/WEB-INF/views/*.xhtml</code> and <code>src/main/webapp/css/style.css</code> exist only in the solution: unused duplicates (see the note in section 2).</span><span lang="fr"><code>src/main/webapp/WEB-INF/views/*.xhtml</code> et <code>src/main/webapp/css/style.css</code> n'existent que dans la solution : doublons inutilisés (voir la note de la section 2).</span></li>
+        <li><span lang="en"><code>docs/</code> in the solution is a static documentation site, not part of the application.</span><span lang="fr"><code>docs/</code> dans la solution est un site de documentation statique, qui ne fait pas partie de l'application.</span></li>
+        <li><span lang="en"><code>templates/main.xhtml</code>: only the footer text differs.</span><span lang="fr"><code>templates/main.xhtml</code> : seul le texte du pied de page diffère.</span></li>
+        <li><span lang="en"><code>web.xml</code>: the solution also maps <code>FacesServlet</code> on <code>/faces/*</code>. <code>faces-config.xml</code>: the solution also declares an unused <code>resource-bundle</code>. <code>server.xml</code>: the solution sets a very verbose <code>traceSpecification</code>.</span><span lang="fr"><code>web.xml</code> : la solution mappe aussi <code>FacesServlet</code> sur <code>/faces/*</code>. <code>faces-config.xml</code> : la solution déclare aussi un <code>resource-bundle</code> inutilisé. <code>server.xml</code> : la solution fixe une <code>traceSpecification</code> très verbeuse.</span></li>
+        <li><span lang="en">Two fixes you made on purpose: <code>listener="#{clientBean.search()}"</code> in <code>client-list.xhtml</code> and <code>h:outputText</code> instead of <code>&lt;p rendered&gt;</code> in <code>client-details.xhtml</code>.</span><span lang="fr">Deux corrections faites volontairement : <code>listener="#{clientBean.search()}"</code> dans <code>client-list.xhtml</code> et <code>h:outputText</code> à la place de <code>&lt;p rendered&gt;</code> dans <code>client-details.xhtml</code>.</span></li>
+        <li><span lang="en">Your <code>starter/</code> may also contain a <code>target/</code> folder: it is a build output, ignored by Git.</span><span lang="fr">Votre <code>starter/</code> peut aussi contenir un dossier <code>target/</code> : c'est un résultat de build, ignoré par Git.</span></li>
+      </ul>
+      <h3><span lang="en">Points to look for in your code</span><span lang="fr">Points à examiner dans votre code</span></h3>
+      <ul>
+        <li><span lang="en">Does every method of <code>ClientBean</code> that changes page return an outcome with <code>?faces-redirect=true</code>?</span><span lang="fr">Chaque méthode de <code>ClientBean</code> qui change de page retourne-t-elle un outcome avec <code>?faces-redirect=true</code> ?</span></li>
+        <li><span lang="en">Is the <code>Address</code> of <code>client</code> never <code>null</code> when the form opens?</span><span lang="fr">L'<code>Address</code> de <code>client</code> n'est-elle jamais <code>null</code> à l'ouverture du formulaire ?</span></li>
+        <li><span lang="en">Is the email validator limited to the format (emptiness belongs to <code>required</code>)?</span><span lang="fr">Le validateur d'email se limite-t-il au format (le vide relève de <code>required</code>) ?</span></li>
+        <li><span lang="en">Do the views live in <code>webapp/views/</code> and the template in <code>WEB-INF/templates/</code>?</span><span lang="fr">Les vues sont-elles dans <code>webapp/views/</code> et le template dans <code>WEB-INF/templates/</code> ?</span></li>
+      </ul>
+    </section>
+
+    <!-- ═════════════ 9. TROUBLESHOOTING ═════════════ -->
+    <section class="lg-section" id="trouble">
+      <h2><span class="lg-sec-num">09</span><span lang="en">Troubleshooting</span><span lang="fr">Dépannage</span></h2>
+      <table class="slide-table">
+        <thead><tr><th><span lang="en">Symptom</span><span lang="fr">Symptôme</span></th><th><span lang="en">Cause and fix</span><span lang="fr">Cause et correction</span></th></tr></thead>
+        <tbody>
+          <tr>
+            <td><code>cannot bind tcp port :9080: address already in use</code></td>
+            <td><span lang="en">Another program or container uses port 9080. Find it with <code>lsof -i :9080</code> (macOS/Linux), or publish on another port with <code>-p 127.0.0.1:9081:9080</code> and use <code>localhost:9081</code>.</span><span lang="fr">Un autre programme ou conteneur utilise le port 9080. Trouvez-le avec <code>lsof -i :9080</code> (macOS/Linux), ou publiez sur un autre port avec <code>-p 127.0.0.1:9081:9080</code> et utilisez <code>localhost:9081</code>.</span></td>
+          </tr>
+          <tr>
+            <td><code>the container name "lab02b-jsf" is already in use</code></td>
+            <td><span lang="en">A previous container still exists. Run <code>podman rm -f lab02b-jsf</code> (the redeploy loop already does it).</span><span lang="fr">Un conteneur précédent existe encore. Lancez <code>podman rm -f lab02b-jsf</code> (la boucle de redéploiement le fait déjà).</span></td>
+          </tr>
+          <tr>
+            <td><code>COPY … no such file or directory</code></td>
+            <td><span lang="en">A file named in the <code>Containerfile</code> is missing: usually <code>target/lab02b-jsf.war</code> (run <code>mvn clean package</code> first) or one of the three configuration files (check the path and spelling).</span><span lang="fr">Un fichier cité dans le <code>Containerfile</code> est absent : souvent <code>target/lab02b-jsf.war</code> (lancez d'abord <code>mvn clean package</code>) ou l'un des trois fichiers de configuration (vérifiez le chemin et l'orthographe).</span></td>
+          </tr>
+          <tr>
+            <td><code>/lab02b-jsf/</code> → 404</td>
+            <td><span lang="en">Before step 7, normal: there is no <code>index.xhtml</code>. Afterwards, the running container is an old image (run the whole redeploy loop) or the application failed to start: look for <code>CWWKZ0002E</code> in <code>podman logs lab02b-jsf</code>, usually caused by a malformed XML file.</span><span lang="fr">Avant l'étape 7, c'est normal : il n'y a pas d'<code>index.xhtml</code>. Ensuite, le conteneur en cours est une ancienne image (relancez toute la boucle de redéploiement) ou l'application n'a pas démarré : cherchez <code>CWWKZ0002E</code> dans <code>podman logs lab02b-jsf</code>, souvent causé par un fichier XML mal formé.</span></td>
+          </tr>
+          <tr>
+            <td><code>/lab02b-jsf/views/client-list.xhtml</code> → 404</td>
+            <td><span lang="en">The view is not in <code>src/main/webapp/views/</code>. A file under <code>WEB-INF/views/</code> (as in the solution's duplicates) is never served directly.</span><span lang="fr">La vue n'est pas dans <code>src/main/webapp/views/</code>. Un fichier sous <code>WEB-INF/views/</code> (comme dans les doublons de la solution) n'est jamais servi directement.</span></td>
+          </tr>
+          <tr>
+            <td><span lang="en">The page shows <code>#{…}</code> or raw tags</span><span lang="fr">La page affiche <code>#{…}</code> ou des balises brutes</span></td>
+            <td><span lang="en">The page was not processed by Faces: the feature <code>faces-4.0</code> is missing in <code>server.xml</code>, the <code>FacesServlet</code> mapping on <code>*.xhtml</code> is missing in <code>web.xml</code>, or a namespace is wrong (use <code>jakarta.faces.*</code>).</span><span lang="fr">La page n'a pas été traitée par Faces : la feature <code>faces-4.0</code> manque dans <code>server.xml</code>, le mapping de <code>FacesServlet</code> sur <code>*.xhtml</code> manque dans <code>web.xml</code>, ou un espace de noms est faux (utilisez <code>jakarta.faces.*</code>).</span></td>
+          </tr>
+          <tr>
+            <td><code>Target Unreachable, identifier 'clientBean' resolved to null</code></td>
+            <td><span lang="en">CDI did not create the bean: check <code>@Named</code> on <code>ClientBean</code>, that <code>beans.xml</code> is in <code>WEB-INF/</code>, and that the class compiled (<code>unzip -l target/lab02b-jsf.war | grep ClientBean</code>).</span><span lang="fr">CDI n'a pas créé le bean : vérifiez <code>@Named</code> sur <code>ClientBean</code>, que <code>beans.xml</code> est dans <code>WEB-INF/</code>, et que la classe est compilée (<code>unzip -l target/lab02b-jsf.war | grep ClientBean</code>).</span></td>
+          </tr>
+          <tr>
+            <td><code>MethodNotFoundException … search(jakarta.faces.event.AjaxBehaviorEvent)</code></td>
+            <td><span lang="en">The AJAX listener is written <code>#{clientBean.search}</code>. Write <code>#{clientBean.search()}</code> (step 10).</span><span lang="fr">Le listener AJAX est écrit <code>#{clientBean.search}</code>. Écrivez <code>#{clientBean.search()}</code> (étape 10).</span></td>
+          </tr>
+          <tr>
+            <td><code>ViewExpiredException</code></td>
+            <td><span lang="en">The session was lost (container restarted or session expired) while the page stayed open. Reload the page with a plain <code>GET</code>.</span><span lang="fr">La session a été perdue (conteneur redémarré ou session expirée) alors que la page restait ouverte. Rechargez la page par un simple <code>GET</code>.</span></td>
+          </tr>
+          <tr>
+            <td><span lang="en">A button does nothing and no message appears</span><span lang="fr">Un bouton ne fait rien et aucun message n'apparaît</span></td>
+            <td><span lang="en">A validation error on a field without an <code>h:message</code> blocks the action silently. Add an <code>h:message for="…"</code> or an <code>h:messages</code> (without <code>globalOnly</code>) while debugging, and check that all the buttons are inside the <code>h:form</code>.</span><span lang="fr">Une erreur de validation sur un champ sans <code>h:message</code> bloque l'action en silence. Ajoutez un <code>h:message for="…"</code> ou un <code>h:messages</code> (sans <code>globalOnly</code>) pour déboguer, et vérifiez que tous les boutons sont dans le <code>h:form</code>.</span></td>
+          </tr>
+          <tr>
+            <td><span lang="en">No success message after Save</span><span lang="fr">Pas de message de succès après Save</span></td>
+            <td><span lang="en">Expected: the redirect drops the message. See the bonus section to keep it.</span><span lang="fr">Normal : la redirection perd le message. Voir la section bonus pour le conserver.</span></td>
+          </tr>
+          <tr>
+            <td><code>Apache MyFaces Core is running in DEVELOPMENT mode</code></td>
+            <td><span lang="en">A warning, not an error: <code>jakarta.faces.PROJECT_STAGE</code> is <code>Development</code> in <code>web.xml</code>. Set it to <code>Production</code> for a real deployment.</span><span lang="fr">Un avertissement, pas une erreur : <code>jakarta.faces.PROJECT_STAGE</code> vaut <code>Development</code> dans <code>web.xml</code>. Mettez-le à <code>Production</code> pour un vrai déploiement.</span></td>
+          </tr>
+          <tr>
+            <td><code>/metrics</code> → 403</td>
+            <td><span lang="en">The element <code>&lt;mpMetrics authentication="false"/&gt;</code> is missing or misplaced in <code>server.xml</code>; it must be a direct child of <code>&lt;server&gt;</code>.</span><span lang="fr">L'élément <code>&lt;mpMetrics authentication="false"/&gt;</code> manque ou est mal placé dans <code>server.xml</code> ; il doit être un enfant direct de <code>&lt;server&gt;</code>.</span></td>
+          </tr>
+          <tr>
+            <td><code>Cannot connect to Podman</code></td>
+            <td><span lang="en">On macOS and Windows the Podman virtual machine is stopped: <code>podman machine start</code>.</span><span lang="fr">Sur macOS et Windows la machine virtuelle Podman est arrêtée : <code>podman machine start</code>.</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- ═════════════ 10. BONUS ═════════════ -->
+    <section class="lg-section" id="bonus">
+      <h2><span class="lg-sec-num">10</span><span lang="en">Go further</span><span lang="fr">Pour aller plus loin</span></h2>
+      <ul>
+        <li><span lang="en"><strong>Composite component.</strong> The original README plans an <code>addressInput.xhtml</code> composite component in <code>src/main/webapp/resources/components/</code> (street, city, postal code, country, with <code>composite:interface</code> and <code>cc.attrs</code>). Build it and use it in <code>client-form.xhtml</code> instead of the second <code>h:panelGrid</code> (<a href="../../02-Lectures/slides/02b-jsf/slides.html#slide-47">slides 47–50</a>).</span><span lang="fr"><strong>Composant composite.</strong> Le README d'origine prévoit un composant composite <code>addressInput.xhtml</code> dans <code>src/main/webapp/resources/components/</code> (rue, ville, code postal, pays, avec <code>composite:interface</code> et <code>cc.attrs</code>). Construisez-le et utilisez-le dans <code>client-form.xhtml</code> à la place du second <code>h:panelGrid</code> (<a href="../../02-Lectures/slides/02b-jsf/slides.html#slide-47">slides 47–50</a>).</span></li>
+        <li><span lang="en"><strong>Keep the success message.</strong> Call <code>FacesContext.getCurrentInstance().getExternalContext().getFlash().setKeepMessages(true)</code> in <code>addMessage</code> so that the message survives the redirect. Also show the message <em>detail</em>, not only the summary (<code>h:messages showDetail="true"</code>).</span><span lang="fr"><strong>Conserver le message de succès.</strong> Appelez <code>FacesContext.getCurrentInstance().getExternalContext().getFlash().setKeepMessages(true)</code> dans <code>addMessage</code> pour que le message survive à la redirection. Affichez aussi le <em>détail</em> du message, pas seulement le résumé (<code>h:messages showDetail="true"</code>).</span></li>
+        <li><span lang="en"><strong>Real view parameters.</strong> The Edit link of the details page sends <code>?id=…</code> but nothing reads it. Add <code>f:viewParam</code> and <code>f:viewAction</code> to <code>client-form.xhtml</code> so that <code>client-form.xhtml?id=2</code> opens client 2 directly.</span><span lang="fr"><strong>Vrais paramètres de vue.</strong> Le lien Edit de la page de détail envoie <code>?id=…</code> mais rien ne le lit. Ajoutez <code>f:viewParam</code> et <code>f:viewAction</code> à <code>client-form.xhtml</code> pour que <code>client-form.xhtml?id=2</code> ouvre directement le client 2.</span></li>
+        <li><span lang="en"><strong>Refresh the total.</strong> The total line does not change during an AJAX search. Change <code>render</code> so that it is updated too.</span><span lang="fr"><strong>Rafraîchir le total.</strong> La ligne de total ne change pas pendant une recherche AJAX. Modifiez <code>render</code> pour qu'elle soit aussi mise à jour.</span></li>
+        <li><span lang="en"><strong>Internationalisation.</strong> <code>faces-config.xml</code> already lists the locales <code>en</code> and <code>fr</code>. Create <code>messages_en.properties</code> and <code>messages_fr.properties</code>, declare the bundle with the variable <code>msg</code>, and replace the labels of the views by <code>#{msg['…']}</code>.</span><span lang="fr"><strong>Internationalisation.</strong> <code>faces-config.xml</code> liste déjà les locales <code>en</code> et <code>fr</code>. Créez <code>messages_en.properties</code> et <code>messages_fr.properties</code>, déclarez le bundle avec la variable <code>msg</code>, et remplacez les libellés des vues par <code>#{msg['…']}</code>.</span></li>
+        <li><span lang="en"><strong>Bean Validation.</strong> Replace <code>required</code> and <code>f:validateLength</code> by annotations (<code>@NotBlank</code>, <code>@Size</code>, <code>@Email</code>) on <code>Client</code> and <code>Address</code>. What changes in the views?</span><span lang="fr"><strong>Bean Validation.</strong> Remplacez <code>required</code> et <code>f:validateLength</code> par des annotations (<code>@NotBlank</code>, <code>@Size</code>, <code>@Email</code>) sur <code>Client</code> et <code>Address</code>. Qu'est-ce qui change dans les vues ?</span></li>
+        <li><span lang="en"><strong>Narrower scope.</strong> A <code>@SessionScoped</code> bean keeps the list of clients per user, so one user does not see another's changes until a reload. Split the bean, or use <code>@ViewScoped</code> (it requires <code>Serializable</code>) for the form, and compare.</span><span lang="fr"><strong>Portée plus étroite.</strong> Un bean <code>@SessionScoped</code> garde la liste des clients par utilisateur : un utilisateur ne voit pas les changements d'un autre avant un rechargement. Découpez le bean, ou utilisez <code>@ViewScoped</code> (il exige <code>Serializable</code>) pour le formulaire, et comparez.</span></li>
+        <li><span lang="en"><strong>A shared list.</strong> <code>ClientService</code> is application-scoped, yet its <code>ArrayList</code> is not thread-safe. Replace it with <code>CopyOnWriteArrayList</code> or synchronise the methods, and explain which one you chose and why.</span><span lang="fr"><strong>Une liste partagée.</strong> <code>ClientService</code> est de portée application, pourtant son <code>ArrayList</code> n'est pas thread-safe. Remplacez-la par une <code>CopyOnWriteArrayList</code> ou synchronisez les méthodes, et expliquez votre choix.</span></li>
+      </ul>
+      <div class="lg-callout lg-callout--tip">
+        <div lang="en"><div class="lg-callout-title">Next</div><p>Lab 03 replaces the in-memory <code>ClientService</code> with JPA entities, PostgreSQL and Flyway migrations.</p></div>
+        <div lang="fr"><div class="lg-callout-title">Suite</div><p>Le Lab 03 remplace le <code>ClientService</code> en mémoire par des entités JPA, PostgreSQL et des migrations Flyway.</p></div>
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<footer class="site-footer">Made with IBM Bob &nbsp;&middot;&nbsp; &copy; 2026 Olivier Planson</footer>
+</body>
+</html>

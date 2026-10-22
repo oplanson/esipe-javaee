@@ -1,0 +1,1046 @@
+<!-- © Copyright 2026 Olivier Planson. All rights reserved. Reproduction prohibited. Made with IBM Bob. -->
+<!DOCTYPE html>
+<html lang="fr" data-lang="fr">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title data-title-en="ESIPE — Lab 04B: Enterprise JavaBeans (EJB) — Lab guide" data-title-fr="ESIPE — Lab 04B : Enterprise JavaBeans (EJB) — Guide du lab">ESIPE — Lab 04B : Enterprise JavaBeans (EJB) — Guide du lab</title>
+  <link rel="stylesheet" href="assets/slide.css"/>
+  <link rel="stylesheet" href="assets/lab-guide.css"/>
+  <script src="assets/lab-guide.js"></script>
+</head>
+<body>
+<header class="site-header">
+  <a class="brand" href="index.html">ESIPE<span>Jakarta EE &amp; Microservices — Labs</span></a>
+  <div class="lang-toggle" id="lang-toggle">
+    <button type="button" id="btn-en" data-set-lang="en">EN</button>
+    <span class="sep">|</span>
+    <button type="button" id="btn-fr" data-set-lang="fr" class="active">FR</button>
+  </div>
+  <a class="back-link" href="index.html">&#8592; Labs</a>
+  <a class="back-link" href="../index.html"><span lang="en">Course site</span><span lang="fr">Site du cours</span></a>
+</header>
+
+<div class="lg-shell">
+
+  <nav class="lg-toc" aria-label="Table of contents">
+    <div class="lg-toc-title"><span lang="en">In this guide</span><span lang="fr">Dans ce guide</span></div>
+    <a href="#hero"><span lang="en">Overview</span><span lang="fr">Vue d'ensemble</span></a>
+    <a href="#goal"><span lang="en">1. Goal</span><span lang="fr">1. Objectif</span></a>
+    <a href="#starter"><span lang="en">2. What the starter gives you</span><span lang="fr">2. Ce que fournit le starter</span></a>
+    <a href="#target"><span lang="en">3. Target structure</span><span lang="fr">3. Structure cible</span></a>
+    <a href="#setup"><span lang="en">4. Setup</span><span lang="fr">4. Préparation</span></a>
+    <a href="#steps"><span lang="en">5. Step by step</span><span lang="fr">5. Pas à pas</span></a>
+    <a class="sub" href="#step-1"><span lang="en">1 · Container files &amp; bootstrap properties</span><span lang="fr">1 · Fichiers conteneur &amp; propriétés de démarrage</span></a>
+    <a class="sub" href="#step-2"><span lang="en">2 · Domain model: enums, Client, Account, Transaction</span><span lang="fr">2 · Modèle du domaine : enums, Client, Account, Transaction</span></a>
+    <a class="sub" href="#step-3"><span lang="en">3 · Flyway migrations &amp; startup bean</span><span lang="fr">3 · Migrations Flyway &amp; bean de démarrage</span></a>
+    <a class="sub" href="#step-4"><span lang="en">4 · Liberty server.xml: features, DataSources, JMS</span><span lang="fr">4 · server.xml Liberty : features, DataSources, JMS</span></a>
+    <a class="sub" href="#step-5"><span lang="en">5 · Stateless bean: AccountServiceBean</span><span lang="fr">5 · Bean stateless : AccountServiceBean</span></a>
+    <a class="sub" href="#step-6"><span lang="en">6 · Stateless bean: ClientServiceBean (new)</span><span lang="fr">6 · Bean stateless : ClientServiceBean (nouveau)</span></a>
+    <a class="sub" href="#step-7"><span lang="en">7 · Singleton bean: ConfigServiceBean</span><span lang="fr">7 · Bean singleton : ConfigServiceBean</span></a>
+    <a class="sub" href="#step-8"><span lang="en">8 · Stateful bean: TransactionBatchBean (new)</span><span lang="fr">8 · Bean stateful : TransactionBatchBean (nouveau)</span></a>
+    <a class="sub" href="#step-9"><span lang="en">9 · Message-driven bean: NotificationMDB</span><span lang="fr">9 · Message-driven bean : NotificationMDB</span></a>
+    <a class="sub" href="#step-10"><span lang="en">10 · Timer service: ReportGeneratorBean (new)</span><span lang="fr">10 · Timer service : ReportGeneratorBean (nouveau)</span></a>
+    <a class="sub" href="#step-11"><span lang="en">11 · MicroProfile health checks</span><span lang="fr">11 · Health checks MicroProfile</span></a>
+    <a class="sub" href="#step-12"><span lang="en">12 · Web layer: BankingServlet, JSP view, web.xml</span><span lang="fr">12 · Couche web : BankingServlet, vue JSP, web.xml</span></a>
+    <a href="#run"><span lang="en">6. Run</span><span lang="fr">6. Exécution</span></a>
+    <a href="#validate"><span lang="en">7. Validate</span><span lang="fr">7. Validation</span></a>
+    <a href="#compare"><span lang="en">8. Compare with solution</span><span lang="fr">8. Comparer à la solution</span></a>
+    <a href="#trouble"><span lang="en">9. Troubleshooting</span><span lang="fr">9. Dépannage</span></a>
+    <a href="#bonus"><span lang="en">10. Go further</span><span lang="fr">10. Pour aller plus loin</span></a>
+  </nav>
+
+  <main class="lg-main">
+
+    <section class="lg-hero" id="hero">
+      <div class="lg-kicker">Lab 04B</div>
+      <h1><span lang="en">Enterprise JavaBeans (EJB)</span><span lang="fr">Enterprise JavaBeans (EJB)</span></h1>
+      <p class="lg-lead"><span lang="en">Rebuild the banking back end with session beans (stateless, stateful, singleton), a message-driven bean, timers and container-managed transactions on Open Liberty and PostgreSQL.</span><span lang="fr">Reconstruisez le back-end bancaire avec des session beans (stateless, stateful, singleton), un message-driven bean, des timers et des transactions gérées par le conteneur sur Open Liberty et PostgreSQL.</span></p>
+      <div class="badge-row">
+        <span class="badge badge-blue">Jakarta EE 10</span>
+        <span class="badge badge-teal">EJB 4.0</span>
+        <span class="badge badge-green">PostgreSQL 16</span>
+        <span class="badge badge-purple">JMS</span>
+        <span class="badge badge-warm">Open Liberty</span>
+      </div>
+      <div class="lg-facts">
+        <div><strong><span lang="en">about 3 h 55</span><span lang="fr">environ 3 h 55</span></strong><span lang="en">Duration</span><span lang="fr">Durée</span></div>
+        <div><strong><span lang="en">Intermediate to advanced</span><span lang="fr">Intermédiaire à avancé</span></strong><span lang="en">Level</span><span lang="fr">Niveau</span></div>
+        <div><strong>JDK 17+ · Maven · Podman · Lab 03–04</strong><span lang="en">Prerequisites</span><span lang="fr">Prérequis</span></div>
+        <div><strong>http://localhost:9080/banking</strong><span lang="en">Application URL</span><span lang="fr">URL de l'application</span></div>
+      </div>
+      <div class="lg-hero-links">
+        <a href="../../02-Lectures/slides/04b-ejb/slides.html#slide-1"><span lang="en">Course slides (EJB)</span><span lang="fr">Slides du cours (EJB)</span></a>
+        <a class="secondary" href="../04b-ejb/index.html"><span lang="en">Course page</span><span lang="fr">Page du cours</span></a>
+        <a class="secondary" href="https://github.com/oplanson/esipe-javaee/blob/master/03-Labs/Lab04B-EJB/README.md"><span lang="en">Original README</span><span lang="fr">README d'origine</span></a>
+        <a class="secondary" href="https://github.com/oplanson/esipe-javaee/tree/master/03-Labs/Lab04B-EJB/solution"><span lang="en">Solution folder</span><span lang="fr">Dossier solution</span></a>
+      </div>
+    </section>
+
+    <section class="lg-section" id="goal">
+      <h2><span class="lg-sec-num">01</span><span lang="en">Goal of the lab</span><span lang="fr">Objectif du lab</span></h2>
+      <p><span lang="en">The application of Lab 03 used a hand-made Singleton service and manual transactions. Here the business logic lives in EJBs: the container pools them, wraps every business method in a transaction, secures them with roles, schedules timers and delivers JMS messages to a message-driven bean. You also repair a starter that does not compile and a solution with three configuration traps.</span><span lang="fr">L'application du Lab 03 utilisait un service Singleton écrit à la main et des transactions manuelles. Ici, la logique métier vit dans des EJB : le conteneur les met en pool, entoure chaque méthode métier d'une transaction, les protège par des rôles, planifie des timers et livre des messages JMS à un message-driven bean. Vous réparez aussi un starter qui ne compile pas et une solution qui contient trois pièges de configuration.</span></p>
+      <h3><span lang="en">What the finished application exposes</span><span lang="fr">Ce que l'application terminée expose</span></h3>
+      <table class="slide-table">
+        <thead><tr><th>URL</th><th><span lang="en">Served by</span><span lang="fr">Servi par</span></th><th><span lang="en">Behaviour</span><span lang="fr">Comportement</span></th></tr></thead>
+        <tbody>
+          <tr><td><code>/</code></td><td><code>index.html</code></td><td><span lang="en">Static home page</span><span lang="fr">Page d'accueil statique</span></td></tr>
+          <tr><td><code>/banking</code></td><td><code>BankingServlet</code> + <code>banking.jsp</code></td><td><span lang="en">Accounts table, totals, configuration and timer statistics</span><span lang="fr">Tableau des comptes, totaux, configuration et statistiques des timers</span></td></tr>
+          <tr><td><code>/banking?action=deposit&amp;accountId=1&amp;amount=100</code></td><td><code>AccountServiceBean</code></td><td><span lang="en">Transactional deposit; the balance and a <code>Transaction</code> row change together</span><span lang="fr">Dépôt transactionnel ; le solde et une ligne <code>Transaction</code> changent ensemble</span></td></tr>
+          <tr><td><code>/banking?action=transfer&amp;fromId=1&amp;toId=2&amp;amount=50</code></td><td><code>AccountServiceBean</code></td><td><span lang="en">Atomic transfer: an error leaves both accounts unchanged</span><span lang="fr">Virement atomique : une erreur laisse les deux comptes inchangés</span></td></tr>
+          <tr><td><code>/banking?action=clients</code></td><td><code>ClientServiceBean</code></td><td><span lang="en">Client list (creates a default client if the table is empty)</span><span lang="fr">Liste des clients (crée un client par défaut si la table est vide)</span></td></tr>
+          <tr><td><code>/health/live</code>, <code>/health/ready</code>, <code>/metrics</code>, <code>/openapi</code></td><td>Open Liberty</td><td><span lang="en">Liveness (database), readiness (EJBs), metrics and OpenAPI document</span><span lang="fr">Liveness (base), readiness (EJB), métriques et document OpenAPI</span></td></tr>
+        </tbody>
+      </table>
+      <h3><span lang="en">Concepts you practise</span><span lang="fr">Concepts mis en pratique</span></h3>
+      <ul>
+        <li><span lang="en">EJB types and container services — <a href="../../02-Lectures/slides/04b-ejb/slides.html#slide-8">slide 8</a>, <a href="../../02-Lectures/slides/04b-ejb/slides.html#slide-9">slide 9</a></span><span lang="fr">Types d'EJB et services du conteneur — <a href="../../02-Lectures/slides/04b-ejb/slides.html#slide-8">slide 8</a>, <a href="../../02-Lectures/slides/04b-ejb/slides.html#slide-9">slide 9</a></span></li><li><span lang="en">Stateless, stateful and singleton beans — <a href="../../02-Lectures/slides/04b-ejb/slides.html#slide-15">slide 15</a>, <a href="../../02-Lectures/slides/04b-ejb/slides.html#slide-19">slide 19</a>, <a href="../../02-Lectures/slides/04b-ejb/slides.html#slide-24">slide 24</a></span><span lang="fr">Beans stateless, stateful et singleton — <a href="../../02-Lectures/slides/04b-ejb/slides.html#slide-15">slide 15</a>, <a href="../../02-Lectures/slides/04b-ejb/slides.html#slide-19">slide 19</a>, <a href="../../02-Lectures/slides/04b-ejb/slides.html#slide-24">slide 24</a></span></li><li><span lang="en">Container-managed transactions, <code>REQUIRED</code> and <code>REQUIRES_NEW</code> — <a href="../../02-Lectures/slides/04b-ejb/slides.html#slide-48">slide 48</a>, <a href="../../02-Lectures/slides/04b-ejb/slides.html#slide-50">slide 50</a></span><span lang="fr">Transactions gérées par le conteneur, <code>REQUIRED</code> et <code>REQUIRES_NEW</code> — <a href="../../02-Lectures/slides/04b-ejb/slides.html#slide-48">slide 48</a>, <a href="../../02-Lectures/slides/04b-ejb/slides.html#slide-50">slide 50</a></span></li><li><span lang="en">Message-driven beans — <a href="../../02-Lectures/slides/04b-ejb/slides.html#slide-31">slide 31</a>, <a href="../../02-Lectures/slides/04b-ejb/slides.html#slide-35">slide 35</a></span><span lang="fr">Message-driven beans — <a href="../../02-Lectures/slides/04b-ejb/slides.html#slide-31">slide 31</a>, <a href="../../02-Lectures/slides/04b-ejb/slides.html#slide-35">slide 35</a></span></li><li><span lang="en">Timer service — <a href="../../02-Lectures/slides/04b-ejb/slides.html#slide-67">slide 67</a>, <a href="../../02-Lectures/slides/04b-ejb/slides.html#slide-71">slide 71</a></span><span lang="fr">Timer service — <a href="../../02-Lectures/slides/04b-ejb/slides.html#slide-67">slide 67</a>, <a href="../../02-Lectures/slides/04b-ejb/slides.html#slide-71">slide 71</a></span></li><li><span lang="en">Declarative security — <a href="../../02-Lectures/slides/04b-ejb/slides.html#slide-58">slide 58</a></span><span lang="fr">Sécurité déclarative — <a href="../../02-Lectures/slides/04b-ejb/slides.html#slide-58">slide 58</a></span></li>
+      </ul>
+    </section>
+
+    <section class="lg-section" id="starter">
+      <h2><span class="lg-sec-num">02</span><span lang="en">What the starter gives you</span><span lang="fr">Ce que fournit le starter</span></h2>
+      <p><span lang="en">Unlike Labs 04 to 07, the starter of this lab is a real project: <code>03-Labs/Lab04B-EJB/starter/</code> holds 15 files and <strong>57 <code>TODO</code> lines</strong> in 5 Java files. You start from it, not from the solution of Lab 04. It is incomplete, though: it does not compile as is.</span><span lang="fr">Contrairement aux Labs 04 à 07, le starter de ce lab est un vrai projet : <code>03-Labs/Lab04B-EJB/starter/</code> contient 15 fichiers et <strong>57 lignes <code>TODO</code></strong> réparties dans 5 fichiers Java. Vous partez de lui, pas de la solution du Lab 04. Il est toutefois incomplet : il ne compile pas en l'état.</span></p>
+      <pre class="dark"><code>cd 03-Labs/Lab04B-EJB/starter</code></pre>
+      <div class="lg-callout lg-callout--warn">
+        <div lang="en"><div class="lg-callout-title">Discrepancies between README, starter and solution</div><p>This guide follows <code>diff -r starter solution</code> and the real files, not the <a href="https://github.com/oplanson/esipe-javaee/blob/master/03-Labs/Lab04B-EJB/README.md">README</a>.</p><ul><li>The README describes a <code>Report</code> entity, an <code>EntityManagerProducer</code>, a <code>WebAppReadinessCheck</code>, REST endpoints under <code>/lab04b/api/...</code>, <code>@Asynchronous</code> methods and <code>SessionContext</code> checks: none of them exists in the starter or the solution.</li><li>The README says port 9080; the starter uses 9081 in <code>bootstrap.properties</code> and <code>server.xml</code>, and 9080 in the compose file and the solution.</li><li>Package-private enums in <code>Account.java</code> / <code>Transaction.java</code> and three missing EJBs (<code>ClientServiceBean</code>, <code>TransactionBatchBean</code>, <code>ReportGeneratorBean</code>) make the starter fail to compile; <code>Client</code>, three enums, three migrations and <code>banking.jsp</code> are missing (steps 2, 3, 6, 8, 10, 12).</li><li>The starter <code>Containerfile</code> and <code>server.xml</code> refer to <code>lab04b-ejb.war</code> while Maven builds <code>banking-ejb-app.war</code>.</li><li>Solution traps fixed here: JMS queue name <code>jms/NotificationQueue</code> vs <code>jms/notificationQueue</code> in the MDB, missing <code>jmsActivationSpec</code>, persistent timers (<code>CNTR4019E</code>).</li><li>The solution resets the database at every start (<code>flyway.clean()</code>) and its <code>index.html</code> advertises demo accounts that are not enforced (no <code>appSecurity</code> feature). Use them as a demonstration only.</li></ul></div>
+        <div lang="fr"><div class="lg-callout-title">Écarts entre le README, le starter et la solution</div><p>Ce guide suit <code>diff -r starter solution</code> et les fichiers réels, pas le <a href="https://github.com/oplanson/esipe-javaee/blob/master/03-Labs/Lab04B-EJB/README.md">README</a>.</p><ul><li>Le README décrit une entité <code>Report</code>, un <code>EntityManagerProducer</code>, un <code>WebAppReadinessCheck</code>, des endpoints REST sous <code>/lab04b/api/...</code>, des méthodes <code>@Asynchronous</code> et des tests <code>SessionContext</code> : aucun n'existe dans le starter ni dans la solution.</li><li>Le README indique le port 9080 ; le starter utilise 9081 dans <code>bootstrap.properties</code> et <code>server.xml</code>, et 9080 dans le fichier compose et la solution.</li><li>Les enums non publics de <code>Account.java</code> / <code>Transaction.java</code> et trois EJB manquants (<code>ClientServiceBean</code>, <code>TransactionBatchBean</code>, <code>ReportGeneratorBean</code>) empêchent le starter de compiler ; <code>Client</code>, trois enums, trois migrations et <code>banking.jsp</code> manquent (étapes 2, 3, 6, 8, 10, 12).</li><li>Le <code>Containerfile</code> et le <code>server.xml</code> du starter désignent <code>lab04b-ejb.war</code> alors que Maven produit <code>banking-ejb-app.war</code>.</li><li>Pièges de la solution corrigés ici : nom de file JMS <code>jms/NotificationQueue</code> au lieu de <code>jms/notificationQueue</code> dans le MDB, <code>jmsActivationSpec</code> absente, timers persistants (<code>CNTR4019E</code>).</li><li>La solution réinitialise la base à chaque démarrage (<code>flyway.clean()</code>) et son <code>index.html</code> annonce des comptes de démo non appliqués (pas de feature <code>appSecurity</code>). Utilisez-les comme démonstration seulement.</li></ul></div>
+      </div>
+      <table class="slide-table">
+        <thead><tr><th><span lang="en">File (in <code>starter/</code>)</span><span lang="fr">Fichier (dans <code>starter/</code>)</span></th><th><span lang="en">Status</span><span lang="fr">Statut</span></th><th><span lang="en">What it is</span><span lang="fr">Rôle</span></th></tr></thead>
+        <tbody>
+          <tr>
+            <td><code>docker-compose.yml</code></td>
+            <td><span class="lg-tag lg-tag--chg"><span lang="en">to modify</span><span lang="fr">à modifier</span></span></td>
+            <td><span lang="en">PostgreSQL 16 and Liberty services; ports published on all interfaces.</span><span lang="fr">Services PostgreSQL 16 et Liberty ; ports publiés sur toutes les interfaces.</span></td>
+          </tr>
+          <tr>
+            <td><code>Containerfile</code></td>
+            <td><span class="lg-tag lg-tag--chg"><span lang="en">to modify</span><span lang="fr">à modifier</span></span></td>
+            <td><span lang="en">Two-stage build; wrong driver folder and WAR name.</span><span lang="fr">Build en deux étapes ; mauvais dossier de driver et mauvais nom de WAR.</span></td>
+          </tr>
+          <tr>
+            <td><code>.gitignore</code></td>
+            <td><span class="lg-tag lg-tag--ok"><span lang="en">keep</span><span lang="fr">à conserver</span></span></td>
+            <td><span lang="en">One extra line compared with the solution.</span><span lang="fr">Une ligne de plus que dans la solution.</span></td>
+          </tr>
+          <tr>
+            <td><code>pom.xml</code></td>
+            <td><span class="lg-tag lg-tag--ok"><span lang="en">keep</span><span lang="fr">à conserver</span></span></td>
+            <td><span lang="en">Identical to the solution (WAR <code>banking-ejb-app</code>, Flyway, PostgreSQL driver).</span><span lang="fr">Identique à la solution (WAR <code>banking-ejb-app</code>, Flyway, driver PostgreSQL).</span></td>
+          </tr>
+          <tr>
+            <td><code>src/main/liberty/config/bootstrap.properties</code></td>
+            <td><span class="lg-tag lg-tag--chg"><span lang="en">to modify</span><span lang="fr">à modifier</span></span></td>
+            <td><span lang="en">Ports and database variables with wrong names.</span><span lang="fr">Ports et variables de base avec de mauvais noms.</span></td>
+          </tr>
+          <tr>
+            <td><code>src/main/liberty/config/server.xml</code></td>
+            <td><span class="lg-tag lg-tag--chg"><span lang="en">to modify</span><span lang="fr">à modifier</span></span></td>
+            <td><span lang="en">Full-profile features, wrong WAR name, no Flyway DataSource.</span><span lang="fr">Features du profil complet, mauvais nom de WAR, pas de DataSource Flyway.</span></td>
+          </tr>
+          <tr>
+            <td><code>src/main/resources/META-INF/persistence.xml</code>, <code>microprofile-config.properties</code></td>
+            <td><span class="lg-tag lg-tag--ok"><span lang="en">keep</span><span lang="fr">à conserver</span></span></td>
+            <td><span lang="en">Identical to the solution.</span><span lang="fr">Identiques à la solution.</span></td>
+          </tr>
+          <tr>
+            <td><code>src/main/resources/db/migration/V1…V3</code>, <code>flyway.location</code> (×2)</td>
+            <td><span class="lg-tag lg-tag--new"><span lang="en">to create</span><span lang="fr">à créer</span></span></td>
+            <td><span lang="en">Schema, sample data and Flyway marker files.</span><span lang="fr">Schéma, données d'exemple et fichiers marqueurs Flyway.</span></td>
+          </tr>
+          <tr>
+            <td><code>com/bank/config/DatabaseMigrationStartup.java</code></td>
+            <td><span class="lg-tag lg-tag--new"><span lang="en">to create</span><span lang="fr">à créer</span></span></td>
+            <td><span lang="en">Singleton that runs Flyway at startup.</span><span lang="fr">Singleton qui lance Flyway au démarrage.</span></td>
+          </tr>
+          <tr>
+            <td><code>com/bank/model/Account.java</code>, <code>Transaction.java</code></td>
+            <td><span class="lg-tag lg-tag--chg"><span lang="en">to modify</span><span lang="fr">à modifier</span></span></td>
+            <td><span lang="en">Entities with package-private enums and no client link.</span><span lang="fr">Entités avec des enums non publics et sans lien vers le client.</span></td>
+          </tr>
+          <tr>
+            <td><code>com/bank/model/Client.java</code>, <code>AccountType.java</code>, <code>AccountStatus.java</code>, <code>TransactionType.java</code></td>
+            <td><span class="lg-tag lg-tag--new"><span lang="en">to create</span><span lang="fr">à créer</span></span></td>
+            <td><span lang="en">Missing entity and enums.</span><span lang="fr">Entité et enums manquants.</span></td>
+          </tr>
+          <tr>
+            <td><code>com/bank/ejb/AccountServiceBean.java</code></td>
+            <td><span class="lg-tag lg-tag--chg"><span lang="en">to modify</span><span lang="fr">à modifier</span></span></td>
+            <td><span lang="en">6 methods and 22 <code>TODO</code> lines.</span><span lang="fr">6 méthodes et 22 lignes <code>TODO</code>.</span></td>
+          </tr>
+          <tr>
+            <td><code>com/bank/ejb/ConfigServiceBean.java</code></td>
+            <td><span class="lg-tag lg-tag--chg"><span lang="en">to modify</span><span lang="fr">à modifier</span></span></td>
+            <td><span lang="en">3 methods and 17 <code>TODO</code> lines.</span><span lang="fr">3 méthodes et 17 lignes <code>TODO</code>.</span></td>
+          </tr>
+          <tr>
+            <td><code>com/bank/ejb/ClientServiceBean.java</code>, <code>TransactionBatchBean.java</code>, <code>ReportGeneratorBean.java</code></td>
+            <td><span class="lg-tag lg-tag--new"><span lang="en">to create</span><span lang="fr">à créer</span></span></td>
+            <td><span lang="en">Three EJBs absent from the starter but used by the servlet.</span><span lang="fr">Trois EJB absents du starter mais utilisés par la servlet.</span></td>
+          </tr>
+          <tr>
+            <td><code>com/bank/mdb/NotificationMDB.java</code></td>
+            <td><span class="lg-tag lg-tag--chg"><span lang="en">to modify</span><span lang="fr">à modifier</span></span></td>
+            <td><span lang="en">7 <code>TODO</code> lines (annotation and <code>onMessage</code>).</span><span lang="fr">7 lignes <code>TODO</code> (annotation et <code>onMessage</code>).</span></td>
+          </tr>
+          <tr>
+            <td><code>com/bank/health/DatabaseHealthCheck.java</code>, <code>EJBHealthCheck.java</code></td>
+            <td><span class="lg-tag lg-tag--chg"><span lang="en">to modify</span><span lang="fr">à modifier</span></span></td>
+            <td><span lang="en">5 + 6 <code>TODO</code> lines.</span><span lang="fr">5 + 6 lignes <code>TODO</code>.</span></td>
+          </tr>
+          <tr>
+            <td><code>com/bank/web/BankingServlet.java</code></td>
+            <td><span class="lg-tag lg-tag--chg"><span lang="en">to modify</span><span lang="fr">à modifier</span></span></td>
+            <td><span lang="en">HTML built with <code>PrintWriter</code>.</span><span lang="fr">HTML construit avec <code>PrintWriter</code>.</span></td>
+          </tr>
+          <tr>
+            <td><code>src/main/webapp/WEB-INF/views/banking.jsp</code></td>
+            <td><span class="lg-tag lg-tag--new"><span lang="en">to create</span><span lang="fr">à créer</span></span></td>
+            <td><span lang="en">JSP view.</span><span lang="fr">Vue JSP.</span></td>
+          </tr>
+          <tr>
+            <td><code>src/main/webapp/WEB-INF/web.xml</code>, <code>src/main/webapp/index.html</code></td>
+            <td><span class="lg-tag lg-tag--ok"><span lang="en">keep</span><span lang="fr">à conserver</span></span></td>
+            <td><span lang="en">Identical to the solution.</span><span lang="fr">Identiques à la solution.</span></td>
+          </tr>
+          <tr>
+            <td><code>src/main/webapp/WEB-INF/index.html</code></td>
+            <td><span class="lg-tag lg-tag--todo"><span lang="en">to delete</span><span lang="fr">à supprimer</span></span></td>
+            <td><span lang="en">Copy of <code>index.html</code>, not in the solution.</span><span lang="fr">Copie de <code>index.html</code>, absente de la solution.</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section class="lg-section" id="target">
+      <h2><span class="lg-sec-num">03</span><span lang="en">Target structure</span><span lang="fr">Structure cible</span></h2>
+      <p><span lang="en">At the end of the lab, <code>starter/</code> has this layout (files marked * are new):</span><span lang="fr">À la fin du lab, <code>starter/</code> a cette arborescence (les fichiers marqués * sont nouveaux) :</span></p>
+      <pre class="dark"><code>starter/
+├── pom.xml  Containerfile  docker-compose.yml  .gitignore
+└── src/main/
+    ├── java/com/bank/
+    │   ├── config/DatabaseMigrationStartup.java *   # Flyway at startup
+    │   ├── ejb/
+    │   │   ├── AccountServiceBean.java              # @Stateless
+    │   │   ├── ClientServiceBean.java *             # @Stateless
+    │   │   ├── ConfigServiceBean.java               # @Singleton @Startup
+    │   │   ├── TransactionBatchBean.java *          # @Stateful
+    │   │   └── ReportGeneratorBean.java *           # @Singleton + timers
+    │   ├── health/{DatabaseHealthCheck,EJBHealthCheck}.java
+    │   ├── mdb/NotificationMDB.java                 # @MessageDriven
+    │   ├── model/{Account,Transaction}.java  Client.java * AccountType.java *
+    │   │         AccountStatus.java *  TransactionType.java *
+    │   └── web/BankingServlet.java
+    ├── liberty/config/{server.xml,bootstrap.properties}
+    ├── resources/
+    │   ├── META-INF/{persistence.xml,microprofile-config.properties}
+    │   └── db/{migration/V1..V3 *.sql + flyway.location, callback/flyway.location} *
+    └── webapp/{index.html, WEB-INF/web.xml, WEB-INF/views/banking.jsp *}</code></pre>
+    </section>
+
+    <section class="lg-section" id="setup">
+      <h2><span class="lg-sec-num">04</span><span lang="en">Setup</span><span lang="fr">Préparation</span></h2>
+      <h3><span lang="en">Tools</span><span lang="fr">Outils</span></h3>
+      <table class="slide-table">
+        <thead><tr><th><span lang="en">Tool</span><span lang="fr">Outil</span></th><th><span lang="en">Check with</span><span lang="fr">Vérifier avec</span></th></tr></thead>
+        <tbody>
+          <tr><td>JDK 17+</td><td><code>java -version</code></td></tr>
+          <tr><td>Maven 3.x</td><td><code>mvn -v</code></td></tr>
+          <tr><td>Podman <span lang="en">(Docker works with the same commands)</span><span lang="fr">(Docker fonctionne avec les mêmes commandes)</span></td><td><code>podman --version</code></td></tr>
+          <tr><td>curl</td><td><code>curl --version</code></td></tr>
+        </tbody>
+      </table>
+      <div class="lg-callout lg-callout--note">
+        <div lang="en"><div class="lg-callout-title">Demo credentials</div><p>The database credentials <code>bankuser</code> / <code>bankpass</code> are demonstration values from the lab files. Never reuse them; in production, use a secret manager. Every published port is bound to <code>127.0.0.1</code>.</p></div>
+        <div lang="fr"><div class="lg-callout-title">Identifiants de démo</div><p>Les identifiants de base <code>bankuser</code> / <code>bankpass</code> sont des valeurs de démonstration issues des fichiers du lab. Ne les réutilisez jamais ; en production, utilisez un gestionnaire de secrets. Tous les ports publiés sont liés à <code>127.0.0.1</code>.</p></div>
+      </div>
+      <h3><span lang="en">Your working folder</span><span lang="fr">Votre dossier de travail</span></h3>
+      <p><span lang="en">Work directly in <code>03-Labs/Lab04B-EJB/starter/</code>. Commands below assume you are in that folder.</span><span lang="fr">Travaillez directement dans <code>03-Labs/Lab04B-EJB/starter/</code>. Les commandes ci-dessous supposent que vous êtes dans ce dossier.</span></p>
+      <pre class="dark"><code>cd 03-Labs/Lab04B-EJB/starter</code></pre>
+      <h3><span lang="en">The redeploy loop</span><span lang="fr">La boucle de redéploiement</span></h3>
+      <p><span lang="en">The <code>Containerfile</code> builds the WAR itself in a Maven stage (the first build downloads dependencies: allow a few minutes). <code>mvn -q -DskipTests package</code> locally is a quick compile check. Database data is kept by the volume <code>postgres-data</code> but reset by Flyway at each application start.</span><span lang="fr">Le <code>Containerfile</code> construit lui-même le WAR dans une étape Maven (le premier build télécharge les dépendances : comptez quelques minutes). <code>mvn -q -DskipTests package</code> en local est un contrôle de compilation rapide. Les données sont conservées par le volume <code>postgres-data</code> mais réinitialisées par Flyway à chaque démarrage de l'application.</span></p>
+      <pre class="dark"><code>mvn -q -DskipTests package
+podman compose down
+podman compose up -d --build
+until curl -fs http://localhost:9080/health/live &gt;/dev/null; do sleep 3; done; echo "ready"</code></pre>
+    </section>
+
+    <section class="lg-section" id="steps">
+      <h2><span class="lg-sec-num">05</span><span lang="en">Step by step</span><span lang="fr">Pas à pas</span></h2>
+      <p><span lang="en">Follow the steps in order. The Java build is only complete after step 10; run the checkpoints as you go.</span><span lang="fr">Suivez les étapes dans l'ordre. Le build Java n'est complet qu'après l'étape 10 ; exécutez les points de contrôle au fur et à mesure.</span></p>
+      <ol class="lg-steps-overview">
+        <li><a href="#step-1"><span lang="en">Container files &amp; bootstrap properties</span><span lang="fr">Fichiers conteneur &amp; propriétés de démarrage</span></a><span class="lg-dur">15 min</span></li>
+        <li><a href="#step-2"><span lang="en">Domain model: enums, Client, Account, Transaction</span><span lang="fr">Modèle du domaine : enums, Client, Account, Transaction</span></a><span class="lg-dur">20 min</span></li>
+        <li><a href="#step-3"><span lang="en">Flyway migrations &amp; startup bean</span><span lang="fr">Migrations Flyway &amp; bean de démarrage</span></a><span class="lg-dur">20 min</span></li>
+        <li><a href="#step-4"><span lang="en">Liberty server.xml: features, DataSources, JMS</span><span lang="fr">server.xml Liberty : features, DataSources, JMS</span></a><span class="lg-dur">25 min</span></li>
+        <li><a href="#step-5"><span lang="en">Stateless bean: AccountServiceBean</span><span lang="fr">Bean stateless : AccountServiceBean</span></a><span class="lg-dur">25 min</span></li>
+        <li><a href="#step-6"><span lang="en">Stateless bean: ClientServiceBean (new)</span><span lang="fr">Bean stateless : ClientServiceBean (nouveau)</span></a><span class="lg-dur">15 min</span></li>
+        <li><a href="#step-7"><span lang="en">Singleton bean: ConfigServiceBean</span><span lang="fr">Bean singleton : ConfigServiceBean</span></a><span class="lg-dur">15 min</span></li>
+        <li><a href="#step-8"><span lang="en">Stateful bean: TransactionBatchBean (new)</span><span lang="fr">Bean stateful : TransactionBatchBean (nouveau)</span></a><span class="lg-dur">25 min</span></li>
+        <li><a href="#step-9"><span lang="en">Message-driven bean: NotificationMDB</span><span lang="fr">Message-driven bean : NotificationMDB</span></a><span class="lg-dur">20 min</span></li>
+        <li><a href="#step-10"><span lang="en">Timer service: ReportGeneratorBean (new)</span><span lang="fr">Timer service : ReportGeneratorBean (nouveau)</span></a><span class="lg-dur">20 min</span></li>
+        <li><a href="#step-11"><span lang="en">MicroProfile health checks</span><span lang="fr">Health checks MicroProfile</span></a><span class="lg-dur">10 min</span></li>
+        <li><a href="#step-12"><span lang="en">Web layer: BankingServlet, JSP view, web.xml</span><span lang="fr">Couche web : BankingServlet, vue JSP, web.xml</span></a><span class="lg-dur">25 min</span></li>
+      </ol>
+
+      <article class="lg-step" id="step-1">
+        <div class="lg-step-head">
+          <div class="lg-step-num">1</div>
+          <div>
+            <h3><span lang="en">Container files &amp; bootstrap properties</span><span lang="fr">Fichiers conteneur &amp; propriétés de démarrage</span></h3>
+            <div class="lg-step-meta">
+              <span class="lg-chip">15 min</span>
+              <span class="lg-chip"><span lang="en">Course:</span><span lang="fr">Cours :</span> <a href="../../02-Lectures/slides/04b-ejb/slides.html#slide-9"><span lang="en">EJB, slide 9</span><span lang="fr">EJB, slide 9</span></a></span>
+            </div>
+          </div>
+        </div>
+        <div class="lg-step-body">
+          <p class="lg-files"><span lang="en">Files:</span><span lang="fr">Fichiers :</span> <span lang="en"><code>docker-compose.yml</code>, <code>Containerfile</code>, <code>src/main/liberty/config/bootstrap.properties</code>, <code>.gitignore</code></span><span lang="fr"><code>docker-compose.yml</code>, <code>Containerfile</code>, <code>src/main/liberty/config/bootstrap.properties</code>, <code>.gitignore</code></span></p>
+          <div class="lg-task-label"><span lang="en">Task</span><span lang="fr">À faire</span></div>
+          <ol>
+            <li><span lang="en">In <code>docker-compose.yml</code>, delete the obsolete <code>version: '3.8'</code> line and publish the three ports on loopback only: <code>127.0.0.1:5432:5432</code>, <code>127.0.0.1:9080:9080</code>, <code>127.0.0.1:9443:9443</code>. Keep the database <code>bankingdb</code>, the container <code>lab04b-postgres</code> and the demo credentials <code>bankuser</code> / <code>bankpass</code> (demo only, never reuse them).</span><span lang="fr">Dans <code>docker-compose.yml</code>, supprimez la ligne obsolète <code>version: '3.8'</code> et publiez les trois ports sur la boucle locale uniquement : <code>127.0.0.1:5432:5432</code>, <code>127.0.0.1:9080:9080</code>, <code>127.0.0.1:9443:9443</code>. Conservez la base <code>bankingdb</code>, le conteneur <code>lab04b-postgres</code> et les identifiants de démo <code>bankuser</code> / <code>bankpass</code> (démo uniquement, ne les réutilisez jamais).</span></li>
+            <li><span lang="en">In <code>Containerfile</code>, fix two paths that do not match the project: the PostgreSQL driver goes to <code>/opt/ol/wlp/usr/shared/resources/postgresql/</code> (not <code>.../lib/</code>) and the WAR to copy is <code>target/banking-ejb-app.war</code> (the <code>finalName</code> of <code>pom.xml</code>, not <code>lab04b-ejb.war</code>).</span><span lang="fr">Dans <code>Containerfile</code>, corrigez deux chemins qui ne correspondent pas au projet : le driver PostgreSQL va dans <code>/opt/ol/wlp/usr/shared/resources/postgresql/</code> (et non <code>.../lib/</code>) et le WAR à copier est <code>target/banking-ejb-app.war</code> (le <code>finalName</code> de <code>pom.xml</code>, pas <code>lab04b-ejb.war</code>).</span></li>
+            <li><span lang="en">Replace the content of <code>src/main/liberty/config/bootstrap.properties</code>: <code>http.port=9080</code>, <code>https.port=9443</code> and the variables <code>DB_HOST</code>, <code>DB_PORT</code>, <code>DB_NAME</code>, <code>DB_USER</code>, <code>DB_PASSWORD</code> (the starter uses <code>default.http.port=9081</code> and lower-case <code>db.*</code> keys that nothing reads).</span><span lang="fr">Remplacez le contenu de <code>src/main/liberty/config/bootstrap.properties</code> : <code>http.port=9080</code>, <code>https.port=9443</code> et les variables <code>DB_HOST</code>, <code>DB_PORT</code>, <code>DB_NAME</code>, <code>DB_USER</code>, <code>DB_PASSWORD</code> (le starter utilise <code>default.http.port=9081</code> et des clés <code>db.*</code> en minuscules que rien ne lit).</span></li>
+            <li><span lang="en"><code>.gitignore</code> differs only by one extra <code>liberty/</code> line in the starter: leave it as is.</span><span lang="fr"><code>.gitignore</code> ne diffère que par une ligne <code>liberty/</code> en plus dans le starter : laissez-le tel quel.</span></li>
+          </ol>
+          <details class="lg-hint lg-hint--1">
+            <summary><span lang="en">Hint 1</span><span lang="fr">Indice 1</span></summary>
+            <div class="lg-hint-body"><p><span lang="en">The container publishes <code>127.0.0.1:HOST:CONTAINER</code>, so the application stays unreachable from other machines. Inside the compose network the application reaches the database with <code>DB_HOST=postgres</code>.</span><span lang="fr">Le conteneur publie <code>127.0.0.1:HÔTE:CONTENEUR</code>, l'application reste donc inaccessible depuis les autres machines. Dans le réseau compose, l'application joint la base avec <code>DB_HOST=postgres</code>.</span></p></div>
+          </details>
+          <details class="lg-hint lg-hint--2">
+            <summary><span lang="en">Hint 2 — signatures and API</span><span lang="fr">Indice 2 — signatures et API</span></summary>
+            <div class="lg-hint-body">
+<pre class="dark"><code># bootstrap.properties
+http.port=9080
+https.port=9443
+DB_HOST=localhost
+DB_PORT=5432
+DB_NAME=bankingdb
+DB_USER=bankuser
+DB_PASSWORD=bankpass
+
+# Containerfile (stage 2) — the two lines to change
+RUN mkdir -p /opt/ol/wlp/usr/shared/resources/postgresql
+COPY --chown=1001:0 --from=builder /build/target/banking-ejb-app.war /config/apps/</code></pre>
+            </div>
+          </details>
+          <details class="lg-hint lg-hint--sol">
+            <summary><span lang="en">Solution files</span><span lang="fr">Fichiers solution</span></summary>
+            <div class="lg-hint-body"><p><a href="https://github.com/oplanson/esipe-javaee/blob/master/03-Labs/Lab04B-EJB/solution/docker-compose.yml"><code>docker-compose.yml</code></a> &nbsp;&middot;&nbsp; <a href="https://github.com/oplanson/esipe-javaee/blob/master/03-Labs/Lab04B-EJB/solution/Containerfile"><code>Containerfile</code></a> &nbsp;&middot;&nbsp; <a href="https://github.com/oplanson/esipe-javaee/blob/master/03-Labs/Lab04B-EJB/solution/src/main/liberty/config/bootstrap.properties"><code>bootstrap.properties</code></a></p></div>
+          </details>
+          <div class="lg-checkpoint">
+            <div class="lg-check-label"><span lang="en">Checkpoint</span><span lang="fr">Point de contrôle</span></div>
+            <pre class="dark"><code>grep -n '127.0.0.1' docker-compose.yml &amp;&amp; grep -n 'banking-ejb-app.war\|resources/postgresql' Containerfile</code></pre>
+            <p><span lang="en">Expected: Three lines with <code>127.0.0.1</code> in the first file, and the WAR and <code>resources/postgresql</code> lines in <code>Containerfile</code>.</span><span lang="fr">Résultat attendu : Trois lignes avec <code>127.0.0.1</code> dans le premier fichier, et les lignes du WAR et de <code>resources/postgresql</code> dans <code>Containerfile</code>.</span></p>
+          </div>
+        </div>
+      </article>
+
+      <article class="lg-step" id="step-2">
+        <div class="lg-step-head">
+          <div class="lg-step-num">2</div>
+          <div>
+            <h3><span lang="en">Domain model: enums, Client, Account, Transaction</span><span lang="fr">Modèle du domaine : enums, Client, Account, Transaction</span></h3>
+            <div class="lg-step-meta">
+              <span class="lg-chip">20 min</span>
+              <span class="lg-chip"><span lang="en">Course:</span><span lang="fr">Cours :</span> <a href="../../02-Lectures/slides/03-jpa/slides.html#slide-10"><span lang="en">JPA, slide 10</span><span lang="fr">JPA, slide 10</span></a></span>
+            </div>
+          </div>
+        </div>
+        <div class="lg-step-body">
+          <p class="lg-files"><span lang="en">Files:</span><span lang="fr">Fichiers :</span> <span lang="en"><code>model/Account.java</code>, <code>model/Transaction.java</code> (to modify) · <code>model/Client.java</code>, <code>model/AccountType.java</code>, <code>model/AccountStatus.java</code>, <code>model/TransactionType.java</code> (to create)</span><span lang="fr"><code>model/Account.java</code>, <code>model/Transaction.java</code> (à modifier) · <code>model/Client.java</code>, <code>model/AccountType.java</code>, <code>model/AccountStatus.java</code>, <code>model/TransactionType.java</code> (à créer)</span></p>
+          <div class="lg-task-label"><span lang="en">Task</span><span lang="fr">À faire</span></div>
+          <ol>
+            <li><span lang="en"><code>Account.java</code> and <code>Transaction.java</code> declare package-private <code>enum</code>s at the bottom of the file: the EJBs and the servlet cannot import them (<code>AccountType is not public</code>). Delete these enums and create three public enums, one per file: <code>AccountType</code> (<code>CHECKING</code>, <code>SAVINGS</code>, <code>BUSINESS</code>), <code>AccountStatus</code> (<code>ACTIVE</code>, <code>SUSPENDED</code>, <code>CLOSED</code>), <code>TransactionType</code> (<code>DEPOSIT</code>, <code>WITHDRAWAL</code>, <code>TRANSFER_IN</code>, <code>TRANSFER_OUT</code>, <code>FEE</code>, <code>INTEREST</code>).</span><span lang="fr"><code>Account.java</code> et <code>Transaction.java</code> déclarent en bas de fichier des <code>enum</code> visibles seulement dans le package : les EJB et la servlet ne peuvent pas les importer (<code>AccountType is not public</code>). Supprimez ces enums et créez trois enums publics, un par fichier : <code>AccountType</code> (<code>CHECKING</code>, <code>SAVINGS</code>, <code>BUSINESS</code>), <code>AccountStatus</code> (<code>ACTIVE</code>, <code>SUSPENDED</code>, <code>CLOSED</code>), <code>TransactionType</code> (<code>DEPOSIT</code>, <code>WITHDRAWAL</code>, <code>TRANSFER_IN</code>, <code>TRANSFER_OUT</code>, <code>FEE</code>, <code>INTEREST</code>).</span></li>
+            <li><span lang="en">Create the entity <code>Client</code> (table <code>clients</code>): <code>id</code>, <code>name</code>, <code>email</code> (unique), <code>phone</code>, <code>address</code>, <code>premium</code> (column <code>is_premium</code>), <code>createdAt</code>, <code>updatedAt</code>, four named queries (<code>Client.findAll</code>, <code>Client.findByName</code>, <code>Client.findByEmail</code>, <code>Client.count</code>) and <code>@OneToMany(mappedBy = "client")</code> accounts with <code>addAccount</code> / <code>removeAccount</code>.</span><span lang="fr">Créez l'entité <code>Client</code> (table <code>clients</code>) : <code>id</code>, <code>name</code>, <code>email</code> (unique), <code>phone</code>, <code>address</code>, <code>premium</code> (colonne <code>is_premium</code>), <code>createdAt</code>, <code>updatedAt</code>, quatre requêtes nommées (<code>Client.findAll</code>, <code>Client.findByName</code>, <code>Client.findByEmail</code>, <code>Client.count</code>) et les comptes <code>@OneToMany(mappedBy = "client")</code> avec <code>addAccount</code> / <code>removeAccount</code>.</span></li>
+            <li><span lang="en">In <code>Account</code>, map the type column as <code>account_type</code>, add the owning side <code>@ManyToOne(optional = false, fetch = FetchType.LAZY) @JoinColumn(name = "client_id", nullable = false) Client client</code> with its getter and setter.</span><span lang="fr">Dans <code>Account</code>, mappez la colonne du type sur <code>account_type</code>, ajoutez le côté propriétaire <code>@ManyToOne(optional = false, fetch = FetchType.LAZY) @JoinColumn(name = "client_id", nullable = false) Client client</code> avec son getter et son setter.</span></li>
+          </ol>
+          <details class="lg-hint lg-hint--1">
+            <summary><span lang="en">Hint 1</span><span lang="fr">Indice 1</span></summary>
+            <div class="lg-hint-body"><p><span lang="en"><code>Account</code> already has <code>@Version</code>, the named queries and the business methods <code>deposit</code>, <code>withdraw</code>, <code>close</code>: only the <code>client</code> relationship and the column name are missing. <code>Transaction.java</code> only loses its enum.</span><span lang="fr"><code>Account</code> possède déjà <code>@Version</code>, les requêtes nommées et les méthodes métier <code>deposit</code>, <code>withdraw</code>, <code>close</code> : il manque seulement la relation <code>client</code> et le nom de colonne. <code>Transaction.java</code> perd seulement son enum.</span></p></div>
+          </details>
+          <details class="lg-hint lg-hint--2">
+            <summary><span lang="en">Hint 2 — signatures and API</span><span lang="fr">Indice 2 — signatures et API</span></summary>
+            <div class="lg-hint-body">
+<pre class="dark"><code>// Account.java
+@Column(name = "account_type", nullable = false, length = 20)
+@Enumerated(EnumType.STRING)
+private AccountType type;
+
+@ManyToOne(optional = false, fetch = FetchType.LAZY)
+@JoinColumn(name = "client_id", nullable = false)
+private Client client;
+
+// Client.java (signatures only — see the solution for the full class)
+@Entity @Table(name = "clients") @NamedQueries({ ... })
+public class Client { /* fields above */ public void addAccount(Account a); public void removeAccount(Account a); }</code></pre>
+            </div>
+          </details>
+          <details class="lg-hint lg-hint--sol">
+            <summary><span lang="en">Solution files</span><span lang="fr">Fichiers solution</span></summary>
+            <div class="lg-hint-body"><p><a href="https://github.com/oplanson/esipe-javaee/blob/master/03-Labs/Lab04B-EJB/solution/src/main/java/com/bank/model/Client.java"><code>Client.java</code></a> &nbsp;&middot;&nbsp; <a href="https://github.com/oplanson/esipe-javaee/blob/master/03-Labs/Lab04B-EJB/solution/src/main/java/com/bank/model/Account.java"><code>Account.java</code></a> &nbsp;&middot;&nbsp; <a href="https://github.com/oplanson/esipe-javaee/blob/master/03-Labs/Lab04B-EJB/solution/src/main/java/com/bank/model/Transaction.java"><code>Transaction.java</code></a> &nbsp;&middot;&nbsp; <a href="https://github.com/oplanson/esipe-javaee/blob/master/03-Labs/Lab04B-EJB/solution/src/main/java/com/bank/model/AccountType.java"><code>AccountType.java</code></a> &nbsp;&middot;&nbsp; <a href="https://github.com/oplanson/esipe-javaee/blob/master/03-Labs/Lab04B-EJB/solution/src/main/java/com/bank/model/AccountStatus.java"><code>AccountStatus.java</code></a> &nbsp;&middot;&nbsp; <a href="https://github.com/oplanson/esipe-javaee/blob/master/03-Labs/Lab04B-EJB/solution/src/main/java/com/bank/model/TransactionType.java"><code>TransactionType.java</code></a></p></div>
+          </details>
+          <div class="lg-checkpoint">
+            <div class="lg-check-label"><span lang="en">Checkpoint</span><span lang="fr">Point de contrôle</span></div>
+            <pre class="dark"><code>mvn -q -DskipTests compile 2&gt;&amp;1 | grep 'ERROR.*\.java' | sed 's#.*/com/bank/##' | sort -u</code></pre>
+            <p><span lang="en">Expected: Only <code>web/BankingServlet.java</code> errors remain (<code>TransactionBatchBean</code> and <code>ReportGeneratorBean</code> not found, created in steps 8 and 10). No error mentions <code>model/</code>.</span><span lang="fr">Résultat attendu : Il ne reste que des erreurs dans <code>web/BankingServlet.java</code> (<code>TransactionBatchBean</code> et <code>ReportGeneratorBean</code> introuvables, créés aux étapes 8 et 10). Aucune erreur ne mentionne <code>model/</code>.</span></p>
+          </div>
+        </div>
+      </article>
+
+      <article class="lg-step" id="step-3">
+        <div class="lg-step-head">
+          <div class="lg-step-num">3</div>
+          <div>
+            <h3><span lang="en">Flyway migrations &amp; startup bean</span><span lang="fr">Migrations Flyway &amp; bean de démarrage</span></h3>
+            <div class="lg-step-meta">
+              <span class="lg-chip">20 min</span>
+              <span class="lg-chip"><span lang="en">Course:</span><span lang="fr">Cours :</span> <a href="../../02-Lectures/slides/03-jpa/slides.html#slide-46"><span lang="en">JPA, slide 46</span><span lang="fr">JPA, slide 46</span></a> <a href="../../02-Lectures/slides/04b-ejb/slides.html#slide-24"><span lang="en">EJB, slide 24</span><span lang="fr">EJB, slide 24</span></a></span>
+            </div>
+          </div>
+        </div>
+        <div class="lg-step-body">
+          <p class="lg-files"><span lang="en">Files:</span><span lang="fr">Fichiers :</span> <span lang="en"><code>src/main/resources/db/migration/V1__create_clients_table.sql</code>, <code>V2__create_accounts_table.sql</code>, <code>V3__create_transactions_table.sql</code>, <code>db/migration/flyway.location</code>, <code>db/callback/flyway.location</code>, <code>src/main/java/com/bank/config/DatabaseMigrationStartup.java</code> (all to create)</span><span lang="fr"><code>src/main/resources/db/migration/V1__create_clients_table.sql</code>, <code>V2__create_accounts_table.sql</code>, <code>V3__create_transactions_table.sql</code>, <code>db/migration/flyway.location</code>, <code>db/callback/flyway.location</code>, <code>src/main/java/com/bank/config/DatabaseMigrationStartup.java</code> (tous à créer)</span></p>
+          <div class="lg-task-label"><span lang="en">Task</span><span lang="fr">À faire</span></div>
+          <ol>
+            <li><span lang="en">The starter has no <code>src/main/resources/db/</code>. Create three migrations: <code>V1</code> (<code>clients</code>, unique index on <code>email</code>, 5 sample clients), <code>V2</code> (<code>accounts</code> with <code>account_type</code>, <code>balance</code>, <code>client_id</code> foreign key, <code>status</code>, <code>version</code>, 8 sample accounts <code>ACC001</code>…<code>ACC008</code>), <code>V3</code> (<code>transactions</code> with <code>account_id</code> foreign key, <code>type</code>, <code>amount</code>, <code>balance_after</code>, unique <code>reference_number</code>, 8 sample rows).</span><span lang="fr">Le starter n'a pas de dossier <code>src/main/resources/db/</code>. Créez trois migrations : <code>V1</code> (<code>clients</code>, index unique sur <code>email</code>, 5 clients d'exemple), <code>V2</code> (<code>accounts</code> avec <code>account_type</code>, <code>balance</code>, clé étrangère <code>client_id</code>, <code>status</code>, <code>version</code>, 8 comptes d'exemple <code>ACC001</code>…<code>ACC008</code>), <code>V3</code> (<code>transactions</code> avec clé étrangère <code>account_id</code>, <code>type</code>, <code>amount</code>, <code>balance_after</code>, <code>reference_number</code> unique, 8 lignes d'exemple).</span></li>
+            <li><span lang="en">Create two <strong>empty</strong> files named <code>flyway.location</code>, one in <code>db/migration/</code> and one in <code>db/callback/</code>. Without these marker files Flyway cannot resolve <code>classpath:db/migration</code> inside the Liberty class loader and applies 0 migration.</span><span lang="fr">Créez deux fichiers <strong>vides</strong> nommés <code>flyway.location</code>, un dans <code>db/migration/</code> et un dans <code>db/callback/</code>. Sans ces fichiers marqueurs, Flyway ne résout pas <code>classpath:db/migration</code> dans le class loader de Liberty et applique 0 migration.</span></li>
+            <li><span lang="en">Create <code>DatabaseMigrationStartup</code>: an EJB <code>@Singleton @Startup</code> with <code>@TransactionManagement(TransactionManagementType.BEAN)</code>, which looks up <code>jdbc/bankingDS</code> with <code>@Resource(lookup = ...)</code> and runs Flyway in a <code>@PostConstruct</code> method.</span><span lang="fr">Créez <code>DatabaseMigrationStartup</code> : un EJB <code>@Singleton @Startup</code> avec <code>@TransactionManagement(TransactionManagementType.BEAN)</code>, qui obtient <code>jdbc/bankingDS</code> par <code>@Resource(lookup = ...)</code> et lance Flyway dans une méthode <code>@PostConstruct</code>.</span></li>
+          </ol>
+          <details class="lg-hint lg-hint--1">
+            <summary><span lang="en">Hint 1</span><span lang="fr">Indice 1</span></summary>
+            <div class="lg-hint-body"><p><span lang="en">Flyway needs a plain JDBC connection outside any JTA transaction, hence bean-managed transactions. The solution's bean calls <code>flyway.clean()</code> before <code>migrate()</code>: the database is <strong>reset at every start</strong> (convenient for a lab, never acceptable in production).</span><span lang="fr">Flyway a besoin d'une connexion JDBC simple hors transaction JTA, d'où les transactions gérées par le bean. Le bean de la solution appelle <code>flyway.clean()</code> avant <code>migrate()</code> : la base est <strong>réinitialisée à chaque démarrage</strong> (pratique pour un lab, inacceptable en production).</span></p></div>
+          </details>
+          <details class="lg-hint lg-hint--2">
+            <summary><span lang="en">Hint 2 — signatures and API</span><span lang="fr">Indice 2 — signatures et API</span></summary>
+            <div class="lg-hint-body">
+<pre class="dark"><code>@Singleton
+@Startup
+@TransactionManagement(TransactionManagementType.BEAN)
+public class DatabaseMigrationStartup {
+    @Resource(lookup = "jdbc/bankingDS")
+    private DataSource dataSource;
+
+    @PostConstruct
+    public void init() {
+        Flyway flyway = Flyway.configure()
+                .dataSource(dataSource)
+                .locations("classpath:db/migration")
+                .cleanDisabled(false)      // lab only
+                .baselineVersion("0").baselineOnMigrate(true)
+                .load();
+        flyway.clean();
+        flyway.migrate();
+    }
+}</code></pre>
+            </div>
+          </details>
+          <details class="lg-hint lg-hint--sol">
+            <summary><span lang="en">Solution files</span><span lang="fr">Fichiers solution</span></summary>
+            <div class="lg-hint-body"><p><a href="https://github.com/oplanson/esipe-javaee/blob/master/03-Labs/Lab04B-EJB/solution/src/main/resources/db/migration/V1__create_clients_table.sql"><code>V1__create_clients_table.sql</code></a> &nbsp;&middot;&nbsp; <a href="https://github.com/oplanson/esipe-javaee/blob/master/03-Labs/Lab04B-EJB/solution/src/main/resources/db/migration/V2__create_accounts_table.sql"><code>V2__create_accounts_table.sql</code></a> &nbsp;&middot;&nbsp; <a href="https://github.com/oplanson/esipe-javaee/blob/master/03-Labs/Lab04B-EJB/solution/src/main/resources/db/migration/V3__create_transactions_table.sql"><code>V3__create_transactions_table.sql</code></a> &nbsp;&middot;&nbsp; <a href="https://github.com/oplanson/esipe-javaee/blob/master/03-Labs/Lab04B-EJB/solution/src/main/resources/db/migration/flyway.location"><code>flyway.location</code></a> &nbsp;&middot;&nbsp; <a href="https://github.com/oplanson/esipe-javaee/blob/master/03-Labs/Lab04B-EJB/solution/src/main/resources/db/callback/flyway.location"><code>flyway.location</code></a> &nbsp;&middot;&nbsp; <a href="https://github.com/oplanson/esipe-javaee/blob/master/03-Labs/Lab04B-EJB/solution/src/main/java/com/bank/config/DatabaseMigrationStartup.java"><code>DatabaseMigrationStartup.java</code></a></p></div>
+          </details>
+          <div class="lg-checkpoint">
+            <div class="lg-check-label"><span lang="en">Checkpoint</span><span lang="fr">Point de contrôle</span></div>
+            <pre class="dark"><code>ls src/main/resources/db/migration src/main/resources/db/callback</code></pre>
+            <p><span lang="en">Expected: <code>V1__…sql</code>, <code>V2__…sql</code>, <code>V3__…sql</code> and <code>flyway.location</code> in <code>migration</code>; <code>flyway.location</code> in <code>callback</code>. The migrations run for real at step 12.</span><span lang="fr">Résultat attendu : <code>V1__…sql</code>, <code>V2__…sql</code>, <code>V3__…sql</code> et <code>flyway.location</code> dans <code>migration</code> ; <code>flyway.location</code> dans <code>callback</code>. Les migrations s'exécutent réellement à l'étape 12.</span></p>
+          </div>
+        </div>
+      </article>
+
+      <article class="lg-step" id="step-4">
+        <div class="lg-step-head">
+          <div class="lg-step-num">4</div>
+          <div>
+            <h3><span lang="en">Liberty server.xml: features, DataSources, JMS</span><span lang="fr">server.xml Liberty : features, DataSources, JMS</span></h3>
+            <div class="lg-step-meta">
+              <span class="lg-chip">25 min</span>
+              <span class="lg-chip"><span lang="en">Course:</span><span lang="fr">Cours :</span> <a href="../../02-Lectures/slides/04b-ejb/slides.html#slide-7"><span lang="en">EJB, slide 7</span><span lang="fr">EJB, slide 7</span></a> <a href="../../02-Lectures/slides/03-jpa/slides.html#slide-66"><span lang="en">JPA, slide 66</span><span lang="fr">JPA, slide 66</span></a></span>
+            </div>
+          </div>
+        </div>
+        <div class="lg-step-body">
+          <p class="lg-files"><span lang="en">Files:</span><span lang="fr">Fichiers :</span> <span lang="en"><code>src/main/liberty/config/server.xml</code> (to modify) · <code>pom.xml</code>, <code>persistence.xml</code>, <code>microprofile-config.properties</code> (to check, identical to the solution)</span><span lang="fr"><code>src/main/liberty/config/server.xml</code> (à modifier) · <code>pom.xml</code>, <code>persistence.xml</code>, <code>microprofile-config.properties</code> (à vérifier, identiques à la solution)</span></p>
+          <div class="lg-task-label"><span lang="en">Task</span><span lang="fr">À faire</span></div>
+          <ol>
+            <li><span lang="en">Replace <code>jakartaee-10.0</code>, <code>microProfile-6.0</code> and <code>localConnector-1.0</code> by the explicit features used by the solution: <code>servlet-6.0</code>, <code>pages-3.1</code>, <code>expressionLanguage-5.0</code>, <code>jsonb-3.0</code>, <code>jsonp-2.1</code>, <code>cdi-4.0</code>, <code>enterpriseBeansLite-4.0</code>, <code>mdb-4.0</code>, <code>persistence-3.1</code>, <code>persistenceContainer-3.1</code>, <code>jdbc-4.2</code>, <code>messaging-3.1</code>, <code>messagingClient-3.0</code>, <code>messagingSecurity-3.0</code>, <code>messagingServer-3.0</code>, <code>mpHealth-4.0</code>, <code>mpConfig-3.0</code>, <code>mpMetrics-5.0</code>, <code>mpOpenAPI-3.1</code>.</span><span lang="fr">Remplacez <code>jakartaee-10.0</code>, <code>microProfile-6.0</code> et <code>localConnector-1.0</code> par les features explicites de la solution : <code>servlet-6.0</code>, <code>pages-3.1</code>, <code>expressionLanguage-5.0</code>, <code>jsonb-3.0</code>, <code>jsonp-2.1</code>, <code>cdi-4.0</code>, <code>enterpriseBeansLite-4.0</code>, <code>mdb-4.0</code>, <code>persistence-3.1</code>, <code>persistenceContainer-3.1</code>, <code>jdbc-4.2</code>, <code>messaging-3.1</code>, <code>messagingClient-3.0</code>, <code>messagingSecurity-3.0</code>, <code>messagingServer-3.0</code>, <code>mpHealth-4.0</code>, <code>mpConfig-3.0</code>, <code>mpMetrics-5.0</code>, <code>mpOpenAPI-3.1</code>.</span></li>
+            <li><span lang="en">Replace the <code>&lt;application&gt;</code> element by <code>&lt;webApplication id="banking-ejb-app" location="banking-ejb-app.war" contextRoot="/"/&gt;</code>, the library by <code>postgresql-lib</code> (<code>${shared.resource.dir}/postgresql</code>), and declare two DataSources reading <code>${env.DB_HOST}</code>, <code>${env.DB_PORT}</code>, <code>${env.DB_NAME}</code>, <code>${env.DB_USER}</code>, <code>${env.DB_PASSWORD}</code>: <code>jdbc/flywayDS</code> (<code>transactional="false"</code>) and <code>jdbc/bankingDS</code>.</span><span lang="fr">Remplacez l'élément <code>&lt;application&gt;</code> par <code>&lt;webApplication id="banking-ejb-app" location="banking-ejb-app.war" contextRoot="/"/&gt;</code>, la bibliothèque par <code>postgresql-lib</code> (<code>${shared.resource.dir}/postgresql</code>), et déclarez deux DataSources qui lisent <code>${env.DB_HOST}</code>, <code>${env.DB_PORT}</code>, <code>${env.DB_NAME}</code>, <code>${env.DB_USER}</code>, <code>${env.DB_PASSWORD}</code> : <code>jdbc/flywayDS</code> (<code>transactional="false"</code>) et <code>jdbc/bankingDS</code>.</span></li>
+            <li><span lang="en">Configure JMS for the MDB of step 9: <code>&lt;messagingEngine&gt;</code> with the queue <code>NotificationQueue</code>, a connection factory <code>jms/NotificationQueueConnectionFactory</code>, a <code>jmsQueue</code> whose <code>jndiName</code> is exactly <code>jms/notificationQueue</code> (lower-case <code>n</code>, the name used by the MDB) and a <code>&lt;jmsActivationSpec id="banking-ejb-app/NotificationMDB"&gt;</code> pointing to <code>NotificationQueue</code>.</span><span lang="fr">Configurez JMS pour le MDB de l'étape 9 : <code>&lt;messagingEngine&gt;</code> avec la file <code>NotificationQueue</code>, une connection factory <code>jms/NotificationQueueConnectionFactory</code>, une <code>jmsQueue</code> dont le <code>jndiName</code> est exactement <code>jms/notificationQueue</code> (<code>n</code> minuscule, le nom utilisé par le MDB) et une <code>&lt;jmsActivationSpec id="banking-ejb-app/NotificationMDB"&gt;</code> qui pointe vers <code>NotificationQueue</code>.</span></li>
+            <li><span lang="en">Remove the EJB timer store, <code>basicRegistry</code>, <code>application-bnd</code> and CORS blocks of the starter (they need features that are not enabled), keep <code>&lt;jpa defaultPersistenceProvider="org.eclipse.persistence.jpa.PersistenceProvider"/&gt;</code>, <code>&lt;mpMetrics authentication="false"/&gt;</code> and <code>&lt;webContainer deferServletLoad="false"/&gt;</code>. Do not add <code>quickStartSecurity</code> (a demo password in clear text).</span><span lang="fr">Supprimez les blocs timer store EJB, <code>basicRegistry</code>, <code>application-bnd</code> et CORS du starter (ils demandent des features non activées), conservez <code>&lt;jpa defaultPersistenceProvider="org.eclipse.persistence.jpa.PersistenceProvider"/&gt;</code>, <code>&lt;mpMetrics authentication="false"/&gt;</code> et <code>&lt;webContainer deferServletLoad="false"/&gt;</code>. N'ajoutez pas <code>quickStartSecurity</code> (un mot de passe de démo en clair).</span></li>
+            <li><span lang="en">Check with <code>diff</code> that <code>pom.xml</code>, <code>persistence.xml</code> (unit <code>bankingPU</code>, JTA, <code>jdbc/bankingDS</code>) and <code>microprofile-config.properties</code> are identical to the solution: nothing to change.</span><span lang="fr">Vérifiez avec <code>diff</code> que <code>pom.xml</code>, <code>persistence.xml</code> (unité <code>bankingPU</code>, JTA, <code>jdbc/bankingDS</code>) et <code>microprofile-config.properties</code> sont identiques à la solution : rien à modifier.</span></li>
+          </ol>
+          <details class="lg-hint lg-hint--1">
+            <summary><span lang="en">Hint 1</span><span lang="fr">Indice 1</span></summary>
+            <div class="lg-hint-body"><p><span lang="en">Two details cause silent failures: the queue JNDI name must match the MDB (<code>jms/notificationQueue</code>) and the activation spec id must be <code>&lt;application name&gt;/&lt;MDB name&gt;</code>. The solution's <code>server.xml</code> has <code>jms/NotificationQueue</code> and no activation spec, so its MDB never receives anything (<code>CNTR4016W</code>, then <code>CNTR4015W</code>). This guide fixes both.</span><span lang="fr">Deux détails provoquent des échecs silencieux : le nom JNDI de la file doit correspondre au MDB (<code>jms/notificationQueue</code>) et l'id de l'activation spec doit être <code>&lt;nom de l'application&gt;/&lt;nom du MDB&gt;</code>. Le <code>server.xml</code> de la solution contient <code>jms/NotificationQueue</code> et aucune activation spec, son MDB ne reçoit donc rien (<code>CNTR4016W</code>, puis <code>CNTR4015W</code>). Ce guide corrige les deux.</span></p></div>
+          </details>
+          <details class="lg-hint lg-hint--2">
+            <summary><span lang="en">Hint 2 — signatures and API</span><span lang="fr">Indice 2 — signatures et API</span></summary>
+            <div class="lg-hint-body">
+<pre class="dark"><code>&lt;webApplication id="banking-ejb-app" location="banking-ejb-app.war" contextRoot="/"/&gt;
+
+&lt;dataSource id="DefaultDataSource" jndiName="jdbc/bankingDS"&gt;
+    &lt;jdbcDriver libraryRef="postgresql-lib"/&gt;
+    &lt;properties.postgresql serverName="${env.DB_HOST}" portNumber="${env.DB_PORT}"
+        databaseName="${env.DB_NAME}" user="${env.DB_USER}" password="${env.DB_PASSWORD}" ssl="false"/&gt;
+&lt;/dataSource&gt;
+
+&lt;messagingEngine&gt;&lt;queue id="NotificationQueue"/&gt;&lt;/messagingEngine&gt;
+&lt;jmsQueue id="NotificationQueue" jndiName="jms/notificationQueue"&gt;
+    &lt;properties.wasJms queueName="NotificationQueue"/&gt;
+&lt;/jmsQueue&gt;
+&lt;jmsActivationSpec id="banking-ejb-app/NotificationMDB"&gt;
+    &lt;properties.wasJms destinationRef="NotificationQueue" maxConcurrency="5"/&gt;
+&lt;/jmsActivationSpec&gt;</code></pre>
+            </div>
+          </details>
+          <details class="lg-hint lg-hint--sol">
+            <summary><span lang="en">Solution files</span><span lang="fr">Fichiers solution</span></summary>
+            <div class="lg-hint-body"><p><a href="https://github.com/oplanson/esipe-javaee/blob/master/03-Labs/Lab04B-EJB/solution/src/main/liberty/config/server.xml"><code>server.xml</code></a> &nbsp;&middot;&nbsp; <a href="https://github.com/oplanson/esipe-javaee/blob/master/03-Labs/Lab04B-EJB/solution/pom.xml"><code>pom.xml</code></a> &nbsp;&middot;&nbsp; <a href="https://github.com/oplanson/esipe-javaee/blob/master/03-Labs/Lab04B-EJB/solution/src/main/resources/META-INF/persistence.xml"><code>persistence.xml</code></a> &nbsp;&middot;&nbsp; <a href="https://github.com/oplanson/esipe-javaee/blob/master/03-Labs/Lab04B-EJB/solution/src/main/resources/META-INF/microprofile-config.properties"><code>microprofile-config.properties</code></a></p></div>
+          </details>
+          <div class="lg-checkpoint">
+            <div class="lg-check-label"><span lang="en">Checkpoint</span><span lang="fr">Point de contrôle</span></div>
+            <pre class="dark"><code>xmllint --noout src/main/liberty/config/server.xml &amp;&amp; grep -c '&lt;feature&gt;' src/main/liberty/config/server.xml</code></pre>
+            <p><span lang="en">Expected: No XML error, then <code>19</code> features.</span><span lang="fr">Résultat attendu : Aucune erreur XML, puis <code>19</code> features.</span></p>
+          </div>
+        </div>
+      </article>
+
+      <article class="lg-step" id="step-5">
+        <div class="lg-step-head">
+          <div class="lg-step-num">5</div>
+          <div>
+            <h3><span lang="en">Stateless bean: AccountServiceBean</span><span lang="fr">Bean stateless : AccountServiceBean</span></h3>
+            <div class="lg-step-meta">
+              <span class="lg-chip">25 min</span>
+              <span class="lg-chip"><span lang="en">Course:</span><span lang="fr">Cours :</span> <a href="../../02-Lectures/slides/04b-ejb/slides.html#slide-15"><span lang="en">EJB, slide 15</span><span lang="fr">EJB, slide 15</span></a> <a href="../../02-Lectures/slides/04b-ejb/slides.html#slide-49"><span lang="en">EJB, slide 49</span><span lang="fr">EJB, slide 49</span></a></span>
+            </div>
+          </div>
+        </div>
+        <div class="lg-step-body">
+          <p class="lg-files"><span lang="en">Files:</span><span lang="fr">Fichiers :</span> <span lang="en"><code>src/main/java/com/bank/ejb/AccountServiceBean.java</code></span><span lang="fr"><code>src/main/java/com/bank/ejb/AccountServiceBean.java</code></span></p>
+          <div class="lg-task-label"><span lang="en">Task</span><span lang="fr">À faire</span></div>
+          <ol>
+            <li><span lang="en">Add <code>@Stateless</code>, <code>@TransactionAttribute(TransactionAttributeType.REQUIRED)</code> and <code>@DeclareRoles({"admin", "teller", "customer"})</code> on the class, and inject the persistence context: <code>@PersistenceContext(unitName = "bankingPU") private EntityManager em;</code>.</span><span lang="fr">Ajoutez <code>@Stateless</code>, <code>@TransactionAttribute(TransactionAttributeType.REQUIRED)</code> et <code>@DeclareRoles({"admin", "teller", "customer"})</code> sur la classe, et injectez le contexte de persistance : <code>@PersistenceContext(unitName = "bankingPU") private EntityManager em;</code>.</span></li>
+            <li><span lang="en">Replace <code>createAccount(String, AccountType)</code> by <code>createAccount(String accountNumber, AccountType type, Long clientId)</code>: an account now requires a <code>Client</code>, so find it with <code>em.find</code>, throw <code>EJBException</code> if absent, set balance <code>BigDecimal.ZERO</code> and status <code>ACTIVE</code>, then <code>persist</code> and <code>flush</code>. Rename <code>findById</code> to <code>findAccount(Long)</code>.</span><span lang="fr">Remplacez <code>createAccount(String, AccountType)</code> par <code>createAccount(String accountNumber, AccountType type, Long clientId)</code> : un compte exige désormais un <code>Client</code>, cherchez-le avec <code>em.find</code>, levez <code>EJBException</code> s'il est absent, fixez le solde à <code>BigDecimal.ZERO</code> et le statut à <code>ACTIVE</code>, puis <code>persist</code> et <code>flush</code>. Renommez <code>findById</code> en <code>findAccount(Long)</code>.</span></li>
+            <li><span lang="en">Implement <code>findAll</code> / <code>getAllAccounts</code> with the named query <code>Account.findAll</code>, plus <code>findAccountByNumber</code>, <code>getBalance</code>, <code>getTransactionHistory</code> (<code>Transaction.findByAccount</code>), <code>getAccountCount</code> (<code>Account.count</code>), <code>updateAccount</code> (<code>merge</code>), <code>closeAccount</code> (<code>account.close()</code>) and <code>deleteAccount</code>.</span><span lang="fr">Implémentez <code>findAll</code> / <code>getAllAccounts</code> avec la requête nommée <code>Account.findAll</code>, ainsi que <code>findAccountByNumber</code>, <code>getBalance</code>, <code>getTransactionHistory</code> (<code>Transaction.findByAccount</code>), <code>getAccountCount</code> (<code>Account.count</code>), <code>updateAccount</code> (<code>merge</code>), <code>closeAccount</code> (<code>account.close()</code>) et <code>deleteAccount</code>.</span></li>
+            <li><span lang="en">Implement <code>deposit</code>, <code>withdraw</code> and <code>transfer</code>: validate the amount (<code>&gt; 0</code>, else <code>IllegalArgumentException</code>), reject a transfer to the same account, <code>em.find</code> the accounts (<code>EJBException</code> if missing), call <code>account.deposit/withdraw</code>, and <code>persist</code> a <code>Transaction(account, type, amount, account.getBalance(), description)</code> (two rows for a transfer: <code>TRANSFER_OUT</code> and <code>TRANSFER_IN</code>). No explicit <code>merge</code>: the account is managed inside the container transaction.</span><span lang="fr">Implémentez <code>deposit</code>, <code>withdraw</code> et <code>transfer</code> : validez le montant (<code>&gt; 0</code>, sinon <code>IllegalArgumentException</code>), refusez un virement vers le même compte, faites <code>em.find</code> des comptes (<code>EJBException</code> s'ils manquent), appelez <code>account.deposit/withdraw</code>, et faites <code>persist</code> d'une <code>Transaction(account, type, amount, account.getBalance(), description)</code> (deux lignes pour un virement : <code>TRANSFER_OUT</code> et <code>TRANSFER_IN</code>). Aucun <code>merge</code> explicite : le compte est géré dans la transaction du conteneur.</span></li>
+            <li><span lang="en">Secure the methods: <code>@RolesAllowed({"admin", "teller"})</code> on writes, <code>@RolesAllowed("admin")</code> on <code>closeAccount</code> / <code>deleteAccount</code>, <code>@PermitAll</code> on reads. These annotations are only enforced when the <code>appSecurity-5.0</code> feature is enabled (see the bonus).</span><span lang="fr">Sécurisez les méthodes : <code>@RolesAllowed({"admin", "teller"})</code> sur les écritures, <code>@RolesAllowed("admin")</code> sur <code>closeAccount</code> / <code>deleteAccount</code>, <code>@PermitAll</code> sur les lectures. Ces annotations ne sont appliquées que si la feature <code>appSecurity-5.0</code> est activée (voir le bonus).</span></li>
+          </ol>
+          <details class="lg-hint lg-hint--1">
+            <summary><span lang="en">Hint 1</span><span lang="fr">Indice 1</span></summary>
+            <div class="lg-hint-body"><p><span lang="en">In a CMT bean, a <code>RuntimeException</code> thrown by a business method marks the transaction for rollback: if <code>withdraw</code> fails on the source account, nothing is written — this is the whole point of <code>transfer</code>.</span><span lang="fr">Dans un bean CMT, une <code>RuntimeException</code> levée par une méthode métier marque la transaction en rollback : si <code>withdraw</code> échoue sur le compte source, rien n'est écrit — c'est tout l'intérêt de <code>transfer</code>.</span></p></div>
+          </details>
+          <details class="lg-hint lg-hint--2">
+            <summary><span lang="en">Hint 2 — signatures and API</span><span lang="fr">Indice 2 — signatures et API</span></summary>
+            <div class="lg-hint-body">
+<pre class="dark"><code>@Stateless
+@TransactionAttribute(TransactionAttributeType.REQUIRED)
+@DeclareRoles({"admin", "teller", "customer"})
+public class AccountServiceBean {
+    @PersistenceContext(unitName = "bankingPU") private EntityManager em;
+
+    @RolesAllowed({"admin", "teller"})
+    public Account createAccount(String accountNumber, AccountType type, Long clientId);
+    @PermitAll public Account findAccount(Long accountId);
+    @PermitAll public List&lt;Account&gt; findAll();
+    @RolesAllowed({"admin", "teller"}) public void deposit(Long accountId, BigDecimal amount);
+    @RolesAllowed({"admin", "teller"}) public void withdraw(Long accountId, BigDecimal amount);
+    @RolesAllowed({"admin", "teller"}) public void transfer(Long fromId, Long toId, BigDecimal amount);
+}</code></pre>
+            </div>
+          </details>
+          <details class="lg-hint lg-hint--sol">
+            <summary><span lang="en">Solution files</span><span lang="fr">Fichiers solution</span></summary>
+            <div class="lg-hint-body"><p><a href="https://github.com/oplanson/esipe-javaee/blob/master/03-Labs/Lab04B-EJB/solution/src/main/java/com/bank/ejb/AccountServiceBean.java"><code>AccountServiceBean.java</code></a></p></div>
+          </details>
+          <div class="lg-checkpoint">
+            <div class="lg-check-label"><span lang="en">Checkpoint</span><span lang="fr">Point de contrôle</span></div>
+            <pre class="dark"><code>grep -n 'UnsupportedOperationException\|TODO' src/main/java/com/bank/ejb/AccountServiceBean.java</code></pre>
+            <p><span lang="en">Expected: No output (the 22 <code>TODO</code> lines of the file are gone).</span><span lang="fr">Résultat attendu : Aucune sortie (les 22 lignes <code>TODO</code> du fichier ont disparu).</span></p>
+          </div>
+        </div>
+      </article>
+
+      <article class="lg-step" id="step-6">
+        <div class="lg-step-head">
+          <div class="lg-step-num">6</div>
+          <div>
+            <h3><span lang="en">Stateless bean: ClientServiceBean (new)</span><span lang="fr">Bean stateless : ClientServiceBean (nouveau)</span></h3>
+            <div class="lg-step-meta">
+              <span class="lg-chip">15 min</span>
+              <span class="lg-chip"><span lang="en">Course:</span><span lang="fr">Cours :</span> <a href="../../02-Lectures/slides/04b-ejb/slides.html#slide-16"><span lang="en">EJB, slide 16</span><span lang="fr">EJB, slide 16</span></a></span>
+            </div>
+          </div>
+        </div>
+        <div class="lg-step-body">
+          <p class="lg-files"><span lang="en">Files:</span><span lang="fr">Fichiers :</span> <span lang="en"><code>src/main/java/com/bank/ejb/ClientServiceBean.java</code> (to create)</span><span lang="fr"><code>src/main/java/com/bank/ejb/ClientServiceBean.java</code> (à créer)</span></p>
+          <div class="lg-task-label"><span lang="en">Task</span><span lang="fr">À faire</span></div>
+          <ol>
+            <li><span lang="en">Create <code>ClientServiceBean</code>, a second <code>@Stateless</code> bean with the same class annotations and persistence context as <code>AccountServiceBean</code> (it does not exist in the starter, but <code>BankingServlet</code> needs it).</span><span lang="fr">Créez <code>ClientServiceBean</code>, un second bean <code>@Stateless</code> avec les mêmes annotations de classe et le même contexte de persistance qu'<code>AccountServiceBean</code> (il n'existe pas dans le starter, mais <code>BankingServlet</code> en a besoin).</span></li>
+            <li><span lang="en">Methods: <code>createClient(Client)</code> (<code>persist</code> + <code>flush</code>), <code>createClient(String name, String email)</code>, <code>findClient(Long)</code>, <code>getAllClients()</code> (<code>Client.findAll</code>), <code>findClientsByName(String)</code> / <code>findClientsByEmail(String)</code> (<code>Client.findByName</code> / <code>Client.findByEmail</code>, parameter wrapped in <code>%</code>), <code>updateClient</code>, <code>deleteClient</code>, <code>getClientCount()</code>, <code>upgradeToPremium(Long)</code> and <code>downgradeFromPremium(Long)</code>.</span><span lang="fr">Méthodes : <code>createClient(Client)</code> (<code>persist</code> + <code>flush</code>), <code>createClient(String name, String email)</code>, <code>findClient(Long)</code>, <code>getAllClients()</code> (<code>Client.findAll</code>), <code>findClientsByName(String)</code> / <code>findClientsByEmail(String)</code> (<code>Client.findByName</code> / <code>Client.findByEmail</code>, paramètre entouré de <code>%</code>), <code>updateClient</code>, <code>deleteClient</code>, <code>getClientCount()</code>, <code>upgradeToPremium(Long)</code> et <code>downgradeFromPremium(Long)</code>.</span></li>
+            <li><span lang="en">Same security rules: writes <code>@RolesAllowed({"admin", "teller"})</code> (<code>deleteClient</code>: <code>admin</code> only), reads <code>@PermitAll</code>.</span><span lang="fr">Mêmes règles de sécurité : écritures <code>@RolesAllowed({"admin", "teller"})</code> (<code>deleteClient</code> : <code>admin</code> seulement), lectures <code>@PermitAll</code>.</span></li>
+          </ol>
+          <details class="lg-hint lg-hint--1">
+            <summary><span lang="en">Hint 1</span><span lang="fr">Indice 1</span></summary>
+            <div class="lg-hint-body"><p><span lang="en">Only <code>getAllClients()</code> and <code>createClient(String, String)</code> are called by the servlet (to create a default client when the table is empty); the rest is a complete service for the bonus exercises.</span><span lang="fr">Seules <code>getAllClients()</code> et <code>createClient(String, String)</code> sont appelées par la servlet (pour créer un client par défaut si la table est vide) ; le reste forme un service complet pour les exercices bonus.</span></p></div>
+          </details>
+          <details class="lg-hint lg-hint--2">
+            <summary><span lang="en">Hint 2 — signatures and API</span><span lang="fr">Indice 2 — signatures et API</span></summary>
+            <div class="lg-hint-body">
+<pre class="dark"><code>@Stateless
+@TransactionAttribute(TransactionAttributeType.REQUIRED)
+@DeclareRoles({"admin", "teller", "customer"})
+public class ClientServiceBean {
+    @PersistenceContext(unitName = "bankingPU") private EntityManager em;
+
+    @RolesAllowed({"admin", "teller"}) public Client createClient(String name, String email);
+    @PermitAll public List&lt;Client&gt; getAllClients();
+    @RolesAllowed({"admin", "teller"}) public Client upgradeToPremium(Long id);
+}</code></pre>
+            </div>
+          </details>
+          <details class="lg-hint lg-hint--sol">
+            <summary><span lang="en">Solution files</span><span lang="fr">Fichiers solution</span></summary>
+            <div class="lg-hint-body"><p><a href="https://github.com/oplanson/esipe-javaee/blob/master/03-Labs/Lab04B-EJB/solution/src/main/java/com/bank/ejb/ClientServiceBean.java"><code>ClientServiceBean.java</code></a></p></div>
+          </details>
+          <div class="lg-checkpoint">
+            <div class="lg-check-label"><span lang="en">Checkpoint</span><span lang="fr">Point de contrôle</span></div>
+            <pre class="dark"><code>ls src/main/java/com/bank/ejb/</code></pre>
+            <p><span lang="en">Expected: <code>AccountServiceBean.java</code>, <code>ClientServiceBean.java</code>, <code>ConfigServiceBean.java</code>.</span><span lang="fr">Résultat attendu : <code>AccountServiceBean.java</code>, <code>ClientServiceBean.java</code>, <code>ConfigServiceBean.java</code>.</span></p>
+          </div>
+        </div>
+      </article>
+
+      <article class="lg-step" id="step-7">
+        <div class="lg-step-head">
+          <div class="lg-step-num">7</div>
+          <div>
+            <h3><span lang="en">Singleton bean: ConfigServiceBean</span><span lang="fr">Bean singleton : ConfigServiceBean</span></h3>
+            <div class="lg-step-meta">
+              <span class="lg-chip">15 min</span>
+              <span class="lg-chip"><span lang="en">Course:</span><span lang="fr">Cours :</span> <a href="../../02-Lectures/slides/04b-ejb/slides.html#slide-24"><span lang="en">EJB, slide 24</span><span lang="fr">EJB, slide 24</span></a> <a href="../../02-Lectures/slides/04b-ejb/slides.html#slide-26"><span lang="en">EJB, slide 26</span><span lang="fr">EJB, slide 26</span></a></span>
+            </div>
+          </div>
+        </div>
+        <div class="lg-step-body">
+          <p class="lg-files"><span lang="en">Files:</span><span lang="fr">Fichiers :</span> <span lang="en"><code>src/main/java/com/bank/ejb/ConfigServiceBean.java</code></span><span lang="fr"><code>src/main/java/com/bank/ejb/ConfigServiceBean.java</code></span></p>
+          <div class="lg-task-label"><span lang="en">Task</span><span lang="fr">À faire</span></div>
+          <ol>
+            <li><span lang="en">Add <code>@Singleton</code>, <code>@Startup</code> and <code>@ConcurrencyManagement(ConcurrencyManagementType.CONTAINER)</code> on the class, and <code>@PostConstruct</code> on <code>init()</code>.</span><span lang="fr">Ajoutez <code>@Singleton</code>, <code>@Startup</code> et <code>@ConcurrencyManagement(ConcurrencyManagementType.CONTAINER)</code> sur la classe, et <code>@PostConstruct</code> sur <code>init()</code>.</span></li>
+            <li><span lang="en">Implement <code>getConfig(String)</code> (<code>config.get</code>) and <code>getAllConfig()</code> (a copy of the map) with <code>@Lock(LockType.READ)</code>, and <code>updateConfig(String, String)</code> (<code>config.put</code>) with <code>@Lock(LockType.WRITE)</code>.</span><span lang="fr">Implémentez <code>getConfig(String)</code> (<code>config.get</code>) et <code>getAllConfig()</code> (une copie de la map) avec <code>@Lock(LockType.READ)</code>, et <code>updateConfig(String, String)</code> (<code>config.put</code>) avec <code>@Lock(LockType.WRITE)</code>.</span></li>
+            <li><span lang="en">Make <code>init()</code> load the keys the servlet reads, <code>app.name</code> = <code>Banking EJB Application</code> and <code>app.version</code> = <code>1.0.0</code>, plus the limits you want (<code>max.transfer.amount</code>, <code>daily.withdrawal.limit</code>…). The solution adds a second map of <code>BigDecimal</code> limits with <code>getLimit</code>, <code>updateLimit</code>, <code>isWithinLimit</code>, feature flags and a <code>@PreDestroy</code>: optional.</span><span lang="fr">Faites charger par <code>init()</code> les clés lues par la servlet, <code>app.name</code> = <code>Banking EJB Application</code> et <code>app.version</code> = <code>1.0.0</code>, plus les limites de votre choix (<code>max.transfer.amount</code>, <code>daily.withdrawal.limit</code>…). La solution ajoute une seconde map de limites <code>BigDecimal</code> avec <code>getLimit</code>, <code>updateLimit</code>, <code>isWithinLimit</code>, des drapeaux de fonctionnalités et un <code>@PreDestroy</code> : optionnel.</span></li>
+          </ol>
+          <details class="lg-hint lg-hint--1">
+            <summary><span lang="en">Hint 1</span><span lang="fr">Indice 1</span></summary>
+            <div class="lg-hint-body"><p><span lang="en"><code>@Lock(READ)</code> lets many threads read at once; <code>@Lock(WRITE)</code> is exclusive. Container-managed concurrency does the locking for you, even though the map is already a <code>ConcurrentHashMap</code>.</span><span lang="fr"><code>@Lock(READ)</code> autorise plusieurs lectures simultanées ; <code>@Lock(WRITE)</code> est exclusif. La concurrence gérée par le conteneur pose les verrous pour vous, même si la map est déjà une <code>ConcurrentHashMap</code>.</span></p></div>
+          </details>
+          <details class="lg-hint lg-hint--2">
+            <summary><span lang="en">Hint 2 — signatures and API</span><span lang="fr">Indice 2 — signatures et API</span></summary>
+            <div class="lg-hint-body">
+<pre class="dark"><code>@Singleton
+@Startup
+@ConcurrencyManagement(ConcurrencyManagementType.CONTAINER)
+public class ConfigServiceBean {
+    private final Map&lt;String, String&gt; config = new ConcurrentHashMap&lt;&gt;();
+
+    @PostConstruct public void init();
+    @Lock(LockType.READ)  public String getConfig(String key);
+    @Lock(LockType.WRITE) public void updateConfig(String key, String value);
+    @Lock(LockType.READ)  public Map&lt;String, String&gt; getAllConfig();
+}</code></pre>
+            </div>
+          </details>
+          <details class="lg-hint lg-hint--sol">
+            <summary><span lang="en">Solution files</span><span lang="fr">Fichiers solution</span></summary>
+            <div class="lg-hint-body"><p><a href="https://github.com/oplanson/esipe-javaee/blob/master/03-Labs/Lab04B-EJB/solution/src/main/java/com/bank/ejb/ConfigServiceBean.java"><code>ConfigServiceBean.java</code></a></p></div>
+          </details>
+          <div class="lg-checkpoint">
+            <div class="lg-check-label"><span lang="en">Checkpoint</span><span lang="fr">Point de contrôle</span></div>
+            <pre class="dark"><code>grep -n 'UnsupportedOperationException\|TODO' src/main/java/com/bank/ejb/ConfigServiceBean.java</code></pre>
+            <p><span lang="en">Expected: No output (the 17 <code>TODO</code> lines are gone).</span><span lang="fr">Résultat attendu : Aucune sortie (les 17 lignes <code>TODO</code> ont disparu).</span></p>
+          </div>
+        </div>
+      </article>
+
+      <article class="lg-step" id="step-8">
+        <div class="lg-step-head">
+          <div class="lg-step-num">8</div>
+          <div>
+            <h3><span lang="en">Stateful bean: TransactionBatchBean (new)</span><span lang="fr">Bean stateful : TransactionBatchBean (nouveau)</span></h3>
+            <div class="lg-step-meta">
+              <span class="lg-chip">25 min</span>
+              <span class="lg-chip"><span lang="en">Course:</span><span lang="fr">Cours :</span> <a href="../../02-Lectures/slides/04b-ejb/slides.html#slide-19"><span lang="en">EJB, slide 19</span><span lang="fr">EJB, slide 19</span></a> <a href="../../02-Lectures/slides/04b-ejb/slides.html#slide-50"><span lang="en">EJB, slide 50</span><span lang="fr">EJB, slide 50</span></a></span>
+            </div>
+          </div>
+        </div>
+        <div class="lg-step-body">
+          <p class="lg-files"><span lang="en">Files:</span><span lang="fr">Fichiers :</span> <span lang="en"><code>src/main/java/com/bank/ejb/TransactionBatchBean.java</code> (to create)</span><span lang="fr"><code>src/main/java/com/bank/ejb/TransactionBatchBean.java</code> (à créer)</span></p>
+          <div class="lg-task-label"><span lang="en">Task</span><span lang="fr">À faire</span></div>
+          <ol>
+            <li><span lang="en">Create <code>TransactionBatchBean</code> (not in the starter, but imported by <code>BankingServlet</code>): <code>@Stateful</code> with <code>@StatefulTimeout(value = 30, unit = TimeUnit.MINUTES)</code> and an <code>@PersistenceContext(unitName = "bankingPU")</code>. The conversational state is a list of pending operations, a <code>batchId</code> and a counter, initialised in a <code>@PostConstruct</code> method.</span><span lang="fr">Créez <code>TransactionBatchBean</code> (absent du starter, mais importé par <code>BankingServlet</code>) : <code>@Stateful</code> avec <code>@StatefulTimeout(value = 30, unit = TimeUnit.MINUTES)</code> et un <code>@PersistenceContext(unitName = "bankingPU")</code>. L'état conversationnel est une liste d'opérations en attente, un <code>batchId</code> et un compteur, initialisés dans une méthode <code>@PostConstruct</code>.</span></li>
+            <li><span lang="en">Add <code>addDeposit</code>, <code>addWithdrawal</code>, <code>addTransfer</code> (validate the amount, append a <code>PendingTransaction</code>), and the getters <code>getPendingCount</code>, <code>getTotalCount</code>, <code>getBatchId</code>, <code>getPendingTransactions</code>. <code>PendingTransaction</code> is a static inner class and <code>TransactionOperation</code> an inner enum (<code>DEPOSIT</code>, <code>WITHDRAWAL</code>, <code>TRANSFER</code>).</span><span lang="fr">Ajoutez <code>addDeposit</code>, <code>addWithdrawal</code>, <code>addTransfer</code> (validation du montant, ajout d'un <code>PendingTransaction</code>), et les getters <code>getPendingCount</code>, <code>getTotalCount</code>, <code>getBatchId</code>, <code>getPendingTransactions</code>. <code>PendingTransaction</code> est une classe interne statique et <code>TransactionOperation</code> un enum interne (<code>DEPOSIT</code>, <code>WITHDRAWAL</code>, <code>TRANSFER</code>).</span></li>
+            <li><span lang="en"><code>commit()</code> is annotated <code>@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)</code>: it applies every pending operation on managed <code>Account</code>s, records <code>Transaction</code> rows, clears the list and returns the count; on failure it throws <code>EJBException</code>. <code>rollback()</code> only clears the list. <code>close()</code> is the <code>@Remove</code> method and <code>cleanup()</code> the <code>@PreDestroy</code> callback.</span><span lang="fr"><code>commit()</code> porte <code>@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)</code> : elle applique chaque opération en attente sur des <code>Account</code> gérés, enregistre des lignes <code>Transaction</code>, vide la liste et renvoie le nombre ; en cas d'échec elle lève <code>EJBException</code>. <code>rollback()</code> vide seulement la liste. <code>close()</code> est la méthode <code>@Remove</code> et <code>cleanup()</code> le callback <code>@PreDestroy</code>.</span></li>
+          </ol>
+          <details class="lg-hint lg-hint--1">
+            <summary><span lang="en">Hint 1</span><span lang="fr">Indice 1</span></summary>
+            <div class="lg-hint-body"><p><span lang="en">A stateful bean is one instance <strong>per client</strong>. Never inject it with <code>@EJB</code> into a servlet (all requests would share it): look it up with <code>InitialContext</code> (<code>java:module/TransactionBatchBean</code>) or hold it in the HTTP session. After a failed <code>commit()</code> the container discards the instance (system exception): calling <code>close()</code> then throws <code>NoSuchEJBException</code>.</span><span lang="fr">Un bean stateful est une instance <strong>par client</strong>. Ne l'injectez jamais avec <code>@EJB</code> dans une servlet (toutes les requêtes le partageraient) : obtenez-le par <code>InitialContext</code> (<code>java:module/TransactionBatchBean</code>) ou conservez-le en session HTTP. Après un <code>commit()</code> en échec, le conteneur détruit l'instance (exception système) : appeler ensuite <code>close()</code> lève <code>NoSuchEJBException</code>.</span></p></div>
+          </details>
+          <details class="lg-hint lg-hint--2">
+            <summary><span lang="en">Hint 2 — signatures and API</span><span lang="fr">Indice 2 — signatures et API</span></summary>
+            <div class="lg-hint-body">
+<pre class="dark"><code>@Stateful
+@StatefulTimeout(value = 30, unit = TimeUnit.MINUTES)
+public class TransactionBatchBean {
+    @PersistenceContext(unitName = "bankingPU") private EntityManager em;
+
+    @PostConstruct public void init();
+    public void addDeposit(Long accountId, BigDecimal amount);
+    public void addWithdrawal(Long accountId, BigDecimal amount);
+    public void addTransfer(Long fromAccountId, Long toAccountId, BigDecimal amount);
+    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW) public int commit();
+    public void rollback();
+    @Remove public void close();
+    @PreDestroy public void cleanup();
+}</code></pre>
+            </div>
+          </details>
+          <details class="lg-hint lg-hint--sol">
+            <summary><span lang="en">Solution files</span><span lang="fr">Fichiers solution</span></summary>
+            <div class="lg-hint-body"><p><a href="https://github.com/oplanson/esipe-javaee/blob/master/03-Labs/Lab04B-EJB/solution/src/main/java/com/bank/ejb/TransactionBatchBean.java"><code>TransactionBatchBean.java</code></a></p></div>
+          </details>
+          <div class="lg-checkpoint">
+            <div class="lg-check-label"><span lang="en">Checkpoint</span><span lang="fr">Point de contrôle</span></div>
+            <pre class="dark"><code>mvn -q -DskipTests compile 2&gt;&amp;1 | grep 'ERROR.*\.java' | sed 's#.*/com/bank/##' | sort -u</code></pre>
+            <p><span lang="en">Expected: Only <code>ReportGeneratorBean</code> is still not found in <code>web/BankingServlet.java</code>.</span><span lang="fr">Résultat attendu : Seul <code>ReportGeneratorBean</code> reste introuvable dans <code>web/BankingServlet.java</code>.</span></p>
+          </div>
+        </div>
+      </article>
+
+      <article class="lg-step" id="step-9">
+        <div class="lg-step-head">
+          <div class="lg-step-num">9</div>
+          <div>
+            <h3><span lang="en">Message-driven bean: NotificationMDB</span><span lang="fr">Message-driven bean : NotificationMDB</span></h3>
+            <div class="lg-step-meta">
+              <span class="lg-chip">20 min</span>
+              <span class="lg-chip"><span lang="en">Course:</span><span lang="fr">Cours :</span> <a href="../../02-Lectures/slides/04b-ejb/slides.html#slide-31"><span lang="en">EJB, slide 31</span><span lang="fr">EJB, slide 31</span></a> <a href="../../02-Lectures/slides/04b-ejb/slides.html#slide-35"><span lang="en">EJB, slide 35</span><span lang="fr">EJB, slide 35</span></a></span>
+            </div>
+          </div>
+        </div>
+        <div class="lg-step-body">
+          <p class="lg-files"><span lang="en">Files:</span><span lang="fr">Fichiers :</span> <span lang="en"><code>src/main/java/com/bank/mdb/NotificationMDB.java</code></span><span lang="fr"><code>src/main/java/com/bank/mdb/NotificationMDB.java</code></span></p>
+          <div class="lg-task-label"><span lang="en">Task</span><span lang="fr">À faire</span></div>
+          <ol>
+            <li><span lang="en">Add <code>@MessageDriven</code> with <code>activationConfig</code>: <code>destinationType</code> = <code>jakarta.jms.Queue</code>, <code>destination</code> = <code>jms/notificationQueue</code>, <code>acknowledgeMode</code> = <code>Auto-acknowledge</code>, <code>maxSessions</code> = <code>10</code>.</span><span lang="fr">Ajoutez <code>@MessageDriven</code> avec <code>activationConfig</code> : <code>destinationType</code> = <code>jakarta.jms.Queue</code>, <code>destination</code> = <code>jms/notificationQueue</code>, <code>acknowledgeMode</code> = <code>Auto-acknowledge</code>, <code>maxSessions</code> = <code>10</code>.</span></li>
+            <li><span lang="en">In <code>onMessage(Message)</code>, replace the three <code>TODO</code> lines: check <code>message instanceof TextMessage</code>, read <code>getText()</code>, log it. In the solution the text follows the format <code>TYPE|RECIPIENT|SUBJECT|BODY</code> with <code>TYPE</code> in <code>EMAIL</code>, <code>SMS</code>, <code>PUSH</code>, <code>ALERT</code>; it is parsed and dispatched to a private method per type.</span><span lang="fr">Dans <code>onMessage(Message)</code>, remplacez les trois lignes <code>TODO</code> : testez <code>message instanceof TextMessage</code>, lisez <code>getText()</code>, journalisez. Dans la solution, le texte suit le format <code>TYPE|DESTINATAIRE|SUJET|CORPS</code> avec <code>TYPE</code> parmi <code>EMAIL</code>, <code>SMS</code>, <code>PUSH</code>, <code>ALERT</code> ; il est analysé puis envoyé vers une méthode privée par type.</span></li>
+            <li><span lang="en">Rethrow a <code>RuntimeException</code> on failure instead of swallowing it: the container then rolls back and redelivers the message.</span><span lang="fr">Relancez une <code>RuntimeException</code> en cas d'échec au lieu de l'avaler : le conteneur annule alors le traitement et redélivre le message.</span></li>
+          </ol>
+          <details class="lg-hint lg-hint--1">
+            <summary><span lang="en">Hint 1</span><span lang="fr">Indice 1</span></summary>
+            <div class="lg-hint-body"><p><span lang="en">The <code>destination</code> property must be the JNDI name declared in <code>server.xml</code> at step 4 (<code>jms/notificationQueue</code>); the MDB id in the activation spec is <code>banking-ejb-app/NotificationMDB</code>. Both come from the application and bean names.</span><span lang="fr">La propriété <code>destination</code> doit être le nom JNDI déclaré dans <code>server.xml</code> à l'étape 4 (<code>jms/notificationQueue</code>) ; l'id du MDB dans l'activation spec est <code>banking-ejb-app/NotificationMDB</code>. Les deux viennent des noms de l'application et du bean.</span></p></div>
+          </details>
+          <details class="lg-hint lg-hint--2">
+            <summary><span lang="en">Hint 2 — signatures and API</span><span lang="fr">Indice 2 — signatures et API</span></summary>
+            <div class="lg-hint-body">
+<pre class="dark"><code>@MessageDriven(name = "NotificationMDB", activationConfig = {
+    @ActivationConfigProperty(propertyName = "destinationType", propertyValue = "jakarta.jms.Queue"),
+    @ActivationConfigProperty(propertyName = "destination", propertyValue = "jms/notificationQueue"),
+    @ActivationConfigProperty(propertyName = "acknowledgeMode", propertyValue = "Auto-acknowledge"),
+    @ActivationConfigProperty(propertyName = "maxSessions", propertyValue = "10")
+})
+public class NotificationMDB implements MessageListener {
+    @Override public void onMessage(Message message);   // TextMessage -&gt; getText() -&gt; parse -&gt; log
+}</code></pre>
+            </div>
+          </details>
+          <details class="lg-hint lg-hint--sol">
+            <summary><span lang="en">Solution files</span><span lang="fr">Fichiers solution</span></summary>
+            <div class="lg-hint-body"><p><a href="https://github.com/oplanson/esipe-javaee/blob/master/03-Labs/Lab04B-EJB/solution/src/main/java/com/bank/mdb/NotificationMDB.java"><code>NotificationMDB.java</code></a></p></div>
+          </details>
+          <div class="lg-checkpoint">
+            <div class="lg-check-label"><span lang="en">Checkpoint</span><span lang="fr">Point de contrôle</span></div>
+            <pre class="dark"><code>grep -c '@MessageDriven' src/main/java/com/bank/mdb/NotificationMDB.java</code></pre>
+            <p><span lang="en">Expected: <code>1</code>.</span><span lang="fr">Résultat attendu : <code>1</code>.</span></p>
+          </div>
+        </div>
+      </article>
+
+      <article class="lg-step" id="step-10">
+        <div class="lg-step-head">
+          <div class="lg-step-num">10</div>
+          <div>
+            <h3><span lang="en">Timer service: ReportGeneratorBean (new)</span><span lang="fr">Timer service : ReportGeneratorBean (nouveau)</span></h3>
+            <div class="lg-step-meta">
+              <span class="lg-chip">20 min</span>
+              <span class="lg-chip"><span lang="en">Course:</span><span lang="fr">Cours :</span> <a href="../../02-Lectures/slides/04b-ejb/slides.html#slide-67"><span lang="en">EJB, slide 67</span><span lang="fr">EJB, slide 67</span></a> <a href="../../02-Lectures/slides/04b-ejb/slides.html#slide-71"><span lang="en">EJB, slide 71</span><span lang="fr">EJB, slide 71</span></a></span>
+            </div>
+          </div>
+        </div>
+        <div class="lg-step-body">
+          <p class="lg-files"><span lang="en">Files:</span><span lang="fr">Fichiers :</span> <span lang="en"><code>src/main/java/com/bank/ejb/ReportGeneratorBean.java</code> (to create)</span><span lang="fr"><code>src/main/java/com/bank/ejb/ReportGeneratorBean.java</code> (à créer)</span></p>
+          <div class="lg-task-label"><span lang="en">Task</span><span lang="fr">À faire</span></div>
+          <ol>
+            <li><span lang="en">Create <code>ReportGeneratorBean</code> (not in the starter, but <code>BankingServlet</code> injects it): <code>@Singleton</code>, <code>@PersistenceContext(unitName = "bankingPU")</code> and <code>@Resource private TimerService timerService;</code>.</span><span lang="fr">Créez <code>ReportGeneratorBean</code> (absent du starter, mais injecté par <code>BankingServlet</code>) : <code>@Singleton</code>, <code>@PersistenceContext(unitName = "bankingPU")</code> et <code>@Resource private TimerService timerService;</code>.</span></li>
+            <li><span lang="en">Add three automatic timers, all with <code>persistent = false</code>: <code>generateDailyReport</code> (<code>@Schedule(hour = "0", minute = "0")</code>), <code>generateHourlySummary</code> (<code>hour = "*", minute = "0"</code>) and <code>generateWeeklyReport</code> (<code>dayOfWeek = "Mon", hour = "8", minute = "0"</code>). Each runs JPQL aggregates (count, <code>SUM</code> of deposits and withdrawals) and increments a counter.</span><span lang="fr">Ajoutez trois timers automatiques, tous avec <code>persistent = false</code> : <code>generateDailyReport</code> (<code>@Schedule(hour = "0", minute = "0")</code>), <code>generateHourlySummary</code> (<code>hour = "*", minute = "0"</code>) et <code>generateWeeklyReport</code> (<code>dayOfWeek = "Mon", hour = "8", minute = "0"</code>). Chacun exécute des agrégats JPQL (nombre, <code>SUM</code> des dépôts et retraits) et incrémente un compteur.</span></li>
+            <li><span lang="en">Add the programmatic timers and the callback: <code>createCustomTimer(long duration, String info)</code>, <code>createIntervalTimer(...)</code>, <code>@Timeout handleTimeout(Timer)</code>, <code>getActiveTimers()</code>, <code>cancelAllTimers()</code> and <code>getStatistics()</code> returning <code>Daily Reports: %d, Hourly Reports: %d</code>.</span><span lang="fr">Ajoutez les timers programmatiques et le callback : <code>createCustomTimer(long duration, String info)</code>, <code>createIntervalTimer(...)</code>, <code>@Timeout handleTimeout(Timer)</code>, <code>getActiveTimers()</code>, <code>cancelAllTimers()</code> et <code>getStatistics()</code> qui renvoie <code>Daily Reports: %d, Hourly Reports: %d</code>.</span></li>
+            <li><span lang="en"><strong>Deviation from the solution</strong>: create programmatic timers as non-persistent, <code>timerService.createSingleActionTimer(duration, new TimerConfig(info, false))</code> and <code>new TimerConfig(info, false)</code> for the interval timer. The solution's <code>createTimer(duration, info)</code> and <code>new TimerConfig(info, true)</code> are persistent and fail with <code>CNTR4019E</code> because no persistent-timer feature is enabled.</span><span lang="fr"><strong>Écart avec la solution</strong> : créez les timers programmatiques non persistants, <code>timerService.createSingleActionTimer(duration, new TimerConfig(info, false))</code> et <code>new TimerConfig(info, false)</code> pour le timer à intervalle. <code>createTimer(duration, info)</code> et <code>new TimerConfig(info, true)</code> de la solution sont persistants et échouent avec <code>CNTR4019E</code> car aucune feature de timers persistants n'est activée.</span></li>
+          </ol>
+          <details class="lg-hint lg-hint--1">
+            <summary><span lang="en">Hint 1</span><span lang="fr">Indice 1</span></summary>
+            <div class="lg-hint-body"><p><span lang="en"><code>@Schedule</code> timers fire from the container clock; to see one quickly in the logs, create a custom timer of 1000 ms and look for <code>Timer expired</code>. A <code>@Singleton</code> has container-managed concurrency with a WRITE lock by default, so the counters need no <code>synchronized</code>.</span><span lang="fr">Les timers <code>@Schedule</code> partent de l'horloge du conteneur ; pour en voir un rapidement dans les logs, créez un timer personnalisé de 1000 ms et cherchez <code>Timer expired</code>. Un <code>@Singleton</code> a une concurrence gérée par le conteneur avec un verrou WRITE par défaut, les compteurs n'ont donc pas besoin de <code>synchronized</code>.</span></p></div>
+          </details>
+          <details class="lg-hint lg-hint--2">
+            <summary><span lang="en">Hint 2 — signatures and API</span><span lang="fr">Indice 2 — signatures et API</span></summary>
+            <div class="lg-hint-body">
+<pre class="dark"><code>@Singleton
+public class ReportGeneratorBean {
+    @PersistenceContext(unitName = "bankingPU") private EntityManager em;
+    @Resource private TimerService timerService;
+
+    @Schedule(hour = "0", minute = "0", persistent = false, info = "Daily Report")
+    public void generateDailyReport();
+    @Schedule(hour = "*", minute = "0", persistent = false, info = "Hourly Summary")
+    public void generateHourlySummary();
+    @Schedule(dayOfWeek = "Mon", hour = "8", minute = "0", persistent = false, info = "Weekly Report")
+    public void generateWeeklyReport();
+
+    public void createCustomTimer(long duration, String info) {
+        timerService.createSingleActionTimer(duration, new TimerConfig(info, false));
+    }
+    @Timeout public void handleTimeout(Timer timer);
+    public String getStatistics();
+}</code></pre>
+            </div>
+          </details>
+          <details class="lg-hint lg-hint--sol">
+            <summary><span lang="en">Solution files</span><span lang="fr">Fichiers solution</span></summary>
+            <div class="lg-hint-body"><p><a href="https://github.com/oplanson/esipe-javaee/blob/master/03-Labs/Lab04B-EJB/solution/src/main/java/com/bank/ejb/ReportGeneratorBean.java"><code>ReportGeneratorBean.java</code></a></p></div>
+          </details>
+          <div class="lg-checkpoint">
+            <div class="lg-check-label"><span lang="en">Checkpoint</span><span lang="fr">Point de contrôle</span></div>
+            <pre class="dark"><code>mvn -q -DskipTests compile 2&gt;&amp;1 | grep -c 'ERROR.*\.java'</code></pre>
+            <p><span lang="en">Expected: <code>0</code>: the whole project compiles.</span><span lang="fr">Résultat attendu : <code>0</code> : tout le projet compile.</span></p>
+          </div>
+        </div>
+      </article>
+
+      <article class="lg-step" id="step-11">
+        <div class="lg-step-head">
+          <div class="lg-step-num">11</div>
+          <div>
+            <h3><span lang="en">MicroProfile health checks</span><span lang="fr">Health checks MicroProfile</span></h3>
+            <div class="lg-step-meta">
+              <span class="lg-chip">10 min</span>
+              <span class="lg-chip"><span lang="en">Course:</span><span lang="fr">Cours :</span> <a href="../../02-Lectures/slides/02-servlets/slides.html#slide-32"><span lang="en">Servlets, slide 32</span><span lang="fr">Servlets, slide 32</span></a> <a href="../../02-Lectures/slides/04b-ejb/slides.html#slide-101"><span lang="en">EJB, slide 101</span><span lang="fr">EJB, slide 101</span></a></span>
+            </div>
+          </div>
+        </div>
+        <div class="lg-step-body">
+          <p class="lg-files"><span lang="en">Files:</span><span lang="fr">Fichiers :</span> <span lang="en"><code>src/main/java/com/bank/health/DatabaseHealthCheck.java</code>, <code>src/main/java/com/bank/health/EJBHealthCheck.java</code></span><span lang="fr"><code>src/main/java/com/bank/health/DatabaseHealthCheck.java</code>, <code>src/main/java/com/bank/health/EJBHealthCheck.java</code></span></p>
+          <div class="lg-task-label"><span lang="en">Task</span><span lang="fr">À faire</span></div>
+          <ol>
+            <li><span lang="en"><code>DatabaseHealthCheck</code>: add <code>@Liveness</code> and <code>@ApplicationScoped</code>, inject the <code>EntityManager</code> with <code>@PersistenceContext(unitName = "bankingPU")</code>, run <code>em.createNativeQuery("SELECT 1").getSingleResult()</code> and return <code>HealthCheckResponse.named("database-connection")</code> <code>up()</code> with data, or <code>down()</code> with the error message on exception.</span><span lang="fr"><code>DatabaseHealthCheck</code> : ajoutez <code>@Liveness</code> et <code>@ApplicationScoped</code>, injectez l'<code>EntityManager</code> avec <code>@PersistenceContext(unitName = "bankingPU")</code>, exécutez <code>em.createNativeQuery("SELECT 1").getSingleResult()</code> et renvoyez <code>HealthCheckResponse.named("database-connection")</code> <code>up()</code> avec des données, ou <code>down()</code> avec le message d'erreur en cas d'exception.</span></li>
+            <li><span lang="en"><code>EJBHealthCheck</code>: add <code>@Readiness</code> and <code>@ApplicationScoped</code>, inject <code>AccountServiceBean</code> and <code>ConfigServiceBean</code> with <code>@EJB</code>, return <code>named("ejb-container")</code> <code>up()</code> when both are non-null, <code>down()</code> otherwise or on exception.</span><span lang="fr"><code>EJBHealthCheck</code> : ajoutez <code>@Readiness</code> et <code>@ApplicationScoped</code>, injectez <code>AccountServiceBean</code> et <code>ConfigServiceBean</code> avec <code>@EJB</code>, renvoyez <code>named("ejb-container")</code> <code>up()</code> si les deux sont non nuls, <code>down()</code> sinon ou en cas d'exception.</span></li>
+          </ol>
+          <details class="lg-hint lg-hint--1">
+            <summary><span lang="en">Hint 1</span><span lang="fr">Indice 1</span></summary>
+            <div class="lg-hint-body"><p><span lang="en">Liveness answers "is the process alive and the database reachable?", readiness "are my components injected and ready for traffic?". Both are exposed under <code>/health/live</code> and <code>/health/ready</code>.</span><span lang="fr">La liveness répond à « le processus est-il vivant et la base joignable ? », la readiness à « mes composants sont-ils injectés et prêts à recevoir du trafic ? ». Les deux sont exposées sous <code>/health/live</code> et <code>/health/ready</code>.</span></p></div>
+          </details>
+          <details class="lg-hint lg-hint--2">
+            <summary><span lang="en">Hint 2 — signatures and API</span><span lang="fr">Indice 2 — signatures et API</span></summary>
+            <div class="lg-hint-body">
+<pre class="dark"><code>@Liveness
+@ApplicationScoped
+public class DatabaseHealthCheck implements HealthCheck {
+    @PersistenceContext(unitName = "bankingPU") private EntityManager em;
+
+    @Override public HealthCheckResponse call() {
+        try {
+            em.createNativeQuery("SELECT 1").getSingleResult();
+            return HealthCheckResponse.named("database-connection").up().build();
+        } catch (Exception e) {
+            return HealthCheckResponse.named("database-connection").down()
+                    .withData("error", e.getMessage()).build();
+        }
+    }
+}
+// EJBHealthCheck: @Readiness @ApplicationScoped, two @EJB fields, named("ejb-container")</code></pre>
+            </div>
+          </details>
+          <details class="lg-hint lg-hint--sol">
+            <summary><span lang="en">Solution files</span><span lang="fr">Fichiers solution</span></summary>
+            <div class="lg-hint-body"><p><a href="https://github.com/oplanson/esipe-javaee/blob/master/03-Labs/Lab04B-EJB/solution/src/main/java/com/bank/health/DatabaseHealthCheck.java"><code>DatabaseHealthCheck.java</code></a> &nbsp;&middot;&nbsp; <a href="https://github.com/oplanson/esipe-javaee/blob/master/03-Labs/Lab04B-EJB/solution/src/main/java/com/bank/health/EJBHealthCheck.java"><code>EJBHealthCheck.java</code></a></p></div>
+          </details>
+          <div class="lg-checkpoint">
+            <div class="lg-check-label"><span lang="en">Checkpoint</span><span lang="fr">Point de contrôle</span></div>
+            <pre class="dark"><code>grep -rn 'UnsupportedOperationException\|TODO' src/main/java</code></pre>
+            <p><span lang="en">Expected: No output: all 57 <code>TODO</code> markers of the starter are resolved.</span><span lang="fr">Résultat attendu : Aucune sortie : les 57 marqueurs <code>TODO</code> du starter sont résolus.</span></p>
+          </div>
+        </div>
+      </article>
+
+      <article class="lg-step" id="step-12">
+        <div class="lg-step-head">
+          <div class="lg-step-num">12</div>
+          <div>
+            <h3><span lang="en">Web layer: BankingServlet, JSP view, web.xml</span><span lang="fr">Couche web : BankingServlet, vue JSP, web.xml</span></h3>
+            <div class="lg-step-meta">
+              <span class="lg-chip">25 min</span>
+              <span class="lg-chip"><span lang="en">Course:</span><span lang="fr">Cours :</span> <a href="../../02-Lectures/slides/02-servlets/slides.html#slide-19"><span lang="en">Servlets, slide 19</span><span lang="fr">Servlets, slide 19</span></a> <a href="../../02-Lectures/slides/04b-ejb/slides.html#slide-44"><span lang="en">EJB, slide 44</span><span lang="fr">EJB, slide 44</span></a></span>
+            </div>
+          </div>
+        </div>
+        <div class="lg-step-body">
+          <p class="lg-files"><span lang="en">Files:</span><span lang="fr">Fichiers :</span> <span lang="en"><code>BankingServlet.java</code> (to modify) · <code>src/main/webapp/WEB-INF/views/banking.jsp</code> (to create) · <code>web.xml</code>, <code>index.html</code> (to check) · <code>src/main/webapp/WEB-INF/index.html</code> (to delete)</span><span lang="fr"><code>BankingServlet.java</code> (à modifier) · <code>src/main/webapp/WEB-INF/views/banking.jsp</code> (à créer) · <code>web.xml</code>, <code>index.html</code> (à vérifier) · <code>src/main/webapp/WEB-INF/index.html</code> (à supprimer)</span></p>
+          <div class="lg-task-label"><span lang="en">Task</span><span lang="fr">À faire</span></div>
+          <ol>
+            <li><span lang="en">The starter servlet writes HTML with <code>PrintWriter</code> and concatenates user input and exception messages: an XSS hole (documented in <code>XSS-SECURITY-FIX.md</code> of the solution). Rewrite <code>doGet</code> so that it only fills request attributes (<code>appName</code>, <code>appVersion</code>, <code>reportStats</code>, <code>successMessage</code> / <code>errorMessage</code>, <code>accounts</code>, <code>totalBalance</code>, <code>activeAccountCount</code>, <code>clients</code>) and forwards to <code>/WEB-INF/views/banking.jsp</code>.</span><span lang="fr">La servlet du starter écrit du HTML avec <code>PrintWriter</code> et concatène les saisies et les messages d'exception : une faille XSS (documentée dans <code>XSS-SECURITY-FIX.md</code> de la solution). Réécrivez <code>doGet</code> pour qu'elle remplisse seulement des attributs de requête (<code>appName</code>, <code>appVersion</code>, <code>reportStats</code>, <code>successMessage</code> / <code>errorMessage</code>, <code>accounts</code>, <code>totalBalance</code>, <code>activeAccountCount</code>, <code>clients</code>) puis redirige en interne vers <code>/WEB-INF/views/banking.jsp</code>.</span></li>
+            <li><span lang="en">Inject the four EJBs with <code>@EJB</code> (<code>AccountServiceBean</code>, <code>ClientServiceBean</code>, <code>ConfigServiceBean</code>, <code>ReportGeneratorBean</code>; drop the unused <code>TransactionBatchBean</code> import). Actions: <code>create</code> (default client via <code>ClientServiceBean</code>, then <code>createAccount(number, CHECKING, clientId)</code>), <code>deposit</code> (<code>accountId</code>, <code>amount</code>), <code>withdraw</code>, <code>transfer</code> (<code>fromId</code>, <code>toId</code>, <code>amount</code>), <code>clients</code>.</span><span lang="fr">Injectez les quatre EJB avec <code>@EJB</code> (<code>AccountServiceBean</code>, <code>ClientServiceBean</code>, <code>ConfigServiceBean</code>, <code>ReportGeneratorBean</code> ; supprimez l'import inutile de <code>TransactionBatchBean</code>). Actions : <code>create</code> (client par défaut via <code>ClientServiceBean</code>, puis <code>createAccount(number, CHECKING, clientId)</code>), <code>deposit</code> (<code>accountId</code>, <code>amount</code>), <code>withdraw</code>, <code>transfer</code> (<code>fromId</code>, <code>toId</code>, <code>amount</code>), <code>clients</code>.</span></li>
+            <li><span lang="en">Create <code>banking.jsp</code> with <code>&lt;%@ taglib prefix="c" uri="jakarta.tags.core" %&gt;</code> and <code>&lt;%@ taglib prefix="fmt" uri="jakarta.tags.fmt" %&gt;</code>: every dynamic value goes through <code>&lt;c:out&gt;</code>, the accounts table through <code>&lt;c:forEach&gt;</code>, amounts through <code>&lt;fmt:formatNumber&gt;</code>.</span><span lang="fr">Créez <code>banking.jsp</code> avec <code>&lt;%@ taglib prefix="c" uri="jakarta.tags.core" %&gt;</code> et <code>&lt;%@ taglib prefix="fmt" uri="jakarta.tags.fmt" %&gt;</code> : chaque valeur dynamique passe par <code>&lt;c:out&gt;</code>, le tableau des comptes par <code>&lt;c:forEach&gt;</code>, les montants par <code>&lt;fmt:formatNumber&gt;</code>.</span></li>
+            <li><span lang="en"><code>web.xml</code> and <code>index.html</code> are identical to the solution: keep them. Note that <code>web.xml</code> declares a BASIC <code>security-constraint</code> on <code>/banking</code>, which Liberty ignores while no <code>appSecurity</code> feature is enabled. Delete <code>src/main/webapp/WEB-INF/index.html</code> (a copy of <code>index.html</code> that is absent from the solution and never served).</span><span lang="fr"><code>web.xml</code> et <code>index.html</code> sont identiques à la solution : conservez-les. Notez que <code>web.xml</code> déclare une <code>security-constraint</code> BASIC sur <code>/banking</code>, ignorée par Liberty tant qu'aucune feature <code>appSecurity</code> n'est activée. Supprimez <code>src/main/webapp/WEB-INF/index.html</code> (une copie de <code>index.html</code>, absente de la solution et jamais servie).</span></li>
+          </ol>
+          <details class="lg-hint lg-hint--1">
+            <summary><span lang="en">Hint 1</span><span lang="fr">Indice 1</span></summary>
+            <div class="lg-hint-body"><p><span lang="en"><code>&lt;c:out&gt;</code> escapes <code>&lt;</code>, <code>&gt;</code>, <code>&amp;</code> and quotes. Test it later with <code>amount=&lt;script&gt;</code>: the page shows the escaped text, not a script.</span><span lang="fr"><code>&lt;c:out&gt;</code> échappe <code>&lt;</code>, <code>&gt;</code>, <code>&amp;</code> et les guillemets. Testez-le plus tard avec <code>amount=&lt;script&gt;</code> : la page affiche le texte échappé, pas un script.</span></p></div>
+          </details>
+          <details class="lg-hint lg-hint--2">
+            <summary><span lang="en">Hint 2 — signatures and API</span><span lang="fr">Indice 2 — signatures et API</span></summary>
+            <div class="lg-hint-body">
+<pre class="dark"><code>@WebServlet("/banking")
+public class BankingServlet extends HttpServlet {
+    @EJB private AccountServiceBean accountService;
+    @EJB private ClientServiceBean clientService;
+    @EJB private ConfigServiceBean configService;
+    @EJB private ReportGeneratorBean reportGenerator;
+
+    @Override protected void doGet(HttpServletRequest req, HttpServletResponse resp) {
+        req.setAttribute("appName", configService.getConfig("app.name"));
+        // ... handle ?action=create|deposit|withdraw|transfer|clients, set attributes ...
+        req.getRequestDispatcher("/WEB-INF/views/banking.jsp").forward(req, resp);
+    }
+}
+&lt;%-- banking.jsp --%&gt; &lt;c:out value="${errorMessage}"/&gt;</code></pre>
+            </div>
+          </details>
+          <details class="lg-hint lg-hint--sol">
+            <summary><span lang="en">Solution files</span><span lang="fr">Fichiers solution</span></summary>
+            <div class="lg-hint-body"><p><a href="https://github.com/oplanson/esipe-javaee/blob/master/03-Labs/Lab04B-EJB/solution/src/main/java/com/bank/web/BankingServlet.java"><code>BankingServlet.java</code></a> &nbsp;&middot;&nbsp; <a href="https://github.com/oplanson/esipe-javaee/blob/master/03-Labs/Lab04B-EJB/solution/src/main/webapp/WEB-INF/views/banking.jsp"><code>banking.jsp</code></a> &nbsp;&middot;&nbsp; <a href="https://github.com/oplanson/esipe-javaee/blob/master/03-Labs/Lab04B-EJB/solution/src/main/webapp/WEB-INF/web.xml"><code>web.xml</code></a> &nbsp;&middot;&nbsp; <a href="https://github.com/oplanson/esipe-javaee/blob/master/03-Labs/Lab04B-EJB/solution/src/main/webapp/index.html"><code>index.html</code></a> &nbsp;&middot;&nbsp; <a href="https://github.com/oplanson/esipe-javaee/blob/master/03-Labs/Lab04B-EJB/solution/XSS-SECURITY-FIX.md"><code>XSS-SECURITY-FIX.md</code></a></p></div>
+          </details>
+          <div class="lg-checkpoint">
+            <div class="lg-check-label"><span lang="en">Checkpoint</span><span lang="fr">Point de contrôle</span></div>
+            <pre class="dark"><code>mvn -q -DskipTests package &amp;&amp; ls target/banking-ejb-app.war</code></pre>
+            <p><span lang="en">Expected: The path <code>target/banking-ejb-app.war</code>. Then deploy with the commands of the Run section.</span><span lang="fr">Résultat attendu : Le chemin <code>target/banking-ejb-app.war</code>. Déployez ensuite avec les commandes de la section Exécution.</span></p>
+          </div>
+        </div>
+      </article>
+    </section>
+
+    <section class="lg-section" id="run">
+      <h2><span class="lg-sec-num">06</span><span lang="en">Run and operate</span><span lang="fr">Exécution</span></h2>
+      <table class="slide-table">
+        <thead><tr><th><span lang="en">Purpose</span><span lang="fr">Usage</span></th><th><span lang="en">Command</span><span lang="fr">Commande</span></th></tr></thead>
+        <tbody>
+          <tr><td><span lang="en">Build and start both containers</span><span lang="fr">Construire et démarrer les deux conteneurs</span></td><td><code>podman compose up -d --build</code></td></tr>
+          <tr><td><span lang="en">Follow Liberty logs</span><span lang="fr">Suivre les logs Liberty</span></td><td><code>podman logs -f lab04b-liberty</code></td></tr>
+          <tr><td><span lang="en">Inspect database rows</span><span lang="fr">Inspecter les lignes en base</span></td><td><code>podman exec lab04b-postgres psql -U bankuser -d bankingdb -c "SELECT id, account_number, balance FROM accounts ORDER BY id;"</code></td></tr>
+          <tr><td><span lang="en">Stop and clean up</span><span lang="fr">Arrêter et nettoyer</span></td><td><code>podman compose down</code> (<span lang="en">add</span><span lang="fr">ajoutez</span> <code>-v</code> <span lang="en">to delete the volume</span><span lang="fr">pour supprimer le volume</span>)</td></tr>
+        </tbody>
+      </table>
+      <table class="slide-table">
+        <thead><tr><th>URL</th><th><span lang="en">What you get</span><span lang="fr">Ce que vous obtenez</span></th></tr></thead>
+        <tbody>
+          <tr><td><a href="http://localhost:9080/">http://localhost:9080/</a></td><td><span lang="en">Home page</span><span lang="fr">Page d'accueil</span></td></tr>
+          <tr><td><a href="http://localhost:9080/banking">http://localhost:9080/banking</a></td><td><span lang="en">Accounts, clients and operations</span><span lang="fr">Comptes, clients et opérations</span></td></tr>
+          <tr><td><a href="http://localhost:9080/health">http://localhost:9080/health</a></td><td>MicroProfile Health</td></tr>
+          <tr><td><a href="http://localhost:9080/metrics">http://localhost:9080/metrics</a></td><td>MicroProfile Metrics</td></tr>
+          <tr><td><a href="http://localhost:9080/openapi">http://localhost:9080/openapi</a></td><td>OpenAPI</td></tr>
+        </tbody>
+      </table>
+      <div class="lg-callout lg-callout--warn">
+        <div lang="en"><div class="lg-callout-title">About the provided scripts</div><p>The lab folder contains <code>podman-test.sh</code> and <code>test-lab.sh</code>. Be careful: <code>podman-test.sh</code> <strong>stops and removes any container that already uses port 9080</strong>, runs <code>docker-compose down -v</code> and <code>podman volume prune -f</code> (which deletes every unused volume on your machine); <code>test-lab.sh</code> starts <code>mvn liberty:run</code> and a compose database. Prefer the explicit commands above.</p></div>
+        <div lang="fr"><div class="lg-callout-title">À propos des scripts fournis</div><p>Le dossier du lab contient <code>podman-test.sh</code> et <code>test-lab.sh</code>. Attention : <code>podman-test.sh</code> <strong>arrête et supprime tout conteneur qui utilise déjà le port 9080</strong>, exécute <code>docker-compose down -v</code> et <code>podman volume prune -f</code> (qui supprime tous les volumes inutilisés de votre machine) ; <code>test-lab.sh</code> lance <code>mvn liberty:run</code> et une base compose. Préférez les commandes explicites ci-dessus.</p></div>
+      </div>
+    </section>
+
+    <section class="lg-section" id="validate">
+      <h2><span class="lg-sec-num">07</span><span lang="en">Validate your work</span><span lang="fr">Valider votre travail</span></h2>
+      <p><span lang="en">Run these checks once the containers are up:</span><span lang="fr">Exécutez ces vérifications quand les conteneurs sont démarrés :</span></p>
+      <pre class="dark"><code>B=http://localhost:9080
+for u in "" banking health/live health/ready metrics openapi; do
+  printf "%-14s %s\n" "/$u" "$(curl -s -o /dev/null -w '%{http_code}' $B/$u)"; done
+curl -s "$B/banking?action=deposit&amp;accountId=1&amp;amount=100"        | grep -E 'class="(success|error)"&gt;'
+curl -s "$B/banking?action=withdraw&amp;accountId=1&amp;amount=999999"    | grep -E 'class="(success|error)"&gt;'
+curl -s "$B/banking?action=transfer&amp;fromId=1&amp;toId=2&amp;amount=50"    | grep -E 'class="(success|error)"&gt;'
+curl -s "$B/banking?action=transfer&amp;fromId=1&amp;toId=999&amp;amount=50"  | grep -E 'class="(success|error)"&gt;'
+podman exec lab04b-postgres psql -U bankuser -d bankingdb -c "SELECT id, balance FROM accounts WHERE id IN (1,2) ORDER BY id;" </code></pre>
+      <table class="slide-table">
+        <thead><tr><th><span lang="en">Check</span><span lang="fr">Contrôle</span></th><th><span lang="en">Expected result</span><span lang="fr">Résultat attendu</span></th></tr></thead>
+        <tbody>
+          <tr><td><span lang="en">Six URLs</span><span lang="fr">Six URL</span></td><td><span lang="en"><code>200</code> for each</span><span lang="fr"><code>200</code> pour chacune</span></td></tr>
+          <tr><td><code>/health/live</code>, <code>/health/ready</code></td><td><code>"status":"UP"</code></td></tr>
+          <tr><td><span lang="en">Deposit</span><span lang="fr">Dépôt</span></td><td><span lang="en"><code>Deposit successful: $100</code></span><span lang="fr"><code>Deposit successful: $100</code></span></td></tr>
+          <tr><td><span lang="en">Withdrawal above the balance</span><span lang="fr">Retrait supérieur au solde</span></td><td><span lang="en">error <code>Insufficient funds</code>, balance unchanged (rollback)</span><span lang="fr">erreur <code>Insufficient funds</code>, solde inchangé (rollback)</span></td></tr>
+          <tr><td><span lang="en">Transfer 1 → 2 of 50</span><span lang="fr">Virement 1 → 2 de 50</span></td><td><span lang="en">success; account 1 is 50 lower and account 2 is 50 higher</span><span lang="fr">succès ; le compte 1 baisse de 50 et le compte 2 augmente de 50</span></td></tr>
+          <tr><td><span lang="en">Transfer to account 999</span><span lang="fr">Virement vers le compte 999</span></td><td><span lang="en">error <code>Destination account not found: 999</code>, nothing written</span><span lang="fr">erreur <code>Destination account not found: 999</code>, rien d'écrit</span></td></tr>
+        </tbody>
+      </table>
+      <h3><span lang="en">Validation checklist</span><span lang="fr">Checklist de validation</span></h3>
+      <ul class="lg-checklist">
+        <li><label><input type="checkbox"/><span lang="en">Flyway applies 3 migrations at startup (<code>3 migration(s) applied</code> in the logs)</span><span lang="fr">Flyway applique 3 migrations au démarrage (<code>3 migration(s) applied</code> dans les logs)</span></label></li>
+        <li><label><input type="checkbox"/><span lang="en"><code>ConfigService initialized successfully</code> appears once (singleton <code>@Startup</code>)</span><span lang="fr"><code>ConfigService initialized successfully</code> apparaît une fois (singleton <code>@Startup</code>)</span></label></li>
+        <li><label><input type="checkbox"/><span lang="en"><code>/banking</code> shows 8 accounts, total balance <code>109500.00</code>, <code>Daily Reports: 0, Hourly Reports: 0</code></span><span lang="fr"><code>/banking</code> affiche 8 comptes, un solde total de <code>109500.00</code>, <code>Daily Reports: 0, Hourly Reports: 0</code></span></label></li>
+        <li><label><input type="checkbox"/><span lang="en">A failed operation leaves balances and the <code>transactions</code> table unchanged</span><span lang="fr">Une opération en échec laisse les soldes et la table <code>transactions</code> inchangés</span></label></li>
+        <li><label><input type="checkbox"/><span lang="en"><code>amount=&lt;script&gt;</code> is displayed escaped, never executed</span><span lang="fr"><code>amount=&lt;script&gt;</code> est affiché échappé, jamais exécuté</span></label></li>
+        <li><label><input type="checkbox"/><span lang="en">Optional, with the helper servlet of the bonus: a message <code>EMAIL|alice@example.com|Welcome|Hello</code> logs <code>Notification processed successfully: EMAIL</code></span><span lang="fr">Facultatif, avec la servlet auxiliaire du bonus : un message <code>EMAIL|alice@example.com|Welcome|Hello</code> journalise <code>Notification processed successfully: EMAIL</code></span></label></li>
+        <li><label><input type="checkbox"/><span lang="en">Optional: a 1000 ms custom timer logs <code>Timer expired: ...</code>, and a stateful batch returns <code>committed=2</code></span><span lang="fr">Facultatif : un timer personnalisé de 1000 ms journalise <code>Timer expired: ...</code>, et un lot stateful renvoie <code>committed=2</code></span></label></li>
+      </ul>
+    </section>
+
+    <section class="lg-section" id="compare">
+      <h2><span class="lg-sec-num">08</span><span lang="en">Compare with the solution</span><span lang="fr">Comparer à la solution</span></h2>
+      <p><span lang="en">To compare your work with the reference solution:</span><span lang="fr">Pour comparer votre travail à la solution de référence :</span></p>
+      <pre class="dark"><code>cd 03-Labs/Lab04B-EJB
+diff -rq starter solution -x target -x postgresql -x docs
+diff -u solution/src/main/java/com/bank/ejb/AccountServiceBean.java \
+        starter/src/main/java/com/bank/ejb/AccountServiceBean.java</code></pre>
+      <h3><span lang="en">Differences that are expected</span><span lang="fr">Différences attendues</span></h3>
+      <ul>
+        <li><span lang="en"><code>server.xml</code>: your <code>jndiName="jms/notificationQueue"</code> and the added <code>jmsActivationSpec</code>; no <code>quickStartSecurity</code>.</span><span lang="fr"><code>server.xml</code> : votre <code>jndiName="jms/notificationQueue"</code> et la <code>jmsActivationSpec</code> ajoutée ; pas de <code>quickStartSecurity</code>.</span></li><li><span lang="en"><code>ReportGeneratorBean.java</code>: non-persistent <code>TimerConfig</code> and <code>createSingleActionTimer</code>.</span><span lang="fr"><code>ReportGeneratorBean.java</code> : <code>TimerConfig</code> non persistant et <code>createSingleActionTimer</code>.</span></li><li><span lang="en"><code>docker-compose.yml</code>: ports prefixed by <code>127.0.0.1:</code>, no <code>version:</code> line.</span><span lang="fr"><code>docker-compose.yml</code> : ports préfixés par <code>127.0.0.1:</code>, pas de ligne <code>version:</code>.</span></li><li><span lang="en"><code>solution/docs/</code>, <code>solution/postgresql/</code> (about 250 downloaded JARs) and <code>solution/XSS-SECURITY-FIX.md</code> are documentation and build outputs, not part of your project.</span><span lang="fr"><code>solution/docs/</code>, <code>solution/postgresql/</code> (environ 250 JARs téléchargés) et <code>solution/XSS-SECURITY-FIX.md</code> sont de la documentation et des résultats de build, pas votre projet.</span></li>
+      </ul>
+    </section>
+
+    <section class="lg-section" id="trouble">
+      <h2><span class="lg-sec-num">09</span><span lang="en">Troubleshooting</span><span lang="fr">Dépannage</span></h2>
+      <table class="slide-table">
+        <thead><tr><th><span lang="en">Symptom</span><span lang="fr">Symptôme</span></th><th><span lang="en">Cause and fix</span><span lang="fr">Cause et correction</span></th></tr></thead>
+        <tbody>
+          <tr><td><code>AccountType is not public in com.bank.model</code></td><td><span lang="en">Package-private enums still declared in <code>Account.java</code>; do step 2.</span><span lang="fr">Enums non publics encore déclarés dans <code>Account.java</code> ; faites l'étape 2.</span></td></tr>
+          <tr><td><code>Unable to resolve location classpath:db/migration</code></td><td><span lang="en">The empty <code>flyway.location</code> marker files are missing (step 3); the database stays empty and <code>relation "accounts" does not exist</code> follows.</span><span lang="fr">Les fichiers marqueurs vides <code>flyway.location</code> manquent (étape 3) ; la base reste vide et <code>relation "accounts" does not exist</code> suit.</span></td></tr>
+          <tr><td><code>CNTR4016W … jms/notificationQueue destination is not available</code></td><td><span lang="en">The JNDI name in <code>server.xml</code> differs from the MDB (<code>jms/NotificationQueue</code>); fix the case (step 4).</span><span lang="fr">Le nom JNDI de <code>server.xml</code> diffère de celui du MDB (<code>jms/NotificationQueue</code>) ; corrigez la casse (étape 4).</span></td></tr>
+          <tr><td><code>CNTR4015W … activation specification is not available</code></td><td><span lang="en">Add <code>&lt;jmsActivationSpec id="banking-ejb-app/NotificationMDB"&gt;</code> (step 4).</span><span lang="fr">Ajoutez <code>&lt;jmsActivationSpec id="banking-ejb-app/NotificationMDB"&gt;</code> (étape 4).</span></td></tr>
+          <tr><td><code>CNTR4019E Persistent timers cannot be created</code></td><td><span lang="en">Use <code>new TimerConfig(info, false)</code> and <code>createSingleActionTimer</code> (step 10).</span><span lang="fr">Utilisez <code>new TimerConfig(info, false)</code> et <code>createSingleActionTimer</code> (étape 10).</span></td></tr>
+          <tr><td><code>NoSuchEJBException: Stateful bean … was removed or timed out</code></td><td><span lang="en">The instance was removed by <code>@Remove</code>, by a timeout, or discarded after a system exception during <code>commit()</code>. Look up a new instance.</span><span lang="fr">L'instance a été supprimée par <code>@Remove</code>, par un timeout, ou détruite après une exception système pendant <code>commit()</code>. Obtenez une nouvelle instance.</span></td></tr>
+          <tr><td><code>null value in column "client_id"</code></td><td><span lang="en">You used a <code>createAccount</code> without client; use the 3-argument version (step 5).</span><span lang="fr">Vous avez utilisé un <code>createAccount</code> sans client ; utilisez la version à 3 arguments (étape 5).</span></td></tr>
+          <tr><td><code>cannot bind tcp port :9080: address already in use</code></td><td><span lang="en">Another container or process uses the port: <code>podman ps</code>, <code>podman compose down</code>, then retry.</span><span lang="fr">Un autre conteneur ou processus utilise le port : <code>podman ps</code>, <code>podman compose down</code>, puis réessayez.</span></td></tr>
+          <tr><td>Data disappears after a restart</td><td><span lang="en">Expected: <code>DatabaseMigrationStartup</code> calls <code>flyway.clean()</code> at each start (lab only).</span><span lang="fr">Normal : <code>DatabaseMigrationStartup</code> appelle <code>flyway.clean()</code> à chaque démarrage (lab uniquement).</span></td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section class="lg-section" id="bonus">
+      <h2><span class="lg-sec-num">10</span><span lang="en">Go further</span><span lang="fr">Pour aller plus loin</span></h2>
+      <ul>
+        <li><span lang="en"><strong>Drive the batch, the MDB and the timers.</strong> Write a small helper servlet (not part of the solution) that looks up <code>java:module/TransactionBatchBean</code>, sends a <code>TextMessage</code> to <code>jms/notificationQueue</code> through <code>JMSContext</code>, and calls <code>createCustomTimer(1000, ...)</code>; check the logs.</span><span lang="fr"><strong>Pilotez le lot, le MDB et les timers.</strong> Écrivez une petite servlet auxiliaire (hors solution) qui obtient <code>java:module/TransactionBatchBean</code>, envoie un <code>TextMessage</code> vers <code>jms/notificationQueue</code> via <code>JMSContext</code>, et appelle <code>createCustomTimer(1000, ...)</code> ; vérifiez les logs.</span></li><li><span lang="en"><strong>Enforce the roles.</strong> Add <code>appSecurity-5.0</code>, a <code>basicRegistry</code> with hashed passwords (<code>securityUtility encode</code>) and an <code>application-bnd</code> mapping <code>admin</code>, <code>teller</code>, <code>customer</code>; a <code>customer</code> deposit then fails with <code>CWWKS9400A</code>.</span><span lang="fr"><strong>Appliquez les rôles.</strong> Ajoutez <code>appSecurity-5.0</code>, un <code>basicRegistry</code> avec mots de passe hachés (<code>securityUtility encode</code>) et un <code>application-bnd</code> qui associe <code>admin</code>, <code>teller</code>, <code>customer</code> ; un dépôt par <code>customer</code> échoue alors avec <code>CWWKS9400A</code>.</span></li><li><span lang="en"><strong>Asynchronous methods.</strong> Add <code>@Asynchronous</code> to a report method returning <code>Future&lt;String&gt;</code> (the README promises it, <a href="../../02-Lectures/slides/04b-ejb/slides.html#slide-76">slide 76</a>).</span><span lang="fr"><strong>Méthodes asynchrones.</strong> Ajoutez <code>@Asynchronous</code> à une méthode de rapport qui renvoie <code>Future&lt;String&gt;</code> (le README le promet, <a href="../../02-Lectures/slides/04b-ejb/slides.html#slide-76">slide 76</a>).</span></li><li><span lang="en"><strong>EJB vs CDI.</strong> Rewrite <code>ConfigServiceBean</code> as an <code>@ApplicationScoped</code> CDI bean and list what you lose (<a href="../../02-Lectures/slides/04b-ejb/slides.html#slide-83">slide 83</a>).</span><span lang="fr"><strong>EJB ou CDI.</strong> Réécrivez <code>ConfigServiceBean</code> en bean CDI <code>@ApplicationScoped</code> et listez ce que vous perdez (<a href="../../02-Lectures/slides/04b-ejb/slides.html#slide-83">slide 83</a>).</span></li>
+      </ul>
+      <div class="lg-callout lg-callout--tip">
+        <div lang="en"><div class="lg-callout-title">Next</div><p>Lab 05 turns the banking services into a REST API with JAX-RS, building on the solution of Lab 04.</p></div>
+        <div lang="fr"><div class="lg-callout-title">Suite</div><p>Le Lab 05 transforme les services bancaires en API REST avec JAX-RS, en partant de la solution du Lab 04.</p></div>
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<footer class="site-footer">Made with IBM Bob &nbsp;&middot;&nbsp; &copy; 2026 Olivier Planson</footer>
+</body>
+</html>

@@ -1,0 +1,1591 @@
+<!-- © Copyright 2026 Olivier Planson. All rights reserved. Reproduction prohibited. Made with IBM Bob. -->
+<!DOCTYPE html>
+<html lang="fr" data-lang="fr">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title data-title-en="ESIPE — Lab 04: CDI and Dependency Injection — Lab guide" data-title-fr="ESIPE — Lab 04 : CDI et injection de dépendances — Guide du lab">ESIPE — Lab 04 : CDI et injection de dépendances — Guide du lab</title>
+  <link rel="stylesheet" href="assets/slide.css"/>
+  <link rel="stylesheet" href="assets/lab-guide.css"/>
+  <script src="assets/lab-guide.js"></script>
+</head>
+<body>
+<header class="site-header">
+  <a class="brand" href="index.html">ESIPE<span>Jakarta EE &amp; Microservices — Labs</span></a>
+  <div class="lang-toggle" id="lang-toggle">
+    <button type="button" id="btn-en" data-set-lang="en">EN</button>
+    <span class="sep">|</span>
+    <button type="button" id="btn-fr" data-set-lang="fr" class="active">FR</button>
+  </div>
+  <a class="back-link" href="index.html">&#8592; Labs</a>
+  <a class="back-link" href="../index.html"><span lang="en">Course site</span><span lang="fr">Site du cours</span></a>
+</header>
+
+<div class="lg-shell">
+
+  <nav class="lg-toc" aria-label="Table of contents">
+    <div class="lg-toc-title"><span lang="en">In this guide</span><span lang="fr">Dans ce guide</span></div>
+    <a href="#hero"><span lang="en">Overview</span><span lang="fr">Vue d'ensemble</span></a>
+    <a href="#goal"><span lang="en">1. Goal</span><span lang="fr">1. Objectif</span></a>
+    <a href="#starter"><span lang="en">2. What the starter gives you</span><span lang="fr">2. Ce que fournit le starter</span></a>
+    <a href="#target"><span lang="en">3. Target structure</span><span lang="fr">3. Structure cible</span></a>
+    <a href="#setup"><span lang="en">4. Setup</span><span lang="fr">4. Préparation</span></a>
+    <a href="#steps"><span lang="en">5. Step by step</span><span lang="fr">5. Pas à pas</span></a>
+    <a class="sub" href="#step-1"><span lang="en">1 · Start from the Lab 03 solution &amp; clean up</span><span lang="fr">1 · Partir de la solution du Lab 03 &amp; nettoyer</span></a>
+    <a class="sub" href="#step-2"><span lang="en">2 · Enable CDI &amp; reconfigure Liberty</span><span lang="fr">2 · Activer CDI &amp; reconfigurer Liberty</span></a>
+    <a class="sub" href="#step-3"><span lang="en">3 · Switch JPA to JTA</span><span lang="fr">3 · Passer JPA en JTA</span></a>
+    <a class="sub" href="#step-4"><span lang="en">4 · Producer methods: EntityManager &amp; Logger</span><span lang="fr">4 · Méthodes productrices : EntityManager &amp; Logger</span></a>
+    <a class="sub" href="#step-5"><span lang="en">5 · Premium clients: V4 migration &amp; entity</span><span lang="fr">5 · Clients premium : migration V4 &amp; entité</span></a>
+    <a class="sub" href="#step-6"><span lang="en">6 · ClientService with CDI &amp; @Transactional</span><span lang="fr">6 · ClientService avec CDI &amp; @Transactional</span></a>
+    <a class="sub" href="#step-7"><span lang="en">7 · ClientController: @Inject &amp; @ConfigProperty</span><span lang="fr">7 · ClientController : @Inject &amp; @ConfigProperty</span></a>
+    <a class="sub" href="#step-8"><span lang="en">8 · Premium in the JSP views &amp; first run</span><span lang="fr">8 · Premium dans les vues JSP &amp; premier lancement</span></a>
+    <a class="sub" href="#step-9"><span lang="en">9 · Interceptor: @Logged</span><span lang="fr">9 · Intercepteur : @Logged</span></a>
+    <a class="sub" href="#step-10"><span lang="en">10 · Qualifiers: Premium &amp; Standard notifications</span><span lang="fr">10 · Qualifiers : notifications Premium &amp; Standard</span></a>
+    <a class="sub" href="#step-11"><span lang="en">11 · CDI events &amp; observers</span><span lang="fr">11 · Événements CDI &amp; observers</span></a>
+    <a class="sub" href="#step-12"><span lang="en">12 · Accounts: AccountService, AccountController &amp; views</span><span lang="fr">12 · Comptes : AccountService, AccountController &amp; vues</span></a>
+    <a class="sub" href="#step-13"><span lang="en">13 · Bean-managed transactions (UserTransaction)</span><span lang="fr">13 · Transactions gérées par le bean (UserTransaction)</span></a>
+    <a class="sub" href="#step-14"><span lang="en">14 · Test servlet &amp; home page</span><span lang="fr">14 · Servlet de test &amp; page d'accueil</span></a>
+    <a class="sub" href="#step-15"><span lang="en">15 · Package &amp; run the container</span><span lang="fr">15 · Packager &amp; lancer le conteneur</span></a>
+    <a href="#run"><span lang="en">6. Run</span><span lang="fr">6. Exécution</span></a>
+    <a href="#validate"><span lang="en">7. Validate</span><span lang="fr">7. Validation</span></a>
+    <a href="#compare"><span lang="en">8. Compare with solution</span><span lang="fr">8. Comparer à la solution</span></a>
+    <a href="#trouble"><span lang="en">9. Troubleshooting</span><span lang="fr">9. Dépannage</span></a>
+    <a href="#bonus"><span lang="en">10. Go further</span><span lang="fr">10. Pour aller plus loin</span></a>
+  </nav>
+
+  <main class="lg-main">
+
+    <!-- ═════════════ HERO ═════════════ -->
+    <section class="lg-hero" id="hero">
+      <div class="lg-kicker">Lab 04</div>
+      <h1><span lang="en">CDI &amp; Dependency Injection</span><span lang="fr">CDI et injection de dépendances</span></h1>
+      <p class="lg-lead">
+        <span lang="en">Refactor the Lab 03 banking application: replace Singletons and manual transactions with CDI beans, producers, qualifiers, interceptors, events, <code>@Transactional</code> and bean-managed <code>UserTransaction</code> on Open Liberty.</span>
+        <span lang="fr">Refactorez l'application bancaire du Lab 03 : remplacez les Singletons et les transactions manuelles par des beans CDI, des producers, des qualifiers, des intercepteurs, des événements, <code>@Transactional</code> et <code>UserTransaction</code> géré par le bean sur Open Liberty.</span>
+      </p>
+      <div class="badge-row">
+        <span class="badge badge-blue">Jakarta EE 10</span>
+        <span class="badge badge-teal">CDI 4.0</span>
+        <span class="badge badge-green">JTA</span>
+        <span class="badge badge-purple">MicroProfile Config</span>
+        <span class="badge badge-warm">Open Liberty</span>
+      </div>
+      <div class="lg-facts">
+        <div><strong><span lang="en">about 4.5 hours</span><span lang="fr">environ 4 h 30</span></strong><span lang="en">Duration</span><span lang="fr">Durée</span></div>
+        <div><strong><span lang="en">Intermediate to advanced</span><span lang="fr">Intermédiaire à avancé</span></strong><span lang="en">Level</span><span lang="fr">Niveau</span></div>
+        <div><strong>JDK 17+ · Maven · Podman</strong><span lang="en">Prerequisites</span><span lang="fr">Prérequis</span></div>
+        <div><strong>http://localhost:9080/</strong><span lang="en">Application URL</span><span lang="fr">URL de l'application</span></div>
+      </div>
+      <div class="lg-hero-links">
+        <a href="../../02-Lectures/slides/04-cdi/slides.html#slide-1"><span lang="en">Course slides (CDI)</span><span lang="fr">Slides du cours (CDI)</span></a>
+        <a class="secondary" href="../04-cdi/index.html"><span lang="en">Course page</span><span lang="fr">Page du cours</span></a>
+        <a class="secondary" href="https://github.com/oplanson/esipe-javaee/blob/master/03-Labs/Lab04-CDI/README.md"><span lang="en">Original README</span><span lang="fr">README d'origine</span></a>
+        <a class="secondary" href="https://github.com/oplanson/esipe-javaee/tree/master/03-Labs/Lab04-CDI/solution"><span lang="en">Solution folder</span><span lang="fr">Dossier solution</span></a>
+      </div>
+    </section>
+
+    <!-- ═════════════ 1. GOAL ═════════════ -->
+    <section class="lg-section" id="goal">
+      <h2><span class="lg-sec-num">01</span><span lang="en">Goal of the lab</span><span lang="fr">Objectif du lab</span></h2>
+      <p>
+        <span lang="en">In Lab 03, <code>ClientService</code> was a Singleton that created its own <code>EntityManager</code> and managed every <code>EntityTransaction</code> by hand, and <code>ClientController</code> obtained it with <code>getInstance()</code>. In this lab, the container creates and wires the objects: you enable CDI, switch JPA to JTA, inject dependencies with <code>@Inject</code>, make transactions declarative with <code>@Transactional</code>, add a logging interceptor, two qualified notification services, CDI events, an account management feature, and finally programmatic transactions with <code>UserTransaction</code>.</span>
+        <span lang="fr">Dans le Lab 03, <code>ClientService</code> était un Singleton qui créait son propre <code>EntityManager</code> et gérait chaque <code>EntityTransaction</code> à la main, et <code>ClientController</code> l'obtenait par <code>getInstance()</code>. Dans ce lab, c'est le conteneur qui crée et relie les objets : vous activez CDI, faites passer JPA en JTA, injectez les dépendances avec <code>@Inject</code>, rendez les transactions déclaratives avec <code>@Transactional</code>, ajoutez un intercepteur de logs, deux services de notification qualifiés, des événements CDI, une gestion des comptes, et enfin des transactions programmatiques avec <code>UserTransaction</code>.</span>
+      </p>
+
+      <h3><span lang="en">What the finished application exposes</span><span lang="fr">Ce que l'application terminée expose</span></h3>
+      <table class="slide-table">
+        <thead><tr>
+          <th>URL</th>
+          <th><span lang="en">Served by</span><span lang="fr">Servi par</span></th>
+          <th><span lang="en">Behaviour</span><span lang="fr">Comportement</span></th>
+        </tr></thead>
+        <tbody>
+          <tr><td><code>/</code></td><td><code>index.html</code></td><td><span lang="en">Home page with CDI feature list and link to the transaction tests</span><span lang="fr">Page d'accueil avec la liste des fonctionnalités CDI et le lien vers les tests de transactions</span></td></tr>
+          <tr><td><code>/clients</code>, <code>/client?action=…</code></td><td><code>ClientController</code></td><td><span lang="en">Client CRUD with a PREMIUM / STANDARD status; creating a client fires a CDI event</span><span lang="fr">CRUD des clients avec un statut PREMIUM / STANDARD ; la création d'un client publie un événement CDI</span></td></tr>
+          <tr><td><code>/accounts</code>, <code>/account?action=…</code></td><td><code>AccountController</code></td><td><span lang="en">Account list, view, create, edit, delete, deposit, withdraw, transfer; calls are logged by <code>@Logged</code></span><span lang="fr">Liste, détail, création, édition, suppression, dépôt, retrait, virement de comptes ; les appels sont journalisés par <code>@Logged</code></span></td></tr>
+          <tr><td><code>/test-transactions?test=batch|comparison|timeout</code></td><td><code>TransactionTestServlet</code></td><td><span lang="en">Bean-managed transaction demos: batch with partial success, CMT vs BMT, timeouts</span><span lang="fr">Démos de transactions gérées par le bean : lot avec succès partiel, CMT vs BMT, timeouts</span></td></tr>
+          <tr><td><code>/health</code>, <code>/metrics</code></td><td>Open Liberty <span class="lg-tag lg-tag--chg">MicroProfile</span></td><td><span lang="en">Liveness (native SQL probe), readiness, metrics</span><span lang="fr">Liveness (sonde SQL native), readiness, métriques</span></td></tr>
+        </tbody>
+      </table>
+      <p>
+        <span lang="en"><code>/validate-transaction</code> (Lab 03 JNDI validator) and <code>/openapi</code> no longer exist in the Lab 04 solution and answer <code>404</code>.</span>
+        <span lang="fr"><code>/validate-transaction</code> (validateur JNDI du Lab 03) et <code>/openapi</code> n'existent plus dans la solution du Lab 04 et répondent <code>404</code>.</span>
+      </p>
+
+      <h3><span lang="en">Concepts you practise</span><span lang="fr">Concepts mis en pratique</span></h3>
+      <ul>
+        <li>
+          <span lang="en">Bean scopes: <code>@ApplicationScoped</code>, <code>@RequestScoped</code> — <a href="../../02-Lectures/slides/04-cdi/slides.html#slide-12">slide 12</a>, <a href="../../02-Lectures/slides/04-cdi/slides.html#slide-13">slide 13</a></span>
+          <span lang="fr">Portées de beans : <code>@ApplicationScoped</code>, <code>@RequestScoped</code> — <a href="../../02-Lectures/slides/04-cdi/slides.html#slide-12">slide 12</a>, <a href="../../02-Lectures/slides/04-cdi/slides.html#slide-13">slide 13</a></span>
+        </li>
+        <li>
+          <span lang="en">Dependency injection with <code>@Inject</code> in beans and servlets — <a href="../../02-Lectures/slides/04-cdi/slides.html#slide-18">slide 18</a></span>
+          <span lang="fr">Injection de dépendances avec <code>@Inject</code> dans les beans et les servlets — <a href="../../02-Lectures/slides/04-cdi/slides.html#slide-18">slide 18</a></span>
+        </li>
+        <li>
+          <span lang="en">Producer methods: <code>@Produces</code>, <code>InjectionPoint</code> — <a href="../../02-Lectures/slides/04-cdi/slides.html#slide-25">slide 25</a>, <a href="../../02-Lectures/slides/04-cdi/slides.html#slide-42">slide 42</a></span>
+          <span lang="fr">Méthodes productrices : <code>@Produces</code>, <code>InjectionPoint</code> — <a href="../../02-Lectures/slides/04-cdi/slides.html#slide-25">slide 25</a>, <a href="../../02-Lectures/slides/04-cdi/slides.html#slide-42">slide 42</a></span>
+        </li>
+        <li>
+          <span lang="en">Qualifiers: <code>@Premium</code> and <code>@Standard</code> — <a href="../../02-Lectures/slides/04-cdi/slides.html#slide-20">slide 20</a>, <a href="../../02-Lectures/slides/04-cdi/slides.html#slide-21">slide 21</a>, <a href="../../02-Lectures/slides/04-cdi/slides.html#slide-22">slide 22</a></span>
+          <span lang="fr">Qualifiers : <code>@Premium</code> et <code>@Standard</code> — <a href="../../02-Lectures/slides/04-cdi/slides.html#slide-20">slide 20</a>, <a href="../../02-Lectures/slides/04-cdi/slides.html#slide-21">slide 21</a>, <a href="../../02-Lectures/slides/04-cdi/slides.html#slide-22">slide 22</a></span>
+        </li>
+        <li>
+          <span lang="en">Interceptors: <code>@InterceptorBinding</code>, <code>@AroundInvoke</code> — <a href="../../02-Lectures/slides/04-cdi/slides.html#slide-30">slide 30</a>, <a href="../../02-Lectures/slides/04-cdi/slides.html#slide-31">slide 31</a>, <a href="../../02-Lectures/slides/04-cdi/slides.html#slide-32">slide 32</a></span>
+          <span lang="fr">Intercepteurs : <code>@InterceptorBinding</code>, <code>@AroundInvoke</code> — <a href="../../02-Lectures/slides/04-cdi/slides.html#slide-30">slide 30</a>, <a href="../../02-Lectures/slides/04-cdi/slides.html#slide-31">slide 31</a>, <a href="../../02-Lectures/slides/04-cdi/slides.html#slide-32">slide 32</a></span>
+        </li>
+        <li>
+          <span lang="en">Declarative transactions: <code>@Transactional</code>, <code>TxType</code>, JTA persistence unit — <a href="../../02-Lectures/slides/04-cdi/slides.html#slide-37">slide 37</a>, <a href="../../02-Lectures/slides/04-cdi/slides.html#slide-38">slide 38</a>, <a href="../../02-Lectures/slides/04-cdi/slides.html#slide-41">slide 41</a></span>
+          <span lang="fr">Transactions déclaratives : <code>@Transactional</code>, <code>TxType</code>, unité de persistance JTA — <a href="../../02-Lectures/slides/04-cdi/slides.html#slide-37">slide 37</a>, <a href="../../02-Lectures/slides/04-cdi/slides.html#slide-38">slide 38</a>, <a href="../../02-Lectures/slides/04-cdi/slides.html#slide-41">slide 41</a></span>
+        </li>
+        <li>
+          <span lang="en">Bean-managed transactions: <code>UserTransaction</code>, CMT vs BMT, timeouts — <a href="../../02-Lectures/slides/04-cdi/slides.html#slide-44">slide 44</a>, <a href="../../02-Lectures/slides/04-cdi/slides.html#slide-45">slide 45</a>, <a href="../../02-Lectures/slides/04-cdi/slides.html#slide-46">slide 46</a>, <a href="../../02-Lectures/slides/04-cdi/slides.html#slide-52">slide 52</a></span>
+          <span lang="fr">Transactions gérées par le bean : <code>UserTransaction</code>, CMT vs BMT, timeouts — <a href="../../02-Lectures/slides/04-cdi/slides.html#slide-44">slide 44</a>, <a href="../../02-Lectures/slides/04-cdi/slides.html#slide-45">slide 45</a>, <a href="../../02-Lectures/slides/04-cdi/slides.html#slide-46">slide 46</a>, <a href="../../02-Lectures/slides/04-cdi/slides.html#slide-52">slide 52</a></span>
+        </li>
+        <li>
+          <span lang="en">CDI events: <code>Event.fire()</code> and <code>@Observes</code> — <a href="../../02-Lectures/slides/04-cdi/slides.html#slide-60">slide 60</a>, <a href="../../02-Lectures/slides/04-cdi/slides.html#slide-61">slide 61</a></span>
+          <span lang="fr">Événements CDI : <code>Event.fire()</code> et <code>@Observes</code> — <a href="../../02-Lectures/slides/04-cdi/slides.html#slide-60">slide 60</a>, <a href="../../02-Lectures/slides/04-cdi/slides.html#slide-61">slide 61</a></span>
+        </li>
+      </ul>
+    </section>
+
+    <!-- ═════════════ 2. STARTER ═════════════ -->
+    <section class="lg-section" id="starter">
+      <h2><span class="lg-sec-num">02</span><span lang="en">What the starter gives you</span><span lang="fr">Ce que fournit le starter</span></h2>
+      <p>
+        <span lang="en">The folder <code>03-Labs/Lab04-CDI/starter/</code> contains <strong>no file at all</strong>: only an empty directory tree. As for Labs 05 to 07, the real starting point is <strong>the solution of the previous lab</strong>. You copy it into <code>starter/</code> with the exact command below, then transform it step by step into the Lab 04 solution.</span>
+        <span lang="fr">Le dossier <code>03-Labs/Lab04-CDI/starter/</code> ne contient <strong>aucun fichier</strong> : seulement une arborescence vide. Comme pour les Labs 05 à 07, le vrai point de départ est <strong>la solution du lab précédent</strong>. Vous la copiez dans <code>starter/</code> avec la commande exacte ci-dessous, puis vous la transformez étape par étape en solution du Lab 04.</span>
+      </p>
+      <pre class="dark"><code>cd 03-Labs
+cp -R Lab03-JPA/solution/src Lab03-JPA/solution/pom.xml \
+      Lab03-JPA/solution/Containerfile Lab03-JPA/solution/docker-compose.yml \
+      Lab04-CDI/starter/
+cd Lab04-CDI/starter</code></pre>
+
+      <div class="lg-callout lg-callout--warn">
+        <div lang="en"><div class="lg-callout-title">Discrepancies between the README, the scripts and the real code</div><p>This guide follows <code>diff -r Lab03-JPA/solution Lab04-CDI/solution</code> and the real files, not the <a href="https://github.com/oplanson/esipe-javaee/blob/master/03-Labs/Lab04-CDI/README.md">README</a>. Findings: (1) <code>starter/</code> is empty although the README announces a starting point. (2) The README step 3 lists <code>cdi-4.0</code> and <code>transaction-2.0</code>; the solution uses <code>webProfile-10.0</code>, and the solution comment "CDI is enabled when the cdi-4.0 feature is present" is stale. (3) The comment in <code>bootstrap.properties</code> says Liberty turns <code>db_host</code> into <code>db.host</code>; in our container test the lowercase keys were <strong>not</strong> resolved (<code>CWWKG0075E ${db.port} is not a number</code>), so the guide passes <code>DB_*</code> environment variables. (4) README Part E uses <code>/banking/test-transactions</code>, <code>/banking/api/accounts/1/transfer</code> and <code>/test-bmt-transfer</code>: the context root is <code>/</code> and only <code>/test-transactions?test=…</code> exists. (5) The README lists <code>ADVANCED-CDI-FEATURES.md</code> at the lab root; it is in <code>solution/</code>. (6) <code>SOLUTION-STATUS.md</code> says <code>Client</code> is "unchanged from Lab 03" and lists V1–V3 only; the solution adds <code>premium</code> and V4. (7) <code>solution/db/migration/</code> (V1–V3, no V4) is a stray copy; the real migrations are in <code>src/main/resources/db/migration/</code>. (8) <code>DatabaseMigrationStartup</code> still says "for Lab 3" in its Javadoc. (9) Compose publishes <code>5432:5432</code> and the scripts publish <code>-p 9080:9080</code> on all interfaces; this guide uses <code>127.0.0.1:</code>.</p></div>
+        <div lang="fr"><div class="lg-callout-title">Écarts entre le README, les scripts et le code réel</div><p>Ce guide suit <code>diff -r Lab03-JPA/solution Lab04-CDI/solution</code> et les fichiers réels, pas le <a href="https://github.com/oplanson/esipe-javaee/blob/master/03-Labs/Lab04-CDI/README.md">README</a>. Constats : (1) <code>starter/</code> est vide alors que le README annonce un point de départ. (2) L'étape 3 du README cite <code>cdi-4.0</code> et <code>transaction-2.0</code> ; la solution utilise <code>webProfile-10.0</code>, et le commentaire de la solution « CDI est activé quand la feature cdi-4.0 est présente » est périmé. (3) Le commentaire de <code>bootstrap.properties</code> dit que Liberty transforme <code>db_host</code> en <code>db.host</code> ; lors de notre test en conteneur, les clés en minuscules n'ont <strong>pas</strong> été résolues (<code>CWWKG0075E ${db.port} is not a number</code>) : le guide passe donc des variables d'environnement <code>DB_*</code>. (4) La partie E du README utilise <code>/banking/test-transactions</code>, <code>/banking/api/accounts/1/transfer</code> et <code>/test-bmt-transfer</code> : le context root est <code>/</code> et seul <code>/test-transactions?test=…</code> existe. (5) Le README place <code>ADVANCED-CDI-FEATURES.md</code> à la racine du lab ; il est dans <code>solution/</code>. (6) <code>SOLUTION-STATUS.md</code> dit que <code>Client</code> est « inchangé depuis le Lab 03 » et ne liste que V1–V3 ; la solution ajoute <code>premium</code> et V4. (7) <code>solution/db/migration/</code> (V1–V3, sans V4) est une copie parasite ; les vraies migrations sont dans <code>src/main/resources/db/migration/</code>. (8) La Javadoc de <code>DatabaseMigrationStartup</code> dit encore « pour le Lab 3 ». (9) Compose publie <code>5432:5432</code> et les scripts publient <code>-p 9080:9080</code> sur toutes les interfaces ; ce guide utilise <code>127.0.0.1:</code>.</p></div>
+      </div>
+
+      <table class="slide-table">
+        <thead><tr>
+          <th><span lang="en">File (in <code>starter/</code> after the copy)</span><span lang="fr">Fichier (dans <code>starter/</code> après la copie)</span></th>
+          <th><span lang="en">Status</span><span lang="fr">Statut</span></th>
+          <th><span lang="en">What it is</span><span lang="fr">Rôle</span></th>
+        </tr></thead>
+        <tbody>
+          <tr>
+            <td><code>pom.xml</code>, <code>Containerfile</code></td>
+            <td><span class="lg-tag lg-tag--chg"><span lang="en">to modify</span><span lang="fr">à modifier</span></span></td>
+            <td><span lang="en">Renamed to <code>banking-cdi-app</code>; dependency versions untouched.</span><span lang="fr">Renommés en <code>banking-cdi-app</code> ; versions de dépendances inchangées.</span></td>
+          </tr>
+          <tr>
+            <td><code>docker-compose.yml</code></td>
+            <td><span class="lg-tag lg-tag--chg"><span lang="en">to modify</span><span lang="fr">à modifier</span></span></td>
+            <td><span lang="en">PostgreSQL 16 Alpine, container <code>banking-db</code>; the copied file publishes <code>5432:5432</code> on all interfaces: bind it to <code>127.0.0.1</code>.</span><span lang="fr">PostgreSQL 16 Alpine, conteneur <code>banking-db</code> ; le fichier copié publie <code>5432:5432</code> sur toutes les interfaces : liez-le à <code>127.0.0.1</code>.</span></td>
+          </tr>
+          <tr>
+            <td><code>src/main/liberty/config/server.xml</code></td>
+            <td><span class="lg-tag lg-tag--chg"><span lang="en">to modify</span><span lang="fr">à modifier</span></span></td>
+            <td><span lang="en"><code>webProfile-10.0</code>, one JTA DataSource, <code>&lt;transaction&gt;</code> timeouts.</span><span lang="fr"><code>webProfile-10.0</code>, une DataSource JTA, timeouts <code>&lt;transaction&gt;</code>.</span></td>
+          </tr>
+          <tr>
+            <td><code>bootstrap.properties</code>, <code>microprofile-config.properties</code>, <code>web.xml</code></td>
+            <td><span class="lg-tag lg-tag--chg"><span lang="en">to modify</span><span lang="fr">à modifier</span></span></td>
+            <td><span lang="en">Lowercase <code>db_*</code> keys, new feature flags, JNDI entries removed.</span><span lang="fr">Clés <code>db_*</code> en minuscules, nouveaux feature flags, entrées JNDI supprimées.</span></td>
+          </tr>
+          <tr>
+            <td><code>src/main/resources/META-INF/persistence.xml</code></td>
+            <td><span class="lg-tag lg-tag--chg"><span lang="en">to modify</span><span lang="fr">à modifier</span></span></td>
+            <td><span lang="en"><code>RESOURCE_LOCAL</code> → <code>JTA</code>.</span><span lang="fr"><code>RESOURCE_LOCAL</code> → <code>JTA</code>.</span></td>
+          </tr>
+          <tr>
+            <td><code>src/main/webapp/WEB-INF/beans.xml</code></td>
+            <td><span class="lg-tag lg-tag--new"><span lang="en">to create</span><span lang="fr">à créer</span></span></td>
+            <td><span lang="en">CDI activation, <code>bean-discovery-mode="all"</code>.</span><span lang="fr">Activation de CDI, <code>bean-discovery-mode="all"</code>.</span></td>
+          </tr>
+          <tr>
+            <td><code>src/main/resources/db/migration/V4__add_client_premium_status.sql</code></td>
+            <td><span class="lg-tag lg-tag--new"><span lang="en">to create</span><span lang="fr">à créer</span></span></td>
+            <td><span lang="en">Adds <code>clients.is_premium</code>.</span><span lang="fr">Ajoute <code>clients.is_premium</code>.</span></td>
+          </tr>
+          <tr>
+            <td><code>V1__create_clients_table.sql</code>, <code>V2__create_accounts_table.sql</code>, <code>V3__add_account_status.sql</code>, <code>flyway.location</code></td>
+            <td><span class="lg-tag lg-tag--ok"><span lang="en">provided</span><span lang="fr">fourni</span></span></td>
+            <td><span lang="en">Unchanged Flyway migrations from Lab 03.</span><span lang="fr">Migrations Flyway du Lab 03, inchangées.</span></td>
+          </tr>
+          <tr>
+            <td><code>config/DatabaseMigrationStartup.java</code>, <code>health/DatabaseHealthCheck.java</code>, <code>health/WebAppReadinessCheck.java</code>, <code>model/Account.java</code></td>
+            <td><span class="lg-tag lg-tag--ok"><span lang="en">provided</span><span lang="fr">fourni</span></span></td>
+            <td><span lang="en">Identical to the solution except the copyright header year (<code>2026</code> vs <code>2025-2026</code>).</span><span lang="fr">Identiques à la solution, sauf l'année de l'en-tête de copyright (<code>2026</code> contre <code>2025-2026</code>).</span></td>
+          </tr>
+          <tr>
+            <td><code>model/Client.java</code></td>
+            <td><span class="lg-tag lg-tag--chg"><span lang="en">to modify</span><span lang="fr">à modifier</span></span></td>
+            <td><span lang="en">New <code>premium</code> field and constructor.</span><span lang="fr">Nouveau champ <code>premium</code> et nouveau constructeur.</span></td>
+          </tr>
+          <tr>
+            <td><code>config/JndiConfigService.java</code>, <code>web/TransactionValidatorServlet.java</code></td>
+            <td><span class="lg-tag lg-tag--todo"><span lang="en">to delete</span><span lang="fr">à supprimer</span></span></td>
+            <td><span lang="en">Lab 03 JNDI classes, absent from the Lab 04 solution.</span><span lang="fr">Classes JNDI du Lab 03, absentes de la solution du Lab 04.</span></td>
+          </tr>
+          <tr>
+            <td><code>config/EntityManagerProducer.java</code></td>
+            <td><span class="lg-tag lg-tag--new"><span lang="en">to create</span><span lang="fr">à créer</span></span></td>
+            <td><span lang="en">Producers for <code>EntityManager</code> and <code>Logger</code>.</span><span lang="fr">Producers pour <code>EntityManager</code> et <code>Logger</code>.</span></td>
+          </tr>
+          <tr>
+            <td><code>config/Logged.java</code>, <code>config/LoggingInterceptor.java</code></td>
+            <td><span class="lg-tag lg-tag--new"><span lang="en">to create</span><span lang="fr">à créer</span></span></td>
+            <td><span lang="en">Interceptor binding and interceptor.</span><span lang="fr">Binding d'intercepteur et intercepteur.</span></td>
+          </tr>
+          <tr>
+            <td><code>config/Premium.java</code>, <code>config/Standard.java</code></td>
+            <td><span class="lg-tag lg-tag--new"><span lang="en">to create</span><span lang="fr">à créer</span></span></td>
+            <td><span lang="en">Qualifiers.</span><span lang="fr">Qualifiers.</span></td>
+          </tr>
+          <tr>
+            <td><code>service/NotificationService.java</code>, <code>service/PremiumNotificationService.java</code>, <code>service/StandardNotificationService.java</code></td>
+            <td><span class="lg-tag lg-tag--new"><span lang="en">to create</span><span lang="fr">à créer</span></span></td>
+            <td><span lang="en">Interface and two qualified implementations.</span><span lang="fr">Interface et deux implémentations qualifiées.</span></td>
+          </tr>
+          <tr>
+            <td><code>event/ClientCreatedEvent.java</code>, <code>event/AccountCreatedEvent.java</code>, <code>event/TransactionEvent.java</code>, <code>event/BankingEventObserver.java</code></td>
+            <td><span class="lg-tag lg-tag--new"><span lang="en">to create</span><span lang="fr">à créer</span></span></td>
+            <td><span lang="en">CDI events and observers.</span><span lang="fr">Événements CDI et observers.</span></td>
+          </tr>
+          <tr>
+            <td><code>service/ClientService.java</code></td>
+            <td><span class="lg-tag lg-tag--chg"><span lang="en">to modify</span><span lang="fr">à modifier</span></span></td>
+            <td><span lang="en">Singleton + <code>EntityTransaction</code> → <code>@ApplicationScoped</code> + <code>@Transactional</code> (294 lines).</span><span lang="fr">Singleton + <code>EntityTransaction</code> → <code>@ApplicationScoped</code> + <code>@Transactional</code> (294 lignes).</span></td>
+          </tr>
+          <tr>
+            <td><code>service/AccountService.java</code>, <code>web/AccountController.java</code></td>
+            <td><span class="lg-tag lg-tag--new"><span lang="en">to create</span><span lang="fr">à créer</span></span></td>
+            <td><span lang="en">Account management (387 and 532 lines).</span><span lang="fr">Gestion des comptes (387 et 532 lignes).</span></td>
+          </tr>
+          <tr>
+            <td><code>service/BatchTransferService.java</code>, <code>service/TransactionComparisonService.java</code>, <code>service/TimeoutTestService.java</code>, <code>web/TransactionTestServlet.java</code></td>
+            <td><span class="lg-tag lg-tag--new"><span lang="en">to create</span><span lang="fr">à créer</span></span></td>
+            <td><span lang="en">Bean-managed transaction services and test servlet.</span><span lang="fr">Services de transactions gérées par le bean et servlet de test.</span></td>
+          </tr>
+          <tr>
+            <td><code>web/ClientController.java</code></td>
+            <td><span class="lg-tag lg-tag--chg"><span lang="en">to modify</span><span lang="fr">à modifier</span></span></td>
+            <td><span lang="en"><code>getInstance()</code> and <code>ServletContext</code> parameters → <code>@Inject</code> and <code>@ConfigProperty</code> (383 lines).</span><span lang="fr"><code>getInstance()</code> et paramètres <code>ServletContext</code> → <code>@Inject</code> et <code>@ConfigProperty</code> (383 lignes).</span></td>
+          </tr>
+          <tr>
+            <td><code>WEB-INF/views/client-list.jsp</code>, <code>client-details.jsp</code>, <code>client-form.jsp</code>, <code>error.jsp</code></td>
+            <td><span class="lg-tag lg-tag--chg"><span lang="en">to modify</span><span lang="fr">à modifier</span></span></td>
+            <td><span lang="en">Premium status, account actions, "Lab 04" footer.</span><span lang="fr">Statut premium, actions sur les comptes, pied de page « Lab 04 ».</span></td>
+          </tr>
+          <tr>
+            <td><code>WEB-INF/views/account-list.jsp</code>, <code>account-details.jsp</code>, <code>account-form.jsp</code></td>
+            <td><span class="lg-tag lg-tag--new"><span lang="en">to create</span><span lang="fr">à créer</span></span></td>
+            <td><span lang="en">Account views.</span><span lang="fr">Vues des comptes.</span></td>
+          </tr>
+          <tr>
+            <td><code>src/main/webapp/index.html</code></td>
+            <td><span class="lg-tag lg-tag--chg"><span lang="en">to modify</span><span lang="fr">à modifier</span></span></td>
+            <td><span lang="en">CDI feature list and link to <code>test-transactions</code>.</span><span lang="fr">Liste des fonctionnalités CDI et lien vers <code>test-transactions</code>.</span></td>
+          </tr>
+          <tr>
+            <td><code>css/style.css</code>, <code>error-404.html</code>, <code>error-500.html</code></td>
+            <td><span class="lg-tag lg-tag--ok"><span lang="en">provided</span><span lang="fr">fourni</span></span></td>
+            <td><span lang="en">Unchanged.</span><span lang="fr">Inchangés.</span></td>
+          </tr>
+        </tbody>
+      </table>
+      <p>
+        <span lang="en">Paths without prefix are relative to <code>src/main/java/com/bank/</code> (Java), <code>src/main/webapp/</code> (JSP) or <code>src/main/resources/db/migration/</code> (SQL), as the context shows.</span>
+        <span lang="fr">Les chemins sans préfixe sont relatifs à <code>src/main/java/com/bank/</code> (Java), <code>src/main/webapp/</code> (JSP) ou <code>src/main/resources/db/migration/</code> (SQL), selon le contexte.</span>
+      </p>
+    </section>
+
+    <!-- ═════════════ 3. TARGET ═════════════ -->
+    <section class="lg-section" id="target">
+      <h2><span class="lg-sec-num">03</span><span lang="en">Target structure</span><span lang="fr">Structure cible</span></h2>
+      <p>
+        <span lang="en">At the end of this lab, your <code>starter/</code> project has the following structure (it matches <code>solution/src</code>, <code>pom.xml</code>, <code>Containerfile</code> and <code>docker-compose.yml</code>):</span>
+        <span lang="fr">À la fin de ce lab, votre projet <code>starter/</code> a la structure suivante (elle correspond à <code>solution/src</code>, <code>pom.xml</code>, <code>Containerfile</code> et <code>docker-compose.yml</code>) :</span>
+      </p>
+      <pre class="dark"><code>Lab04-CDI/starter/
+├── pom.xml                                  # banking-cdi-app
+├── docker-compose.yml                       # PostgreSQL 16, 127.0.0.1:5432
+├── Containerfile                            # banking-cdi-app.war
+└── src/main/
+    ├── java/com/bank/
+    │   ├── config/
+    │   │   ├── DatabaseMigrationStartup.java    # Flyway at boot (unchanged)
+    │   │   ├── EntityManagerProducer.java       # NEW  @Produces EntityManager + Logger
+    │   │   ├── Logged.java                      # NEW  interceptor binding
+    │   │   ├── LoggingInterceptor.java          # NEW  @AroundInvoke
+    │   │   ├── Premium.java                     # NEW  qualifier
+    │   │   └── Standard.java                    # NEW  qualifier
+    │   ├── event/                               # NEW
+    │   │   ├── ClientCreatedEvent.java
+    │   │   ├── AccountCreatedEvent.java
+    │   │   ├── TransactionEvent.java
+    │   │   └── BankingEventObserver.java        # @Observes x4
+    │   ├── health/                              # unchanged
+    │   │   ├── DatabaseHealthCheck.java
+    │   │   └── WebAppReadinessCheck.java
+    │   ├── model/
+    │   │   ├── Account.java                     # unchanged
+    │   │   └── Client.java                      # + premium
+    │   ├── service/
+    │   │   ├── ClientService.java               # @ApplicationScoped, @Transactional
+    │   │   ├── AccountService.java              # NEW  @Logged, events
+    │   │   ├── NotificationService.java         # NEW  interface
+    │   │   ├── PremiumNotificationService.java  # NEW  @Premium
+    │   │   ├── StandardNotificationService.java # NEW  @Standard
+    │   │   ├── BatchTransferService.java        # NEW  UserTransaction (BMT)
+    │   │   ├── TransactionComparisonService.java# NEW  CMT vs BMT
+    │   │   └── TimeoutTestService.java          # NEW  transaction timeouts
+    │   └── web/
+    │       ├── ClientController.java            # @Inject, @ConfigProperty
+    │       ├── AccountController.java           # NEW  /accounts, /account
+    │       └── TransactionTestServlet.java      # NEW  /test-transactions
+    ├── liberty/config/
+    │   ├── bootstrap.properties                 # db_* keys
+    │   └── server.xml                           # webProfile-10.0, JTA DataSource
+    ├── resources/
+    │   ├── META-INF/
+    │   │   ├── microprofile-config.properties   # feature flags
+    │   │   └── persistence.xml                  # transaction-type="JTA"
+    │   └── db/migration/
+    │       ├── V1__create_clients_table.sql
+    │       ├── V2__create_accounts_table.sql
+    │       ├── V3__add_account_status.sql
+    │       ├── V4__add_client_premium_status.sql # NEW
+    │       └── flyway.location                  # empty marker file, keep it
+    └── webapp/
+        ├── WEB-INF/
+        │   ├── beans.xml                        # NEW  CDI activation
+        │   ├── web.xml                          # JNDI entries removed
+        │   └── views/
+        │       ├── client-list.jsp, client-details.jsp, client-form.jsp
+        │       ├── account-list.jsp, account-details.jsp, account-form.jsp   # NEW
+        │       └── error.jsp
+        ├── css/style.css
+        ├── error-404.html, error-500.html
+        └── index.html</code></pre>
+    </section>
+
+    <!-- ═════════════ 4. SETUP ═════════════ -->
+    <section class="lg-section" id="setup">
+      <h2><span class="lg-sec-num">04</span><span lang="en">Setup</span><span lang="fr">Préparation</span></h2>
+      <h3><span lang="en">Tools</span><span lang="fr">Outils</span></h3>
+      <table class="slide-table">
+        <thead><tr><th><span lang="en">Tool</span><span lang="fr">Outil</span></th><th><span lang="en">Check with</span><span lang="fr">Vérifier avec</span></th></tr></thead>
+        <tbody>
+          <tr><td>JDK 17+</td><td><code>java -version</code></td></tr>
+          <tr><td>Maven 3.x</td><td><code>mvn -v</code></td></tr>
+          <tr><td>Podman <span lang="en">(Docker works with the same commands)</span><span lang="fr">(Docker fonctionne avec les mêmes commandes)</span></td><td><code>podman --version</code></td></tr>
+          <tr><td>curl</td><td><code>curl --version</code></td></tr>
+        </tbody>
+      </table>
+      <p>
+        <span lang="en">No <code>psql</code> client is needed on your machine: the guide runs <code>psql</code> inside the database container.</span>
+        <span lang="fr">Aucun client <code>psql</code> n'est nécessaire sur votre machine : le guide exécute <code>psql</code> dans le conteneur de base de données.</span>
+      </p>
+
+      <div class="lg-callout lg-callout--note">
+        <div lang="en"><div class="lg-callout-title">Database security in development</div><p>The container uses demonstration credentials (<code>bankuser</code> / <code>bankpass</code>) found in the lab files. They are for local demos only: never reuse them and never commit real secrets. Ports are bound to <code>127.0.0.1</code> so that nothing is exposed on your network.</p></div>
+        <div lang="fr"><div class="lg-callout-title">Sécurité de la base en développement</div><p>Le conteneur utilise des identifiants de démonstration (<code>bankuser</code> / <code>bankpass</code>) présents dans les fichiers du lab. Ils servent uniquement aux démos locales : ne les réutilisez jamais et ne versionnez jamais de vrais secrets. Les ports sont liés à <code>127.0.0.1</code> pour ne rien exposer sur votre réseau.</p></div>
+      </div>
+
+      <h3><span lang="en">Your starting point: the Lab 03 solution</span><span lang="fr">Votre point de départ : la solution du Lab 03</span></h3>
+      <p>
+        <span lang="en">Work in <code>03-Labs/Lab04-CDI/starter/</code>. If you have not already done it in the <a href="#starter">previous section</a>, copy the Lab 03 solution now (the command copies sources and build files, never <code>target/</code>, <code>postgresql/</code> or <code>docs/</code>):</span>
+        <span lang="fr">Travaillez dans <code>03-Labs/Lab04-CDI/starter/</code>. Si ce n'est pas déjà fait dans la <a href="#starter">section précédente</a>, copiez maintenant la solution du Lab 03 (la commande copie les sources et les fichiers de build, jamais <code>target/</code>, <code>postgresql/</code> ni <code>docs/</code>) :</span>
+      </p>
+      <pre class="dark"><code>cd 03-Labs
+cp -R Lab03-JPA/solution/src Lab03-JPA/solution/pom.xml \
+      Lab03-JPA/solution/Containerfile Lab03-JPA/solution/docker-compose.yml \
+      Lab04-CDI/starter/
+cd Lab04-CDI/starter</code></pre>
+      <p>
+        <span lang="en">All commands below assume you are in <code>03-Labs/Lab04-CDI/starter/</code>.</span>
+        <span lang="fr">Toutes les commandes ci-dessous supposent que vous êtes dans <code>03-Labs/Lab04-CDI/starter/</code>.</span>
+      </p>
+
+      <h3><span lang="en">Free ports 5432 and 9080</span><span lang="fr">Libérer les ports 5432 et 9080</span></h3>
+      <p>
+        <span lang="en">Lab 03 used the same container names and ports. Remove them first. Compose names its volume after the folder, so from <code>starter/</code> you get a new empty database and Flyway applies V1 to V4:</span>
+        <span lang="fr">Le Lab 03 utilisait les mêmes noms de conteneurs et les mêmes ports. Supprimez-les d'abord. Compose nomme son volume d'après le dossier : depuis <code>starter/</code> vous obtenez une base neuve et vide, et Flyway applique V1 à V4 :</span>
+      </p>
+      <pre class="dark"><code>podman rm -f banking-jpa-lab03 banking-db 2&gt;/dev/null
+lsof -i :5432 -i :9080    # must print nothing</code></pre>
+
+      <h3><span lang="en">The redeploy loop</span><span lang="fr">La boucle de redéploiement</span></h3>
+      <p>
+        <span lang="en">Start PostgreSQL once with <code>podman compose up -d</code> (after step 1), then rebuild and redeploy the application with:</span>
+        <span lang="fr">Démarrez PostgreSQL une fois avec <code>podman compose up -d</code> (après l'étape 1), puis reconstruisez et redéployez l'application avec :</span>
+      </p>
+      <pre class="dark"><code>mvn clean package -DskipTests
+podman rm -f banking-cdi-lab04 2&gt;/dev/null
+podman build -t banking-cdi-app:lab04 -f Containerfile .
+podman run -d --name banking-cdi-lab04 -p 127.0.0.1:9080:9080 \
+  -e DB_HOST=host.containers.internal -e DB_PORT=5432 -e DB_NAME=bankdb \
+  -e DB_USER=bankuser -e DB_PASSWORD=bankpass banking-cdi-app:lab04
+until curl -fs http://localhost:9080/ &gt;/dev/null; do sleep 2; done; echo "ready"</code></pre>
+      <div class="lg-callout lg-callout--warn">
+        <div lang="en"><div class="lg-callout-title">Dev mode not validated</div><p><code>mvn liberty:dev</code> / <code>liberty:run</code> was <strong>not</strong> validated for this lab: in our attempt Liberty did not find the PostgreSQL driver library (<code>DSRA4000E</code>) and <code>/health</code> reported the database <code>DOWN</code>. Use the container loop above, which was tested end to end.</p></div>
+        <div lang="fr"><div class="lg-callout-title">Mode dev non validé</div><p><code>mvn liberty:dev</code> / <code>liberty:run</code> n'a <strong>pas</strong> été validé pour ce lab : lors de notre essai, Liberty n'a pas trouvé la bibliothèque du driver PostgreSQL (<code>DSRA4000E</code>) et <code>/health</code> signalait la base <code>DOWN</code>. Utilisez la boucle en conteneur ci-dessus, testée de bout en bout.</p></div>
+      </div>
+    </section>
+
+    <!-- ═════════════ 5. STEPS ═════════════ -->
+    <section class="lg-section" id="steps">
+      <h2><span class="lg-sec-num">05</span><span lang="en">Step by step</span><span lang="fr">Pas à pas</span></h2>
+      <p>
+        <span lang="en">Follow each step in order. Read the task, open the hints if needed and run the checkpoint before moving on. Total: 270 minutes. Steps 6 and 7 form a pair: the project compiles again only at the end of step 7.</span>
+        <span lang="fr">Suivez les étapes dans l'ordre. Lisez la consigne, ouvrez les indices en cas de doute et exécutez le point de contrôle avant de continuer. Total : 270 minutes. Les étapes 6 et 7 vont ensemble : le projet recompile seulement à la fin de l'étape 7.</span>
+      </p>
+      <ol class="lg-steps-overview">
+        <li><a href="#step-1"><span lang="en">Start from the Lab 03 solution &amp; clean up</span><span lang="fr">Partir de la solution du Lab 03 &amp; nettoyer</span></a><span class="lg-dur">15 min</span></li>
+        <li><a href="#step-2"><span lang="en">Enable CDI &amp; reconfigure Liberty</span><span lang="fr">Activer CDI &amp; reconfigurer Liberty</span></a><span class="lg-dur">20 min</span></li>
+        <li><a href="#step-3"><span lang="en">Switch JPA to JTA</span><span lang="fr">Passer JPA en JTA</span></a><span class="lg-dur">10 min</span></li>
+        <li><a href="#step-4"><span lang="en">Producer methods: EntityManager &amp; Logger</span><span lang="fr">Méthodes productrices : EntityManager &amp; Logger</span></a><span class="lg-dur">15 min</span></li>
+        <li><a href="#step-5"><span lang="en">Premium clients: V4 migration &amp; entity</span><span lang="fr">Clients premium : migration V4 &amp; entité</span></a><span class="lg-dur">10 min</span></li>
+        <li><a href="#step-6"><span lang="en">ClientService with CDI &amp; @Transactional</span><span lang="fr">ClientService avec CDI &amp; @Transactional</span></a><span class="lg-dur">25 min</span></li>
+        <li><a href="#step-7"><span lang="en">ClientController: @Inject &amp; @ConfigProperty</span><span lang="fr">ClientController : @Inject &amp; @ConfigProperty</span></a><span class="lg-dur">20 min</span></li>
+        <li><a href="#step-8"><span lang="en">Premium in the JSP views &amp; first run</span><span lang="fr">Premium dans les vues JSP &amp; premier lancement</span></a><span class="lg-dur">15 min</span></li>
+        <li><a href="#step-9"><span lang="en">Interceptor: @Logged</span><span lang="fr">Intercepteur : @Logged</span></a><span class="lg-dur">20 min</span></li>
+        <li><a href="#step-10"><span lang="en">Qualifiers: Premium &amp; Standard notifications</span><span lang="fr">Qualifiers : notifications Premium &amp; Standard</span></a><span class="lg-dur">20 min</span></li>
+        <li><a href="#step-11"><span lang="en">CDI events &amp; observers</span><span lang="fr">Événements CDI &amp; observers</span></a><span class="lg-dur">20 min</span></li>
+        <li><a href="#step-12"><span lang="en">Accounts: AccountService, AccountController &amp; views</span><span lang="fr">Comptes : AccountService, AccountController &amp; vues</span></a><span class="lg-dur">25 min</span></li>
+        <li><a href="#step-13"><span lang="en">Bean-managed transactions (UserTransaction)</span><span lang="fr">Transactions gérées par le bean (UserTransaction)</span></a><span class="lg-dur">25 min</span></li>
+        <li><a href="#step-14"><span lang="en">Test servlet &amp; home page</span><span lang="fr">Servlet de test &amp; page d'accueil</span></a><span class="lg-dur">15 min</span></li>
+        <li><a href="#step-15"><span lang="en">Package &amp; run the container</span><span lang="fr">Packager &amp; lancer le conteneur</span></a><span class="lg-dur">15 min</span></li>
+      </ol>
+
+      <!-- ───────── STEP 1 ───────── -->
+      <article class="lg-step" id="step-1">
+        <div class="lg-step-head">
+          <div class="lg-step-num">1</div>
+          <div>
+            <h3><span lang="en">Start from the Lab 03 solution &amp; clean up</span><span lang="fr">Partir de la solution du Lab 03 &amp; nettoyer</span></h3>
+            <div class="lg-step-meta">
+              <span class="lg-chip">15 min</span>
+              <span class="lg-chip"><span lang="en">Course:</span><span lang="fr">Cours :</span> <a href="../../02-Lectures/slides/04-cdi/slides.html#slide-65">slide 65</a></span>
+            </div>
+          </div>
+        </div>
+        <div class="lg-step-body">
+          <p class="lg-files"><span lang="en">Files to modify/delete:</span><span lang="fr">Fichiers à modifier/supprimer :</span> <code>pom.xml</code>, <code>Containerfile</code>, <code>docker-compose.yml</code>, <code>src/main/java/com/bank/config/JndiConfigService.java</code>, <code>src/main/java/com/bank/web/TransactionValidatorServlet.java</code></p>
+          <div class="lg-task-label"><span lang="en">Task</span><span lang="fr">À faire</span></div>
+          <ol>
+            <li><span lang="en">Copy the Lab 03 <strong>solution</strong> into <code>starter/</code> with the command below (the Lab 04 <code>starter/</code> contains no file).</span><span lang="fr">Copiez la <strong>solution</strong> du Lab 03 dans <code>starter/</code> avec la commande ci-dessous (le <code>starter/</code> du Lab 04 ne contient aucun fichier).</span></li>
+            <li><span lang="en">Delete <code>JndiConfigService.java</code> and <code>TransactionValidatorServlet.java</code>: the Lab 04 solution replaces JNDI environment entries by MicroProfile Config and no longer ships the validator servlet.</span><span lang="fr">Supprimez <code>JndiConfigService.java</code> et <code>TransactionValidatorServlet.java</code> : la solution du Lab 04 remplace les entrées d'environnement JNDI par MicroProfile Config et ne contient plus la servlet de validation.</span></li>
+            <li><span lang="en">In <code>pom.xml</code>, change only <code>artifactId</code> to <code>banking-cdi-app</code>, <code>name</code> to <code>Banking CDI Application - Lab 04</code> and <code>description</code> to <code>CDI and Dependency Injection Lab</code>. Do not touch any dependency version.</span><span lang="fr">Dans <code>pom.xml</code>, changez uniquement <code>artifactId</code> en <code>banking-cdi-app</code>, <code>name</code> en <code>Banking CDI Application - Lab 04</code> et <code>description</code> en <code>CDI and Dependency Injection Lab</code>. Ne modifiez aucune version de dépendance.</span></li>
+            <li><span lang="en">In <code>Containerfile</code>, update the title comments and the WAR name to <code>target/banking-cdi-app.war</code>.</span><span lang="fr">Dans <code>Containerfile</code>, mettez à jour les commentaires de titre et le nom du WAR en <code>target/banking-cdi-app.war</code>.</span></li>
+            <li><span lang="en">In <code>docker-compose.yml</code>, publish PostgreSQL on <code>127.0.0.1:5432:5432</code> (the provided file publishes <code>5432:5432</code> on all interfaces).</span><span lang="fr">Dans <code>docker-compose.yml</code>, publiez PostgreSQL sur <code>127.0.0.1:5432:5432</code> (le fichier fourni publie <code>5432:5432</code> sur toutes les interfaces).</span></li>
+          </ol>
+<pre class="dark"><code>cd 03-Labs
+cp -R Lab03-JPA/solution/src Lab03-JPA/solution/pom.xml \
+      Lab03-JPA/solution/Containerfile Lab03-JPA/solution/docker-compose.yml \
+      Lab04-CDI/starter/
+cd Lab04-CDI/starter
+rm src/main/java/com/bank/config/JndiConfigService.java \
+   src/main/java/com/bank/web/TransactionValidatorServlet.java</code></pre>
+          <details class="lg-hint lg-hint--1">
+            <summary><span lang="en">Hint 1 — what is replaced</span><span lang="fr">Indice 1 — ce qui est remplacé</span></summary>
+            <div class="lg-hint-body">
+              <p><span lang="en">Lab 03 reads the database settings from environment variables and its JNDI <code>env-entry</code> values from <code>web.xml</code>. Lab 04 uses CDI injection and MicroProfile Config instead, so the two JNDI classes are no longer needed. Do not copy <code>target/</code>, <code>postgresql/</code> or <code>docs/</code> from the solution: they are build outputs.</span><span lang="fr">Le Lab 03 lit la configuration de base via des variables d'environnement et ses valeurs JNDI <code>env-entry</code> depuis <code>web.xml</code>. Le Lab 04 utilise l'injection CDI et MicroProfile Config à la place : les deux classes JNDI ne servent plus. Ne copiez pas <code>target/</code>, <code>postgresql/</code> ni <code>docs/</code> de la solution : ce sont des sorties de build.</span></p>
+            </div>
+          </details>
+          <details class="lg-hint lg-hint--2">
+            <summary><span lang="en">Hint 2 — expected edits</span><span lang="fr">Indice 2 — modifications attendues</span></summary>
+            <div class="lg-hint-body">
+<pre class="dark"><code># pom.xml
+&lt;artifactId&gt;banking-cdi-app&lt;/artifactId&gt;
+&lt;name&gt;Banking CDI Application - Lab 04&lt;/name&gt;
+&lt;description&gt;CDI and Dependency Injection Lab&lt;/description&gt;
+
+# Containerfile
+COPY --chown=1001:0 target/banking-cdi-app.war /config/apps/
+
+# docker-compose.yml
+ports:
+  - "127.0.0.1:5432:5432"</code></pre>
+            </div>
+          </details>
+          <details class="lg-hint lg-hint--sol">
+            <summary><span lang="en">Solution files</span><span lang="fr">Fichiers solution</span></summary>
+            <div class="lg-hint-body">
+              <p><a href="https://github.com/oplanson/esipe-javaee/blob/master/03-Labs/Lab04-CDI/solution/pom.xml"><code>solution/pom.xml</code></a> &nbsp;&middot;&nbsp; <a href="https://github.com/oplanson/esipe-javaee/blob/master/03-Labs/Lab04-CDI/solution/Containerfile"><code>solution/Containerfile</code></a> &nbsp;&middot;&nbsp; <a href="https://github.com/oplanson/esipe-javaee/blob/master/03-Labs/Lab04-CDI/solution/docker-compose.yml"><code>solution/docker-compose.yml</code></a></p>
+            </div>
+          </details>
+          <div class="lg-checkpoint">
+            <div class="lg-check-label"><span lang="en">Checkpoint</span><span lang="fr">Point de contrôle</span></div>
+<pre class="dark"><code>grep -n 'banking-cdi-app' pom.xml Containerfile
+ls src/main/java/com/bank/config src/main/java/com/bank/web
+mvn -q -DskipTests compile &amp;&amp; echo COMPILE-OK</code></pre>
+            <p><span lang="en"><code>pom.xml</code> and <code>Containerfile</code> show <code>banking-cdi-app</code>; <code>config/</code> lists only <code>DatabaseMigrationStartup.java</code> and <code>web/</code> only <code>ClientController.java</code>; then <code>COMPILE-OK</code>.</span><span lang="fr"><code>pom.xml</code> et <code>Containerfile</code> affichent <code>banking-cdi-app</code> ; <code>config/</code> ne liste que <code>DatabaseMigrationStartup.java</code> et <code>web/</code> que <code>ClientController.java</code> ; puis <code>COMPILE-OK</code>.</span></p>
+          </div>
+        </div>
+      </article>
+
+      <!-- ───────── STEP 2 ───────── -->
+      <article class="lg-step" id="step-2">
+        <div class="lg-step-head">
+          <div class="lg-step-num">2</div>
+          <div>
+            <h3><span lang="en">Enable CDI &amp; reconfigure Liberty</span><span lang="fr">Activer CDI &amp; reconfigurer Liberty</span></h3>
+            <div class="lg-step-meta">
+              <span class="lg-chip">20 min</span>
+              <span class="lg-chip"><span lang="en">Course:</span><span lang="fr">Cours :</span> <a href="../../02-Lectures/slides/04-cdi/slides.html#slide-9">slide 9</a> &middot; <a href="../../02-Lectures/slides/04-cdi/slides.html#slide-41">slide 41</a></span>
+            </div>
+          </div>
+        </div>
+        <div class="lg-step-body">
+          <p class="lg-files"><span lang="en">Files to create/modify:</span><span lang="fr">Fichiers à créer/modifier :</span> <code>src/main/webapp/WEB-INF/beans.xml</code>, <code>src/main/liberty/config/server.xml</code>, <code>src/main/liberty/config/bootstrap.properties</code>, <code>src/main/resources/META-INF/microprofile-config.properties</code>, <code>src/main/webapp/WEB-INF/web.xml</code></p>
+          <div class="lg-task-label"><span lang="en">Task</span><span lang="fr">À faire</span></div>
+          <ol>
+            <li><span lang="en">Create <code>WEB-INF/beans.xml</code> (Jakarta namespace, <code>version="4.0"</code>, <code>bean-discovery-mode="all"</code>) so that every class of the WAR is a candidate bean.</span><span lang="fr">Créez <code>WEB-INF/beans.xml</code> (espace de noms Jakarta, <code>version="4.0"</code>, <code>bean-discovery-mode="all"</code>) pour que chaque classe du WAR soit un bean candidat.</span></li>
+            <li><span lang="en">In <code>server.xml</code>, replace the list of individual web/JPA features by <code>webProfile-10.0</code> (it brings CDI, JPA, JTA, Servlet, Pages). Keep <code>mpConfig-3.0</code>, <code>mpHealth-4.0</code>, <code>mpMetrics-5.0</code>; <code>mpOpenAPI</code> is dropped.</span><span lang="fr">Dans <code>server.xml</code>, remplacez la liste de features web/JPA par <code>webProfile-10.0</code> (CDI, JPA, JTA, Servlet, Pages inclus). Gardez <code>mpConfig-3.0</code>, <code>mpHealth-4.0</code>, <code>mpMetrics-5.0</code> ; <code>mpOpenAPI</code> disparaît.</span></li>
+            <li><span lang="en">Still in <code>server.xml</code>: keep a single JTA DataSource <code>jdbc/bankingDS</code> (library <code>postgresql-library</code>, values <code>${db.host}</code>, <code>${db.port}</code>, <code>${db.name}</code>, <code>${db.user}</code>, <code>${db.password}</code>), remove <code>flywayDS</code>, <code>&lt;jpa&gt;</code> and <code>quickStartSecurity</code>, rename the application to <code>banking-cdi-app</code>, and add a <code>&lt;transaction&gt;</code> element (timeouts used in step 13).</span><span lang="fr">Toujours dans <code>server.xml</code> : gardez une seule DataSource JTA <code>jdbc/bankingDS</code> (bibliothèque <code>postgresql-library</code>, valeurs <code>${db.host}</code>, <code>${db.port}</code>, <code>${db.name}</code>, <code>${db.user}</code>, <code>${db.password}</code>), supprimez <code>flywayDS</code>, <code>&lt;jpa&gt;</code> et <code>quickStartSecurity</code>, renommez l'application en <code>banking-cdi-app</code> et ajoutez un élément <code>&lt;transaction&gt;</code> (timeouts utilisés à l'étape 13).</span></li>
+            <li><span lang="en">In <code>bootstrap.properties</code>, replace the <code>DB_*</code> keys by lowercase <code>db_host</code>, <code>db_port</code>, <code>db_name</code>, <code>db_user</code>, <code>db_password</code> and set <code>app.name=Banking CDI Application</code>.</span><span lang="fr">Dans <code>bootstrap.properties</code>, remplacez les clés <code>DB_*</code> par <code>db_host</code>, <code>db_port</code>, <code>db_name</code>, <code>db_user</code>, <code>db_password</code> en minuscules et fixez <code>app.name=Banking CDI Application</code>.</span></li>
+            <li><span lang="en">In <code>microprofile-config.properties</code>, set <code>app.name=Lab 04 - CDI and Dependency Injection</code> and add <code>feature.account.deletion.enabled=true</code> and <code>feature.account.transfer.enabled=true</code>.</span><span lang="fr">Dans <code>microprofile-config.properties</code>, fixez <code>app.name=Lab 04 - CDI and Dependency Injection</code> et ajoutez <code>feature.account.deletion.enabled=true</code> et <code>feature.account.transfer.enabled=true</code>.</span></li>
+            <li><span lang="en">In <code>web.xml</code>, update <code>display-name</code>, <code>description</code> and the <code>app.name</code> context parameter, and delete the <code>&lt;resource-ref&gt;</code> and the three <code>&lt;env-entry&gt;</code> elements.</span><span lang="fr">Dans <code>web.xml</code>, mettez à jour <code>display-name</code>, <code>description</code> et le paramètre de contexte <code>app.name</code>, puis supprimez le <code>&lt;resource-ref&gt;</code> et les trois éléments <code>&lt;env-entry&gt;</code>.</span></li>
+          </ol>
+<div class="lg-callout lg-callout--warn">
+        <div lang="en"><div class="lg-callout-title">Heads-up on database settings</div><p>The comment in the solution&#39;s <code>bootstrap.properties</code> says Liberty turns <code>db_host</code> into <code>db.host</code>. In our container test this did <strong>not</strong> happen for <code>bootstrap.properties</code>: Liberty failed with <code>CWWKG0075E ... ${db.port} is not a number</code>. Environment variables <code>DB_HOST</code>, <code>DB_PORT</code>, <code>DB_NAME</code>, <code>DB_USER</code>, <code>DB_PASSWORD</code> do resolve <code>${db.*}</code>, so this guide always passes all five with <code>-e</code> when it starts the container. These are demo credentials, never to reuse in production.</p></div>
+        <div lang="fr"><div class="lg-callout-title">À savoir sur les paramètres de base</div><p>Le commentaire du <code>bootstrap.properties</code> de la solution indique que Liberty transforme <code>db_host</code> en <code>db.host</code>. Lors de notre test en conteneur, ce n&#39;est <strong>pas</strong> le cas pour <code>bootstrap.properties</code> : Liberty échoue avec <code>CWWKG0075E ... ${db.port} is not a number</code>. Les variables d&#39;environnement <code>DB_HOST</code>, <code>DB_PORT</code>, <code>DB_NAME</code>, <code>DB_USER</code>, <code>DB_PASSWORD</code> résolvent bien <code>${db.*}</code> : ce guide passe donc toujours les cinq avec <code>-e</code> au démarrage du conteneur. Ce sont des identifiants de démo, à ne jamais réutiliser en production.</p></div>
+      </div>
+          <details class="lg-hint lg-hint--1">
+            <summary><span lang="en">Hint 1 — what goes where</span><span lang="fr">Indice 1 — ce qui va où</span></summary>
+            <div class="lg-hint-body">
+              <p><span lang="en"><code>webProfile-10.0</code> already contains <code>cdi-4.0</code> and <code>transaction-2.0</code>; the README mentions both features separately, the solution uses the profile. <code>beans.xml</code> must live in <code>WEB-INF/</code>. The empty <code>flyway.location</code> files under <code>src/main/resources/db/</code> come with the Lab 03 copy: keep them (Flyway needs them on Liberty).</span><span lang="fr"><code>webProfile-10.0</code> contient déjà <code>cdi-4.0</code> et <code>transaction-2.0</code> ; le README cite les deux features séparément, la solution utilise le profil. <code>beans.xml</code> doit se trouver dans <code>WEB-INF/</code>. Les fichiers vides <code>flyway.location</code> sous <code>src/main/resources/db/</code> viennent avec la copie du Lab 03 : conservez-les (Flyway en a besoin sur Liberty).</span></p>
+            </div>
+          </details>
+          <details class="lg-hint lg-hint--2">
+            <summary><span lang="en">Hint 2 — server.xml essentials</span><span lang="fr">Indice 2 — l'essentiel de server.xml</span></summary>
+            <div class="lg-hint-body">
+<pre class="dark"><code>&lt;featureManager&gt;
+    &lt;feature&gt;webProfile-10.0&lt;/feature&gt;
+    &lt;feature&gt;mpConfig-3.0&lt;/feature&gt;
+    &lt;feature&gt;mpHealth-4.0&lt;/feature&gt;
+    &lt;feature&gt;mpMetrics-5.0&lt;/feature&gt;
+&lt;/featureManager&gt;
+
+&lt;dataSource id="bankingDS" jndiName="jdbc/bankingDS"&gt;
+    &lt;jdbcDriver libraryRef="postgresql-library"/&gt;
+    &lt;properties.postgresql serverName="${db.host}" portNumber="${db.port}"
+        databaseName="${db.name}" user="${db.user}" password="${db.password}"/&gt;
+&lt;/dataSource&gt;
+
+&lt;transaction totalTranLifetimeTimeout="120s" maxTransactionTimeout="300s"
+             clientInactivityTimeout="60s" heuristicRetryInterval="10s" heuristicRetryLimit="5"/&gt;
+
+&lt;!-- beans.xml --&gt;
+&lt;beans xmlns="https://jakarta.ee/xml/ns/jakartaee" version="4.0"
+       bean-discovery-mode="all"/&gt;</code></pre>
+            </div>
+          </details>
+          <details class="lg-hint lg-hint--sol">
+            <summary><span lang="en">Solution files</span><span lang="fr">Fichiers solution</span></summary>
+            <div class="lg-hint-body">
+              <p><a href="https://github.com/oplanson/esipe-javaee/blob/master/03-Labs/Lab04-CDI/solution/src/main/webapp/WEB-INF/beans.xml"><code>solution/…/beans.xml</code></a> &nbsp;&middot;&nbsp; <a href="https://github.com/oplanson/esipe-javaee/blob/master/03-Labs/Lab04-CDI/solution/src/main/liberty/config/server.xml"><code>solution/…/server.xml</code></a> &nbsp;&middot;&nbsp; <a href="https://github.com/oplanson/esipe-javaee/blob/master/03-Labs/Lab04-CDI/solution/src/main/liberty/config/bootstrap.properties"><code>solution/…/bootstrap.properties</code></a> &nbsp;&middot;&nbsp; <a href="https://github.com/oplanson/esipe-javaee/blob/master/03-Labs/Lab04-CDI/solution/src/main/resources/META-INF/microprofile-config.properties"><code>solution/…/microprofile-config.properties</code></a> &nbsp;&middot;&nbsp; <a href="https://github.com/oplanson/esipe-javaee/blob/master/03-Labs/Lab04-CDI/solution/src/main/webapp/WEB-INF/web.xml"><code>solution/…/web.xml</code></a></p>
+            </div>
+          </details>
+          <div class="lg-checkpoint">
+            <div class="lg-check-label"><span lang="en">Checkpoint</span><span lang="fr">Point de contrôle</span></div>
+<pre class="dark"><code>grep -E 'webProfile-10.0|&lt;transaction' src/main/liberty/config/server.xml
+grep -c 'bean-discovery-mode="all"' src/main/webapp/WEB-INF/beans.xml
+grep -c -E 'env-entry|resource-ref' src/main/webapp/WEB-INF/web.xml</code></pre>
+            <p><span lang="en">Two matching lines from <code>server.xml</code> (<code>webProfile-10.0</code> and <code>&lt;transaction</code>), then <code>1</code> for <code>beans.xml</code>, then <code>0</code> for <code>web.xml</code>.</span><span lang="fr">Deux lignes de <code>server.xml</code> (<code>webProfile-10.0</code> et <code>&lt;transaction</code>), puis <code>1</code> pour <code>beans.xml</code>, puis <code>0</code> pour <code>web.xml</code>.</span></p>
+          </div>
+        </div>
+      </article>
+
+      <!-- ───────── STEP 3 ───────── -->
+      <article class="lg-step" id="step-3">
+        <div class="lg-step-head">
+          <div class="lg-step-num">3</div>
+          <div>
+            <h3><span lang="en">Switch JPA to JTA</span><span lang="fr">Passer JPA en JTA</span></h3>
+            <div class="lg-step-meta">
+              <span class="lg-chip">10 min</span>
+              <span class="lg-chip"><span lang="en">Course:</span><span lang="fr">Cours :</span> <a href="../../02-Lectures/slides/04-cdi/slides.html#slide-41">slide 41</a></span>
+            </div>
+          </div>
+        </div>
+        <div class="lg-step-body">
+          <p class="lg-files"><span lang="en">File to modify:</span><span lang="fr">Fichier à modifier :</span> <code>src/main/resources/META-INF/persistence.xml</code></p>
+          <div class="lg-task-label"><span lang="en">Task</span><span lang="fr">À faire</span></div>
+          <ol>
+            <li><span lang="en">Change the persistence unit <code>bankingPU</code> from <code>transaction-type="RESOURCE_LOCAL"</code> to <code>"JTA"</code>.</span><span lang="fr">Faites passer l'unité de persistance <code>bankingPU</code> de <code>transaction-type="RESOURCE_LOCAL"</code> à <code>"JTA"</code>.</span></li>
+            <li><span lang="en">Replace <code>&lt;non-jta-data-source&gt;jdbc/bankingDS&lt;/non-jta-data-source&gt;</code> by <code>&lt;jta-data-source&gt;jdbc/bankingDS&lt;/jta-data-source&gt;</code>. Keep the EclipseLink provider, the two entity classes and the properties unchanged.</span><span lang="fr">Remplacez <code>&lt;non-jta-data-source&gt;jdbc/bankingDS&lt;/non-jta-data-source&gt;</code> par <code>&lt;jta-data-source&gt;jdbc/bankingDS&lt;/jta-data-source&gt;</code>. Gardez inchangés le provider EclipseLink, les deux classes d'entités et les propriétés.</span></li>
+          </ol>
+
+          <details class="lg-hint lg-hint--1">
+            <summary><span lang="en">Hint 1 — why JTA</span><span lang="fr">Indice 1 — pourquoi JTA</span></summary>
+            <div class="lg-hint-body">
+              <p><span lang="en">With <code>RESOURCE_LOCAL</code> (Lab 03) your code opened and committed an <code>EntityTransaction</code>. With <code>JTA</code> the container owns the transaction: <code>@Transactional</code> starts and ends it, and the injected <code>EntityManager</code> joins it automatically.</span><span lang="fr">Avec <code>RESOURCE_LOCAL</code> (Lab 03), votre code ouvrait et validait une <code>EntityTransaction</code>. Avec <code>JTA</code>, le conteneur possède la transaction : <code>@Transactional</code> la démarre et la termine, et l'<code>EntityManager</code> injecté la rejoint automatiquement.</span></p>
+            </div>
+          </details>
+          <details class="lg-hint lg-hint--2">
+            <summary><span lang="en">Hint 2 — target fragment</span><span lang="fr">Indice 2 — fragment cible</span></summary>
+            <div class="lg-hint-body">
+<pre class="dark"><code>&lt;persistence-unit name="bankingPU" transaction-type="JTA"&gt;
+    &lt;provider&gt;org.eclipse.persistence.jpa.PersistenceProvider&lt;/provider&gt;
+    &lt;jta-data-source&gt;jdbc/bankingDS&lt;/jta-data-source&gt;
+    &lt;class&gt;com.bank.model.Client&lt;/class&gt;
+    &lt;class&gt;com.bank.model.Account&lt;/class&gt;
+    ...</code></pre>
+            </div>
+          </details>
+          <details class="lg-hint lg-hint--sol">
+            <summary><span lang="en">Solution file</span><span lang="fr">Fichier solution</span></summary>
+            <div class="lg-hint-body">
+              <p><a href="https://github.com/oplanson/esipe-javaee/blob/master/03-Labs/Lab04-CDI/solution/src/main/resources/META-INF/persistence.xml"><code>solution/…/persistence.xml</code></a></p>
+            </div>
+          </details>
+          <div class="lg-checkpoint">
+            <div class="lg-check-label"><span lang="en">Checkpoint</span><span lang="fr">Point de contrôle</span></div>
+<pre class="dark"><code>grep -E 'transaction-type|jta-data-source' src/main/resources/META-INF/persistence.xml</code></pre>
+            <p><span lang="en">Two lines: <code>transaction-type="JTA"</code> and <code>&lt;jta-data-source&gt;jdbc/bankingDS&lt;/jta-data-source&gt;</code>.</span><span lang="fr">Deux lignes : <code>transaction-type="JTA"</code> et <code>&lt;jta-data-source&gt;jdbc/bankingDS&lt;/jta-data-source&gt;</code>.</span></p>
+          </div>
+        </div>
+      </article>
+
+      <!-- ───────── STEP 4 ───────── -->
+      <article class="lg-step" id="step-4">
+        <div class="lg-step-head">
+          <div class="lg-step-num">4</div>
+          <div>
+            <h3><span lang="en">Producer methods: EntityManager &amp; Logger</span><span lang="fr">Méthodes productrices : EntityManager &amp; Logger</span></h3>
+            <div class="lg-step-meta">
+              <span class="lg-chip">15 min</span>
+              <span class="lg-chip"><span lang="en">Course:</span><span lang="fr">Cours :</span> <a href="../../02-Lectures/slides/04-cdi/slides.html#slide-25">slide 25</a> &middot; <a href="../../02-Lectures/slides/04-cdi/slides.html#slide-42">slide 42</a></span>
+            </div>
+          </div>
+        </div>
+        <div class="lg-step-body">
+          <p class="lg-files"><span lang="en">File to create:</span><span lang="fr">Fichier à créer :</span> <code>src/main/java/com/bank/config/EntityManagerProducer.java</code></p>
+          <div class="lg-task-label"><span lang="en">Task</span><span lang="fr">À faire</span></div>
+          <ol>
+            <li><span lang="en">Create <code>EntityManagerProducer</code> as an <code>@ApplicationScoped</code> bean in package <code>com.bank.config</code>.</span><span lang="fr">Créez <code>EntityManagerProducer</code> comme bean <code>@ApplicationScoped</code> dans le package <code>com.bank.config</code>.</span></li>
+            <li><span lang="en">Hold the container-managed <code>EntityManager</code> with <code>@PersistenceContext(unitName = "bankingPU")</code> and expose it with a <code>@Produces @RequestScoped</code> method so that other beans can simply <code>@Inject EntityManager</code>.</span><span lang="fr">Détenez l'<code>EntityManager</code> géré par le conteneur avec <code>@PersistenceContext(unitName = "bankingPU")</code> et exposez-le par une méthode <code>@Produces @RequestScoped</code> afin que les autres beans puissent simplement faire <code>@Inject EntityManager</code>.</span></li>
+            <li><span lang="en">Add a second <code>@Produces</code> method taking an <code>InjectionPoint</code> that returns a <code>java.util.logging.Logger</code> named after the class which injects it.</span><span lang="fr">Ajoutez une seconde méthode <code>@Produces</code> recevant un <code>InjectionPoint</code> et renvoyant un <code>java.util.logging.Logger</code> nommé d'après la classe qui l'injecte.</span></li>
+          </ol>
+
+          <details class="lg-hint lg-hint--1">
+            <summary><span lang="en">Hint 1 — two producers</span><span lang="fr">Indice 1 — deux producers</span></summary>
+            <div class="lg-hint-body">
+              <p><span lang="en"><code>EntityManager</code> and <code>Logger</code> are classes you cannot annotate, so CDI cannot discover them as beans. A producer method tells CDI how to create them. Without the <code>Logger</code> producer, deployment fails with <code>WELD-001408: Unsatisfied dependencies for type Logger</code>.</span><span lang="fr"><code>EntityManager</code> et <code>Logger</code> sont des classes que vous ne pouvez pas annoter : CDI ne peut pas les découvrir comme beans. Une méthode productrice explique à CDI comment les créer. Sans le producer de <code>Logger</code>, le déploiement échoue avec <code>WELD-001408: Unsatisfied dependencies for type Logger</code>.</span></p>
+            </div>
+          </details>
+          <details class="lg-hint lg-hint--2">
+            <summary><span lang="en">Hint 2 — skeleton</span><span lang="fr">Indice 2 — squelette</span></summary>
+            <div class="lg-hint-body">
+<pre class="dark"><code>@ApplicationScoped
+public class EntityManagerProducer {
+
+    @PersistenceContext(unitName = "bankingPU")
+    private EntityManager em;
+
+    @Produces
+    @RequestScoped
+    public EntityManager getEntityManager() { return em; }
+
+    @Produces
+    public Logger produceLogger(InjectionPoint injectionPoint) {
+        // Logger.getLogger(&lt;declaring class name of the injection point&gt;)
+    }
+}</code></pre>
+            </div>
+          </details>
+          <details class="lg-hint lg-hint--sol">
+            <summary><span lang="en">Solution file</span><span lang="fr">Fichier solution</span></summary>
+            <div class="lg-hint-body">
+              <p><a href="https://github.com/oplanson/esipe-javaee/blob/master/03-Labs/Lab04-CDI/solution/src/main/java/com/bank/config/EntityManagerProducer.java"><code>solution/…/config/EntityManagerProducer.java</code></a></p>
+            </div>
+          </details>
+          <div class="lg-checkpoint">
+            <div class="lg-check-label"><span lang="en">Checkpoint</span><span lang="fr">Point de contrôle</span></div>
+<pre class="dark"><code>grep -n -E '@PersistenceContext|@Produces|@RequestScoped' src/main/java/com/bank/config/EntityManagerProducer.java</code></pre>
+            <p><span lang="en">Four lines: <code>@PersistenceContext</code>, <code>@Produces</code>, <code>@RequestScoped</code> and a second <code>@Produces</code>.</span><span lang="fr">Quatre lignes : <code>@PersistenceContext</code>, <code>@Produces</code>, <code>@RequestScoped</code> et un second <code>@Produces</code>.</span></p>
+          </div>
+        </div>
+      </article>
+
+      <!-- ───────── STEP 5 ───────── -->
+      <article class="lg-step" id="step-5">
+        <div class="lg-step-head">
+          <div class="lg-step-num">5</div>
+          <div>
+            <h3><span lang="en">Premium clients: V4 migration &amp; entity</span><span lang="fr">Clients premium : migration V4 &amp; entité</span></h3>
+            <div class="lg-step-meta">
+              <span class="lg-chip">10 min</span>
+              <span class="lg-chip"><span lang="en">Course:</span><span lang="fr">Cours :</span> <a href="../../02-Lectures/slides/04-cdi/slides.html#slide-20">slide 20</a> &middot; <a href="../../02-Lectures/slides/04-cdi/slides.html#slide-21">slide 21</a></span>
+            </div>
+          </div>
+        </div>
+        <div class="lg-step-body">
+          <p class="lg-files"><span lang="en">Files to create/modify:</span><span lang="fr">Fichiers à créer/modifier :</span> <code>src/main/resources/db/migration/V4__add_client_premium_status.sql</code>, <code>src/main/java/com/bank/model/Client.java</code></p>
+          <div class="lg-task-label"><span lang="en">Task</span><span lang="fr">À faire</span></div>
+          <ol>
+            <li><span lang="en">Create the Flyway migration <code>V4__add_client_premium_status.sql</code>: <code>ALTER TABLE clients ADD COLUMN is_premium BOOLEAN DEFAULT FALSE NOT NULL</code>, then mark the two oldest clients (<code>ORDER BY created_at LIMIT 2</code>) as premium so both notification services can be demonstrated.</span><span lang="fr">Créez la migration Flyway <code>V4__add_client_premium_status.sql</code> : <code>ALTER TABLE clients ADD COLUMN is_premium BOOLEAN DEFAULT FALSE NOT NULL</code>, puis marquez les deux plus anciens clients (<code>ORDER BY created_at LIMIT 2</code>) comme premium afin de pouvoir démontrer les deux services de notification.</span></li>
+            <li><span lang="en">In <code>Client.java</code>, add the field <code>@Column(name = "is_premium", nullable = false) private boolean premium = false;</code> with <code>isPremium()</code> / <code>setPremium(boolean)</code>, a constructor <code>Client(String name, String email, boolean premium)</code>, and include <code>premium</code> in <code>toString()</code>.</span><span lang="fr">Dans <code>Client.java</code>, ajoutez le champ <code>@Column(name = "is_premium", nullable = false) private boolean premium = false;</code> avec <code>isPremium()</code> / <code>setPremium(boolean)</code>, un constructeur <code>Client(String name, String email, boolean premium)</code> et ajoutez <code>premium</code> à <code>toString()</code>.</span></li>
+            <li><span lang="en">Never edit <code>V1</code>–<code>V3</code>: Flyway checksums them. The new column goes in a new version.</span><span lang="fr">Ne modifiez jamais <code>V1</code>–<code>V3</code> : Flyway en vérifie le checksum. La nouvelle colonne va dans une nouvelle version.</span></li>
+          </ol>
+
+          <details class="lg-hint lg-hint--1">
+            <summary><span lang="en">Hint 1 — Flyway versioning</span><span lang="fr">Indice 1 — versionnement Flyway</span></summary>
+            <div class="lg-hint-body">
+              <p><span lang="en">A migration that has already been applied must stay byte-identical. Add a new file with the next version number. The column name in SQL is <code>is_premium</code>; in Java the property is <code>premium</code>, bridged by <code>@Column(name = ...)</code>.</span><span lang="fr">Une migration déjà appliquée doit rester identique à l'octet près. Ajoutez un nouveau fichier avec le numéro de version suivant. La colonne SQL s'appelle <code>is_premium</code> ; la propriété Java s'appelle <code>premium</code>, reliées par <code>@Column(name = ...)</code>.</span></p>
+            </div>
+          </details>
+          <details class="lg-hint lg-hint--2">
+            <summary><span lang="en">Hint 2 — migration core</span><span lang="fr">Indice 2 — cœur de la migration</span></summary>
+            <div class="lg-hint-body">
+<pre class="dark"><code>ALTER TABLE clients
+ADD COLUMN is_premium BOOLEAN DEFAULT FALSE NOT NULL;
+
+UPDATE clients SET is_premium = TRUE
+WHERE id IN (SELECT id FROM clients ORDER BY created_at LIMIT 2);</code></pre>
+            </div>
+          </details>
+          <details class="lg-hint lg-hint--sol">
+            <summary><span lang="en">Solution files</span><span lang="fr">Fichiers solution</span></summary>
+            <div class="lg-hint-body">
+              <p><a href="https://github.com/oplanson/esipe-javaee/blob/master/03-Labs/Lab04-CDI/solution/src/main/resources/db/migration/V4__add_client_premium_status.sql"><code>solution/…/V4__add_client_premium_status.sql</code></a> &nbsp;&middot;&nbsp; <a href="https://github.com/oplanson/esipe-javaee/blob/master/03-Labs/Lab04-CDI/solution/src/main/java/com/bank/model/Client.java"><code>solution/…/model/Client.java</code></a></p>
+            </div>
+          </details>
+          <div class="lg-checkpoint">
+            <div class="lg-check-label"><span lang="en">Checkpoint</span><span lang="fr">Point de contrôle</span></div>
+<pre class="dark"><code>grep -n 'is_premium' src/main/resources/db/migration/V4__add_client_premium_status.sql src/main/java/com/bank/model/Client.java</code></pre>
+            <p><span lang="en">Matches in the SQL file (<code>ADD COLUMN</code>, <code>COMMENT</code>, <code>UPDATE</code>) and one match in <code>Client.java</code> (<code>@Column(name = "is_premium"...</code>).</span><span lang="fr">Des occurrences dans le fichier SQL (<code>ADD COLUMN</code>, <code>COMMENT</code>, <code>UPDATE</code>) et une dans <code>Client.java</code> (<code>@Column(name = "is_premium"...</code>).</span></p>
+          </div>
+        </div>
+      </article>
+
+      <!-- ───────── STEP 6 ───────── -->
+      <article class="lg-step" id="step-6">
+        <div class="lg-step-head">
+          <div class="lg-step-num">6</div>
+          <div>
+            <h3><span lang="en">ClientService with CDI &amp; @Transactional</span><span lang="fr">ClientService avec CDI &amp; @Transactional</span></h3>
+            <div class="lg-step-meta">
+              <span class="lg-chip">25 min</span>
+              <span class="lg-chip"><span lang="en">Course:</span><span lang="fr">Cours :</span> <a href="../../02-Lectures/slides/04-cdi/slides.html#slide-12">slide 12</a> &middot; <a href="../../02-Lectures/slides/04-cdi/slides.html#slide-37">slide 37</a> &middot; <a href="../../02-Lectures/slides/04-cdi/slides.html#slide-38">slide 38</a></span>
+            </div>
+          </div>
+        </div>
+        <div class="lg-step-body">
+          <p class="lg-files"><span lang="en">File to modify:</span><span lang="fr">Fichier à modifier :</span> <code>src/main/java/com/bank/service/ClientService.java</code></p>
+          <div class="lg-task-label"><span lang="en">Task</span><span lang="fr">À faire</span></div>
+          <ol>
+            <li><span lang="en">Remove the Singleton machinery: <code>getInstance()</code>, the private constructor, the <code>EntityManagerFactory</code>, <code>shutdown()</code>, and every <code>try / finally</code> with <code>EntityTransaction</code> and <code>em.close()</code>.</span><span lang="fr">Supprimez la mécanique Singleton : <code>getInstance()</code>, le constructeur privé, l'<code>EntityManagerFactory</code>, <code>shutdown()</code> et chaque <code>try / finally</code> avec <code>EntityTransaction</code> et <code>em.close()</code>.</span></li>
+            <li><span lang="en">Annotate the class <code>@ApplicationScoped</code> and inject <code>Logger</code> and <code>EntityManager</code> with <code>@Inject</code>.</span><span lang="fr">Annotez la classe <code>@ApplicationScoped</code> et injectez <code>Logger</code> et <code>EntityManager</code> avec <code>@Inject</code>.</span></li>
+            <li><span lang="en">Annotate reads (<code>findAll</code>, <code>findById</code>, <code>findByIdWithAccounts</code>, <code>findByName</code>, <code>findByEmail</code>, <code>count</code>, <code>exists</code>) with <code>@Transactional(Transactional.TxType.SUPPORTS)</code> and writes (<code>create</code>, <code>update</code>, <code>delete</code>, <code>addAccount</code>, <code>removeAccount</code>) with <code>@Transactional</code> (import <code>jakarta.transaction.Transactional</code>).</span><span lang="fr">Annotez les lectures (<code>findAll</code>, <code>findById</code>, <code>findByIdWithAccounts</code>, <code>findByName</code>, <code>findByEmail</code>, <code>count</code>, <code>exists</code>) avec <code>@Transactional(Transactional.TxType.SUPPORTS)</code> et les écritures (<code>create</code>, <code>update</code>, <code>delete</code>, <code>addAccount</code>, <code>removeAccount</code>) avec <code>@Transactional</code> (import <code>jakarta.transaction.Transactional</code>).</span></li>
+            <li><span lang="en">In <code>create</code>, keep <code>em.persist(client)</code> followed by <code>em.flush()</code> so the generated id is available. Keep the public method signatures unchanged. Do not fire events yet (step 11).</span><span lang="fr">Dans <code>create</code>, gardez <code>em.persist(client)</code> suivi de <code>em.flush()</code> pour disposer de l'id généré. Gardez les signatures publiques inchangées. Ne publiez pas encore d'événement (étape 11).</span></li>
+          </ol>
+<div class="lg-callout lg-callout--note">
+        <div lang="en"><div class="lg-callout-title">Expected build state</div><p><code>ClientController</code> still calls <code>ClientService.getInstance()</code> until step 7, so the project does not compile between steps 6 and 7. This is expected.</p></div>
+        <div lang="fr"><div class="lg-callout-title">État attendu du build</div><p><code>ClientController</code> appelle encore <code>ClientService.getInstance()</code> jusqu'à l&#39;étape 7 : le projet ne compile donc pas entre les étapes 6 et 7. C&#39;est normal.</p></div>
+      </div>
+          <details class="lg-hint lg-hint--1">
+            <summary><span lang="en">Hint 1 — TxType</span><span lang="fr">Indice 1 — TxType</span></summary>
+            <div class="lg-hint-body">
+              <p><span lang="en"><code>REQUIRED</code> (the default of <code>@Transactional</code>) joins the caller's transaction or starts one; a <code>RuntimeException</code> triggers rollback. <code>SUPPORTS</code> joins a transaction if one exists but does not start one: ideal for reads.</span><span lang="fr"><code>REQUIRED</code> (valeur par défaut de <code>@Transactional</code>) rejoint la transaction de l'appelant ou en démarre une ; une <code>RuntimeException</code> déclenche le rollback. <code>SUPPORTS</code> rejoint une transaction existante sans en démarrer : idéal pour les lectures.</span></p>
+            </div>
+          </details>
+          <details class="lg-hint lg-hint--2">
+            <summary><span lang="en">Hint 2 — skeleton</span><span lang="fr">Indice 2 — squelette</span></summary>
+            <div class="lg-hint-body">
+<pre class="dark"><code>@ApplicationScoped
+public class ClientService {
+    @Inject private Logger logger;
+    @Inject private EntityManager em;
+
+    @Transactional(Transactional.TxType.SUPPORTS)
+    public List&lt;Client&gt; findAll() {
+        return em.createNamedQuery("Client.findAll", Client.class).getResultList();
+    }
+
+    @Transactional
+    public Client create(Client client) {
+        em.persist(client);
+        em.flush();              // force ID generation
+        return client;
+    }
+    // update -&gt; em.merge(...); delete -&gt; em.find(...) + em.remove(...)
+    // addAccount / removeAccount keep both sides of the relation in sync
+}</code></pre>
+            </div>
+          </details>
+          <details class="lg-hint lg-hint--sol">
+            <summary><span lang="en">Solution file</span><span lang="fr">Fichier solution</span></summary>
+            <div class="lg-hint-body">
+              <p><a href="https://github.com/oplanson/esipe-javaee/blob/master/03-Labs/Lab04-CDI/solution/src/main/java/com/bank/service/ClientService.java"><code>solution/…/service/ClientService.java</code></a></p>
+            </div>
+          </details>
+          <div class="lg-checkpoint">
+            <div class="lg-check-label"><span lang="en">Checkpoint</span><span lang="fr">Point de contrôle</span></div>
+<pre class="dark"><code>grep -c 'getInstance' src/main/java/com/bank/service/ClientService.java
+grep -c -E '^\s*@Transactional' src/main/java/com/bank/service/ClientService.java</code></pre>
+            <p><span lang="en"><code>0</code> for <code>getInstance</code>, then <code>12</code> annotated methods (7 reads with <code>SUPPORTS</code>, 5 writes).</span><span lang="fr"><code>0</code> pour <code>getInstance</code>, puis <code>12</code> méthodes annotées (7 lectures en <code>SUPPORTS</code>, 5 écritures).</span></p>
+          </div>
+        </div>
+      </article>
+
+      <!-- ───────── STEP 7 ───────── -->
+      <article class="lg-step" id="step-7">
+        <div class="lg-step-head">
+          <div class="lg-step-num">7</div>
+          <div>
+            <h3><span lang="en">ClientController: @Inject &amp; @ConfigProperty</span><span lang="fr">ClientController : @Inject &amp; @ConfigProperty</span></h3>
+            <div class="lg-step-meta">
+              <span class="lg-chip">20 min</span>
+              <span class="lg-chip"><span lang="en">Course:</span><span lang="fr">Cours :</span> <a href="../../02-Lectures/slides/04-cdi/slides.html#slide-18">slide 18</a></span>
+            </div>
+          </div>
+        </div>
+        <div class="lg-step-body">
+          <p class="lg-files"><span lang="en">File to modify:</span><span lang="fr">Fichier à modifier :</span> <code>src/main/java/com/bank/web/ClientController.java</code></p>
+          <div class="lg-task-label"><span lang="en">Task</span><span lang="fr">À faire</span></div>
+          <ol>
+            <li><span lang="en">Replace <code>ClientService.getInstance()</code> by a field <code>@Inject private ClientService clientService;</code>. Inject <code>Logger</code> the same way and replace every <code>log(...)</code> call by <code>logger.info / warning / severe</code>.</span><span lang="fr">Remplacez <code>ClientService.getInstance()</code> par un champ <code>@Inject private ClientService clientService;</code>. Injectez <code>Logger</code> de la même façon et remplacez chaque appel <code>log(...)</code> par <code>logger.info / warning / severe</code>.</span></li>
+            <li><span lang="en">Replace the manual reads of <code>ServletContext</code> init parameters by <code>@Inject @ConfigProperty(name = ..., defaultValue = ...)</code> fields: <code>web.pagination.default.size</code> (<code>Integer</code>, <code>"10"</code>), <code>feature.client.deletion.enabled</code> (<code>Boolean</code>, <code>"true"</code>), <code>app.name</code> (<code>String</code>). Import <code>org.eclipse.microprofile.config.inject.ConfigProperty</code>.</span><span lang="fr">Remplacez les lectures manuelles des paramètres d'init du <code>ServletContext</code> par des champs <code>@Inject @ConfigProperty(name = ..., defaultValue = ...)</code> : <code>web.pagination.default.size</code> (<code>Integer</code>, <code>"10"</code>), <code>feature.client.deletion.enabled</code> (<code>Boolean</code>, <code>"true"</code>), <code>app.name</code> (<code>String</code>). Importez <code>org.eclipse.microprofile.config.inject.ConfigProperty</code>.</span></li>
+            <li><span lang="en">Reduce <code>init()</code> to logging the injected values. Do <strong>not</strong> call <code>clientService.count()</code> there: the <code>@RequestScoped</code> <code>EntityManager</code> is not active during servlet initialisation.</span><span lang="fr">Réduisez <code>init()</code> à des logs des valeurs injectées. N'appelez <strong>pas</strong> <code>clientService.count()</code> ici : l'<code>EntityManager</code> <code>@RequestScoped</code> n'est pas actif pendant l'initialisation de la servlet.</span></li>
+            <li><span lang="en">In the create and update handlers, read the request parameter <code>premium</code> (<code>"true".equals(req.getParameter("premium"))</code>) and use <code>new Client(name, email, premium)</code> / <code>client.setPremium(premium)</code>. Keep the PRG redirects.</span><span lang="fr">Dans les handlers de création et de mise à jour, lisez le paramètre de requête <code>premium</code> (<code>"true".equals(req.getParameter("premium"))</code>) et utilisez <code>new Client(name, email, premium)</code> / <code>client.setPremium(premium)</code>. Gardez les redirections PRG.</span></li>
+          </ol>
+
+          <details class="lg-hint lg-hint--1">
+            <summary><span lang="en">Hint 1 — injection in a servlet</span><span lang="fr">Indice 1 — injection dans une servlet</span></summary>
+            <div class="lg-hint-body">
+              <p><span lang="en">Servlets are container-managed, so CDI injects into them as it does for beans. Use field injection with <code>@Inject</code>. The <code>@ConfigProperty</code> values come from <code>microprofile-config.properties</code> (step 2) and fall back to <code>defaultValue</code>.</span><span lang="fr">Les servlets sont gérées par le conteneur : CDI y injecte comme dans les beans. Utilisez l'injection de champ avec <code>@Inject</code>. Les valeurs <code>@ConfigProperty</code> viennent de <code>microprofile-config.properties</code> (étape 2) et retombent sur <code>defaultValue</code>.</span></p>
+            </div>
+          </details>
+          <details class="lg-hint lg-hint--2">
+            <summary><span lang="en">Hint 2 — injected fields</span><span lang="fr">Indice 2 — champs injectés</span></summary>
+            <div class="lg-hint-body">
+<pre class="dark"><code>@Inject private ClientService clientService;
+@Inject private Logger logger;
+
+@Inject
+@ConfigProperty(name = "web.pagination.default.size", defaultValue = "10")
+private Integer defaultPageSize;
+
+@Inject
+@ConfigProperty(name = "feature.client.deletion.enabled", defaultValue = "true")
+private Boolean deletionEnabled;
+
+@Inject
+@ConfigProperty(name = "app.name", defaultValue = "Banking Application")
+private String appName;</code></pre>
+            </div>
+          </details>
+          <details class="lg-hint lg-hint--sol">
+            <summary><span lang="en">Solution file</span><span lang="fr">Fichier solution</span></summary>
+            <div class="lg-hint-body">
+              <p><a href="https://github.com/oplanson/esipe-javaee/blob/master/03-Labs/Lab04-CDI/solution/src/main/java/com/bank/web/ClientController.java"><code>solution/…/web/ClientController.java</code></a></p>
+            </div>
+          </details>
+          <div class="lg-checkpoint">
+            <div class="lg-check-label"><span lang="en">Checkpoint</span><span lang="fr">Point de contrôle</span></div>
+<pre class="dark"><code>mvn -q -DskipTests package &amp;&amp; ls target/banking-cdi-app.war</code></pre>
+            <p><span lang="en">No error, then <code>target/banking-cdi-app.war</code> is listed. The first build downloads the Liberty runtime if it is not cached.</span><span lang="fr">Aucune erreur, puis <code>target/banking-cdi-app.war</code> est listé. Le premier build télécharge le runtime Liberty s'il n'est pas en cache.</span></p>
+          </div>
+        </div>
+      </article>
+
+      <!-- ───────── STEP 8 ───────── -->
+      <article class="lg-step" id="step-8">
+        <div class="lg-step-head">
+          <div class="lg-step-num">8</div>
+          <div>
+            <h3><span lang="en">Premium in the JSP views &amp; first run</span><span lang="fr">Premium dans les vues JSP &amp; premier lancement</span></h3>
+            <div class="lg-step-meta">
+              <span class="lg-chip">15 min</span>
+              <span class="lg-chip"><span lang="en">Course:</span><span lang="fr">Cours :</span> <a href="../../02-Lectures/slides/04-cdi/slides.html#slide-11">slide 11</a> &middot; <a href="../../02-Lectures/slides/04-cdi/slides.html#slide-13">slide 13</a></span>
+            </div>
+          </div>
+        </div>
+        <div class="lg-step-body">
+          <p class="lg-files"><span lang="en">Files to modify:</span><span lang="fr">Fichiers à modifier :</span> <code>src/main/webapp/WEB-INF/views/client-list.jsp</code>, <code>client-details.jsp</code>, <code>client-form.jsp</code>, <code>error.jsp</code></p>
+          <div class="lg-task-label"><span lang="en">Task</span><span lang="fr">À faire</span></div>
+          <ol>
+            <li><span lang="en"><code>client-list.jsp</code>: add a <strong>Status</strong> column that shows a <code>PREMIUM</code> or <code>STANDARD</code> badge with <code>&lt;c:choose&gt;</code> on <code>${client.premium}</code>.</span><span lang="fr"><code>client-list.jsp</code> : ajoutez une colonne <strong>Status</strong> qui affiche un badge <code>PREMIUM</code> ou <code>STANDARD</code> avec <code>&lt;c:choose&gt;</code> sur <code>${client.premium}</code>.</span></li>
+            <li><span lang="en"><code>client-details.jsp</code>: add the same status block, the success messages <code>account_created</code> / <code>account_deleted</code>, an <em>Add Account</em> link to <code>/account?action=new&amp;clientId=${client.id}</code>, and an <em>Actions</em> column (view, edit, delete via POST to <code>/account</code>). The total row spans 4 columns. Footer text: <em>Lab 04</em>.</span><span lang="fr"><code>client-details.jsp</code> : ajoutez le même bloc de statut, les messages de succès <code>account_created</code> / <code>account_deleted</code>, un lien <em>Add Account</em> vers <code>/account?action=new&amp;clientId=${client.id}</code> et une colonne <em>Actions</em> (voir, éditer, supprimer par POST vers <code>/account</code>). La ligne de total couvre 4 colonnes. Texte de pied de page : <em>Lab 04</em>.</span></li>
+            <li><span lang="en"><code>client-form.jsp</code>: add a checkbox <code>name="premium" value="true"</code>, checked when <code>${client.premium}</code>. <code>error.jsp</code>: footer text <em>Lab 04</em>.</span><span lang="fr"><code>client-form.jsp</code> : ajoutez une case à cocher <code>name="premium" value="true"</code>, cochée si <code>${client.premium}</code>. <code>error.jsp</code> : texte de pied de page <em>Lab 04</em>.</span></li>
+            <li><span lang="en">Start PostgreSQL and deploy with the commands of the <a href="#setup">Setup</a> section, then create one premium client.</span><span lang="fr">Démarrez PostgreSQL et déployez avec les commandes de la section <a href="#setup">Préparation</a>, puis créez un client premium.</span></li>
+          </ol>
+
+          <details class="lg-hint lg-hint--1">
+            <summary><span lang="en">Hint 1 — JSP and EL</span><span lang="fr">Indice 1 — JSP et EL</span></summary>
+            <div class="lg-hint-body">
+              <p><span lang="en"><code>${client.premium}</code> calls <code>isPremium()</code>. The links to <code>/account</code> work only after step 12; until then, do not click them. On first start Flyway applies V4 (and V1–V3 on a fresh database).</span><span lang="fr"><code>${client.premium}</code> appelle <code>isPremium()</code>. Les liens vers <code>/account</code> ne fonctionnent qu'après l'étape 12 ; d'ici là, ne cliquez pas dessus. Au premier démarrage, Flyway applique V4 (et V1–V3 sur une base neuve).</span></p>
+            </div>
+          </details>
+          <details class="lg-hint lg-hint--2">
+            <summary><span lang="en">Hint 2 — badge fragment</span><span lang="fr">Indice 2 — fragment de badge</span></summary>
+            <div class="lg-hint-body">
+<pre class="dark"><code>&lt;c:choose&gt;
+    &lt;c:when test="${client.premium}"&gt;&lt;span class="badge badge-success"&gt;PREMIUM&lt;/span&gt;&lt;/c:when&gt;
+    &lt;c:otherwise&gt;&lt;span class="badge badge-secondary"&gt;STANDARD&lt;/span&gt;&lt;/c:otherwise&gt;
+&lt;/c:choose&gt;
+
+&lt;input type="checkbox" id="premium" name="premium" value="true"
+       ${client.premium ? 'checked' : ''}&gt;</code></pre>
+            </div>
+          </details>
+          <details class="lg-hint lg-hint--sol">
+            <summary><span lang="en">Solution files</span><span lang="fr">Fichiers solution</span></summary>
+            <div class="lg-hint-body">
+              <p><a href="https://github.com/oplanson/esipe-javaee/blob/master/03-Labs/Lab04-CDI/solution/src/main/webapp/WEB-INF/views/client-list.jsp"><code>solution/…/client-list.jsp</code></a> &nbsp;&middot;&nbsp; <a href="https://github.com/oplanson/esipe-javaee/blob/master/03-Labs/Lab04-CDI/solution/src/main/webapp/WEB-INF/views/client-details.jsp"><code>solution/…/client-details.jsp</code></a> &nbsp;&middot;&nbsp; <a href="https://github.com/oplanson/esipe-javaee/blob/master/03-Labs/Lab04-CDI/solution/src/main/webapp/WEB-INF/views/client-form.jsp"><code>solution/…/client-form.jsp</code></a> &nbsp;&middot;&nbsp; <a href="https://github.com/oplanson/esipe-javaee/blob/master/03-Labs/Lab04-CDI/solution/src/main/webapp/WEB-INF/views/error.jsp"><code>solution/…/error.jsp</code></a></p>
+            </div>
+          </details>
+          <div class="lg-checkpoint">
+            <div class="lg-check-label"><span lang="en">Checkpoint</span><span lang="fr">Point de contrôle</span></div>
+<pre class="dark"><code>curl -s -o /dev/null -w '%{http_code}\n' -X POST http://localhost:9080/client \
+  -d "action=create&amp;name=Demo+Premium&amp;email=demo.premium@example.com&amp;premium=true"
+podman exec banking-db psql -U bankuser -d bankdb \
+  -c "SELECT name, is_premium FROM clients WHERE email='demo.premium@example.com';"</code></pre>
+            <p><span lang="en"><code>302</code> (redirect after create), then one row <code>Demo Premium | t</code>.</span><span lang="fr"><code>302</code> (redirection après création), puis une ligne <code>Demo Premium | t</code>.</span></p>
+          </div>
+        </div>
+      </article>
+
+      <!-- ───────── STEP 9 ───────── -->
+      <article class="lg-step" id="step-9">
+        <div class="lg-step-head">
+          <div class="lg-step-num">9</div>
+          <div>
+            <h3><span lang="en">Interceptor: @Logged</span><span lang="fr">Intercepteur : @Logged</span></h3>
+            <div class="lg-step-meta">
+              <span class="lg-chip">20 min</span>
+              <span class="lg-chip"><span lang="en">Course:</span><span lang="fr">Cours :</span> <a href="../../02-Lectures/slides/04-cdi/slides.html#slide-30">slide 30</a> &middot; <a href="../../02-Lectures/slides/04-cdi/slides.html#slide-31">slide 31</a> &middot; <a href="../../02-Lectures/slides/04-cdi/slides.html#slide-32">slide 32</a></span>
+            </div>
+          </div>
+        </div>
+        <div class="lg-step-body">
+          <p class="lg-files"><span lang="en">Files to create:</span><span lang="fr">Fichiers à créer :</span> <code>src/main/java/com/bank/config/Logged.java</code>, <code>src/main/java/com/bank/config/LoggingInterceptor.java</code></p>
+          <div class="lg-task-label"><span lang="en">Task</span><span lang="fr">À faire</span></div>
+          <ol>
+            <li><span lang="en">Create the interceptor binding <code>@interface Logged</code> annotated <code>@InterceptorBinding</code>, <code>@Retention(RUNTIME)</code>, <code>@Target({TYPE, METHOD})</code>.</span><span lang="fr">Créez le binding d'intercepteur <code>@interface Logged</code> annoté <code>@InterceptorBinding</code>, <code>@Retention(RUNTIME)</code>, <code>@Target({TYPE, METHOD})</code>.</span></li>
+            <li><span lang="en">Create <code>LoggingInterceptor</code> annotated <code>@Logged @Interceptor @Priority(Interceptor.Priority.APPLICATION)</code>, with an injected <code>Logger</code>.</span><span lang="fr">Créez <code>LoggingInterceptor</code> annoté <code>@Logged @Interceptor @Priority(Interceptor.Priority.APPLICATION)</code>, avec un <code>Logger</code> injecté.</span></li>
+            <li><span lang="en">Implement one <code>@AroundInvoke</code> method <code>Object logMethod(InvocationContext context) throws Exception</code>: log entry (class, method, parameters), call <code>context.proceed()</code>, log exit with duration and result, and on exception log severe then rethrow. Truncate printed values to 100 characters.</span><span lang="fr">Implémentez une méthode <code>@AroundInvoke</code> <code>Object logMethod(InvocationContext context) throws Exception</code> : loguez l'entrée (classe, méthode, paramètres), appelez <code>context.proceed()</code>, loguez la sortie avec durée et résultat et, en cas d'exception, loguez en sévère puis relancez. Tronquez les valeurs affichées à 100 caractères.</span></li>
+          </ol>
+
+          <details class="lg-hint lg-hint--1">
+            <summary><span lang="en">Hint 1 — activation</span><span lang="fr">Indice 1 — activation</span></summary>
+            <div class="lg-hint-body">
+              <p><span lang="en"><code>@Priority</code> enables the interceptor for the whole application, so no <code>&lt;interceptors&gt;</code> section is needed in <code>beans.xml</code>. The interceptor only runs for container-managed beans that carry <code>@Logged</code> (used in step 12 on <code>AccountService</code>).</span><span lang="fr"><code>@Priority</code> active l'intercepteur pour toute l'application : aucune section <code>&lt;interceptors&gt;</code> n'est nécessaire dans <code>beans.xml</code>. L'intercepteur ne s'exécute que pour les beans gérés portant <code>@Logged</code> (utilisé à l'étape 12 sur <code>AccountService</code>).</span></p>
+            </div>
+          </details>
+          <details class="lg-hint lg-hint--2">
+            <summary><span lang="en">Hint 2 — skeleton</span><span lang="fr">Indice 2 — squelette</span></summary>
+            <div class="lg-hint-body">
+<pre class="dark"><code>@InterceptorBinding
+@Retention(RetentionPolicy.RUNTIME)
+@Target({ElementType.TYPE, ElementType.METHOD})
+public @interface Logged { }
+
+@Logged
+@Interceptor
+@jakarta.annotation.Priority(Interceptor.Priority.APPLICATION)
+public class LoggingInterceptor {
+    @Inject private Logger logger;
+
+    @AroundInvoke
+    public Object logMethod(InvocationContext context) throws Exception {
+        long start = System.currentTimeMillis();
+        try {
+            Object result = context.proceed();
+            // log exit + duration + result
+            return result;
+        } catch (Exception e) {
+            // log severe, then
+            throw e;
+        }
+    }
+}</code></pre>
+            </div>
+          </details>
+          <details class="lg-hint lg-hint--sol">
+            <summary><span lang="en">Solution files</span><span lang="fr">Fichiers solution</span></summary>
+            <div class="lg-hint-body">
+              <p><a href="https://github.com/oplanson/esipe-javaee/blob/master/03-Labs/Lab04-CDI/solution/src/main/java/com/bank/config/Logged.java"><code>solution/…/config/Logged.java</code></a> &nbsp;&middot;&nbsp; <a href="https://github.com/oplanson/esipe-javaee/blob/master/03-Labs/Lab04-CDI/solution/src/main/java/com/bank/config/LoggingInterceptor.java"><code>solution/…/config/LoggingInterceptor.java</code></a></p>
+            </div>
+          </details>
+          <div class="lg-checkpoint">
+            <div class="lg-check-label"><span lang="en">Checkpoint</span><span lang="fr">Point de contrôle</span></div>
+<pre class="dark"><code>grep -n -E '@InterceptorBinding|@Interceptor|@AroundInvoke|Priority' src/main/java/com/bank/config/Logged.java src/main/java/com/bank/config/LoggingInterceptor.java
+mvn -q -DskipTests compile &amp;&amp; echo COMPILE-OK</code></pre>
+            <p><span lang="en">One match in <code>Logged.java</code> (<code>@InterceptorBinding</code>), three in <code>LoggingInterceptor.java</code> (<code>@Interceptor</code>, <code>@jakarta.annotation.Priority</code>, <code>@AroundInvoke</code>), then <code>COMPILE-OK</code>.</span><span lang="fr">Une occurrence dans <code>Logged.java</code> (<code>@InterceptorBinding</code>), trois dans <code>LoggingInterceptor.java</code> (<code>@Interceptor</code>, <code>@jakarta.annotation.Priority</code>, <code>@AroundInvoke</code>), puis <code>COMPILE-OK</code>.</span></p>
+          </div>
+        </div>
+      </article>
+
+      <!-- ───────── STEP 10 ───────── -->
+      <article class="lg-step" id="step-10">
+        <div class="lg-step-head">
+          <div class="lg-step-num">10</div>
+          <div>
+            <h3><span lang="en">Qualifiers: Premium &amp; Standard notifications</span><span lang="fr">Qualifiers : notifications Premium &amp; Standard</span></h3>
+            <div class="lg-step-meta">
+              <span class="lg-chip">20 min</span>
+              <span class="lg-chip"><span lang="en">Course:</span><span lang="fr">Cours :</span> <a href="../../02-Lectures/slides/04-cdi/slides.html#slide-20">slide 20</a> &middot; <a href="../../02-Lectures/slides/04-cdi/slides.html#slide-21">slide 21</a> &middot; <a href="../../02-Lectures/slides/04-cdi/slides.html#slide-22">slide 22</a></span>
+            </div>
+          </div>
+        </div>
+        <div class="lg-step-body">
+          <p class="lg-files"><span lang="en">Files to create:</span><span lang="fr">Fichiers à créer :</span> <code>config/Premium.java</code>, <code>config/Standard.java</code>, <code>service/NotificationService.java</code>, <code>service/PremiumNotificationService.java</code>, <code>service/StandardNotificationService.java</code> <span lang="en">(under</span><span lang="fr">(sous</span> <code>src/main/java/com/bank/</code>)</p>
+          <div class="lg-task-label"><span lang="en">Task</span><span lang="fr">À faire</span></div>
+          <ol>
+            <li><span lang="en">Create two qualifier annotations <code>@Premium</code> and <code>@Standard</code> in <code>com.bank.config</code>: <code>@Qualifier</code>, <code>@Retention(RUNTIME)</code>, <code>@Target({TYPE, METHOD, FIELD, PARAMETER})</code>.</span><span lang="fr">Créez deux annotations qualifier <code>@Premium</code> et <code>@Standard</code> dans <code>com.bank.config</code> : <code>@Qualifier</code>, <code>@Retention(RUNTIME)</code>, <code>@Target({TYPE, METHOD, FIELD, PARAMETER})</code>.</span></li>
+            <li><span lang="en">Create the interface <code>NotificationService</code> with <code>sendWelcomeNotification(Client)</code>, <code>sendAccountCreatedNotification(Account)</code>, <code>sendTransactionNotification(Account, String, double)</code> and <code>getServiceLevel()</code>.</span><span lang="fr">Créez l'interface <code>NotificationService</code> avec <code>sendWelcomeNotification(Client)</code>, <code>sendAccountCreatedNotification(Account)</code>, <code>sendTransactionNotification(Account, String, double)</code> et <code>getServiceLevel()</code>.</span></li>
+            <li><span lang="en">Create <code>PremiumNotificationService</code> (<code>@ApplicationScoped @Premium</code>, level <code>"Premium"</code>) and <code>StandardNotificationService</code> (<code>@ApplicationScoped @Standard</code>, level <code>"Standard"</code>). Each only logs a message; the premium one describes several channels (email, SMS, push, in-app).</span><span lang="fr">Créez <code>PremiumNotificationService</code> (<code>@ApplicationScoped @Premium</code>, niveau <code>"Premium"</code>) et <code>StandardNotificationService</code> (<code>@ApplicationScoped @Standard</code>, niveau <code>"Standard"</code>). Chacun se contente de loguer un message ; le premium décrit plusieurs canaux (email, SMS, push, in-app).</span></li>
+          </ol>
+
+          <details class="lg-hint lg-hint--1">
+            <summary><span lang="en">Hint 1 — why qualifiers</span><span lang="fr">Indice 1 — pourquoi des qualifiers</span></summary>
+            <div class="lg-hint-body">
+              <p><span lang="en">Two beans implement the same interface, so <code>@Inject NotificationService</code> alone would be ambiguous (<code>WELD-001409</code>). A qualifier on both the bean and the injection point selects exactly one. The injection happens in step 11.</span><span lang="fr">Deux beans implémentent la même interface : un simple <code>@Inject NotificationService</code> serait ambigu (<code>WELD-001409</code>). Un qualifier sur le bean et sur le point d'injection en sélectionne exactement un. L'injection a lieu à l'étape 11.</span></p>
+            </div>
+          </details>
+          <details class="lg-hint lg-hint--2">
+            <summary><span lang="en">Hint 2 — skeleton</span><span lang="fr">Indice 2 — squelette</span></summary>
+            <div class="lg-hint-body">
+<pre class="dark"><code>@Qualifier
+@Retention(RUNTIME)
+@Target({TYPE, METHOD, FIELD, PARAMETER})
+public @interface Premium { }      // Standard: identical
+
+public interface NotificationService {
+    void sendWelcomeNotification(Client client);
+    void sendAccountCreatedNotification(Account account);
+    void sendTransactionNotification(Account account, String transactionType, double amount);
+    String getServiceLevel();
+}
+
+@ApplicationScoped
+@Premium
+public class PremiumNotificationService implements NotificationService { /* log only */ }</code></pre>
+            </div>
+          </details>
+          <details class="lg-hint lg-hint--sol">
+            <summary><span lang="en">Solution files</span><span lang="fr">Fichiers solution</span></summary>
+            <div class="lg-hint-body">
+              <p><a href="https://github.com/oplanson/esipe-javaee/blob/master/03-Labs/Lab04-CDI/solution/src/main/java/com/bank/config/Premium.java"><code>solution/…/config/Premium.java</code></a> &nbsp;&middot;&nbsp; <a href="https://github.com/oplanson/esipe-javaee/blob/master/03-Labs/Lab04-CDI/solution/src/main/java/com/bank/config/Standard.java"><code>solution/…/config/Standard.java</code></a> &nbsp;&middot;&nbsp; <a href="https://github.com/oplanson/esipe-javaee/blob/master/03-Labs/Lab04-CDI/solution/src/main/java/com/bank/service/NotificationService.java"><code>solution/…/service/NotificationService.java</code></a> &nbsp;&middot;&nbsp; <a href="https://github.com/oplanson/esipe-javaee/blob/master/03-Labs/Lab04-CDI/solution/src/main/java/com/bank/service/PremiumNotificationService.java"><code>solution/…/service/PremiumNotificationService.java</code></a> &nbsp;&middot;&nbsp; <a href="https://github.com/oplanson/esipe-javaee/blob/master/03-Labs/Lab04-CDI/solution/src/main/java/com/bank/service/StandardNotificationService.java"><code>solution/…/service/StandardNotificationService.java</code></a></p>
+            </div>
+          </details>
+          <div class="lg-checkpoint">
+            <div class="lg-check-label"><span lang="en">Checkpoint</span><span lang="fr">Point de contrôle</span></div>
+<pre class="dark"><code>grep -n -E '^@(Qualifier|Premium|Standard|ApplicationScoped)' src/main/java/com/bank/config/Premium.java src/main/java/com/bank/config/Standard.java src/main/java/com/bank/service/*NotificationService.java
+mvn -q -DskipTests compile &amp;&amp; echo COMPILE-OK</code></pre>
+            <p><span lang="en">Six lines (two <code>@Qualifier</code>, two <code>@ApplicationScoped</code>, <code>@Premium</code>, <code>@Standard</code>), then <code>COMPILE-OK</code>.</span><span lang="fr">Six lignes (deux <code>@Qualifier</code>, deux <code>@ApplicationScoped</code>, <code>@Premium</code>, <code>@Standard</code>), puis <code>COMPILE-OK</code>.</span></p>
+          </div>
+        </div>
+      </article>
+
+      <!-- ───────── STEP 11 ───────── -->
+      <article class="lg-step" id="step-11">
+        <div class="lg-step-head">
+          <div class="lg-step-num">11</div>
+          <div>
+            <h3><span lang="en">CDI events &amp; observers</span><span lang="fr">Événements CDI &amp; observers</span></h3>
+            <div class="lg-step-meta">
+              <span class="lg-chip">20 min</span>
+              <span class="lg-chip"><span lang="en">Course:</span><span lang="fr">Cours :</span> <a href="../../02-Lectures/slides/04-cdi/slides.html#slide-59">slide 59</a> &middot; <a href="../../02-Lectures/slides/04-cdi/slides.html#slide-60">slide 60</a> &middot; <a href="../../02-Lectures/slides/04-cdi/slides.html#slide-61">slide 61</a></span>
+            </div>
+          </div>
+        </div>
+        <div class="lg-step-body">
+          <p class="lg-files"><span lang="en">Files to create/modify:</span><span lang="fr">Fichiers à créer/modifier :</span> <code>event/ClientCreatedEvent.java</code>, <code>event/AccountCreatedEvent.java</code>, <code>event/TransactionEvent.java</code>, <code>event/BankingEventObserver.java</code>, <code>service/ClientService.java</code> <span lang="en">(under</span><span lang="fr">(sous</span> <code>src/main/java/com/bank/</code>)</p>
+          <div class="lg-task-label"><span lang="en">Task</span><span lang="fr">À faire</span></div>
+          <ol>
+            <li><span lang="en">Create the package <code>com.bank.event</code> with three immutable event classes: <code>ClientCreatedEvent</code> (client, <code>createdBy</code> defaulting to <code>"system"</code>, timestamp), <code>AccountCreatedEvent</code> (account, clientId, createdBy, timestamp) and <code>TransactionEvent</code> (account, enum <code>TransactionType {DEPOSIT, WITHDRAWAL, TRANSFER}</code>, amount, targetAccountId, performedBy, timestamp).</span><span lang="fr">Créez le package <code>com.bank.event</code> avec trois classes d'événement immuables : <code>ClientCreatedEvent</code> (client, <code>createdBy</code> valant <code>"system"</code> par défaut, timestamp), <code>AccountCreatedEvent</code> (compte, clientId, createdBy, timestamp) et <code>TransactionEvent</code> (compte, enum <code>TransactionType {DEPOSIT, WITHDRAWAL, TRANSFER}</code>, montant, targetAccountId, performedBy, timestamp).</span></li>
+            <li><span lang="en">Create <code>BankingEventObserver</code> (<code>@ApplicationScoped</code>) that injects <code>Logger</code>, <code>@Inject @Premium NotificationService</code> and <code>@Inject @Standard NotificationService</code>, and declares four observers: <code>onClientCreated</code>, <code>onAccountCreated</code>, <code>onTransaction</code> and <code>onLargeTransaction</code> (warning when <code>amount &gt; 10000</code>), each with a <code>@Observes</code> parameter.</span><span lang="fr">Créez <code>BankingEventObserver</code> (<code>@ApplicationScoped</code>) qui injecte <code>Logger</code>, <code>@Inject @Premium NotificationService</code> et <code>@Inject @Standard NotificationService</code>, et déclare quatre observers : <code>onClientCreated</code>, <code>onAccountCreated</code>, <code>onTransaction</code> et <code>onLargeTransaction</code> (avertissement si <code>amount &gt; 10000</code>), chacun avec un paramètre <code>@Observes</code>.</span></li>
+            <li><span lang="en">Add a private <code>selectNotificationService(boolean premium)</code> returning the <code>@Premium</code> or the <code>@Standard</code> service depending on <code>client.isPremium()</code>.</span><span lang="fr">Ajoutez une méthode privée <code>selectNotificationService(boolean premium)</code> qui renvoie le service <code>@Premium</code> ou <code>@Standard</code> selon <code>client.isPremium()</code>.</span></li>
+            <li><span lang="en">Back in <code>ClientService</code>: inject <code>Event&lt;ClientCreatedEvent&gt;</code> and, in <code>create()</code> after <code>em.flush()</code>, call <code>clientCreatedEvent.fire(new ClientCreatedEvent(client))</code>.</span><span lang="fr">De retour dans <code>ClientService</code> : injectez <code>Event&lt;ClientCreatedEvent&gt;</code> et, dans <code>create()</code> après <code>em.flush()</code>, appelez <code>clientCreatedEvent.fire(new ClientCreatedEvent(client))</code>.</span></li>
+          </ol>
+
+          <details class="lg-hint lg-hint--1">
+            <summary><span lang="en">Hint 1 — synchronous events</span><span lang="fr">Indice 1 — événements synchrones</span></summary>
+            <div class="lg-hint-body">
+              <p><span lang="en"><code>Event.fire()</code> calls the observers synchronously in the caller's thread and transaction. An observer is any method with a parameter annotated <code>@Observes</code>; the event type selects which observers run. Both <code>onTransaction</code> and <code>onLargeTransaction</code> observe <code>TransactionEvent</code>, so both run.</span><span lang="fr"><code>Event.fire()</code> appelle les observers de façon synchrone dans le thread et la transaction de l'appelant. Un observer est une méthode dont un paramètre est annoté <code>@Observes</code> ; le type d'événement choisit les observers exécutés. <code>onTransaction</code> et <code>onLargeTransaction</code> observent tous deux <code>TransactionEvent</code> : les deux s'exécutent.</span></p>
+            </div>
+          </details>
+          <details class="lg-hint lg-hint--2">
+            <summary><span lang="en">Hint 2 — key signatures</span><span lang="fr">Indice 2 — signatures clés</span></summary>
+            <div class="lg-hint-body">
+<pre class="dark"><code>// ClientService
+@Inject private Event&lt;ClientCreatedEvent&gt; clientCreatedEvent;
+...
+clientCreatedEvent.fire(new ClientCreatedEvent(client));
+
+// BankingEventObserver
+@Inject @Premium  private NotificationService premiumNotificationService;
+@Inject @Standard private NotificationService standardNotificationService;
+
+public void onClientCreated(@Observes ClientCreatedEvent event) { ... }
+public void onAccountCreated(@Observes AccountCreatedEvent event) { ... }
+public void onTransaction(@Observes TransactionEvent event) { ... }
+public void onLargeTransaction(@Observes TransactionEvent event) { ... }</code></pre>
+            </div>
+          </details>
+          <details class="lg-hint lg-hint--sol">
+            <summary><span lang="en">Solution files</span><span lang="fr">Fichiers solution</span></summary>
+            <div class="lg-hint-body">
+              <p><a href="https://github.com/oplanson/esipe-javaee/blob/master/03-Labs/Lab04-CDI/solution/src/main/java/com/bank/event/ClientCreatedEvent.java"><code>solution/…/event/ClientCreatedEvent.java</code></a> &nbsp;&middot;&nbsp; <a href="https://github.com/oplanson/esipe-javaee/blob/master/03-Labs/Lab04-CDI/solution/src/main/java/com/bank/event/AccountCreatedEvent.java"><code>solution/…/event/AccountCreatedEvent.java</code></a> &nbsp;&middot;&nbsp; <a href="https://github.com/oplanson/esipe-javaee/blob/master/03-Labs/Lab04-CDI/solution/src/main/java/com/bank/event/TransactionEvent.java"><code>solution/…/event/TransactionEvent.java</code></a> &nbsp;&middot;&nbsp; <a href="https://github.com/oplanson/esipe-javaee/blob/master/03-Labs/Lab04-CDI/solution/src/main/java/com/bank/event/BankingEventObserver.java"><code>solution/…/event/BankingEventObserver.java</code></a> &nbsp;&middot;&nbsp; <a href="https://github.com/oplanson/esipe-javaee/blob/master/03-Labs/Lab04-CDI/solution/src/main/java/com/bank/service/ClientService.java"><code>solution/…/service/ClientService.java</code></a></p>
+            </div>
+          </details>
+          <div class="lg-checkpoint">
+            <div class="lg-check-label"><span lang="en">Checkpoint</span><span lang="fr">Point de contrôle</span></div>
+<pre class="dark"><code>grep -c '@Observes' src/main/java/com/bank/event/BankingEventObserver.java
+grep -n '\.fire(' src/main/java/com/bank/service/ClientService.java
+mvn -q -DskipTests compile &amp;&amp; echo COMPILE-OK</code></pre>
+            <p><span lang="en"><code>4</code>, then one <code>clientCreatedEvent.fire(...)</code> line, then <code>COMPILE-OK</code>.</span><span lang="fr"><code>4</code>, puis une ligne <code>clientCreatedEvent.fire(...)</code>, puis <code>COMPILE-OK</code>.</span></p>
+          </div>
+        </div>
+      </article>
+
+      <!-- ───────── STEP 12 ───────── -->
+      <article class="lg-step" id="step-12">
+        <div class="lg-step-head">
+          <div class="lg-step-num">12</div>
+          <div>
+            <h3><span lang="en">Accounts: AccountService, AccountController &amp; views</span><span lang="fr">Comptes : AccountService, AccountController &amp; vues</span></h3>
+            <div class="lg-step-meta">
+              <span class="lg-chip">25 min</span>
+              <span class="lg-chip"><span lang="en">Course:</span><span lang="fr">Cours :</span> <a href="../../02-Lectures/slides/04-cdi/slides.html#slide-32">slide 32</a> &middot; <a href="../../02-Lectures/slides/04-cdi/slides.html#slide-37">slide 37</a> &middot; <a href="../../02-Lectures/slides/04-cdi/slides.html#slide-38">slide 38</a></span>
+            </div>
+          </div>
+        </div>
+        <div class="lg-step-body">
+          <p class="lg-files"><span lang="en">Files to create:</span><span lang="fr">Fichiers à créer :</span> <code>service/AccountService.java</code>, <code>web/AccountController.java</code> <span lang="en">(under</span><span lang="fr">(sous</span> <code>src/main/java/com/bank/</code>), <code>src/main/webapp/WEB-INF/views/account-list.jsp</code>, <code>account-details.jsp</code>, <code>account-form.jsp</code></p>
+          <div class="lg-task-label"><span lang="en">Task</span><span lang="fr">À faire</span></div>
+          <ol>
+            <li><span lang="en"><code>AccountService</code> (<code>@ApplicationScoped</code>): inject <code>Logger</code>, <code>EntityManager</code>, <code>Event&lt;AccountCreatedEvent&gt;</code> and <code>Event&lt;TransactionEvent&gt;</code>. Implement <code>findAll</code>, <code>findById</code>, <code>findByClient</code>, <code>findByType</code> (named queries <code>Account.*</code>), <code>create(Account, Long clientId)</code>, <code>update</code>, <code>delete</code>, <code>deposit</code>, <code>withdraw</code>, <code>transfer</code>, <code>count</code>, <code>exists</code>, <code>getTotalBalance</code>.</span><span lang="fr"><code>AccountService</code> (<code>@ApplicationScoped</code>) : injectez <code>Logger</code>, <code>EntityManager</code>, <code>Event&lt;AccountCreatedEvent&gt;</code> et <code>Event&lt;TransactionEvent&gt;</code>. Implémentez <code>findAll</code>, <code>findById</code>, <code>findByClient</code>, <code>findByType</code> (requêtes nommées <code>Account.*</code>), <code>create(Account, Long clientId)</code>, <code>update</code>, <code>delete</code>, <code>deposit</code>, <code>withdraw</code>, <code>transfer</code>, <code>count</code>, <code>exists</code>, <code>getTotalBalance</code>.</span></li>
+            <li><span lang="en">Use <code>@Transactional(SUPPORTS)</code> for reads and <code>@Transactional</code> for writes, and add <code>@Logged</code> on the 11 business methods (all except <code>count</code> and <code>exists</code>). In <code>create</code> keep both sides of the relation (<code>account.setClient(client); client.addAccount(account);</code>) then fire <code>AccountCreatedEvent</code>; <code>deposit</code>, <code>withdraw</code> and <code>transfer</code> fire a <code>TransactionEvent</code> (4 <code>fire</code> calls in total).</span><span lang="fr">Utilisez <code>@Transactional(SUPPORTS)</code> pour les lectures et <code>@Transactional</code> pour les écritures, et ajoutez <code>@Logged</code> sur les 11 méthodes métier (toutes sauf <code>count</code> et <code>exists</code>). Dans <code>create</code>, maintenez les deux côtés de la relation (<code>account.setClient(client); client.addAccount(account);</code>) puis publiez <code>AccountCreatedEvent</code> ; <code>deposit</code>, <code>withdraw</code> et <code>transfer</code> publient un <code>TransactionEvent</code> (4 appels <code>fire</code> au total).</span></li>
+            <li><span lang="en"><code>AccountController</code>: <code>@WebServlet(name = "AccountController", urlPatterns = {"/accounts", "/account"}, loadOnStartup = 2)</code>; inject <code>AccountService</code>, <code>ClientService</code>, <code>Logger</code> and <code>@ConfigProperty</code> for <code>feature.account.deletion.enabled</code>, <code>feature.account.transfer.enabled</code> and <code>app.name</code>. <code>doGet</code> handles <code>list</code>, <code>view</code>, <code>new</code>, <code>edit</code>; <code>doPost</code> handles <code>create</code>, <code>update</code>, <code>delete</code>, <code>deposit</code>, <code>withdraw</code>, <code>transfer</code> with PRG redirects; failures forward to <code>error.jsp</code>.</span><span lang="fr"><code>AccountController</code> : <code>@WebServlet(name = "AccountController", urlPatterns = {"/accounts", "/account"}, loadOnStartup = 2)</code> ; injectez <code>AccountService</code>, <code>ClientService</code>, <code>Logger</code> et des <code>@ConfigProperty</code> pour <code>feature.account.deletion.enabled</code>, <code>feature.account.transfer.enabled</code> et <code>app.name</code>. <code>doGet</code> gère <code>list</code>, <code>view</code>, <code>new</code>, <code>edit</code> ; <code>doPost</code> gère <code>create</code>, <code>update</code>, <code>delete</code>, <code>deposit</code>, <code>withdraw</code>, <code>transfer</code> avec redirections PRG ; les échecs sont transmis à <code>error.jsp</code>.</span></li>
+            <li><span lang="en">Create the three JSP views. Form fields are <code>action</code>, <code>id</code>, <code>clientId</code>, <code>number</code>, <code>type</code> (<code>CHECKING</code> or <code>SAVINGS</code>), <code>balance</code>, <code>amount</code>, <code>fromId</code>, <code>toId</code>.</span><span lang="fr">Créez les trois vues JSP. Les champs de formulaire sont <code>action</code>, <code>id</code>, <code>clientId</code>, <code>number</code>, <code>type</code> (<code>CHECKING</code> ou <code>SAVINGS</code>), <code>balance</code>, <code>amount</code>, <code>fromId</code>, <code>toId</code>.</span></li>
+          </ol>
+
+          <details class="lg-hint lg-hint--1">
+            <summary><span lang="en">Hint 1 — long files</span><span lang="fr">Indice 1 — fichiers longs</span></summary>
+            <div class="lg-hint-body">
+              <p><span lang="en">These files are long (387 and 532 lines) and mostly repeat the patterns of <code>ClientService</code> and <code>ClientController</code>. Write one method of each kind, then apply the same pattern; the account number must be unique (<code>V2</code>). Open the solution links when you need the exact JSP markup.</span><span lang="fr">Ces fichiers sont longs (387 et 532 lignes) et répètent surtout les motifs de <code>ClientService</code> et <code>ClientController</code>. Écrivez une méthode de chaque type, puis appliquez le même motif ; le numéro de compte doit être unique (<code>V2</code>). Ouvrez les liens solution pour le balisage exact des JSP.</span></p>
+            </div>
+          </details>
+          <details class="lg-hint lg-hint--2">
+            <summary><span lang="en">Hint 2 — one write method</span><span lang="fr">Indice 2 — une méthode d'écriture</span></summary>
+            <div class="lg-hint-body">
+<pre class="dark"><code>@Transactional
+@Logged
+public boolean deposit(Long accountId, double amount) {
+    if (accountId == null || amount &lt;= 0) return false;
+    Account account = em.find(Account.class, accountId);
+    if (account == null) return false;
+    account.deposit(amount);
+    em.merge(account);
+    transactionEvent.fire(new TransactionEvent(
+        account, TransactionEvent.TransactionType.DEPOSIT, amount));
+    return true;
+}</code></pre>
+            </div>
+          </details>
+          <details class="lg-hint lg-hint--sol">
+            <summary><span lang="en">Solution files</span><span lang="fr">Fichiers solution</span></summary>
+            <div class="lg-hint-body">
+              <p><a href="https://github.com/oplanson/esipe-javaee/blob/master/03-Labs/Lab04-CDI/solution/src/main/java/com/bank/service/AccountService.java"><code>solution/…/service/AccountService.java</code></a> &nbsp;&middot;&nbsp; <a href="https://github.com/oplanson/esipe-javaee/blob/master/03-Labs/Lab04-CDI/solution/src/main/java/com/bank/web/AccountController.java"><code>solution/…/web/AccountController.java</code></a> &nbsp;&middot;&nbsp; <a href="https://github.com/oplanson/esipe-javaee/blob/master/03-Labs/Lab04-CDI/solution/src/main/webapp/WEB-INF/views/account-list.jsp"><code>solution/…/account-list.jsp</code></a> &nbsp;&middot;&nbsp; <a href="https://github.com/oplanson/esipe-javaee/blob/master/03-Labs/Lab04-CDI/solution/src/main/webapp/WEB-INF/views/account-details.jsp"><code>solution/…/account-details.jsp</code></a> &nbsp;&middot;&nbsp; <a href="https://github.com/oplanson/esipe-javaee/blob/master/03-Labs/Lab04-CDI/solution/src/main/webapp/WEB-INF/views/account-form.jsp"><code>solution/…/account-form.jsp</code></a></p>
+            </div>
+          </details>
+          <div class="lg-checkpoint">
+            <div class="lg-check-label"><span lang="en">Checkpoint</span><span lang="fr">Point de contrôle</span></div>
+<pre class="dark"><code>grep -c -E '^\s+@Logged' src/main/java/com/bank/service/AccountService.java
+grep -c '\.fire(' src/main/java/com/bank/service/AccountService.java
+mvn -q -DskipTests compile &amp;&amp; echo COMPILE-OK</code></pre>
+            <p><span lang="en"><code>11</code>, <code>4</code>, then <code>COMPILE-OK</code>.</span><span lang="fr"><code>11</code>, <code>4</code>, puis <code>COMPILE-OK</code>.</span></p>
+          </div>
+        </div>
+      </article>
+
+      <!-- ───────── STEP 13 ───────── -->
+      <article class="lg-step" id="step-13">
+        <div class="lg-step-head">
+          <div class="lg-step-num">13</div>
+          <div>
+            <h3><span lang="en">Bean-managed transactions (UserTransaction)</span><span lang="fr">Transactions gérées par le bean (UserTransaction)</span></h3>
+            <div class="lg-step-meta">
+              <span class="lg-chip">25 min</span>
+              <span class="lg-chip"><span lang="en">Course:</span><span lang="fr">Cours :</span> <a href="../../02-Lectures/slides/04-cdi/slides.html#slide-44">slide 44</a> &middot; <a href="../../02-Lectures/slides/04-cdi/slides.html#slide-45">slide 45</a> &middot; <a href="../../02-Lectures/slides/04-cdi/slides.html#slide-46">slide 46</a> &middot; <a href="../../02-Lectures/slides/04-cdi/slides.html#slide-52">slide 52</a></span>
+            </div>
+          </div>
+        </div>
+        <div class="lg-step-body">
+          <p class="lg-files"><span lang="en">Files to create:</span><span lang="fr">Fichiers à créer :</span> <code>service/BatchTransferService.java</code>, <code>service/TransactionComparisonService.java</code>, <code>service/TimeoutTestService.java</code> <span lang="en">(under</span><span lang="fr">(sous</span> <code>src/main/java/com/bank/</code>)</p>
+          <div class="lg-task-label"><span lang="en">Task</span><span lang="fr">À faire</span></div>
+          <ol>
+            <li><span lang="en">Create three <code>@ApplicationScoped</code> services that obtain a <code>UserTransaction</code> with <code>@Resource</code> (<code>jakarta.annotation.Resource</code>, <code>jakarta.transaction.UserTransaction</code>) and inject <code>Logger</code> (plus <code>EntityManager</code> for the first two).</span><span lang="fr">Créez trois services <code>@ApplicationScoped</code> qui obtiennent une <code>UserTransaction</code> par <code>@Resource</code> (<code>jakarta.annotation.Resource</code>, <code>jakarta.transaction.UserTransaction</code>) et injectent <code>Logger</code> (plus <code>EntityManager</code> pour les deux premiers).</span></li>
+            <li><span lang="en"><code>BatchTransferService.processBatch(List&lt;TransferRequest&gt;)</code>: for each request call <code>setTransactionTimeout(30)</code> then <code>begin()</code>, load both accounts, roll back and record a failure if an account is missing or the balance is insufficient, otherwise move the amount and <code>commit()</code>. In the <code>catch</code>, roll back only if <code>getStatus() == Status.STATUS_ACTIVE</code>. Add the static result classes <code>TransferRequest</code>, <code>BatchTransferResult</code>, <code>TransferResult</code> and <code>transferWithRetry(...)</code>.</span><span lang="fr"><code>BatchTransferService.processBatch(List&lt;TransferRequest&gt;)</code> : pour chaque requête, appelez <code>setTransactionTimeout(30)</code> puis <code>begin()</code>, chargez les deux comptes, faites un rollback et notez un échec si un compte manque ou si le solde est insuffisant, sinon déplacez le montant et faites <code>commit()</code>. Dans le <code>catch</code>, ne faites le rollback que si <code>getStatus() == Status.STATUS_ACTIVE</code>. Ajoutez les classes de résultat statiques <code>TransferRequest</code>, <code>BatchTransferResult</code>, <code>TransferResult</code> et <code>transferWithRetry(...)</code>.</span></li>
+            <li><span lang="en"><code>TransactionComparisonService</code>: <code>transferCMT</code> (annotated <code>@Transactional</code>, about 10 lines) and <code>transferBMT</code> (manual begin / commit / rollback, about 30 lines), plus <code>measureCMT</code>, <code>measureBMT</code> (<code>System.nanoTime()</code>) and <code>comparePerformance</code>.</span><span lang="fr"><code>TransactionComparisonService</code> : <code>transferCMT</code> (annoté <code>@Transactional</code>, une dizaine de lignes) et <code>transferBMT</code> (begin / commit / rollback manuels, une trentaine de lignes), plus <code>measureCMT</code>, <code>measureBMT</code> (<code>System.nanoTime()</code>) et <code>comparePerformance</code>.</span></li>
+            <li><span lang="en"><code>TimeoutTestService</code>: <code>testShortTimeout</code> (timeout 2 s, work 5 s: expected failure), <code>testAdequateTimeout</code> (10 s / 2 s) , <code>testDefaultTimeout</code> and <code>runAllTests</code>. The <code>&lt;transaction maxTransactionTimeout="300s"&gt;</code> of step 2 permits these values.</span><span lang="fr"><code>TimeoutTestService</code> : <code>testShortTimeout</code> (timeout 2 s, travail 5 s : échec attendu), <code>testAdequateTimeout</code> (10 s / 2 s), <code>testDefaultTimeout</code> et <code>runAllTests</code>. Le <code>&lt;transaction maxTransactionTimeout="300s"&gt;</code> de l'étape 2 autorise ces valeurs.</span></li>
+          </ol>
+
+          <details class="lg-hint lg-hint--1">
+            <summary><span lang="en">Hint 1 — CMT vs BMT</span><span lang="fr">Indice 1 — CMT vs BMT</span></summary>
+            <div class="lg-hint-body">
+              <p><span lang="en">With bean-managed transactions you must not use <code>@Transactional</code> on the same method. <code>setTransactionTimeout()</code> must be called <em>before</em> <code>begin()</code>. Always check the status before <code>rollback()</code>, otherwise the rollback itself can throw.</span><span lang="fr">Avec des transactions gérées par le bean, n'utilisez pas <code>@Transactional</code> sur la même méthode. <code>setTransactionTimeout()</code> doit être appelé <em>avant</em> <code>begin()</code>. Vérifiez toujours le statut avant <code>rollback()</code>, sinon le rollback peut lui-même lever une exception.</span></p>
+            </div>
+          </details>
+          <details class="lg-hint lg-hint--2">
+            <summary><span lang="en">Hint 2 — BMT pattern</span><span lang="fr">Indice 2 — motif BMT</span></summary>
+            <div class="lg-hint-body">
+<pre class="dark"><code>@Resource private UserTransaction utx;
+
+try {
+    utx.setTransactionTimeout(30);   // seconds, before begin()
+    utx.begin();
+    // em.find(...) / business logic
+    utx.commit();
+} catch (Exception e) {
+    try {
+        if (utx.getStatus() == Status.STATUS_ACTIVE) utx.rollback();
+    } catch (Exception ex) { /* log */ }
+}</code></pre>
+            </div>
+          </details>
+          <details class="lg-hint lg-hint--sol">
+            <summary><span lang="en">Solution files</span><span lang="fr">Fichiers solution</span></summary>
+            <div class="lg-hint-body">
+              <p><a href="https://github.com/oplanson/esipe-javaee/blob/master/03-Labs/Lab04-CDI/solution/src/main/java/com/bank/service/BatchTransferService.java"><code>solution/…/service/BatchTransferService.java</code></a> &nbsp;&middot;&nbsp; <a href="https://github.com/oplanson/esipe-javaee/blob/master/03-Labs/Lab04-CDI/solution/src/main/java/com/bank/service/TransactionComparisonService.java"><code>solution/…/service/TransactionComparisonService.java</code></a> &nbsp;&middot;&nbsp; <a href="https://github.com/oplanson/esipe-javaee/blob/master/03-Labs/Lab04-CDI/solution/src/main/java/com/bank/service/TimeoutTestService.java"><code>solution/…/service/TimeoutTestService.java</code></a></p>
+            </div>
+          </details>
+          <div class="lg-checkpoint">
+            <div class="lg-check-label"><span lang="en">Checkpoint</span><span lang="fr">Point de contrôle</span></div>
+<pre class="dark"><code>grep -c 'UserTransaction utx' src/main/java/com/bank/service/BatchTransferService.java src/main/java/com/bank/service/TransactionComparisonService.java src/main/java/com/bank/service/TimeoutTestService.java
+mvn -q -DskipTests compile &amp;&amp; echo COMPILE-OK</code></pre>
+            <p><span lang="en"><code>1</code> for each of the three files, then <code>COMPILE-OK</code>.</span><span lang="fr"><code>1</code> pour chacun des trois fichiers, puis <code>COMPILE-OK</code>.</span></p>
+          </div>
+        </div>
+      </article>
+
+      <!-- ───────── STEP 14 ───────── -->
+      <article class="lg-step" id="step-14">
+        <div class="lg-step-head">
+          <div class="lg-step-num">14</div>
+          <div>
+            <h3><span lang="en">Test servlet &amp; home page</span><span lang="fr">Servlet de test &amp; page d'accueil</span></h3>
+            <div class="lg-step-meta">
+              <span class="lg-chip">15 min</span>
+              <span class="lg-chip"><span lang="en">Course:</span><span lang="fr">Cours :</span> <a href="../../02-Lectures/slides/04-cdi/slides.html#slide-57">slide 57</a></span>
+            </div>
+          </div>
+        </div>
+        <div class="lg-step-body">
+          <p class="lg-files"><span lang="en">Files to create/modify:</span><span lang="fr">Fichiers à créer/modifier :</span> <code>src/main/java/com/bank/web/TransactionTestServlet.java</code>, <code>src/main/webapp/index.html</code></p>
+          <div class="lg-task-label"><span lang="en">Task</span><span lang="fr">À faire</span></div>
+          <ol>
+            <li><span lang="en">Create <code>TransactionTestServlet</code> with <code>@WebServlet("/test-transactions")</code>, injecting <code>BatchTransferService</code>, <code>TransactionComparisonService</code> and <code>TimeoutTestService</code>. In <code>doGet</code>, switch on the parameter <code>test</code>: <code>batch</code>, <code>comparison</code>, <code>timeout</code>; any other value shows a welcome page. It writes simple HTML itself.</span><span lang="fr">Créez <code>TransactionTestServlet</code> avec <code>@WebServlet("/test-transactions")</code>, en injectant <code>BatchTransferService</code>, <code>TransactionComparisonService</code> et <code>TimeoutTestService</code>. Dans <code>doGet</code>, faites un switch sur le paramètre <code>test</code> : <code>batch</code>, <code>comparison</code>, <code>timeout</code> ; toute autre valeur affiche une page d'accueil. La servlet écrit elle-même du HTML simple.</span></li>
+            <li><span lang="en">The batch test submits five transfers: T1 (1 → 2, 100.00), T2 (2 → 3, 50.00), T3 (1 → 3, 999999.00, insufficient funds), T4 (3 → 1, 25.00), T5 (999 → 1, 10.00, account not found). Expect 3 successes and 2 failures.</span><span lang="fr">Le test de lot soumet cinq virements : T1 (1 → 2, 100,00), T2 (2 → 3, 50,00), T3 (1 → 3, 999999,00, solde insuffisant), T4 (3 → 1, 25,00), T5 (999 → 1, 10,00, compte inexistant). Attendez-vous à 3 succès et 2 échecs.</span></li>
+            <li><span lang="en"><code>index.html</code>: set title and subtitle to <em>Lab 04: CDI &amp; Dependency Injection</em>, replace the <em>Validate Transaction (JNDI Demo)</em> button by a link to <code>test-transactions</code>, and replace the feature list by the CDI features (injection, producer, interceptor, scopes, CMT, BMT, batch, timeout, MicroProfile Config).</span><span lang="fr"><code>index.html</code> : fixez le titre et le sous-titre à <em>Lab 04: CDI &amp; Dependency Injection</em>, remplacez le bouton <em>Validate Transaction (JNDI Demo)</em> par un lien vers <code>test-transactions</code> et remplacez la liste de fonctionnalités par les fonctionnalités CDI (injection, producer, intercepteur, portées, CMT, BMT, lot, timeout, MicroProfile Config).</span></li>
+          </ol>
+
+          <details class="lg-hint lg-hint--1">
+            <summary><span lang="en">Hint 1 — servlet with services</span><span lang="fr">Indice 1 — servlet et services</span></summary>
+            <div class="lg-hint-body">
+              <p><span lang="en">A servlet can inject any CDI bean. The batch results change account balances, so running <code>?test=batch</code> several times drains the accounts used by T1, T2 and T4; that does not break the lab.</span><span lang="fr">Une servlet peut injecter n'importe quel bean CDI. Les résultats du lot modifient les soldes : lancer plusieurs fois <code>?test=batch</code> vide progressivement les comptes utilisés par T1, T2 et T4, ce qui ne casse pas le lab.</span></p>
+            </div>
+          </details>
+          <details class="lg-hint lg-hint--2">
+            <summary><span lang="en">Hint 2 — dispatch</span><span lang="fr">Indice 2 — aiguillage</span></summary>
+            <div class="lg-hint-body">
+<pre class="dark"><code>@WebServlet("/test-transactions")
+public class TransactionTestServlet extends HttpServlet {
+    @Inject private BatchTransferService batchService;
+    @Inject private TransactionComparisonService comparisonService;
+    @Inject private TimeoutTestService timeoutService;
+
+    @Override
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp) ... {
+        String testType = req.getParameter("test");
+        // ... write HTML header and navigation, then:
+        switch (testType == null ? "" : testType) {
+            case "batch":      testBatchProcessing(out); break;
+            case "comparison": testComparison(out);      break;
+            case "timeout":    testTimeout(out);         break;
+            default:           showWelcome(out);
+        }
+    }
+}</code></pre>
+            </div>
+          </details>
+          <details class="lg-hint lg-hint--sol">
+            <summary><span lang="en">Solution files</span><span lang="fr">Fichiers solution</span></summary>
+            <div class="lg-hint-body">
+              <p><a href="https://github.com/oplanson/esipe-javaee/blob/master/03-Labs/Lab04-CDI/solution/src/main/java/com/bank/web/TransactionTestServlet.java"><code>solution/…/web/TransactionTestServlet.java</code></a> &nbsp;&middot;&nbsp; <a href="https://github.com/oplanson/esipe-javaee/blob/master/03-Labs/Lab04-CDI/solution/src/main/webapp/index.html"><code>solution/…/webapp/index.html</code></a></p>
+            </div>
+          </details>
+          <div class="lg-checkpoint">
+            <div class="lg-check-label"><span lang="en">Checkpoint</span><span lang="fr">Point de contrôle</span></div>
+<pre class="dark"><code>grep -n '@WebServlet' src/main/java/com/bank/web/TransactionTestServlet.java
+grep -c 'test-transactions' src/main/webapp/index.html
+mvn -q -DskipTests package &amp;&amp; ls target/banking-cdi-app.war</code></pre>
+            <p><span lang="en">The <code>@WebServlet("/test-transactions")</code> line, <code>1</code>, then <code>target/banking-cdi-app.war</code>.</span><span lang="fr">La ligne <code>@WebServlet("/test-transactions")</code>, <code>1</code>, puis <code>target/banking-cdi-app.war</code>.</span></p>
+          </div>
+        </div>
+      </article>
+
+      <!-- ───────── STEP 15 ───────── -->
+      <article class="lg-step" id="step-15">
+        <div class="lg-step-head">
+          <div class="lg-step-num">15</div>
+          <div>
+            <h3><span lang="en">Package &amp; run the container</span><span lang="fr">Packager &amp; lancer le conteneur</span></h3>
+            <div class="lg-step-meta">
+              <span class="lg-chip">15 min</span>
+              <span class="lg-chip"><span lang="en">Course:</span><span lang="fr">Cours :</span> <a href="../../02-Lectures/slides/04-cdi/slides.html#slide-71">slide 71</a></span>
+            </div>
+          </div>
+        </div>
+        <div class="lg-step-body">
+          <p class="lg-files"><span lang="en">File to check:</span><span lang="fr">Fichier à vérifier :</span> <code>Containerfile</code></p>
+          <div class="lg-task-label"><span lang="en">Task</span><span lang="fr">À faire</span></div>
+          <ol>
+            <li><span lang="en">Check that <code>Containerfile</code> copies <code>target/banking-cdi-app.war</code>, <code>server.xml</code>, <code>bootstrap.properties</code>, <code>microprofile-config.properties</code> and the PostgreSQL driver from <code>target/liberty/wlp/usr/servers/bankingServer/postgresql/</code>, then runs <code>configure.sh</code> (nothing to rewrite: only the WAR name changed in step 1).</span><span lang="fr">Vérifiez que <code>Containerfile</code> copie <code>target/banking-cdi-app.war</code>, <code>server.xml</code>, <code>bootstrap.properties</code>, <code>microprofile-config.properties</code> et le driver PostgreSQL depuis <code>target/liberty/wlp/usr/servers/bankingServer/postgresql/</code>, puis exécute <code>configure.sh</code> (rien à réécrire : seul le nom du WAR a changé à l'étape 1).</span></li>
+            <li><span lang="en">Run the redeploy loop of the <a href="#setup">Setup</a> section from a clean state: database up, WAR built, image built, container started with the five <code>DB_*</code> environment variables, ports published on <code>127.0.0.1</code>.</span><span lang="fr">Exécutez la boucle de redéploiement de la section <a href="#setup">Préparation</a> depuis un état propre : base démarrée, WAR construit, image construite, conteneur lancé avec les cinq variables d'environnement <code>DB_*</code>, ports publiés sur <code>127.0.0.1</code>.</span></li>
+            <li><span lang="en">Look at the Liberty log: you should see the four Flyway migrations on a fresh database, then the application start.</span><span lang="fr">Regardez le log Liberty : vous devez voir les quatre migrations Flyway sur une base neuve, puis le démarrage de l'application.</span></li>
+          </ol>
+
+          <details class="lg-hint lg-hint--1">
+            <summary><span lang="en">Hint 1 — if the container exits or health is DOWN</span><span lang="fr">Indice 1 — si le conteneur s'arrête ou si la santé est DOWN</span></summary>
+            <div class="lg-hint-body">
+              <p><span lang="en">Check <code>podman logs banking-cdi-lab04</code>. <code>${db.port} is not a number</code> means one of the five <code>-e DB_*</code> options is missing. <code>Intermediate context does not exist: jdbc/bankingDS</code> is the consequence of the same problem.</span><span lang="fr">Consultez <code>podman logs banking-cdi-lab04</code>. <code>${db.port} is not a number</code> signifie qu'une des cinq options <code>-e DB_*</code> manque. <code>Intermediate context does not exist: jdbc/bankingDS</code> est la conséquence du même problème.</span></p>
+            </div>
+          </details>
+          <details class="lg-hint lg-hint--2">
+            <summary><span lang="en">Hint 2 — run command</span><span lang="fr">Indice 2 — commande de lancement</span></summary>
+            <div class="lg-hint-body">
+<pre class="dark"><code>podman run -d --name banking-cdi-lab04 -p 127.0.0.1:9080:9080 \
+  -e DB_HOST=host.containers.internal -e DB_PORT=5432 -e DB_NAME=bankdb \
+  -e DB_USER=bankuser -e DB_PASSWORD=bankpass banking-cdi-app:lab04</code></pre>
+            </div>
+          </details>
+          <details class="lg-hint lg-hint--sol">
+            <summary><span lang="en">Solution file</span><span lang="fr">Fichier solution</span></summary>
+            <div class="lg-hint-body">
+              <p><a href="https://github.com/oplanson/esipe-javaee/blob/master/03-Labs/Lab04-CDI/solution/Containerfile"><code>solution/Containerfile</code></a></p>
+            </div>
+          </details>
+          <div class="lg-checkpoint">
+            <div class="lg-check-label"><span lang="en">Checkpoint</span><span lang="fr">Point de contrôle</span></div>
+<pre class="dark"><code>curl -s http://localhost:9080/health/live
+podman logs banking-cdi-lab04 2&gt;&amp;1 | grep 'Flyway migration completed'</code></pre>
+            <p><span lang="en"><code>{"status":"UP","checks":[{"name":"database-connection","status":"UP",..."type":"postgresql"...}]}</code>, then <code>Flyway migration completed successfully</code> (<code>Migrations executed: 4</code> on a fresh database, <code>0</code> afterwards).</span><span lang="fr"><code>{"status":"UP","checks":[{"name":"database-connection","status":"UP",..."type":"postgresql"...}]}</code>, puis <code>Flyway migration completed successfully</code> (<code>Migrations executed: 4</code> sur une base neuve, <code>0</code> ensuite).</span></p>
+          </div>
+        </div>
+      </article>
+
+    </section>
+
+    <!-- ═════════════ 6. RUN ═════════════ -->
+    <section class="lg-section" id="run">
+      <h2><span class="lg-sec-num">06</span><span lang="en">Run and operate</span><span lang="fr">Exécution</span></h2>
+      <table class="slide-table">
+        <thead><tr><th><span lang="en">Purpose</span><span lang="fr">Usage</span></th><th><span lang="en">Command</span><span lang="fr">Commande</span></th></tr></thead>
+        <tbody>
+          <tr><td><span lang="en">Start PostgreSQL</span><span lang="fr">Démarrer PostgreSQL</span></td><td><code>podman compose up -d</code></td></tr>
+          <tr><td><span lang="en">Build and start the application</span><span lang="fr">Construire et démarrer l'application</span></td><td><span lang="en">the redeploy loop of the <a href="#setup">Setup</a> section</span><span lang="fr">la boucle de redéploiement de la section <a href="#setup">Préparation</a></span></td></tr>
+          <tr><td><span lang="en">Inspect database rows</span><span lang="fr">Inspecter les lignes en base</span></td><td><code>podman exec banking-db psql -U bankuser -d bankdb -c "SELECT id, name, is_premium FROM clients;"</code></td></tr>
+          <tr><td><span lang="en">Inspect Flyway history</span><span lang="fr">Inspecter l'historique Flyway</span></td><td><code>podman exec banking-db psql -U bankuser -d bankdb -c "SELECT version, description FROM flyway_schema_history;"</code></td></tr>
+          <tr><td><span lang="en">Follow Liberty logs</span><span lang="fr">Suivre les logs Liberty</span></td><td><code>podman logs -f banking-cdi-lab04</code></td></tr>
+          <tr><td><span lang="en">Stop and clean up</span><span lang="fr">Arrêter et nettoyer</span></td><td><code>podman rm -f banking-cdi-lab04 &amp;&amp; podman compose down</code></td></tr>
+        </tbody>
+      </table>
+
+      <table class="slide-table">
+        <thead><tr><th>URL</th><th><span lang="en">What you get</span><span lang="fr">Ce que vous obtenez</span></th></tr></thead>
+        <tbody>
+          <tr><td><a href="http://localhost:9080/">http://localhost:9080/</a></td><td><span lang="en">Home page</span><span lang="fr">Page d'accueil</span></td></tr>
+          <tr><td><a href="http://localhost:9080/clients">http://localhost:9080/clients</a></td><td><span lang="en">Clients with PREMIUM / STANDARD status</span><span lang="fr">Clients avec statut PREMIUM / STANDARD</span></td></tr>
+          <tr><td><a href="http://localhost:9080/client?action=new">http://localhost:9080/client?action=new</a></td><td><span lang="en">Client form with the Premium checkbox</span><span lang="fr">Formulaire client avec la case Premium</span></td></tr>
+          <tr><td><a href="http://localhost:9080/accounts">http://localhost:9080/accounts</a></td><td><span lang="en">All accounts</span><span lang="fr">Tous les comptes</span></td></tr>
+          <tr><td><a href="http://localhost:9080/test-transactions">http://localhost:9080/test-transactions</a></td><td><span lang="en">Transaction tests (add <code>?test=batch</code>, <code>comparison</code> or <code>timeout</code>)</span><span lang="fr">Tests de transactions (ajoutez <code>?test=batch</code>, <code>comparison</code> ou <code>timeout</code>)</span></td></tr>
+          <tr><td><a href="http://localhost:9080/health">http://localhost:9080/health</a></td><td><span lang="en">MicroProfile Health (database &amp; web application)</span><span lang="fr">MicroProfile Health (base &amp; application web)</span></td></tr>
+          <tr><td><a href="http://localhost:9080/metrics">http://localhost:9080/metrics</a></td><td><span lang="en">MicroProfile Metrics</span><span lang="fr">MicroProfile Metrics</span></td></tr>
+        </tbody>
+      </table>
+
+      <div class="lg-callout lg-callout--note">
+        <div lang="en"><div class="lg-callout-title">Persistent data</div><p>Clients, accounts and balances live in PostgreSQL and survive a restart of the Liberty container. The batch test changes balances each time you run it.</p></div>
+        <div lang="fr"><div class="lg-callout-title">Données persistantes</div><p>Les clients, comptes et soldes sont dans PostgreSQL et survivent au redémarrage du conteneur Liberty. Le test de lot modifie les soldes à chaque exécution.</p></div>
+      </div>
+
+      <div class="lg-callout lg-callout--warn">
+        <div lang="en"><div class="lg-callout-title">About the provided scripts</div><p>The lab folder contains scripts (<code>podman-test.sh</code>, <code>docker-test.sh</code>, <code>run-lab.sh</code>, <code>test-lab.sh</code>). Be careful: <code>podman-test.sh</code> <strong>stops and removes any container that uses port 9080</strong>, runs <code>docker-compose down -v</code> (which <strong>deletes the database volume</strong>), removes the image and runs <code>podman image prune -f</code> and <code>podman volume prune -f</code> (which delete <strong>all</strong> unused images and volumes of your machine). <code>docker-test.sh</code> publishes <code>-p 9080:9080</code> on all interfaces. They also target <code>solution/</code> by default. Prefer the explicit commands shown above.</p></div>
+        <div lang="fr"><div class="lg-callout-title">À propos des scripts fournis</div><p>Le dossier du lab contient des scripts (<code>podman-test.sh</code>, <code>docker-test.sh</code>, <code>run-lab.sh</code>, <code>test-lab.sh</code>). Attention : <code>podman-test.sh</code> <strong>arrête et supprime tout conteneur utilisant le port 9080</strong>, exécute <code>docker-compose down -v</code> (qui <strong>supprime le volume de la base</strong>), supprime l'image et exécute <code>podman image prune -f</code> et <code>podman volume prune -f</code> (qui suppriment <strong>toutes</strong> les images et tous les volumes inutilisés de votre machine). <code>docker-test.sh</code> publie <code>-p 9080:9080</code> sur toutes les interfaces. Ils ciblent aussi <code>solution/</code> par défaut. Préférez les commandes explicites ci-dessus.</p></div>
+      </div>
+    </section>
+
+    <!-- ═════════════ 7. VALIDATE ═════════════ -->
+    <section class="lg-section" id="validate">
+      <h2><span class="lg-sec-num">07</span><span lang="en">Validate your work</span><span lang="fr">Valider votre travail</span></h2>
+      <p>
+        <span lang="en">Run these checks on a freshly deployed application to verify CDI wiring, JTA, the interceptor, qualifiers, events and bean-managed transactions:</span>
+        <span lang="fr">Exécutez ces vérifications sur une application fraîchement déployée pour valider le câblage CDI, JTA, l'intercepteur, les qualifiers, les événements et les transactions gérées par le bean :</span>
+      </p>
+      <pre class="dark"><code>B=http://localhost:9080
+
+# 1. Endpoints
+for u in "" clients "client?action=new" accounts "account?action=new" test-transactions health metrics; do
+  printf "%-22s %s\n" "/$u" "$(curl -s -o /dev/null -w '%{http_code}' "$B/$u")"
+done
+
+# 2. Liveness (PostgreSQL connection)
+curl -s $B/health/live | grep -E '"name":"database-connection".*"status":"UP"'
+
+# 3. Premium client: JPA insert + CDI event + @Premium qualifier
+E=alice.$(date +%s)@example.com
+curl -s -o /dev/null -w '%{http_code}\n' -X POST $B/client -d "action=create&amp;name=Alice+Martin&amp;email=$E&amp;premium=true"
+podman exec banking-db psql -U bankuser -d bankdb -c "SELECT id, name, is_premium FROM clients WHERE email='$E';"
+podman logs banking-cdi-lab04 2&gt;&amp;1 | grep -E 'EVENT OBSERVED: Client created|PREMIUM:' | tail -2
+
+# 4. Interceptor on AccountService
+curl -s -o /dev/null -w '%{http_code}\n' -X POST $B/account -d "action=deposit&amp;id=1&amp;amount=10"
+podman logs banking-cdi-lab04 2&gt;&amp;1 | grep -E 'Entering: AccountService.*deposit|Exiting: AccountService.*deposit'
+
+# 5. Bean-managed transactions (fresh database: 3 successes, 2 failures)
+curl -s "$B/test-transactions?test=batch" | grep -oE "(Successful|Failed):&lt;/strong&gt; &lt;span class='[a-z]+'&gt;[0-9]+"
+curl -s "$B/test-transactions?test=comparison" | grep -o 'Winner: [A-Z]*'
+curl -s "$B/test-transactions?test=timeout" | grep -E 'EXPECTED|SUCCESS'</code></pre>
+      <table class="slide-table">
+        <thead><tr><th><span lang="en">Check</span><span lang="fr">Contrôle</span></th><th><span lang="en">Expected result</span><span lang="fr">Résultat attendu</span></th></tr></thead>
+        <tbody>
+          <tr><td><span lang="en">Eight endpoints</span><span lang="fr">Huit endpoints</span></td><td><span lang="en"><code>200</code> for each</span><span lang="fr"><code>200</code> pour chacun</span></td></tr>
+          <tr><td><code>/health/live</code></td><td><span lang="en">a line with <code>database-connection</code> and <code>UP</code></span><span lang="fr">une ligne avec <code>database-connection</code> et <code>UP</code></span></td></tr>
+          <tr><td><span lang="en">Create premium client</span><span lang="fr">Création client premium</span></td><td><span lang="en"><code>302</code>, one row with <code>is_premium = t</code>, log lines <code>EVENT OBSERVED: Client created</code> and <code>PREMIUM: Sending personalized welcome email</code></span><span lang="fr"><code>302</code>, une ligne avec <code>is_premium = t</code>, lignes de log <code>EVENT OBSERVED: Client created</code> et <code>PREMIUM: Sending personalized welcome email</code></span></td></tr>
+          <tr><td><span lang="en">Deposit</span><span lang="fr">Dépôt</span></td><td><span lang="en"><code>302</code>, log lines <code>→ Entering: AccountService…deposit(1, 10.0)</code> and <code>← Exiting … Result: true</code></span><span lang="fr"><code>302</code>, lignes de log <code>→ Entering: AccountService…deposit(1, 10.0)</code> et <code>← Exiting … Result: true</code></span></td></tr>
+          <tr><td><code>test=batch</code></td><td><span lang="en"><code>Successful…3</code> and <code>Failed…2</code> (T3 insufficient funds, T5 account not found)</span><span lang="fr"><code>Successful…3</code> et <code>Failed…2</code> (T3 solde insuffisant, T5 compte inexistant)</span></td></tr>
+          <tr><td><code>test=comparison</code></td><td><span lang="en"><code>Winner: CMT</code> (about 1–2 ms against 5–6 ms for BMT on our machine)</span><span lang="fr"><code>Winner: CMT</code> (environ 1–2 ms contre 5–6 ms pour BMT sur notre machine)</span></td></tr>
+          <tr><td><code>test=timeout</code></td><td><span lang="en">takes about 10 seconds: <code>EXPECTED: Transaction timed out</code>, then two <code>SUCCESS</code> lines. The Liberty log shows <code>WTRN0006W … has timed out after 2 seconds</code>: this is expected.</span><span lang="fr">dure environ 10 secondes : <code>EXPECTED: Transaction timed out</code>, puis deux lignes <code>SUCCESS</code>. Le log Liberty montre <code>WTRN0006W … has timed out after 2 seconds</code> : c'est normal.</span></td></tr>
+        </tbody>
+      </table>
+
+      <h3><span lang="en">Validation checklist</span><span lang="fr">Checklist de validation</span></h3>
+      <ul class="lg-checklist">
+        <li><label><input type="checkbox"/><span lang="en">Lab 03 solution copied into <code>starter/</code> and renamed <code>banking-cdi-app</code></span><span lang="fr">Solution du Lab 03 copiée dans <code>starter/</code> et renommée <code>banking-cdi-app</code></span></label></li>
+        <li><label><input type="checkbox"/><span lang="en"><code>beans.xml</code> present, <code>webProfile-10.0</code> enabled, persistence unit in <code>JTA</code> mode</span><span lang="fr"><code>beans.xml</code> présent, <code>webProfile-10.0</code> activé, unité de persistance en mode <code>JTA</code></span></label></li>
+        <li><label><input type="checkbox"/><span lang="en"><code>EntityManager</code> and <code>Logger</code> are injected through producers</span><span lang="fr"><code>EntityManager</code> et <code>Logger</code> sont injectés via des producers</span></label></li>
+        <li><label><input type="checkbox"/><span lang="en"><code>ClientService</code> is <code>@ApplicationScoped</code> with no <code>getInstance()</code>, no manual transaction</span><span lang="fr"><code>ClientService</code> est <code>@ApplicationScoped</code> sans <code>getInstance()</code> ni transaction manuelle</span></label></li>
+        <li><label><input type="checkbox"/><span lang="en">Flyway applies V1–V4 and clients carry a premium flag</span><span lang="fr">Flyway applique V1–V4 et les clients portent un indicateur premium</span></label></li>
+        <li><label><input type="checkbox"/><span lang="en"><code>@Logged</code> methods of <code>AccountService</code> write <code>Entering</code> / <code>Exiting</code> log lines</span><span lang="fr">Les méthodes <code>@Logged</code> de <code>AccountService</code> écrivent des lignes <code>Entering</code> / <code>Exiting</code></span></label></li>
+        <li><label><input type="checkbox"/><span lang="en">Creating a client triggers <code>PremiumNotificationService</code> or <code>StandardNotificationService</code> through the event observer</span><span lang="fr">Créer un client déclenche <code>PremiumNotificationService</code> ou <code>StandardNotificationService</code> via l'observer d'événement</span></label></li>
+        <li><label><input type="checkbox"/><span lang="en">The batch test shows 3 successes and 2 failures</span><span lang="fr">Le test de lot affiche 3 succès et 2 échecs</span></label></li>
+        <li><label><input type="checkbox"/><span lang="en">The timeout test shows one expected timeout and two successes</span><span lang="fr">Le test de timeout affiche un timeout attendu et deux succès</span></label></li>
+        <li><label><input type="checkbox"/><span lang="en"><code>/health/live</code> reports <code>UP</code> and the container is bound to <code>127.0.0.1</code></span><span lang="fr"><code>/health/live</code> renvoie <code>UP</code> et le conteneur est lié à <code>127.0.0.1</code></span></label></li>
+      </ul>
+    </section>
+
+    <!-- ═════════════ 8. COMPARE ═════════════ -->
+    <section class="lg-section" id="compare">
+      <h2><span class="lg-sec-num">08</span><span lang="en">Compare with the solution</span><span lang="fr">Comparer à la solution</span></h2>
+      <p>
+        <span lang="en">To compare your implementation with the reference solution:</span>
+        <span lang="fr">Pour comparer votre implémentation avec la solution de référence :</span>
+      </p>
+      <pre class="dark"><code>cd 03-Labs/Lab04-CDI
+diff -rq starter solution -x target -x docs -x postgresql -x db -x '*.md' -x .gitignore -x repository
+diff -u solution/src/main/java/com/bank/service/ClientService.java \
+        starter/src/main/java/com/bank/service/ClientService.java</code></pre>
+
+      <h3><span lang="en">Differences that are expected</span><span lang="fr">Différences attendues</span></h3>
+      <ul>
+        <li><span lang="en"><code>docker-compose.yml</code>: yours binds <code>127.0.0.1:5432:5432</code>; the solution publishes <code>5432:5432</code> on all interfaces.</span><span lang="fr"><code>docker-compose.yml</code> : le vôtre lie <code>127.0.0.1:5432:5432</code> ; la solution publie <code>5432:5432</code> sur toutes les interfaces.</span></li>
+        <li><span lang="en"><code>DatabaseMigrationStartup.java</code>, <code>DatabaseHealthCheck.java</code>, <code>WebAppReadinessCheck.java</code>, <code>Account.java</code>: only the copyright header differs (<code>2026</code> vs <code>2025-2026</code>).</span><span lang="fr"><code>DatabaseMigrationStartup.java</code>, <code>DatabaseHealthCheck.java</code>, <code>WebAppReadinessCheck.java</code>, <code>Account.java</code> : seul l'en-tête de copyright diffère (<code>2026</code> contre <code>2025-2026</code>).</span></li>
+        <li><span lang="en">An empty <code>repository/</code> directory comes with the Lab 03 copy; <code>target/</code>, <code>postgresql/</code>, <code>docs/</code>, <code>db/</code> and the Markdown notes of the solution are not part of the exercise.</span><span lang="fr">Un dossier vide <code>repository/</code> vient avec la copie du Lab 03 ; <code>target/</code>, <code>postgresql/</code>, <code>docs/</code>, <code>db/</code> et les notes Markdown de la solution ne font pas partie de l'exercice.</span></li>
+        <li><span lang="en">Your Javadoc and log messages may differ; only behaviour matters.</span><span lang="fr">Votre Javadoc et vos messages de log peuvent différer ; seul le comportement compte.</span></li>
+      </ul>
+
+      <h3><span lang="en">Points to look for in your code</span><span lang="fr">Points à examiner dans votre code</span></h3>
+      <ul>
+        <li><span lang="en">Does any write method of <code>ClientService</code> or <code>AccountService</code> lack <code>@Transactional</code>? Reads should use <code>SUPPORTS</code>.</span><span lang="fr">Une méthode d'écriture de <code>ClientService</code> ou <code>AccountService</code> n'a-t-elle pas <code>@Transactional</code> ? Les lectures doivent utiliser <code>SUPPORTS</code>.</span></li>
+        <li><span lang="en">Do the BMT services call <code>setTransactionTimeout</code> before <code>begin</code> and check <code>STATUS_ACTIVE</code> before <code>rollback</code>?</span><span lang="fr">Les services BMT appellent-ils <code>setTransactionTimeout</code> avant <code>begin</code> et vérifient-ils <code>STATUS_ACTIVE</code> avant <code>rollback</code> ?</span></li>
+        <li><span lang="en">Is every injection point of <code>NotificationService</code> qualified?</span><span lang="fr">Chaque point d'injection de <code>NotificationService</code> est-il qualifié ?</span></li>
+        <li><span lang="en"><code>doGet</code> and <code>doPost</code> of <code>AccountController</code> carry <code>@Logged</code> in the solution, but no <code>Entering: AccountController</code> line ever appears in the log: servlet container calls are not intercepted. Only <code>AccountService</code> is logged. Do not copy that annotation expecting an effect.</span><span lang="fr"><code>doGet</code> et <code>doPost</code> de <code>AccountController</code> portent <code>@Logged</code> dans la solution, mais aucune ligne <code>Entering: AccountController</code> n'apparaît dans le log : les appels du conteneur de servlets ne sont pas interceptés. Seul <code>AccountService</code> est journalisé. Ne copiez pas cette annotation en attendant un effet.</span></li>
+      </ul>
+    </section>
+
+    <!-- ═════════════ 9. TROUBLESHOOTING ═════════════ -->
+    <section class="lg-section" id="trouble">
+      <h2><span class="lg-sec-num">09</span><span lang="en">Troubleshooting</span><span lang="fr">Dépannage</span></h2>
+      <table class="slide-table">
+        <thead><tr><th><span lang="en">Symptom</span><span lang="fr">Symptôme</span></th><th><span lang="en">Cause and fix</span><span lang="fr">Cause et correction</span></th></tr></thead>
+        <tbody>
+          <tr>
+            <td><code>CWWKG0075E … ${db.port} is not a number</code></td>
+            <td><span lang="en">A <code>DB_*</code> variable is missing: pass all five (<code>DB_HOST</code>, <code>DB_PORT</code>, <code>DB_NAME</code>, <code>DB_USER</code>, <code>DB_PASSWORD</code>) with <code>-e</code> in <code>podman run</code>.</span><span lang="fr">Une variable <code>DB_*</code> manque : passez les cinq (<code>DB_HOST</code>, <code>DB_PORT</code>, <code>DB_NAME</code>, <code>DB_USER</code>, <code>DB_PASSWORD</code>) avec <code>-e</code> dans <code>podman run</code>.</span></td>
+          </tr>
+          <tr>
+            <td><code>Intermediate context does not exist: jdbc/bankingDS</code></td>
+            <td><span lang="en">Consequence of the previous error: the DataSource could not be created, so Flyway and the persistence unit cannot find it. Fix the <code>DB_*</code> variables and redeploy.</span><span lang="fr">Conséquence de l'erreur précédente : la DataSource n'a pas pu être créée, donc Flyway et l'unité de persistance ne la trouvent pas. Corrigez les variables <code>DB_*</code> et redéployez.</span></td>
+          </tr>
+          <tr>
+            <td><code>WELD-001408: Unsatisfied dependencies for type Logger</code></td>
+            <td><span lang="en">The <code>Logger</code> producer is missing in <code>EntityManagerProducer</code> (step 4) or <code>beans.xml</code> is absent from <code>WEB-INF/</code>.</span><span lang="fr">Le producer de <code>Logger</code> manque dans <code>EntityManagerProducer</code> (étape 4) ou <code>beans.xml</code> est absent de <code>WEB-INF/</code>.</span></td>
+          </tr>
+          <tr>
+            <td><code>WELD-001409: Ambiguous dependencies for type NotificationService</code></td>
+            <td><span lang="en">An injection point has no qualifier. Add <code>@Premium</code> or <code>@Standard</code> (step 11).</span><span lang="fr">Un point d'injection n'a pas de qualifier. Ajoutez <code>@Premium</code> ou <code>@Standard</code> (étape 11).</span></td>
+          </tr>
+          <tr>
+            <td><code>Unable to resolve location classpath:db/migration … flyway.location</code></td>
+            <td><span lang="en">The empty <code>flyway.location</code> marker files were not copied from Lab 03. Copy the whole <code>src/</code> folder as shown in the Setup section; Flyway cannot scan the WAR on Liberty without them.</span><span lang="fr">Les fichiers marqueurs vides <code>flyway.location</code> n'ont pas été copiés du Lab 03. Copiez tout le dossier <code>src/</code> comme indiqué en Préparation ; sans eux Flyway ne peut pas scanner le WAR sur Liberty.</span></td>
+          </tr>
+          <tr>
+            <td><code>FlywayException: Validate failed … checksum mismatch</code></td>
+            <td><span lang="en">You edited V1, V2 or V3. Restore them from the Lab 03 solution; put changes in a new version (V4).</span><span lang="fr">Vous avez modifié V1, V2 ou V3. Restaurez-les depuis la solution du Lab 03 ; mettez les changements dans une nouvelle version (V4).</span></td>
+          </tr>
+          <tr>
+            <td><code>TransactionRequiredException</code></td>
+            <td><span lang="en">A write method runs without a transaction: add <code>@Transactional</code> to it (step 6 or 12), or call it through the injected bean, not through <code>new</code>.</span><span lang="fr">Une méthode d'écriture s'exécute sans transaction : ajoutez-lui <code>@Transactional</code> (étape 6 ou 12), ou appelez-la via le bean injecté et non via <code>new</code>.</span></td>
+          </tr>
+          <tr>
+            <td><code>/health → DOWN, database-connection disconnected</code></td>
+            <td><span lang="en">The container cannot reach PostgreSQL. Check <code>podman ps</code>, that <code>DB_HOST=host.containers.internal</code> and that <code>banking-db</code> is healthy. With <code>mvn liberty:run</code> the driver library was not found (<code>DSRA4000E</code>): use the container loop.</span><span lang="fr">Le conteneur ne joint pas PostgreSQL. Vérifiez <code>podman ps</code>, <code>DB_HOST=host.containers.internal</code> et que <code>banking-db</code> est sain. Avec <code>mvn liberty:run</code>, la bibliothèque du driver est introuvable (<code>DSRA4000E</code>) : utilisez la boucle en conteneur.</span></td>
+          </tr>
+          <tr>
+            <td><code>404 on /validate-transaction or /openapi</code></td>
+            <td><span lang="en">Expected: the JNDI validator and <code>mpOpenAPI</code> were removed in Lab 04.</span><span lang="fr">Normal : le validateur JNDI et <code>mpOpenAPI</code> ont été supprimés au Lab 04.</span></td>
+          </tr>
+          <tr>
+            <td><code>Port 5432 or 9080 already in use</code></td>
+            <td><span lang="en">Another process holds the port. Check with <code>lsof -i :5432</code> or <code>lsof -i :9080</code> and remove the Lab 03 containers (<code>podman rm -f banking-jpa-lab03 banking-db</code>).</span><span lang="fr">Un autre processus occupe le port. Vérifiez avec <code>lsof -i :5432</code> ou <code>lsof -i :9080</code> et supprimez les conteneurs du Lab 03 (<code>podman rm -f banking-jpa-lab03 banking-db</code>).</span></td>
+          </tr>
+          <tr>
+            <td><code>Duplicate email: the form is shown again with code 200</code></td>
+            <td><span lang="en">The <code>email</code> column is <code>UNIQUE</code> (V1). Use another address in your tests.</span><span lang="fr">La colonne <code>email</code> est <code>UNIQUE</code> (V1). Utilisez une autre adresse dans vos tests.</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- ═════════════ 10. BONUS ═════════════ -->
+    <section class="lg-section" id="bonus">
+      <h2><span class="lg-sec-num">10</span><span lang="en">Go further</span><span lang="fr">Pour aller plus loin</span></h2>
+      <ul>
+        <li><span lang="en"><strong>Alternative implementation.</strong> Add a third <code>NotificationService</code> annotated <code>@Alternative</code> and enable it with <code>@Priority</code>; observe which bean is injected without qualifier.</span><span lang="fr"><strong>Implémentation alternative.</strong> Ajoutez un troisième <code>NotificationService</code> annoté <code>@Alternative</code> et activez-le avec <code>@Priority</code> ; observez quel bean est injecté sans qualifier.</span></li>
+        <li><span lang="en"><strong>Asynchronous events.</strong> Replace <code>fire</code> by <code>fireAsync</code> and <code>@Observes</code> by <code>@ObservesAsync</code> in one observer. What happens to the transaction and to the log order?</span><span lang="fr"><strong>Événements asynchrones.</strong> Remplacez <code>fire</code> par <code>fireAsync</code> et <code>@Observes</code> par <code>@ObservesAsync</code> dans un observer. Que deviennent la transaction et l'ordre des logs ?</span></li>
+        <li><span lang="en"><strong>Rollback rules.</strong> Make <code>AccountService.transfer</code> throw a checked exception and use <code>@Transactional(rollbackOn = ...)</code> so that the withdrawal is undone.</span><span lang="fr"><strong>Règles de rollback.</strong> Faites lever une exception contrôlée à <code>AccountService.transfer</code> et utilisez <code>@Transactional(rollbackOn = ...)</code> pour annuler le retrait.</span></li>
+        <li><span lang="en"><strong>Class-level interceptor.</strong> Put <code>@Logged</code> on <code>ClientService</code> (class level) and compare the log with the method-level use in <code>AccountService</code>.</span><span lang="fr"><strong>Intercepteur au niveau classe.</strong> Placez <code>@Logged</code> sur <code>ClientService</code> (niveau classe) et comparez le log avec l'usage au niveau méthode dans <code>AccountService</code>.</span></li>
+        <li><span lang="en"><strong>Why is the servlet not intercepted?</strong> Explain, with the CDI specification, why <code>@Logged</code> on <code>AccountController.doGet</code> has no effect.</span><span lang="fr"><strong>Pourquoi la servlet n'est-elle pas interceptée ?</strong> Expliquez, avec la spécification CDI, pourquoi <code>@Logged</code> sur <code>AccountController.doGet</code> n'a aucun effet.</span></li>
+      </ul>
+      <div class="lg-callout lg-callout--tip">
+        <div lang="en"><div class="lg-callout-title">Next</div><p>Lab 04B introduces Enterprise JavaBeans (EJB): stateless, stateful and singleton session beans, message-driven beans, timers and security, compared with the CDI beans you wrote here.</p></div>
+        <div lang="fr"><div class="lg-callout-title">Suite</div><p>Le Lab 04B introduit les Enterprise JavaBeans (EJB) : session beans stateless, stateful et singleton, message-driven beans, timers et sécurité, comparés aux beans CDI que vous venez d'écrire.</p></div>
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<footer class="site-footer">Made with IBM Bob &nbsp;&middot;&nbsp; &copy; 2026 Olivier Planson</footer>
+</body>
+</html>

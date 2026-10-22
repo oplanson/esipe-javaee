@@ -1,0 +1,33 @@
+{
+  "lab": "Lab05B-JMS",
+  "must_cite": [
+    "pom.xml",
+    "docker-compose.yml",
+    "server.xml",
+    "bootstrap.properties",
+    "persistence.xml",
+    "TransactionEvent.java",
+    "TransactionEventProducer.java",
+    "TransactionEventMDB.java",
+    "EmailNotificationMDB.java",
+    "AuditLoggingMDB.java",
+    "DeadLetterQueueMDB.java",
+    "AuditLog.java",
+    "FailedMessage.java",
+    "LoggerProducer.java",
+    "EmailService.java",
+    "MessagingTestServlet.java",
+    "JsonMessageUtil.java"
+  ],
+  "must_cite_in_steps": [
+    "docker-compose.yml",
+    "bootstrap.properties",
+    "server.xml",
+    "persistence.xml",
+    "TransactionEventProducer.java",
+    "EmailNotificationMDB.java",
+    "AuditLoggingMDB.java",
+    "DeadLetterQueueMDB.java",
+    "JsonMessageUtil.java"
+  ]
+}

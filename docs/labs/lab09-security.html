@@ -1,0 +1,1349 @@
+<!-- © Copyright 2026 Olivier Planson. All rights reserved. Reproduction prohibited. Made with IBM Bob. -->
+<!DOCTYPE html>
+<html lang="fr" data-lang="fr">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title data-title-en="ESIPE — Lab 09: Security — Lab guide" data-title-fr="ESIPE — Lab 09 : Sécurité — Guide du lab">ESIPE — Lab 09 : Sécurité — Guide du lab</title>
+  <link rel="stylesheet" href="assets/slide.css"/>
+  <link rel="stylesheet" href="assets/lab-guide.css"/>
+  <script src="assets/lab-guide.js"></script>
+</head>
+<body>
+<header class="site-header">
+  <a class="brand" href="index.html">ESIPE<span>Jakarta EE &amp; Microservices — Labs</span></a>
+  <div class="lang-toggle" id="lang-toggle">
+    <button type="button" id="btn-en" data-set-lang="en">EN</button>
+    <span class="sep">|</span>
+    <button type="button" id="btn-fr" data-set-lang="fr" class="active">FR</button>
+  </div>
+  <a class="back-link" href="index.html">&#8592; Labs</a>
+  <a class="back-link" href="../index.html"><span lang="en">Course site</span><span lang="fr">Site du cours</span></a>
+</header>
+
+<div class="lg-shell">
+
+  <nav class="lg-toc" aria-label="Table of contents">
+    <div class="lg-toc-title"><span lang="en">In this guide</span><span lang="fr">Dans ce guide</span></div>
+    <a href="#hero"><span lang="en">Overview</span><span lang="fr">Vue d'ensemble</span></a>
+    <a href="#goal"><span lang="en">1. Goal</span><span lang="fr">1. Objectif</span></a>
+    <a href="#starter"><span lang="en">2. What the starter gives you</span><span lang="fr">2. Ce que fournit le starter</span></a>
+    <a href="#target"><span lang="en">3. Target structure</span><span lang="fr">3. Structure cible</span></a>
+    <a href="#setup"><span lang="en">4. Setup</span><span lang="fr">4. Préparation</span></a>
+    <a href="#steps"><span lang="en">5. Step by step</span><span lang="fr">5. Pas à pas</span></a>
+    <a class="sub" href="#step-1"><span lang="en">1 · Build the starter</span><span lang="fr">1 · Compiler le starter</span></a>
+    <a class="sub" href="#step-2"><span lang="en">2 · Complete the compose stack</span><span lang="fr">2 · Compléter la stack compose</span></a>
+    <a class="sub" href="#step-3"><span lang="en">3 · Start the baseline</span><span lang="fr">3 · Démarrer l'existant</span></a>
+    <a class="sub" href="#step-4"><span lang="en">4 · Audit: PBKDF2</span><span lang="fr">4 · Audit : PBKDF2</span></a>
+    <a class="sub" href="#step-5"><span lang="en">5 · Audit: the JWT</span><span lang="fr">5 · Audit : le JWT</span></a>
+    <a class="sub" href="#step-6"><span lang="en">6 · Audit: the mechanism</span><span lang="fr">6 · Audit : le mécanisme</span></a>
+    <a class="sub" href="#step-7"><span lang="en">7 · Audit: RBAC</span><span lang="fr">7 · Audit : RBAC</span></a>
+    <a class="sub" href="#step-8"><span lang="en">8 · Audit: the audit trail</span><span lang="fr">8 · Audit : la piste d'audit</span></a>
+    <a class="sub" href="#step-9"><span lang="en">9 · Persistence</span><span lang="fr">9 · Persistance</span></a>
+    <a class="sub" href="#step-10"><span lang="en">10 · Fix role parsing</span><span lang="fr">10 · Corriger la lecture des rôles</span></a>
+    <a class="sub" href="#step-11"><span lang="en">11 · Fix the audit query</span><span lang="fr">11 · Corriger la requête d'audit</span></a>
+    <a class="sub" href="#step-12"><span lang="en">12 · Transactions and lockout</span><span lang="fr">12 · Transactions et verrouillage</span></a>
+    <a class="sub" href="#step-13"><span lang="en">13 · Public endpoints</span><span lang="fr">13 · Endpoints publics</span></a>
+    <a class="sub" href="#step-14"><span lang="en">14 · Server configuration</span><span lang="fr">14 · Configuration serveur</span></a>
+    <a class="sub" href="#step-15"><span lang="en">15 · CORS filter</span><span lang="fr">15 · Filtre CORS</span></a>
+    <a class="sub" href="#step-16"><span lang="en">16 · Security headers</span><span lang="fr">16 · En-têtes de sécurité</span></a>
+    <a href="#run"><span lang="en">6. Run</span><span lang="fr">6. Exécution</span></a>
+    <a href="#validate"><span lang="en">7. Validate</span><span lang="fr">7. Validation</span></a>
+    <a href="#compare"><span lang="en">8. Compare with solution</span><span lang="fr">8. Comparer à la solution</span></a>
+    <a href="#trouble"><span lang="en">9. Troubleshooting</span><span lang="fr">9. Dépannage</span></a>
+    <a href="#bonus"><span lang="en">10. Go further</span><span lang="fr">10. Pour aller plus loin</span></a>
+  </nav>
+
+  <main class="lg-main">
+
+    <!-- ═════════════ HERO ═════════════ -->
+    <section class="lg-hero" id="hero">
+      <div class="lg-kicker">Lab 09</div>
+      <h1><span lang="en">Security: audit and hardening</span><span lang="fr">Sécurité : audit et durcissement</span></h1>
+      <p class="lg-lead">
+        <span lang="en">The starter already contains a complete secured banking application (JWT, PBKDF2, roles, audit trail). You audit it like a reviewer would, find what is wrong, and apply the hardening fixes one by one.</span>
+        <span lang="fr">Le starter contient déjà une application bancaire sécurisée complète (JWT, PBKDF2, rôles, piste d'audit). Vous l'auditez comme le ferait un relecteur, vous trouvez ce qui ne va pas, puis vous appliquez les corrections de durcissement une à une.</span>
+      </p>
+      <div class="badge-row">
+        <span class="badge badge-blue">Jakarta EE 10</span>
+        <span class="badge badge-teal">Jakarta Security</span>
+        <span class="badge badge-green">MicroProfile 6.1</span>
+        <span class="badge badge-purple">Open Liberty · Java 21</span>
+        <span class="badge badge-warm">Podman</span>
+      </div>
+      <div class="lg-facts">
+        <div><strong><span lang="en">about 4 h 15 min</span><span lang="fr">environ 4 h 15</span></strong><span lang="en">Duration</span><span lang="fr">Durée</span></div>
+        <div><strong><span lang="en">Advanced</span><span lang="fr">Avancé</span></strong><span lang="en">Level</span><span lang="fr">Niveau</span></div>
+        <div><strong>JDK 21 · Maven · Podman · curl</strong><span lang="en">Prerequisites</span><span lang="fr">Prérequis</span></div>
+        <div><strong>http://127.0.0.1:9080</strong><span lang="en">Application URL</span><span lang="fr">URL de l'application</span></div>
+      </div>
+      <div class="lg-hero-links">
+        <a href="../../02-Lectures/slides/09-security/slides.html#slide-14"><span lang="en">Course slides (Security)</span><span lang="fr">Slides du cours (Sécurité)</span></a>
+        <a class="secondary" href="../09-security/index.html"><span lang="en">Course page</span><span lang="fr">Page du cours</span></a>
+        <a class="secondary" href="https://github.com/oplanson/esipe-javaee/blob/master/03-Labs/Lab09-Security/README.md"><span lang="en">Original README</span><span lang="fr">README d'origine</span></a>
+        <a class="secondary" href="https://github.com/oplanson/esipe-javaee/tree/master/03-Labs/Lab09-Security/solution"><span lang="en">Solution folder</span><span lang="fr">Dossier solution</span></a>
+      </div>
+    </section>
+
+    <!-- ═════════════ 1. GOAL ═════════════ -->
+    <section class="lg-section" id="goal">
+      <h2><span class="lg-sec-num">01</span><span lang="en">Goal of the lab</span><span lang="fr">Objectif du lab</span></h2>
+      <p>
+        <span lang="en">This is the last lab of the course, and it works differently from the others: you do not write the application, you <strong>review and harden</strong> it. The starter compiles and runs, but ten files differ from the reference solution, and each difference is a real weakness or a latent bug. You find it with a probe, understand why, then fix it.</span>
+        <span lang="fr">C'est le dernier lab du cours, et il fonctionne autrement que les autres : vous n'écrivez pas l'application, vous la <strong>relisez et la durcissez</strong>. Le starter compile et s'exécute, mais dix fichiers diffèrent de la solution de référence, et chaque écart est une vraie faiblesse ou un bug latent. Vous le trouvez par une sonde, vous comprenez pourquoi, puis vous le corrigez.</span>
+      </p>
+
+      <h3><span lang="en">The application under review</span><span lang="fr">L'application relue</span></h3>
+      <table class="slide-table">
+        <thead><tr>
+          <th>Endpoint</th>
+          <th><span lang="en">Access</span><span lang="fr">Accès</span></th>
+          <th><span lang="en">Behaviour</span><span lang="fr">Comportement</span></th>
+        </tr></thead>
+        <tbody>
+          <tr><td><code>POST /api/auth/register</code></td><td><span lang="en">public</span><span lang="fr">public</span></td><td><span lang="en">Creates a user with the <code>CUSTOMER</code> role and returns a JWT</span><span lang="fr">Crée un utilisateur avec le rôle <code>CUSTOMER</code> et renvoie un JWT</span></td></tr>
+          <tr><td><code>POST /api/auth/login</code></td><td><span lang="en">public</span><span lang="fr">public</span></td><td><span lang="en">Checks the credentials through the <code>IdentityStore</code> and returns a JWT</span><span lang="fr">Vérifie les identifiants via l'<code>IdentityStore</code> et renvoie un JWT</span></td></tr>
+          <tr><td><code>POST /api/auth/logout</code>, <code>GET /api/auth/me</code></td><td><span lang="en">token</span><span lang="fr">jeton</span></td><td><span lang="en">Logout is only recorded in the audit trail; <code>me</code> returns the caller</span><span lang="fr">La déconnexion est seulement journalisée dans la piste d'audit ; <code>me</code> renvoie l'appelant</span></td></tr>
+          <tr><td><code>GET /api/accounts</code></td><td><code>ADMIN</code>, <code>MANAGER</code></td><td><span lang="en">All accounts</span><span lang="fr">Tous les comptes</span></td></tr>
+          <tr><td><code>GET /api/accounts/my</code>, <code>GET /api/accounts/{id}</code></td><td><span lang="en">any role</span><span lang="fr">tout rôle</span></td><td><span lang="en">A <code>CUSTOMER</code> only sees their own accounts</span><span lang="fr">Un <code>CUSTOMER</code> ne voit que ses propres comptes</span></td></tr>
+          <tr><td><code>POST /api/accounts</code>, <code>…/deposit</code>, <code>…/withdraw</code></td><td><code>TELLER</code>, <code>MANAGER</code>, <code>ADMIN</code></td><td><span lang="en">Create, deposit, withdraw</span><span lang="fr">Création, dépôt, retrait</span></td></tr>
+          <tr><td><code>POST /api/accounts/transfer</code>, <code>DELETE /api/accounts/{id}</code></td><td><code>MANAGER</code>, <code>ADMIN</code> / <code>ADMIN</code></td><td><span lang="en">Transfer / delete</span><span lang="fr">Virement / suppression</span></td></tr>
+          <tr><td><code>/health/live</code>, <code>/metrics</code>, <code>/openapi</code></td><td><span lang="en">public</span><span lang="fr">public</span></td><td><span lang="en">MicroProfile endpoints</span><span lang="fr">Endpoints MicroProfile</span></td></tr>
+        </tbody>
+      </table>
+
+      <h3><span lang="en">Concepts you practise</span><span lang="fr">Concepts mis en pratique</span></h3>
+      <ul>
+        <li>
+          <span lang="en">Authentication versus authorization, and the authentication flow — <a href="../../02-Lectures/slides/09-security/slides.html#slide-13">slides 13</a>–<a href="../../02-Lectures/slides/09-security/slides.html#slide-14">14</a></span>
+          <span lang="fr">Authentification et autorisation, et le flux d'authentification — <a href="../../02-Lectures/slides/09-security/slides.html#slide-13">slides 13</a>–<a href="../../02-Lectures/slides/09-security/slides.html#slide-14">14</a></span>
+        </li>
+        <li>
+          <span lang="en">Token-based authentication with JWT — <a href="../../02-Lectures/slides/09-security/slides.html#slide-16">slide 16</a></span>
+          <span lang="fr">Authentification par jeton avec JWT — <a href="../../02-Lectures/slides/09-security/slides.html#slide-16">slide 16</a></span>
+        </li>
+        <li>
+          <span lang="en">Role-based access control with <code>@RolesAllowed</code> — <a href="../../02-Lectures/slides/09-security/slides.html#slide-18">slide 18</a></span>
+          <span lang="fr">Contrôle d'accès par rôles avec <code>@RolesAllowed</code> — <a href="../../02-Lectures/slides/09-security/slides.html#slide-18">slide 18</a></span>
+        </li>
+        <li>
+          <span lang="en">Common threats and the OWASP Top 10 (broken access control, cryptographic failures, security misconfiguration, logging failures) — <a href="../../02-Lectures/slides/09-security/slides.html#slide-10">slide 10</a> and <a href="../../02-Lectures/slides/09-security/slides.html#slide-11">11</a></span>
+          <span lang="fr">Menaces courantes et OWASP Top 10 (contrôle d'accès défaillant, défaillances cryptographiques, mauvaise configuration, défaut de journalisation) — <a href="../../02-Lectures/slides/09-security/slides.html#slide-10">slide 10</a> et <a href="../../02-Lectures/slides/09-security/slides.html#slide-11">11</a></span>
+        </li>
+        <li>
+          <span lang="en">Security layers and hardening: headers, CORS, configuration, secrets — <a href="../../02-Lectures/slides/09-security/slides.html#slide-9">slide 9</a> and the <a href="../../02-Lectures/slides/09-security/slides.html#slide-20">summary, slide 20</a></span>
+          <span lang="fr">Couches de sécurité et durcissement : en-têtes, CORS, configuration, secrets — <a href="../../02-Lectures/slides/09-security/slides.html#slide-9">slide 9</a> et le <a href="../../02-Lectures/slides/09-security/slides.html#slide-20">résumé, slide 20</a></span>
+        </li>
+      </ul>
+    </section>
+
+    <!-- ═════════════ 2. STARTER ═════════════ -->
+    <section class="lg-section" id="starter">
+      <h2><span class="lg-sec-num">02</span><span lang="en">What the starter gives you</span><span lang="fr">Ce que fournit le starter</span></h2>
+      <div class="lg-callout lg-callout--warn">
+        <div lang="en"><div class="lg-callout-title">This starter is almost complete — read this before you start</div><p>Unlike the other labs, <code>03-Labs/Lab09-Security/starter/</code> already holds about twenty finished Java classes. Its <code>README-STARTER.md</code> says <em>"Complete Implementation"</em> and calls the classes <em>"a reference"</em>: that is misleading, because they contain the defects you are asked to find. The starter also contains a nested <code>starter/solution/</code> folder (a stale copy of <code>Containerfile</code>, <code>pom.xml</code>, <code>docker-compose.yml</code> and some resources): ignore it, never run a command inside it, and exclude it from every <code>diff</code>. The real reference is <code>03-Labs/Lab09-Security/solution/</code>.</p></div>
+        <div lang="fr"><div class="lg-callout-title">Ce starter est presque complet — à lire avant de commencer</div><p>Contrairement aux autres labs, <code>03-Labs/Lab09-Security/starter/</code> contient déjà une vingtaine de classes Java terminées. Son <code>README-STARTER.md</code> annonce <em>« Complete Implementation »</em> et présente les classes comme <em>« une référence »</em> : c'est trompeur, car elles contiennent les défauts que l'on vous demande de trouver. Le starter contient aussi un dossier imbriqué <code>starter/solution/</code> (copie périmée de <code>Containerfile</code>, <code>pom.xml</code>, <code>docker-compose.yml</code> et de quelques ressources) : ignorez-le, ne lancez aucune commande dedans et excluez-le de tout <code>diff</code>. La vraie référence est <code>03-Labs/Lab09-Security/solution/</code>.</p></div>
+      </div>
+      <p>
+        <span lang="en">The ground truth is the difference between the two trees: exactly <strong>ten files</strong> differ (nine modified, one missing from the starter). Every one of them is covered by a step below.</span>
+        <span lang="fr">La vérité est l'écart entre les deux arborescences : exactement <strong>dix fichiers</strong> diffèrent (neuf modifiés, un absent du starter). Chacun est couvert par une étape ci-dessous.</span>
+      </p>
+      <pre class="dark"><code>cd 03-Labs/Lab09-Security
+diff -rq starter solution -x solution -x target -x docs -x README-STARTER.md</code></pre>
+      <table class="slide-table">
+        <thead><tr>
+          <th><span lang="en">File (in <code>starter/</code>)</span><span lang="fr">Fichier (dans <code>starter/</code>)</span></th>
+          <th><span lang="en">Status</span><span lang="fr">Statut</span></th>
+          <th><span lang="en">What it contains</span><span lang="fr">Contenu</span></th>
+        </tr></thead>
+        <tbody>
+          <tr>
+            <td><code>pom.xml</code></td>
+            <td><span class="lg-tag lg-tag--ok"><span lang="en">provided</span><span lang="fr">fourni</span></span></td>
+            <td><span lang="en">WAR packaging, Jakarta EE API 10.0.0, MicroProfile 6.1, JJWT 0.12.5, PostgreSQL driver 42.7.14. <code>finalName</code> is <code>banking-security-app</code> but the WAR plugin sets <code>warName</code> to <code>bank-security</code>, so the file produced is <code>target/bank-security.war</code>. The compiler properties still say Java 17 while the image runs Java 21: do not change versions (step 1).</span><span lang="fr">Packaging WAR, API Jakarta EE 10.0.0, MicroProfile 6.1, JJWT 0.12.5, pilote PostgreSQL 42.7.14. <code>finalName</code> vaut <code>banking-security-app</code> mais le plugin WAR fixe <code>warName</code> à <code>bank-security</code> : le fichier produit est donc <code>target/bank-security.war</code>. Les propriétés du compilateur indiquent encore Java 17 alors que l'image exécute Java 21 : ne changez pas les versions (étape 1).</span></td>
+          </tr>
+          <tr>
+            <td><code>Containerfile</code></td>
+            <td><span class="lg-tag lg-tag--ok"><span lang="en">provided</span><span lang="fr">fourni</span></span></td>
+            <td><span lang="en">Multi-stage build: Maven 3.9 on Temurin 21, then <code>icr.io/appcafe/open-liberty:full-java21-openj9-ubi-minimal</code>. It downloads the PostgreSQL driver and copies <code>server.xml</code> and <code>bootstrap.properties</code> into <code>/config/</code>. Identical to the solution.</span><span lang="fr">Build multi-étapes : Maven 3.9 sur Temurin 21, puis <code>icr.io/appcafe/open-liberty:full-java21-openj9-ubi-minimal</code>. Il télécharge le pilote PostgreSQL et copie <code>server.xml</code> et <code>bootstrap.properties</code> dans <code>/config/</code>. Identique à la solution.</span></td>
+          </tr>
+          <tr>
+            <td><code>docker-compose.yml</code></td>
+            <td><span class="lg-tag lg-tag--chg"><span lang="en">to modify</span><span lang="fr">à modifier</span></span></td>
+            <td><span lang="en">Only the PostgreSQL service <code>bank-security-db</code> (demo credentials <code>bankuser</code> / <code>bankpass</code>, database <code>bankdb</code>), plus an obsolete <code>version</code> key. The application service is missing (step 2).</span><span lang="fr">Seulement le service PostgreSQL <code>bank-security-db</code> (identifiants de démo <code>bankuser</code> / <code>bankpass</code>, base <code>bankdb</code>), plus une clé <code>version</code> obsolète. Le service de l'application est absent (étape 2).</span></td>
+          </tr>
+          <tr>
+            <td><code>src/main/liberty/config/server.xml</code></td>
+            <td><span class="lg-tag lg-tag--chg"><span lang="en">to modify</span><span lang="fr">à modifier</span></span></td>
+            <td><span lang="en">Features <code>webProfile-10.0</code> and <code>microProfile-6.1</code>, HTTP endpoint, the <code>bank-security.war</code> application, the <code>jdbc/bankDS</code> data source and a <code>cors</code> element. Two defects (step 14).</span><span lang="fr">Features <code>webProfile-10.0</code> et <code>microProfile-6.1</code>, endpoint HTTP, l'application <code>bank-security.war</code>, la source de données <code>jdbc/bankDS</code> et un élément <code>cors</code>. Deux défauts (étape 14).</span></td>
+          </tr>
+          <tr>
+            <td><code>src/main/liberty/config/bootstrap.properties</code></td>
+            <td><span class="lg-tag lg-tag--chg"><span lang="en">to modify</span><span lang="fr">à modifier</span></span></td>
+            <td><span lang="en">Ports <code>9080</code> / <code>9443</code>, plus a block of database settings that nothing reads (step 14).</span><span lang="fr">Ports <code>9080</code> / <code>9443</code>, plus un bloc de paramètres de base de données que rien ne lit (étape 14).</span></td>
+          </tr>
+          <tr>
+            <td><code>src/main/resources/META-INF/persistence.xml</code></td>
+            <td><span class="lg-tag lg-tag--chg"><span lang="en">to modify</span><span lang="fr">à modifier</span></span></td>
+            <td><span lang="en">Persistence unit <code>bankPU</code> (JTA, <code>jdbc/bankDS</code>) with three entities and a schema-generation policy that is not safe (step 9).</span><span lang="fr">Unité de persistance <code>bankPU</code> (JTA, <code>jdbc/bankDS</code>) avec trois entités et une politique de génération du schéma qui n'est pas sûre (étape 9).</span></td>
+          </tr>
+          <tr>
+            <td><code>src/main/resources/META-INF/microprofile-config.properties</code>, <code>src/main/webapp/WEB-INF/web.xml</code></td>
+            <td><span class="lg-tag lg-tag--ok"><span lang="en">provided</span><span lang="fr">fourni</span></span></td>
+            <td><span lang="en">JWT settings (demo secret, 24 h lifetime, issuer), password and lockout settings; declaration of the four security roles. Identical to the solution.</span><span lang="fr">Paramètres JWT (secret de démo, durée de 24 h, émetteur), paramètres de mot de passe et de verrouillage ; déclaration des quatre rôles. Identiques à la solution.</span></td>
+          </tr>
+          <tr>
+            <td><code>…/security/JwtService.java</code>, <code>SecurityAuditService.java</code>, <code>DatabaseIdentityStore.java</code>, <code>JwtAuthenticationMechanism.java</code></td>
+            <td><span class="lg-tag lg-tag--chg"><span lang="en">to modify</span><span lang="fr">à modifier</span></span></td>
+            <td><span lang="en">Complete classes with one or more defects each (steps 10, 11, 12, 13).</span><span lang="fr">Classes complètes avec un ou plusieurs défauts chacune (étapes 10, 11, 12, 13).</span></td>
+          </tr>
+          <tr>
+            <td><code>…/filter/CorsFilter.java</code></td>
+            <td><span class="lg-tag lg-tag--chg"><span lang="en">to modify</span><span lang="fr">à modifier</span></span></td>
+            <td><span lang="en">JAX-RS response filter that adds the CORS headers (step 15).</span><span lang="fr">Filtre de réponse JAX-RS qui ajoute les en-têtes CORS (étape 15).</span></td>
+          </tr>
+          <tr>
+            <td><code>…/filter/SecurityHeadersServletFilter.java</code></td>
+            <td><span class="lg-tag lg-tag--new"><span lang="en">to create</span><span lang="fr">à créer</span></span></td>
+            <td><span lang="en">Missing: a servlet filter that adds security headers to every response, static pages included (step 16).</span><span lang="fr">Absent : un filtre de servlet qui ajoute des en-têtes de sécurité à toutes les réponses, pages statiques comprises (étape 16).</span></td>
+          </tr>
+          <tr>
+            <td><span lang="en">The other 14 classes: <code>AuthResource</code>, <code>AccountResource</code>, <code>RestApplication</code>, the four DTOs, <code>SecurityHeadersFilter</code>, <code>PasswordService</code>, the four entities, <code>UserService</code>, <code>AccountService</code></span><span lang="fr">Les 14 autres classes : <code>AuthResource</code>, <code>AccountResource</code>, <code>RestApplication</code>, les quatre DTO, <code>SecurityHeadersFilter</code>, <code>PasswordService</code>, les quatre entités, <code>UserService</code>, <code>AccountService</code></span></td>
+            <td><span class="lg-tag lg-tag--ok"><span lang="en">provided</span><span lang="fr">fourni</span></span></td>
+            <td><span lang="en">Identical to the solution. You read some of them during the audit steps (4 to 8) but you do not change them.</span><span lang="fr">Identiques à la solution. Vous en lisez certaines pendant les étapes d'audit (4 à 8) mais vous ne les modifiez pas.</span></td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="lg-callout lg-callout--note">
+        <div lang="en"><div class="lg-callout-title">Demo credentials only</div><p>The values <code>bankuser</code> / <code>bankpass</code> and the JWT secret in <code>microprofile-config.properties</code> are <strong>demo values</strong>, fine for this local lab and never for production. Do not reuse them anywhere.</p></div>
+        <div lang="fr"><div class="lg-callout-title">Identifiants de démo uniquement</div><p>Les valeurs <code>bankuser</code> / <code>bankpass</code> et le secret JWT de <code>microprofile-config.properties</code> sont des <strong>valeurs de démo</strong>, acceptables pour ce lab local et jamais pour la production. Ne les réutilisez nulle part.</p></div>
+      </div>
+    </section>
+
+    <!-- ═════════════ 3. TARGET ═════════════ -->
+    <section class="lg-section" id="target">
+      <h2><span class="lg-sec-num">03</span><span lang="en">Target structure</span><span lang="fr">Structure cible</span></h2>
+      <p>
+        <span lang="en">When you are done, the ten differing files of <code>starter/</code> match <code>solution/</code> in behaviour. Legend: <code>[=]</code> provided, <code>[~]</code> modified by you, <code>[+]</code> created by you.</span>
+        <span lang="fr">À la fin, les dix fichiers qui diffèrent dans <code>starter/</code> ont le même comportement que dans <code>solution/</code>. Légende : <code>[=]</code> fourni, <code>[~]</code> modifié par vous, <code>[+]</code> créé par vous.</span>
+      </p>
+      <div class="lg-tree"><span class="t-note">Lab09-Security/starter/</span>
+├── <span class="t-chg">[~] docker-compose.yml</span>
+├── <span class="t-ok">[=] Containerfile</span>
+├── <span class="t-ok">[=] pom.xml</span>
+└── src/main/
+    ├── java/com/bank/
+    │   ├── api/                <span class="t-ok">[=] AuthResource, AccountResource, RestApplication</span>
+    │   ├── dto/                <span class="t-ok">[=] 4 DTO</span>
+    │   ├── model/              <span class="t-ok">[=] User, Role, Account, SecurityAuditLog</span>
+    │   ├── service/            <span class="t-ok">[=] UserService, AccountService</span>
+    │   ├── filter/
+    │   │   ├── <span class="t-chg">[~] CorsFilter.java</span>
+    │   │   ├── <span class="t-ok">[=] SecurityHeadersFilter.java</span>
+    │   │   └── <span class="t-new">[+] SecurityHeadersServletFilter.java</span>
+    │   └── security/
+    │       ├── <span class="t-chg">[~] DatabaseIdentityStore.java</span>
+    │       ├── <span class="t-chg">[~] JwtAuthenticationMechanism.java</span>
+    │       ├── <span class="t-chg">[~] JwtService.java</span>
+    │       ├── <span class="t-chg">[~] SecurityAuditService.java</span>
+    │       └── <span class="t-ok">[=] PasswordService.java</span>
+    ├── liberty/config/
+    │   ├── <span class="t-chg">[~] server.xml</span>
+    │   └── <span class="t-chg">[~] bootstrap.properties</span>
+    ├── resources/META-INF/
+    │   ├── <span class="t-chg">[~] persistence.xml</span>
+    │   └── <span class="t-ok">[=] microprofile-config.properties</span>
+    └── webapp/             <span class="t-ok">[=] index.html, WEB-INF/web.xml</span></div>
+      <p>
+        <span lang="en">Reference files: <a href="https://github.com/oplanson/esipe-javaee/blob/master/03-Labs/Lab09-Security/solution/src/main/java/com/bank/filter/SecurityHeadersServletFilter.java"><code>SecurityHeadersServletFilter.java</code></a>, <a href="https://github.com/oplanson/esipe-javaee/blob/master/03-Labs/Lab09-Security/solution/src/main/java/com/bank/security/DatabaseIdentityStore.java"><code>DatabaseIdentityStore.java</code></a>, <a href="https://github.com/oplanson/esipe-javaee/blob/master/03-Labs/Lab09-Security/solution/src/main/java/com/bank/security/JwtAuthenticationMechanism.java"><code>JwtAuthenticationMechanism.java</code></a>. Try each step on your own before opening them.</span>
+        <span lang="fr">Fichiers de référence : <a href="https://github.com/oplanson/esipe-javaee/blob/master/03-Labs/Lab09-Security/solution/src/main/java/com/bank/filter/SecurityHeadersServletFilter.java"><code>SecurityHeadersServletFilter.java</code></a>, <a href="https://github.com/oplanson/esipe-javaee/blob/master/03-Labs/Lab09-Security/solution/src/main/java/com/bank/security/DatabaseIdentityStore.java"><code>DatabaseIdentityStore.java</code></a>, <a href="https://github.com/oplanson/esipe-javaee/blob/master/03-Labs/Lab09-Security/solution/src/main/java/com/bank/security/JwtAuthenticationMechanism.java"><code>JwtAuthenticationMechanism.java</code></a>. Essayez chaque étape par vous-même avant de les ouvrir.</span>
+      </p>
+    </section>
+
+    <!-- ═════════════ 4. SETUP ═════════════ -->
+    <section class="lg-section" id="setup">
+      <h2><span class="lg-sec-num">04</span><span lang="en">Setup</span><span lang="fr">Préparation</span></h2>
+      <h3><span lang="en">Tools</span><span lang="fr">Outils</span></h3>
+      <table class="slide-table">
+        <thead><tr><th><span lang="en">Tool</span><span lang="fr">Outil</span></th><th><span lang="en">Check with</span><span lang="fr">Vérifier avec</span></th></tr></thead>
+        <tbody>
+          <tr><td>JDK 21</td><td><code>java -version</code></td></tr>
+          <tr><td>Maven 3.x</td><td><code>mvn -v</code></td></tr>
+          <tr><td>Podman + <span lang="en">compose support</span><span lang="fr">support compose</span> <span lang="en">(Docker works with the same commands)</span><span lang="fr">(Docker fonctionne avec les mêmes commandes)</span></td><td><code>podman --version</code> · <code>podman compose version</code></td></tr>
+          <tr><td>curl, python3</td><td><code>curl --version</code> · <code>python3 --version</code></td></tr>
+        </tbody>
+      </table>
+      <div class="lg-callout lg-callout--note">
+        <div lang="en"><div class="lg-callout-title">macOS and Windows</div><p>Podman runs containers in a virtual machine. If <code>podman</code> cannot connect, run <code>podman machine list</code> and start it with <code>podman machine start</code>.</p></div>
+        <div lang="fr"><div class="lg-callout-title">macOS et Windows</div><p>Podman exécute les conteneurs dans une machine virtuelle. Si <code>podman</code> ne se connecte pas, lancez <code>podman machine list</code> puis démarrez-la avec <code>podman machine start</code>.</p></div>
+      </div>
+
+      <h3><span lang="en">Your working folder</span><span lang="fr">Votre dossier de travail</span></h3>
+      <p>
+        <span lang="en">Work directly in <code>starter/</code>. All commands start from the repository root. Open a terminal and define two helpers that the steps reuse (define them again in every new terminal):</span>
+        <span lang="fr">Travaillez directement dans <code>starter/</code>. Toutes les commandes partent de la racine du dépôt. Ouvrez un terminal et définissez deux fonctions que les étapes réutilisent (redéfinissez-les dans chaque nouveau terminal) :</span>
+      </p>
+      <pre class="dark"><code>cd 03-Labs/Lab09-Security/starter
+B=http://127.0.0.1:9080
+PW='Demo-Pass-2026!'      # demo password: never reuse it anywhere
+
+db()    { podman exec bank-security-db psql -U bankuser -d bankdb "$@"; }
+code()  { curl -s -o /dev/null -w '%{http_code}' "$@"; }
+reg()   { code -X POST $B/api/auth/register -H 'Content-Type: application/json' \
+            -d "{\"username\":\"$1\",\"email\":\"$1@example.com\",\"password\":\"$PW\"}"; }
+loginc(){ code -X POST $B/api/auth/login -H 'Content-Type: application/json' \
+            -d "{\"username\":\"$1\",\"password\":\"${2:-$PW}\"}"; }
+login() { curl -s -X POST $B/api/auth/login -H 'Content-Type: application/json' \
+            -d "{\"username\":\"$1\",\"password\":\"${2:-$PW}\"}" \
+            | python3 -c 'import sys,json; print(json.load(sys.stdin)["token"])'; }</code></pre>
+      <p>
+        <span lang="en"><code>db</code> runs SQL in the database container, <code>code</code> prints only the HTTP status, <code>reg</code> registers a user, <code>loginc</code> prints the login status and <code>login</code> prints a JWT. Step 5 adds a sixth helper, <code>mint</code>.</span>
+        <span lang="fr"><code>db</code> exécute du SQL dans le conteneur de base, <code>code</code> n'affiche que le statut HTTP, <code>reg</code> inscrit un utilisateur, <code>loginc</code> affiche le statut du login et <code>login</code> affiche un JWT. L'étape 5 ajoute une sixième fonction, <code>mint</code>.</span>
+      </p>
+
+      <h3><span lang="en">The redeploy loop</span><span lang="fr">La boucle de redéploiement</span></h3>
+      <p>
+        <span lang="en">The WAR is built <strong>inside</strong> the image (multi-stage <code>Containerfile</code>), so after every change you rebuild only the application service. The database and its volume are untouched:</span>
+        <span lang="fr">Le WAR est construit <strong>dans</strong> l'image (<code>Containerfile</code> multi-étapes) : après chaque modification, vous reconstruisez seulement le service de l'application. La base et son volume ne sont pas touchés :</span>
+      </p>
+      <pre class="dark"><code>podman compose up -d --build app
+until curl -fs $B/health/live &gt;/dev/null; do sleep 3; done; echo "ready"</code></pre>
+      <p>
+        <span lang="en">This loop works from step 2 on, once the compose file contains the <code>app</code> service. The first build downloads Maven dependencies and the base images and may take several minutes. For a quick compile check without a container, use <code>mvn -q -DskipTests compile</code> in <code>starter/</code>.</span>
+        <span lang="fr">Cette boucle fonctionne à partir de l'étape 2, une fois que le fichier compose contient le service <code>app</code>. Le premier build télécharge les dépendances Maven et les images de base et peut prendre plusieurs minutes. Pour une vérification rapide de compilation sans conteneur, utilisez <code>mvn -q -DskipTests compile</code> dans <code>starter/</code>.</span>
+      </p>
+    </section>
+
+
+    <!-- ═════════════ 5. STEPS ═════════════ -->
+    <section class="lg-section" id="steps">
+      <h2><span class="lg-sec-num">05</span><span lang="en">Step by step</span><span lang="fr">Pas à pas</span></h2>
+      <p>
+        <span lang="en">Steps 1 to 3 get the baseline running. Steps 4 to 8 are <strong>audit</strong> steps: you read code and probe the running application, and you change nothing. Steps 9 to 16 are <strong>hardening</strong> steps: each one fixes one of the ten differing files. Do them in order; the later probes rely on the earlier fixes.</span>
+        <span lang="fr">Les étapes 1 à 3 mettent l'existant en marche. Les étapes 4 à 8 sont des étapes d'<strong>audit</strong> : vous lisez le code et sondez l'application en marche, sans rien modifier. Les étapes 9 à 16 sont des étapes de <strong>durcissement</strong> : chacune corrige l'un des dix fichiers qui diffèrent. Faites-les dans l'ordre : les sondes suivantes s'appuient sur les corrections précédentes.</span>
+      </p>
+      <ol class="lg-steps-overview">
+        <li><a href="#step-1"><span lang="en">Build the starter</span><span lang="fr">Compiler le starter</span></a><span class="lg-dur">10 min</span></li>
+        <li><a href="#step-2"><span lang="en">Complete the compose stack</span><span lang="fr">Compléter la stack compose</span></a><span class="lg-dur">20 min</span></li>
+        <li><a href="#step-3"><span lang="en">Start the baseline</span><span lang="fr">Démarrer l'existant</span></a><span class="lg-dur">15 min</span></li>
+        <li><a href="#step-4"><span lang="en">Audit: PBKDF2</span><span lang="fr">Audit : PBKDF2</span></a><span class="lg-dur">15 min</span></li>
+        <li><a href="#step-5"><span lang="en">Audit: the JWT</span><span lang="fr">Audit : le JWT</span></a><span class="lg-dur">20 min</span></li>
+        <li><a href="#step-6"><span lang="en">Audit: the mechanism</span><span lang="fr">Audit : le mécanisme</span></a><span class="lg-dur">15 min</span></li>
+        <li><a href="#step-7"><span lang="en">Audit: RBAC</span><span lang="fr">Audit : RBAC</span></a><span class="lg-dur">20 min</span></li>
+        <li><a href="#step-8"><span lang="en">Audit: the audit trail</span><span lang="fr">Audit : la piste d'audit</span></a><span class="lg-dur">15 min</span></li>
+        <li><a href="#step-9"><span lang="en">Persistence</span><span lang="fr">Persistance</span></a><span class="lg-dur">15 min</span></li>
+        <li><a href="#step-10"><span lang="en">Fix role parsing</span><span lang="fr">Corriger la lecture des rôles</span></a><span class="lg-dur">10 min</span></li>
+        <li><a href="#step-11"><span lang="en">Fix the audit query</span><span lang="fr">Corriger la requête d'audit</span></a><span class="lg-dur">15 min</span></li>
+        <li><a href="#step-12"><span lang="en">Transactions and lockout</span><span lang="fr">Transactions et verrouillage</span></a><span class="lg-dur">25 min</span></li>
+        <li><a href="#step-13"><span lang="en">Public endpoints</span><span lang="fr">Endpoints publics</span></a><span class="lg-dur">15 min</span></li>
+        <li><a href="#step-14"><span lang="en">Server configuration</span><span lang="fr">Configuration serveur</span></a><span class="lg-dur">15 min</span></li>
+        <li><a href="#step-15"><span lang="en">CORS filter</span><span lang="fr">Filtre CORS</span></a><span class="lg-dur">10 min</span></li>
+        <li><a href="#step-16"><span lang="en">Security headers</span><span lang="fr">En-têtes de sécurité</span></a><span class="lg-dur">20 min</span></li>
+      </ol>
+
+      <!-- ───────── STEP 1 ───────── -->
+      <article class="lg-step" id="step-1">
+        <div class="lg-step-head">
+          <div class="lg-step-num">1</div>
+          <div>
+            <h3><span lang="en">Build the starter</span><span lang="fr">Compiler le starter</span></h3>
+            <div class="lg-step-meta">
+              <span class="lg-chip">10 min</span>
+              <span class="lg-chip"><span lang="en">Maven WAR packaging</span><span lang="fr">Packaging WAR avec Maven</span></span>
+            </div>
+          </div>
+        </div>
+        <div class="lg-step-body">
+          <p class="lg-files"><span lang="en">File to read:</span><span lang="fr">Fichier à lire :</span> <code>pom.xml</code></p>
+          <div class="lg-task-label"><span lang="en">Task</span><span lang="fr">À faire</span></div>
+          <ol>
+            <li><span lang="en">Compile the project, then package it.</span><span lang="fr">Compilez le projet, puis empaquetez-le.</span></li>
+            <li><span lang="en">Read <code>pom.xml</code> and note the name of the WAR that is produced, the Java level used by the compiler and the version of the JWT library.</span><span lang="fr">Lisez <code>pom.xml</code> et notez le nom du WAR produit, le niveau de Java utilisé par le compilateur et la version de la bibliothèque JWT.</span></li>
+          </ol>
+          <details class="lg-hint lg-hint--1">
+            <summary><span lang="en">Hint 1 — where to look</span><span lang="fr">Indice 1 — où chercher</span></summary>
+            <div class="lg-hint-body">
+              <p><span lang="en">Look at <code>&lt;finalName&gt;</code> and at the <code>&lt;warName&gt;</code> of the WAR plugin: they do not have the same value. The compiler level is in the <code>&lt;properties&gt;</code> block.</span><span lang="fr">Regardez <code>&lt;finalName&gt;</code> et le <code>&lt;warName&gt;</code> du plugin WAR : ils n'ont pas la même valeur. Le niveau du compilateur est dans le bloc <code>&lt;properties&gt;</code>.</span></p>
+            </div>
+          </details>
+          <details class="lg-hint lg-hint--2">
+            <summary><span lang="en">Hint 2 — the answers</span><span lang="fr">Indice 2 — les réponses</span></summary>
+            <div class="lg-hint-body">
+              <ul>
+                <li><span lang="en">The WAR plugin sets <code>warName</code> to <code>bank-security</code>, so the file produced is <code>target/bank-security.war</code>, which is the name <code>server.xml</code> and the <code>Containerfile</code> expect. <code>finalName</code> (<code>banking-security-app</code>) is not what you get.</span><span lang="fr">Le plugin WAR fixe <code>warName</code> à <code>bank-security</code> : le fichier produit est donc <code>target/bank-security.war</code>, le nom attendu par <code>server.xml</code> et le <code>Containerfile</code>. Ce n'est pas <code>finalName</code> (<code>banking-security-app</code>) qui l'emporte.</span></li>
+                <li><span lang="en">The compiler properties say Java 17 while the image runs Java 21. Leave them as they are: this lab does not change versions.</span><span lang="fr">Les propriétés du compilateur indiquent Java 17 alors que l'image exécute Java 21. Laissez-les telles quelles : ce lab ne change pas les versions.</span></li>
+                <li><span lang="en">JJWT 0.12.5, which offers the fluent <code>Jwts.builder()</code> and <code>Jwts.parser().verifyWith()</code> API.</span><span lang="fr">JJWT 0.12.5, qui propose l'API fluide <code>Jwts.builder()</code> et <code>Jwts.parser().verifyWith()</code>.</span></li>
+              </ul>
+            </div>
+          </details>
+          <details class="lg-hint lg-hint--sol">
+            <summary><span lang="en">Solution files</span><span lang="fr">Fichiers solution</span></summary>
+            <div class="lg-hint-body">
+              <p><a href="https://github.com/oplanson/esipe-javaee/blob/master/03-Labs/Lab09-Security/solution/pom.xml"><code>solution/pom.xml</code></a> <span lang="en">(identical to the starter)</span><span lang="fr">(identique au starter)</span></p>
+            </div>
+          </details>
+          <div class="lg-checkpoint">
+            <div class="lg-check-label"><span lang="en">Checkpoint</span><span lang="fr">Point de contrôle</span></div>
+            <pre class="dark"><code>mvn -q -DskipTests compile
+mvn -q -DskipTests package
+ls target/bank-security.war</code></pre>
+            <p><span lang="en">Expected: both Maven commands finish without error. <code>target/bank-security.war</code> exists. The starter compiles as it is: the defects you will fix are behavioural, not compile errors.</span><span lang="fr">Attendu : les deux commandes Maven se terminent sans erreur. <code>target/bank-security.war</code> existe. Le starter compile tel quel : les défauts à corriger sont des défauts de comportement, pas des erreurs de compilation.</span></p>
+          </div>
+        </div>
+      </article>
+
+      <!-- ───────── STEP 2 ───────── -->
+      <article class="lg-step" id="step-2">
+        <div class="lg-step-head">
+          <div class="lg-step-num">2</div>
+          <div>
+            <h3><span lang="en">Complete the compose stack</span><span lang="fr">Compléter la stack compose</span></h3>
+            <div class="lg-step-meta">
+              <span class="lg-chip">20 min</span>
+              <span class="lg-chip"><span lang="en">Course:</span><span lang="fr">Cours :</span> <a href="../../02-Lectures/slides/09-security/slides.html#slide-9"><span lang="en">security layers, slide 9</span><span lang="fr">couches de sécurité, slide 9</span></a></span>
+            </div>
+          </div>
+        </div>
+        <div class="lg-step-body">
+          <p class="lg-files"><span lang="en">File to modify:</span><span lang="fr">Fichier à modifier :</span> <code>docker-compose.yml</code></p>
+          <div class="lg-task-label"><span lang="en">Task</span><span lang="fr">À faire</span></div>
+          <ol>
+            <li><span lang="en">Remove the obsolete <code>version</code> key.</span><span lang="fr">Supprimez la clé obsolète <code>version</code>.</span></li>
+            <li><span lang="en">Add a user-defined network <code>bank-network</code> and attach the database service to it.</span><span lang="fr">Ajoutez un réseau <code>bank-network</code> et rattachez-y le service de base de données.</span></li>
+            <li><span lang="en">Add an <code>app</code> service built from the <code>Containerfile</code>, named <code>bank-security-app</code>, that waits for a healthy database and receives the five <code>env.DB_*</code> variables (host = the service name <code>postgres</code>).</span><span lang="fr">Ajoutez un service <code>app</code> construit depuis le <code>Containerfile</code>, nommé <code>bank-security-app</code>, qui attend une base saine et reçoit les cinq variables <code>env.DB_*</code> (hôte = le nom de service <code>postgres</code>).</span></li>
+            <li><span lang="en">Publish every port on <code>127.0.0.1</code> only: <code>"127.0.0.1:5432:5432"</code>, <code>"127.0.0.1:9080:9080"</code>, <code>"127.0.0.1:9443:9443"</code>.</span><span lang="fr">Publiez chaque port sur <code>127.0.0.1</code> uniquement : <code>"127.0.0.1:5432:5432"</code>, <code>"127.0.0.1:9080:9080"</code>, <code>"127.0.0.1:9443:9443"</code>.</span></li>
+          </ol>
+          <div class="lg-callout lg-callout--warn">
+            <div lang="en"><div class="lg-callout-title">Do not copy the solution's port mapping</div><p>The solution publishes <code>"9080:9080"</code> and <code>"5432:5432"</code>, which exposes the application and the database on every network interface of your machine. This guide asks for the <code>127.0.0.1:</code> prefix: a database with a demo password must never be reachable from the network.</p></div>
+            <div lang="fr"><div class="lg-callout-title">Ne recopiez pas le mapping de ports de la solution</div><p>La solution publie <code>"9080:9080"</code> et <code>"5432:5432"</code>, ce qui expose l'application et la base sur toutes les interfaces réseau de votre machine. Ce guide demande le préfixe <code>127.0.0.1:</code> : une base avec un mot de passe de démo ne doit jamais être joignable depuis le réseau.</p></div>
+          </div>
+          <details class="lg-hint lg-hint--1">
+            <summary><span lang="en">Hint 1 — the structure</span><span lang="fr">Indice 1 — la structure</span></summary>
+            <div class="lg-hint-body">
+              <p><span lang="en">The service key is <code>app</code>, with <code>build.context: .</code> and <code>build.dockerfile: Containerfile</code>. For the wait, use <code>depends_on</code> with <code>condition: service_healthy</code>; the database already has a healthcheck.</span><span lang="fr">La clé du service est <code>app</code>, avec <code>build.context: .</code> et <code>build.dockerfile: Containerfile</code>. Pour l'attente, utilisez <code>depends_on</code> avec <code>condition: service_healthy</code> ; la base a déjà un healthcheck.</span></p>
+            </div>
+          </details>
+          <details class="lg-hint lg-hint--2">
+            <summary><span lang="en">Hint 2 — the app service</span><span lang="fr">Indice 2 — le service app</span></summary>
+            <div class="lg-hint-body">
+<pre class="dark"><code>  app:
+    build: { context: ., dockerfile: Containerfile }
+    container_name: bank-security-app
+    environment:
+      env.DB_HOST: postgres
+      env.DB_PORT: 5432
+      env.DB_NAME: bankdb
+      env.DB_USER: bankuser
+      env.DB_PASSWORD: bankpass      # demo value
+    ports: ["127.0.0.1:9080:9080", "127.0.0.1:9443:9443"]
+    depends_on:
+      postgres: { condition: service_healthy }
+    networks: [bank-network]</code></pre>
+              <p><span lang="en">The variable names start with <code>env.</code> because <code>server.xml</code> reads <code>${env.DB_HOST}</code> and the others.</span><span lang="fr">Les noms de variables commencent par <code>env.</code> parce que <code>server.xml</code> lit <code>${env.DB_HOST}</code> et les autres.</span></p>
+            </div>
+          </details>
+          <details class="lg-hint lg-hint--sol">
+            <summary><span lang="en">Solution files</span><span lang="fr">Fichiers solution</span></summary>
+            <div class="lg-hint-body">
+              <p><a href="https://github.com/oplanson/esipe-javaee/blob/master/03-Labs/Lab09-Security/solution/docker-compose.yml"><code>solution/docker-compose.yml</code></a></p>
+            </div>
+          </details>
+          <div class="lg-checkpoint">
+            <div class="lg-check-label"><span lang="en">Checkpoint</span><span lang="fr">Point de contrôle</span></div>
+            <pre class="dark"><code>podman compose config --quiet &amp;&amp; echo "compose OK"
+grep -n '127.0.0.1' docker-compose.yml</code></pre>
+            <p><span lang="en">Expected: <code>compose OK</code> and three lines showing the <code>127.0.0.1:</code> prefix.</span><span lang="fr">Attendu : <code>compose OK</code> et trois lignes qui montrent le préfixe <code>127.0.0.1:</code>.</span></p>
+          </div>
+        </div>
+      </article>
+
+      <!-- ───────── STEP 3 ───────── -->
+      <article class="lg-step" id="step-3">
+        <div class="lg-step-head">
+          <div class="lg-step-num">3</div>
+          <div>
+            <h3><span lang="en">Start the baseline</span><span lang="fr">Démarrer l'existant</span></h3>
+            <div class="lg-step-meta">
+              <span class="lg-chip">15 min</span>
+              <span class="lg-chip"><span lang="en">Container deployment</span><span lang="fr">Déploiement en conteneur</span></span>
+            </div>
+          </div>
+        </div>
+        <div class="lg-step-body">
+          <p class="lg-files"><span lang="en">Files used:</span><span lang="fr">Fichiers utilisés :</span> <code>Containerfile</code>, <code>docker-compose.yml</code></p>
+          <div class="lg-task-label"><span lang="en">Task</span><span lang="fr">À faire</span></div>
+          <ol>
+            <li><span lang="en">Define the helper functions of the <a href="#setup">Setup</a> section in your terminal.</span><span lang="fr">Définissez dans votre terminal les fonctions de la section <a href="#setup">Préparation</a>.</span></li>
+            <li><span lang="en">Build and start the whole stack, wait for the application to be ready, and register a first user.</span><span lang="fr">Construisez et démarrez toute la stack, attendez que l'application soit prête, puis inscrivez un premier utilisateur.</span></li>
+          </ol>
+          <details class="lg-hint lg-hint--1">
+            <summary><span lang="en">Hint 1 — slow first build</span><span lang="fr">Indice 1 — premier build lent</span></summary>
+            <div class="lg-hint-body">
+              <p><span lang="en">The first build downloads Maven dependencies and two base images; allow several minutes. Follow it with <code>podman logs -f bank-security-app</code> and wait for the line saying that the server is ready to run a smarter planet.</span><span lang="fr">Le premier build télécharge les dépendances Maven et deux images de base ; comptez plusieurs minutes. Suivez-le avec <code>podman logs -f bank-security-app</code> et attendez la ligne indiquant que le serveur est prêt.</span></p>
+            </div>
+          </details>
+          <details class="lg-hint lg-hint--2">
+            <summary><span lang="en">Hint 2 — the commands</span><span lang="fr">Indice 2 — les commandes</span></summary>
+            <div class="lg-hint-body">
+<pre class="dark"><code>podman compose up -d --build
+until curl -fs $B/health/live &gt;/dev/null; do sleep 3; done; echo "ready"
+reg alice          # prints the HTTP status</code></pre>
+            </div>
+          </details>
+          <div class="lg-checkpoint">
+            <div class="lg-check-label"><span lang="en">Checkpoint</span><span lang="fr">Point de contrôle</span></div>
+            <pre class="dark"><code>code $B/health/live
+reg alice
+loginc alice
+db -c "select username, account_locked from users;"</code></pre>
+            <p><span lang="en">Expected: <code>200</code>, <code>201</code>, <code>200</code>, then a table with the single row <code>alice | f</code>. If <code>/health/live</code> never answers 200, read <code>podman logs bank-security-app</code>: a <code>CWWKG0075E</code> message means the <code>env.DB_*</code> variables did not reach the container.</span><span lang="fr">Attendu : <code>200</code>, <code>201</code>, <code>200</code>, puis un tableau avec l'unique ligne <code>alice | f</code>. Si <code>/health/live</code> ne répond jamais 200, lisez <code>podman logs bank-security-app</code> : un message <code>CWWKG0075E</code> signifie que les variables <code>env.DB_*</code> ne sont pas arrivées dans le conteneur.</span></p>
+          </div>
+        </div>
+      </article>
+
+      <!-- ───────── STEP 4 ───────── -->
+      <article class="lg-step" id="step-4">
+        <div class="lg-step-head">
+          <div class="lg-step-num">4</div>
+          <div>
+            <h3><span lang="en">Audit: PBKDF2</span><span lang="fr">Audit : PBKDF2</span></h3>
+            <div class="lg-step-meta">
+              <span class="lg-chip">15 min</span>
+              <span class="lg-chip"><span lang="en">Course:</span><span lang="fr">Cours :</span> <a href="../../02-Lectures/slides/09-security/slides.html#slide-11"><span lang="en">cryptographic failures, slide 11</span><span lang="fr">défaillances cryptographiques, slide 11</span></a></span>
+            </div>
+          </div>
+        </div>
+        <div class="lg-step-body">
+          <p class="lg-files"><span lang="en">File to read:</span><span lang="fr">Fichier à lire :</span> <code>src/main/java/com/bank/security/PasswordService.java</code></p>
+          <div class="lg-task-label"><span lang="en">Task</span><span lang="fr">À faire</span></div>
+          <ol>
+            <li><span lang="en">Read <code>PasswordService</code> and list: the algorithm, the number of iterations, the salt length, how the stored value is laid out, and how two hashes are compared.</span><span lang="fr">Lisez <code>PasswordService</code> et listez : l'algorithme, le nombre d'itérations, la longueur du sel, la forme de la valeur stockée, et la façon dont deux hashes sont comparés.</span></li>
+            <li><span lang="en">Check in the database that no clear-text password is stored, and that two users with the same password get different hashes.</span><span lang="fr">Vérifiez en base qu'aucun mot de passe en clair n'est stocké, et que deux utilisateurs ayant le même mot de passe obtiennent des hashes différents.</span></li>
+          </ol>
+          <details class="lg-hint lg-hint--1">
+            <summary><span lang="en">Hint 1 — what to compare</span><span lang="fr">Indice 1 — quoi comparer</span></summary>
+            <div class="lg-hint-body">
+              <p><span lang="en">Register <code>alice</code> and <code>bob</code> with the same password (<code>reg alice</code>, <code>reg bob</code>), then select the <code>password</code> column of the <code>users</code> table. Look at the two halves around the <code>:</code>.</span><span lang="fr">Inscrivez <code>alice</code> et <code>bob</code> avec le même mot de passe (<code>reg alice</code>, <code>reg bob</code>), puis sélectionnez la colonne <code>password</code> de la table <code>users</code>. Regardez les deux moitiés autour du <code>:</code>.</span></p>
+            </div>
+          </details>
+          <details class="lg-hint lg-hint--2">
+            <summary><span lang="en">Hint 2 — the answers</span><span lang="fr">Indice 2 — les réponses</span></summary>
+            <div class="lg-hint-body">
+              <ul>
+                <li><span lang="en"><code>PBKDF2WithHmacSHA512</code>, 310 000 iterations, 512-bit key, 64-byte random salt from <code>SecureRandom</code>.</span><span lang="fr"><code>PBKDF2WithHmacSHA512</code>, 310 000 itérations, clé de 512 bits, sel aléatoire de 64 octets issu de <code>SecureRandom</code>.</span></li>
+                <li><span lang="en">Stored as <code>base64(salt):base64(hash)</code>. The salt is new for each user, so equal passwords give different values.</span><span lang="fr">Stocké sous la forme <code>base64(sel):base64(hash)</code>. Le sel est neuf pour chaque utilisateur : deux mots de passe identiques donnent donc des valeurs différentes.</span></li>
+                <li><span lang="en"><code>constantTimeEquals</code> compares byte by byte with a bitwise accumulator, so the time does not reveal where the first difference is.</span><span lang="fr"><code>constantTimeEquals</code> compare octet par octet avec un accumulateur bit à bit : la durée ne révèle donc pas où se trouve la première différence.</span></li>
+                <li><span lang="en">Verdict: nothing to fix in this class. It is identical to the solution.</span><span lang="fr">Verdict : rien à corriger dans cette classe. Elle est identique à la solution.</span></li>
+              </ul>
+            </div>
+          </details>
+          <details class="lg-hint lg-hint--sol">
+            <summary><span lang="en">Solution files</span><span lang="fr">Fichiers solution</span></summary>
+            <div class="lg-hint-body">
+              <p><a href="https://github.com/oplanson/esipe-javaee/blob/master/03-Labs/Lab09-Security/solution/src/main/java/com/bank/security/PasswordService.java"><code>solution/…/PasswordService.java</code></a></p>
+            </div>
+          </details>
+          <div class="lg-checkpoint">
+            <div class="lg-check-label"><span lang="en">Checkpoint</span><span lang="fr">Point de contrôle</span></div>
+            <pre class="dark"><code>reg alice; reg bob
+db -t -c "select username, left(password, 20) as salt_start, length(password) as len from users order by username;"</code></pre>
+            <p><span lang="en">Expected: two rows whose <code>salt_start</code> values differ and whose <code>len</code> is the same (177 characters: 88 + 1 + 88). Neither contains <code>Demo-Pass</code>.</span><span lang="fr">Attendu : deux lignes dont les valeurs <code>salt_start</code> diffèrent et dont <code>len</code> est identique (177 caractères : 88 + 1 + 88). Aucune ne contient <code>Demo-Pass</code>.</span></p>
+          </div>
+        </div>
+      </article>
+
+      <!-- ───────── STEP 5 ───────── -->
+      <article class="lg-step" id="step-5">
+        <div class="lg-step-head">
+          <div class="lg-step-num">5</div>
+          <div>
+            <h3><span lang="en">Audit: the JWT</span><span lang="fr">Audit : le JWT</span></h3>
+            <div class="lg-step-meta">
+              <span class="lg-chip">20 min</span>
+              <span class="lg-chip"><span lang="en">Course:</span><span lang="fr">Cours :</span> <a href="../../02-Lectures/slides/09-security/slides.html#slide-16"><span lang="en">JWT, slide 16</span><span lang="fr">JWT, slide 16</span></a></span>
+            </div>
+          </div>
+        </div>
+        <div class="lg-step-body">
+          <p class="lg-files"><span lang="en">Files to read:</span><span lang="fr">Fichiers à lire :</span> <code>src/main/java/com/bank/security/JwtService.java</code>, <code>src/main/resources/META-INF/microprofile-config.properties</code></p>
+          <div class="lg-task-label"><span lang="en">Task</span><span lang="fr">À faire</span></div>
+          <ol>
+            <li><span lang="en">Read <code>JwtService</code>: signing algorithm, claims, lifetime, where the secret comes from, and what <code>init()</code> refuses.</span><span lang="fr">Lisez <code>JwtService</code> : algorithme de signature, claims, durée de vie, origine du secret, et ce que <code>init()</code> refuse.</span></li>
+            <li><span lang="en">Decode a real token and read its three parts.</span><span lang="fr">Décodez un vrai jeton et lisez ses trois parties.</span></li>
+            <li><span lang="en">Add a sixth helper, <code>mint</code>, that signs a token with the secret of <code>microprofile-config.properties</code>. It proves what a leaked secret allows: forging a token for any user and any role.</span><span lang="fr">Ajoutez une sixième fonction, <code>mint</code>, qui signe un jeton avec le secret de <code>microprofile-config.properties</code>. Elle démontre ce que permet un secret qui fuite : forger un jeton pour n'importe quel utilisateur et n'importe quel rôle.</span></li>
+          </ol>
+<pre class="dark"><code>mint() { python3 - "$1" "$2" &lt;&lt;'PY'
+import sys,hmac,hashlib,base64,json,time
+secret=b"MySecretKeyForJWTTokenGenerationThatIsAtLeast256BitsLongForHS256Algorithm"   # demo secret
+b=lambda x: base64.urlsafe_b64encode(x).rstrip(b"=").decode()
+h=b(json.dumps({"alg":"HS256"},separators=(",",":")).encode()); now=int(time.time())
+p=b(json.dumps({"sub":sys.argv[1],"roles":sys.argv[2],"iss":"bank-security-app","iat":now,"exp":now+3600},separators=(",",":")).encode())
+print(h+"."+p+"."+b(hmac.new(secret,(h+"."+p).encode(),hashlib.sha256).digest()))
+PY
+}</code></pre>
+          <details class="lg-hint lg-hint--1">
+            <summary><span lang="en">Hint 1 — decode a token</span><span lang="fr">Indice 1 — décoder un jeton</span></summary>
+            <div class="lg-hint-body">
+              <p><span lang="en">A JWT is three Base64URL parts separated by dots. Take the middle one: <code>login alice | cut -d. -f2</code>, then decode it (add <code>=</code> padding if your tool complains).</span><span lang="fr">Un JWT est composé de trois parties Base64URL séparées par des points. Prenez celle du milieu : <code>login alice | cut -d. -f2</code>, puis décodez-la (ajoutez du remplissage <code>=</code> si votre outil se plaint).</span></p>
+            </div>
+          </details>
+          <details class="lg-hint lg-hint--2">
+            <summary><span lang="en">Hint 2 — the answers</span><span lang="fr">Indice 2 — les réponses</span></summary>
+            <div class="lg-hint-body">
+              <ul>
+                <li><span lang="en">HS256 (symmetric). Claims: <code>sub</code> = username, <code>roles</code> = a comma-separated string, <code>iss</code>, <code>iat</code>, <code>exp</code> (24 h by default).</span><span lang="fr">HS256 (symétrique). Claims : <code>sub</code> = nom d'utilisateur, <code>roles</code> = une chaîne séparée par des virgules, <code>iss</code>, <code>iat</code>, <code>exp</code> (24 h par défaut).</span></li>
+                <li><span lang="en">The secret comes from MicroProfile Config (<code>jwt.secret</code>), with the same value as default in the code. <code>init()</code> rejects a secret shorter than 32 bytes. The value is committed in the repository: fine for a demo, a vulnerability in production.</span><span lang="fr">Le secret vient de MicroProfile Config (<code>jwt.secret</code>), avec la même valeur par défaut dans le code. <code>init()</code> rejette un secret de moins de 32 octets. La valeur est commitée dans le dépôt : acceptable pour une démo, une vulnérabilité en production.</span></li>
+                <li><span lang="en">In production, inject the secret from the environment or a vault, and rotate it. A 24 h lifetime with no revocation also means that <code>logout</code> does not invalidate a token (step 8).</span><span lang="fr">En production, injectez le secret depuis l'environnement ou un coffre, et faites-le tourner. Une durée de 24 h sans révocation signifie aussi que <code>logout</code> n'invalide pas un jeton (étape 8).</span></li>
+              </ul>
+            </div>
+          </details>
+          <details class="lg-hint lg-hint--sol">
+            <summary><span lang="en">Solution files</span><span lang="fr">Fichiers solution</span></summary>
+            <div class="lg-hint-body">
+              <p><a href="https://github.com/oplanson/esipe-javaee/blob/master/03-Labs/Lab09-Security/solution/src/main/java/com/bank/security/JwtService.java"><code>solution/…/JwtService.java</code></a> · <a href="https://github.com/oplanson/esipe-javaee/blob/master/03-Labs/Lab09-Security/solution/src/main/resources/META-INF/microprofile-config.properties"><code>solution/…/microprofile-config.properties</code></a></p>
+            </div>
+          </details>
+          <div class="lg-checkpoint">
+            <div class="lg-check-label"><span lang="en">Checkpoint</span><span lang="fr">Point de contrôle</span></div>
+            <pre class="dark"><code>code $B/api/accounts -H "Authorization: Bearer $(mint mallory ADMIN,MANAGER)"
+code $B/api/accounts -H "Authorization: Bearer $(login alice)"</code></pre>
+            <p><span lang="en">Expected: <code>200</code> for the forged token (user <code>mallory</code> does not even exist in the database) and <code>403</code> for the genuine <code>CUSTOMER</code> token of alice. This is the consequence of a leaked secret, not a bug in the code.</span><span lang="fr">Attendu : <code>200</code> pour le jeton forgé (l'utilisateur <code>mallory</code> n'existe même pas en base) et <code>403</code> pour le vrai jeton <code>CUSTOMER</code> d'alice. C'est la conséquence d'un secret qui fuite, pas un bug du code.</span></p>
+          </div>
+        </div>
+      </article>
+
+      <!-- ───────── STEP 6 ───────── -->
+      <article class="lg-step" id="step-6">
+        <div class="lg-step-head">
+          <div class="lg-step-num">6</div>
+          <div>
+            <h3><span lang="en">Audit: the mechanism</span><span lang="fr">Audit : le mécanisme</span></h3>
+            <div class="lg-step-meta">
+              <span class="lg-chip">15 min</span>
+              <span class="lg-chip"><span lang="en">Course:</span><span lang="fr">Cours :</span> <a href="../../02-Lectures/slides/09-security/slides.html#slide-14"><span lang="en">authentication flow, slide 14</span><span lang="fr">flux d'authentification, slide 14</span></a></span>
+            </div>
+          </div>
+        </div>
+        <div class="lg-step-body">
+          <p class="lg-files"><span lang="en">File to read:</span><span lang="fr">Fichier à lire :</span> <code>src/main/java/com/bank/security/JwtAuthenticationMechanism.java</code></p>
+          <div class="lg-task-label"><span lang="en">Task</span><span lang="fr">À faire</span></div>
+          <ol>
+            <li><span lang="en">Follow <code>validateRequest</code> from the <code>Authorization</code> header to <code>notifyContainerAboutLogin</code>. Note which outcome each failure produces.</span><span lang="fr">Suivez <code>validateRequest</code> depuis l'en-tête <code>Authorization</code> jusqu'à <code>notifyContainerAboutLogin</code>. Notez le résultat produit par chaque échec.</span></li>
+            <li><span lang="en">Read <code>isPublicEndpoint</code> and probe the home page and the metrics endpoint without a token.</span><span lang="fr">Lisez <code>isPublicEndpoint</code> et sondez la page d'accueil et l'endpoint de métriques sans jeton.</span></li>
+          </ol>
+          <details class="lg-hint lg-hint--1">
+            <summary><span lang="en">Hint 1 — what to probe</span><span lang="fr">Indice 1 — quoi sonder</span></summary>
+            <div class="lg-hint-body">
+              <p><span lang="en">Call <code>/</code>, <code>/index.html</code>, <code>/metrics</code>, <code>/health/started</code> and <code>/openapi</code> without a token and compare the status codes with what <code>isPublicEndpoint</code> lists.</span><span lang="fr">Appelez <code>/</code>, <code>/index.html</code>, <code>/metrics</code>, <code>/health/started</code> et <code>/openapi</code> sans jeton et comparez les codes de statut avec ce que liste <code>isPublicEndpoint</code>.</span></p>
+            </div>
+          </details>
+          <details class="lg-hint lg-hint--2">
+            <summary><span lang="en">Hint 2 — the answers</span><span lang="fr">Indice 2 — les réponses</span></summary>
+            <div class="lg-hint-body">
+              <ul>
+                <li><span lang="en">No token on a non-public path → <code>responseUnauthorized()</code> (401). Bad signature, expired token, missing subject → 401. Valid token → the container is told the caller and its role names, which is what makes <code>@RolesAllowed</code> work.</span><span lang="fr">Pas de jeton sur un chemin non public → <code>responseUnauthorized()</code> (401). Mauvaise signature, jeton expiré, sujet absent → 401. Jeton valide → le conteneur reçoit l'appelant et le nom de ses rôles, ce qui fait fonctionner <code>@RolesAllowed</code>.</span></li>
+                <li><span lang="en">In the starter, <code>/</code> and <code>/index.html</code> answer <strong>401</strong>: the static home page is not in the public list. <code>/metrics</code> answers 403 (a Liberty setting, step 14). <code>/health/started</code> happens to answer 200 because Liberty handles it before this mechanism.</span><span lang="fr">Dans le starter, <code>/</code> et <code>/index.html</code> répondent <strong>401</strong> : la page d'accueil statique n'est pas dans la liste publique. <code>/metrics</code> répond 403 (un réglage Liberty, étape 14). <code>/health/started</code> répond 200 parce que Liberty le traite avant ce mécanisme.</span></li>
+                <li><span lang="en">Also note <code>getClientIpAddress</code>: it trusts <code>X-Forwarded-For</code> from any caller, so the IP stored in the audit trail can be forged. It is the same in the solution; it is a point for the bonus section.</span><span lang="fr">Notez aussi <code>getClientIpAddress</code> : il fait confiance à <code>X-Forwarded-For</code> venant de n'importe quel appelant, donc l'IP enregistrée dans la piste d'audit peut être falsifiée. C'est identique dans la solution ; c'est un sujet pour la section bonus.</span></li>
+              </ul>
+            </div>
+          </details>
+          <details class="lg-hint lg-hint--sol">
+            <summary><span lang="en">Solution files</span><span lang="fr">Fichiers solution</span></summary>
+            <div class="lg-hint-body">
+              <p><a href="https://github.com/oplanson/esipe-javaee/blob/master/03-Labs/Lab09-Security/solution/src/main/java/com/bank/security/JwtAuthenticationMechanism.java"><code>solution/…/JwtAuthenticationMechanism.java</code></a> <span lang="en">(fixed in step 13)</span><span lang="fr">(corrigé à l'étape 13)</span></p>
+            </div>
+          </details>
+          <div class="lg-checkpoint">
+            <div class="lg-check-label"><span lang="en">Checkpoint</span><span lang="fr">Point de contrôle</span></div>
+            <pre class="dark"><code>for u in "" index.html metrics health/started openapi api/accounts/my; do
+  printf "%-18s %s\n" "/$u" "$(code $B/$u)"
+done</code></pre>
+            <p><span lang="en">Expected on the starter: <code>401 401 403 200 200 401</code>, in that order. Keep this list: step 13 and step 14 change two of these values.</span><span lang="fr">Attendu sur le starter : <code>401 401 403 200 200 401</code>, dans cet ordre. Gardez cette liste : les étapes 13 et 14 changent deux de ces valeurs.</span></p>
+          </div>
+        </div>
+      </article>
+
+      <!-- ───────── STEP 7 ───────── -->
+      <article class="lg-step" id="step-7">
+        <div class="lg-step-head">
+          <div class="lg-step-num">7</div>
+          <div>
+            <h3><span lang="en">Audit: RBAC</span><span lang="fr">Audit : RBAC</span></h3>
+            <div class="lg-step-meta">
+              <span class="lg-chip">20 min</span>
+              <span class="lg-chip"><span lang="en">Course:</span><span lang="fr">Cours :</span> <a href="../../02-Lectures/slides/09-security/slides.html#slide-18"><span lang="en">RBAC, slide 18</span><span lang="fr">RBAC, slide 18</span></a></span>
+            </div>
+          </div>
+        </div>
+        <div class="lg-step-body">
+          <p class="lg-files"><span lang="en">Files to read:</span><span lang="fr">Fichiers à lire :</span> <code>src/main/java/com/bank/api/AccountResource.java</code>, <code>src/main/webapp/WEB-INF/web.xml</code></p>
+          <div class="lg-task-label"><span lang="en">Task</span><span lang="fr">À faire</span></div>
+          <ol>
+            <li><span lang="en">Build the role matrix: for each method of <code>AccountResource</code>, write the roles in <code>@RolesAllowed</code>.</span><span lang="fr">Construisez la matrice des rôles : pour chaque méthode de <code>AccountResource</code>, notez les rôles de <code>@RolesAllowed</code>.</span></li>
+            <li><span lang="en">Find the second line of defence for <code>GET /api/accounts/{id}</code> (a rule that <code>@RolesAllowed</code> alone cannot express).</span><span lang="fr">Trouvez la seconde ligne de défense de <code>GET /api/accounts/{id}</code> (une règle que <code>@RolesAllowed</code> seul ne peut pas exprimer).</span></li>
+            <li><span lang="en">Probe it with a real <code>CUSTOMER</code> token: one allowed call, two refused calls.</span><span lang="fr">Sondez-la avec un vrai jeton <code>CUSTOMER</code> : un appel autorisé, deux appels refusés.</span></li>
+          </ol>
+          <details class="lg-hint lg-hint--1">
+            <summary><span lang="en">Hint 1 — the ownership rule</span><span lang="fr">Indice 1 — la règle de propriété</span></summary>
+            <div class="lg-hint-body">
+              <p><span lang="en">Read the body of <code>getAccountById</code>: it calls <code>isUserInRole("CUSTOMER")</code> and compares the owner with the caller. Without it, any customer could read any account by guessing an id (broken access control, OWASP A01).</span><span lang="fr">Lisez le corps de <code>getAccountById</code> : il appelle <code>isUserInRole("CUSTOMER")</code> et compare le propriétaire avec l'appelant. Sans cela, n'importe quel client pourrait lire n'importe quel compte en devinant un identifiant (contrôle d'accès défaillant, OWASP A01).</span></p>
+            </div>
+          </details>
+          <details class="lg-hint lg-hint--2">
+            <summary><span lang="en">Hint 2 — the matrix</span><span lang="fr">Indice 2 — la matrice</span></summary>
+            <div class="lg-hint-body">
+              <table class="slide-table">
+                <thead><tr><th><span lang="en">Operation</span><span lang="fr">Opération</span></th><th><span lang="en">Roles allowed</span><span lang="fr">Rôles autorisés</span></th></tr></thead>
+                <tbody>
+                  <tr><td><code>GET /api/accounts</code></td><td>ADMIN, MANAGER</td></tr>
+                  <tr><td><code>GET /api/accounts/my</code>, <code>GET /api/accounts/{id}</code></td><td>CUSTOMER, TELLER, MANAGER, ADMIN</td></tr>
+                  <tr><td><code>POST /api/accounts</code>, <code>…/deposit</code>, <code>…/withdraw</code></td><td>TELLER, MANAGER, ADMIN</td></tr>
+                  <tr><td><code>POST /api/accounts/transfer</code></td><td>MANAGER, ADMIN</td></tr>
+                  <tr><td><code>DELETE /api/accounts/{id}</code></td><td>ADMIN</td></tr>
+                </tbody>
+              </table>
+              <p><span lang="en">The four roles are declared in <code>web.xml</code> with <code>&lt;security-role&gt;</code>. A refused ownership check is written to the audit trail through <code>logAccessDenied</code>. Nothing needs fixing in this class.</span><span lang="fr">Les quatre rôles sont déclarés dans <code>web.xml</code> avec <code>&lt;security-role&gt;</code>. Un refus de propriété est écrit dans la piste d'audit par <code>logAccessDenied</code>. Rien à corriger dans cette classe.</span></p>
+            </div>
+          </details>
+          <details class="lg-hint lg-hint--sol">
+            <summary><span lang="en">Solution files</span><span lang="fr">Fichiers solution</span></summary>
+            <div class="lg-hint-body">
+              <p><a href="https://github.com/oplanson/esipe-javaee/blob/master/03-Labs/Lab09-Security/solution/src/main/java/com/bank/api/AccountResource.java"><code>solution/…/AccountResource.java</code></a> · <a href="https://github.com/oplanson/esipe-javaee/blob/master/03-Labs/Lab09-Security/solution/src/main/webapp/WEB-INF/web.xml"><code>solution/…/web.xml</code></a></p>
+            </div>
+          </details>
+          <div class="lg-checkpoint">
+            <div class="lg-check-label"><span lang="en">Checkpoint</span><span lang="fr">Point de contrôle</span></div>
+            <pre class="dark"><code>T=$(login alice)
+code $B/api/accounts/my      -H "Authorization: Bearer $T"
+code $B/api/accounts         -H "Authorization: Bearer $T"
+code -X DELETE $B/api/accounts/1 -H "Authorization: Bearer $T"
+code $B/api/accounts/my</code></pre>
+            <p><span lang="en">Expected: <code>200</code> (own accounts), <code>403</code> (the role is not allowed), <code>403</code> (delete is ADMIN only), <code>401</code> (no token).</span><span lang="fr">Attendu : <code>200</code> (ses propres comptes), <code>403</code> (rôle non autorisé), <code>403</code> (la suppression est réservée à ADMIN), <code>401</code> (pas de jeton).</span></p>
+          </div>
+        </div>
+      </article>
+
+      <!-- ───────── STEP 8 ───────── -->
+      <article class="lg-step" id="step-8">
+        <div class="lg-step-head">
+          <div class="lg-step-num">8</div>
+          <div>
+            <h3><span lang="en">Audit: the audit trail</span><span lang="fr">Audit : la piste d'audit</span></h3>
+            <div class="lg-step-meta">
+              <span class="lg-chip">15 min</span>
+              <span class="lg-chip"><span lang="en">Course:</span><span lang="fr">Cours :</span> <a href="../../02-Lectures/slides/09-security/slides.html#slide-10"><span lang="en">logging failures, slide 10</span><span lang="fr">défaut de journalisation, slide 10</span></a></span>
+            </div>
+          </div>
+        </div>
+        <div class="lg-step-body">
+          <p class="lg-files"><span lang="en">Files to read:</span><span lang="fr">Fichiers à lire :</span> <code>src/main/java/com/bank/security/SecurityAuditService.java</code>, <code>src/main/java/com/bank/api/AuthResource.java</code></p>
+          <div class="lg-task-label"><span lang="en">Task</span><span lang="fr">À faire</span></div>
+          <ol>
+            <li><span lang="en">List the events that <code>SecurityAuditService</code> can record and what each row stores (user, action, resource, result, IP, user agent).</span><span lang="fr">Listez les événements que <code>SecurityAuditService</code> peut enregistrer et ce que stocke chaque ligne (utilisateur, action, ressource, résultat, IP, user agent).</span></li>
+            <li><span lang="en">Generate a few events (a registration, a login, two failed logins, a logout) and read them back from <code>security_audit_logs</code>.</span><span lang="fr">Générez quelques événements (une inscription, une connexion, deux échecs, une déconnexion) et relisez-les dans <code>security_audit_logs</code>.</span></li>
+            <li><span lang="en">Check what <code>logout</code> really does: reuse the token after logging out.</span><span lang="fr">Vérifiez ce que fait réellement <code>logout</code> : réutilisez le jeton après la déconnexion.</span></li>
+          </ol>
+          <details class="lg-hint lg-hint--1">
+            <summary><span lang="en">Hint 1 — the queries</span><span lang="fr">Indice 1 — les requêtes</span></summary>
+            <div class="lg-hint-body">
+              <p><span lang="en">Group the table by <code>action</code> and <code>result</code>. For the logout test, keep the token in a variable (<code>T=$(login alice)</code>), call <code>POST /api/auth/logout</code> with it, then call <code>/api/accounts/my</code> with the same token.</span><span lang="fr">Groupez la table par <code>action</code> et <code>result</code>. Pour le test de déconnexion, gardez le jeton dans une variable (<code>T=$(login alice)</code>), appelez <code>POST /api/auth/logout</code> avec lui, puis appelez <code>/api/accounts/my</code> avec le même jeton.</span></p>
+            </div>
+          </details>
+          <details class="lg-hint lg-hint--2">
+            <summary><span lang="en">Hint 2 — the answers</span><span lang="fr">Indice 2 — les réponses</span></summary>
+            <div class="lg-hint-body">
+              <ul>
+                <li><span lang="en">Events: successful and failed login, logout, access denied, resource access, account lockout, password change, registration. Every method is <code>@Transactional</code> and writes one row.</span><span lang="fr">Événements : connexion réussie et échouée, déconnexion, accès refusé, accès à une ressource, verrouillage de compte, changement de mot de passe, inscription. Chaque méthode est <code>@Transactional</code> et écrit une ligne.</span></li>
+                <li><span lang="en"><code>logout</code> answers 200 and writes a <code>LOGOUT</code> row, but the JWT stays valid until it expires: the second call also answers 200. There is no revocation list.</span><span lang="fr"><code>logout</code> répond 200 et écrit une ligne <code>LOGOUT</code>, mais le JWT reste valide jusqu'à son expiration : le second appel répond aussi 200. Il n'y a pas de liste de révocation.</span></li>
+                <li><span lang="en">One method looks wrong: <code>countRecentFailedLogins</code> uses <code>CURRENT_TIMESTAMP - 1 HOUR</code>, which is not valid JPQL. Nothing calls it yet, so the application never complains. You prove it in step 11.</span><span lang="fr">Une méthode semble fausse : <code>countRecentFailedLogins</code> utilise <code>CURRENT_TIMESTAMP - 1 HOUR</code>, qui n'est pas du JPQL valide. Rien ne l'appelle encore, donc l'application ne se plaint jamais. Vous le prouvez à l'étape 11.</span></li>
+              </ul>
+            </div>
+          </details>
+          <details class="lg-hint lg-hint--sol">
+            <summary><span lang="en">Solution files</span><span lang="fr">Fichiers solution</span></summary>
+            <div class="lg-hint-body">
+              <p><a href="https://github.com/oplanson/esipe-javaee/blob/master/03-Labs/Lab09-Security/solution/src/main/java/com/bank/security/SecurityAuditService.java"><code>solution/…/SecurityAuditService.java</code></a> <span lang="en">(fixed in step 11)</span><span lang="fr">(corrigé à l'étape 11)</span></p>
+            </div>
+          </details>
+          <div class="lg-checkpoint">
+            <div class="lg-check-label"><span lang="en">Checkpoint</span><span lang="fr">Point de contrôle</span></div>
+            <pre class="dark"><code>loginc alice WrongPass1!; loginc alice WrongPass1!
+T=$(login alice); code -X POST $B/api/auth/logout -H "Authorization: Bearer $T"; echo
+code $B/api/accounts/my -H "Authorization: Bearer $T"; echo
+db -c "select action, result, count(*) from security_audit_logs group by 1,2 order by 1,2;"</code></pre>
+            <p><span lang="en">Expected: <code>200</code> and <code>200</code> (the token still works after logout), then a table that contains at least the rows <code>LOGIN | FAILURE</code>, <code>LOGIN | SUCCESS</code>, <code>LOGOUT | SUCCESS</code> and <code>REGISTRATION | SUCCESS</code>.</span><span lang="fr">Attendu : <code>200</code> et <code>200</code> (le jeton fonctionne encore après la déconnexion), puis un tableau qui contient au moins les lignes <code>LOGIN | FAILURE</code>, <code>LOGIN | SUCCESS</code>, <code>LOGOUT | SUCCESS</code> et <code>REGISTRATION | SUCCESS</code>.</span></p>
+          </div>
+        </div>
+      </article>
+
+      <!-- ───────── STEP 9 ───────── -->
+      <article class="lg-step" id="step-9">
+        <div class="lg-step-head">
+          <div class="lg-step-num">9</div>
+          <div>
+            <h3><span lang="en">Persistence</span><span lang="fr">Persistance</span></h3>
+            <div class="lg-step-meta">
+              <span class="lg-chip">15 min</span>
+              <span class="lg-chip"><span lang="en">JPA schema generation</span><span lang="fr">Génération de schéma JPA</span></span>
+            </div>
+          </div>
+        </div>
+        <div class="lg-step-body">
+          <p class="lg-files"><span lang="en">Files to change:</span><span lang="fr">Fichiers à modifier :</span> <code>src/main/resources/META-INF/persistence.xml</code></p>
+          <div class="lg-task-label"><span lang="en">Task</span><span lang="fr">À faire</span></div>
+          <ol>
+            <li><span lang="en">Register a user, restart only the application container and count the rows of <code>users</code>.</span><span lang="fr">Inscrivez un utilisateur, redémarrez seulement le conteneur de l'application et comptez les lignes de <code>users</code>.</span></li>
+            <li><span lang="en">Find the property that explains the result and replace its value so that the schema is created if needed but never dropped.</span><span lang="fr">Trouvez la propriété qui explique le résultat et changez sa valeur pour que le schéma soit créé si nécessaire mais jamais supprimé.</span></li>
+            <li><span lang="en">Tell EclipseLink which database it talks to.</span><span lang="fr">Indiquez à EclipseLink quelle base de données il utilise.</span></li>
+          </ol>
+          <details class="lg-hint lg-hint--1">
+            <summary><span lang="en">Hint 1 — where to look</span><span lang="fr">Indice 1 — où chercher</span></summary>
+            <div class="lg-hint-body">
+              <p><span lang="en">Look for <code>schema-generation.database.action</code> and for <code>drop-source</code>. The platform property starts with <code>eclipselink.target-database</code>.</span><span lang="fr">Cherchez <code>schema-generation.database.action</code> et <code>drop-source</code>. La propriété de plateforme commence par <code>eclipselink.target-database</code>.</span></p>
+            </div>
+          </details>
+          <details class="lg-hint lg-hint--2">
+            <summary><span lang="en">Hint 2 — the change</span><span lang="fr">Indice 2 — la modification</span></summary>
+            <div class="lg-hint-body">
+<pre class="dark"><code>&lt;property name=&quot;eclipselink.target-database&quot; value=&quot;PostgreSQL&quot;/&gt;
+&lt;property name=&quot;jakarta.persistence.schema-generation.database.action&quot; value=&quot;create&quot;/&gt;
+&lt;!-- remove the schema-generation.drop-source property --&gt;</code></pre>
+            </div>
+          </details>
+          <details class="lg-hint lg-hint--sol">
+            <summary><span lang="en">Solution files</span><span lang="fr">Fichiers solution</span></summary>
+            <div class="lg-hint-body">
+              <p><a href="https://github.com/oplanson/esipe-javaee/blob/master/03-Labs/Lab09-Security/solution/src/main/resources/META-INF/persistence.xml"><code>solution/…/persistence.xml</code></a></p>
+            </div>
+          </details>
+          <div class="lg-checkpoint">
+            <div class="lg-check-label"><span lang="en">Checkpoint</span><span lang="fr">Point de contrôle</span></div>
+<pre class="dark"><code>reg alice; echo
+podman restart bank-security-app &gt;/dev/null
+until curl -fs $B/health/live &gt;/dev/null; do sleep 3; done
+db -c &quot;select count(*) from users;&quot;</code></pre>
+            <p><span lang="en">Expected: <code>201</code>, then a count of <code>1</code>. With <code>drop-and-create</code> the count is <code>0</code> after the restart: the schema is wiped at each start although the volume is kept. If alice already exists, the status is <code>400</code> and the count is still <code>1</code>.</span><span lang="fr">Attendu : <code>201</code>, puis un compte de <code>1</code>. Avec <code>drop-and-create</code> le compte est <code>0</code> après le redémarrage : le schéma est effacé à chaque démarrage alors que le volume est conservé. Si alice existe déjà, le statut est <code>400</code> et le compte reste <code>1</code>.</span></p>
+          </div>
+        </div>
+      </article>
+
+      <!-- ───────── STEP 10 ───────── -->
+      <article class="lg-step" id="step-10">
+        <div class="lg-step-head">
+          <div class="lg-step-num">10</div>
+          <div>
+            <h3><span lang="en">Fix role parsing</span><span lang="fr">Corriger la lecture des rôles</span></h3>
+            <div class="lg-step-meta">
+              <span class="lg-chip">10 min</span>
+              <span class="lg-chip"><span lang="en">Java collections</span><span lang="fr">Collections Java</span></span>
+            </div>
+          </div>
+        </div>
+        <div class="lg-step-body">
+          <p class="lg-files"><span lang="en">Files to change:</span><span lang="fr">Fichiers à modifier :</span> <code>src/main/java/com/bank/security/JwtService.java</code></p>
+          <div class="lg-task-label"><span lang="en">Task</span><span lang="fr">À faire</span></div>
+          <ol>
+            <li><span lang="en">Read <code>getRolesFromToken</code> and explain what <code>Set.of(array)</code> does when the array holds the same element twice.</span><span lang="fr">Lisez <code>getRolesFromToken</code> et expliquez ce que fait <code>Set.of(tableau)</code> quand le tableau contient deux fois le même élément.</span></li>
+            <li><span lang="en">Replace it by a construction that tolerates duplicates.</span><span lang="fr">Remplacez-le par une construction qui tolère les doublons.</span></li>
+          </ol>
+          <details class="lg-hint lg-hint--1">
+            <summary><span lang="en">Hint 1 — where to look</span><span lang="fr">Indice 1 — où chercher</span></summary>
+            <div class="lg-hint-body">
+              <p><span lang="en"><code>Set.of</code> throws <code>IllegalArgumentException</code> on a duplicate; the surrounding code then treats the token as invalid. Start from <code>java.util.Arrays.stream</code>.</span><span lang="fr"><code>Set.of</code> lève <code>IllegalArgumentException</code> sur un doublon ; le code appelant considère alors le jeton comme invalide. Partez de <code>java.util.Arrays.stream</code>.</span></p>
+            </div>
+          </details>
+          <details class="lg-hint lg-hint--2">
+            <summary><span lang="en">Hint 2 — the change</span><span lang="fr">Indice 2 — la modification</span></summary>
+            <div class="lg-hint-body">
+<pre class="dark"><code>return java.util.Arrays.stream(rolesString.split(&quot;,&quot;))
+        .map(String::trim)
+        .map(Role::valueOf)
+        .collect(Collectors.toSet());</code></pre>
+            </div>
+          </details>
+          <details class="lg-hint lg-hint--sol">
+            <summary><span lang="en">Solution files</span><span lang="fr">Fichiers solution</span></summary>
+            <div class="lg-hint-body">
+              <p><a href="https://github.com/oplanson/esipe-javaee/blob/master/03-Labs/Lab09-Security/solution/src/main/java/com/bank/security/JwtService.java"><code>solution/…/JwtService.java</code></a></p>
+            </div>
+          </details>
+          <div class="lg-checkpoint">
+            <div class="lg-check-label"><span lang="en">Checkpoint</span><span lang="fr">Point de contrôle</span></div>
+<pre class="dark"><code>podman compose up -d --build app
+until curl -fs $B/health/live &gt;/dev/null; do sleep 3; done
+code $B/api/accounts -H &quot;Authorization: Bearer $(mint mallory ADMIN,MANAGER)&quot;; echo
+code $B/api/accounts -H &quot;Authorization: Bearer $(mint mallory ADMIN,ADMIN)&quot;; echo</code></pre>
+            <p><span lang="en">Expected: <code>200</code> and <code>200</code>. Before the fix the second call answered <code>403</code>. This is only a robustness fix: the real problem, a forgeable token, is the leaked secret of step 5 (see Go further).</span><span lang="fr">Attendu : <code>200</code> et <code>200</code>. Avant la correction, le second appel répondait <code>403</code>. C'est seulement un correctif de robustesse : le vrai problème, un jeton forgeable, vient du secret exposé à l'étape 5 (voir Pour aller plus loin).</span></p>
+          </div>
+        </div>
+      </article>
+
+      <!-- ───────── STEP 11 ───────── -->
+      <article class="lg-step" id="step-11">
+        <div class="lg-step-head">
+          <div class="lg-step-num">11</div>
+          <div>
+            <h3><span lang="en">Fix the audit query</span><span lang="fr">Corriger la requête d'audit</span></h3>
+            <div class="lg-step-meta">
+              <span class="lg-chip">15 min</span>
+              <span class="lg-chip"><span lang="en">JPQL parameters</span><span lang="fr">Paramètres JPQL</span></span>
+            </div>
+          </div>
+        </div>
+        <div class="lg-step-body">
+          <p class="lg-files"><span lang="en">Files to change:</span><span lang="fr">Fichiers à modifier :</span> <code>src/main/java/com/bank/security/SecurityAuditService.java</code></p>
+          <div class="lg-task-label"><span lang="en">Task</span><span lang="fr">À faire</span></div>
+          <ol>
+            <li><span lang="en">In <code>countRecentFailedLogins</code>, replace the invalid expression <code>CURRENT_TIMESTAMP - 1 HOUR</code> by a named parameter <code>:cutoff</code>.</span><span lang="fr">Dans <code>countRecentFailedLogins</code>, remplacez l'expression invalide <code>CURRENT_TIMESTAMP - 1 HOUR</code> par un paramètre nommé <code>:cutoff</code>.</span></li>
+            <li><span lang="en">Compute the cutoff in Java (one hour ago) and bind it.</span><span lang="fr">Calculez la limite en Java (il y a une heure) et liez-la.</span></li>
+          </ol>
+          <details class="lg-hint lg-hint--1">
+            <summary><span lang="en">Hint 1 — where to look</span><span lang="fr">Indice 1 — où chercher</span></summary>
+            <div class="lg-hint-body">
+              <p><span lang="en">JPQL has no date arithmetic on <code>CURRENT_TIMESTAMP</code>. Use <code>java.time.LocalDateTime.now().minusHours(1)</code> and <code>setParameter("cutoff", …)</code>.</span><span lang="fr">JPQL n'a pas d'arithmétique de dates sur <code>CURRENT_TIMESTAMP</code>. Utilisez <code>java.time.LocalDateTime.now().minusHours(1)</code> et <code>setParameter("cutoff", …)</code>.</span></p>
+            </div>
+          </details>
+          <details class="lg-hint lg-hint--2">
+            <summary><span lang="en">Hint 2 — the change</span><span lang="fr">Indice 2 — la modification</span></summary>
+            <div class="lg-hint-body">
+<pre class="dark"><code>java.time.LocalDateTime cutoff = java.time.LocalDateTime.now().minusHours(1);
+return em.createQuery(
+        &quot;SELECT COUNT(l) FROM SecurityAuditLog l WHERE l.username = :username &quot;
+      + &quot;AND l.action = &#x27;LOGIN&#x27; AND l.result = &#x27;FAILURE&#x27; AND l.timestamp &gt; :cutoff&quot;, Long.class)
+        .setParameter(&quot;username&quot;, username)
+        .setParameter(&quot;cutoff&quot;, cutoff)
+        .getSingleResult();</code></pre>
+            </div>
+          </details>
+          <details class="lg-hint lg-hint--sol">
+            <summary><span lang="en">Solution files</span><span lang="fr">Fichiers solution</span></summary>
+            <div class="lg-hint-body">
+              <p><a href="https://github.com/oplanson/esipe-javaee/blob/master/03-Labs/Lab09-Security/solution/src/main/java/com/bank/security/SecurityAuditService.java"><code>solution/…/SecurityAuditService.java</code></a></p>
+            </div>
+          </details>
+          <div class="lg-checkpoint">
+            <div class="lg-check-label"><span lang="en">Checkpoint</span><span lang="fr">Point de contrôle</span></div>
+<pre class="dark"><code>grep -n &quot;cutoff&quot; src/main/java/com/bank/security/SecurityAuditService.java
+podman compose up -d --build app
+until curl -fs $B/health/live &gt;/dev/null; do sleep 3; done; code $B/health/live; echo</code></pre>
+            <p><span lang="en">Expected: three lines that contain <code>cutoff</code> (declaration, JPQL text, binding), then <code>200</code>. Nothing calls this method yet, so the build proves only that the code compiles. The Go further section shows how to call it.</span><span lang="fr">Attendu : trois lignes contenant <code>cutoff</code> (déclaration, texte JPQL, liaison), puis <code>200</code>. Rien n'appelle encore cette méthode : le build prouve seulement que le code compile. La section Pour aller plus loin montre comment l'appeler.</span></p>
+          </div>
+        </div>
+      </article>
+
+      <!-- ───────── STEP 12 ───────── -->
+      <article class="lg-step" id="step-12">
+        <div class="lg-step-head">
+          <div class="lg-step-num">12</div>
+          <div>
+            <h3><span lang="en">Transactions and lockout</span><span lang="fr">Transactions et verrouillage</span></h3>
+            <div class="lg-step-meta">
+              <span class="lg-chip">25 min</span>
+              <span class="lg-chip"><span lang="en">JTA, <code>@Transactional</code> and the CDI proxy</span><span lang="fr">JTA, <code>@Transactional</code> et le proxy CDI</span></span>
+            </div>
+          </div>
+        </div>
+        <div class="lg-step-body">
+          <p class="lg-files"><span lang="en">Files to change:</span><span lang="fr">Fichiers à modifier :</span> <code>src/main/java/com/bank/security/DatabaseIdentityStore.java</code></p>
+          <div class="lg-task-label"><span lang="en">Task</span><span lang="fr">À faire</span></div>
+          <ol>
+            <li><span lang="en">Make 5 wrong logins for a new user (<code>carol</code>) and read <code>failed_login_attempts</code>. Observe that it stays at 0 and that the account is never locked.</span><span lang="fr">Faites 5 connexions erronées pour un nouvel utilisateur (<code>carol</code>) et lisez <code>failed_login_attempts</code>. Constatez qu'il reste à 0 et que le compte n'est jamais verrouillé.</span></li>
+            <li><span lang="en">Explain why: <code>resetFailedAttempts</code> and <code>incrementFailedAttempts</code> are <code>private</code> methods annotated <code>@Transactional</code> and called from inside the same bean, so no interceptor runs.</span><span lang="fr">Expliquez pourquoi : <code>resetFailedAttempts</code> et <code>incrementFailedAttempts</code> sont des méthodes <code>private</code> annotées <code>@Transactional</code> et appelées depuis le même bean : aucun intercepteur ne s'exécute.</span></li>
+            <li><span lang="en">In these two methods only, open a transaction by hand: inject an <code>EntityManagerFactory</code> (<code>@PersistenceUnit</code>) and a <code>UserTransaction</code> (<code>@Resource</code>), create an <code>EntityManager</code>, call <code>utx.begin()</code>, <code>em.joinTransaction()</code>, then <code>utx.commit()</code>, and close the manager in <code>finally</code>.</span><span lang="fr">Dans ces deux méthodes seulement, ouvrez une transaction à la main : injectez un <code>EntityManagerFactory</code> (<code>@PersistenceUnit</code>) et un <code>UserTransaction</code> (<code>@Resource</code>), créez un <code>EntityManager</code>, appelez <code>utx.begin()</code>, <code>em.joinTransaction()</code>, puis <code>utx.commit()</code>, et fermez le manager dans <code>finally</code>.</span></li>
+            <li><span lang="en">Leave <code>@Transactional</code> on <code>createUser</code> and <code>unlockAccount</code> as it is.</span><span lang="fr">Laissez <code>@Transactional</code> sur <code>createUser</code> et <code>unlockAccount</code> tel quel.</span></li>
+          </ol>
+          <details class="lg-hint lg-hint--1">
+            <summary><span lang="en">Hint 1 — where to look</span><span lang="fr">Indice 1 — où chercher</span></summary>
+            <div class="lg-hint-body">
+              <p><span lang="en">Remove <code>@Transactional</code> from the two private methods. Keep the existing <code>@PersistenceContext</code> <code>em</code> for the read queries. Roll back in the <code>catch</code> block.</span><span lang="fr">Retirez <code>@Transactional</code> des deux méthodes privées. Conservez le <code>em</code> <code>@PersistenceContext</code> existant pour les lectures. Annulez la transaction dans le bloc <code>catch</code>.</span></p>
+            </div>
+          </details>
+          <details class="lg-hint lg-hint--2">
+            <summary><span lang="en">Hint 2 — the change</span><span lang="fr">Indice 2 — la modification</span></summary>
+            <div class="lg-hint-body">
+<pre class="dark"><code>@PersistenceUnit(unitName = &quot;bankPU&quot;) private EntityManagerFactory emf;
+@Resource private UserTransaction utx;
+
+private void incrementFailedAttempts(User user) {
+    EntityManager em = emf.createEntityManager();
+    try {
+        utx.begin();
+        em.joinTransaction();
+        int attempts = user.getFailedLoginAttempts() + 1;
+        user.setFailedLoginAttempts(attempts);
+        if (attempts &gt;= MAX_FAILED_ATTEMPTS) user.setAccountLocked(true);
+        em.merge(user);
+        em.flush();
+        utx.commit();
+    } catch (Exception e) {
+        try { utx.rollback(); } catch (Exception ex) { LOGGER.severe(ex.getMessage()); }
+        LOGGER.severe(&quot;Error incrementing failed attempts: &quot; + e.getMessage());
+    } finally {
+        em.close();
+    }
+}
+// resetFailedAttempts: same pattern (failed attempts = 0, last login = now)</code></pre>
+            </div>
+          </details>
+          <div class="lg-callout lg-callout--warn">
+            <div lang="en"><div class="lg-callout-title">Why not change <code>createUser</code> too?</div><p>The solution replaces <code>@Transactional</code> by <code>utx.begin()</code> in <code>createUser</code> as well. But <code>UserService</code> already runs inside a container transaction, and Liberty then refuses <code>UserTransaction</code> methods: registration answers 500. Keep <code>@Transactional</code> there. Do not copy that part of the solution.</p></div>
+            <div lang="fr"><div class="lg-callout-title">Pourquoi ne pas modifier aussi <code>createUser</code> ?</div><p>La solution remplace aussi <code>@Transactional</code> par <code>utx.begin()</code> dans <code>createUser</code>. Or <code>UserService</code> s'exécute déjà dans une transaction du conteneur et Liberty refuse alors les méthodes de <code>UserTransaction</code> : l'inscription répond 500. Gardez <code>@Transactional</code> à cet endroit. Ne recopiez pas cette partie de la solution.</p></div>
+          </div>
+          <details class="lg-hint lg-hint--sol">
+            <summary><span lang="en">Solution files</span><span lang="fr">Fichiers solution</span></summary>
+            <div class="lg-hint-body">
+              <p><a href="https://github.com/oplanson/esipe-javaee/blob/master/03-Labs/Lab09-Security/solution/src/main/java/com/bank/security/DatabaseIdentityStore.java"><code>solution/…/DatabaseIdentityStore.java</code></a></p>
+            </div>
+          </details>
+          <div class="lg-checkpoint">
+            <div class="lg-check-label"><span lang="en">Checkpoint</span><span lang="fr">Point de contrôle</span></div>
+<pre class="dark"><code>podman compose up -d --build app
+until curl -fs $B/health/live &gt;/dev/null; do sleep 3; done
+reg carol; echo
+for i in 1 2 3 4 5 6; do echo -n &quot;$(loginc carol Bad1!) &quot;; done; echo
+loginc carol; echo
+db -c &quot;select username, account_locked, failed_login_attempts from users where username=&#x27;carol&#x27;;&quot;
+reg dave; echo; loginc dave; echo
+db -c &quot;select username, last_login is not null as has_last_login from users where username=&#x27;dave&#x27;;&quot;</code></pre>
+            <p><span lang="en">Expected: <code>201</code>, then <code>401 401 401 401 403 403</code> (lock at the fifth failure), <code>403</code> even with the right password, and the row <code>carol | t | 5</code>. For <code>dave</code>: <code>201</code>, <code>200</code> and <code>has_last_login = t</code>.</span><span lang="fr">Attendu : <code>201</code>, puis <code>401 401 401 401 403 403</code> (verrouillage au cinquième échec), <code>403</code> même avec le bon mot de passe, et la ligne <code>carol | t | 5</code>. Pour <code>dave</code> : <code>201</code>, <code>200</code> et <code>has_last_login = t</code>.</span></p>
+          </div>
+        </div>
+      </article>
+
+      <!-- ───────── STEP 13 ───────── -->
+      <article class="lg-step" id="step-13">
+        <div class="lg-step-head">
+          <div class="lg-step-num">13</div>
+          <div>
+            <h3><span lang="en">Public endpoints</span><span lang="fr">Endpoints publics</span></h3>
+            <div class="lg-step-meta">
+              <span class="lg-chip">15 min</span>
+              <span class="lg-chip"><span lang="en">Authentication mechanism</span><span lang="fr">Mécanisme d'authentification</span></span>
+            </div>
+          </div>
+        </div>
+        <div class="lg-step-body">
+          <p class="lg-files"><span lang="en">File to change:</span><span lang="fr">Fichier à modifier :</span> <code>src/main/java/com/bank/security/JwtAuthenticationMechanism.java</code></p>
+          <div class="lg-task-label"><span lang="en">Task</span><span lang="fr">À faire</span></div>
+          <ol>
+            <li><span lang="en">Probe six paths without a token: <code>/</code>, <code>/index.html</code>, <code>/metrics</code>, <code>/health/started</code>, <code>/openapi</code> and <code>/api/accounts/my</code>.</span><span lang="fr">Sondez six chemins sans jeton : <code>/</code>, <code>/index.html</code>, <code>/metrics</code>, <code>/health/started</code>, <code>/openapi</code> et <code>/api/accounts/my</code>.</span></li>
+            <li><span lang="en">Extend <code>isPublicEndpoint</code> so that the home page and the static resources are public, without opening any <code>/api</code> path other than login and register.</span><span lang="fr">Étendez <code>isPublicEndpoint</code> pour que la page d'accueil et les ressources statiques soient publiques, sans ouvrir d'autre chemin <code>/api</code> que login et register.</span></li>
+          </ol>
+          <details class="lg-hint lg-hint--1">
+            <summary><span lang="en">Hint 1 — where to look</span><span lang="fr">Indice 1 — où chercher</span></summary>
+            <div class="lg-hint-body">
+              <p><span lang="en">Add three rules: the exact path <code>/</code>, <code>/index.html</code>, and static suffixes (<code>.css</code>, <code>.js</code>, <code>.png</code>, <code>.jpg</code>, <code>.ico</code>). Health and metrics paths stay public.</span><span lang="fr">Ajoutez trois règles : le chemin exact <code>/</code>, <code>/index.html</code> et les suffixes statiques (<code>.css</code>, <code>.js</code>, <code>.png</code>, <code>.jpg</code>, <code>.ico</code>). Les chemins health et metrics restent publics.</span></p>
+            </div>
+          </details>
+          <details class="lg-hint lg-hint--2">
+            <summary><span lang="en">Hint 2 — the change</span><span lang="fr">Indice 2 — la modification</span></summary>
+            <div class="lg-hint-body">
+<pre class="dark"><code>if (path.equals(&quot;/&quot;) || path.endsWith(&quot;/index.html&quot;)
+        || path.endsWith(&quot;.css&quot;) || path.endsWith(&quot;.js&quot;)
+        || path.endsWith(&quot;.png&quot;) || path.endsWith(&quot;.jpg&quot;) || path.endsWith(&quot;.ico&quot;)) {
+    return true;
+}</code></pre>
+            </div>
+          </details>
+          <details class="lg-hint lg-hint--sol">
+            <summary><span lang="en">Solution files</span><span lang="fr">Fichiers solution</span></summary>
+            <div class="lg-hint-body">
+              <p><a href="https://github.com/oplanson/esipe-javaee/blob/master/03-Labs/Lab09-Security/solution/src/main/java/com/bank/security/JwtAuthenticationMechanism.java"><code>solution/…/JwtAuthenticationMechanism.java</code></a></p>
+            </div>
+          </details>
+          <div class="lg-checkpoint">
+            <div class="lg-check-label"><span lang="en">Checkpoint</span><span lang="fr">Point de contrôle</span></div>
+<pre class="dark"><code>podman compose up -d --build app
+until curl -fs $B/health/live &gt;/dev/null; do sleep 3; done
+for p in / /index.html /metrics /health/started /openapi /api/accounts/my; do echo -n &quot;$(code $B$p) &quot;; done; echo</code></pre>
+            <p><span lang="en">Expected: <code>200 200 403 200 200 401</code>. The starter answered <code>401 401 403 200 200 401</code>. <code>/metrics</code> still answers <code>403</code>: it is refused by the server itself, which step 14 fixes.</span><span lang="fr">Attendu : <code>200 200 403 200 200 401</code>. Le starter répondait <code>401 401 403 200 200 401</code>. <code>/metrics</code> répond encore <code>403</code> : il est refusé par le serveur lui-même, ce que l'étape 14 corrige.</span></p>
+          </div>
+        </div>
+      </article>
+
+      <!-- ───────── STEP 14 ───────── -->
+      <article class="lg-step" id="step-14">
+        <div class="lg-step-head">
+          <div class="lg-step-num">14</div>
+          <div>
+            <h3><span lang="en">Server configuration</span><span lang="fr">Configuration serveur</span></h3>
+            <div class="lg-step-meta">
+              <span class="lg-chip">15 min</span>
+              <span class="lg-chip"><span lang="en">Liberty configuration</span><span lang="fr">Configuration Liberty</span></span>
+            </div>
+          </div>
+        </div>
+        <div class="lg-step-body">
+          <p class="lg-files"><span lang="en">Files to change:</span><span lang="fr">Fichiers à modifier :</span> <code>src/main/liberty/config/server.xml</code>, <code>src/main/liberty/config/bootstrap.properties</code></p>
+          <div class="lg-task-label"><span lang="en">Task</span><span lang="fr">À faire</span></div>
+          <ol>
+            <li><span lang="en">In <code>server.xml</code>, allow unauthenticated access to the metrics endpoint with <code>&lt;mpMetrics authentication="false"/&gt;</code>.</span><span lang="fr">Dans <code>server.xml</code>, autorisez l'accès non authentifié aux métriques avec <code>&lt;mpMetrics authentication="false"/&gt;</code>.</span></li>
+            <li><span lang="en">Delete the five <code>env.DB_*</code> <code>&lt;variable&gt;</code> lines that carry default values (<code>localhost</code>, <code>bankpass</code>…). A missing variable must fail loudly instead of falling back to a guess.</span><span lang="fr">Supprimez les cinq lignes <code>&lt;variable&gt;</code> <code>env.DB_*</code> qui portent des valeurs par défaut (<code>localhost</code>, <code>bankpass</code>…). Une variable absente doit échouer bruyamment au lieu de retomber sur une valeur devinée.</span></li>
+            <li><span lang="en">In <code>bootstrap.properties</code>, delete the unused <code>DB_*</code> block.</span><span lang="fr">Dans <code>bootstrap.properties</code>, supprimez le bloc <code>DB_*</code> inutilisé.</span></li>
+          </ol>
+          <details class="lg-hint lg-hint--1">
+            <summary><span lang="en">Hint 1 — where to look</span><span lang="fr">Indice 1 — où chercher</span></summary>
+            <div class="lg-hint-body">
+              <p><span lang="en">Put the <code>mpMetrics</code> element next to <code>applicationSecurity</code>. The datasource keeps reading <code>${env.DB_HOST}</code> and the others from the container environment set in step 2.</span><span lang="fr">Placez l'élément <code>mpMetrics</code> à côté de <code>applicationSecurity</code>. La datasource continue de lire <code>${env.DB_HOST}</code> et les autres depuis l'environnement du conteneur défini à l'étape 2.</span></p>
+            </div>
+          </details>
+          <details class="lg-hint lg-hint--2">
+            <summary><span lang="en">Hint 2 — the change</span><span lang="fr">Indice 2 — la modification</span></summary>
+            <div class="lg-hint-body">
+<pre class="dark"><code>&lt;applicationSecurity allowFailOverToBasicAuth=&quot;false&quot;
+    useAuthenticationDataForUnprotectedResource=&quot;false&quot;/&gt;
+&lt;mpMetrics authentication=&quot;false&quot;/&gt;</code></pre>
+            </div>
+          </details>
+          <details class="lg-hint lg-hint--sol">
+            <summary><span lang="en">Solution files</span><span lang="fr">Fichiers solution</span></summary>
+            <div class="lg-hint-body">
+              <p><a href="https://github.com/oplanson/esipe-javaee/blob/master/03-Labs/Lab09-Security/solution/src/main/liberty/config/server.xml"><code>solution/…/server.xml</code></a> · <a href="https://github.com/oplanson/esipe-javaee/blob/master/03-Labs/Lab09-Security/solution/src/main/liberty/config/bootstrap.properties"><code>solution/…/bootstrap.properties</code></a></p>
+            </div>
+          </details>
+          <div class="lg-checkpoint">
+            <div class="lg-check-label"><span lang="en">Checkpoint</span><span lang="fr">Point de contrôle</span></div>
+<pre class="dark"><code>podman compose up -d --build app
+until curl -fs $B/health/live &gt;/dev/null; do sleep 3; done
+code $B/metrics; echo
+grep -c &#x27;defaultValue=&quot;localhost&quot;&#x27; src/main/liberty/config/server.xml
+reg erin; echo</code></pre>
+            <p><span lang="en">Expected: <code>200</code>, then <code>0</code> (the default values are gone), then <code>201</code> (the database connection still works through <code>env.DB_*</code>). The other <code>defaultValue</code> lines (ports) stay.</span><span lang="fr">Attendu : <code>200</code>, puis <code>0</code> (les valeurs par défaut ont disparu), puis <code>201</code> (la connexion à la base fonctionne toujours via <code>env.DB_*</code>). Les autres lignes <code>defaultValue</code> (ports) restent.</span></p>
+          </div>
+        </div>
+      </article>
+
+      <!-- ───────── STEP 15 ───────── -->
+      <article class="lg-step" id="step-15">
+        <div class="lg-step-head">
+          <div class="lg-step-num">15</div>
+          <div>
+            <h3><span lang="en">CORS filter</span><span lang="fr">Filtre CORS</span></h3>
+            <div class="lg-step-meta">
+              <span class="lg-chip">10 min</span>
+              <span class="lg-chip"><span lang="en">CORS and credentials</span><span lang="fr">CORS et credentials</span></span>
+            </div>
+          </div>
+        </div>
+        <div class="lg-step-body">
+          <p class="lg-files"><span lang="en">Files to change:</span><span lang="fr">Fichiers à modifier :</span> <code>src/main/java/com/bank/filter/CorsFilter.java</code>, <code>src/main/liberty/config/server.xml</code></p>
+          <div class="lg-task-label"><span lang="en">Task</span><span lang="fr">À faire</span></div>
+          <ol>
+            <li><span lang="en">Count the <code>Access-Control-Allow-Credentials</code> headers returned for a request that has an <code>Origin</code>. Note that the origin is <code>*</code>.</span><span lang="fr">Comptez les en-têtes <code>Access-Control-Allow-Credentials</code> renvoyés pour une requête qui porte un <code>Origin</code>. Notez que l'origine est <code>*</code>.</span></li>
+            <li><span lang="en">Remove the line that adds <code>Access-Control-Allow-Credentials: true</code> in <code>CorsFilter</code>.</span><span lang="fr">Supprimez la ligne qui ajoute <code>Access-Control-Allow-Credentials: true</code> dans <code>CorsFilter</code>.</span></li>
+            <li><span lang="en">The Liberty <code>&lt;cors&gt;</code> element in <code>server.xml</code> adds the same header too: set <code>allowCredentials="false"</code>.</span><span lang="fr">L'élément Liberty <code>&lt;cors&gt;</code> de <code>server.xml</code> ajoute aussi le même en-tête : mettez <code>allowCredentials="false"</code>.</span></li>
+          </ol>
+          <details class="lg-hint lg-hint--1">
+            <summary><span lang="en">Hint 1 — where to look</span><span lang="fr">Indice 1 — où chercher</span></summary>
+            <div class="lg-hint-body">
+              <p><span lang="en">A wildcard origin together with credentials is the combination browsers reject and security reviews flag. Two components produce the header: the JAX-RS filter and the server. You must fix both.</span><span lang="fr">Une origine générique associée aux credentials est la combinaison que les navigateurs rejettent et que les revues de sécurité signalent. Deux composants produisent l'en-tête : le filtre JAX-RS et le serveur. Il faut corriger les deux.</span></p>
+            </div>
+          </details>
+          <details class="lg-hint lg-hint--2">
+            <summary><span lang="en">Hint 2 — the change</span><span lang="fr">Indice 2 — la modification</span></summary>
+            <div class="lg-hint-body">
+<pre class="dark"><code>// CorsFilter.java : delete these two lines
+// responseContext.getHeaders().add(&quot;Access-Control-Allow-Credentials&quot;, &quot;true&quot;);
+
+&lt;!-- server.xml --&gt;
+&lt;cors domain=&quot;/&quot; allowedOrigins=&quot;*&quot; ... allowCredentials=&quot;false&quot; maxAge=&quot;3600&quot;/&gt;</code></pre>
+            </div>
+          </details>
+          <details class="lg-hint lg-hint--sol">
+            <summary><span lang="en">Solution files</span><span lang="fr">Fichiers solution</span></summary>
+            <div class="lg-hint-body">
+              <p><a href="https://github.com/oplanson/esipe-javaee/blob/master/03-Labs/Lab09-Security/solution/src/main/java/com/bank/filter/CorsFilter.java"><code>solution/…/CorsFilter.java</code></a> · <a href="https://github.com/oplanson/esipe-javaee/blob/master/03-Labs/Lab09-Security/solution/src/main/liberty/config/server.xml"><code>solution/…/server.xml</code></a></p>
+            </div>
+          </details>
+          <div class="lg-checkpoint">
+            <div class="lg-check-label"><span lang="en">Checkpoint</span><span lang="fr">Point de contrôle</span></div>
+<pre class="dark"><code>podman compose up -d --build app
+until curl -fs $B/health/live &gt;/dev/null; do sleep 3; done
+curl -si -H &#x27;Origin: http://example.org&#x27; $B/api/accounts/my | grep -ci &#x27;^access-control-allow-credentials&#x27;
+curl -si -H &#x27;Origin: http://example.org&#x27; $B/api/accounts/my | grep -i &#x27;^access-control-allow-origin&#x27; </code></pre>
+            <p><span lang="en">Expected: <code>0</code>, then <code>Access-Control-Allow-Origin: *</code>. The wildcard origin remains: restricting it to your real front-end is a Go further exercise. The reference solution still has <code>allowCredentials="true"</code> in <code>server.xml</code>, so it still sends the header; this guide goes one step further.</span><span lang="fr">Attendu : <code>0</code>, puis <code>Access-Control-Allow-Origin: *</code>. L'origine générique demeure : la restreindre à votre vrai front-end est un exercice de la section Pour aller plus loin. La solution de référence garde <code>allowCredentials="true"</code> dans <code>server.xml</code> et envoie donc encore l'en-tête ; ce guide va un cran plus loin.</span></p>
+          </div>
+        </div>
+      </article>
+
+      <!-- ───────── STEP 16 ───────── -->
+      <article class="lg-step" id="step-16">
+        <div class="lg-step-head">
+          <div class="lg-step-num">16</div>
+          <div>
+            <h3><span lang="en">Security headers</span><span lang="fr">En-têtes de sécurité</span></h3>
+            <div class="lg-step-meta">
+              <span class="lg-chip">20 min</span>
+              <span class="lg-chip"><span lang="en">Servlet filter</span><span lang="fr">Filtre de servlet</span></span>
+            </div>
+          </div>
+        </div>
+        <div class="lg-step-body">
+          <p class="lg-files"><span lang="en">Files to change:</span><span lang="fr">Fichiers à modifier :</span> <code>src/main/java/com/bank/filter/SecurityHeadersServletFilter.java</code> <span lang="en">(new file)</span><span lang="fr">(nouveau fichier)</span></p>
+          <div class="lg-task-label"><span lang="en">Task</span><span lang="fr">À faire</span></div>
+          <ol>
+            <li><span lang="en">Count the <code>X-Frame-Options</code> headers on <code>/</code>, <code>/index.html</code> and on a <code>401</code> response of <code>/api/accounts/my</code>. The existing JAX-RS <code>SecurityHeadersFilter</code> only covers JAX-RS responses.</span><span lang="fr">Comptez les en-têtes <code>X-Frame-Options</code> sur <code>/</code>, <code>/index.html</code> et sur la réponse <code>401</code> de <code>/api/accounts/my</code>. Le <code>SecurityHeadersFilter</code> JAX-RS existant ne couvre que les réponses JAX-RS.</span></li>
+            <li><span lang="en">Create <code>SecurityHeadersServletFilter</code>, a <code>jakarta.servlet.Filter</code> mapped to <code>/*</code> with <code>@WebFilter</code>, that sets the headers on every response.</span><span lang="fr">Créez <code>SecurityHeadersServletFilter</code>, un <code>jakarta.servlet.Filter</code> associé à <code>/*</code> avec <code>@WebFilter</code>, qui pose les en-têtes sur chaque réponse.</span></li>
+            <li><span lang="en">Send <code>Strict-Transport-Security</code> only when the request scheme is <code>https</code>.</span><span lang="fr">N'envoyez <code>Strict-Transport-Security</code> que si le schéma de la requête est <code>https</code>.</span></li>
+          </ol>
+          <details class="lg-hint lg-hint--1">
+            <summary><span lang="en">Hint 1 — where to look</span><span lang="fr">Indice 1 — où chercher</span></summary>
+            <div class="lg-hint-body">
+              <p><span lang="en">Use <code>setHeader</code>, not <code>addHeader</code>: the header is then replaced, never duplicated, when both filters run. Headers: <code>X-Frame-Options: DENY</code>, <code>X-Content-Type-Options: nosniff</code>, <code>Content-Security-Policy</code>, <code>Referrer-Policy</code>, <code>Permissions-Policy</code>.</span><span lang="fr">Utilisez <code>setHeader</code> et non <code>addHeader</code> : l'en-tête est alors remplacé, jamais dupliqué, quand les deux filtres s'exécutent. En-têtes : <code>X-Frame-Options: DENY</code>, <code>X-Content-Type-Options: nosniff</code>, <code>Content-Security-Policy</code>, <code>Referrer-Policy</code>, <code>Permissions-Policy</code>.</span></p>
+            </div>
+          </details>
+          <details class="lg-hint lg-hint--2">
+            <summary><span lang="en">Hint 2 — the change</span><span lang="fr">Indice 2 — la modification</span></summary>
+            <div class="lg-hint-body">
+<pre class="dark"><code>@WebFilter(urlPatterns = &quot;/*&quot;)
+public class SecurityHeadersServletFilter implements Filter {
+    @Override
+    public void doFilter(ServletRequest req, ServletResponse res, FilterChain chain)
+            throws IOException, ServletException {
+        HttpServletResponse r = (HttpServletResponse) res;
+        r.setHeader(&quot;X-Frame-Options&quot;, &quot;DENY&quot;);
+        r.setHeader(&quot;X-Content-Type-Options&quot;, &quot;nosniff&quot;);
+        r.setHeader(&quot;Content-Security-Policy&quot;, &quot;default-src &#x27;self&#x27;; frame-ancestors &#x27;none&#x27;&quot;);
+        r.setHeader(&quot;Referrer-Policy&quot;, &quot;strict-origin-when-cross-origin&quot;);
+        r.setHeader(&quot;Permissions-Policy&quot;, &quot;geolocation=(), microphone=(), camera=()&quot;);
+        if (&quot;https&quot;.equals(req.getScheme())) {
+            r.setHeader(&quot;Strict-Transport-Security&quot;, &quot;max-age=31536000; includeSubDomains&quot;);
+        }
+        chain.doFilter(req, res);
+    }
+}</code></pre>
+            </div>
+          </details>
+          <details class="lg-hint lg-hint--sol">
+            <summary><span lang="en">Solution files</span><span lang="fr">Fichiers solution</span></summary>
+            <div class="lg-hint-body">
+              <p><a href="https://github.com/oplanson/esipe-javaee/blob/master/03-Labs/Lab09-Security/solution/src/main/java/com/bank/filter/SecurityHeadersServletFilter.java"><code>solution/…/SecurityHeadersServletFilter.java</code></a></p>
+            </div>
+          </details>
+          <div class="lg-checkpoint">
+            <div class="lg-check-label"><span lang="en">Checkpoint</span><span lang="fr">Point de contrôle</span></div>
+<pre class="dark"><code>podman compose up -d --build app
+until curl -fs $B/health/live &gt;/dev/null; do sleep 3; done
+for p in / /index.html /api/accounts/my; do echo -n &quot;$p &quot;; curl -si $B$p | grep -ci &#x27;^x-frame-options&#x27;; done</code></pre>
+            <p><span lang="en">Expected: the count is <code>1</code> for each of the three paths (never <code>2</code>). Before the filter, <code>/</code> and <code>/index.html</code> gave <code>0</code>. HSTS is absent here because you use plain <code>http</code> on <code>127.0.0.1</code>.</span><span lang="fr">Attendu : le compte vaut <code>1</code> pour chacun des trois chemins (jamais <code>2</code>). Avant le filtre, <code>/</code> et <code>/index.html</code> donnaient <code>0</code>. HSTS est absent ici car vous utilisez <code>http</code> en clair sur <code>127.0.0.1</code>.</span></p>
+          </div>
+        </div>
+      </article>
+    </section>
+
+    <!-- ═════════════ 6. RUN ═════════════ -->
+    <section class="lg-section" id="run">
+      <h2><span class="lg-sec-num">06</span><span lang="en">Run and operate</span><span lang="fr">Exécution</span></h2>
+      <table class="slide-table">
+        <thead><tr><th><span lang="en">Purpose</span><span lang="fr">Usage</span></th><th><span lang="en">Command</span><span lang="fr">Commande</span></th></tr></thead>
+        <tbody>
+          <tr><td><span lang="en">Rebuild and restart the application</span><span lang="fr">Reconstruire et redémarrer l'application</span></td><td><code>podman compose up -d --build app</code></td></tr>
+          <tr><td><span lang="en">Follow the logs</span><span lang="fr">Suivre les logs</span></td><td><code>podman logs -f bank-security-app</code></td></tr>
+          <tr><td><span lang="en">Open a SQL shell</span><span lang="fr">Ouvrir un shell SQL</span></td><td><code>podman exec -it bank-security-db psql -U bankuser -d bankdb</code></td></tr>
+          <tr><td><span lang="en">Stop, keep the data</span><span lang="fr">Arrêter en gardant les données</span></td><td><code>podman compose down</code></td></tr>
+          <tr><td><span lang="en">Stop and delete the data</span><span lang="fr">Arrêter et supprimer les données</span></td><td><code>podman compose down -v</code></td></tr>
+        </tbody>
+      </table>
+      <table class="slide-table">
+        <thead><tr><th>URL</th><th><span lang="en">What you get</span><span lang="fr">Ce que vous obtenez</span></th></tr></thead>
+        <tbody>
+          <tr><td><a href="http://127.0.0.1:9080/">http://127.0.0.1:9080/</a></td><td><span lang="en">Home page (public after step 13)</span><span lang="fr">Page d'accueil (publique après l'étape 13)</span></td></tr>
+          <tr><td><a href="http://127.0.0.1:9080/health/live">http://127.0.0.1:9080/health/live</a></td><td>MicroProfile Health</td></tr>
+          <tr><td><a href="http://127.0.0.1:9080/metrics">http://127.0.0.1:9080/metrics</a></td><td><span lang="en">Metrics (public after step 14)</span><span lang="fr">Métriques (publiques après l'étape 14)</span></td></tr>
+          <tr><td><a href="http://127.0.0.1:9080/openapi">http://127.0.0.1:9080/openapi</a></td><td>OpenAPI</td></tr>
+        </tbody>
+      </table>
+      <div class="lg-callout lg-callout--warn">
+        <div lang="en"><div class="lg-callout-title">About the provided scripts (<code>podman-test.sh</code>, <code>test-lab.sh</code>)</div><p><code>podman-test.sh</code> is destructive: it stops and removes containers by name, runs <code>docker-compose down -v</code>, then <code>podman image prune -f</code> and <code>podman volume prune -f</code>, which delete <strong>all</strong> unused images and volumes of your machine, not only those of this lab. Use the explicit commands of this guide instead.</p></div>
+        <div lang="fr"><div class="lg-callout-title">À propos des scripts fournis (<code>podman-test.sh</code>, <code>test-lab.sh</code>)</div><p><code>podman-test.sh</code> est destructif : il arrête et supprime des conteneurs par leur nom, lance <code>docker-compose down -v</code>, puis <code>podman image prune -f</code> et <code>podman volume prune -f</code>, qui suppriment <strong>toutes</strong> les images et volumes inutilisés de votre machine, pas seulement ceux de ce lab. Utilisez plutôt les commandes explicites de ce guide.</p></div>
+      </div>
+    </section>
+
+    <!-- ═════════════ 7. VALIDATE ═════════════ -->
+    <section class="lg-section" id="validate">
+      <h2><span class="lg-sec-num">07</span><span lang="en">Validate your work</span><span lang="fr">Valider votre travail</span></h2>
+      <p><span lang="en">Run these checks on a fresh stack (<code>podman compose down -v</code>, then <code>podman compose up -d --build</code>).</span><span lang="fr">Lancez ces vérifications sur une stack neuve (<code>podman compose down -v</code>, puis <code>podman compose up -d --build</code>).</span></p>
+<pre class="dark"><code>until curl -fs $B/health/live &gt;/dev/null; do sleep 3; done
+for p in / /index.html /metrics /health/started /openapi /api/accounts/my; do echo -n &quot;$(code $B$p) &quot;; done; echo
+reg zoe; echo
+for i in 1 2 3 4 5 6; do echo -n &quot;$(loginc zoe Bad1!) &quot;; done; echo
+curl -si -H &#x27;Origin: http://example.org&#x27; $B/api/accounts/my | grep -ci &#x27;^access-control-allow-credentials&#x27;
+curl -si $B/ | grep -ci &#x27;^x-frame-options&#x27;
+code $B/api/accounts -H &quot;Authorization: Bearer $(mint mallory ADMIN,ADMIN)&quot;; echo</code></pre>
+      <table class="slide-table">
+        <thead><tr><th><span lang="en">Check</span><span lang="fr">Contrôle</span></th><th><span lang="en">Expected result</span><span lang="fr">Résultat attendu</span></th></tr></thead>
+        <tbody>
+          <tr><td><span lang="en">six public and protected paths</span><span lang="fr">six chemins publics et protégés</span></td><td><code>200 200 200 200 200 401</code></td></tr>
+          <tr><td><span lang="en">registration</span><span lang="fr">inscription</span></td><td><code>201</code></td></tr>
+          <tr><td><span lang="en">six wrong logins</span><span lang="fr">six connexions erronées</span></td><td><code>401 401 401 401 403 403</code></td></tr>
+          <tr><td>Allow-Credentials</td><td><code>0</code></td></tr>
+          <tr><td>X-Frame-Options</td><td><code>1</code></td></tr>
+          <tr><td><span lang="en">forged token with a duplicate role</span><span lang="fr">jeton forgé avec un rôle en double</span></td><td><code>200</code></td></tr>
+        </tbody>
+      </table>
+      <h3><span lang="en">Validation checklist</span><span lang="fr">Checklist de validation</span></h3>
+      <ul class="lg-checklist">
+        <li><label><input type="checkbox"/><span lang="en">The application builds and starts from the compose file, with all ports on <code>127.0.0.1</code></span><span lang="fr">L'application se construit et démarre depuis le fichier compose, avec tous les ports sur <code>127.0.0.1</code></span></label></li>
+        <li><label><input type="checkbox"/><span lang="en">Users survive a restart of the application</span><span lang="fr">Les utilisateurs survivent à un redémarrage de l'application</span></label></li>
+        <li><label><input type="checkbox"/><span lang="en">An account is locked after five failed logins</span><span lang="fr">Un compte est verrouillé après cinq échecs de connexion</span></label></li>
+        <li><label><input type="checkbox"/><span lang="en">I can explain why <code>@Transactional</code> on a private method has no effect</span><span lang="fr">Je sais expliquer pourquoi <code>@Transactional</code> sur une méthode privée n'a aucun effet</span></label></li>
+        <li><label><input type="checkbox"/><span lang="en">I can explain what a leaked JWT secret allows an attacker to do</span><span lang="fr">Je sais expliquer ce que permet à un attaquant un secret JWT qui fuite</span></label></li>
+        <li><label><input type="checkbox"/><span lang="en">I can explain why <code>Allow-Origin: *</code> must not be combined with credentials</span><span lang="fr">Je sais expliquer pourquoi <code>Allow-Origin: *</code> ne doit pas être combiné avec des credentials</span></label></li>
+      </ul>
+    </section>
+
+    <!-- ═════════════ 8. COMPARE ═════════════ -->
+    <section class="lg-section" id="compare">
+      <h2><span class="lg-sec-num">08</span><span lang="en">Compare with the solution</span><span lang="fr">Comparer à la solution</span></h2>
+      <p><span lang="en">Your code does not have to match the solution character by character. Behaviour must match. To see differences:</span><span lang="fr">Votre code n'a pas à être identique à la solution caractère par caractère. Le comportement doit être le même. Pour voir les différences :</span></p>
+<pre class="dark"><code>diff -rq 03-Labs/Lab09-Security/starter 03-Labs/Lab09-Security/solution \
+  -x solution -x target -x docs -x README-STARTER.md</code></pre>
+      <h3><span lang="en">Expected differences</span><span lang="fr">Différences attendues</span></h3>
+      <ul>
+        <li><span lang="en"><code>docker-compose.yml</code>: the solution publishes <code>"9080:9080"</code> and <code>"5432:5432"</code> on all interfaces; yours uses <code>127.0.0.1:</code>.</span><span lang="fr"><code>docker-compose.yml</code> : la solution publie <code>"9080:9080"</code> et <code>"5432:5432"</code> sur toutes les interfaces ; le vôtre utilise <code>127.0.0.1:</code>.</span></li>
+        <li><span lang="en"><code>DatabaseIdentityStore.java</code>: the solution also uses <code>UserTransaction</code> in <code>createUser</code> and <code>unlockAccount</code>, which makes registration answer 500 on Liberty. Yours keeps <code>@Transactional</code> there.</span><span lang="fr"><code>DatabaseIdentityStore.java</code> : la solution utilise aussi <code>UserTransaction</code> dans <code>createUser</code> et <code>unlockAccount</code>, ce qui fait répondre 500 à l'inscription sous Liberty. Le vôtre garde <code>@Transactional</code> à cet endroit.</span></li>
+        <li><span lang="en"><code>server.xml</code> and <code>CorsFilter.java</code>: the solution keeps <code>allowCredentials="true"</code> in <code>&lt;cors&gt;</code>; yours sets <code>false</code>.</span><span lang="fr"><code>server.xml</code> et <code>CorsFilter.java</code> : la solution garde <code>allowCredentials="true"</code> dans <code>&lt;cors&gt;</code> ; le vôtre met <code>false</code>.</span></li>
+        <li><span lang="en"><code>README-STARTER.md</code> and the nested <code>starter/solution/</code> folder exist only in the starter; ignore them.</span><span lang="fr"><code>README-STARTER.md</code> et le dossier imbriqué <code>starter/solution/</code> n'existent que dans le starter ; ignorez-les.</span></li>
+        <li><span lang="en">Comments, import order and log wording.</span><span lang="fr">Les commentaires, l'ordre des imports et la formulation des logs.</span></li>
+      </ul>
+    </section>
+
+    <!-- ═════════════ 9. TROUBLESHOOTING ═════════════ -->
+    <section class="lg-section" id="trouble">
+      <h2><span class="lg-sec-num">09</span><span lang="en">Troubleshooting</span><span lang="fr">Dépannage</span></h2>
+      <table class="slide-table">
+        <thead><tr><th><span lang="en">Symptom</span><span lang="fr">Symptôme</span></th><th><span lang="en">Cause and fix</span><span lang="fr">Cause et correction</span></th></tr></thead>
+        <tbody>
+          <tr><td><code>CWWKG0075E</code></td><td><span lang="en">The <code>env.DB_*</code> variables did not reach the container, or you removed the defaults without defining them in the compose file (step 2).</span><span lang="fr">Les variables <code>env.DB_*</code> n'arrivent pas au conteneur, ou vous avez retiré les valeurs par défaut sans les définir dans le fichier compose (étape 2).</span></td></tr>
+          <tr><td><span lang="en">Registration answers <code>500</code></span><span lang="fr">L'inscription répond <code>500</code></span></td><td><span lang="en">You used <code>utx.begin()</code> in <code>createUser</code>. Restore <code>@Transactional</code> there (step 12).</span><span lang="fr">Vous avez utilisé <code>utx.begin()</code> dans <code>createUser</code>. Rétablissez <code>@Transactional</code> à cet endroit (étape 12).</span></td></tr>
+          <tr><td><span lang="en">Registration answers <code>400</code></span><span lang="fr">L'inscription répond <code>400</code></span></td><td><span lang="en">The user or the e-mail already exists. Use a new name, or <code>podman compose down -v</code> for a clean database.</span><span lang="fr">L'utilisateur ou l'e-mail existe déjà. Prenez un autre nom, ou <code>podman compose down -v</code> pour une base propre.</span></td></tr>
+          <tr><td><span lang="en"><code>/metrics</code> answers <code>403</code></span><span lang="fr"><code>/metrics</code> répond <code>403</code></span></td><td><span lang="en"><code>&lt;mpMetrics authentication="false"/&gt;</code> is missing in <code>server.xml</code> (step 14).</span><span lang="fr"><code>&lt;mpMetrics authentication="false"/&gt;</code> manque dans <code>server.xml</code> (étape 14).</span></td></tr>
+          <tr><td><span lang="en"><code>Port is already allocated</code></span><span lang="fr"><code>Port is already allocated</code></span></td><td><span lang="en">Another stack holds 9080, 9443 or 5432. List it with <code>podman ps</code> and stop only your own containers.</span><span lang="fr">Une autre stack occupe 9080, 9443 ou 5432. Listez-la avec <code>podman ps</code> et arrêtez seulement vos propres conteneurs.</span></td></tr>
+          <tr><td><span lang="en">Header counted twice</span><span lang="fr">En-tête compté deux fois</span></td><td><span lang="en">You used <code>addHeader</code> in the servlet filter. Use <code>setHeader</code> (step 16).</span><span lang="fr">Vous avez utilisé <code>addHeader</code> dans le filtre de servlet. Utilisez <code>setHeader</code> (étape 16).</span></td></tr>
+          <tr><td><span lang="en">Cannot connect to Podman</span><span lang="fr">Impossible de se connecter à Podman</span></td><td><span lang="en">On macOS/Windows the Podman VM is stopped: <code>podman machine start</code>.</span><span lang="fr">Sur macOS/Windows la VM Podman est arrêtée : <code>podman machine start</code>.</span></td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- ═════════════ 10. BONUS ═════════════ -->
+    <section class="lg-section" id="bonus">
+      <h2><span class="lg-sec-num">10</span><span lang="en">Go further</span><span lang="fr">Pour aller plus loin</span></h2>
+      <ul>
+        <li><span lang="en"><strong>Externalise the JWT secret.</strong> Read it from an environment variable instead of <code>microprofile-config.properties</code>, then check that your <code>mint</code> helper no longer works.</span><span lang="fr"><strong>Externaliser le secret JWT.</strong> Lisez-le depuis une variable d'environnement plutôt que depuis <code>microprofile-config.properties</code>, puis vérifiez que votre fonction <code>mint</code> ne marche plus.</span></li>
+        <li><span lang="en"><strong>Revoke tokens at logout.</strong> Keep a list of revoked identifiers and refuse them in the authentication mechanism.</span><span lang="fr"><strong>Révoquer les jetons à la déconnexion.</strong> Gardez une liste d'identifiants révoqués et refusez-les dans le mécanisme d'authentification.</span></li>
+        <li><span lang="en"><strong>Restrict CORS.</strong> Replace <code>allowedOrigins="*"</code> by the origin of your front-end.</span><span lang="fr"><strong>Restreindre CORS.</strong> Remplacez <code>allowedOrigins="*"</code> par l'origine de votre front-end.</span></li>
+        <li><span lang="en"><strong>Exercise <code>countRecentFailedLogins</code>.</strong> Add a temporary GET resource that calls it for a user, check the count after several failed logins, then delete the resource.</span><span lang="fr"><strong>Exercer <code>countRecentFailedLogins</code>.</strong> Ajoutez une ressource GET temporaire qui l'appelle pour un utilisateur, vérifiez le compte après plusieurs échecs de connexion, puis supprimez la ressource.</span></li>
+        <li><span lang="en"><strong>Duplicate e-mail.</strong> Register two users with the same e-mail and make the application answer with a clean error.</span><span lang="fr"><strong>E-mail en double.</strong> Inscrivez deux utilisateurs avec le même e-mail et faites répondre l'application par une erreur propre.</span></li>
+      </ul>
+      <div class="lg-callout lg-callout--tip">
+        <div lang="en"><div class="lg-callout-title">End of the course labs</div><p>This was the last lab. Go back to the <a href="index.html">labs index</a> or to the <a href="../index.html">course home page</a>.</p></div>
+        <div lang="fr"><div class="lg-callout-title">Fin des labs du cours</div><p>C'était le dernier lab. Retournez à l'<a href="index.html">index des labs</a> ou à la <a href="../index.html">page d'accueil du cours</a>.</p></div>
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<footer class="site-footer">Made with IBM Bob &nbsp;&middot;&nbsp; &copy; 2026 Olivier Planson</footer>
+</body>
+</html>

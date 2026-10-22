@@ -1,0 +1,27 @@
+{
+  "lab": "Lab09-Security",
+  "must_cite": [
+    "SecurityHeadersServletFilter.java",
+    "JwtService.java",
+    "SecurityAuditService.java",
+    "CorsFilter.java",
+    "DatabaseIdentityStore.java",
+    "JwtAuthenticationMechanism.java",
+    "server.xml",
+    "bootstrap.properties",
+    "persistence.xml",
+    "docker-compose.yml"
+  ],
+  "must_cite_in_steps": [
+    "SecurityHeadersServletFilter.java",
+    "JwtService.java",
+    "SecurityAuditService.java",
+    "CorsFilter.java",
+    "DatabaseIdentityStore.java",
+    "JwtAuthenticationMechanism.java",
+    "server.xml",
+    "bootstrap.properties",
+    "persistence.xml",
+    "docker-compose.yml"
+  ]
+}

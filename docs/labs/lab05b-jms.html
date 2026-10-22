@@ -1,0 +1,918 @@
+<!-- © Copyright 2026 Olivier Planson. All rights reserved. Reproduction prohibited. Made with IBM Bob. -->
+<!DOCTYPE html>
+<html lang="fr" data-lang="fr">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title data-title-en="ESIPE — Lab 05B: Jakarta Messaging (JMS) — Lab guide" data-title-fr="ESIPE — Lab 05B : Messagerie Jakarta (JMS) — Guide du lab">ESIPE — Lab 05B : Messagerie Jakarta (JMS) — Guide du lab</title>
+  <link rel="stylesheet" href="assets/slide.css"/>
+  <link rel="stylesheet" href="assets/lab-guide.css"/>
+  <script src="assets/lab-guide.js"></script>
+</head>
+<body>
+<header class="site-header">
+  <a class="brand" href="index.html">ESIPE<span>Jakarta EE &amp; Microservices — Labs</span></a>
+  <div class="lang-toggle" id="lang-toggle">
+    <button type="button" id="btn-en" data-set-lang="en">EN</button>
+    <span class="sep">|</span>
+    <button type="button" id="btn-fr" data-set-lang="fr" class="active">FR</button>
+  </div>
+  <a class="back-link" href="index.html">&#8592; Labs</a>
+  <a class="back-link" href="../index.html"><span lang="en">Course site</span><span lang="fr">Site du cours</span></a>
+</header>
+
+<div class="lg-shell">
+
+  <nav class="lg-toc" aria-label="Table of contents">
+    <div class="lg-toc-title"><span lang="en">In this guide</span><span lang="fr">Dans ce guide</span></div>
+    <a href="#hero"><span lang="en">Overview</span><span lang="fr">Vue d'ensemble</span></a>
+    <a href="#goal"><span lang="en">1. Goal</span><span lang="fr">1. Objectif</span></a>
+    <a href="#starter"><span lang="en">2. What the starter gives you</span><span lang="fr">2. Ce que fournit le starter</span></a>
+    <a href="#target"><span lang="en">3. Target structure</span><span lang="fr">3. Structure cible</span></a>
+    <a href="#setup"><span lang="en">4. Setup</span><span lang="fr">4. Préparation</span></a>
+    <a href="#steps"><span lang="en">5. Step by step</span><span lang="fr">5. Pas à pas</span></a>
+    <a class="sub" href="#step-1"><span lang="en">1 · Database &amp; configuration</span><span lang="fr">1 · Base de données &amp; configuration</span></a>
+    <a class="sub" href="#step-2"><span lang="en">2 · server.xml JMS configuration</span><span lang="fr">2 · Configuration JMS dans server.xml</span></a>
+    <a class="sub" href="#step-3"><span lang="en">3 · persistence.xml &amp; Flyway</span><span lang="fr">3 · persistence.xml &amp; Flyway</span></a>
+    <a class="sub" href="#step-4"><span lang="en">4 · TransactionEventProducer</span><span lang="fr">4 · TransactionEventProducer</span></a>
+    <a class="sub" href="#step-5"><span lang="en">5 · EmailNotificationMDB</span><span lang="fr">5 · EmailNotificationMDB</span></a>
+    <a class="sub" href="#step-6"><span lang="en">6 · AuditLoggingMDB</span><span lang="fr">6 · AuditLoggingMDB</span></a>
+    <a class="sub" href="#step-7"><span lang="en">7 · DeadLetterQueueMDB alert</span><span lang="fr">7 · Alerte DeadLetterQueueMDB</span></a>
+    <a class="sub" href="#step-8"><span lang="en">8 · util — JsonMessageUtil</span><span lang="fr">8 · util — JsonMessageUtil</span></a>
+    <a href="#run"><span lang="en">6. Run</span><span lang="fr">6. Exécution</span></a>
+    <a href="#validate"><span lang="en">7. Validate</span><span lang="fr">7. Validation</span></a>
+    <a href="#compare"><span lang="en">8. Compare with solution</span><span lang="fr">8. Comparer à la solution</span></a>
+    <a href="#trouble"><span lang="en">9. Troubleshooting</span><span lang="fr">9. Dépannage</span></a>
+    <a href="#bonus"><span lang="en">10. Go further</span><span lang="fr">10. Pour aller plus loin</span></a>
+  </nav>
+
+  <main class="lg-main">
+
+    <!-- ═════════════ HERO ═════════════ -->
+    <section class="lg-hero" id="hero">
+      <div class="lg-kicker">Lab 05B</div>
+      <h1><span lang="en">Jakarta Messaging (JMS)</span><span lang="fr">Messagerie Jakarta (JMS)</span></h1>
+      <p class="lg-lead">
+        <span lang="en">Add asynchronous enterprise messaging to the banking application: a JMS producer publishes transaction events to queues and a topic; Message-Driven Beans process them for transaction handling, email notifications, durable audit logging, and dead-letter recovery — all on Open Liberty with the embedded wasJms messaging engine and PostgreSQL.</span>
+        <span lang="fr">Ajoutez de la messagerie d'entreprise asynchrone à l'application bancaire : un producteur JMS publie des événements de transaction vers des files d'attente et un sujet ; des Message-Driven Beans les traitent pour le traitement des transactions, les notifications e-mail, la journalisation d'audit durable et la récupération des messages en échec — sur Open Liberty avec le moteur de messagerie wasJms intégré et PostgreSQL.</span>
+      </p>
+      <div class="badge-row">
+        <span class="badge badge-blue">Jakarta EE 10</span>
+        <span class="badge badge-teal">JMS 3.1</span>
+        <span class="badge badge-green">PostgreSQL 16</span>
+        <span class="badge badge-purple">Flyway 10</span>
+        <span class="badge badge-warm">Open Liberty</span>
+      </div>
+      <div class="lg-facts">
+        <div><strong><span lang="en">about 2 h 30 min</span><span lang="fr">environ 2 h 30 min</span></strong><span lang="en">Duration</span><span lang="fr">Durée</span></div>
+        <div><strong><span lang="en">Intermediate</span><span lang="fr">Intermédiaire</span></strong><span lang="en">Level</span><span lang="fr">Niveau</span></div>
+        <div><strong>Lab 04B · JDK 17+ · Maven · Podman</strong><span lang="en">Prerequisites</span><span lang="fr">Prérequis</span></div>
+        <div><strong>http://localhost:9080/</strong><span lang="en">Application URL</span><span lang="fr">URL de l'application</span></div>
+      </div>
+      <div class="lg-hero-links">
+        <a href="../../02-Lectures/slides/05b-jms/slides.html#slide-1"><span lang="en">Course slides (JMS)</span><span lang="fr">Slides du cours (JMS)</span></a>
+        <a class="secondary" href="../05b-jms/index.html"><span lang="en">Course page</span><span lang="fr">Page du cours</span></a>
+        <a class="secondary" href="https://github.com/oplanson/esipe-javaee/blob/master/03-Labs/Lab05B-JMS/README.md"><span lang="en">Original README</span><span lang="fr">README d'origine</span></a>
+        <a class="secondary" href="https://github.com/oplanson/esipe-javaee/tree/master/03-Labs/Lab05B-JMS/solution"><span lang="en">Solution folder</span><span lang="fr">Dossier solution</span></a>
+      </div>
+    </section>
+
+    <!-- ═════════════ 1. GOAL ═════════════ -->
+    <section class="lg-section" id="goal">
+      <h2><span class="lg-sec-num">01</span><span lang="en">Goal of the lab</span><span lang="fr">Objectif du lab</span></h2>
+      <p>
+        <span lang="en">Lab 04B introduced EJBs and CDI interceptors for synchronous transaction processing. In this lab you layer asynchronous messaging on top: a CDI bean acts as a JMS producer sending <code>TransactionEvent</code> objects to two queues (<code>jms/transactionQueue</code>, <code>jms/emailQueue</code>) and one topic (<code>jms/auditTopic</code>). Four Message-Driven Beans consume those destinations, and a utility class provides secure JSON-based message serialization as an alternative to Java object serialization.</span>
+        <span lang="fr">Le Lab 04B a introduit les EJB et les intercepteurs CDI pour le traitement synchrone des transactions. Dans ce lab, vous ajoutez une couche de messagerie asynchrone : un bean CDI fait office de producteur JMS qui envoie des objets <code>TransactionEvent</code> vers deux files d'attente (<code>jms/transactionQueue</code>, <code>jms/emailQueue</code>) et un sujet (<code>jms/auditTopic</code>). Quatre Message-Driven Beans consomment ces destinations, et une classe utilitaire fournit une sérialisation JSON sécurisée comme alternative à la sérialisation Java.</span>
+      </p>
+
+      <h3><span lang="en">What the finished application exposes</span><span lang="fr">Ce que l'application terminée expose</span></h3>
+      <table class="slide-table">
+        <thead><tr>
+          <th>URL</th>
+          <th><span lang="en">Component</span><span lang="fr">Composant</span></th>
+          <th><span lang="en">Behaviour</span><span lang="fr">Comportement</span></th>
+        </tr></thead>
+        <tbody>
+          <tr><td><code>/</code></td><td><code>index.html</code></td><td><span lang="en">Home page with links to the test servlet</span><span lang="fr">Page d'accueil avec liens vers le servlet de test</span></td></tr>
+          <tr><td><code>/test-messaging</code></td><td><code>MessagingTestServlet</code></td><td><span lang="en">Menu for sending transaction, email, and audit events</span><span lang="fr">Menu pour envoyer des événements de transaction, e-mail et audit</span></td></tr>
+          <tr><td><code>/test-messaging/deposit</code></td><td><code>TransactionEventProducer</code></td><td><span lang="en">Sends one DEPOSIT event to the transaction queue</span><span lang="fr">Envoie un événement DEPOSIT vers la file de transactions</span></td></tr>
+          <tr><td><code>/test-messaging/email</code></td><td><code>TransactionEventProducer</code></td><td><span lang="en">Sends an e-mail notification event to the email queue</span><span lang="fr">Envoie un événement de notification vers la file e-mail</span></td></tr>
+          <tr><td><code>/test-messaging/audit</code></td><td><code>TransactionEventProducer</code></td><td><span lang="en">Publishes an audit event to the audit topic</span><span lang="fr">Publie un événement d'audit sur le sujet d'audit</span></td></tr>
+          <tr><td><code>/test-messaging/all</code></td><td><code>TransactionEventProducer</code></td><td><span lang="en">Sends events to all three destinations at once</span><span lang="fr">Envoie des événements vers les trois destinations en même temps</span></td></tr>
+          <tr><td><code>/health/live</code></td><td><span lang="en">MicroProfile Health</span><span lang="fr">MicroProfile Health</span></td><td><code>status: UP</code></td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- ═════════════ 2. STARTER ═════════════ -->
+    <section class="lg-section" id="starter">
+      <h2><span class="lg-sec-num">02</span><span lang="en">What the starter gives you</span><span lang="fr">Ce que fournit le starter</span></h2>
+
+      <div class="lg-callout lg-callout--warn">
+        <div lang="en"><div class="lg-callout-title">Starter anomalies to be aware of</div>
+          <ul>
+            <li>The starter does <strong>not</strong> contain the <code>com.bank.util</code> package: you must create <code>src/main/java/com/bank/util/JsonMessageUtil.java</code> from scratch (Step 8).</li>
+            <li><code>persistence.xml</code> uses <code>transaction-type="JTA"</code> and <code>&lt;jta-data-source&gt;</code>, which is correct for a JTA-managed environment — the README incorrectly describes it as RESOURCE_LOCAL. Keep JTA.</li>
+            <li>The Flyway Maven plugin in <code>pom.xml</code> points at <code>bankdb</code> (wrong); the actual database is <code>bankingdb</code>. Do not modify <code>pom.xml</code>: the plugin is only used for manual CLI migrations and the application runs Flyway at startup via Liberty.</li>
+            <li><code>docker-compose.yml</code> publishes ports without <code>127.0.0.1:</code> binding. The guide uses explicit host-binding in standalone <code>podman run</code> commands; see the security note in the Setup section.</li>
+          </ul>
+        </div>
+        <div lang="fr"><div class="lg-callout-title">Anomalies du starter à connaître</div>
+          <ul>
+            <li>Le starter ne contient <strong>pas</strong> le package <code>com.bank.util</code> : vous devez créer <code>src/main/java/com/bank/util/JsonMessageUtil.java</code> de zéro (Étape 8).</li>
+            <li><code>persistence.xml</code> utilise <code>transaction-type="JTA"</code> et <code>&lt;jta-data-source&gt;</code>, ce qui est correct pour un environnement géré par JTA — le README décrit incorrectement cela comme RESOURCE_LOCAL. Conservez JTA.</li>
+            <li>Le plugin Maven Flyway dans <code>pom.xml</code> pointe vers <code>bankdb</code> (incorrect) ; la vraie base est <code>bankingdb</code>. Ne modifiez pas <code>pom.xml</code> : le plugin n'est utilisé que pour les migrations CLI manuelles, l'application exécute Flyway au démarrage via Liberty.</li>
+            <li><code>docker-compose.yml</code> publie des ports sans la liaison <code>127.0.0.1:</code>. Le guide utilise des liaisons d'hôte explicites dans les commandes <code>podman run</code> autonomes ; voir la note de sécurité dans la section Préparation.</li>
+          </ul>
+        </div>
+      </div>
+
+      <h3><span lang="en">Files already in the starter</span><span lang="fr">Fichiers déjà présents dans le starter</span></h3>
+      <table class="slide-table">
+        <thead><tr><th><span lang="en">File</span><span lang="fr">Fichier</span></th><th><span lang="en">Status</span><span lang="fr">État</span></th></tr></thead>
+        <tbody>
+          <tr><td><code>pom.xml</code></td><td><span lang="en">Complete — do not modify</span><span lang="fr">Complet — ne pas modifier</span></td></tr>
+          <tr><td><code>docker-compose.yml</code></td><td><span lang="en">Complete — note the port binding issue above</span><span lang="fr">Complet — noter l'anomalie de liaison de port ci-dessus</span></td></tr>
+          <tr><td><code>Containerfile</code></td><td><span lang="en">Complete — do not modify</span><span lang="fr">Complet — ne pas modifier</span></td></tr>
+          <tr><td><code>src/main/liberty/config/server.xml</code></td><td><span lang="en">Provided with JMS engine, queues, topic, activation specs and DataSource — review in Step 2</span><span lang="fr">Fourni avec le moteur JMS, files, sujet, activation specs et DataSource — à revoir en Étape 2</span></td></tr>
+          <tr><td><code>src/main/liberty/config/bootstrap.properties</code></td><td><span lang="en">Complete</span><span lang="fr">Complet</span></td></tr>
+          <tr><td><code>src/main/resources/META-INF/persistence.xml</code></td><td><span lang="en">Complete — JTA mode, entities AuditLog and FailedMessage</span><span lang="fr">Complet — mode JTA, entités AuditLog et FailedMessage</span></td></tr>
+          <tr><td><code>com.bank.event.TransactionEvent</code></td><td><span lang="en">Complete — implements Serializable, carries all event fields</span><span lang="fr">Complet — implémente Serializable, porte tous les champs de l'événement</span></td></tr>
+          <tr><td><code>com.bank.model.AuditLog</code></td><td><span lang="en">Complete — JPA entity mapped to <code>audit_logs</code></span><span lang="fr">Complet — entité JPA mappée sur <code>audit_logs</code></span></td></tr>
+          <tr><td><code>com.bank.model.FailedMessage</code></td><td><span lang="en">Complete — JPA entity for DLQ storage</span><span lang="fr">Complet — entité JPA pour le stockage DLQ</span></td></tr>
+          <tr><td><code>com.bank.config.LoggerProducer</code></td><td><span lang="en">Complete — CDI producer for Logger injection</span><span lang="fr">Complet — producteur CDI pour l'injection de Logger</span></td></tr>
+          <tr><td><code>com.bank.service.EmailService</code></td><td><span lang="en">Complete — stub service, does not send real emails</span><span lang="fr">Complet — service stub, n'envoie pas d'e-mails réels</span></td></tr>
+          <tr><td><code>com.bank.web.MessagingTestServlet</code></td><td><span lang="en">Complete — test endpoints for all messaging scenarios</span><span lang="fr">Complet — endpoints de test pour tous les scénarios de messagerie</span></td></tr>
+          <tr><td><code>com.bank.mdb.TransactionEventMDB</code></td><td><span lang="en">Complete — fully configured <code>@MessageDriven</code> bean</span><span lang="fr">Complet — bean <code>@MessageDriven</code> entièrement configuré</span></td></tr>
+          <tr><td><code>com.bank.mdb.DeadLetterQueueMDB</code></td><td><span lang="en">Mostly complete — alert TODO remains (Step 7)</span><span lang="fr">Quasi-complet — TODO alerte à compléter (Étape 7)</span></td></tr>
+          <tr><td><code>com.bank.producer.TransactionEventProducer</code></td><td><span lang="en">Skeleton — 15 TODOs to implement (Step 4)</span><span lang="fr">Squelette — 15 TODO à implémenter (Étape 4)</span></td></tr>
+          <tr><td><code>com.bank.mdb.EmailNotificationMDB</code></td><td><span lang="en">Skeleton — 7 TODOs to implement (Step 5)</span><span lang="fr">Squelette — 7 TODO à implémenter (Étape 5)</span></td></tr>
+          <tr><td><code>com.bank.mdb.AuditLoggingMDB</code></td><td><span lang="en">Skeleton — 14 TODOs to implement (Step 6)</span><span lang="fr">Squelette — 14 TODO à implémenter (Étape 6)</span></td></tr>
+          <tr><td><code>com.bank.util.JsonMessageUtil</code></td><td><span lang="en"><strong>Missing from starter — create from scratch (Step 8)</strong></span><span lang="fr"><strong>Absent du starter — à créer de zéro (Étape 8)</strong></span></td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- ═════════════ 3. TARGET ═════════════ -->
+    <section class="lg-section" id="target">
+      <h2><span class="lg-sec-num">03</span><span lang="en">Target structure</span><span lang="fr">Structure cible</span></h2>
+      <p>
+        <span lang="en">After completing the lab, the <code>src/main/java/com/bank/</code> tree has these packages:</span>
+        <span lang="fr">Une fois le lab terminé, l'arborescence <code>src/main/java/com/bank/</code> contient ces packages :</span>
+      </p>
+      <pre class="dark"><code>com/bank/
+├── config/       LoggerProducer.java              (provided)
+├── event/        TransactionEvent.java            (provided)
+├── mdb/          TransactionEventMDB.java         (provided)
+│                 EmailNotificationMDB.java        (★ step 5)
+│                 AuditLoggingMDB.java             (★ step 6)
+│                 DeadLetterQueueMDB.java          (★ step 7)
+├── model/        AuditLog.java                    (provided)
+│                 FailedMessage.java               (provided)
+├── producer/     TransactionEventProducer.java    (★ step 4)
+├── service/      EmailService.java                (provided)
+├── util/         JsonMessageUtil.java             (★ step 8 — CREATE)
+└── web/          MessagingTestServlet.java        (provided)</code></pre>
+    </section>
+
+    <!-- ═════════════ 4. SETUP ═════════════ -->
+    <section class="lg-section" id="setup">
+      <h2><span class="lg-sec-num">04</span><span lang="en">Setup</span><span lang="fr">Préparation</span></h2>
+
+      <h3><span lang="en">Starting point</span><span lang="fr">Point de départ</span></h3>
+      <p>
+        <span lang="en">The starting point for this lab is the <strong>solution of Lab 04B</strong>. Copy it or work directly in the starter folder.</span>
+        <span lang="fr">Le point de départ de ce lab est la <strong>solution du Lab 04B</strong>. Copiez-la ou travaillez directement dans le dossier starter.</span>
+      </p>
+      <pre class="dark"><code>cd 03-Labs/Lab05B-JMS/starter</code></pre>
+
+      <h3><span lang="en">Security notice</span><span lang="fr">Note de sécurité</span></h3>
+      <div class="lg-callout lg-callout--warn">
+        <div lang="en"><div class="lg-callout-title">Demo credentials — never reuse in production</div><p>The database uses credentials <code>bankuser</code> / <code>bankpass</code> for demonstration only. In production, use a secret manager and never hard-code credentials. Ports are bound to <code>127.0.0.1</code> in all explicit <code>podman run</code> commands in this guide to prevent remote exposure, even though <code>docker-compose.yml</code> binds on all interfaces. If you use Compose directly, add <code>127.0.0.1:</code> to each port mapping.</p></div>
+        <div lang="fr"><div class="lg-callout-title">Identifiants de démo — ne jamais réutiliser en production</div><p>La base utilise les identifiants <code>bankuser</code> / <code>bankpass</code> à titre de démonstration uniquement. En production, utilisez un gestionnaire de secrets et ne codez jamais d'identifiants en dur. Les ports sont liés à <code>127.0.0.1</code> dans toutes les commandes <code>podman run</code> explicites de ce guide pour éviter toute exposition distante, même si <code>docker-compose.yml</code> lie sur toutes les interfaces. Si vous utilisez Compose directement, ajoutez <code>127.0.0.1:</code> à chaque port mappé.</p></div>
+      </div>
+
+      <h3><span lang="en">Your working folder</span><span lang="fr">Votre dossier de travail</span></h3>
+      <p>
+        <span lang="en">All commands below assume you are in <code>03-Labs/Lab05B-JMS/starter/</code>.</span>
+        <span lang="fr">Toutes les commandes ci-dessous supposent que vous êtes dans <code>03-Labs/Lab05B-JMS/starter/</code>.</span>
+      </p>
+
+      <h3><span lang="en">The redeploy loop</span><span lang="fr">La boucle de redéploiement</span></h3>
+      <pre class="dark"><code>mvn clean package -DskipTests
+podman rm -f banking-jms-lab05b 2&gt;/dev/null
+podman build -t banking-jms-app:lab05b -f Containerfile .
+podman run -d --name banking-jms-lab05b \
+  -p 127.0.0.1:9080:9080 \
+  -e db.host=host.containers.internal \
+  banking-jms-app:lab05b
+until curl -fs http://localhost:9080/ &gt;/dev/null; do sleep 2; done; echo "ready"</code></pre>
+    </section>
+
+    <!-- ═════════════ 5. STEPS ═════════════ -->
+    <section class="lg-section" id="steps">
+      <h2><span class="lg-sec-num">05</span><span lang="en">Step by step</span><span lang="fr">Pas à pas</span></h2>
+      <p>
+        <span lang="en">Follow each step sequentially. Read the task, inspect the hints if needed, and run the checkpoint before continuing.</span>
+        <span lang="fr">Suivez chaque étape de manière séquentielle. Lisez la consigne, consultez les indices en cas de doute et exécutez le point de contrôle avant de continuer.</span>
+      </p>
+      <ol class="lg-steps-overview">
+        <li><a href="#step-1"><span lang="en">Database &amp; configuration</span><span lang="fr">Base de données &amp; configuration</span></a><span class="lg-dur">10 min</span></li>
+        <li><a href="#step-2"><span lang="en">server.xml JMS configuration</span><span lang="fr">Configuration JMS dans server.xml</span></a><span class="lg-dur">15 min</span></li>
+        <li><a href="#step-3"><span lang="en">persistence.xml &amp; Flyway</span><span lang="fr">persistence.xml &amp; Flyway</span></a><span class="lg-dur">10 min</span></li>
+        <li><a href="#step-4"><span lang="en">TransactionEventProducer</span><span lang="fr">TransactionEventProducer</span></a><span class="lg-dur">25 min</span></li>
+        <li><a href="#step-5"><span lang="en">EmailNotificationMDB</span><span lang="fr">EmailNotificationMDB</span></a><span class="lg-dur">20 min</span></li>
+        <li><a href="#step-6"><span lang="en">AuditLoggingMDB</span><span lang="fr">AuditLoggingMDB</span></a><span class="lg-dur">25 min</span></li>
+        <li><a href="#step-7"><span lang="en">DeadLetterQueueMDB alert</span><span lang="fr">Alerte DeadLetterQueueMDB</span></a><span class="lg-dur">15 min</span></li>
+        <li><a href="#step-8"><span lang="en">util — JsonMessageUtil (create)</span><span lang="fr">util — JsonMessageUtil (à créer)</span></a><span class="lg-dur">25 min</span></li>
+      </ol>
+
+      <!-- ───────── STEP 1 ───────── -->
+      <article class="lg-step" id="step-1">
+        <div class="lg-step-head">
+          <div class="lg-step-num">1</div>
+          <div>
+            <h3><span lang="en">Database container &amp; bootstrap configuration</span><span lang="fr">Conteneur de base de données &amp; configuration bootstrap</span></h3>
+            <div class="lg-step-meta">
+              <span class="lg-chip">10 min</span>
+              <span class="lg-chip"><span lang="en">Course:</span><span lang="fr">Cours :</span> <a href="../../02-Lectures/slides/05b-jms/slides.html#slide-1"><span lang="en">JMS, slide 1</span><span lang="fr">JMS, slide 1</span></a></span>
+            </div>
+          </div>
+        </div>
+        <div class="lg-step-body">
+          <p class="lg-files"><span lang="en">Files to review:</span><span lang="fr">Fichiers à vérifier :</span> <code>docker-compose.yml</code>, <code>src/main/liberty/config/bootstrap.properties</code></p>
+          <div class="lg-task-label"><span lang="en">Task</span><span lang="fr">À faire</span></div>
+          <ol>
+            <li><span lang="en">Start the PostgreSQL 16 container named <code>banking-jms-db</code> which uses database <code>bankingdb</code>, user <code>bankuser</code>, password <code>bankpass</code>.</span><span lang="fr">Démarrez le conteneur PostgreSQL 16 nommé <code>banking-jms-db</code> qui utilise la base <code>bankingdb</code>, l'utilisateur <code>bankuser</code>, le mot de passe <code>bankpass</code>.</span></li>
+            <li><span lang="en">Verify <code>bootstrap.properties</code>: <code>http.port=9080</code>, <code>https.port=9443</code>, <code>db.host=localhost</code>, <code>db.port=5432</code>, <code>db.name=bankingdb</code>, <code>db.user=bankuser</code>, <code>db.password=bankpass</code>.</span><span lang="fr">Vérifiez <code>bootstrap.properties</code> : <code>http.port=9080</code>, <code>https.port=9443</code>, <code>db.host=localhost</code>, <code>db.port=5432</code>, <code>db.name=bankingdb</code>, <code>db.user=bankuser</code>, <code>db.password=bankpass</code>.</span></li>
+          </ol>
+          <details class="lg-hint lg-hint--1">
+            <summary><span lang="en">Hint 1 — starting the database</span><span lang="fr">Indice 1 — démarrage de la base</span></summary>
+            <div class="lg-hint-body">
+              <p><span lang="en">Use <code>podman run</code> to avoid the port binding issue in <code>docker-compose.yml</code>:</span><span lang="fr">Utilisez <code>podman run</code> pour éviter le problème de liaison de port dans <code>docker-compose.yml</code> :</span></p>
+              <pre class="dark"><code>podman run -d --name banking-jms-db \
+  -p 127.0.0.1:5432:5432 \
+  -e POSTGRES_DB=bankingdb \
+  -e POSTGRES_USER=bankuser \
+  -e POSTGRES_PASSWORD=bankpass \
+  postgres:16-alpine</code></pre>
+            </div>
+          </details>
+          <details class="lg-hint lg-hint--2">
+            <summary><span lang="en">Hint 2 — verify database readiness</span><span lang="fr">Indice 2 — vérifier que la base est prête</span></summary>
+            <div class="lg-hint-body">
+              <pre class="dark"><code>podman exec banking-jms-db pg_isready -U bankuser -d bankingdb</code></pre>
+              <p><span lang="en">Expected: <code>bankingdb:5432 - accepting connections</code>.</span><span lang="fr">Attendu : <code>bankingdb:5432 - accepting connections</code>.</span></p>
+            </div>
+          </details>
+          <details class="lg-hint lg-hint--sol">
+            <summary><span lang="en">Solution files</span><span lang="fr">Fichiers solution</span></summary>
+            <div class="lg-hint-body">
+              <p><a href="https://github.com/oplanson/esipe-javaee/blob/master/03-Labs/Lab05B-JMS/solution/docker-compose.yml"><code>solution/docker-compose.yml</code></a> &nbsp;&middot;&nbsp; <a href="https://github.com/oplanson/esipe-javaee/blob/master/03-Labs/Lab05B-JMS/solution/src/main/liberty/config/bootstrap.properties"><code>solution/…/bootstrap.properties</code></a></p>
+            </div>
+          </details>
+          <div class="lg-checkpoint">
+            <div class="lg-check-label"><span lang="en">Checkpoint</span><span lang="fr">Point de contrôle</span></div>
+            <pre class="dark"><code>podman exec banking-jms-db pg_isready -U bankuser -d bankingdb</code></pre>
+            <p><span lang="en">Expected: <code>bankingdb:5432 - accepting connections</code>.</span><span lang="fr">Attendu : <code>bankingdb:5432 - accepting connections</code>.</span></p>
+          </div>
+        </div>
+      </article>
+
+      <!-- ───────── STEP 2 ───────── -->
+      <article class="lg-step" id="step-2">
+        <div class="lg-step-head">
+          <div class="lg-step-num">2</div>
+          <div>
+            <h3><span lang="en">Review server.xml JMS configuration</span><span lang="fr">Examiner la configuration JMS dans server.xml</span></h3>
+            <div class="lg-step-meta">
+              <span class="lg-chip">15 min</span>
+              <span class="lg-chip"><span lang="en">Course:</span><span lang="fr">Cours :</span> <a href="../../02-Lectures/slides/05b-jms/slides.html#slide-1"><span lang="en">JMS, slide 1</span><span lang="fr">JMS, slide 1</span></a></span>
+            </div>
+          </div>
+        </div>
+        <div class="lg-step-body">
+          <p class="lg-files"><span lang="en">File to review:</span><span lang="fr">Fichier à examiner :</span> <code>src/main/liberty/config/server.xml</code></p>
+          <div class="lg-task-label"><span lang="en">Task</span><span lang="fr">À faire</span></div>
+          <ol>
+            <li><span lang="en">Open <code>server.xml</code> and identify the <code>&lt;messagingEngine&gt;</code> block that declares two queues (<code>transactionQueue</code>, <code>emailQueue</code>), one dead-letter queue (<code>deadLetterQueue</code>), and one topic space (<code>auditTopicSpace</code>).</span><span lang="fr">Ouvrez <code>server.xml</code> et identifiez le bloc <code>&lt;messagingEngine&gt;</code> qui déclare deux files d'attente (<code>transactionQueue</code>, <code>emailQueue</code>), une file de lettres mortes (<code>deadLetterQueue</code>) et un espace de sujet (<code>auditTopicSpace</code>).</span></li>
+            <li><span lang="en">Verify the four <code>&lt;jmsActivationSpec&gt;</code> elements wiring each MDB to its destination: <code>TransactionEventMDB</code> → <code>transactionQueue</code>, <code>EmailNotificationMDB</code> → <code>emailQueue</code>, <code>AuditLoggingMDB</code> → <code>auditTopic</code> (durable), <code>DeadLetterQueueMDB</code> → <code>deadLetterQueue</code>.</span><span lang="fr">Vérifiez les quatre éléments <code>&lt;jmsActivationSpec&gt;</code> qui relient chaque MDB à sa destination : <code>TransactionEventMDB</code> → <code>transactionQueue</code>, <code>EmailNotificationMDB</code> → <code>emailQueue</code>, <code>AuditLoggingMDB</code> → <code>auditTopic</code> (durable), <code>DeadLetterQueueMDB</code> → <code>deadLetterQueue</code>.</span></li>
+            <li><span lang="en">Note the JNDI names your code must use: <code>jms/connectionFactory</code>, <code>jms/transactionQueue</code>, <code>jms/emailQueue</code>, <code>jms/auditTopic</code>, <code>jms/deadLetterQueue</code>.</span><span lang="fr">Notez les noms JNDI que votre code devra utiliser : <code>jms/connectionFactory</code>, <code>jms/transactionQueue</code>, <code>jms/emailQueue</code>, <code>jms/auditTopic</code>, <code>jms/deadLetterQueue</code>.</span></li>
+          </ol>
+          <details class="lg-hint lg-hint--1">
+            <summary><span lang="en">Hint 1 — activation spec id format</span><span lang="fr">Indice 1 — format d'id de l'activation spec</span></summary>
+            <div class="lg-hint-body">
+              <p><span lang="en">The <code>id</code> of each <code>&lt;jmsActivationSpec&gt;</code> follows the pattern <code>appName/MDBClassName</code> (e.g. <code>banking-jms-app/EmailNotificationMDB</code>). Liberty uses this to bind the spec to the correct MDB at deployment time.</span><span lang="fr">L'<code>id</code> de chaque <code>&lt;jmsActivationSpec&gt;</code> suit le format <code>nomApp/NomClasseMDB</code> (ex. <code>banking-jms-app/EmailNotificationMDB</code>). Liberty utilise cela pour lier la spec au bon MDB au déploiement.</span></p>
+            </div>
+          </details>
+          <details class="lg-hint lg-hint--2">
+            <summary><span lang="en">Hint 2 — durable subscription in activation spec</span><span lang="fr">Indice 2 — abonnement durable dans l'activation spec</span></summary>
+            <div class="lg-hint-body">
+              <p><span lang="en">For <code>AuditLoggingMDB</code>, the activation spec sets <code>subscriptionDurability="Durable"</code>, <code>clientId="AuditClient"</code>, <code>subscriptionName="AuditSubscription"</code>. The MDB annotation must mirror these values (see Step 6).</span><span lang="fr">Pour <code>AuditLoggingMDB</code>, l'activation spec définit <code>subscriptionDurability="Durable"</code>, <code>clientId="AuditClient"</code>, <code>subscriptionName="AuditSubscription"</code>. L'annotation MDB doit refléter ces valeurs (voir Étape 6).</span></p>
+            </div>
+          </details>
+          <details class="lg-hint lg-hint--sol">
+            <summary><span lang="en">Solution files</span><span lang="fr">Fichiers solution</span></summary>
+            <div class="lg-hint-body">
+              <p><a href="https://github.com/oplanson/esipe-javaee/blob/master/03-Labs/Lab05B-JMS/solution/src/main/liberty/config/server.xml"><code>solution/…/server.xml</code></a></p>
+            </div>
+          </details>
+          <div class="lg-checkpoint">
+            <div class="lg-check-label"><span lang="en">Checkpoint</span><span lang="fr">Point de contrôle</span></div>
+            <pre class="dark"><code>grep -c "jmsActivationSpec" src/main/liberty/config/server.xml</code></pre>
+            <p><span lang="en">Expected: <code>4</code>.</span><span lang="fr">Attendu : <code>4</code>.</span></p>
+          </div>
+        </div>
+      </article>
+
+      <!-- ───────── STEP 3 ───────── -->
+      <article class="lg-step" id="step-3">
+        <div class="lg-step-head">
+          <div class="lg-step-num">3</div>
+          <div>
+            <h3><span lang="en">persistence.xml &amp; Flyway schema</span><span lang="fr">persistence.xml &amp; schéma Flyway</span></h3>
+            <div class="lg-step-meta">
+              <span class="lg-chip">10 min</span>
+              <span class="lg-chip"><span lang="en">Course:</span><span lang="fr">Cours :</span> <a href="../../02-Lectures/slides/05b-jms/slides.html#slide-1"><span lang="en">JMS, slide 1</span><span lang="fr">JMS, slide 1</span></a></span>
+            </div>
+          </div>
+        </div>
+        <div class="lg-step-body">
+          <p class="lg-files"><span lang="en">Files to review:</span><span lang="fr">Fichiers à examiner :</span> <code>src/main/resources/META-INF/persistence.xml</code></p>
+          <div class="lg-task-label"><span lang="en">Task</span><span lang="fr">À faire</span></div>
+          <ol>
+            <li><span lang="en">Open <code>persistence.xml</code>. The unit <code>bankingPU</code> uses <code>transaction-type="JTA"</code> with <code>&lt;jta-data-source&gt;jdbc/bankingDS&lt;/jta-data-source&gt;</code>. It includes entities <code>AuditLog</code> and <code>FailedMessage</code>, and the property <code>jakarta.persistence.schema-generation.database.action=create</code> so the tables are auto-created at first start — <strong>no Flyway migration SQL files are needed for this lab</strong>.</span><span lang="fr">Ouvrez <code>persistence.xml</code>. L'unité <code>bankingPU</code> utilise <code>transaction-type="JTA"</code> avec <code>&lt;jta-data-source&gt;jdbc/bankingDS&lt;/jta-data-source&gt;</code>. Elle inclut les entités <code>AuditLog</code> et <code>FailedMessage</code>, et la propriété <code>jakarta.persistence.schema-generation.database.action=create</code> crée les tables automatiquement au premier démarrage — <strong>aucun fichier SQL de migration Flyway n'est nécessaire pour ce lab</strong>.</span></li>
+            <li><span lang="en">Confirm that <code>AuditLog</code> maps to <code>audit_logs</code> and that the fields <code>transactionId</code>, <code>accountNumber</code>, <code>amount</code>, <code>transactionType</code>, <code>timestamp</code>, <code>status</code>, <code>description</code>, <code>createdAt</code> are all present — you will set them in Step 6.</span><span lang="fr">Confirmez que <code>AuditLog</code> est mappé sur <code>audit_logs</code> et que les champs <code>transactionId</code>, <code>accountNumber</code>, <code>amount</code>, <code>transactionType</code>, <code>timestamp</code>, <code>status</code>, <code>description</code>, <code>createdAt</code> sont tous présents — vous les définirez à l'Étape 6.</span></li>
+          </ol>
+          <details class="lg-hint lg-hint--1">
+            <summary><span lang="en">Hint 1 — JTA vs RESOURCE_LOCAL</span><span lang="fr">Indice 1 — JTA vs RESOURCE_LOCAL</span></summary>
+            <div class="lg-hint-body">
+              <p><span lang="en">In a JTA-managed environment (EJB container on Liberty), the container manages transaction demarcation. Use <code>&lt;jta-data-source&gt;</code> and inject <code>EntityManager</code> with <code>@PersistenceContext</code> — no manual <code>EntityTransaction.begin()</code>. The MDB method <code>onMessage()</code> is automatically wrapped in a transaction by the EJB container.</span><span lang="fr">Dans un environnement géré par JTA (conteneur EJB sur Liberty), le conteneur gère la démarcation des transactions. Utilisez <code>&lt;jta-data-source&gt;</code> et injectez <code>EntityManager</code> avec <code>@PersistenceContext</code> — pas de <code>EntityTransaction.begin()</code> manuel. La méthode <code>onMessage()</code> du MDB est automatiquement enveloppée dans une transaction par le conteneur EJB.</span></p>
+            </div>
+          </details>
+          <details class="lg-hint lg-hint--2">
+            <summary><span lang="en">Hint 2 — checking the persistence unit name</span><span lang="fr">Indice 2 — vérifier le nom de l'unité de persistance</span></summary>
+            <div class="lg-hint-body">
+              <pre class="dark"><code>grep "persistence-unit name" src/main/resources/META-INF/persistence.xml</code></pre>
+              <p><span lang="en">Expected: <code>bankingPU</code>. You will use this name in <code>@PersistenceContext(unitName = "bankingPU")</code>.</span><span lang="fr">Attendu : <code>bankingPU</code>. Vous utiliserez ce nom dans <code>@PersistenceContext(unitName = "bankingPU")</code>.</span></p>
+            </div>
+          </details>
+          <details class="lg-hint lg-hint--sol">
+            <summary><span lang="en">Solution files</span><span lang="fr">Fichiers solution</span></summary>
+            <div class="lg-hint-body">
+              <p><a href="https://github.com/oplanson/esipe-javaee/blob/master/03-Labs/Lab05B-JMS/solution/src/main/resources/META-INF/persistence.xml"><code>solution/…/persistence.xml</code></a></p>
+            </div>
+          </details>
+          <div class="lg-checkpoint">
+            <div class="lg-check-label"><span lang="en">Checkpoint</span><span lang="fr">Point de contrôle</span></div>
+            <pre class="dark"><code>mvn clean package -DskipTests</code></pre>
+            <p><span lang="en">Expected: <code>BUILD SUCCESS</code>. The WAR is at <code>target/banking-jms-app.war</code>.</span><span lang="fr">Attendu : <code>BUILD SUCCESS</code>. Le WAR est dans <code>target/banking-jms-app.war</code>.</span></p>
+          </div>
+        </div>
+      </article>
+
+      <!-- ───────── STEP 4 ───────── -->
+      <article class="lg-step" id="step-4">
+        <div class="lg-step-head">
+          <div class="lg-step-num">4</div>
+          <div>
+            <h3><span lang="en">TransactionEventProducer — JMS producer bean</span><span lang="fr">TransactionEventProducer — bean producteur JMS</span></h3>
+            <div class="lg-step-meta">
+              <span class="lg-chip">25 min</span>
+              <span class="lg-chip"><span lang="en">Course:</span><span lang="fr">Cours :</span> <a href="../../02-Lectures/slides/05b-jms/slides.html#slide-1"><span lang="en">JMS, slide 1</span><span lang="fr">JMS, slide 1</span></a></span>
+            </div>
+          </div>
+        </div>
+        <div class="lg-step-body">
+          <p class="lg-files"><span lang="en">File to modify:</span><span lang="fr">Fichier à modifier :</span> <code>src/main/java/com/bank/producer/TransactionEventProducer.java</code></p>
+          <div class="lg-task-label"><span lang="en">Task</span><span lang="fr">À faire</span></div>
+          <ol>
+            <li><span lang="en">Inject the <code>JMSContext</code> with <code>@JMSConnectionFactory("jms/connectionFactory")</code>.</span><span lang="fr">Injectez le <code>JMSContext</code> avec <code>@JMSConnectionFactory("jms/connectionFactory")</code>.</span></li>
+            <li><span lang="en">Inject the three JMS destinations with <code>@Resource(lookup = "jms/transactionQueue")</code>, <code>@Resource(lookup = "jms/emailQueue")</code>, and <code>@Resource(lookup = "jms/auditTopic")</code>.</span><span lang="fr">Injectez les trois destinations JMS avec <code>@Resource(lookup = "jms/transactionQueue")</code>, <code>@Resource(lookup = "jms/emailQueue")</code> et <code>@Resource(lookup = "jms/auditTopic")</code>.</span></li>
+            <li><span lang="en">In <code>sendTransactionEvent</code>: create an <code>ObjectMessage</code> from <code>event</code>, set string properties <code>transactionType</code>, <code>status</code> and long property <code>accountId</code>, then send with the computed priority and <code>DeliveryMode.PERSISTENT</code>.</span><span lang="fr">Dans <code>sendTransactionEvent</code> : créez un <code>ObjectMessage</code> à partir de <code>event</code>, définissez les propriétés chaînes <code>transactionType</code>, <code>status</code> et la propriété longue <code>accountId</code>, puis envoyez avec la priorité calculée et <code>DeliveryMode.PERSISTENT</code>.</span></li>
+            <li><span lang="en">In <code>sendEmailNotification</code>: create an <code>ObjectMessage</code>, set properties <code>notificationType="EMAIL"</code> and <code>customerEmail</code>, then send to <code>emailQueue</code> with <code>DeliveryMode.PERSISTENT</code>.</span><span lang="fr">Dans <code>sendEmailNotification</code> : créez un <code>ObjectMessage</code>, définissez les propriétés <code>notificationType="EMAIL"</code> et <code>customerEmail</code>, puis envoyez vers <code>emailQueue</code> avec <code>DeliveryMode.PERSISTENT</code>.</span></li>
+            <li><span lang="en">In <code>publishAuditEvent</code>: create an <code>ObjectMessage</code>, set properties <code>eventType="AUDIT"</code>, <code>transactionType</code>, and <code>timestamp</code> (milliseconds), then publish to <code>auditTopic</code> with <code>DeliveryMode.PERSISTENT</code>.</span><span lang="fr">Dans <code>publishAuditEvent</code> : créez un <code>ObjectMessage</code>, définissez les propriétés <code>eventType="AUDIT"</code>, <code>transactionType</code> et <code>timestamp</code> (en millisecondes), puis publiez vers <code>auditTopic</code> avec <code>DeliveryMode.PERSISTENT</code>.</span></li>
+          </ol>
+          <details class="lg-hint lg-hint--1">
+            <summary><span lang="en">Hint 1 — injection annotations</span><span lang="fr">Indice 1 — annotations d'injection</span></summary>
+            <div class="lg-hint-body">
+              <pre class="dark"><code>@Inject
+@JMSConnectionFactory("jms/connectionFactory")
+private JMSContext context;
+
+@Resource(lookup = "jms/transactionQueue")
+private Queue transactionQueue;
+
+@Resource(lookup = "jms/emailQueue")
+private Queue emailQueue;
+
+@Resource(lookup = "jms/auditTopic")
+private Topic auditTopic;</code></pre>
+            </div>
+          </details>
+          <details class="lg-hint lg-hint--2">
+            <summary><span lang="en">Hint 2 — sendTransactionEvent skeleton</span><span lang="fr">Indice 2 — squelette sendTransactionEvent</span></summary>
+            <div class="lg-hint-body">
+              <pre class="dark"><code>ObjectMessage message = context.createObjectMessage(event);
+message.setStringProperty("transactionType", event.getType());
+message.setStringProperty("status", event.getStatus());
+message.setLongProperty("accountId", event.getAccountId());
+int priority = getPriority(event.getType());
+context.createProducer()
+       .setPriority(priority)
+       .setDeliveryMode(DeliveryMode.PERSISTENT)
+       .send(transactionQueue, message);</code></pre>
+            </div>
+          </details>
+          <details class="lg-hint lg-hint--sol">
+            <summary><span lang="en">Solution files</span><span lang="fr">Fichiers solution</span></summary>
+            <div class="lg-hint-body">
+              <p><a href="https://github.com/oplanson/esipe-javaee/blob/master/03-Labs/Lab05B-JMS/solution/src/main/java/com/bank/producer/TransactionEventProducer.java"><code>solution/…/TransactionEventProducer.java</code></a></p>
+            </div>
+          </details>
+          <div class="lg-checkpoint">
+            <div class="lg-check-label"><span lang="en">Checkpoint</span><span lang="fr">Point de contrôle</span></div>
+            <pre class="dark"><code>mvn clean package -DskipTests</code></pre>
+            <p><span lang="en">Expected: <code>BUILD SUCCESS</code>. No <code>// TODO</code> comments should remain in <code>TransactionEventProducer.java</code>.</span><span lang="fr">Attendu : <code>BUILD SUCCESS</code>. Plus aucun commentaire <code>// TODO</code> dans <code>TransactionEventProducer.java</code>.</span></p>
+          </div>
+        </div>
+      </article>
+
+      <!-- ───────── STEP 5 ───────── -->
+      <article class="lg-step" id="step-5">
+        <div class="lg-step-head">
+          <div class="lg-step-num">5</div>
+          <div>
+            <h3><span lang="en">EmailNotificationMDB — configure and implement</span><span lang="fr">EmailNotificationMDB — configurer et implémenter</span></h3>
+            <div class="lg-step-meta">
+              <span class="lg-chip">20 min</span>
+              <span class="lg-chip"><span lang="en">Course:</span><span lang="fr">Cours :</span> <a href="../../02-Lectures/slides/05b-jms/slides.html#slide-1"><span lang="en">JMS, slide 1</span><span lang="fr">JMS, slide 1</span></a></span>
+            </div>
+          </div>
+        </div>
+        <div class="lg-step-body">
+          <p class="lg-files"><span lang="en">File to modify:</span><span lang="fr">Fichier à modifier :</span> <code>src/main/java/com/bank/mdb/EmailNotificationMDB.java</code></p>
+          <div class="lg-task-label"><span lang="en">Task</span><span lang="fr">À faire</span></div>
+          <ol>
+            <li><span lang="en">Add the four <code>@ActivationConfigProperty</code> entries inside <code>@MessageDriven</code>: <code>destinationType=jakarta.jms.Queue</code>, <code>destination=jms/emailQueue</code>, <code>messageSelector=notificationType = 'EMAIL'</code>, <code>acknowledgeMode=Auto-acknowledge</code>.</span><span lang="fr">Ajoutez les quatre entrées <code>@ActivationConfigProperty</code> dans <code>@MessageDriven</code> : <code>destinationType=jakarta.jms.Queue</code>, <code>destination=jms/emailQueue</code>, <code>messageSelector=notificationType = 'EMAIL'</code>, <code>acknowledgeMode=Auto-acknowledge</code>.</span></li>
+            <li><span lang="en">In <code>onMessage</code>: verify the message type is <code>ObjectMessage</code>; cast it and retrieve the payload; verify the payload is a <code>TransactionEvent</code>; cast payload to <code>TransactionEvent</code>; read properties <code>notificationType</code> and <code>customerEmail</code>; call <code>emailService.sendTransactionNotification(event)</code>.</span><span lang="fr">Dans <code>onMessage</code> : vérifiez que le message est de type <code>ObjectMessage</code> ; castez-le et récupérez le payload ; vérifiez que le payload est un <code>TransactionEvent</code> ; castez le payload en <code>TransactionEvent</code> ; lisez les propriétés <code>notificationType</code> et <code>customerEmail</code> ; appelez <code>emailService.sendTransactionNotification(event)</code>.</span></li>
+          </ol>
+          <details class="lg-hint lg-hint--1">
+            <summary><span lang="en">Hint 1 — @MessageDriven annotation</span><span lang="fr">Indice 1 — annotation @MessageDriven</span></summary>
+            <div class="lg-hint-body">
+              <pre class="dark"><code>@MessageDriven(
+    name = "EmailNotificationMDB",
+    activationConfig = {
+        @ActivationConfigProperty(
+            propertyName = "destinationType",
+            propertyValue = "jakarta.jms.Queue"
+        ),
+        @ActivationConfigProperty(
+            propertyName = "destination",
+            propertyValue = "jms/emailQueue"
+        ),
+        @ActivationConfigProperty(
+            propertyName = "messageSelector",
+            propertyValue = "notificationType = 'EMAIL'"
+        ),
+        @ActivationConfigProperty(
+            propertyName = "acknowledgeMode",
+            propertyValue = "Auto-acknowledge"
+        )
+    }
+)</code></pre>
+            </div>
+          </details>
+          <details class="lg-hint lg-hint--2">
+            <summary><span lang="en">Hint 2 — onMessage body</span><span lang="fr">Indice 2 — corps de onMessage</span></summary>
+            <div class="lg-hint-body">
+              <pre class="dark"><code>if (!(message instanceof ObjectMessage)) {
+    logger.warning("Non-ObjectMessage received, ignoring");
+    return;
+}
+ObjectMessage objectMessage = (ObjectMessage) message;
+Object payload = objectMessage.getObject();
+if (!(payload instanceof TransactionEvent)) {
+    logger.warning("Non-TransactionEvent payload, ignoring");
+    return;
+}
+TransactionEvent event = (TransactionEvent) payload;
+String notificationType = message.getStringProperty("notificationType");
+String customerEmail = message.getStringProperty("customerEmail");
+emailService.sendTransactionNotification(event);</code></pre>
+            </div>
+          </details>
+          <details class="lg-hint lg-hint--sol">
+            <summary><span lang="en">Solution files</span><span lang="fr">Fichiers solution</span></summary>
+            <div class="lg-hint-body">
+              <p><a href="https://github.com/oplanson/esipe-javaee/blob/master/03-Labs/Lab05B-JMS/solution/src/main/java/com/bank/mdb/EmailNotificationMDB.java"><code>solution/…/EmailNotificationMDB.java</code></a></p>
+            </div>
+          </details>
+          <div class="lg-checkpoint">
+            <div class="lg-check-label"><span lang="en">Checkpoint</span><span lang="fr">Point de contrôle</span></div>
+            <pre class="dark"><code>grep -c "TODO" src/main/java/com/bank/mdb/EmailNotificationMDB.java</code></pre>
+            <p><span lang="en">Expected: <code>0</code>.</span><span lang="fr">Attendu : <code>0</code>.</span></p>
+          </div>
+        </div>
+      </article>
+
+      <!-- ───────── STEP 6 ───────── -->
+      <article class="lg-step" id="step-6">
+        <div class="lg-step-head">
+          <div class="lg-step-num">6</div>
+          <div>
+            <h3><span lang="en">AuditLoggingMDB — durable topic subscription</span><span lang="fr">AuditLoggingMDB — abonnement durable au sujet</span></h3>
+            <div class="lg-step-meta">
+              <span class="lg-chip">25 min</span>
+              <span class="lg-chip"><span lang="en">Course:</span><span lang="fr">Cours :</span> <a href="../../02-Lectures/slides/05b-jms/slides.html#slide-1"><span lang="en">JMS, slide 1</span><span lang="fr">JMS, slide 1</span></a></span>
+            </div>
+          </div>
+        </div>
+        <div class="lg-step-body">
+          <p class="lg-files"><span lang="en">File to modify:</span><span lang="fr">Fichier à modifier :</span> <code>src/main/java/com/bank/mdb/AuditLoggingMDB.java</code></p>
+          <div class="lg-task-label"><span lang="en">Task</span><span lang="fr">À faire</span></div>
+          <ol>
+            <li><span lang="en">Add six <code>@ActivationConfigProperty</code> entries: <code>destinationType=jakarta.jms.Topic</code>, <code>destination=jms/auditTopic</code>, <code>subscriptionDurability=Durable</code>, <code>clientId=AuditClient</code>, <code>subscriptionName=AuditSubscription</code>, <code>acknowledgeMode=Auto-acknowledge</code>.</span><span lang="fr">Ajoutez six <code>@ActivationConfigProperty</code> : <code>destinationType=jakarta.jms.Topic</code>, <code>destination=jms/auditTopic</code>, <code>subscriptionDurability=Durable</code>, <code>clientId=AuditClient</code>, <code>subscriptionName=AuditSubscription</code>, <code>acknowledgeMode=Auto-acknowledge</code>.</span></li>
+            <li><span lang="en">Inject the <code>EntityManager</code> with <code>@PersistenceContext(unitName = "bankingPU")</code>.</span><span lang="fr">Injectez l'<code>EntityManager</code> avec <code>@PersistenceContext(unitName = "bankingPU")</code>.</span></li>
+            <li><span lang="en">In <code>onMessage</code>: verify message type; cast to <code>ObjectMessage</code>; call <code>objectMessage.getObject()</code> to get the payload; verify it is a <code>TransactionEvent</code>; read message properties <code>eventType</code>, <code>transactionType</code>, <code>timestamp</code>; create an <code>AuditLog</code> entity, populate all its fields from the event, and call <code>em.persist(auditLog)</code>.</span><span lang="fr">Dans <code>onMessage</code> : vérifiez le type du message ; castez en <code>ObjectMessage</code> ; appelez <code>objectMessage.getObject()</code> pour récupérer le payload ; vérifiez qu'il s'agit d'un <code>TransactionEvent</code> ; lisez les propriétés <code>eventType</code>, <code>transactionType</code>, <code>timestamp</code> ; créez une entité <code>AuditLog</code>, remplissez tous ses champs depuis l'événement et appelez <code>em.persist(auditLog)</code>.</span></li>
+          </ol>
+          <details class="lg-hint lg-hint--1">
+            <summary><span lang="en">Hint 1 — @ActivationConfigProperty for Topic</span><span lang="fr">Indice 1 — @ActivationConfigProperty pour Topic</span></summary>
+            <div class="lg-hint-body">
+              <pre class="dark"><code>@ActivationConfigProperty(
+    propertyName = "destinationType",
+    propertyValue = "jakarta.jms.Topic"
+),
+@ActivationConfigProperty(
+    propertyName = "destination",
+    propertyValue = "jms/auditTopic"
+),
+@ActivationConfigProperty(
+    propertyName = "subscriptionDurability",
+    propertyValue = "Durable"
+),
+@ActivationConfigProperty(
+    propertyName = "clientId",
+    propertyValue = "AuditClient"
+),
+@ActivationConfigProperty(
+    propertyName = "subscriptionName",
+    propertyValue = "AuditSubscription"
+),
+@ActivationConfigProperty(
+    propertyName = "acknowledgeMode",
+    propertyValue = "Auto-acknowledge"
+)</code></pre>
+            </div>
+          </details>
+          <details class="lg-hint lg-hint--2">
+            <summary><span lang="en">Hint 2 — persisting the AuditLog</span><span lang="fr">Indice 2 — persistance de AuditLog</span></summary>
+            <div class="lg-hint-body">
+              <pre class="dark"><code>AuditLog auditLog = new AuditLog();
+auditLog.setTransactionId(event.getTransactionId());
+auditLog.setAccountNumber(event.getAccountNumber());
+auditLog.setAmount(event.getAmount());
+auditLog.setTransactionType(event.getType());
+auditLog.setTimestamp(event.getTimestamp());
+auditLog.setStatus(event.getStatus());
+auditLog.setDescription(event.getDescription());
+em.persist(auditLog);</code></pre>
+              <p><span lang="en">The <code>@PrePersist</code> callback on <code>AuditLog</code> sets <code>createdAt</code> automatically.</span><span lang="fr">Le callback <code>@PrePersist</code> sur <code>AuditLog</code> initialise <code>createdAt</code> automatiquement.</span></p>
+            </div>
+          </details>
+          <details class="lg-hint lg-hint--sol">
+            <summary><span lang="en">Solution files</span><span lang="fr">Fichiers solution</span></summary>
+            <div class="lg-hint-body">
+              <p><a href="https://github.com/oplanson/esipe-javaee/blob/master/03-Labs/Lab05B-JMS/solution/src/main/java/com/bank/mdb/AuditLoggingMDB.java"><code>solution/…/AuditLoggingMDB.java</code></a></p>
+            </div>
+          </details>
+          <div class="lg-checkpoint">
+            <div class="lg-check-label"><span lang="en">Checkpoint</span><span lang="fr">Point de contrôle</span></div>
+            <pre class="dark"><code>grep -c "TODO" src/main/java/com/bank/mdb/AuditLoggingMDB.java</code></pre>
+            <p><span lang="en">Expected: <code>0</code>.</span><span lang="fr">Attendu : <code>0</code>.</span></p>
+          </div>
+        </div>
+      </article>
+
+      <!-- ───────── STEP 7 ───────── -->
+      <article class="lg-step" id="step-7">
+        <div class="lg-step-head">
+          <div class="lg-step-num">7</div>
+          <div>
+            <h3><span lang="en">DeadLetterQueueMDB — complete the alert notification</span><span lang="fr">DeadLetterQueueMDB — compléter la notification d'alerte</span></h3>
+            <div class="lg-step-meta">
+              <span class="lg-chip">15 min</span>
+              <span class="lg-chip"><span lang="en">Course:</span><span lang="fr">Cours :</span> <a href="../../02-Lectures/slides/05b-jms/slides.html#slide-1"><span lang="en">JMS, slide 1</span><span lang="fr">JMS, slide 1</span></a></span>
+            </div>
+          </div>
+        </div>
+        <div class="lg-step-body">
+          <p class="lg-files"><span lang="en">File to modify:</span><span lang="fr">Fichier à modifier :</span> <code>src/main/java/com/bank/mdb/DeadLetterQueueMDB.java</code></p>
+          <div class="lg-task-label"><span lang="en">Task</span><span lang="fr">À faire</span></div>
+          <ol>
+            <li><span lang="en">Locate the two TODOs: one in <code>onMessage()</code> at line ~83 (<code>sendAlertNotification(failedMessage)</code>), and the actual method stub at line ~170 (<code>sendAlertNotification</code>).</span><span lang="fr">Localisez les deux TODO : un dans <code>onMessage()</code> vers la ligne 83 (<code>sendAlertNotification(failedMessage)</code>), et le stub de la méthode vers la ligne 170 (<code>sendAlertNotification</code>).</span></li>
+            <li><span lang="en">Implement <code>sendAlertNotification(FailedMessage fm)</code>: log a SEVERE message with the failed message ID, delivery count, and a short description of the failure. The lab does not require real email or SMS sending; a structured log line is sufficient.</span><span lang="fr">Implémentez <code>sendAlertNotification(FailedMessage fm)</code> : logguez un message SEVERE avec l'identifiant du message en échec, le nombre de tentatives et une courte description de l'échec. Le lab ne requiert pas d'envoi réel d'e-mail ou SMS ; une ligne de log structurée suffit.</span></li>
+          </ol>
+          <details class="lg-hint lg-hint--1">
+            <summary><span lang="en">Hint 1 — minimal implementation</span><span lang="fr">Indice 1 — implémentation minimale</span></summary>
+            <div class="lg-hint-body">
+              <pre class="dark"><code>private void sendAlertNotification(FailedMessage fm) {
+    logger.severe(String.format(
+        "ALERT: Message %s failed after %d delivery attempts. Error: %s",
+        fm.getMessageId(),
+        fm.getDeliveryCount(),
+        fm.getErrorMessage()
+    ));
+    // In production: integrate with an alerting system
+    // (e.g., SNS, PagerDuty, or an alerting queue)
+}</code></pre>
+            </div>
+          </details>
+          <details class="lg-hint lg-hint--2">
+            <summary><span lang="en">Hint 2 — DLQ pattern reminder</span><span lang="fr">Indice 2 — rappel du pattern DLQ</span></summary>
+            <div class="lg-hint-body">
+              <p><span lang="en">A Dead Letter Queue captures messages that could not be processed after a configurable number of redelivery attempts. Liberty's <code>wasJms</code> engine routes such messages to <code>jms/deadLetterQueue</code> automatically. The <code>DeadLetterQueueMDB</code> then stores them in the <code>failed_messages</code> table and alerts operators. Never throw from a DLQ handler — it would cause an infinite loop.</span><span lang="fr">Une Dead Letter Queue capture les messages qui n'ont pas pu être traités après un nombre configurable de tentatives de réacheminement. Le moteur Liberty <code>wasJms</code> achemine automatiquement ces messages vers <code>jms/deadLetterQueue</code>. Le <code>DeadLetterQueueMDB</code> les stocke ensuite dans la table <code>failed_messages</code> et alerte les opérateurs. Ne jamais lever d'exception dans un handler DLQ — cela provoquerait une boucle infinie.</span></p>
+            </div>
+          </details>
+          <details class="lg-hint lg-hint--sol">
+            <summary><span lang="en">Solution files</span><span lang="fr">Fichiers solution</span></summary>
+            <div class="lg-hint-body">
+              <p><a href="https://github.com/oplanson/esipe-javaee/blob/master/03-Labs/Lab05B-JMS/solution/src/main/java/com/bank/mdb/DeadLetterQueueMDB.java"><code>solution/…/DeadLetterQueueMDB.java</code></a></p>
+            </div>
+          </details>
+          <div class="lg-checkpoint">
+            <div class="lg-check-label"><span lang="en">Checkpoint</span><span lang="fr">Point de contrôle</span></div>
+            <pre class="dark"><code>grep -c "TODO" src/main/java/com/bank/mdb/DeadLetterQueueMDB.java</code></pre>
+            <p><span lang="en">Expected: <code>0</code>.</span><span lang="fr">Attendu : <code>0</code>.</span></p>
+          </div>
+        </div>
+      </article>
+
+      <!-- ───────── STEP 8 ───────── -->
+      <article class="lg-step" id="step-8">
+        <div class="lg-step-head">
+          <div class="lg-step-num">8</div>
+          <div>
+            <h3><span lang="en">Create com.bank.util.JsonMessageUtil</span><span lang="fr">Créer com.bank.util.JsonMessageUtil</span></h3>
+            <div class="lg-step-meta">
+              <span class="lg-chip">25 min</span>
+              <span class="lg-chip"><span lang="en">Course:</span><span lang="fr">Cours :</span> <a href="../../02-Lectures/slides/05b-jms/slides.html#slide-1"><span lang="en">JMS, slide 1</span><span lang="fr">JMS, slide 1</span></a></span>
+            </div>
+          </div>
+        </div>
+        <div class="lg-step-body">
+          <p class="lg-files"><span lang="en">File to create:</span><span lang="fr">Fichier à créer :</span> <code>src/main/java/com/bank/util/JsonMessageUtil.java</code></p>
+          <div class="lg-task-label"><span lang="en">Task</span><span lang="fr">À faire</span></div>
+          <ol>
+            <li><span lang="en">Create the directory <code>src/main/java/com/bank/util/</code> and a new class <code>JsonMessageUtil</code> in package <code>com.bank.util</code>.</span><span lang="fr">Créez le répertoire <code>src/main/java/com/bank/util/</code> et une nouvelle classe <code>JsonMessageUtil</code> dans le package <code>com.bank.util</code>.</span></li>
+            <li><span lang="en">Import <code>jakarta.json.bind.Jsonb</code> and <code>jakarta.json.bind.JsonbBuilder</code> (provided by <code>jakartaee-api</code>, no extra dependency needed).</span><span lang="fr">Importez <code>jakarta.json.bind.Jsonb</code> et <code>jakarta.json.bind.JsonbBuilder</code> (fournis par <code>jakartaee-api</code>, aucune dépendance supplémentaire).</span></li>
+            <li><span lang="en">Implement three static methods: <code>String toJson(Object)</code>, <code>&lt;T&gt; T fromJson(String, Class&lt;T&gt;)</code>, and <code>&lt;T&gt; T fromJsonSafe(String, Class&lt;T&gt;)</code>.</span><span lang="fr">Implémentez trois méthodes statiques : <code>String toJson(Object)</code>, <code>&lt;T&gt; T fromJson(String, Class&lt;T&gt;)</code> et <code>&lt;T&gt; T fromJsonSafe(String, Class&lt;T&gt;)</code>.</span></li>
+            <li><span lang="en">Add an inner class <code>JsonSerializationException extends RuntimeException</code> with two constructors (message only; message + cause).</span><span lang="fr">Ajoutez une classe interne <code>JsonSerializationException extends RuntimeException</code> avec deux constructeurs (message seul ; message + cause).</span></li>
+          </ol>
+          <div class="lg-callout lg-callout--warn">
+            <div lang="en"><div class="lg-callout-title">Security — why JSON instead of Java serialization?</div><p>Using <code>ObjectMessage</code> with Java serialization exposes your application to deserialization gadget-chain attacks (CVE class similar to Apache Commons Collections). A safer pattern sends a <code>TextMessage</code> with a JSON body and deserializes to a specific type on the consumer side, eliminating the ability to inject arbitrary classes. The solution includes <code>JsonMessageUtil</code> to demonstrate this alternative. For this lab you implement the utility; adapting the MDBs to use text messages is left as a bonus exercise.</p></div>
+            <div lang="fr"><div class="lg-callout-title">Sécurité — pourquoi JSON plutôt que la sérialisation Java ?</div><p>L'utilisation d'<code>ObjectMessage</code> avec la sérialisation Java expose l'application aux attaques par chaîne de gadgets de désérialisation (classe CVE similaire à Apache Commons Collections). Une approche plus sûre envoie un <code>TextMessage</code> avec un corps JSON et désérialise vers un type spécifique côté consommateur, éliminant la possibilité d'injecter des classes arbitraires. La solution inclut <code>JsonMessageUtil</code> pour illustrer cette alternative. Pour ce lab, vous implémentez l'utilitaire ; l'adaptation des MDB pour utiliser des messages texte est laissée en exercice bonus.</p></div>
+          </div>
+          <details class="lg-hint lg-hint--1">
+            <summary><span lang="en">Hint 1 — class skeleton</span><span lang="fr">Indice 1 — squelette de la classe</span></summary>
+            <div class="lg-hint-body">
+              <pre class="dark"><code>package com.bank.util;
+
+import jakarta.json.bind.Jsonb;
+import jakarta.json.bind.JsonbBuilder;
+import jakarta.json.bind.JsonbException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
+public class JsonMessageUtil {
+
+    private static final Logger LOGGER =
+        Logger.getLogger(JsonMessageUtil.class.getName());
+    private static final Jsonb jsonb = JsonbBuilder.create();
+
+    public static String toJson(Object object) { ... }
+
+    public static &lt;T&gt; T fromJson(String json, Class&lt;T&gt; type) { ... }
+
+    public static &lt;T&gt; T fromJsonSafe(String json, Class&lt;T&gt; type) { ... }
+
+    public static class JsonSerializationException extends RuntimeException {
+        public JsonSerializationException(String message) { super(message); }
+        public JsonSerializationException(String message, Throwable cause) {
+            super(message, cause);
+        }
+    }
+}</code></pre>
+            </div>
+          </details>
+          <details class="lg-hint lg-hint--2">
+            <summary><span lang="en">Hint 2 — toJson and fromJson implementations</span><span lang="fr">Indice 2 — implémentations toJson et fromJson</span></summary>
+            <div class="lg-hint-body">
+              <pre class="dark"><code>public static String toJson(Object object) {
+    if (object == null) return null;
+    try {
+        return jsonb.toJson(object);
+    } catch (JsonbException e) {
+        LOGGER.log(Level.SEVERE, "Serialization failed: " + e.getMessage(), e);
+        throw new JsonSerializationException("Failed to serialize to JSON", e);
+    }
+}
+
+public static &lt;T&gt; T fromJson(String json, Class&lt;T&gt; type) {
+    if (json == null || json.trim().isEmpty()) return null;
+    if (type == null) throw new IllegalArgumentException("type cannot be null");
+    try {
+        return jsonb.fromJson(json, type);
+    } catch (JsonbException e) {
+        throw new JsonSerializationException(
+            "Failed to deserialize JSON to " + type.getName(), e);
+    }
+}
+
+public static &lt;T&gt; T fromJsonSafe(String json, Class&lt;T&gt; type) {
+    try { return fromJson(json, type); }
+    catch (JsonSerializationException e) {
+        LOGGER.warning("Safe deserialization failed: " + e.getMessage());
+        return null;
+    }
+}</code></pre>
+            </div>
+          </details>
+          <details class="lg-hint lg-hint--sol">
+            <summary><span lang="en">Solution files</span><span lang="fr">Fichiers solution</span></summary>
+            <div class="lg-hint-body">
+              <p><a href="https://github.com/oplanson/esipe-javaee/blob/master/03-Labs/Lab05B-JMS/solution/src/main/java/com/bank/util/JsonMessageUtil.java"><code>solution/…/JsonMessageUtil.java</code></a></p>
+            </div>
+          </details>
+          <div class="lg-checkpoint">
+            <div class="lg-check-label"><span lang="en">Checkpoint</span><span lang="fr">Point de contrôle</span></div>
+            <pre class="dark"><code>ls src/main/java/com/bank/util/JsonMessageUtil.java &amp;&amp; mvn clean package -DskipTests</code></pre>
+            <p><span lang="en">Expected: file exists and <code>BUILD SUCCESS</code>.</span><span lang="fr">Attendu : le fichier existe et <code>BUILD SUCCESS</code>.</span></p>
+          </div>
+        </div>
+      </article>
+
+    </section>
+
+    <!-- ═════════════ 6. RUN ═════════════ -->
+    <section class="lg-section" id="run">
+      <h2><span class="lg-sec-num">06</span><span lang="en">Run the application</span><span lang="fr">Exécuter l'application</span></h2>
+
+      <div class="lg-callout lg-callout--warn">
+        <div lang="en"><div class="lg-callout-title">Warning — podman-test.sh and test-lab.sh</div><p>The scripts <code>podman-test.sh</code> and <code>test-lab.sh</code> at the lab root <strong>stop and remove any container using the target port</strong> before each test. Do not run them if you have other services using ports 5432 or 9080. Prefer the explicit commands below.</p></div>
+        <div lang="fr"><div class="lg-callout-title">Avertissement — podman-test.sh et test-lab.sh</div><p>Les scripts <code>podman-test.sh</code> et <code>test-lab.sh</code> à la racine du lab <strong>arrêtent et suppriment tout conteneur utilisant le port cible</strong> avant chaque test. Ne les lancez pas si d'autres services utilisent les ports 5432 ou 9080. Préférez les commandes explicites ci-dessous.</p></div>
+      </div>
+
+      <h3><span lang="en">1. Start the database</span><span lang="fr">1. Démarrer la base de données</span></h3>
+      <pre class="dark"><code>podman run -d --name banking-jms-db \
+  -p 127.0.0.1:5432:5432 \
+  -e POSTGRES_DB=bankingdb \
+  -e POSTGRES_USER=bankuser \
+  -e POSTGRES_PASSWORD=bankpass \
+  postgres:16-alpine
+podman exec banking-jms-db pg_isready -U bankuser -d bankingdb</code></pre>
+
+      <h3><span lang="en">2. Build and run the application</span><span lang="fr">2. Construire et démarrer l'application</span></h3>
+      <pre class="dark"><code>mvn clean package -DskipTests
+podman rm -f banking-jms-lab05b 2&gt;/dev/null
+podman build -t banking-jms-app:lab05b -f Containerfile .
+podman run -d --name banking-jms-lab05b \
+  -p 127.0.0.1:9080:9080 \
+  -e db.host=host.containers.internal \
+  -e db.name=bankingdb \
+  -e db.user=bankuser \
+  -e db.password=bankpass \
+  banking-jms-app:lab05b
+until curl -fs http://localhost:9080/health/live &gt;/dev/null; do sleep 2; done
+echo "Application ready"</code></pre>
+
+      <h3><span lang="en">3. Send test messages</span><span lang="fr">3. Envoyer des messages de test</span></h3>
+      <pre class="dark"><code># Send a deposit event to the transaction queue
+curl http://localhost:9080/test-messaging/deposit
+
+# Send all events (queue + email queue + audit topic)
+curl http://localhost:9080/test-messaging/all
+
+# Watch Liberty logs for MDB processing
+podman logs -f banking-jms-lab05b 2&gt;&amp;1 | grep -E "(MDB|audit|email|transaction)"</code></pre>
+    </section>
+
+    <!-- ═════════════ 7. VALIDATE ═════════════ -->
+    <section class="lg-section" id="validate">
+      <h2><span class="lg-sec-num">07</span><span lang="en">Validate</span><span lang="fr">Valider</span></h2>
+      <table class="slide-table">
+        <thead><tr><th><span lang="en">Check</span><span lang="fr">Contrôle</span></th><th><span lang="en">Expected result</span><span lang="fr">Résultat attendu</span></th></tr></thead>
+        <tbody>
+          <tr><td><code>GET /health/live</code></td><td><code>{"status":"UP"}</code></td></tr>
+          <tr><td><code>GET /test-messaging/deposit</code></td><td><span lang="en">Deposit event sent; Liberty log shows <code>TransactionEventMDB: Processing DEPOSIT</code></span><span lang="fr">Événement DEPOSIT envoyé ; le log Liberty montre <code>TransactionEventMDB: Processing DEPOSIT</code></span></td></tr>
+          <tr><td><code>GET /test-messaging/email</code></td><td><span lang="en">Liberty log shows <code>EmailNotificationMDB: Received message</code></span><span lang="fr">Le log Liberty montre <code>EmailNotificationMDB: Received message</code></span></td></tr>
+          <tr><td><code>GET /test-messaging/audit</code></td><td><span lang="en">Liberty log shows <code>AuditLoggingMDB: Received audit message</code> and a row in <code>audit_logs</code></span><span lang="fr">Le log Liberty montre <code>AuditLoggingMDB: Received audit message</code> et une ligne dans <code>audit_logs</code></span></td></tr>
+          <tr><td><span lang="en">SQL query on <code>audit_logs</code></span><span lang="fr">Requête SQL sur <code>audit_logs</code></span></td><td><span lang="en">At least one row after <code>/test-messaging/audit</code></span><span lang="fr">Au moins une ligne après <code>/test-messaging/audit</code></span></td></tr>
+          <tr><td><code>GET /test-messaging/all</code></td><td><span lang="en">Three MDB log entries (transaction, email, audit)</span><span lang="fr">Trois entrées de log MDB (transaction, e-mail, audit)</span></td></tr>
+        </tbody>
+      </table>
+
+      <h3><span lang="en">Check the audit_logs table</span><span lang="fr">Vérifier la table audit_logs</span></h3>
+      <pre class="dark"><code>podman exec -it banking-jms-db psql -U bankuser -d bankingdb \
+  -c "SELECT id, transaction_id, transaction_type, amount, status FROM audit_logs;"</code></pre>
+
+      <h3><span lang="en">Validation checklist</span><span lang="fr">Checklist de validation</span></h3>
+      <ul class="lg-checklist">
+        <li><label><input type="checkbox"/><span lang="en"><code>TransactionEventProducer</code> injects JMSContext and three destinations with <code>@Inject @JMSConnectionFactory</code> and <code>@Resource(lookup)</code></span><span lang="fr"><code>TransactionEventProducer</code> injecte JMSContext et trois destinations avec <code>@Inject @JMSConnectionFactory</code> et <code>@Resource(lookup)</code></span></label></li>
+        <li><label><input type="checkbox"/><span lang="en"><code>sendTransactionEvent</code> sends a persistent <code>ObjectMessage</code> with properties and priority to <code>jms/transactionQueue</code></span><span lang="fr"><code>sendTransactionEvent</code> envoie un <code>ObjectMessage</code> persistant avec propriétés et priorité vers <code>jms/transactionQueue</code></span></label></li>
+        <li><label><input type="checkbox"/><span lang="en"><code>EmailNotificationMDB</code> has four <code>@ActivationConfigProperty</code> entries including message selector <code>notificationType = 'EMAIL'</code></span><span lang="fr"><code>EmailNotificationMDB</code> possède quatre <code>@ActivationConfigProperty</code> dont le sélecteur <code>notificationType = 'EMAIL'</code></span></label></li>
+        <li><label><input type="checkbox"/><span lang="en"><code>AuditLoggingMDB</code> has six <code>@ActivationConfigProperty</code> entries for durable topic subscription</span><span lang="fr"><code>AuditLoggingMDB</code> possède six <code>@ActivationConfigProperty</code> pour l'abonnement durable au sujet</span></label></li>
+        <li><label><input type="checkbox"/><span lang="en"><code>AuditLoggingMDB</code> persists an <code>AuditLog</code> entity via <code>@PersistenceContext</code>-injected <code>EntityManager</code></span><span lang="fr"><code>AuditLoggingMDB</code> persiste une entité <code>AuditLog</code> via l'<code>EntityManager</code> injecté avec <code>@PersistenceContext</code></span></label></li>
+        <li><label><input type="checkbox"/><span lang="en"><code>DeadLetterQueueMDB.sendAlertNotification</code> is implemented (no <code>// TODO</code> remains)</span><span lang="fr"><code>DeadLetterQueueMDB.sendAlertNotification</code> est implémenté (plus aucun <code>// TODO</code>)</span></label></li>
+        <li><label><input type="checkbox"/><span lang="en"><code>com.bank.util.JsonMessageUtil</code> exists with <code>toJson</code>, <code>fromJson</code>, <code>fromJsonSafe</code> and inner <code>JsonSerializationException</code></span><span lang="fr"><code>com.bank.util.JsonMessageUtil</code> existe avec <code>toJson</code>, <code>fromJson</code>, <code>fromJsonSafe</code> et la classe interne <code>JsonSerializationException</code></span></label></li>
+      </ul>
+    </section>
+
+    <!-- ═════════════ 8. COMPARE ═════════════ -->
+    <section class="lg-section" id="compare">
+      <h2><span class="lg-sec-num">08</span><span lang="en">Compare with the solution</span><span lang="fr">Comparer à la solution</span></h2>
+      <p>
+        <span lang="en">To compare your implementation with the reference solution:</span>
+        <span lang="fr">Pour comparer votre implémentation avec la solution de référence :</span>
+      </p>
+      <pre class="dark"><code>cd 03-Labs/Lab05B-JMS
+diff -rq starter solution \
+  -x target -x docs -x postgresql
+diff -u solution/src/main/java/com/bank/producer/TransactionEventProducer.java \
+         starter/src/main/java/com/bank/producer/TransactionEventProducer.java
+diff -u solution/src/main/java/com/bank/mdb/AuditLoggingMDB.java \
+         starter/src/main/java/com/bank/mdb/AuditLoggingMDB.java</code></pre>
+
+      <h3><span lang="en">Differences that are expected</span><span lang="fr">Différences attendues</span></h3>
+      <ul>
+        <li><span lang="en">The solution <code>bootstrap.properties</code> uses <code>db.host=host.containers.internal</code> to connect from inside a container; the starter uses <code>localhost</code> for local dev mode.</span><span lang="fr">La solution de <code>bootstrap.properties</code> utilise <code>db.host=host.containers.internal</code> pour se connecter depuis un conteneur ; le starter utilise <code>localhost</code> pour le mode dev local.</span></li>
+        <li><span lang="en">Build artefacts (<code>target/</code>, <code>postgresql/</code>) are not present in the solution.</span><span lang="fr">Les artefacts de build (<code>target/</code>, <code>postgresql/</code>) ne sont pas présents dans la solution.</span></li>
+      </ul>
+
+      <h3><span lang="en">Points to look for in your code</span><span lang="fr">Points à examiner dans votre code</span></h3>
+      <ul>
+        <li><span lang="en">Does <code>sendTransactionEvent</code> call <code>context.createObjectMessage(event)</code> before setting properties? Calling setters on a <code>null</code> message will throw a <code>NullPointerException</code>.</span><span lang="fr"><code>sendTransactionEvent</code> appelle-t-il <code>context.createObjectMessage(event)</code> avant de définir les propriétés ? Appeler des setters sur un message <code>null</code> lèvera une <code>NullPointerException</code>.</span></li>
+        <li><span lang="en">Does <code>AuditLoggingMDB</code> call <code>objectMessage.getObject()</code> (not <code>null</code>) before casting to <code>TransactionEvent</code>?</span><span lang="fr"><code>AuditLoggingMDB</code> appelle-t-il <code>objectMessage.getObject()</code> (pas <code>null</code>) avant de caster en <code>TransactionEvent</code> ?</span></li>
+        <li><span lang="en">Are the six activation properties for <code>AuditLoggingMDB</code> all present? Missing <code>subscriptionDurability</code> or <code>clientId</code> causes a deployment error.</span><span lang="fr">Les six propriétés d'activation de <code>AuditLoggingMDB</code> sont-elles toutes présentes ? Un <code>subscriptionDurability</code> ou <code>clientId</code> manquant provoque une erreur de déploiement.</span></li>
+      </ul>
+    </section>
+
+    <!-- ═════════════ 9. TROUBLESHOOTING ═════════════ -->
+    <section class="lg-section" id="trouble">
+      <h2><span class="lg-sec-num">09</span><span lang="en">Troubleshooting</span><span lang="fr">Dépannage</span></h2>
+      <table class="slide-table">
+        <thead><tr><th><span lang="en">Symptom</span><span lang="fr">Symptôme</span></th><th><span lang="en">Cause and fix</span><span lang="fr">Cause et correction</span></th></tr></thead>
+        <tbody>
+          <tr>
+            <td><code>NullPointerException in sendTransactionEvent</code></td>
+            <td><span lang="en"><code>context.createObjectMessage(event)</code> returns <code>null</code> when the producer was not fully constructed (CDI proxy issue). Ensure <code>@ApplicationScoped</code> is on the class and <code>@Inject @JMSConnectionFactory</code> is on the field.</span><span lang="fr"><code>context.createObjectMessage(event)</code> retourne <code>null</code> si le producteur n'a pas été entièrement construit (problème de proxy CDI). Vérifiez que <code>@ApplicationScoped</code> est sur la classe et <code>@Inject @JMSConnectionFactory</code> est sur le champ.</span></td>
+          </tr>
+          <tr>
+            <td><code>CWSJY0019E: Endpoint activation failed for MDB</code></td>
+            <td><span lang="en">Mismatch between the <code>id</code> of <code>jmsActivationSpec</code> in <code>server.xml</code> and the MDB class name. The format must be exactly <code>banking-jms-app/EmailNotificationMDB</code>. Check also that all <code>@ActivationConfigProperty</code> values match the server-side spec.</span><span lang="fr">Inadéquation entre l'<code>id</code> de <code>jmsActivationSpec</code> dans <code>server.xml</code> et le nom de la classe MDB. Le format doit être exactement <code>banking-jms-app/EmailNotificationMDB</code>. Vérifiez aussi que toutes les valeurs <code>@ActivationConfigProperty</code> correspondent à la spec côté serveur.</span></td>
+          </tr>
+          <tr>
+            <td><span lang="en">Messages sent but MDB never logs</span><span lang="fr">Messages envoyés mais le MDB ne logge jamais</span></td>
+            <td><span lang="en">The message selector <code>notificationType = 'EMAIL'</code> is case-sensitive. Ensure the producer sets the property with the exact same casing.</span><span lang="fr">Le sélecteur de message <code>notificationType = 'EMAIL'</code> est sensible à la casse. Assurez-vous que le producteur définit la propriété avec exactement la même casse.</span></td>
+          </tr>
+          <tr>
+            <td><code>Connection to localhost:5432 refused</code></td>
+            <td><span lang="en">PostgreSQL container is not running or the host resolution differs inside the container. Use <code>-e db.host=host.containers.internal</code> in the <code>podman run</code> command.</span><span lang="fr">Le conteneur PostgreSQL n'est pas démarré ou la résolution d'hôte diffère à l'intérieur du conteneur. Utilisez <code>-e db.host=host.containers.internal</code> dans la commande <code>podman run</code>.</span></td>
+          </tr>
+          <tr>
+            <td><code>CWSJY0018E: Durable subscription already exists</code></td>
+            <td><span lang="en">The durable subscription <code>AuditSubscription</code> was previously registered with a different client ID. Stop the server, delete the Liberty server state with <code>podman rm -f banking-jms-lab05b</code>, and restart.</span><span lang="fr">L'abonnement durable <code>AuditSubscription</code> a été précédemment enregistré avec un autre client ID. Arrêtez le serveur, supprimez l'état Liberty avec <code>podman rm -f banking-jms-lab05b</code> et redémarrez.</span></td>
+          </tr>
+          <tr>
+            <td><code>ClassNotFoundException: com.bank.util.JsonMessageUtil</code></td>
+            <td><span lang="en">You forgot to create the file in <code>src/main/java/com/bank/util/</code>. The starter does not include this class — see Step 8.</span><span lang="fr">Vous avez oublié de créer le fichier dans <code>src/main/java/com/bank/util/</code>. Le starter ne contient pas cette classe — voir Étape 8.</span></td>
+          </tr>
+          <tr>
+            <td><code>Port 5432 or 9080 already in use</code></td>
+            <td><span lang="en">Another process holds the port. Run <code>lsof -i :5432</code> or <code>lsof -i :9080</code> and stop conflicting containers with <code>podman ps</code> and <code>podman rm -f &lt;name&gt;</code>.</span><span lang="fr">Un autre processus occupe le port. Exécutez <code>lsof -i :5432</code> ou <code>lsof -i :9080</code> et arrêtez les conteneurs en conflit avec <code>podman ps</code> et <code>podman rm -f &lt;nom&gt;</code>.</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- ═════════════ 10. BONUS ═════════════ -->
+    <section class="lg-section" id="bonus">
+      <h2><span class="lg-sec-num">10</span><span lang="en">Go further</span><span lang="fr">Pour aller plus loin</span></h2>
+      <ul>
+        <li><span lang="en"><strong>Switch to TextMessage with JSON payload.</strong> Adapt <code>TransactionEventProducer</code> to send a <code>TextMessage</code> containing <code>JsonMessageUtil.toJson(event)</code> instead of an <code>ObjectMessage</code>. Update each MDB to receive the text message and deserialize with <code>JsonMessageUtil.fromJson(text, TransactionEvent.class)</code>. This eliminates Java deserialization vulnerabilities.</span><span lang="fr"><strong>Passer à TextMessage avec payload JSON.</strong> Adaptez <code>TransactionEventProducer</code> pour envoyer un <code>TextMessage</code> contenant <code>JsonMessageUtil.toJson(event)</code> au lieu d'un <code>ObjectMessage</code>. Mettez à jour chaque MDB pour recevoir le message texte et désérialiser avec <code>JsonMessageUtil.fromJson(text, TransactionEvent.class)</code>. Cela élimine les vulnérabilités de désérialisation Java.</span></li>
+        <li><span lang="en"><strong>Message priority and redelivery.</strong> Deliberately cause <code>TransactionEventMDB.onMessage</code> to throw for one transaction type. Observe the message being redelivered and eventually landing in <code>jms/deadLetterQueue</code>. Verify the <code>failed_messages</code> table contains a row.</span><span lang="fr"><strong>Priorité de message et réacheminement.</strong> Provoquez délibérément une exception dans <code>TransactionEventMDB.onMessage</code> pour un type de transaction. Observez le réacheminement du message et son arrivée finale dans <code>jms/deadLetterQueue</code>. Vérifiez que la table <code>failed_messages</code> contient une ligne.</span></li>
+        <li><span lang="en"><strong>Batch producer.</strong> Use <code>/test-messaging/batch</code> to send 10 messages, then monitor Liberty logs to observe concurrent MDB processing (<code>maxConcurrency="10"</code> on <code>TransactionEventMDB</code>). Compare with <code>maxConcurrency="1"</code>.</span><span lang="fr"><strong>Producteur par lot.</strong> Utilisez <code>/test-messaging/batch</code> pour envoyer 10 messages, puis surveillez les logs Liberty pour observer le traitement concurrent des MDB (<code>maxConcurrency="10"</code> sur <code>TransactionEventMDB</code>). Comparez avec <code>maxConcurrency="1"</code>.</span></li>
+        <li><span lang="en"><strong>Second topic subscriber.</strong> Create a new MDB <code>ReportingMDB</code> that also subscribes (non-durably) to <code>jms/auditTopic</code> and logs aggregate statistics. Verify that both <code>AuditLoggingMDB</code> and <code>ReportingMDB</code> receive every published audit event.</span><span lang="fr"><strong>Deuxième abonné au sujet.</strong> Créez un nouveau MDB <code>ReportingMDB</code> qui s'abonne (sans durabilité) à <code>jms/auditTopic</code> et logge des statistiques agrégées. Vérifiez que <code>AuditLoggingMDB</code> et <code>ReportingMDB</code> reçoivent chaque événement d'audit publié.</span></li>
+      </ul>
+      <div class="lg-callout lg-callout--tip">
+        <div lang="en"><div class="lg-callout-title">Next</div><p>Lab 06 introduces Domain-Driven Design (DDD) patterns: entities, value objects, aggregates, repositories, and bounded contexts applied to the banking application.</p></div>
+        <div lang="fr"><div class="lg-callout-title">Suite</div><p>Le Lab 06 introduit les patterns de Domain-Driven Design (DDD) : entités, objets-valeurs, agrégats, repositories et bounded contexts appliqués à l'application bancaire.</p></div>
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<footer class="site-footer">Made with IBM Bob &nbsp;&middot;&nbsp; &copy; 2026 Olivier Planson</footer>
+</body>
+</html>

@@ -1,0 +1,1491 @@
+<!-- © Copyright 2026 Olivier Planson. All rights reserved. Reproduction prohibited. Made with IBM Bob. -->
+<!DOCTYPE html>
+<html lang="fr" data-lang="fr">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title data-title-en="ESIPE — Lab 07: Hexagonal Architecture — Lab guide" data-title-fr="ESIPE — Lab 07 : Architecture hexagonale — Guide du lab">ESIPE — Lab 07 : Architecture hexagonale — Guide du lab</title>
+  <link rel="stylesheet" href="assets/slide.css"/>
+  <link rel="stylesheet" href="assets/lab-guide.css"/>
+  <script src="assets/lab-guide.js"></script>
+</head>
+<body>
+<header class="site-header">
+  <a class="brand" href="index.html">ESIPE<span>Jakarta EE &amp; Microservices — Labs</span></a>
+  <div class="lang-toggle" id="lang-toggle">
+    <button type="button" id="btn-en" data-set-lang="en">EN</button>
+    <span class="sep">|</span>
+    <button type="button" id="btn-fr" data-set-lang="fr" class="active">FR</button>
+  </div>
+  <a class="back-link" href="index.html">&#8592; Labs</a>
+  <a class="back-link" href="../index.html"><span lang="en">Course site</span><span lang="fr">Site du cours</span></a>
+</header>
+
+<div class="lg-shell">
+
+  <nav class="lg-toc" aria-label="Table of contents">
+    <div class="lg-toc-title"><span lang="en">In this guide</span><span lang="fr">Dans ce guide</span></div>
+    <a href="#hero"><span lang="en">Overview</span><span lang="fr">Vue d'ensemble</span></a>
+    <a href="#goal"><span lang="en">1. Goal</span><span lang="fr">1. Objectif</span></a>
+    <a href="#starter"><span lang="en">2. Starting point</span><span lang="fr">2. Point de départ</span></a>
+    <a href="#target"><span lang="en">3. Target structure</span><span lang="fr">3. Structure cible</span></a>
+    <a href="#setup"><span lang="en">4. Setup</span><span lang="fr">4. Préparation</span></a>
+    <a href="#steps"><span lang="en">5. Step by step</span><span lang="fr">5. Pas à pas</span></a>
+    <a class="sub" href="#step-1"><span lang="en">1 · Copy, rename &amp; verify baseline</span><span lang="fr">1 · Copier, renommer &amp; vérifier la base</span></a>
+    <a class="sub" href="#step-2"><span lang="en">2 · Clean up the DDD layout</span><span lang="fr">2 · Nettoyer l'organisation DDD</span></a>
+    <a class="sub" href="#step-3"><span lang="en">3 · Framework-free value objects</span><span lang="fr">3 · Objets-valeur sans framework</span></a>
+    <a class="sub" href="#step-4"><span lang="en">4 · Pure aggregates</span><span lang="fr">4 · Agrégats purs</span></a>
+    <a class="sub" href="#step-5"><span lang="en">5 · Domain events &amp; TransferService</span><span lang="fr">5 · Événements de domaine &amp; TransferService</span></a>
+    <a class="sub" href="#step-6"><span lang="en">6 · Outbound ports</span><span lang="fr">6 · Ports sortants</span></a>
+    <a class="sub" href="#step-7"><span lang="en">7 · Inbound ports, commands &amp; DTOs</span><span lang="fr">7 · Ports entrants, commandes &amp; DTOs</span></a>
+    <a class="sub" href="#step-8"><span lang="en">8 · Application services</span><span lang="fr">8 · Services applicatifs</span></a>
+    <a class="sub" href="#step-9"><span lang="en">9 · JPA entities &amp; mappers</span><span lang="fr">9 · Entités JPA &amp; mappers</span></a>
+    <a class="sub" href="#step-10"><span lang="en">10 · JPA &amp; event adapters</span><span lang="fr">10 · Adaptateurs JPA &amp; événements</span></a>
+    <a class="sub" href="#step-11"><span lang="en">11 · REST adapters v1</span><span lang="fr">11 · Adaptateurs REST v1</span></a>
+    <a class="sub" href="#step-12"><span lang="en">12 · REST adapters v2</span><span lang="fr">12 · Adaptateurs REST v2</span></a>
+    <a class="sub" href="#step-13"><span lang="en">13 · Web adapters &amp; JSP views</span><span lang="fr">13 · Adaptateurs web &amp; vues JSP</span></a>
+    <a class="sub" href="#step-14"><span lang="en">14 · Configuration &amp; packaging</span><span lang="fr">14 · Configuration &amp; packaging</span></a>
+    <a href="#run"><span lang="en">6. Run</span><span lang="fr">6. Exécution</span></a>
+    <a href="#validate"><span lang="en">7. Validate</span><span lang="fr">7. Validation</span></a>
+    <a href="#compare"><span lang="en">8. Compare with solution</span><span lang="fr">8. Comparer à la solution</span></a>
+    <a href="#trouble"><span lang="en">9. Troubleshooting</span><span lang="fr">9. Dépannage</span></a>
+    <a href="#bonus"><span lang="en">10. Go further</span><span lang="fr">10. Pour aller plus loin</span></a>
+  </nav>
+
+  <main class="lg-main">
+
+    <!-- ═════════════ HERO ═════════════ -->
+    <section class="lg-hero" id="hero">
+      <div class="lg-kicker">Lab 07</div>
+      <h1><span lang="en">Hexagonal Architecture</span><span lang="fr">Architecture hexagonale</span></h1>
+      <p class="lg-lead">
+        <span lang="en">Starting from the Lab 06 DDD solution, you reorganise the banking application into ports and adapters: a framework-free domain, inbound ports (use cases), outbound ports (repositories, event publisher) and infrastructure adapters for JPA, REST (v1 and v2) and servlets/JSP.</span>
+        <span lang="fr">En partant de la solution DDD du Lab 06, vous réorganisez l'application bancaire en ports et adaptateurs : un domaine sans framework, des ports entrants (cas d'usage), des ports sortants (repositories, éditeur d'événements) et des adaptateurs d'infrastructure pour JPA, REST (v1 et v2) et servlets/JSP.</span>
+      </p>
+      <div class="badge-row">
+        <span class="badge badge-blue">Jakarta EE 10</span>
+        <span class="badge badge-teal">Hexagonal</span>
+        <span class="badge badge-green">JPA 3.1</span>
+        <span class="badge badge-purple">CDI 4.0</span>
+        <span class="badge badge-warm">JAX-RS</span>
+      </div>
+      <div class="lg-facts">
+        <div><strong><span lang="en">about 4 h 30</span><span lang="fr">environ 4 h 30</span></strong><span lang="en">Duration</span><span lang="fr">Durée</span></div>
+        <div><strong><span lang="en">Advanced</span><span lang="fr">Avancé</span></strong><span lang="en">Level</span><span lang="fr">Niveau</span></div>
+        <div><strong>JDK 17+ · Maven · Podman · Labs 01–06</strong><span lang="en">Prerequisites</span><span lang="fr">Prérequis</span></div>
+        <div><strong>http://localhost:9080</strong><span lang="en">Application URL</span><span lang="fr">URL de l'application</span></div>
+      </div>
+      <div class="lg-hero-links">
+        <a href="../../02-Lectures/slides/07-hexagonal/slides.html#slide-1"><span lang="en">Course slides (Hexagonal)</span><span lang="fr">Slides du cours (Hexagonal)</span></a>
+        <a class="secondary" href="../07-hexagonal/index.html"><span lang="en">Course page</span><span lang="fr">Page du cours</span></a>
+        <a class="secondary" href="https://github.com/oplanson/esipe-javaee/blob/master/03-Labs/Lab07-Hexagonal/README.md"><span lang="en">Original README</span><span lang="fr">README d'origine</span></a>
+        <a class="secondary" href="https://github.com/oplanson/esipe-javaee/tree/master/03-Labs/Lab07-Hexagonal/solution"><span lang="en">Solution folder</span><span lang="fr">Dossier solution</span></a>
+      </div>
+    </section>
+
+    <!-- ═════════════ 1. GOAL ═════════════ -->
+    <section class="lg-section" id="goal">
+      <h2><span class="lg-sec-num">01</span><span lang="en">Goal of the lab</span><span lang="fr">Objectif du lab</span></h2>
+      <p>
+        <span lang="en">The business rules written in Lab 06 (value objects, aggregates, <code>TransferService</code>) stay in the middle. Around them you build explicit ports and move every technical detail (JPA, JAX-RS, servlets, CDI events) into adapters. The rule is simple: <strong>dependencies point inward</strong>; the domain knows nothing about the application layer, and the application layer knows nothing about the infrastructure. See <a href="../../02-Lectures/slides/07-hexagonal/slides.html#slide-8">slide 8</a>.</span>
+        <span lang="fr">Les règles métier écrites au Lab 06 (objets-valeur, agrégats, <code>TransferService</code>) restent au centre. Autour d'elles, vous construisez des ports explicites et déplacez chaque détail technique (JPA, JAX-RS, servlets, événements CDI) dans des adaptateurs. La règle est simple : <strong>les dépendances pointent vers l'intérieur</strong> ; le domaine ne connaît rien de la couche application, et la couche application ne connaît rien de l'infrastructure. Voir la <a href="../../02-Lectures/slides/07-hexagonal/slides.html#slide-8">slide 8</a>.</span>
+      </p>
+      <p>
+        <span lang="en">Visible change: the REST API moves from <code>/api/clients</code> and <code>/api/accounts</code> (Lab 06) to <code>/api/v1/...</code> (deprecated) and <code>/api/v2/...</code>. The JSP pages keep the URLs <code>/clients</code> and <code>/accounts</code>.</span>
+        <span lang="fr">Changement visible : l'API REST passe de <code>/api/clients</code> et <code>/api/accounts</code> (Lab 06) à <code>/api/v1/...</code> (dépréciée) et <code>/api/v2/...</code>. Les pages JSP gardent les URL <code>/clients</code> et <code>/accounts</code>.</span>
+      </p>
+
+      <h3><span lang="en">Hexagonal building blocks you practise</span><span lang="fr">Briques hexagonales mises en pratique</span></h3>
+      <table class="slide-table">
+        <thead><tr>
+          <th><span lang="en">Block</span><span lang="fr">Brique</span></th>
+          <th><span lang="en">Package / class(es)</span><span lang="fr">Package / classe(s)</span></th>
+          <th><span lang="en">Key characteristic</span><span lang="fr">Caractéristique clé</span></th>
+        </tr></thead>
+        <tbody>
+          <tr>
+            <td><strong><span lang="en">Domain</span><span lang="fr">Domaine</span></strong></td>
+            <td><code>domain.model</code>, <code>domain.valueobject</code>, <code>domain.event</code>, <code>domain.service</code></td>
+            <td><span lang="en">Plain Java: no <code>jakarta.*</code> import, no annotation from a framework</span><span lang="fr">Java pur : aucun import <code>jakarta.*</code>, aucune annotation de framework</span></td>
+          </tr>
+          <tr>
+            <td><strong><span lang="en">Primary port</span><span lang="fr">Port primaire</span></strong></td>
+            <td><code>application.port.in</code> + <code>application.command</code></td>
+            <td><span lang="en">Use-case interfaces called by the outside world; commands are Java records (<a href="../../02-Lectures/slides/07-hexagonal/slides.html#slide-13">slide 13</a>)</span><span lang="fr">Interfaces de cas d'usage appelées par l'extérieur ; les commandes sont des records Java (<a href="../../02-Lectures/slides/07-hexagonal/slides.html#slide-13">slide 13</a>)</span></td>
+          </tr>
+          <tr>
+            <td><strong><span lang="en">Secondary port</span><span lang="fr">Port secondaire</span></strong></td>
+            <td><code>application.port.out</code></td>
+            <td><span lang="en">Interfaces the application needs: repositories and event publisher (<a href="../../02-Lectures/slides/07-hexagonal/slides.html#slide-14">slide 14</a>)</span><span lang="fr">Interfaces dont l'application a besoin : repositories et éditeur d'événements (<a href="../../02-Lectures/slides/07-hexagonal/slides.html#slide-14">slide 14</a>)</span></td>
+          </tr>
+          <tr>
+            <td><strong><span lang="en">Application services</span><span lang="fr">Services applicatifs</span></strong></td>
+            <td><code>application.service</code></td>
+            <td><span lang="en">Implement the primary ports, orchestrate domain + secondary ports, own the transaction</span><span lang="fr">Implémentent les ports primaires, orchestrent domaine + ports secondaires, portent la transaction</span></td>
+          </tr>
+          <tr>
+            <td><strong><span lang="en">Primary adapters</span><span lang="fr">Adaptateurs primaires</span></strong></td>
+            <td><code>infrastructure.rest</code>, <code>infrastructure.web</code></td>
+            <td><span lang="en">Translate HTTP into commands and DTOs; no business rule</span><span lang="fr">Traduisent HTTP en commandes et DTO ; aucune règle métier</span></td>
+          </tr>
+          <tr>
+            <td><strong><span lang="en">Secondary adapters</span><span lang="fr">Adaptateurs secondaires</span></strong></td>
+            <td><code>infrastructure.persistence</code>, <code>infrastructure.event</code></td>
+            <td><span lang="en">JPA entities, mappers and adapters; CDI event adapter (<a href="../../02-Lectures/slides/07-hexagonal/slides.html#slide-27">slide 27</a>)</span><span lang="fr">Entités JPA, mappers et adaptateurs ; adaptateur d'événements CDI (<a href="../../02-Lectures/slides/07-hexagonal/slides.html#slide-27">slide 27</a>)</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- ═════════════ 2. STARTER ═════════════ -->
+    <section class="lg-section" id="starter">
+      <h2><span class="lg-sec-num">02</span><span lang="en">Starting point</span><span lang="fr">Point de départ</span></h2>
+      <p>
+        <span lang="en">The folder <code>03-Labs/Lab07-Hexagonal/starter/</code> is <strong>empty</strong>. Your starting point is the <strong>solution of Lab 06</strong> (<code>03-Labs/Lab06-DDD/solution</code>), which you copy into <code>starter/</code> (see Setup, section 4). The files to add or modify are all in the solution of this lab (<code>03-Labs/Lab07-Hexagonal/solution</code>). The source of truth is <code>diff -rq 03-Labs/Lab06-DDD/solution 03-Labs/Lab07-Hexagonal/solution</code>, not the README.</span>
+        <span lang="fr">Le dossier <code>03-Labs/Lab07-Hexagonal/starter/</code> est <strong>vide</strong>. Votre point de départ est la <strong>solution du Lab 06</strong> (<code>03-Labs/Lab06-DDD/solution</code>), que vous copiez dans <code>starter/</code> (voir Préparation, section 4). Les fichiers à ajouter ou modifier sont tous dans la solution de ce lab (<code>03-Labs/Lab07-Hexagonal/solution</code>). La source de vérité est <code>diff -rq 03-Labs/Lab06-DDD/solution 03-Labs/Lab07-Hexagonal/solution</code>, pas le README.</span>
+      </p>
+      <div class="lg-callout lg-callout--warn">
+        <div lang="en">
+          <div class="lg-callout-title">Empty starter and inconsistencies in the lab files — read before you start</div>
+          <ul>
+            <li><code>SOLUTION-STATUS.md</code> announces 65 compilation errors. This is wrong: <code>mvn -q -DskipTests package</code> succeeds on the solution (checked on a temporary copy).</li>
+            <li>The README refers to <code>solution/REFACTORING-GUIDE.md</code> and <code>HEXAGONAL-ARCHITECTURE.md</code>: neither file exists.</li>
+            <li>The README describes <code>DepositMoneyUseCase</code>, <code>DepositMoneyService</code>… and URLs such as <code>/banking-hexagonal/api/...</code>: none of them exist. The real ports are <code>AccountManagementUseCase</code>, <code>ClientManagementUseCase</code>, <code>MoneyOperationsUseCase</code>; the real URLs are <code>/api/v1/...</code> and <code>/api/v2/...</code>.</li>
+            <li><code>persistence.xml</code> contains <code>hibernate.*</code> properties, but the runtime JPA provider of Open Liberty is EclipseLink: these properties are ignored.</li>
+            <li><code>bootstrap.properties</code> sets <code>db_host=postgres</code> and <code>db_name=bankingdb</code> (Lab 06: <code>localhost</code> and <code>bankdb</code>). Without <code>DB_*</code> variables passed with <code>-e</code>, Liberty logs <code>CWWKG0075E</code> for <code>${db.port}</code> and then cannot find <code>jdbc/bankingDS</code>. This guide passes the variables explicitly.</li>
+            <li><code>microprofile-config.properties</code> still contains a <code>db.url</code> pointing to <code>localhost/bankdb</code>: it is not used.</li>
+            <li><code>docker-compose.yml</code> publishes <code>5432:5432</code> on all interfaces. In this guide you write <code>127.0.0.1:5432:5432</code>.</li>
+            <li>The scripts <code>podman-test.sh</code>, <code>docker-test.sh</code>, <code>run-lab.sh</code>, <code>test-lab.sh</code> are destructive (<code>down -v</code>, prune). Do not use them (see section Run).</li>
+            <li><code>ClientWebAdapter</code> contains 15 <code>System.out.println</code>: use a <code>Logger</code> in your version.</li>
+            <li><code>server.xml</code> enables <code>com.bank.*=all</code> logging: far too verbose; keep <code>fine</code> as in Lab 06.</li>
+            <li><code>httpEndpoint</code> uses <code>host="*"</code> (all interfaces): acceptable in a container whose port you publish on <code>127.0.0.1</code> only.</li>
+          </ul>
+          <p>Credentials shown in the lab files (<code>bankuser</code> / <code>bankpass</code>) are demo credentials and must never be reused in a real project.</p>
+        </div>
+        <div lang="fr">
+          <div class="lg-callout-title">Starter vide et incohérences dans les fichiers du lab — à lire avant de commencer</div>
+          <ul>
+            <li><code>SOLUTION-STATUS.md</code> annonce 65 erreurs de compilation. C'est faux : <code>mvn -q -DskipTests package</code> réussit sur la solution (vérifié sur une copie temporaire).</li>
+            <li>Le README renvoie vers <code>solution/REFACTORING-GUIDE.md</code> et <code>HEXAGONAL-ARCHITECTURE.md</code> : aucun de ces fichiers n'existe.</li>
+            <li>Le README décrit <code>DepositMoneyUseCase</code>, <code>DepositMoneyService</code>… et des URL comme <code>/banking-hexagonal/api/...</code> : rien de tout cela n'existe. Les vrais ports sont <code>AccountManagementUseCase</code>, <code>ClientManagementUseCase</code>, <code>MoneyOperationsUseCase</code> ; les vraies URL sont <code>/api/v1/...</code> et <code>/api/v2/...</code>.</li>
+            <li><code>persistence.xml</code> contient des propriétés <code>hibernate.*</code>, mais le fournisseur JPA d'exécution d'Open Liberty est EclipseLink : ces propriétés sont ignorées.</li>
+            <li><code>bootstrap.properties</code> fixe <code>db_host=postgres</code> et <code>db_name=bankingdb</code> (Lab 06 : <code>localhost</code> et <code>bankdb</code>). Sans variables <code>DB_*</code> passées avec <code>-e</code>, Liberty journalise <code>CWWKG0075E</code> pour <code>${db.port}</code> puis ne trouve pas <code>jdbc/bankingDS</code>. Ce guide passe les variables explicitement.</li>
+            <li><code>microprofile-config.properties</code> contient encore un <code>db.url</code> vers <code>localhost/bankdb</code> : il n'est pas utilisé.</li>
+            <li><code>docker-compose.yml</code> publie <code>5432:5432</code> sur toutes les interfaces. Dans ce guide, vous écrivez <code>127.0.0.1:5432:5432</code>.</li>
+            <li>Les scripts <code>podman-test.sh</code>, <code>docker-test.sh</code>, <code>run-lab.sh</code>, <code>test-lab.sh</code> sont destructifs (<code>down -v</code>, prune). Ne les utilisez pas (voir la section Exécution).</li>
+            <li><code>ClientWebAdapter</code> contient 15 <code>System.out.println</code> : utilisez un <code>Logger</code> dans votre version.</li>
+            <li><code>server.xml</code> active la journalisation <code>com.bank.*=all</code> : beaucoup trop verbeux ; gardez <code>fine</code> comme au Lab 06.</li>
+            <li><code>httpEndpoint</code> utilise <code>host="*"</code> (toutes les interfaces) : acceptable dans un conteneur dont vous ne publiez le port que sur <code>127.0.0.1</code>.</li>
+          </ul>
+          <p>Les identifiants affichés dans les fichiers du lab (<code>bankuser</code> / <code>bankpass</code>) sont des identifiants de démo et ne doivent jamais être réutilisés dans un vrai projet.</p>
+        </div>
+      </div>
+
+      <h3><span lang="en">What changes between Lab 06 and Lab 07</span><span lang="fr">Ce qui change entre le Lab 06 et le Lab 07</span></h3>
+      <table class="slide-table">
+        <thead><tr>
+          <th><span lang="en">Lab 06 (baseline)</span><span lang="fr">Lab 06 (base)</span></th>
+          <th><span lang="en">Lab 07 (target)</span><span lang="fr">Lab 07 (cible)</span></th>
+        </tr></thead>
+        <tbody>
+          <tr><td><code>model/Account.java</code>, <code>model/Client.java</code> (JPA entities)</td><td><code>domain/model/Account.java</code>, <code>domain/model/Client.java</code> <span lang="en">(pure) + <code>infrastructure/persistence/entity/*Entity.java</code></span><span lang="fr">(purs) + <code>infrastructure/persistence/entity/*Entity.java</code></span></td></tr>
+          <tr><td><code>domain/repository/*Repository.java</code></td><td><code>application/port/out/*Repository.java</code> + <code>EventPublisher.java</code></td></tr>
+          <tr><td><code>service/AccountService.java</code>, <code>ClientService.java</code></td><td><code>application/service/*ManagementService.java</code>, <code>MoneyOperationsService.java</code></td></tr>
+          <tr><td><code>api/*Resource.java</code>, <code>api/v2/</code></td><td><code>infrastructure/rest/adapter/v1</code>, <code>.../v2</code></td></tr>
+          <tr><td><code>web/*Controller.java</code></td><td><code>infrastructure/web/adapter/*WebAdapter.java</code></td></tr>
+          <tr><td><code>config/</code>, <code>health/</code>, <code>event/</code>, <code>exception/</code>, <code>client/</code>, <code>dto/</code></td><td><span lang="en"><code>infrastructure/config/</code> keeps only 2 classes; the other packages disappear</span><span lang="fr"><code>infrastructure/config/</code> ne garde que 2 classes ; les autres packages disparaissent</span></td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- ═════════════ 3. TARGET ═════════════ -->
+    <section class="lg-section" id="target">
+      <h2><span class="lg-sec-num">03</span><span lang="en">Target structure</span><span lang="fr">Structure cible</span></h2>
+      <p>
+        <span lang="en">When you are done, your <code>starter/</code> (copied from the Lab 06 solution) must match <code>Lab07-Hexagonal/solution</code>. Legend: <code>[=]</code> kept from Lab 06, <code>[~]</code> modified, <code>[+]</code> created. The empty <code>application/usecase/</code> folder of the solution is not needed.</span>
+        <span lang="fr">À la fin, votre <code>starter/</code> (copié depuis la solution du Lab 06) doit correspondre à <code>Lab07-Hexagonal/solution</code>. Légende : <code>[=]</code> conservé du Lab 06, <code>[~]</code> modifié, <code>[+]</code> créé. Le dossier vide <code>application/usecase/</code> de la solution n'est pas nécessaire.</span>
+      </p>
+      <div class="lg-tree"><span class="t-note">Lab07-Hexagonal/starter/</span>
+├── <span class="t-chg">[~] pom.xml</span>               <span class="t-note">artifactId → banking-hexagonal-app</span>
+├── <span class="t-chg">[~] Containerfile</span>         <span class="t-note">banking-hexagonal-app.war</span>
+├── <span class="t-chg">[~] docker-compose.yml</span>    <span class="t-note">lab07-postgres, bankingdb, 127.0.0.1:5432</span>
+└── src/main/
+    ├── java/com/bank/
+    │   ├── domain/
+    │   │   ├── valueobject/   <span class="t-chg">[~] Money, Email, AccountNumber, AccountType</span>
+    │   │   ├── model/         <span class="t-new">[+] Account, Client</span>
+    │   │   ├── event/         <span class="t-new">[+] DomainEvent</span>  <span class="t-chg">[~] MoneyDeposited/Withdrawn/TransferredEvent</span>
+    │   │   └── service/       <span class="t-chg">[~] TransferService</span>
+    │   ├── application/
+    │   │   ├── port/in/       <span class="t-new">[+] AccountManagement/ClientManagement/MoneyOperations UseCase</span>
+    │   │   ├── port/out/      <span class="t-new">[+] AccountRepository, ClientRepository, EventPublisher</span>
+    │   │   ├── command/       <span class="t-new">[+] 6 records</span>
+    │   │   ├── dto/           <span class="t-chg">[~] AccountDTO, ClientDTO</span>
+    │   │   └── service/       <span class="t-new">[+] AccountManagementService, ClientManagementService, MoneyOperationsService</span>
+    │   └── infrastructure/
+    │       ├── config/        <span class="t-chg">[~] DatabaseMigrationStartup, EntityManagerProducer</span>
+    │       ├── event/         <span class="t-new">[+] CDIEventPublisherAdapter</span>
+    │       ├── persistence/   <span class="t-new">[+] entity/, mapper/, adapter/</span>
+    │       ├── rest/          <span class="t-new">[+] RestApplication, adapter/v1, adapter/v2</span>
+    │       └── web/adapter/   <span class="t-new">[+] AccountWebAdapter, ClientWebAdapter</span>
+    ├── liberty/config/        <span class="t-chg">[~] server.xml, bootstrap.properties</span>
+    ├── resources/META-INF/    <span class="t-chg">[~] persistence.xml, microprofile-config.properties</span>
+    ├── resources/db/migration/ <span class="t-ok">[=] V1 … V5 (unchanged)</span>
+    └── webapp/                <span class="t-chg">[~] WEB-INF/beans.xml, web.xml, 7 JSP views, index.html</span></div>
+    </section>
+
+    <!-- ═════════════ 4. SETUP ═════════════ -->
+    <section class="lg-section" id="setup">
+      <h2><span class="lg-sec-num">04</span><span lang="en">Setup</span><span lang="fr">Préparation</span></h2>
+      <h3><span lang="en">Tools</span><span lang="fr">Outils</span></h3>
+      <table class="slide-table">
+        <thead><tr><th><span lang="en">Tool</span><span lang="fr">Outil</span></th><th><span lang="en">Check with</span><span lang="fr">Vérifier avec</span></th></tr></thead>
+        <tbody>
+          <tr><td>JDK 17+</td><td><code>java -version</code></td></tr>
+          <tr><td>Maven 3.x</td><td><code>mvn -v</code></td></tr>
+          <tr><td>Podman <span lang="en">(or Docker)</span><span lang="fr">(ou Docker)</span></td><td><code>podman --version</code></td></tr>
+          <tr><td>curl</td><td><code>curl --version</code></td></tr>
+        </tbody>
+      </table>
+
+      <h3><span lang="en">Copy the Lab 06 solution into your starter folder</span><span lang="fr">Copier la solution du Lab 06 dans votre dossier starter</span></h3>
+      <p>
+        <span lang="en"><strong>Rule 9</strong>: Lab 07 builds on the solution of Lab 06. Copy it first (only the sources and build files, not the generated folders), then refactor.</span>
+        <span lang="fr"><strong>Règle 9</strong> : le Lab 07 repart de la solution du Lab 06. Copiez-la d'abord (uniquement les sources et fichiers de build, pas les dossiers générés), puis refactorisez.</span>
+      </p>
+      <pre class="dark"><code># from 03-Labs
+cp -R Lab06-DDD/solution/src Lab06-DDD/solution/pom.xml \
+      Lab06-DDD/solution/Containerfile Lab06-DDD/solution/docker-compose.yml \
+      Lab07-Hexagonal/starter/
+cd Lab07-Hexagonal/starter</code></pre>
+
+      <h3><span lang="en">Start the database</span><span lang="fr">Démarrer la base de données</span></h3>
+      <p>
+        <span lang="en">The database container of this lab is named <code>lab07-postgres</code> (database <code>bankingdb</code>). It is defined by the <code>docker-compose.yml</code> you edit in step 14. Port 5432 must be free: stop the Lab 06 database first (<code>podman stop lab06-postgres</code>). Once step 14 is done:</span>
+        <span lang="fr">Le conteneur de base de données de ce lab s'appelle <code>lab07-postgres</code> (base <code>bankingdb</code>). Il est défini par le <code>docker-compose.yml</code> que vous modifiez à l'étape 14. Le port 5432 doit être libre : arrêtez d'abord la base du Lab 06 (<code>podman stop lab06-postgres</code>). Une fois l'étape 14 terminée :</span>
+      </p>
+      <pre class="dark"><code>podman stop lab06-postgres 2&gt;/dev/null
+podman-compose -f docker-compose.yml up -d
+# or with docker:
+# docker compose -f docker-compose.yml up -d</code></pre>
+      <div class="lg-callout lg-callout--warn">
+        <div lang="en">
+          <div class="lg-callout-title">Compose publishes <code>5432:5432</code> on all interfaces</div>
+          <p>The original <code>docker-compose.yml</code> binds PostgreSQL as <code>5432:5432</code> (no <code>127.0.0.1:</code> prefix), so any machine on your network can reach the database with demo credentials. In step 14 you write <code>"127.0.0.1:5432:5432"</code>. The credentials <code>bankuser</code> / <code>bankpass</code> are demo credentials: never reuse them.</p>
+        </div>
+        <div lang="fr">
+          <div class="lg-callout-title">Compose publie <code>5432:5432</code> sur toutes les interfaces</div>
+          <p>Le <code>docker-compose.yml</code> d'origine lie PostgreSQL en <code>5432:5432</code> (sans préfixe <code>127.0.0.1:</code>) : toute machine de votre réseau peut atteindre la base avec des identifiants de démo. À l'étape 14, vous écrivez <code>"127.0.0.1:5432:5432"</code>. Les identifiants <code>bankuser</code> / <code>bankpass</code> sont des identifiants de démo : ne les réutilisez jamais.</p>
+        </div>
+      </div>
+
+      <h3><span lang="en">Redeploy loop</span><span lang="fr">Boucle de redéploiement</span></h3>
+      <p>
+        <span lang="en">The <code>DB_*</code> variables are mandatory (see the warning in section 2). <code>--network host</code> lets the application reach the database published on <code>127.0.0.1:5432</code>.</span>
+        <span lang="fr">Les variables <code>DB_*</code> sont obligatoires (voir l'avertissement de la section 2). <code>--network host</code> permet à l'application d'atteindre la base publiée sur <code>127.0.0.1:5432</code>.</span>
+      </p>
+      <pre class="dark"><code>mvn clean package -DskipTests
+podman rm -f banking-lab07 2&gt;/dev/null
+podman build -t banking-hexagonal-app:lab07 -f Containerfile .
+podman run -d --name banking-lab07 \
+  -p 127.0.0.1:9080:9080 \
+  --network host \
+  -e DB_HOST=127.0.0.1 -e DB_PORT=5432 -e DB_NAME=bankingdb \
+  -e DB_USER=bankuser -e DB_PASSWORD=bankpass \
+  banking-hexagonal-app:lab07
+until curl -fs http://localhost:9080/health &gt;/dev/null; do sleep 2; done; echo "ready"</code></pre>
+    </section>
+
+    <!-- ═════════════ 5. STEPS ═════════════ -->
+    <section class="lg-section" id="steps">
+      <h2><span class="lg-sec-num">05</span><span lang="en">Step by step</span><span lang="fr">Pas à pas</span></h2>
+      <p>
+        <span lang="en">The steps follow the refactoring order of the course (<a href="../../02-Lectures/slides/07-hexagonal/slides.html#slide-34">slide 34</a>): inside out, so that the project compiles after every step. Try each task on your own; open the hints only if you are stuck; run the checkpoint before continuing. Steps 1 to 13 only need <code>mvn -q -DskipTests compile</code>; the container is built in step 14.</span>
+        <span lang="fr">Les étapes suivent l'ordre de refactoring du cours (<a href="../../02-Lectures/slides/07-hexagonal/slides.html#slide-34">slide 34</a>) : de l'intérieur vers l'extérieur, de sorte que le projet compile après chaque étape. Essayez chaque tâche par vous-même ; n'ouvrez les indices qu'en cas de blocage ; lancez le point de contrôle avant de continuer. Les étapes 1 à 13 n'ont besoin que de <code>mvn -q -DskipTests compile</code> ; le conteneur est construit à l'étape 14.</span>
+      </p>
+      <ol class="lg-steps-overview">
+        <li><a href="#step-1"><span lang="en">Copy, rename &amp; verify baseline</span><span lang="fr">Copier, renommer &amp; vérifier la base</span></a><span class="lg-dur">10 min</span></li>
+        <li><a href="#step-2"><span lang="en">Clean up the DDD layout</span><span lang="fr">Nettoyer l'organisation DDD</span></a><span class="lg-dur">10 min</span></li>
+        <li><a href="#step-3"><span lang="en">Framework-free value objects</span><span lang="fr">Objets-valeur sans framework</span></a><span class="lg-dur">20 min</span></li>
+        <li><a href="#step-4"><span lang="en">Pure aggregates</span><span lang="fr">Agrégats purs</span></a><span class="lg-dur">40 min</span></li>
+        <li><a href="#step-5"><span lang="en">Domain events &amp; TransferService</span><span lang="fr">Événements de domaine &amp; TransferService</span></a><span class="lg-dur">20 min</span></li>
+        <li><a href="#step-6"><span lang="en">Outbound ports</span><span lang="fr">Ports sortants</span></a><span class="lg-dur">15 min</span></li>
+        <li><a href="#step-7"><span lang="en">Inbound ports, commands &amp; DTOs</span><span lang="fr">Ports entrants, commandes &amp; DTOs</span></a><span class="lg-dur">20 min</span></li>
+        <li><a href="#step-8"><span lang="en">Application services</span><span lang="fr">Services applicatifs</span></a><span class="lg-dur">35 min</span></li>
+        <li><a href="#step-9"><span lang="en">JPA entities &amp; mappers</span><span lang="fr">Entités JPA &amp; mappers</span></a><span class="lg-dur">20 min</span></li>
+        <li><a href="#step-10"><span lang="en">JPA &amp; event adapters</span><span lang="fr">Adaptateurs JPA &amp; événements</span></a><span class="lg-dur">20 min</span></li>
+        <li><a href="#step-11"><span lang="en">REST adapters v1</span><span lang="fr">Adaptateurs REST v1</span></a><span class="lg-dur">15 min</span></li>
+        <li><a href="#step-12"><span lang="en">REST adapters v2</span><span lang="fr">Adaptateurs REST v2</span></a><span class="lg-dur">15 min</span></li>
+        <li><a href="#step-13"><span lang="en">Web adapters &amp; JSP views</span><span lang="fr">Adaptateurs web &amp; vues JSP</span></a><span class="lg-dur">20 min</span></li>
+        <li><a href="#step-14"><span lang="en">Configuration &amp; packaging</span><span lang="fr">Configuration &amp; packaging</span></a><span class="lg-dur">10 min</span></li>
+      </ol>
+
+      <!-- ───────── STEP 1 ───────── -->
+      <article class="lg-step" id="step-1">
+        <div class="lg-step-head">
+          <div class="lg-step-num">1</div>
+          <div>
+            <h3><span lang="en">Copy the Lab 06 baseline, rename the artifact, verify the build</span><span lang="fr">Copier la base du Lab 06, renommer l'artefact, vérifier le build</span></h3>
+            <div class="lg-step-meta">
+              <span class="lg-chip">10 min</span>
+              <span class="lg-chip"><span lang="en">Maven WAR packaging</span><span lang="fr">Packaging WAR Maven</span></span>
+              <span class="lg-chip"><a href="../../02-Lectures/slides/07-hexagonal/slides.html#slide-34">slide 34</a> · <a href="../../02-Lectures/slides/07-hexagonal/slides.html#slide-35">35</a></span>
+            </div>
+          </div>
+        </div>
+        <div class="lg-step-body">
+          <p class="lg-files"><span lang="en">Files to modify:</span><span lang="fr">Fichiers à modifier :</span> <code>pom.xml</code>, <code>Containerfile</code></p>
+          <div class="lg-task-label"><span lang="en">Task</span><span lang="fr">À faire</span></div>
+          <ol>
+            <li><span lang="en">Copy the Lab 06 solution into <code>starter/</code> (see Setup).</span><span lang="fr">Copiez la solution du Lab 06 dans <code>starter/</code> (voir Préparation).</span></li>
+            <li><span lang="en">In <code>pom.xml</code>, change <code>&lt;artifactId&gt;</code> from <code>banking-ddd-app</code> to <code>banking-hexagonal-app</code>, and update <code>&lt;name&gt;</code> and <code>&lt;description&gt;</code> (Lab 07, Hexagonal Architecture).</span><span lang="fr">Dans <code>pom.xml</code>, changez <code>&lt;artifactId&gt;</code> de <code>banking-ddd-app</code> en <code>banking-hexagonal-app</code>, et mettez à jour <code>&lt;name&gt;</code> et <code>&lt;description&gt;</code> (Lab 07, Architecture hexagonale).</span></li>
+            <li><span lang="en">In <code>Containerfile</code>, change the <code>COPY</code> line of the WAR to <code>target/banking-hexagonal-app.war</code> (and the header comments: image <code>banking-hexagonal-app:lab07</code>).</span><span lang="fr">Dans <code>Containerfile</code>, changez la ligne <code>COPY</code> du WAR en <code>target/banking-hexagonal-app.war</code> (et les commentaires d'en-tête : image <code>banking-hexagonal-app:lab07</code>).</span></li>
+            <li><span lang="en">Build to confirm the baseline compiles with its new name. Do not touch the Maven dependency versions.</span><span lang="fr">Compilez pour confirmer que la base compile avec son nouveau nom. Ne touchez pas aux versions des dépendances Maven.</span></li>
+          </ol>
+          <details class="lg-hint lg-hint--1">
+            <summary><span lang="en">Hint 1</span><span lang="fr">Indice 1</span></summary>
+            <div class="lg-hint-body">
+              <p><span lang="en">Only three lines differ in <code>pom.xml</code> between the two solutions: <code>artifactId</code>, <code>name</code>, <code>description</code>. In <code>Containerfile</code>, only the comments and the WAR name differ. Compare with <code>diff Lab06-DDD/solution/pom.xml Lab07-Hexagonal/solution/pom.xml</code>.</span><span lang="fr">Seules trois lignes diffèrent dans <code>pom.xml</code> entre les deux solutions : <code>artifactId</code>, <code>name</code>, <code>description</code>. Dans <code>Containerfile</code>, seuls les commentaires et le nom du WAR diffèrent. Comparez avec <code>diff Lab06-DDD/solution/pom.xml Lab07-Hexagonal/solution/pom.xml</code>.</span></p>
+            </div>
+          </details>
+          <details class="lg-hint lg-hint--sol">
+            <summary><span lang="en">Solution files</span><span lang="fr">Fichiers solution</span></summary>
+            <div class="lg-hint-body">
+              <p>
+                <a href="https://github.com/oplanson/esipe-javaee/blob/master/03-Labs/Lab07-Hexagonal/solution/pom.xml"><code>solution/pom.xml</code></a> ·
+                <a href="https://github.com/oplanson/esipe-javaee/blob/master/03-Labs/Lab07-Hexagonal/solution/Containerfile"><code>solution/Containerfile</code></a>
+              </p>
+            </div>
+          </details>
+          <div class="lg-checkpoint">
+            <div class="lg-check-label"><span lang="en">Checkpoint</span><span lang="fr">Point de contrôle</span></div>
+            <pre class="dark"><code>mvn -q -DskipTests package &amp;&amp; ls target/*.war</code></pre>
+            <p><span lang="en">Expected: no error, and <code>target/banking-hexagonal-app.war</code> is listed.</span><span lang="fr">Attendu : aucune erreur, et <code>target/banking-hexagonal-app.war</code> est listé.</span></p>
+          </div>
+        </div>
+      </article>
+
+      <!-- ───────── STEP 2 ───────── -->
+      <article class="lg-step" id="step-2">
+        <div class="lg-step-head">
+          <div class="lg-step-num">2</div>
+          <div>
+            <h3><span lang="en">Clean up the DDD layout and relocate the config classes</span><span lang="fr">Nettoyer l'organisation DDD et déplacer les classes de configuration</span></h3>
+            <div class="lg-step-meta">
+              <span class="lg-chip">10 min</span>
+              <span class="lg-chip"><span lang="en">Package structure</span><span lang="fr">Structure de packages</span></span>
+              <span class="lg-chip"><a href="../../02-Lectures/slides/07-hexagonal/slides.html#slide-15">slide 15</a> · <a href="../../02-Lectures/slides/07-hexagonal/slides.html#slide-36">36</a></span>
+            </div>
+          </div>
+        </div>
+        <div class="lg-step-body">
+          <p class="lg-files"><span lang="en">Files to move:</span><span lang="fr">Fichiers à déplacer :</span> <code>DatabaseMigrationStartup.java</code>, <code>EntityManagerProducer.java</code></p>
+          <div class="lg-task-label"><span lang="en">Task</span><span lang="fr">À faire</span></div>
+          <ol>
+            <li><span lang="en">Create <code>com.bank.infrastructure.config</code> and move <code>DatabaseMigrationStartup.java</code> and <code>EntityManagerProducer.java</code> into it from <code>com.bank.config</code>. Update their <code>package</code> line.</span><span lang="fr">Créez <code>com.bank.infrastructure.config</code> et déplacez-y <code>DatabaseMigrationStartup.java</code> et <code>EntityManagerProducer.java</code> depuis <code>com.bank.config</code>. Mettez à jour leur ligne <code>package</code>.</span></li>
+            <li><span lang="en">Delete the packages that have no place in the hexagon: <code>api</code>, <code>client</code>, <code>config</code> (the rest of it: <code>Logged</code>, <code>LoggingInterceptor</code>, <code>Premium</code>, <code>Standard</code>), <code>dto</code>, <code>event</code>, <code>exception</code>, <code>health</code>, <code>model</code>, <code>service</code>, <code>web</code>.</span><span lang="fr">Supprimez les packages qui n'ont pas leur place dans l'hexagone : <code>api</code>, <code>client</code>, <code>config</code> (le reste : <code>Logged</code>, <code>LoggingInterceptor</code>, <code>Premium</code>, <code>Standard</code>), <code>dto</code>, <code>event</code>, <code>exception</code>, <code>health</code>, <code>model</code>, <code>service</code>, <code>web</code>.</span></li>
+            <li><span lang="en">Delete also <code>domain/repository</code>, <code>domain/service</code>, <code>domain/event</code> and <code>application/dto</code>: they reference the deleted <code>model</code> classes and are rewritten in steps 5, 6 and 7.</span><span lang="fr">Supprimez aussi <code>domain/repository</code>, <code>domain/service</code>, <code>domain/event</code> et <code>application/dto</code> : ils référencent les classes supprimées de <code>model</code> et sont réécrits aux étapes 5, 6 et 7.</span></li>
+            <li><span lang="en">Only <code>domain/valueobject</code> and <code>infrastructure/config</code> remain. The project compiles but does nothing yet.</span><span lang="fr">Seuls <code>domain/valueobject</code> et <code>infrastructure/config</code> subsistent. Le projet compile mais ne fait rien pour l'instant.</span></li>
+          </ol>
+          <details class="lg-hint lg-hint--1">
+            <summary><span lang="en">Hint 1</span><span lang="fr">Indice 1</span></summary>
+            <div class="lg-hint-body">
+              <p><span lang="en">Work from <code>src/main/java/com/bank</code>. The list of packages present only in Lab 06 is given by <code>diff -rq 03-Labs/Lab06-DDD/solution 03-Labs/Lab07-Hexagonal/solution -x docs -x postgresql -x target</code> ("Only in Lab06-DDD/…").</span><span lang="fr">Travaillez depuis <code>src/main/java/com/bank</code>. La liste des packages présents uniquement au Lab 06 est donnée par <code>diff -rq 03-Labs/Lab06-DDD/solution 03-Labs/Lab07-Hexagonal/solution -x docs -x postgresql -x target</code> (« Only in Lab06-DDD/… »).</span></p>
+            </div>
+          </details>
+          <details class="lg-hint lg-hint--2">
+            <summary><span lang="en">Hint 2 — commands</span><span lang="fr">Indice 2 — commandes</span></summary>
+            <div class="lg-hint-body">
+<pre class="dark"><code>cd src/main/java/com/bank
+mkdir -p infrastructure/config
+mv config/DatabaseMigrationStartup.java config/EntityManagerProducer.java infrastructure/config/
+# then edit the two "package com.bank.config;" lines → "package com.bank.infrastructure.config;"
+rm -rf api client config dto event exception health model service web
+rm -rf domain/repository domain/service domain/event application/dto</code></pre>
+            </div>
+          </details>
+          <details class="lg-hint lg-hint--sol">
+            <summary><span lang="en">Solution files</span><span lang="fr">Fichiers solution</span></summary>
+            <div class="lg-hint-body">
+              <p>
+                <a href="https://github.com/oplanson/esipe-javaee/blob/master/03-Labs/Lab07-Hexagonal/solution/src/main/java/com/bank/infrastructure/config/DatabaseMigrationStartup.java"><code>solution/…/DatabaseMigrationStartup.java</code></a> ·
+                <a href="https://github.com/oplanson/esipe-javaee/blob/master/03-Labs/Lab07-Hexagonal/solution/src/main/java/com/bank/infrastructure/config/EntityManagerProducer.java"><code>solution/…/EntityManagerProducer.java</code></a>
+              </p>
+            </div>
+          </details>
+          <div class="lg-checkpoint">
+            <div class="lg-check-label"><span lang="en">Checkpoint</span><span lang="fr">Point de contrôle</span></div>
+            <pre class="dark"><code>mvn -q -DskipTests compile
+find src/main/java -name '*.java' | sort</code></pre>
+            <p><span lang="en">Expected: no compilation error; the list contains the four value-object files and the two <code>infrastructure/config</code> classes, nothing else.</span><span lang="fr">Attendu : aucune erreur de compilation ; la liste contient les quatre fichiers d'objets-valeur et les deux classes de <code>infrastructure/config</code>, rien d'autre.</span></p>
+          </div>
+        </div>
+      </article>
+
+      <!-- ───────── STEP 3 ───────── -->
+      <article class="lg-step" id="step-3">
+        <div class="lg-step-head">
+          <div class="lg-step-num">3</div>
+          <div>
+            <h3><span lang="en">Framework-free value objects — <code>Money</code>, <code>Email</code>, <code>AccountNumber</code>, <code>AccountType</code></span><span lang="fr">Objets-valeur sans framework — <code>Money</code>, <code>Email</code>, <code>AccountNumber</code>, <code>AccountType</code></span></h3>
+            <div class="lg-step-meta">
+              <span class="lg-chip">20 min</span>
+              <span class="lg-chip"><span lang="en">Domain purity</span><span lang="fr">Pureté du domaine</span></span>
+              <span class="lg-chip"><a href="../../02-Lectures/slides/07-hexagonal/slides.html#slide-37">slide 37</a></span>
+            </div>
+          </div>
+        </div>
+        <div class="lg-step-body">
+          <p class="lg-files"><span lang="en">Files to modify</span><span lang="fr">Fichiers à modifier</span> (<code>com.bank.domain.valueobject</code>) : <code>Money.java</code>, <code>Email.java</code>, <code>AccountNumber.java</code>, <code>AccountType.java</code></p>
+          <div class="lg-task-label"><span lang="en">Task</span><span lang="fr">À faire</span></div>
+          <ol>
+            <li><span lang="en">Remove <code>@Embeddable</code> and every <code>jakarta.*</code> import (<code>@NotNull</code>, <code>@Pattern</code>…) from the four value objects: JPA mapping now belongs to the infrastructure.</span><span lang="fr">Retirez <code>@Embeddable</code> et tous les imports <code>jakarta.*</code> (<code>@NotNull</code>, <code>@Pattern</code>…) des quatre objets-valeur : le mapping JPA appartient désormais à l'infrastructure.</span></li>
+            <li><span lang="en"><code>Money</code>: make <code>amount</code> and <code>currency</code> <code>final</code> and drop the <code>protected</code> no-arg constructor that existed only for JPA.</span><span lang="fr"><code>Money</code> : rendez <code>amount</code> et <code>currency</code> <code>final</code> et supprimez le constructeur <code>protected</code> sans argument qui n'existait que pour JPA.</span></li>
+            <li><span lang="en"><code>Email</code>: validate with <code>java.util.regex.Pattern</code> instead of the Bean Validation annotation. <code>AccountNumber</code>: keep the "FR" country code and generate the digits without UUID. <code>AccountType</code>: keep the same rules (CHECKING overdraft, SAVINGS interest).</span><span lang="fr"><code>Email</code> : validez avec <code>java.util.regex.Pattern</code> au lieu de l'annotation Bean Validation. <code>AccountNumber</code> : gardez le code pays « FR » et générez les chiffres sans UUID. <code>AccountType</code> : gardez les mêmes règles (découvert CHECKING, intérêts SAVINGS).</span></li>
+            <li><span lang="en">The public API used later (<code>Money.of</code>, <code>Money.euros</code>, <code>Email.of</code>, <code>AccountNumber.of</code>/<code>generate</code>, <code>AccountType.canWithdraw</code>) must not change.</span><span lang="fr">L'API publique utilisée plus loin (<code>Money.of</code>, <code>Money.euros</code>, <code>Email.of</code>, <code>AccountNumber.of</code>/<code>generate</code>, <code>AccountType.canWithdraw</code>) ne doit pas changer.</span></li>
+          </ol>
+          <details class="lg-hint lg-hint--1">
+            <summary><span lang="en">Hint 1</span><span lang="fr">Indice 1</span></summary>
+            <div class="lg-hint-body">
+              <p><span lang="en">Compare each file with its Lab 06 version: <code>diff Lab06-DDD/solution/src/main/java/com/bank/domain/valueobject/Money.java Lab07-Hexagonal/solution/src/main/java/com/bank/domain/valueobject/Money.java</code>. The behaviour is the same; only framework coupling disappears. Keep <code>equals</code>, <code>hashCode</code>, <code>toString</code>.</span><span lang="fr">Comparez chaque fichier avec sa version du Lab 06 : <code>diff Lab06-DDD/solution/src/main/java/com/bank/domain/valueobject/Money.java Lab07-Hexagonal/solution/src/main/java/com/bank/domain/valueobject/Money.java</code>. Le comportement est identique ; seul le couplage au framework disparaît. Gardez <code>equals</code>, <code>hashCode</code>, <code>toString</code>.</span></p>
+            </div>
+          </details>
+          <details class="lg-hint lg-hint--2">
+            <summary><span lang="en">Hint 2 — shape of the result</span><span lang="fr">Indice 2 — forme du résultat</span></summary>
+            <div class="lg-hint-body">
+<pre class="dark"><code>public class Money {                       // no @Embeddable
+    private final BigDecimal amount;
+    private final String currency;
+    public Money(BigDecimal amount, String currency) { /* validate */ }
+    public static Money of(BigDecimal amount, String currency)
+    public static Money euros(double amount)
+    public Money add(Money other) / subtract / multiply
+    public boolean isGreaterThan(Money o) / isLessThan / isPositive / isNegative / isZero
+}
+public class Email { private static final String EMAIL_PATTERN = "..."; public static Email of(String v) }
+public class AccountNumber { public static AccountNumber of(String v); public static AccountNumber generate() }
+public enum AccountType { CHECKING, SAVINGS; boolean canWithdraw(Money balance, Money amount) }</code></pre>
+            </div>
+          </details>
+          <details class="lg-hint lg-hint--sol">
+            <summary><span lang="en">Solution files</span><span lang="fr">Fichiers solution</span></summary>
+            <div class="lg-hint-body">
+              <p>
+                <a href="https://github.com/oplanson/esipe-javaee/blob/master/03-Labs/Lab07-Hexagonal/solution/src/main/java/com/bank/domain/valueobject/Money.java"><code>solution/…/Money.java</code></a> ·
+                <a href="https://github.com/oplanson/esipe-javaee/blob/master/03-Labs/Lab07-Hexagonal/solution/src/main/java/com/bank/domain/valueobject/Email.java"><code>solution/…/Email.java</code></a> ·
+                <a href="https://github.com/oplanson/esipe-javaee/blob/master/03-Labs/Lab07-Hexagonal/solution/src/main/java/com/bank/domain/valueobject/AccountNumber.java"><code>solution/…/AccountNumber.java</code></a> ·
+                <a href="https://github.com/oplanson/esipe-javaee/blob/master/03-Labs/Lab07-Hexagonal/solution/src/main/java/com/bank/domain/valueobject/AccountType.java"><code>solution/…/AccountType.java</code></a>
+              </p>
+            </div>
+          </details>
+          <div class="lg-checkpoint">
+            <div class="lg-check-label"><span lang="en">Checkpoint</span><span lang="fr">Point de contrôle</span></div>
+            <pre class="dark"><code>mvn -q -DskipTests compile
+grep -rn "import jakarta" src/main/java/com/bank/domain || echo "domain is framework-free"</code></pre>
+            <p><span lang="en">Expected: no compilation error, then <code>domain is framework-free</code>.</span><span lang="fr">Attendu : aucune erreur de compilation, puis <code>domain is framework-free</code>.</span></p>
+          </div>
+        </div>
+      </article>
+
+      <!-- ───────── STEP 4 ───────── -->
+      <article class="lg-step" id="step-4">
+        <div class="lg-step-head">
+          <div class="lg-step-num">4</div>
+          <div>
+            <h3><span lang="en">Pure aggregates — <code>Account</code>, <code>Client</code>, <code>DomainEvent</code></span><span lang="fr">Agrégats purs — <code>Account</code>, <code>Client</code>, <code>DomainEvent</code></span></h3>
+            <div class="lg-step-meta">
+              <span class="lg-chip">40 min</span>
+              <span class="lg-chip"><span lang="en">Domain model without JPA</span><span lang="fr">Modèle de domaine sans JPA</span></span>
+              <span class="lg-chip"><a href="../../02-Lectures/slides/07-hexagonal/slides.html#slide-37">slide 37</a> · <a href="../../02-Lectures/slides/07-hexagonal/slides.html#slide-27">27</a></span>
+            </div>
+          </div>
+        </div>
+        <div class="lg-step-body">
+          <p class="lg-files"><span lang="en">Files to create:</span><span lang="fr">Fichiers à créer :</span> <code>domain/model/Account.java</code>, <code>domain/model/Client.java</code>, <code>domain/event/DomainEvent.java</code></p>
+          <div class="lg-task-label"><span lang="en">Task</span><span lang="fr">À faire</span></div>
+          <ol>
+            <li><span lang="en">Create the marker interface <code>DomainEvent</code> in <code>com.bank.domain.event</code> with a single method <code>LocalDateTime occurredOn()</code>.</span><span lang="fr">Créez l'interface marqueur <code>DomainEvent</code> dans <code>com.bank.domain.event</code> avec une seule méthode <code>LocalDateTime occurredOn()</code>.</span></li>
+            <li><span lang="en">Recreate <code>Account</code> in <code>com.bank.domain.model</code> as a plain class: no <code>@Entity</code>, no <code>@Embedded</code>, no <code>@PrePersist</code>. Keep the business methods <code>deposit</code>, <code>withdraw</code>, <code>close</code>, <code>reactivate</code>, <code>transferTo</code>, <code>canWithdraw</code> and the factory <code>Account.open(...)</code>. Add the constructor used to <em>reconstitute</em> an account from persistence (id, number, balance, type, <code>Long clientId</code>, active).</span><span lang="fr">Recréez <code>Account</code> dans <code>com.bank.domain.model</code> comme classe simple : ni <code>@Entity</code>, ni <code>@Embedded</code>, ni <code>@PrePersist</code>. Gardez les méthodes métier <code>deposit</code>, <code>withdraw</code>, <code>close</code>, <code>reactivate</code>, <code>transferTo</code>, <code>canWithdraw</code> et la fabrique <code>Account.open(...)</code>. Ajoutez le constructeur de <em>reconstitution</em> depuis la persistance (id, numéro, solde, type, <code>Long clientId</code>, actif).</span></li>
+            <li><span lang="en">Recreate <code>Client</code> the same way: factory <code>Client.create(name, email)</code>, <code>updateInfo</code>, <code>upgradeToPremium</code>, <code>downgradeFromPremium</code>, <code>addAccount</code>, <code>removeAccount</code>, and a reconstitution constructor <code>(id, name, email, premium)</code>.</span><span lang="fr">Recréez <code>Client</code> de la même façon : fabrique <code>Client.create(name, email)</code>, <code>updateInfo</code>, <code>upgradeToPremium</code>, <code>downgradeFromPremium</code>, <code>addAccount</code>, <code>removeAccount</code>, et un constructeur de reconstitution <code>(id, name, email, premium)</code>.</span></li>
+            <li><span lang="en">Both aggregates keep a list of <code>DomainEvent</code> (<code>getDomainEvents</code>, <code>clearDomainEvents</code>, protected <code>addDomainEvent</code>) so that the application layer can publish them after saving.</span><span lang="fr">Les deux agrégats gardent une liste de <code>DomainEvent</code> (<code>getDomainEvents</code>, <code>clearDomainEvents</code>, <code>addDomainEvent</code> protégé) pour que la couche application puisse les publier après la sauvegarde.</span></li>
+            <li><span lang="en"><strong>Known gap of the solution, fixed in your version:</strong> in the solution <code>Account.getClientId()</code> returns <code>client != null ? client.getId() : null</code>, so it is <code>null</code> for an account rebuilt from the database. Keep the <code>clientId</code> constructor argument in a field and return it when <code>client</code> is <code>null</code>.</span><span lang="fr"><strong>Écart connu de la solution, corrigé dans votre version :</strong> dans la solution, <code>Account.getClientId()</code> renvoie <code>client != null ? client.getId() : null</code>, donc <code>null</code> pour un compte reconstitué depuis la base. Conservez l'argument <code>clientId</code> du constructeur dans un champ et renvoyez-le quand <code>client</code> est <code>null</code>.</span></li>
+          </ol>
+          <details class="lg-hint lg-hint--1">
+            <summary><span lang="en">Hint 1</span><span lang="fr">Indice 1</span></summary>
+            <div class="lg-hint-body">
+              <p><span lang="en">The Lab 06 classes <code>model/Account.java</code> and <code>model/Client.java</code> are already deleted: start from your memory of Lab 06 (or from <code>git show</code> of the Lab 06 solution) and strip the persistence annotations. <code>Account</code> imports only <code>Money</code>, <code>AccountNumber</code>, <code>AccountType</code> and <code>DomainEvent</code>; <code>Client</code> imports <code>Email</code> and <code>DomainEvent</code>. The invariant checks (positive amount, active account, minimum balance by account type) now live in <code>deposit</code>/<code>withdraw</code>, throwing <code>IllegalArgumentException</code> or <code>IllegalStateException</code>.</span><span lang="fr">Les classes <code>model/Account.java</code> et <code>model/Client.java</code> du Lab 06 sont déjà supprimées : repartez de votre mémoire du Lab 06 (ou d'un <code>git show</code> de la solution du Lab 06) et retirez les annotations de persistance. <code>Account</code> n'importe que <code>Money</code>, <code>AccountNumber</code>, <code>AccountType</code> et <code>DomainEvent</code> ; <code>Client</code> importe <code>Email</code> et <code>DomainEvent</code>. Les contrôles d'invariants (montant positif, compte actif, solde minimum selon le type de compte) vivent désormais dans <code>deposit</code>/<code>withdraw</code>, qui lèvent <code>IllegalArgumentException</code> ou <code>IllegalStateException</code>.</span></p>
+            </div>
+          </details>
+          <details class="lg-hint lg-hint--2">
+            <summary><span lang="en">Hint 2 — signatures</span><span lang="fr">Indice 2 — signatures</span></summary>
+            <div class="lg-hint-body">
+<pre class="dark"><code>public interface DomainEvent { LocalDateTime occurredOn(); }
+
+public class Account {
+    protected Account() {}
+    public Account(AccountNumber n, Money initial, AccountType t, Client client)
+    public Account(Long id, AccountNumber n, Money balance, AccountType t, Client client, boolean active)
+    public Account(Long id, AccountNumber n, Money balance, AccountType t, Long clientId, boolean active)
+    public static Account open(AccountNumber n, Money initial, AccountType t, Client client)
+    public void deposit(Money amount)    public void withdraw(Money amount)
+    public void close()                  public void reactivate()
+    public void transferTo(Account to, Money amount)
+    public boolean canWithdraw(Money amount)
+    public Long getClientId()   // fix: return field clientId when client == null
+    public List&lt;DomainEvent&gt; getDomainEvents()   public void clearDomainEvents()
+}
+
+public class Client {
+    public static Client create(String name, Email email)
+    public Client(Long id, String name, Email email, boolean premium)
+    public void updateInfo(String name, Email email)
+    public void upgradeToPremium()   public void downgradeFromPremium()
+    public void addAccount(Account a)   public void removeAccount(Account a)
+}</code></pre>
+            </div>
+          </details>
+          <details class="lg-hint lg-hint--sol">
+            <summary><span lang="en">Solution files</span><span lang="fr">Fichiers solution</span></summary>
+            <div class="lg-hint-body">
+              <p>
+                <a href="https://github.com/oplanson/esipe-javaee/blob/master/03-Labs/Lab07-Hexagonal/solution/src/main/java/com/bank/domain/model/Account.java"><code>solution/…/Account.java</code></a> ·
+                <a href="https://github.com/oplanson/esipe-javaee/blob/master/03-Labs/Lab07-Hexagonal/solution/src/main/java/com/bank/domain/model/Client.java"><code>solution/…/Client.java</code></a> ·
+                <a href="https://github.com/oplanson/esipe-javaee/blob/master/03-Labs/Lab07-Hexagonal/solution/src/main/java/com/bank/domain/event/DomainEvent.java"><code>solution/…/DomainEvent.java</code></a>
+              </p>
+            </div>
+          </details>
+          <div class="lg-checkpoint">
+            <div class="lg-check-label"><span lang="en">Checkpoint</span><span lang="fr">Point de contrôle</span></div>
+            <pre class="dark"><code>mvn -q -DskipTests compile
+grep -rn "import jakarta" src/main/java/com/bank/domain || echo "domain is framework-free"</code></pre>
+            <p><span lang="en">Expected: no compilation error, then <code>domain is framework-free</code>.</span><span lang="fr">Attendu : aucune erreur de compilation, puis <code>domain is framework-free</code>.</span></p>
+          </div>
+        </div>
+      </article>
+
+      <!-- ───────── STEP 5 ───────── -->
+      <article class="lg-step" id="step-5">
+        <div class="lg-step-head">
+          <div class="lg-step-num">5</div>
+          <div>
+            <h3><span lang="en">Domain events and <code>TransferService</code></span><span lang="fr">Événements de domaine et <code>TransferService</code></span></h3>
+            <div class="lg-step-meta">
+              <span class="lg-chip">20 min</span>
+              <span class="lg-chip"><span lang="en">Domain service without CDI</span><span lang="fr">Service de domaine sans CDI</span></span>
+              <span class="lg-chip"><a href="../../02-Lectures/slides/07-hexagonal/slides.html#slide-38">slide 38</a></span>
+            </div>
+          </div>
+        </div>
+        <div class="lg-step-body">
+          <p class="lg-files"><span lang="en">Files to create:</span><span lang="fr">Fichiers à créer :</span> <code>MoneyDepositedEvent.java</code>, <code>MoneyWithdrawnEvent.java</code>, <code>MoneyTransferredEvent.java</code> (<code>domain/event</code>), <code>TransferService.java</code> (<code>domain/service</code>)</p>
+          <div class="lg-task-label"><span lang="en">Task</span><span lang="fr">À faire</span></div>
+          <ol>
+            <li><span lang="en">Recreate the three immutable event classes with <code>final</code> fields and a validating constructor: <code>MoneyDepositedEvent(Account, Money amount, Money balanceAfter)</code> and its two siblings. They import <code>com.bank.domain.model.Account</code> (not the deleted <code>com.bank.model</code>).</span><span lang="fr">Recréez les trois classes d'événement immuables avec des champs <code>final</code> et un constructeur validant : <code>MoneyDepositedEvent(Account, Money amount, Money balanceAfter)</code> et ses deux équivalents. Elles importent <code>com.bank.domain.model.Account</code> (et non le <code>com.bank.model</code> supprimé).</span></li>
+            <li><span lang="en">Recreate <code>TransferService</code> as a <strong>plain class</strong>: no <code>@ApplicationScoped</code>, no <code>@Inject</code>, no <code>@Transactional</code>, no logger from a framework. Methods: <code>transfer</code>, <code>transferWithFee</code>, <code>calculateTransferFee</code>, <code>canTransfer</code>, <code>canTransferWithFee</code>.</span><span lang="fr">Recréez <code>TransferService</code> comme <strong>classe simple</strong> : ni <code>@ApplicationScoped</code>, ni <code>@Inject</code>, ni <code>@Transactional</code>, ni logger de framework. Méthodes : <code>transfer</code>, <code>transferWithFee</code>, <code>calculateTransferFee</code>, <code>canTransfer</code>, <code>canTransferWithFee</code>.</span></li>
+            <li><span lang="en">Note how it will still be injectable: <code>beans.xml</code> uses <code>bean-discovery-mode="all"</code> (step 14), so CDI treats the plain class as a dependent bean.</span><span lang="fr">Notez comment elle restera injectable : <code>beans.xml</code> utilise <code>bean-discovery-mode="all"</code> (étape 14), donc CDI traite la classe simple comme un bean dépendant.</span></li>
+          </ol>
+          <details class="lg-hint lg-hint--1">
+            <summary><span lang="en">Hint 1</span><span lang="fr">Indice 1</span></summary>
+            <div class="lg-hint-body">
+              <p><span lang="en">Do not copy framework code back from Lab 06 <code>TransferService</code>: its CDI annotations and logger are exactly what this step removes. A transfer debits the source with <code>from.transferTo(to, amount)</code> (or <code>withdraw</code> + <code>deposit</code>) and the fee is a percentage of the amount, lower for a premium client.</span><span lang="fr">Ne recopiez pas le code framework du <code>TransferService</code> du Lab 06 : ses annotations CDI et son logger sont exactement ce que cette étape retire. Un virement débite la source avec <code>from.transferTo(to, amount)</code> (ou <code>withdraw</code> + <code>deposit</code>) et les frais sont un pourcentage du montant, plus faible pour un client premium.</span></p>
+            </div>
+          </details>
+          <details class="lg-hint lg-hint--2">
+            <summary><span lang="en">Hint 2 — signatures</span><span lang="fr">Indice 2 — signatures</span></summary>
+            <div class="lg-hint-body">
+<pre class="dark"><code>public class TransferService {                       // no annotation
+    public void transfer(Account from, Account to, Money amount)
+    public Money transferWithFee(Account from, Account to, Money amount, boolean isPremiumClient)
+    public Money calculateTransferFee(Money amount, boolean isPremiumClient)
+    public boolean canTransfer(Account from, Account to, Money amount)
+    public boolean canTransferWithFee(Account from, Account to, Money amount, boolean isPremiumClient)
+}
+public class MoneyDepositedEvent {
+    private final Account account; private final Money amount;
+    private final Money balanceAfter; private final LocalDateTime occurredAt;
+}</code></pre>
+            </div>
+          </details>
+          <details class="lg-hint lg-hint--sol">
+            <summary><span lang="en">Solution files</span><span lang="fr">Fichiers solution</span></summary>
+            <div class="lg-hint-body">
+              <p>
+                <a href="https://github.com/oplanson/esipe-javaee/blob/master/03-Labs/Lab07-Hexagonal/solution/src/main/java/com/bank/domain/event/MoneyDepositedEvent.java"><code>solution/…/MoneyDepositedEvent.java</code></a> ·
+                <a href="https://github.com/oplanson/esipe-javaee/blob/master/03-Labs/Lab07-Hexagonal/solution/src/main/java/com/bank/domain/event/MoneyWithdrawnEvent.java"><code>solution/…/MoneyWithdrawnEvent.java</code></a> ·
+                <a href="https://github.com/oplanson/esipe-javaee/blob/master/03-Labs/Lab07-Hexagonal/solution/src/main/java/com/bank/domain/event/MoneyTransferredEvent.java"><code>solution/…/MoneyTransferredEvent.java</code></a> ·
+                <a href="https://github.com/oplanson/esipe-javaee/blob/master/03-Labs/Lab07-Hexagonal/solution/src/main/java/com/bank/domain/service/TransferService.java"><code>solution/…/TransferService.java</code></a>
+              </p>
+            </div>
+          </details>
+          <div class="lg-checkpoint">
+            <div class="lg-check-label"><span lang="en">Checkpoint</span><span lang="fr">Point de contrôle</span></div>
+            <pre class="dark"><code>mvn -q -DskipTests compile
+grep -rn "import jakarta" src/main/java/com/bank/domain || echo "domain is framework-free"</code></pre>
+            <p><span lang="en">Expected: no compilation error, then <code>domain is framework-free</code>.</span><span lang="fr">Attendu : aucune erreur de compilation, puis <code>domain is framework-free</code>.</span></p>
+          </div>
+        </div>
+      </article>
+
+      <!-- ───────── STEP 6 ───────── -->
+      <article class="lg-step" id="step-6">
+        <div class="lg-step-head">
+          <div class="lg-step-num">6</div>
+          <div>
+            <h3><span lang="en">Outbound (secondary) ports — repositories and <code>EventPublisher</code></span><span lang="fr">Ports sortants (secondaires) — repositories et <code>EventPublisher</code></span></h3>
+            <div class="lg-step-meta">
+              <span class="lg-chip">15 min</span>
+              <span class="lg-chip"><span lang="en">Secondary ports</span><span lang="fr">Ports secondaires</span></span>
+              <span class="lg-chip"><a href="../../02-Lectures/slides/07-hexagonal/slides.html#slide-25">slide 25</a> · <a href="../../02-Lectures/slides/07-hexagonal/slides.html#slide-39">39</a></span>
+            </div>
+          </div>
+        </div>
+        <div class="lg-step-body">
+          <p class="lg-files"><span lang="en">Files to create</span><span lang="fr">Fichiers à créer</span> (<code>com.bank.application.port.out</code>) : <code>AccountRepository.java</code>, <code>ClientRepository.java</code>, <code>EventPublisher.java</code></p>
+          <div class="lg-task-label"><span lang="en">Task</span><span lang="fr">À faire</span></div>
+          <ol>
+            <li><span lang="en">The repository interfaces of Lab 06 lived in the domain. In the hexagon they are ports owned by the <strong>application</strong> layer: create <code>AccountRepository</code> and <code>ClientRepository</code> in <code>application.port.out</code>, expressed in domain types only (<code>Account</code>, <code>Client</code>, <code>Email</code>, <code>AccountNumber</code>).</span><span lang="fr">Les interfaces repository du Lab 06 vivaient dans le domaine. Dans l'hexagone, ce sont des ports possédés par la couche <strong>application</strong> : créez <code>AccountRepository</code> et <code>ClientRepository</code> dans <code>application.port.out</code>, exprimés uniquement avec des types du domaine (<code>Account</code>, <code>Client</code>, <code>Email</code>, <code>AccountNumber</code>).</span></li>
+            <li><span lang="en">Create <code>EventPublisher</code> with a single method <code>void publish(DomainEvent event)</code>: the application must be able to announce events without knowing CDI.</span><span lang="fr">Créez <code>EventPublisher</code> avec une seule méthode <code>void publish(DomainEvent event)</code> : l'application doit pouvoir annoncer des événements sans connaître CDI.</span></li>
+          </ol>
+          <details class="lg-hint lg-hint--1">
+            <summary><span lang="en">Hint 1</span><span lang="fr">Indice 1</span></summary>
+            <div class="lg-hint-body">
+              <p><span lang="en">A port is a plain Java interface with no annotation. Return <code>Optional</code> for single lookups, <code>List</code> for collections, and make <code>save</code> and <code>delete</code> return <code>void</code>.</span><span lang="fr">Un port est une simple interface Java sans annotation. Retournez <code>Optional</code> pour les recherches unitaires, <code>List</code> pour les collections, et faites retourner <code>void</code> à <code>save</code> et <code>delete</code>.</span></p>
+            </div>
+          </details>
+          <details class="lg-hint lg-hint--2">
+            <summary><span lang="en">Hint 2 — signatures</span><span lang="fr">Indice 2 — signatures</span></summary>
+            <div class="lg-hint-body">
+<pre class="dark"><code>public interface AccountRepository {
+    Optional&lt;Account&gt; findById(Long id);
+    Optional&lt;Account&gt; findByNumber(AccountNumber accountNumber);
+    List&lt;Account&gt; findByClientId(Long clientId);
+    List&lt;Account&gt; findAll();
+    void save(Account account);
+    void delete(Account account);
+    boolean existsByNumber(AccountNumber accountNumber);
+}
+public interface ClientRepository {
+    Optional&lt;Client&gt; findById(Long id);
+    Optional&lt;Client&gt; findByEmail(Email email);
+    List&lt;Client&gt; findAll();
+    List&lt;Client&gt; findPremiumClients();
+    void save(Client client);   void delete(Client client);
+    boolean existsByEmail(Email email);
+}
+public interface EventPublisher { void publish(DomainEvent event); }</code></pre>
+            </div>
+          </details>
+          <details class="lg-hint lg-hint--sol">
+            <summary><span lang="en">Solution files</span><span lang="fr">Fichiers solution</span></summary>
+            <div class="lg-hint-body">
+              <p>
+                <a href="https://github.com/oplanson/esipe-javaee/blob/master/03-Labs/Lab07-Hexagonal/solution/src/main/java/com/bank/application/port/out/AccountRepository.java"><code>solution/…/AccountRepository.java</code></a> ·
+                <a href="https://github.com/oplanson/esipe-javaee/blob/master/03-Labs/Lab07-Hexagonal/solution/src/main/java/com/bank/application/port/out/ClientRepository.java"><code>solution/…/ClientRepository.java</code></a> ·
+                <a href="https://github.com/oplanson/esipe-javaee/blob/master/03-Labs/Lab07-Hexagonal/solution/src/main/java/com/bank/application/port/out/EventPublisher.java"><code>solution/…/EventPublisher.java</code></a>
+              </p>
+            </div>
+          </details>
+          <div class="lg-checkpoint">
+            <div class="lg-check-label"><span lang="en">Checkpoint</span><span lang="fr">Point de contrôle</span></div>
+            <pre class="dark"><code>mvn -q -DskipTests compile
+grep -rln "jakarta" src/main/java/com/bank/application/port || echo "ports are framework-free"</code></pre>
+            <p><span lang="en">Expected: no compilation error, then <code>ports are framework-free</code>.</span><span lang="fr">Attendu : aucune erreur de compilation, puis <code>ports are framework-free</code>.</span></p>
+          </div>
+        </div>
+      </article>
+
+      <!-- ───────── STEP 7 ───────── -->
+      <article class="lg-step" id="step-7">
+        <div class="lg-step-head">
+          <div class="lg-step-num">7</div>
+          <div>
+            <h3><span lang="en">Inbound (primary) ports, commands and DTOs</span><span lang="fr">Ports entrants (primaires), commandes et DTOs</span></h3>
+            <div class="lg-step-meta">
+              <span class="lg-chip">20 min</span>
+              <span class="lg-chip"><span lang="en">Use cases as interfaces</span><span lang="fr">Cas d'usage en interfaces</span></span>
+              <span class="lg-chip"><a href="../../02-Lectures/slides/07-hexagonal/slides.html#slide-22">slide 22</a> · <a href="../../02-Lectures/slides/07-hexagonal/slides.html#slide-23">23</a> · <a href="../../02-Lectures/slides/07-hexagonal/slides.html#slide-40">40</a></span>
+            </div>
+          </div>
+        </div>
+        <div class="lg-step-body">
+          <p class="lg-files"><span lang="en">Files to create:</span><span lang="fr">Fichiers à créer :</span> <code>AccountManagementUseCase.java</code>, <code>ClientManagementUseCase.java</code>, <code>MoneyOperationsUseCase.java</code> (<code>port.in</code>) ; <code>CreateClientCommand.java</code>, <code>UpdateClientCommand.java</code>, <code>OpenAccountCommand.java</code>, <code>DepositCommand.java</code>, <code>WithdrawCommand.java</code>, <code>TransferCommand.java</code> (<code>application.command</code>) ; <code>AccountDTO.java</code>, <code>ClientDTO.java</code> (<code>application.dto</code>)</p>
+          <div class="lg-task-label"><span lang="en">Task</span><span lang="fr">À faire</span></div>
+          <ol>
+            <li><span lang="en">Create the three use-case interfaces in <code>application.port.in</code>. <code>AccountManagementUseCase</code>: open, close, reactivate and query accounts. <code>ClientManagementUseCase</code>: create, update, delete, query clients and upgrade/downgrade premium. <code>MoneyOperationsUseCase</code>: <code>deposit</code>, <code>withdraw</code>, <code>transfer</code>.</span><span lang="fr">Créez les trois interfaces de cas d'usage dans <code>application.port.in</code>. <code>AccountManagementUseCase</code> : ouvrir, fermer, réactiver et consulter les comptes. <code>ClientManagementUseCase</code> : créer, modifier, supprimer, consulter les clients et passer premium/standard. <code>MoneyOperationsUseCase</code> : <code>deposit</code>, <code>withdraw</code>, <code>transfer</code>.</span></li>
+            <li><span lang="en">Create the six commands in <code>application.command</code> as Java <strong>records</strong> that carry domain value objects: <code>CreateClientCommand(String name, Email email, boolean premium)</code>, <code>UpdateClientCommand(Long clientId, String name, Email email, Boolean premium)</code>, <code>OpenAccountCommand(Long clientId, AccountNumber accountNumber, Money initialBalance, AccountType accountType, String currency)</code>, <code>DepositCommand(Long accountId, Money amount)</code>, <code>WithdrawCommand(Long accountId, Money amount)</code>, <code>TransferCommand(Long fromAccountId, Long toAccountId, Money amount)</code>.</span><span lang="fr">Créez les six commandes dans <code>application.command</code> sous forme de <strong>records</strong> Java qui portent des objets-valeur du domaine : <code>CreateClientCommand(String name, Email email, boolean premium)</code>, <code>UpdateClientCommand(Long clientId, String name, Email email, Boolean premium)</code>, <code>OpenAccountCommand(Long clientId, AccountNumber accountNumber, Money initialBalance, AccountType accountType, String currency)</code>, <code>DepositCommand(Long accountId, Money amount)</code>, <code>WithdrawCommand(Long accountId, Money amount)</code>, <code>TransferCommand(Long fromAccountId, Long toAccountId, Money amount)</code>.</span></li>
+            <li><span lang="en">Rewrite <code>AccountDTO</code> and <code>ClientDTO</code> as simple JavaBeans (no domain import): <code>AccountDTO</code> exposes <code>id</code>, <code>accountNumber</code>, <code>balance</code>, <code>currency</code>, <code>accountType</code>, <code>clientId</code>, <code>clientName</code> and <code>getBalanceAsDouble()</code>; <code>ClientDTO</code> exposes <code>id</code>, <code>name</code>, <code>email</code>, <code>premium</code>, <code>accounts</code> and <code>getPremiumStatus()</code>. These names are what the JSP pages read (step 13).</span><span lang="fr">Réécrivez <code>AccountDTO</code> et <code>ClientDTO</code> comme JavaBeans simples (aucun import du domaine) : <code>AccountDTO</code> expose <code>id</code>, <code>accountNumber</code>, <code>balance</code>, <code>currency</code>, <code>accountType</code>, <code>clientId</code>, <code>clientName</code> et <code>getBalanceAsDouble()</code> ; <code>ClientDTO</code> expose <code>id</code>, <code>name</code>, <code>email</code>, <code>premium</code>, <code>accounts</code> et <code>getPremiumStatus()</code>. Ces noms sont ceux que lisent les pages JSP (étape 13).</span></li>
+          </ol>
+          <details class="lg-hint lg-hint--1">
+            <summary><span lang="en">Hint 1</span><span lang="fr">Indice 1</span></summary>
+            <div class="lg-hint-body">
+              <p><span lang="en">The DTO exists so that adapters never see an <code>Account</code>: balance is a <code>BigDecimal</code> plus a <code>currency</code> string, the account type is a <code>String</code>. Commands, on the contrary, carry rich value objects because the adapter has already validated them by building <code>Money</code> or <code>Email</code>.</span><span lang="fr">Le DTO existe pour que les adaptateurs ne voient jamais un <code>Account</code> : le solde est un <code>BigDecimal</code> plus une chaîne <code>currency</code>, le type de compte une <code>String</code>. Les commandes, au contraire, portent des objets-valeur riches car l'adaptateur les a déjà validés en construisant <code>Money</code> ou <code>Email</code>.</span></p>
+            </div>
+          </details>
+          <details class="lg-hint lg-hint--2">
+            <summary><span lang="en">Hint 2 — signatures</span><span lang="fr">Indice 2 — signatures</span></summary>
+            <div class="lg-hint-body">
+<pre class="dark"><code>public interface AccountManagementUseCase {
+    AccountDTO openAccount(OpenAccountCommand command);
+    void closeAccount(Long accountId);        void reactivateAccount(Long accountId);
+    AccountDTO getAccount(Long accountId);    AccountDTO getAccountByNumber(AccountNumber n);
+    List&lt;AccountDTO&gt; getClientAccounts(Long clientId);   List&lt;AccountDTO&gt; getAllAccounts();
+}
+public interface ClientManagementUseCase {
+    ClientDTO createClient(CreateClientCommand c);   ClientDTO updateClient(Long id, UpdateClientCommand c);
+    void deleteClient(Long id);   ClientDTO getClient(Long id);   ClientDTO getClientByEmail(Email e);
+    List&lt;ClientDTO&gt; getAllClients();   List&lt;ClientDTO&gt; getPremiumClients();
+    void upgradeToPremium(Long id);   void downgradeFromPremium(Long id);
+}
+public interface MoneyOperationsUseCase {
+    void deposit(DepositCommand c);   void withdraw(WithdrawCommand c);   void transfer(TransferCommand c);
+}
+public record DepositCommand(Long accountId, Money amount) {}</code></pre>
+            </div>
+          </details>
+          <details class="lg-hint lg-hint--sol">
+            <summary><span lang="en">Solution files</span><span lang="fr">Fichiers solution</span></summary>
+            <div class="lg-hint-body">
+              <p>
+                <a href="https://github.com/oplanson/esipe-javaee/blob/master/03-Labs/Lab07-Hexagonal/solution/src/main/java/com/bank/application/port/in/AccountManagementUseCase.java"><code>solution/…/AccountManagementUseCase.java</code></a> ·
+                <a href="https://github.com/oplanson/esipe-javaee/blob/master/03-Labs/Lab07-Hexagonal/solution/src/main/java/com/bank/application/port/in/ClientManagementUseCase.java"><code>solution/…/ClientManagementUseCase.java</code></a> ·
+                <a href="https://github.com/oplanson/esipe-javaee/blob/master/03-Labs/Lab07-Hexagonal/solution/src/main/java/com/bank/application/port/in/MoneyOperationsUseCase.java"><code>solution/…/MoneyOperationsUseCase.java</code></a> ·
+                <a href="https://github.com/oplanson/esipe-javaee/blob/master/03-Labs/Lab07-Hexagonal/solution/src/main/java/com/bank/application/command/CreateClientCommand.java"><code>solution/…/CreateClientCommand.java</code></a> ·
+                <a href="https://github.com/oplanson/esipe-javaee/blob/master/03-Labs/Lab07-Hexagonal/solution/src/main/java/com/bank/application/command/UpdateClientCommand.java"><code>solution/…/UpdateClientCommand.java</code></a> ·
+                <a href="https://github.com/oplanson/esipe-javaee/blob/master/03-Labs/Lab07-Hexagonal/solution/src/main/java/com/bank/application/command/OpenAccountCommand.java"><code>solution/…/OpenAccountCommand.java</code></a> ·
+                <a href="https://github.com/oplanson/esipe-javaee/blob/master/03-Labs/Lab07-Hexagonal/solution/src/main/java/com/bank/application/command/DepositCommand.java"><code>solution/…/DepositCommand.java</code></a> ·
+                <a href="https://github.com/oplanson/esipe-javaee/blob/master/03-Labs/Lab07-Hexagonal/solution/src/main/java/com/bank/application/command/WithdrawCommand.java"><code>solution/…/WithdrawCommand.java</code></a> ·
+                <a href="https://github.com/oplanson/esipe-javaee/blob/master/03-Labs/Lab07-Hexagonal/solution/src/main/java/com/bank/application/command/TransferCommand.java"><code>solution/…/TransferCommand.java</code></a> ·
+                <a href="https://github.com/oplanson/esipe-javaee/blob/master/03-Labs/Lab07-Hexagonal/solution/src/main/java/com/bank/application/dto/AccountDTO.java"><code>solution/…/AccountDTO.java</code></a> ·
+                <a href="https://github.com/oplanson/esipe-javaee/blob/master/03-Labs/Lab07-Hexagonal/solution/src/main/java/com/bank/application/dto/ClientDTO.java"><code>solution/…/ClientDTO.java</code></a>
+              </p>
+            </div>
+          </details>
+          <div class="lg-checkpoint">
+            <div class="lg-check-label"><span lang="en">Checkpoint</span><span lang="fr">Point de contrôle</span></div>
+            <pre class="dark"><code>mvn -q -DskipTests compile
+ls src/main/java/com/bank/application/command | wc -l</code></pre>
+            <p><span lang="en">Expected: no compilation error, then <code>6</code> command files.</span><span lang="fr">Attendu : aucune erreur de compilation, puis <code>6</code> fichiers de commande.</span></p>
+          </div>
+        </div>
+      </article>
+
+      <!-- ───────── STEP 8 ───────── -->
+      <article class="lg-step" id="step-8">
+        <div class="lg-step-head">
+          <div class="lg-step-num">8</div>
+          <div>
+            <h3><span lang="en">Application services — implement the use cases</span><span lang="fr">Services applicatifs — implémenter les cas d'usage</span></h3>
+            <div class="lg-step-meta">
+              <span class="lg-chip">35 min</span>
+              <span class="lg-chip"><span lang="en">Orchestration &amp; transactions</span><span lang="fr">Orchestration &amp; transactions</span></span>
+              <span class="lg-chip"><a href="../../02-Lectures/slides/07-hexagonal/slides.html#slide-22">slide 22</a> · <a href="../../02-Lectures/slides/07-hexagonal/slides.html#slide-41">41</a></span>
+            </div>
+          </div>
+        </div>
+        <div class="lg-step-body">
+          <p class="lg-files"><span lang="en">Files to create</span><span lang="fr">Fichiers à créer</span> (<code>com.bank.application.service</code>) : <code>AccountManagementService.java</code>, <code>ClientManagementService.java</code>, <code>MoneyOperationsService.java</code></p>
+          <div class="lg-task-label"><span lang="en">Task</span><span lang="fr">À faire</span></div>
+          <ol>
+            <li><span lang="en">Each service is <code>@ApplicationScoped</code> and <code>@Transactional</code> (<code>jakarta.transaction.Transactional</code>), implements one inbound port, and receives its dependencies through <code>@Inject</code> on <em>ports</em> only: <code>AccountRepository</code>, <code>ClientRepository</code>, <code>EventPublisher</code> (and <code>TransferService</code> for money operations). Never inject a JPA class here.</span><span lang="fr">Chaque service est <code>@ApplicationScoped</code> et <code>@Transactional</code> (<code>jakarta.transaction.Transactional</code>), implémente un port entrant et reçoit ses dépendances par <code>@Inject</code> sur des <em>ports</em> uniquement : <code>AccountRepository</code>, <code>ClientRepository</code>, <code>EventPublisher</code> (et <code>TransferService</code> pour les opérations monétaires). N'injectez jamais de classe JPA ici.</span></li>
+            <li><span lang="en"><code>MoneyOperationsService</code>: load the aggregate through the repository port, call the domain method (<code>account.deposit(command.amount())</code>), <code>save</code>, then publish <code>account.getDomainEvents()</code> through <code>EventPublisher</code> and call <code>clearDomainEvents()</code>. <code>transfer</code> loads both accounts, delegates to <code>transferService.transfer(from, to, amount)</code>, saves both and publishes the events of both.</span><span lang="fr"><code>MoneyOperationsService</code> : chargez l'agrégat via le port repository, appelez la méthode du domaine (<code>account.deposit(command.amount())</code>), <code>save</code>, puis publiez <code>account.getDomainEvents()</code> via <code>EventPublisher</code> et appelez <code>clearDomainEvents()</code>. <code>transfer</code> charge les deux comptes, délègue à <code>transferService.transfer(from, to, amount)</code>, sauvegarde les deux et publie les événements des deux.</span></li>
+            <li><span lang="en"><code>AccountManagementService</code> and <code>ClientManagementService</code>: implement every method of their port, map aggregates to DTOs with a private <code>toDTO</code> method, and throw <code>IllegalArgumentException</code> when an id is unknown.</span><span lang="fr"><code>AccountManagementService</code> et <code>ClientManagementService</code> : implémentez chaque méthode de leur port, convertissez les agrégats en DTO avec une méthode privée <code>toDTO</code>, et levez <code>IllegalArgumentException</code> quand un id est inconnu.</span></li>
+            <li><span lang="en">The package <code>application/usecase</code> that exists empty in the solution is a leftover: the services belong in <code>application/service</code>.</span><span lang="fr">Le package <code>application/usecase</code> qui existe vide dans la solution est un reliquat : les services vont dans <code>application/service</code>.</span></li>
+          </ol>
+          <details class="lg-hint lg-hint--1">
+            <summary><span lang="en">Hint 1</span><span lang="fr">Indice 1</span></summary>
+            <div class="lg-hint-body">
+              <p><span lang="en">The service contains no business rule: if you write an <code>if</code> on a balance, move it into <code>Account</code>. The service only sequences: load → domain call → save → publish. Event publication goes through the port, which is why the domain stays unaware of CDI (<a href="../../02-Lectures/slides/07-hexagonal/slides.html#slide-26">slide 26</a>).</span><span lang="fr">Le service ne contient aucune règle métier : si vous écrivez un <code>if</code> sur un solde, déplacez-le dans <code>Account</code>. Le service ne fait qu'enchaîner : charger → appel domaine → sauvegarder → publier. La publication passe par le port, c'est pourquoi le domaine ignore CDI (<a href="../../02-Lectures/slides/07-hexagonal/slides.html#slide-26">slide 26</a>).</span></p>
+            </div>
+          </details>
+          <details class="lg-hint lg-hint--2">
+            <summary><span lang="en">Hint 2 — skeleton of <code>MoneyOperationsService</code></span><span lang="fr">Indice 2 — squelette de <code>MoneyOperationsService</code></span></summary>
+            <div class="lg-hint-body">
+<pre class="dark"><code>@ApplicationScoped
+@Transactional
+public class MoneyOperationsService implements MoneyOperationsUseCase {
+    @Inject private AccountRepository accountRepository;
+    @Inject private TransferService transferService;
+    @Inject private EventPublisher eventPublisher;
+
+    @Override
+    public void deposit(DepositCommand command) {
+        Account account = accountRepository.findById(command.accountId())
+            .orElseThrow(() -&gt; new IllegalArgumentException("Account not found: " + command.accountId()));
+        account.deposit(command.amount());
+        accountRepository.save(account);
+        account.getDomainEvents().forEach(eventPublisher::publish);
+        account.clearDomainEvents();
+    }
+    // withdraw: same shape;  transfer: two accounts + transferService.transfer(...)
+}</code></pre>
+            </div>
+          </details>
+          <details class="lg-hint lg-hint--sol">
+            <summary><span lang="en">Solution files</span><span lang="fr">Fichiers solution</span></summary>
+            <div class="lg-hint-body">
+              <p>
+                <a href="https://github.com/oplanson/esipe-javaee/blob/master/03-Labs/Lab07-Hexagonal/solution/src/main/java/com/bank/application/service/AccountManagementService.java"><code>solution/…/AccountManagementService.java</code></a> ·
+                <a href="https://github.com/oplanson/esipe-javaee/blob/master/03-Labs/Lab07-Hexagonal/solution/src/main/java/com/bank/application/service/ClientManagementService.java"><code>solution/…/ClientManagementService.java</code></a> ·
+                <a href="https://github.com/oplanson/esipe-javaee/blob/master/03-Labs/Lab07-Hexagonal/solution/src/main/java/com/bank/application/service/MoneyOperationsService.java"><code>solution/…/MoneyOperationsService.java</code></a>
+              </p>
+            </div>
+          </details>
+          <div class="lg-checkpoint">
+            <div class="lg-check-label"><span lang="en">Checkpoint</span><span lang="fr">Point de contrôle</span></div>
+            <pre class="dark"><code>mvn -q -DskipTests compile
+grep -rhn "^import" src/main/java/com/bank/application/service | grep -c "infrastructure"</code></pre>
+            <p><span lang="en">Expected: no compilation error, then <code>0</code> (the application layer imports nothing from <code>infrastructure</code>).</span><span lang="fr">Attendu : aucune erreur de compilation, puis <code>0</code> (la couche application n'importe rien d'<code>infrastructure</code>).</span></p>
+          </div>
+        </div>
+      </article>
+
+      <!-- ───────── STEP 9 ───────── -->
+      <article class="lg-step" id="step-9">
+        <div class="lg-step-head">
+          <div class="lg-step-num">9</div>
+          <div>
+            <h3><span lang="en">JPA entities and mappers</span><span lang="fr">Entités JPA et mappers</span></h3>
+            <div class="lg-step-meta">
+              <span class="lg-chip">20 min</span>
+              <span class="lg-chip"><span lang="en">Domain ↔ persistence mapping</span><span lang="fr">Mapping domaine ↔ persistance</span></span>
+              <span class="lg-chip"><a href="../../02-Lectures/slides/07-hexagonal/slides.html#slide-27">slide 27</a> · <a href="../../02-Lectures/slides/07-hexagonal/slides.html#slide-28">28</a></span>
+            </div>
+          </div>
+        </div>
+        <div class="lg-step-body">
+          <p class="lg-files"><span lang="en">Files to create</span><span lang="fr">Fichiers à créer</span> (<code>com.bank.infrastructure.persistence</code>) : <code>entity/AccountEntity.java</code>, <code>entity/ClientEntity.java</code>, <code>mapper/AccountMapper.java</code>, <code>mapper/ClientMapper.java</code></p>
+          <div class="lg-task-label"><span lang="en">Task</span><span lang="fr">À faire</span></div>
+          <ol>
+            <li><span lang="en">The JPA annotations removed from <code>Account</code> and <code>Client</code> come back here, on separate classes. <code>ClientEntity</code>: <code>@Entity @Table(name = "clients")</code>, <code>id</code> (<code>@GeneratedValue(strategy = GenerationType.IDENTITY)</code>), <code>name</code>, <code>email</code> (unique, 100), <code>premium</code> mapped to column <code>is_premium</code>, and <code>@OneToMany(mappedBy = "client")</code> accounts.</span><span lang="fr">Les annotations JPA retirées de <code>Account</code> et <code>Client</code> reviennent ici, sur des classes séparées. <code>ClientEntity</code> : <code>@Entity @Table(name = "clients")</code>, <code>id</code> (<code>@GeneratedValue(strategy = GenerationType.IDENTITY)</code>), <code>name</code>, <code>email</code> (unique, 100), <code>premium</code> mappé sur la colonne <code>is_premium</code>, et comptes en <code>@OneToMany(mappedBy = "client")</code>.</span></li>
+            <li><span lang="en"><code>AccountEntity</code>: <code>@Table(name = "accounts")</code>; flat primitive fields <code>accountNumber</code> (column <code>account_number</code>), <code>balance</code> (<code>BigDecimal</code>), <code>accountType</code> (column <code>account_type</code>, a <code>String</code>), <code>clientId</code> (column <code>client_id</code>), <code>status</code> (<code>ACTIVE</code>/<code>CLOSED</code>), and a read-only <code>@ManyToOne</code> to <code>ClientEntity</code> (<code>insertable = false, updatable = false</code>).</span><span lang="fr"><code>AccountEntity</code> : <code>@Table(name = "accounts")</code> ; champs plats <code>accountNumber</code> (colonne <code>account_number</code>), <code>balance</code> (<code>BigDecimal</code>), <code>accountType</code> (colonne <code>account_type</code>, une <code>String</code>), <code>clientId</code> (colonne <code>client_id</code>), <code>status</code> (<code>ACTIVE</code>/<code>CLOSED</code>), et un <code>@ManyToOne</code> en lecture seule vers <code>ClientEntity</code> (<code>insertable = false, updatable = false</code>).</span></li>
+            <li><span lang="en"><strong>Known gap of the solution, fixed in your version:</strong> the solution maps the balance with <code>@Column(name = "balance", ...)</code>, but migration V5 (Lab 06) added <code>balance_amount</code> as the <code>NOT NULL</code> column that the application must write. Use <code>@Column(name = "balance_amount", nullable = false, precision = 19, scale = 2)</code>.</span><span lang="fr"><strong>Écart connu de la solution, corrigé dans votre version :</strong> la solution mappe le solde avec <code>@Column(name = "balance", ...)</code>, alors que la migration V5 (Lab 06) a ajouté <code>balance_amount</code> comme colonne <code>NOT NULL</code> que l'application doit écrire. Utilisez <code>@Column(name = "balance_amount", nullable = false, precision = 19, scale = 2)</code>.</span></li>
+            <li><span lang="en">Create the two mappers as <code>@ApplicationScoped</code> beans with three methods each: <code>toDomain(entity)</code>, <code>toEntity(domain)</code>, <code>updateEntity(domain, entity)</code>. <code>AccountMapper.toDomain</code> builds the <code>Money</code> in EUR (the database stores no currency), the <code>AccountType</code> from the string and calls the <code>clientId</code> reconstitution constructor of step 4; the account is active unless <code>status</code> is <code>CLOSED</code>.</span><span lang="fr">Créez les deux mappers comme beans <code>@ApplicationScoped</code> avec trois méthodes chacun : <code>toDomain(entity)</code>, <code>toEntity(domain)</code>, <code>updateEntity(domain, entity)</code>. <code>AccountMapper.toDomain</code> construit le <code>Money</code> en EUR (la base ne stocke pas de devise), l'<code>AccountType</code> depuis la chaîne et appelle le constructeur de reconstitution avec <code>clientId</code> de l'étape 4 ; le compte est actif sauf si <code>status</code> vaut <code>CLOSED</code>.</span></li>
+          </ol>
+          <details class="lg-hint lg-hint--1">
+            <summary><span lang="en">Hint 1</span><span lang="fr">Indice 1</span></summary>
+            <div class="lg-hint-body">
+              <p><span lang="en">The columns come from migrations V1–V5 in <code>src/main/resources/db/migration</code> (unchanged in this lab). Read <code>V5__refactor_for_ddd.sql</code> to see the exact names <code>account_number</code>, <code>account_type</code>, <code>balance_amount</code>. The entity may be anemic (getters/setters): its job is only to describe the table.</span><span lang="fr">Les colonnes viennent des migrations V1–V5 dans <code>src/main/resources/db/migration</code> (inchangées dans ce lab). Lisez <code>V5__refactor_for_ddd.sql</code> pour voir les noms exacts <code>account_number</code>, <code>account_type</code>, <code>balance_amount</code>. L'entité peut être anémique (getters/setters) : son rôle est seulement de décrire la table.</span></p>
+            </div>
+          </details>
+          <details class="lg-hint lg-hint--2">
+            <summary><span lang="en">Hint 2 — signatures</span><span lang="fr">Indice 2 — signatures</span></summary>
+            <div class="lg-hint-body">
+<pre class="dark"><code>@Entity @Table(name = "accounts")
+public class AccountEntity {
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY) private Long id;
+    @Column(name = "account_number", unique = true, nullable = false, length = 50) private String accountNumber;
+    @Column(name = "balance_amount", nullable = false, precision = 19, scale = 2) private BigDecimal balance;
+    @Column(name = "account_type", nullable = false, length = 20) private String accountType;
+    @Column(name = "client_id", nullable = false) private Long clientId;
+    @Column(name = "status", length = 20) private String status = "ACTIVE";
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "client_id", insertable = false, updatable = false) private ClientEntity client;
+}
+@ApplicationScoped
+public class AccountMapper {
+    public Account toDomain(AccountEntity entity)
+    public AccountEntity toEntity(Account account)
+    public void updateEntity(Account account, AccountEntity entity)
+}</code></pre>
+            </div>
+          </details>
+          <details class="lg-hint lg-hint--sol">
+            <summary><span lang="en">Solution files</span><span lang="fr">Fichiers solution</span></summary>
+            <div class="lg-hint-body">
+              <p>
+                <a href="https://github.com/oplanson/esipe-javaee/blob/master/03-Labs/Lab07-Hexagonal/solution/src/main/java/com/bank/infrastructure/persistence/entity/AccountEntity.java"><code>solution/…/AccountEntity.java</code></a> ·
+                <a href="https://github.com/oplanson/esipe-javaee/blob/master/03-Labs/Lab07-Hexagonal/solution/src/main/java/com/bank/infrastructure/persistence/entity/ClientEntity.java"><code>solution/…/ClientEntity.java</code></a> ·
+                <a href="https://github.com/oplanson/esipe-javaee/blob/master/03-Labs/Lab07-Hexagonal/solution/src/main/java/com/bank/infrastructure/persistence/mapper/AccountMapper.java"><code>solution/…/AccountMapper.java</code></a> ·
+                <a href="https://github.com/oplanson/esipe-javaee/blob/master/03-Labs/Lab07-Hexagonal/solution/src/main/java/com/bank/infrastructure/persistence/mapper/ClientMapper.java"><code>solution/…/ClientMapper.java</code></a> ·
+                <a href="https://github.com/oplanson/esipe-javaee/blob/master/03-Labs/Lab07-Hexagonal/solution/src/main/resources/db/migration/V5__refactor_for_ddd.sql"><code>V5__refactor_for_ddd.sql</code></a>
+              </p>
+            </div>
+          </details>
+          <div class="lg-checkpoint">
+            <div class="lg-check-label"><span lang="en">Checkpoint</span><span lang="fr">Point de contrôle</span></div>
+            <pre class="dark"><code>mvn -q -DskipTests compile
+grep -n 'name = "balance' src/main/java/com/bank/infrastructure/persistence/entity/AccountEntity.java</code></pre>
+            <p><span lang="en">Expected: no compilation error; the <code>grep</code> shows <code>name = "balance_amount"</code>.</span><span lang="fr">Attendu : aucune erreur de compilation ; le <code>grep</code> affiche <code>name = "balance_amount"</code>.</span></p>
+          </div>
+        </div>
+      </article>
+
+      <!-- ───────── STEP 10 ───────── -->
+      <article class="lg-step" id="step-10">
+        <div class="lg-step-head">
+          <div class="lg-step-num">10</div>
+          <div>
+            <h3><span lang="en">JPA and event adapters</span><span lang="fr">Adaptateurs JPA et événements</span></h3>
+            <div class="lg-step-meta">
+              <span class="lg-chip">20 min</span>
+              <span class="lg-chip"><span lang="en">Secondary adapters</span><span lang="fr">Adaptateurs secondaires</span></span>
+              <span class="lg-chip"><a href="../../02-Lectures/slides/07-hexagonal/slides.html#slide-26">slide 26</a> · <a href="../../02-Lectures/slides/07-hexagonal/slides.html#slide-30">30</a> · <a href="../../02-Lectures/slides/07-hexagonal/slides.html#slide-31">31</a></span>
+            </div>
+          </div>
+        </div>
+        <div class="lg-step-body">
+          <p class="lg-files"><span lang="en">Files to create:</span><span lang="fr">Fichiers à créer :</span> <code>infrastructure/persistence/adapter/JpaAccountAdapter.java</code>, <code>JpaClientAdapter.java</code>, <code>infrastructure/event/CDIEventPublisherAdapter.java</code></p>
+          <div class="lg-task-label"><span lang="en">Task</span><span lang="fr">À faire</span></div>
+          <ol>
+            <li><span lang="en"><code>JpaAccountAdapter implements AccountRepository</code> and <code>JpaClientAdapter implements ClientRepository</code>, both <code>@ApplicationScoped</code>. They inject the <code>EntityManager</code> (produced by <code>EntityManagerProducer</code>, step 2) and the mapper, run JPQL queries on the <em>entities</em> and return <em>domain</em> objects.</span><span lang="fr"><code>JpaAccountAdapter implements AccountRepository</code> et <code>JpaClientAdapter implements ClientRepository</code>, tous deux <code>@ApplicationScoped</code>. Ils injectent l'<code>EntityManager</code> (produit par <code>EntityManagerProducer</code>, étape 2) et le mapper, exécutent des requêtes JPQL sur les <em>entités</em> et renvoient des objets du <em>domaine</em>.</span></li>
+            <li><span lang="en"><code>save</code> must handle both cases: no id → <code>mapper.toEntity</code> + <code>persist</code>, then copy the generated id back with <code>account.setId(...)</code>; existing id → <code>find</code> + <code>mapper.updateEntity</code>.</span><span lang="fr"><code>save</code> doit gérer les deux cas : pas d'id → <code>mapper.toEntity</code> + <code>persist</code>, puis recopier l'id généré avec <code>account.setId(...)</code> ; id existant → <code>find</code> + <code>mapper.updateEntity</code>.</span></li>
+            <li><span lang="en"><code>CDIEventPublisherAdapter implements EventPublisher</code> is <code>@ApplicationScoped</code>, injects <code>Event&lt;DomainEvent&gt;</code> and calls <code>eventBus.fire(event)</code>. Any CDI observer can now react to domain events without the domain knowing it.</span><span lang="fr"><code>CDIEventPublisherAdapter implements EventPublisher</code> est <code>@ApplicationScoped</code>, injecte <code>Event&lt;DomainEvent&gt;</code> et appelle <code>eventBus.fire(event)</code>. Tout observateur CDI peut désormais réagir aux événements de domaine sans que le domaine le sache.</span></li>
+            <li><span lang="en">Check <code>EntityManagerProducer.java</code> and <code>DatabaseMigrationStartup.java</code> (moved in step 2): the producer exposes <code>@PersistenceContext(unitName = "bankingPU")</code>; the startup class runs Flyway at boot.</span><span lang="fr">Vérifiez <code>EntityManagerProducer.java</code> et <code>DatabaseMigrationStartup.java</code> (déplacés à l'étape 2) : le producer expose <code>@PersistenceContext(unitName = "bankingPU")</code> ; la classe de démarrage exécute Flyway au boot.</span></li>
+          </ol>
+          <details class="lg-hint lg-hint--1">
+            <summary><span lang="en">Hint 1</span><span lang="fr">Indice 1</span></summary>
+            <div class="lg-hint-body">
+              <p><span lang="en">The adapter is the only class that mixes both vocabularies: <code>AccountEntity</code> on one side, <code>Account</code> on the other. Use <code>createQuery("SELECT a FROM AccountEntity a WHERE a.clientId = :clientId", AccountEntity.class)</code> and map the list with a stream. Catch <code>NoResultException</code> and return <code>Optional.empty()</code>. The transaction is opened by the application service, not here.</span><span lang="fr">L'adaptateur est la seule classe qui mélange les deux vocabulaires : <code>AccountEntity</code> d'un côté, <code>Account</code> de l'autre. Utilisez <code>createQuery("SELECT a FROM AccountEntity a WHERE a.clientId = :clientId", AccountEntity.class)</code> et convertissez la liste avec un stream. Attrapez <code>NoResultException</code> et renvoyez <code>Optional.empty()</code>. La transaction est ouverte par le service applicatif, pas ici.</span></p>
+            </div>
+          </details>
+          <details class="lg-hint lg-hint--2">
+            <summary><span lang="en">Hint 2 — signatures</span><span lang="fr">Indice 2 — signatures</span></summary>
+            <div class="lg-hint-body">
+<pre class="dark"><code>@ApplicationScoped
+public class JpaAccountAdapter implements AccountRepository {
+    @Inject private EntityManager entityManager;
+    @Inject private AccountMapper accountMapper;
+    public Optional&lt;Account&gt; findById(Long id)      // entityManager.find(AccountEntity.class, id)
+    public void save(Account account)                 // persist or update, then account.setId(...)
+    // findByNumber, findByClientId, findAll, delete, existsByNumber
+}
+@ApplicationScoped
+public class CDIEventPublisherAdapter implements EventPublisher {
+    @Inject private Event&lt;DomainEvent&gt; eventBus;
+    public void publish(DomainEvent event) { eventBus.fire(event); }
+}</code></pre>
+            </div>
+          </details>
+          <details class="lg-hint lg-hint--sol">
+            <summary><span lang="en">Solution files</span><span lang="fr">Fichiers solution</span></summary>
+            <div class="lg-hint-body">
+              <p>
+                <a href="https://github.com/oplanson/esipe-javaee/blob/master/03-Labs/Lab07-Hexagonal/solution/src/main/java/com/bank/infrastructure/persistence/adapter/JpaAccountAdapter.java"><code>solution/…/JpaAccountAdapter.java</code></a> ·
+                <a href="https://github.com/oplanson/esipe-javaee/blob/master/03-Labs/Lab07-Hexagonal/solution/src/main/java/com/bank/infrastructure/persistence/adapter/JpaClientAdapter.java"><code>solution/…/JpaClientAdapter.java</code></a> ·
+                <a href="https://github.com/oplanson/esipe-javaee/blob/master/03-Labs/Lab07-Hexagonal/solution/src/main/java/com/bank/infrastructure/event/CDIEventPublisherAdapter.java"><code>solution/…/CDIEventPublisherAdapter.java</code></a>
+              </p>
+            </div>
+          </details>
+          <div class="lg-checkpoint">
+            <div class="lg-check-label"><span lang="en">Checkpoint</span><span lang="fr">Point de contrôle</span></div>
+            <pre class="dark"><code>mvn -q -DskipTests compile
+grep -rln "implements \(AccountRepository\|ClientRepository\|EventPublisher\)" src/main/java | sort</code></pre>
+            <p><span lang="en">Expected: no compilation error; the three adapter files are listed.</span><span lang="fr">Attendu : aucune erreur de compilation ; les trois fichiers d'adaptateur sont listés.</span></p>
+          </div>
+        </div>
+      </article>
+
+      <!-- ───────── STEP 11 ───────── -->
+      <article class="lg-step" id="step-11">
+        <div class="lg-step-head">
+          <div class="lg-step-num">11</div>
+          <div>
+            <h3><span lang="en">REST adapters v1 and <code>RestApplication</code></span><span lang="fr">Adaptateurs REST v1 et <code>RestApplication</code></span></h3>
+            <div class="lg-step-meta">
+              <span class="lg-chip">15 min</span>
+              <span class="lg-chip"><span lang="en">Primary adapter (REST)</span><span lang="fr">Adaptateur primaire (REST)</span></span>
+              <span class="lg-chip"><a href="../../02-Lectures/slides/07-hexagonal/slides.html#slide-24">slide 24</a> · <a href="../../02-Lectures/slides/07-hexagonal/slides.html#slide-52">52</a></span>
+            </div>
+          </div>
+        </div>
+        <div class="lg-step-body">
+          <p class="lg-files"><span lang="en">Files to create</span><span lang="fr">Fichiers à créer</span> (<code>com.bank.infrastructure.rest</code>) : <code>RestApplication.java</code>, <code>adapter/v1/AccountRestAdapter.java</code>, <code>adapter/v1/ClientRestAdapter.java</code></p>
+          <div class="lg-task-label"><span lang="en">Task</span><span lang="fr">À faire</span></div>
+          <ol>
+            <li><span lang="en"><code>RestApplication extends Application</code> with <code>@ApplicationPath("/api")</code>.</span><span lang="fr"><code>RestApplication extends Application</code> avec <code>@ApplicationPath("/api")</code>.</span></li>
+            <li><span lang="en"><code>ClientRestAdapter</code> at <code>@Path("/v1/clients")</code> (<code>@Produces</code>/<code>@Consumes</code> JSON): <code>POST</code> (201), <code>GET /{id}</code>, <code>GET</code> (list), <code>PUT /{id}</code>, <code>DELETE /{id}</code>. It injects <code>ClientManagementUseCase</code> (the <em>port</em>, never the service class) and declares inner request classes (<code>CreateClientRequest</code>, <code>UpdateClientRequest</code>) with <code>name</code>, <code>email</code> (a plain string) and <code>premium</code>.</span><span lang="fr"><code>ClientRestAdapter</code> sur <code>@Path("/v1/clients")</code> (<code>@Produces</code>/<code>@Consumes</code> JSON) : <code>POST</code> (201), <code>GET /{id}</code>, <code>GET</code> (liste), <code>PUT /{id}</code>, <code>DELETE /{id}</code>. Il injecte <code>ClientManagementUseCase</code> (le <em>port</em>, jamais la classe de service) et déclare des classes de requête internes (<code>CreateClientRequest</code>, <code>UpdateClientRequest</code>) avec <code>name</code>, <code>email</code> (une simple chaîne) et <code>premium</code>.</span></li>
+            <li><span lang="en"><code>AccountRestAdapter</code> at <code>@Path("/v1/accounts")</code>: <code>POST</code> (open: <code>clientId</code>, <code>initialBalance</code>, <code>currency</code>, <code>accountType</code>), <code>GET /{id}</code>, <code>GET</code> (list), <code>DELETE /{id}</code> (close, 204), <code>POST /{id}/deposit</code>, <code>POST /{id}/withdraw</code> (body <code>amount</code>, <code>currency</code>; 204), <code>POST /transfer</code>. It injects <code>AccountManagementUseCase</code> and <code>MoneyOperationsUseCase</code>.</span><span lang="fr"><code>AccountRestAdapter</code> sur <code>@Path("/v1/accounts")</code> : <code>POST</code> (ouvrir : <code>clientId</code>, <code>initialBalance</code>, <code>currency</code>, <code>accountType</code>), <code>GET /{id}</code>, <code>GET</code> (liste), <code>DELETE /{id}</code> (clôture, 204), <code>POST /{id}/deposit</code>, <code>POST /{id}/withdraw</code> (corps <code>amount</code>, <code>currency</code> ; 204), <code>POST /transfer</code>. Il injecte <code>AccountManagementUseCase</code> et <code>MoneyOperationsUseCase</code>.</span></li>
+            <li><span lang="en">Mark v1 with <code>@Deprecated</code> (class and methods): the course teaches API versioning with a deprecated v1.</span><span lang="fr">Marquez v1 avec <code>@Deprecated</code> (classe et méthodes) : le cours enseigne le versioning d'API avec une v1 dépréciée.</span></li>
+            <li><span lang="en">Translate exceptions into status codes: <code>IllegalArgumentException</code> → 400 or 404; <strong>also catch <code>IllegalStateException</code></strong> (business rule violated, for instance a withdrawal above the available balance) and answer 409 or 400 instead of letting it become a 500 (see the "known gaps" in section 8).</span><span lang="fr">Traduisez les exceptions en codes de statut : <code>IllegalArgumentException</code> → 400 ou 404 ; <strong>attrapez aussi <code>IllegalStateException</code></strong> (règle métier violée, par exemple un retrait supérieur au solde disponible) et répondez 409 ou 400 plutôt que de laisser un 500 (voir les « écarts connus » de la section 8).</span></li>
+          </ol>
+          <details class="lg-hint lg-hint--1">
+            <summary><span lang="en">Hint 1</span><span lang="fr">Indice 1</span></summary>
+            <div class="lg-hint-body">
+              <p><span lang="en">The adapter does three things only: build value objects from the request (<code>Money.of(request.amount, currency)</code>, <code>Email.of(request.email)</code>), call the port, wrap the result in a <code>Response</code>. An invalid amount or email makes the value object throw <code>IllegalArgumentException</code> — that is your 400. Inject the ports with <code>@Inject</code>; the adapter itself is <code>@ApplicationScoped</code>.</span><span lang="fr">L'adaptateur ne fait que trois choses : construire des objets-valeur depuis la requête (<code>Money.of(request.amount, currency)</code>, <code>Email.of(request.email)</code>), appeler le port, envelopper le résultat dans une <code>Response</code>. Un montant ou un email invalide fait lever <code>IllegalArgumentException</code> à l'objet-valeur — c'est votre 400. Injectez les ports avec <code>@Inject</code> ; l'adaptateur lui-même est <code>@ApplicationScoped</code>.</span></p>
+            </div>
+          </details>
+          <details class="lg-hint lg-hint--2">
+            <summary><span lang="en">Hint 2 — signatures</span><span lang="fr">Indice 2 — signatures</span></summary>
+            <div class="lg-hint-body">
+<pre class="dark"><code>@ApplicationPath("/api")
+public class RestApplication extends Application {}
+
+@Path("/v1/clients") @Produces(MediaType.APPLICATION_JSON) @Consumes(MediaType.APPLICATION_JSON)
+@ApplicationScoped @Deprecated
+public class ClientRestAdapter {
+    @Inject private ClientManagementUseCase clientManagement;
+    @POST public Response createClient(CreateClientRequest request)
+    @GET @Path("/{id}") public Response getClient(@PathParam("id") Long id)
+    // getAllClients, updateClient, deleteClient
+}
+@Path("/v1/accounts") /* same annotations */
+public class AccountRestAdapter {
+    @Inject private AccountManagementUseCase accountManagement;
+    @Inject private MoneyOperationsUseCase moneyOperations;
+    @POST @Path("/{id}/deposit")
+    public Response deposit(@PathParam("id") Long id, MoneyOperationRequest request)
+}</code></pre>
+            </div>
+          </details>
+          <details class="lg-hint lg-hint--sol">
+            <summary><span lang="en">Solution files</span><span lang="fr">Fichiers solution</span></summary>
+            <div class="lg-hint-body">
+              <p>
+                <a href="https://github.com/oplanson/esipe-javaee/blob/master/03-Labs/Lab07-Hexagonal/solution/src/main/java/com/bank/infrastructure/rest/RestApplication.java"><code>solution/…/RestApplication.java</code></a> ·
+                <a href="https://github.com/oplanson/esipe-javaee/blob/master/03-Labs/Lab07-Hexagonal/solution/src/main/java/com/bank/infrastructure/rest/adapter/v1/AccountRestAdapter.java"><code>solution/…/AccountRestAdapter.java</code></a> ·
+                <a href="https://github.com/oplanson/esipe-javaee/blob/master/03-Labs/Lab07-Hexagonal/solution/src/main/java/com/bank/infrastructure/rest/adapter/v1/ClientRestAdapter.java"><code>solution/…/ClientRestAdapter.java</code></a>
+              </p>
+            </div>
+          </details>
+          <div class="lg-checkpoint">
+            <div class="lg-check-label"><span lang="en">Checkpoint</span><span lang="fr">Point de contrôle</span></div>
+            <pre class="dark"><code>mvn -q -DskipTests compile
+grep -rn '@Path("/v1' src/main/java</code></pre>
+            <p><span lang="en">Expected: no compilation error; two lines, <code>/v1/accounts</code> and <code>/v1/clients</code>.</span><span lang="fr">Attendu : aucune erreur de compilation ; deux lignes, <code>/v1/accounts</code> et <code>/v1/clients</code>.</span></p>
+          </div>
+        </div>
+      </article>
+
+      <!-- ───────── STEP 12 ───────── -->
+      <article class="lg-step" id="step-12">
+        <div class="lg-step-head">
+          <div class="lg-step-num">12</div>
+          <div>
+            <h3><span lang="en">REST adapters v2 — a second adapter on the same ports</span><span lang="fr">Adaptateurs REST v2 — un second adaptateur sur les mêmes ports</span></h3>
+            <div class="lg-step-meta">
+              <span class="lg-chip">15 min</span>
+              <span class="lg-chip"><span lang="en">API versioning</span><span lang="fr">Versioning d'API</span></span>
+              <span class="lg-chip"><a href="../../02-Lectures/slides/07-hexagonal/slides.html#slide-30">slide 30</a> · <a href="../../02-Lectures/slides/07-hexagonal/slides.html#slide-31">31</a></span>
+            </div>
+          </div>
+        </div>
+        <div class="lg-step-body">
+          <p class="lg-files"><span lang="en">Files to create</span><span lang="fr">Fichiers à créer</span> (<code>adapter/v2</code>) : <code>AccountRestAdapterV2.java</code>, <code>ClientRestAdapterV2.java</code> ; <span lang="en">to read:</span><span lang="fr">à lire :</span> <code>API-VERSIONING.md</code></p>
+          <div class="lg-task-label"><span lang="en">Task</span><span lang="fr">À faire</span></div>
+          <ol>
+            <li><span lang="en">Create <code>ClientRestAdapterV2</code> at <code>@Path("/v2/clients")</code> with the v1 operations plus <code>GET /premium</code>, <code>POST /{id}/upgrade</code> and <code>POST /{id}/downgrade</code> (all through <code>ClientManagementUseCase</code>).</span><span lang="fr">Créez <code>ClientRestAdapterV2</code> sur <code>@Path("/v2/clients")</code> avec les opérations de la v1 plus <code>GET /premium</code>, <code>POST /{id}/upgrade</code> et <code>POST /{id}/downgrade</code> (toutes via <code>ClientManagementUseCase</code>).</span></li>
+            <li><span lang="en">Create <code>AccountRestAdapterV2</code> at <code>@Path("/v2/accounts")</code>. The difference with v1 is the payload: money is a nested object <code>{"amount": 50, "currency": "EUR"}</code> (inner class <code>MoneyDTO</code>); opening an account takes <code>initialBalance</code> as such an object; <code>GET /v2/accounts?clientId=1</code> lists the accounts of a client.</span><span lang="fr">Créez <code>AccountRestAdapterV2</code> sur <code>@Path("/v2/accounts")</code>. La différence avec la v1 est la charge utile : l'argent est un objet imbriqué <code>{"amount": 50, "currency": "EUR"}</code> (classe interne <code>MoneyDTO</code>) ; l'ouverture d'un compte prend <code>initialBalance</code> sous cette forme ; <code>GET /v2/accounts?clientId=1</code> liste les comptes d'un client.</span></li>
+            <li><span lang="en">The point of the step: v1 and v2 call the <strong>same</strong> ports. Adding an API version did not touch the domain nor the application layer (<a href="../../02-Lectures/slides/07-hexagonal/slides.html#slide-31">slide 31</a>). Read <code>API-VERSIONING.md</code> in the solution for the deprecation policy.</span><span lang="fr">Le but de l'étape : v1 et v2 appellent les <strong>mêmes</strong> ports. Ajouter une version d'API n'a touché ni le domaine ni la couche application (<a href="../../02-Lectures/slides/07-hexagonal/slides.html#slide-31">slide 31</a>). Lisez <code>API-VERSIONING.md</code> dans la solution pour la politique de dépréciation.</span></li>
+            <li><span lang="en">Apply the same exception handling as in step 11 (catch <code>IllegalStateException</code> too).</span><span lang="fr">Appliquez la même gestion d'exceptions qu'à l'étape 11 (attrapez aussi <code>IllegalStateException</code>).</span></li>
+          </ol>
+          <details class="lg-hint lg-hint--1">
+            <summary><span lang="en">Hint 1</span><span lang="fr">Indice 1</span></summary>
+            <div class="lg-hint-body">
+              <p><span lang="en">Copy the v1 class, change the <code>@Path</code>, remove <code>@Deprecated</code>, and replace <code>amount</code>/<code>currency</code> fields by a <code>MoneyDTO money</code> field. Both adapters can coexist because JAX-RS only needs distinct paths.</span><span lang="fr">Copiez la classe v1, changez le <code>@Path</code>, retirez <code>@Deprecated</code>, et remplacez les champs <code>amount</code>/<code>currency</code> par un champ <code>MoneyDTO money</code>. Les deux adaptateurs coexistent car JAX-RS n'exige que des chemins distincts.</span></p>
+            </div>
+          </details>
+          <details class="lg-hint lg-hint--2">
+            <summary><span lang="en">Hint 2 — signatures</span><span lang="fr">Indice 2 — signatures</span></summary>
+            <div class="lg-hint-body">
+<pre class="dark"><code>@Path("/v2/accounts")
+public class AccountRestAdapterV2 {
+    @POST public Response openAccount(OpenAccountRequestV2 request)       // initialBalance: MoneyDTO
+    @POST @Path("/{id}/deposit")  public Response deposit(@PathParam("id") Long id, MoneyDTO money)
+    @POST @Path("/transfer")      public Response transfer(TransferRequestV2 request)
+    public static class MoneyDTO { public BigDecimal amount; public String currency; }
+}
+@Path("/v2/clients")
+public class ClientRestAdapterV2 {
+    @GET @Path("/premium")             public Response getPremiumClients()
+    @POST @Path("/{id}/upgrade")       public Response upgradeToPremium(@PathParam("id") Long id)
+}</code></pre>
+            </div>
+          </details>
+          <details class="lg-hint lg-hint--sol">
+            <summary><span lang="en">Solution files</span><span lang="fr">Fichiers solution</span></summary>
+            <div class="lg-hint-body">
+              <p>
+                <a href="https://github.com/oplanson/esipe-javaee/blob/master/03-Labs/Lab07-Hexagonal/solution/src/main/java/com/bank/infrastructure/rest/adapter/v2/AccountRestAdapterV2.java"><code>solution/…/AccountRestAdapterV2.java</code></a> ·
+                <a href="https://github.com/oplanson/esipe-javaee/blob/master/03-Labs/Lab07-Hexagonal/solution/src/main/java/com/bank/infrastructure/rest/adapter/v2/ClientRestAdapterV2.java"><code>solution/…/ClientRestAdapterV2.java</code></a> ·
+                <a href="https://github.com/oplanson/esipe-javaee/blob/master/03-Labs/Lab07-Hexagonal/solution/API-VERSIONING.md"><code>solution/API-VERSIONING.md</code></a>
+              </p>
+            </div>
+          </details>
+          <div class="lg-checkpoint">
+            <div class="lg-check-label"><span lang="en">Checkpoint</span><span lang="fr">Point de contrôle</span></div>
+            <pre class="dark"><code>mvn -q -DskipTests compile
+grep -rn '@Path("/v2' src/main/java</code></pre>
+            <p><span lang="en">Expected: no compilation error; two lines, <code>/v2/accounts</code> and <code>/v2/clients</code>.</span><span lang="fr">Attendu : aucune erreur de compilation ; deux lignes, <code>/v2/accounts</code> et <code>/v2/clients</code>.</span></p>
+          </div>
+        </div>
+      </article>
+
+      <!-- ───────── STEP 13 ───────── -->
+      <article class="lg-step" id="step-13">
+        <div class="lg-step-head">
+          <div class="lg-step-num">13</div>
+          <div>
+            <h3><span lang="en">Web adapters (servlets) and JSP views</span><span lang="fr">Adaptateurs web (servlets) et vues JSP</span></h3>
+            <div class="lg-step-meta">
+              <span class="lg-chip">20 min</span>
+              <span class="lg-chip"><span lang="en">Primary adapter (web)</span><span lang="fr">Adaptateur primaire (web)</span></span>
+              <span class="lg-chip"><a href="../../02-Lectures/slides/07-hexagonal/slides.html#slide-24">slide 24</a> · <a href="../../02-Lectures/slides/07-hexagonal/slides.html#slide-53">53</a></span>
+            </div>
+          </div>
+        </div>
+        <div class="lg-step-body">
+          <p class="lg-files"><span lang="en">Files to create:</span><span lang="fr">Fichiers à créer :</span> <code>infrastructure/web/adapter/AccountWebAdapter.java</code>, <code>ClientWebAdapter.java</code> ; <span lang="en">to modify:</span><span lang="fr">à modifier :</span> <code>WEB-INF/views/account-details.jsp</code>, <code>account-form.jsp</code>, <code>account-list.jsp</code>, <code>client-details.jsp</code>, <code>client-form.jsp</code>, <code>client-list.jsp</code>, <code>error.jsp</code></p>
+          <div class="lg-task-label"><span lang="en">Task</span><span lang="fr">À faire</span></div>
+          <ol>
+            <li><span lang="en">Create two <code>HttpServlet</code> subclasses, <code>ClientWebAdapter</code> (URL <code>/clients</code>, <code>/clients/*</code>) and <code>AccountWebAdapter</code> (<code>/accounts</code>, <code>/accounts/*</code>). They are declared in <code>web.xml</code> (step 14), <strong>not</strong> with <code>@WebServlet</code>, and receive the same use-case ports by <code>@Inject</code>.</span><span lang="fr">Créez deux sous-classes de <code>HttpServlet</code>, <code>ClientWebAdapter</code> (URL <code>/clients</code>, <code>/clients/*</code>) et <code>AccountWebAdapter</code> (<code>/accounts</code>, <code>/accounts/*</code>). Elles sont déclarées dans <code>web.xml</code> (étape 14), <strong>pas</strong> avec <code>@WebServlet</code>, et reçoivent les mêmes ports de cas d'usage par <code>@Inject</code>.</span></li>
+            <li><span lang="en">Route on <code>request.getPathInfo()</code>. <code>ClientWebAdapter</code>: <code>GET</code> on <code>/</code>, <code>/new</code>, <code>/{id}</code>, <code>/{id}/edit</code>; <code>POST</code> on <code>/</code>, <code>/{id}</code>, <code>/{id}/delete</code>. Forward to <code>/WEB-INF/views/*.jsp</code> with DTOs in request attributes, or redirect after a POST. On error, forward to <code>error.jsp</code>.</span><span lang="fr">Routez sur <code>request.getPathInfo()</code>. <code>ClientWebAdapter</code> : <code>GET</code> sur <code>/</code>, <code>/new</code>, <code>/{id}</code>, <code>/{id}/edit</code> ; <code>POST</code> sur <code>/</code>, <code>/{id}</code>, <code>/{id}/delete</code>. Faites un forward vers <code>/WEB-INF/views/*.jsp</code> avec les DTO en attributs de requête, ou une redirection après un POST. En cas d'erreur, forward vers <code>error.jsp</code>.</span></li>
+            <li><span lang="en">Use a <code>java.util.logging.Logger</code>, not <code>System.out.println</code> (the solution's <code>ClientWebAdapter</code> has 15 of them).</span><span lang="fr">Utilisez un <code>java.util.logging.Logger</code>, pas <code>System.out.println</code> (le <code>ClientWebAdapter</code> de la solution en contient 15).</span></li>
+            <li><span lang="en">Adapt the seven JSP views of Lab 06: links now point to the new routes (<code>/clients/${client.id}</code>, <code>/clients/${client.id}/edit</code>) instead of <code>/client?action=view&amp;id=…</code>, and the pages read <code>AccountDTO</code>/<code>ClientDTO</code> instead of the former entities.</span><span lang="fr">Adaptez les sept vues JSP du Lab 06 : les liens pointent désormais vers les nouvelles routes (<code>/clients/${client.id}</code>, <code>/clients/${client.id}/edit</code>) au lieu de <code>/client?action=view&amp;id=…</code>, et les pages lisent <code>AccountDTO</code>/<code>ClientDTO</code> au lieu des anciennes entités.</span></li>
+            <li><span lang="en"><strong>Known gaps of the solution JSPs, fixed in your version:</strong> <code>client-details.jsp</code> reads <code>account.number</code> and <code>account.type</code> — the DTO properties are <code>accountNumber</code> and <code>accountType</code>; the account JSPs call <code>account.getClient()</code>, which <code>AccountDTO</code> does not have — use <code>getClientId()</code> and <code>getClientName()</code>; <code>account-list.jsp</code> uses <code>Account::getBalanceAsDouble</code> — use <code>AccountDTO::getBalanceAsDouble</code>.</span><span lang="fr"><strong>Écarts connus des JSP de la solution, corrigés dans votre version :</strong> <code>client-details.jsp</code> lit <code>account.number</code> et <code>account.type</code> — les propriétés du DTO sont <code>accountNumber</code> et <code>accountType</code> ; les JSP de comptes appellent <code>account.getClient()</code>, que <code>AccountDTO</code> n'a pas — utilisez <code>getClientId()</code> et <code>getClientName()</code> ; <code>account-list.jsp</code> utilise <code>Account::getBalanceAsDouble</code> — utilisez <code>AccountDTO::getBalanceAsDouble</code>.</span></li>
+          </ol>
+          <details class="lg-hint lg-hint--1">
+            <summary><span lang="en">Hint 1</span><span lang="fr">Indice 1</span></summary>
+            <div class="lg-hint-body">
+              <p><span lang="en">A servlet is just another adapter: it translates form parameters into a command (<code>new CreateClientCommand(name, Email.of(email), premium)</code>), calls the port and puts the returned DTO in <code>request.setAttribute("client", dto)</code>. A JSP error such as <code>The class AccountDTO does not have the property number</code> appears only when the page is rendered, so open each page once after deployment (section 7).</span><span lang="fr">Une servlet est un adaptateur comme un autre : elle traduit les paramètres de formulaire en commande (<code>new CreateClientCommand(name, Email.of(email), premium)</code>), appelle le port et place le DTO renvoyé dans <code>request.setAttribute("client", dto)</code>. Une erreur JSP comme <code>The class AccountDTO does not have the property number</code> n'apparaît qu'au rendu de la page : ouvrez donc chaque page une fois après le déploiement (section 7).</span></p>
+            </div>
+          </details>
+          <details class="lg-hint lg-hint--2">
+            <summary><span lang="en">Hint 2 — signatures</span><span lang="fr">Indice 2 — signatures</span></summary>
+            <div class="lg-hint-body">
+<pre class="dark"><code>@ApplicationScoped   // CDI-managed servlet, declared in web.xml
+public class ClientWebAdapter extends HttpServlet {
+    @Inject private ClientManagementUseCase clientManagement;
+    @Inject private AccountManagementUseCase accountManagement;
+    protected void doGet(HttpServletRequest request, HttpServletResponse response)
+    protected void doPost(HttpServletRequest request, HttpServletResponse response)
+}
+// JSP: ${account.accountNumber}  ${account.accountType}  ${account.clientName}
+//      ${client.premiumStatus}   &lt;c:forEach items="${client.accounts}" var="account"&gt;</code></pre>
+            </div>
+          </details>
+          <details class="lg-hint lg-hint--sol">
+            <summary><span lang="en">Solution files</span><span lang="fr">Fichiers solution</span></summary>
+            <div class="lg-hint-body">
+              <p>
+                <a href="https://github.com/oplanson/esipe-javaee/blob/master/03-Labs/Lab07-Hexagonal/solution/src/main/java/com/bank/infrastructure/web/adapter/AccountWebAdapter.java"><code>solution/…/AccountWebAdapter.java</code></a> ·
+                <a href="https://github.com/oplanson/esipe-javaee/blob/master/03-Labs/Lab07-Hexagonal/solution/src/main/java/com/bank/infrastructure/web/adapter/ClientWebAdapter.java"><code>solution/…/ClientWebAdapter.java</code></a> ·
+                <a href="https://github.com/oplanson/esipe-javaee/blob/master/03-Labs/Lab07-Hexagonal/solution/src/main/webapp/WEB-INF/views/account-details.jsp"><code>account-details.jsp</code></a> ·
+                <a href="https://github.com/oplanson/esipe-javaee/blob/master/03-Labs/Lab07-Hexagonal/solution/src/main/webapp/WEB-INF/views/account-form.jsp"><code>account-form.jsp</code></a> ·
+                <a href="https://github.com/oplanson/esipe-javaee/blob/master/03-Labs/Lab07-Hexagonal/solution/src/main/webapp/WEB-INF/views/account-list.jsp"><code>account-list.jsp</code></a> ·
+                <a href="https://github.com/oplanson/esipe-javaee/blob/master/03-Labs/Lab07-Hexagonal/solution/src/main/webapp/WEB-INF/views/client-details.jsp"><code>client-details.jsp</code></a> ·
+                <a href="https://github.com/oplanson/esipe-javaee/blob/master/03-Labs/Lab07-Hexagonal/solution/src/main/webapp/WEB-INF/views/client-form.jsp"><code>client-form.jsp</code></a> ·
+                <a href="https://github.com/oplanson/esipe-javaee/blob/master/03-Labs/Lab07-Hexagonal/solution/src/main/webapp/WEB-INF/views/client-list.jsp"><code>client-list.jsp</code></a> ·
+                <a href="https://github.com/oplanson/esipe-javaee/blob/master/03-Labs/Lab07-Hexagonal/solution/src/main/webapp/WEB-INF/views/error.jsp"><code>error.jsp</code></a>
+              </p>
+            </div>
+          </details>
+          <div class="lg-checkpoint">
+            <div class="lg-check-label"><span lang="en">Checkpoint</span><span lang="fr">Point de contrôle</span></div>
+            <pre class="dark"><code>mvn -q -DskipTests compile
+grep -rn "System.out.println" src/main/java || echo "no System.out"
+grep -rn "account\.number\|account\.type\|account\.getClient()" src/main/webapp || echo "JSP properties OK"</code></pre>
+            <p><span lang="en">Expected: no compilation error, then <code>no System.out</code> and <code>JSP properties OK</code>.</span><span lang="fr">Attendu : aucune erreur de compilation, puis <code>no System.out</code> et <code>JSP properties OK</code>.</span></p>
+          </div>
+        </div>
+      </article>
+
+      <!-- ───────── STEP 14 ───────── -->
+      <article class="lg-step" id="step-14">
+        <div class="lg-step-head">
+          <div class="lg-step-num">14</div>
+          <div>
+            <h3><span lang="en">Configuration &amp; packaging</span><span lang="fr">Configuration &amp; packaging</span></h3>
+            <div class="lg-step-meta">
+              <span class="lg-chip">10 min</span>
+              <span class="lg-chip"><span lang="en">Wiring the hexagon</span><span lang="fr">Câblage de l'hexagone</span></span>
+              <span class="lg-chip"><a href="../../02-Lectures/slides/07-hexagonal/slides.html#slide-54">slide 54</a> · <a href="../../02-Lectures/slides/07-hexagonal/slides.html#slide-55">55</a> · <a href="../../02-Lectures/slides/07-hexagonal/slides.html#slide-56">56</a></span>
+            </div>
+          </div>
+        </div>
+        <div class="lg-step-body">
+          <p class="lg-files"><span lang="en">Files to modify:</span><span lang="fr">Fichiers à modifier :</span> <code>docker-compose.yml</code>, <code>src/main/liberty/config/server.xml</code>, <code>bootstrap.properties</code>, <code>src/main/resources/META-INF/persistence.xml</code>, <code>microprofile-config.properties</code>, <code>src/main/webapp/WEB-INF/beans.xml</code>, <code>web.xml</code>, <code>src/main/webapp/index.html</code></p>
+          <div class="lg-task-label"><span lang="en">Task</span><span lang="fr">À faire</span></div>
+          <ol>
+            <li><span lang="en"><code>docker-compose.yml</code>: container <code>lab07-postgres</code>, image <code>postgres:16-alpine</code>, database <code>bankingdb</code> (also in the <code>pg_isready</code> healthcheck), and the port written <code>"127.0.0.1:5432:5432"</code>.</span><span lang="fr"><code>docker-compose.yml</code> : conteneur <code>lab07-postgres</code>, image <code>postgres:16-alpine</code>, base <code>bankingdb</code> (aussi dans le healthcheck <code>pg_isready</code>), et le port écrit <code>"127.0.0.1:5432:5432"</code>.</span></li>
+            <li><span lang="en"><code>server.xml</code>: <code>webApplication</code> id and location → <code>banking-hexagonal-app</code> / <code>banking-hexagonal-app.war</code>; server description; keep <code>com.bank.*=fine</code> in <code>traceSpecification</code> (the solution's <code>all</code> is far too verbose). The <code>httpEndpoint</code> keeps <code>host="*"</code>: inside the container that is normal, the exposure is controlled by <code>-p 127.0.0.1:9080:9080</code>.</span><span lang="fr"><code>server.xml</code> : id et location du <code>webApplication</code> → <code>banking-hexagonal-app</code> / <code>banking-hexagonal-app.war</code> ; description du serveur ; gardez <code>com.bank.*=fine</code> dans <code>traceSpecification</code> (le <code>all</code> de la solution est beaucoup trop verbeux). Le <code>httpEndpoint</code> garde <code>host="*"</code> : dans le conteneur c'est normal, l'exposition est contrôlée par <code>-p 127.0.0.1:9080:9080</code>.</span></li>
+            <li><span lang="en"><code>bootstrap.properties</code>: <code>db_name=bankingdb</code> (the Lab 07 database); the solution also sets <code>db_host=postgres</code>, which only works on a compose network. We override it at run time with <code>-e DB_HOST=127.0.0.1 …</code> (see the redeploy loop), so that <code>${db.host}</code>, <code>${db.port}</code>… resolve.</span><span lang="fr"><code>bootstrap.properties</code> : <code>db_name=bankingdb</code> (la base du Lab 07) ; la solution fixe aussi <code>db_host=postgres</code>, ce qui ne marche que sur un réseau compose. On le surcharge à l'exécution avec <code>-e DB_HOST=127.0.0.1 …</code> (voir la boucle de redéploiement), pour que <code>${db.host}</code>, <code>${db.port}</code>… se résolvent.</span></li>
+            <li><span lang="en"><code>persistence.xml</code>: unit <code>bankingPU</code>, <code>jta-data-source</code> <code>jdbc/bankingDS</code>, and the two <code>&lt;class&gt;</code> entries now in <code>com.bank.infrastructure.persistence.entity</code> (<code>ClientEntity</code>, <code>AccountEntity</code>). Do not copy the <code>hibernate.*</code> properties of the solution: Liberty uses EclipseLink, they have no effect.</span><span lang="fr"><code>persistence.xml</code> : unité <code>bankingPU</code>, <code>jta-data-source</code> <code>jdbc/bankingDS</code>, et les deux entrées <code>&lt;class&gt;</code> désormais dans <code>com.bank.infrastructure.persistence.entity</code> (<code>ClientEntity</code>, <code>AccountEntity</code>). Ne copiez pas les propriétés <code>hibernate.*</code> de la solution : Liberty utilise EclipseLink, elles n'ont aucun effet.</span></li>
+            <li><span lang="en"><code>microprofile-config.properties</code>: keep only <code>app.name</code>; drop the unused <code>db.url</code>. <code>beans.xml</code>: <code>bean-discovery-mode="all"</code> (version 4.0) so that plain classes such as <code>TransferService</code> and the mappers are beans.</span><span lang="fr"><code>microprofile-config.properties</code> : ne gardez que <code>app.name</code> ; retirez le <code>db.url</code> inutilisé. <code>beans.xml</code> : <code>bean-discovery-mode="all"</code> (version 4.0) pour que les classes simples comme <code>TransferService</code> et les mappers soient des beans.</span></li>
+            <li><span lang="en"><code>web.xml</code>: declare the two servlets (<code>ClientWebAdapter</code>, <code>AccountWebAdapter</code>) with their <code>url-pattern</code> mappings, keep the welcome file and the 404/500 error pages; remove the Lab 05 <code>context-param</code> entries. <code>index.html</code>: update the title and subtitle to Lab 07 and keep the REST links to <code>/api/v1/...</code> and <code>/api/v2/...</code>.</span><span lang="fr"><code>web.xml</code> : déclarez les deux servlets (<code>ClientWebAdapter</code>, <code>AccountWebAdapter</code>) avec leurs mappings <code>url-pattern</code>, gardez le welcome file et les pages d'erreur 404/500 ; retirez les <code>context-param</code> du Lab 05. <code>index.html</code> : mettez à jour le titre et le sous-titre pour le Lab 07 et gardez les liens REST vers <code>/api/v1/...</code> et <code>/api/v2/...</code>.</span></li>
+          </ol>
+          <details class="lg-hint lg-hint--1">
+            <summary><span lang="en">Hint 1</span><span lang="fr">Indice 1</span></summary>
+            <div class="lg-hint-body">
+              <p><span lang="en">Use <code>diff</code> on each file against its Lab 06 version to see the minimal change, for example <code>diff Lab06-DDD/solution/src/main/liberty/config/server.xml Lab07-Hexagonal/solution/src/main/liberty/config/server.xml</code>. Resource files carry no logic: only names change.</span><span lang="fr">Utilisez <code>diff</code> sur chaque fichier contre sa version du Lab 06 pour voir le changement minimal, par exemple <code>diff Lab06-DDD/solution/src/main/liberty/config/server.xml Lab07-Hexagonal/solution/src/main/liberty/config/server.xml</code>. Les fichiers de ressources ne portent aucune logique : seuls les noms changent.</span></p>
+            </div>
+          </details>
+          <details class="lg-hint lg-hint--2">
+            <summary><span lang="en">Hint 2 — key lines</span><span lang="fr">Indice 2 — lignes clés</span></summary>
+            <div class="lg-hint-body">
+<pre class="dark"><code># docker-compose.yml
+    container_name: lab07-postgres
+    ports:
+      - "127.0.0.1:5432:5432"
+
+&lt;!-- server.xml --&gt;
+&lt;webApplication id="banking-hexagonal-app" location="banking-hexagonal-app.war" contextRoot="/" /&gt;
+traceSpecification="*=info:com.bank.*=fine"
+
+&lt;!-- web.xml --&gt;
+&lt;servlet-class&gt;com.bank.infrastructure.web.adapter.ClientWebAdapter&lt;/servlet-class&gt;
+&lt;url-pattern&gt;/clients&lt;/url-pattern&gt;   &lt;url-pattern&gt;/clients/*&lt;/url-pattern&gt;</code></pre>
+            </div>
+          </details>
+          <details class="lg-hint lg-hint--sol">
+            <summary><span lang="en">Solution files</span><span lang="fr">Fichiers solution</span></summary>
+            <div class="lg-hint-body">
+              <p>
+                <a href="https://github.com/oplanson/esipe-javaee/blob/master/03-Labs/Lab07-Hexagonal/solution/docker-compose.yml"><code>solution/docker-compose.yml</code></a> ·
+                <a href="https://github.com/oplanson/esipe-javaee/blob/master/03-Labs/Lab07-Hexagonal/solution/src/main/liberty/config/server.xml"><code>solution/…/server.xml</code></a> ·
+                <a href="https://github.com/oplanson/esipe-javaee/blob/master/03-Labs/Lab07-Hexagonal/solution/src/main/liberty/config/bootstrap.properties"><code>solution/…/bootstrap.properties</code></a> ·
+                <a href="https://github.com/oplanson/esipe-javaee/blob/master/03-Labs/Lab07-Hexagonal/solution/src/main/resources/META-INF/persistence.xml"><code>solution/…/persistence.xml</code></a> ·
+                <a href="https://github.com/oplanson/esipe-javaee/blob/master/03-Labs/Lab07-Hexagonal/solution/src/main/resources/META-INF/microprofile-config.properties"><code>solution/…/microprofile-config.properties</code></a> ·
+                <a href="https://github.com/oplanson/esipe-javaee/blob/master/03-Labs/Lab07-Hexagonal/solution/src/main/webapp/WEB-INF/beans.xml"><code>solution/…/beans.xml</code></a> ·
+                <a href="https://github.com/oplanson/esipe-javaee/blob/master/03-Labs/Lab07-Hexagonal/solution/src/main/webapp/WEB-INF/web.xml"><code>solution/…/web.xml</code></a> ·
+                <a href="https://github.com/oplanson/esipe-javaee/blob/master/03-Labs/Lab07-Hexagonal/solution/src/main/webapp/index.html"><code>solution/…/index.html</code></a>
+              </p>
+            </div>
+          </details>
+          <div class="lg-checkpoint">
+            <div class="lg-check-label"><span lang="en">Checkpoint</span><span lang="fr">Point de contrôle</span></div>
+            <pre class="dark"><code>mvn -q -DskipTests package
+podman-compose -f docker-compose.yml up -d
+podman build -t banking-hexagonal-app:lab07 -f Containerfile .
+podman rm -f banking-lab07 2&gt;/dev/null
+podman run -d --name banking-lab07 -p 127.0.0.1:9080:9080 --network host \
+  -e DB_HOST=127.0.0.1 -e DB_PORT=5432 -e DB_NAME=bankingdb \
+  -e DB_USER=bankuser -e DB_PASSWORD=bankpass banking-hexagonal-app:lab07
+until curl -fs http://localhost:9080/ &gt;/dev/null; do sleep 2; done; echo "ready"</code></pre>
+            <p><span lang="en">Expected: the build succeeds, the image builds, the container starts and <code>ready</code> is printed. Open <a href="http://localhost:9080/">http://localhost:9080/</a> in the browser.</span><span lang="fr">Attendu : le build réussit, l'image se construit, le conteneur démarre et <code>ready</code> s'affiche. Ouvrez <a href="http://localhost:9080/">http://localhost:9080/</a> dans le navigateur.</span></p>
+          </div>
+        </div>
+      </article>
+    </section>
+
+    <!-- ═════════════ 6. RUN ═════════════ -->
+    <section class="lg-section" id="run">
+      <h2><span class="lg-sec-num">06</span><span lang="en">Run and operate</span><span lang="fr">Exécution</span></h2>
+      <table class="slide-table">
+        <thead><tr><th><span lang="en">Purpose</span><span lang="fr">Usage</span></th><th><span lang="en">Command</span><span lang="fr">Commande</span></th></tr></thead>
+        <tbody>
+          <tr><td><span lang="en">Start/restart after a change</span><span lang="fr">Démarrer/redémarrer après un changement</span></td><td><span lang="en">redeploy loop from <a href="#setup">Setup</a></span><span lang="fr">boucle de redéploiement de la <a href="#setup">Préparation</a></span></td></tr>
+          <tr><td><span lang="en">Follow server logs</span><span lang="fr">Suivre les logs du serveur</span></td><td><code>podman logs -f banking-lab07</code></td></tr>
+          <tr><td><span lang="en">Stop database</span><span lang="fr">Arrêter la base</span></td><td><code>podman stop lab07-postgres</code></td></tr>
+          <tr><td><span lang="en">Stop and clean all</span><span lang="fr">Tout arrêter et nettoyer</span></td><td><code>podman rm -f banking-lab07 lab07-postgres</code></td></tr>
+        </tbody>
+      </table>
+      <table class="slide-table">
+        <thead><tr><th>URL</th><th><span lang="en">What you get</span><span lang="fr">Ce que vous obtenez</span></th></tr></thead>
+        <tbody>
+          <tr><td><a href="http://localhost:9080/">http://localhost:9080/</a></td><td><span lang="en">Home page</span><span lang="fr">Page d'accueil</span></td></tr>
+          <tr><td><a href="http://localhost:9080/clients">http://localhost:9080/clients</a></td><td><span lang="en">Client list (JSP, web adapter)</span><span lang="fr">Liste des clients (JSP, adaptateur web)</span></td></tr>
+          <tr><td><a href="http://localhost:9080/accounts">http://localhost:9080/accounts</a></td><td><span lang="en">Account list (JSP, web adapter)</span><span lang="fr">Liste des comptes (JSP, adaptateur web)</span></td></tr>
+          <tr><td><a href="http://localhost:9080/api/v1/clients">http://localhost:9080/api/v1/clients</a></td><td><span lang="en">REST v1 (deprecated) — clients</span><span lang="fr">REST v1 (dépréciée) — clients</span></td></tr>
+          <tr><td><a href="http://localhost:9080/api/v2/clients">http://localhost:9080/api/v2/clients</a></td><td><span lang="en">REST v2 — clients</span><span lang="fr">REST v2 — clients</span></td></tr>
+          <tr><td><a href="http://localhost:9080/api/v2/clients/premium">http://localhost:9080/api/v2/clients/premium</a></td><td><span lang="en">REST v2 — premium clients</span><span lang="fr">REST v2 — clients premium</span></td></tr>
+          <tr><td><a href="http://localhost:9080/health">http://localhost:9080/health</a></td><td><span lang="en">MicroProfile Health (no custom check in this lab)</span><span lang="fr">MicroProfile Health (aucun contrôle personnalisé dans ce lab)</span></td></tr>
+          <tr><td><a href="http://localhost:9080/metrics">http://localhost:9080/metrics</a></td><td><span lang="en">MicroProfile Metrics</span><span lang="fr">MicroProfile Metrics</span></td></tr>
+        </tbody>
+      </table>
+      <div class="lg-callout lg-callout--warn">
+        <div lang="en">
+          <div class="lg-callout-title">About the provided scripts (<code>podman-test.sh</code>, <code>docker-test.sh</code>, <code>run-lab.sh</code>, <code>test-lab.sh</code>)</div>
+          <p>These scripts stop and remove <strong>any container that already uses the target ports</strong> before starting, and some run <code>down -v</code> or prune commands that delete volumes and images. This includes resources from other labs. Use the explicit commands in this guide instead. The scripts are provided as a convenience only.</p>
+        </div>
+        <div lang="fr">
+          <div class="lg-callout-title">À propos des scripts fournis (<code>podman-test.sh</code>, <code>docker-test.sh</code>, <code>run-lab.sh</code>, <code>test-lab.sh</code>)</div>
+          <p>Ces scripts arrêtent et suppriment <strong>tout conteneur qui utilise déjà les ports cibles</strong> avant de démarrer, et certains lancent <code>down -v</code> ou des commandes de nettoyage (prune) qui suppriment volumes et images. Cela inclut des ressources d'autres labs. Utilisez les commandes explicites de ce guide à la place. Les scripts sont fournis uniquement par commodité.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═════════════ 7. VALIDATE ═════════════ -->
+    <section class="lg-section" id="validate">
+      <h2><span class="lg-sec-num">07</span><span lang="en">Validate your work</span><span lang="fr">Valider votre travail</span></h2>
+      <p>
+        <span lang="en">Run these checks once everything is deployed. Each line shows the expected result <strong>for your version with the fixes of steps 4, 9, 11–13</strong>. The seed data of migration V1 provides clients 1 and following.</span>
+        <span lang="fr">Lancez ces vérifications une fois tout déployé. Chaque ligne indique le résultat attendu <strong>pour votre version avec les corrections des étapes 4, 9, 11–13</strong>. Les données de départ de la migration V1 fournissent les clients 1 et suivants.</span>
+      </p>
+      <pre class="dark"><code>B=http://localhost:9080
+
+# Health and metrics
+curl -s $B/health | python3 -m json.tool | grep '"status"'
+curl -s -o /dev/null -w '%{http_code}\n' $B/metrics
+
+# REST v1 (deprecated): create a client, open an account, deposit
+curl -s -X POST $B/api/v1/clients -H "Content-Type: application/json" \
+  -d '{"name":"Alice Dupont","email":"alice@example.com","premium":false}' \
+  -o /dev/null -w '%{http_code}\n'
+curl -s -X POST $B/api/v1/accounts -H "Content-Type: application/json" \
+  -d '{"clientId":1,"initialBalance":100,"currency":"EUR","accountType":"CHECKING"}' \
+  -o /dev/null -w '%{http_code}\n'
+curl -s -X POST $B/api/v1/accounts/1/deposit -H "Content-Type: application/json" \
+  -d '{"amount":50,"currency":"EUR"}' -o /dev/null -w '%{http_code}\n'
+
+# REST v2: same ports, nested money object
+curl -s -X POST $B/api/v2/accounts/1/withdraw -H "Content-Type: application/json" \
+  -d '{"amount":20,"currency":"EUR"}' -o /dev/null -w '%{http_code}\n'
+curl -s $B/api/v2/clients/premium | python3 -m json.tool | head -5
+
+# Business rules
+curl -s -X POST $B/api/v1/clients -H "Content-Type: application/json" \
+  -d '{"name":"Alice Bis","email":"alice@example.com","premium":false}' -o /dev/null -w '%{http_code}\n'
+curl -s -X POST $B/api/v2/accounts/1/withdraw -H "Content-Type: application/json" \
+  -d '{"amount":1000000,"currency":"EUR"}' -o /dev/null -w '%{http_code}\n'
+
+# JSP pages
+for p in clients accounts clients/1; do curl -s -o /dev/null -w "$p %{http_code}\n" $B/$p; done</code></pre>
+      <table class="slide-table">
+        <thead><tr><th><span lang="en">Check</span><span lang="fr">Contrôle</span></th><th><span lang="en">Expected result</span><span lang="fr">Résultat attendu</span></th></tr></thead>
+        <tbody>
+          <tr><td><code>/health status</code></td><td><code>"status": "UP"</code></td></tr>
+          <tr><td><code>/metrics</code></td><td><code>200</code></td></tr>
+          <tr><td><span lang="en">Create client (v1)</span><span lang="fr">Créer un client (v1)</span></td><td><code>201</code></td></tr>
+          <tr><td><span lang="en">Open account (v1)</span><span lang="fr">Ouvrir un compte (v1)</span></td><td><code>201</code></td></tr>
+          <tr><td><span lang="en">Deposit (v1), withdraw (v2)</span><span lang="fr">Dépôt (v1), retrait (v2)</span></td><td><code>204</code></td></tr>
+          <tr><td><span lang="en">Duplicate email</span><span lang="fr">Email en double</span></td><td><code>400</code> <span lang="en">(or another 4xx; the solution as shipped answers 500)</span><span lang="fr">(ou un autre 4xx ; la solution telle que livrée répond 500)</span></td></tr>
+          <tr><td><span lang="en">Withdrawal above the balance</span><span lang="fr">Retrait supérieur au solde</span></td><td><code>400</code> / <code>409</code> <span lang="en">(the solution as shipped answers 500)</span><span lang="fr">(la solution telle que livrée répond 500)</span></td></tr>
+          <tr><td><span lang="en">JSP pages</span><span lang="fr">Pages JSP</span></td><td><code>200</code> <span lang="en">for all three</span><span lang="fr">pour les trois</span></td></tr>
+        </tbody>
+      </table>
+      <h3><span lang="en">Validation checklist</span><span lang="fr">Checklist de validation</span></h3>
+      <ul class="lg-checklist">
+        <li><label><input type="checkbox"/><span lang="en">The project builds with <code>mvn -DskipTests package</code> and the image builds</span><span lang="fr">Le projet se compile avec <code>mvn -DskipTests package</code> et l'image se construit</span></label></li>
+        <li><label><input type="checkbox"/><span lang="en"><code>grep -rn "import jakarta" src/main/java/com/bank/domain</code> returns nothing</span><span lang="fr"><code>grep -rn "import jakarta" src/main/java/com/bank/domain</code> ne retourne rien</span></label></li>
+        <li><label><input type="checkbox"/><span lang="en">No class under <code>application</code> imports anything from <code>infrastructure</code></span><span lang="fr">Aucune classe sous <code>application</code> n'importe quoi que ce soit d'<code>infrastructure</code></span></label></li>
+        <li><label><input type="checkbox"/><span lang="en">Both <code>/api/v1/...</code> and <code>/api/v2/...</code> work and call the same use-case ports</span><span lang="fr"><code>/api/v1/...</code> et <code>/api/v2/...</code> fonctionnent et appellent les mêmes ports de cas d'usage</span></label></li>
+        <li><label><input type="checkbox"/><span lang="en">The three JSP pages render without a server error</span><span lang="fr">Les trois pages JSP s'affichent sans erreur serveur</span></label></li>
+        <li><label><input type="checkbox"/><span lang="en">I can name which classes are primary ports, secondary ports, primary adapters, secondary adapters</span><span lang="fr">Je sais nommer quelles classes sont des ports primaires, des ports secondaires, des adaptateurs primaires, des adaptateurs secondaires</span></label></li>
+        <li><label><input type="checkbox"/><span lang="en">I can explain why <code>EventPublisher</code> is a port and <code>CDIEventPublisherAdapter</code> an adapter</span><span lang="fr">Je sais expliquer pourquoi <code>EventPublisher</code> est un port et <code>CDIEventPublisherAdapter</code> un adaptateur</span></label></li>
+        <li><label><input type="checkbox"/><span lang="en">I can explain why mappers exist between <code>Account</code> and <code>AccountEntity</code></span><span lang="fr">Je sais expliquer pourquoi des mappers existent entre <code>Account</code> et <code>AccountEntity</code></span></label></li>
+      </ul>
+    </section>
+
+    <!-- ═════════════ 8. COMPARE ═════════════ -->
+    <section class="lg-section" id="compare">
+      <h2><span class="lg-sec-num">08</span><span lang="en">Compare with the solution</span><span lang="fr">Comparer à la solution</span></h2>
+      <p>
+        <span lang="en">Your code does not have to match the solution character by character. Behaviour must match. To see differences:</span>
+        <span lang="fr">Votre code n'a pas à être identique à la solution caractère par caractère. Le comportement doit être le même. Pour voir les différences :</span>
+      </p>
+      <pre class="dark"><code>diff -rq 03-Labs/Lab07-Hexagonal/starter 03-Labs/Lab07-Hexagonal/solution \
+  -x target -x docs -x postgresql</code></pre>
+      <h3><span lang="en">Expected differences</span><span lang="fr">Différences attendues</span></h3>
+      <ul>
+        <li><span lang="en">Files only in the solution: <code>API-VERSIONING.md</code>, the <code>docs/</code> site, the <code>postgresql/</code> driver folder (generated), and the empty folder <code>application/usecase</code>.</span><span lang="fr">Fichiers uniquement dans la solution : <code>API-VERSIONING.md</code>, le site <code>docs/</code>, le dossier de driver <code>postgresql/</code> (généré), et le dossier vide <code>application/usecase</code>.</span></li>
+        <li><span lang="en">Files that differ on purpose: the fixes listed below, <code>persistence.xml</code> (no <code>hibernate.*</code>), <code>server.xml</code> (<code>fine</code> instead of <code>all</code>), <code>docker-compose.yml</code> (<code>127.0.0.1:</code> prefix), <code>microprofile-config.properties</code>.</span><span lang="fr">Fichiers qui diffèrent volontairement : les corrections listées ci-dessous, <code>persistence.xml</code> (sans <code>hibernate.*</code>), <code>server.xml</code> (<code>fine</code> au lieu de <code>all</code>), <code>docker-compose.yml</code> (préfixe <code>127.0.0.1:</code>), <code>microprofile-config.properties</code>.</span></li>
+      </ul>
+      <h3><span lang="en">Known gaps of the solution</span><span lang="fr">Écarts connus de la solution</span></h3>
+      <p>
+        <span lang="en">Observed while running the solution; the solution was not modified. Your version fixes them in the steps indicated.</span>
+        <span lang="fr">Constatés à l'exécution de la solution ; la solution n'a pas été modifiée. Votre version les corrige aux étapes indiquées.</span>
+      </p>
+      <table class="slide-table">
+        <thead><tr><th><span lang="en">Symptom in the solution</span><span lang="fr">Symptôme dans la solution</span></th><th><span lang="en">Cause and fix</span><span lang="fr">Cause et correction</span></th><th><span lang="en">Step</span><span lang="fr">Étape</span></th></tr></thead>
+        <tbody>
+          <tr>
+            <td><span lang="en">Saving an account fails</span><span lang="fr">L'enregistrement d'un compte échoue</span></td>
+            <td><span lang="en"><code>AccountEntity</code> maps <code>balance</code> instead of <code>balance_amount</code>. Fix: <code>@Column(name = "balance_amount", ...)</code>.</span><span lang="fr"><code>AccountEntity</code> mappe <code>balance</code> au lieu de <code>balance_amount</code>. Correctif : <code>@Column(name = "balance_amount", ...)</code>.</span></td>
+            <td>9</td>
+          </tr>
+          <tr>
+            <td><code>Account.getClientId()</code> <span lang="en">is <code>null</code> for a rebuilt account</span><span lang="fr">vaut <code>null</code> pour un compte reconstitué</span></td>
+            <td><span lang="en">The reconstitution constructor drops its <code>clientId</code> argument. Fix: keep it in a field and return it when <code>client</code> is <code>null</code>.</span><span lang="fr">Le constructeur de reconstitution ignore son argument <code>clientId</code>. Correctif : le conserver dans un champ et le renvoyer quand <code>client</code> est <code>null</code>.</span></td>
+            <td>4</td>
+          </tr>
+          <tr>
+            <td><span lang="en">JSP error on client details</span><span lang="fr">Erreur JSP sur le détail d'un client</span></td>
+            <td><span lang="en"><code>client-details.jsp</code> reads <code>account.number</code> / <code>account.type</code>; <code>AccountDTO</code> exposes <code>accountNumber</code> / <code>accountType</code>.</span><span lang="fr"><code>client-details.jsp</code> lit <code>account.number</code> / <code>account.type</code> ; <code>AccountDTO</code> expose <code>accountNumber</code> / <code>accountType</code>.</span></td>
+            <td>13</td>
+          </tr>
+          <tr>
+            <td><span lang="en">JSP error on account pages</span><span lang="fr">Erreur JSP sur les pages de comptes</span></td>
+            <td><span lang="en">The JSPs call <code>account.getClient()</code> (absent from the DTO) and <code>Account::getBalanceAsDouble</code>. Fix: <code>getClientId()</code> / <code>getClientName()</code> and <code>AccountDTO::getBalanceAsDouble</code>.</span><span lang="fr">Les JSP appellent <code>account.getClient()</code> (absent du DTO) et <code>Account::getBalanceAsDouble</code>. Correctif : <code>getClientId()</code> / <code>getClientName()</code> et <code>AccountDTO::getBalanceAsDouble</code>.</span></td>
+            <td>13</td>
+          </tr>
+          <tr>
+            <td><span lang="en">Duplicate email → 500</span><span lang="fr">Email en double → 500</span></td>
+            <td><span lang="en">The unique constraint violation is not translated. Fix: check <code>existsByEmail</code> in <code>ClientManagementService</code> and throw <code>IllegalArgumentException</code> (→ 400).</span><span lang="fr">La violation de contrainte d'unicité n'est pas traduite. Correctif : vérifier <code>existsByEmail</code> dans <code>ClientManagementService</code> et lever <code>IllegalArgumentException</code> (→ 400).</span></td>
+            <td>8, 11</td>
+          </tr>
+          <tr>
+            <td><span lang="en">Withdrawal above the balance → 500</span><span lang="fr">Retrait supérieur au solde → 500</span></td>
+            <td><span lang="en">The domain throws <code>IllegalStateException</code>, which the REST adapters do not catch. Fix: catch it and answer 409 or 400.</span><span lang="fr">Le domaine lève <code>IllegalStateException</code>, que les adaptateurs REST n'attrapent pas. Correctif : l'attraper et répondre 409 ou 400.</span></td>
+            <td>11, 12</td>
+          </tr>
+          <tr>
+            <td><code>/accounts/1/edit</code> → 404</td>
+            <td><span lang="en">No such route in <code>AccountWebAdapter</code>, although <code>account-form.jsp</code> supports edit mode. Add the route or remove the edit link.</span><span lang="fr">Aucune route de ce type dans <code>AccountWebAdapter</code>, bien que <code>account-form.jsp</code> gère le mode édition. Ajoutez la route ou retirez le lien d'édition.</span></td>
+            <td>13</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- ═════════════ 9. TROUBLESHOOTING ═════════════ -->
+    <section class="lg-section" id="trouble">
+      <h2><span class="lg-sec-num">09</span><span lang="en">Troubleshooting</span><span lang="fr">Dépannage</span></h2>
+      <table class="slide-table">
+        <thead><tr><th><span lang="en">Symptom</span><span lang="fr">Symptôme</span></th><th><span lang="en">Cause and fix</span><span lang="fr">Cause et correction</span></th></tr></thead>
+        <tbody>
+          <tr>
+            <td><code>CWWKG0075E</code> <span lang="en">for <code>${db.port}</code>, then <code>jdbc/bankingDS</code> not found</span><span lang="fr">pour <code>${db.port}</code>, puis <code>jdbc/bankingDS</code> introuvable</span></td>
+            <td><span lang="en">The database variables are not defined. Pass <code>-e DB_HOST=127.0.0.1 -e DB_PORT=5432 -e DB_NAME=bankingdb -e DB_USER=bankuser -e DB_PASSWORD=bankpass</code> to <code>podman run</code> (see the redeploy loop).</span><span lang="fr">Les variables de base de données ne sont pas définies. Passez <code>-e DB_HOST=127.0.0.1 -e DB_PORT=5432 -e DB_NAME=bankingdb -e DB_USER=bankuser -e DB_PASSWORD=bankpass</code> à <code>podman run</code> (voir la boucle de redéploiement).</span></td>
+          </tr>
+          <tr>
+            <td><code>package com.bank.model does not exist</code> / <code>cannot find symbol: class Account</code></td>
+            <td><span lang="en">An import still points to the Lab 06 package. The aggregates are now in <code>com.bank.domain.model</code>.</span><span lang="fr">Un import pointe encore vers le package du Lab 06. Les agrégats sont désormais dans <code>com.bank.domain.model</code>.</span></td>
+          </tr>
+          <tr>
+            <td><code>Unsatisfied dependencies for type AccountRepository</code></td>
+            <td><span lang="en">No bean implements the port: check <code>JpaAccountAdapter</code> is <code>@ApplicationScoped</code> and <code>beans.xml</code> has <code>bean-discovery-mode="all"</code>.</span><span lang="fr">Aucun bean n'implémente le port : vérifiez que <code>JpaAccountAdapter</code> est <code>@ApplicationScoped</code> et que <code>beans.xml</code> a <code>bean-discovery-mode="all"</code>.</span></td>
+          </tr>
+          <tr>
+            <td><code>Unsatisfied dependencies for type TransferService</code></td>
+            <td><span lang="en">The class has no bean-defining annotation: <code>beans.xml</code> must use <code>bean-discovery-mode="all"</code> (step 14).</span><span lang="fr">La classe n'a pas d'annotation de définition de bean : <code>beans.xml</code> doit utiliser <code>bean-discovery-mode="all"</code> (étape 14).</span></td>
+          </tr>
+          <tr>
+            <td><code>column "balance_amount" ... null value violates not-null constraint</code></td>
+            <td><span lang="en"><code>AccountEntity</code> still maps <code>balance</code> (step 9).</span><span lang="fr"><code>AccountEntity</code> mappe encore <code>balance</code> (étape 9).</span></td>
+          </tr>
+          <tr>
+            <td><code>The class AccountDTO does not have the property number</code></td>
+            <td><span lang="en">The JSP reads an old property name. Use <code>accountNumber</code>, <code>accountType</code>, <code>clientName</code> (step 13).</span><span lang="fr">La JSP lit un ancien nom de propriété. Utilisez <code>accountNumber</code>, <code>accountType</code>, <code>clientName</code> (étape 13).</span></td>
+          </tr>
+          <tr>
+            <td><span lang="en">Port 5432 already in use</span><span lang="fr">Port 5432 déjà utilisé</span></td>
+            <td><span lang="en">The Lab 06 database is still running: <code>podman stop lab06-postgres</code>.</span><span lang="fr">La base du Lab 06 tourne encore : <code>podman stop lab06-postgres</code>.</span></td>
+          </tr>
+          <tr>
+            <td><span lang="en">Flyway error on a database created by another lab</span><span lang="fr">Erreur Flyway sur une base créée par un autre lab</span></td>
+            <td><span lang="en">Lab 07 uses its own database <code>bankingdb</code>. Reset it: <code>podman rm -f lab07-postgres</code>, then <code>podman-compose up -d</code> again.</span><span lang="fr">Le Lab 07 utilise sa propre base <code>bankingdb</code>. Réinitialisez-la : <code>podman rm -f lab07-postgres</code>, puis relancez <code>podman-compose up -d</code>.</span></td>
+          </tr>
+          <tr>
+            <td><span lang="en"><code>/health</code> returns <code>DOWN</code> or the server cannot start</span><span lang="fr"><code>/health</code> retourne <code>DOWN</code> ou le serveur ne démarre pas</span></td>
+            <td><span lang="en">The database container <code>lab07-postgres</code> is not running or unreachable. Check <code>podman ps</code> and <code>podman logs banking-lab07</code>.</span><span lang="fr">Le conteneur <code>lab07-postgres</code> n'est pas en cours d'exécution ou est injoignable. Vérifiez <code>podman ps</code> et <code>podman logs banking-lab07</code>.</span></td>
+          </tr>
+          <tr>
+            <td><span lang="en">Cannot connect to Podman</span><span lang="fr">Impossible de se connecter à Podman</span></td>
+            <td><span lang="en">On macOS/Windows the Podman VM is stopped: <code>podman machine start</code>.</span><span lang="fr">Sur macOS/Windows la VM Podman est arrêtée : <code>podman machine start</code>.</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- ═════════════ 10. BONUS ═════════════ -->
+    <section class="lg-section" id="bonus">
+      <h2><span class="lg-sec-num">10</span><span lang="en">Go further</span><span lang="fr">Pour aller plus loin</span></h2>
+      <ul>
+        <li><span lang="en"><strong>A second adapter for a secondary port.</strong> Write <code>InMemoryAccountAdapter implements AccountRepository</code> (a <code>ConcurrentHashMap</code>) and use it in a plain JUnit test of <code>MoneyOperationsService</code> without a database (<a href="../../02-Lectures/slides/07-hexagonal/slides.html#slide-30">slide 30</a>).</span><span lang="fr"><strong>Un second adaptateur pour un port secondaire.</strong> Écrivez <code>InMemoryAccountAdapter implements AccountRepository</code> (une <code>ConcurrentHashMap</code>) et utilisez-le dans un test JUnit simple de <code>MoneyOperationsService</code> sans base de données (<a href="../../02-Lectures/slides/07-hexagonal/slides.html#slide-30">slide 30</a>).</span></li>
+        <li><span lang="en"><strong>A CDI observer for domain events.</strong> Add a bean with <code>@Observes MoneyDepositedEvent</code>… that logs the three event types, fed by <code>CDIEventPublisherAdapter</code>.</span><span lang="fr"><strong>Un observateur CDI d'événements de domaine.</strong> Ajoutez un bean avec <code>@Observes MoneyDepositedEvent</code>… qui journalise les trois types d'événements, alimenté par <code>CDIEventPublisherAdapter</code>.</span></li>
+        <li><span lang="en"><strong>Architecture test.</strong> Write a JUnit test that scans the compiled classes and fails if a class under <code>domain</code> or <code>application</code> imports <code>jakarta.persistence</code> or <code>com.bank.infrastructure</code> (the <code>grep</code> checks of this guide, automated).</span><span lang="fr"><strong>Test d'architecture.</strong> Écrivez un test JUnit qui analyse les classes compilées et échoue si une classe sous <code>domain</code> ou <code>application</code> importe <code>jakarta.persistence</code> ou <code>com.bank.infrastructure</code> (les contrôles <code>grep</code> de ce guide, automatisés).</span></li>
+        <li><span lang="en"><strong>Error mapping.</strong> Replace the <code>try/catch</code> blocks of the REST adapters by a JAX-RS <code>ExceptionMapper</code> so that <code>IllegalArgumentException</code> → 400 and <code>IllegalStateException</code> → 409 in one place.</span><span lang="fr"><strong>Mapping d'erreurs.</strong> Remplacez les blocs <code>try/catch</code> des adaptateurs REST par un <code>ExceptionMapper</code> JAX-RS, de sorte que <code>IllegalArgumentException</code> → 400 et <code>IllegalStateException</code> → 409 en un seul endroit.</span></li>
+        <li><span lang="en"><strong>Banking example in the course.</strong> Compare your result with the example of <a href="../../02-Lectures/slides/07-hexagonal/slides.html#slide-52">slides 52–56</a>.</span><span lang="fr"><strong>Exemple bancaire du cours.</strong> Comparez votre résultat avec l'exemple des <a href="../../02-Lectures/slides/07-hexagonal/slides.html#slide-52">slides 52–56</a>.</span></li>
+      </ul>
+      <div class="lg-callout lg-callout--tip">
+        <div lang="en"><div class="lg-callout-title">Next</div><p><a href="lab08-microservices.html">Lab 08</a> splits the application into microservices (api-gateway, client-service, account-service). The ports and adapters you built here make that cut natural: each service keeps its own hexagon and talks to the others through new adapters.</p></div>
+        <div lang="fr"><div class="lg-callout-title">Suite</div><p>Le <a href="lab08-microservices.html">Lab 08</a> découpe l'application en microservices (api-gateway, client-service, account-service). Les ports et adaptateurs construits ici rendent ce découpage naturel : chaque service garde son propre hexagone et dialogue avec les autres par de nouveaux adaptateurs.</p></div>
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<footer class="site-footer">Made with IBM Bob &nbsp;&middot;&nbsp; &copy; 2026 Olivier Planson</footer>
+</body>
+</html>
